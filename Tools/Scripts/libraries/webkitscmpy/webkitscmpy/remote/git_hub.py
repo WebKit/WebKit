@@ -75,7 +75,7 @@ class GitHub(Scm):
     def is_git(self):
         return True
 
-    def request(self, path=None, params=None, headers=None, authenticated=None):
+    def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True):
         headers = {key: value for key, value in headers.items()} if headers else dict()
         headers['Accept'] = headers.get('Accept', 'application/vnd.github.v3+json')
 
@@ -105,7 +105,7 @@ class GitHub(Scm):
             return None
         result = response.json()
 
-        while isinstance(response.json(), list) and len(response.json()) == params['per_page']:
+        while paginate and isinstance(response.json(), list) and len(response.json()) == params['per_page']:
             params['page'] += 1
             response = requests.get(url, params=params, headers=headers, auth=auth)
             if response.status_code != 200:
@@ -287,16 +287,22 @@ class GitHub(Scm):
         # it's possible for a series of commits to share a commit time. To handle this case, we assign each commit a
         # zero-indexed "order" within it's timestamp.
         order = 0
-        while not identifier or order + 1 < identifier + (branch_point or 0):
-            response = self.request('commits/{}'.format('{}~{}'.format(commit_data['sha'], order + 1)))
-            if not response:
+        lhash = commit_data['sha']
+        while lhash:
+            response = self.request('commits', paginate=False, params=dict(sha=lhash, per_page=20))
+            if len(response) <= 1:
                 break
-            parent_timestamp = int(calendar.timegm(datetime.strptime(
-                response['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ',
-            ).timetuple()))
-            if parent_timestamp != timestamp:
-                break
-            order += 1
+            for c in response:
+                if lhash == c['sha']:
+                    continue
+                parent_timestamp = int(calendar.timegm(datetime.strptime(
+                    c['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ',
+                ).timetuple()))
+                if parent_timestamp != timestamp:
+                    lhash = None
+                    break
+                lhash = c['sha']
+                order += 1
 
         return Commit(
             repository_id=self.id,
@@ -312,6 +318,67 @@ class GitHub(Scm):
                 email_match.group('email') if email_match else None,
             ), message=commit_data['commit']['message'] if include_log else None,
         )
+
+    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
+        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+
+        previous = end
+        cached = [previous]
+        while previous:
+            response = self.request('commits', paginate=False, params=dict(sha=previous.hash))
+            if not response:
+                break
+            for commit_data in response:
+                branch_point = previous.branch_point
+                identifier = previous.identifier
+                if commit_data['sha'] == previous.hash:
+                    cached = cached[:-1]
+                else:
+                    identifier -= 1
+
+                if not identifier:
+                    identifier = branch_point
+                    branch_point = None
+
+                matches = self.GIT_SVN_REVISION.findall(commit_data['commit']['message'])
+                revision = int(matches[-1].split('@')[0]) if matches else None
+
+                email_match = self.EMAIL_RE.match(commit_data['commit']['author']['email'])
+                timestamp = int(calendar.timegm(datetime.strptime(
+                    commit_data['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ',
+                ).timetuple()))
+
+                previous = Commit(
+                    repository_id=self.id,
+                    hash=commit_data['sha'],
+                    revision=revision,
+                    branch=end.branch if identifier and branch_point else self.default_branch,
+                    identifier=identifier if include_identifier else None,
+                    branch_point=branch_point if include_identifier else None,
+                    timestamp=timestamp,
+                    author=self.contributors.create(
+                        commit_data['commit']['author']['name'],
+                        email_match.group('email') if email_match else None,
+                    ), order=0,
+                    message=commit_data['commit']['message'] if include_log else None,
+                )
+                if not cached or cached[0].timestamp != previous.timestamp:
+                    for c in cached:
+                        yield c
+                    cached = [previous]
+                else:
+                    for c in cached:
+                        c.order += 1
+                    cached.append(previous)
+
+                if previous.hash == begin.hash or previous.timestamp < begin.timestamp:
+                    previous = None
+                    break
+
+        for c in cached:
+            c.order += begin.order
+            yield c
+
 
     def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, six.string_types):

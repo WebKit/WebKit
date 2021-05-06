@@ -1,3 +1,61 @@
+2021-05-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add API to efficiently create a sequence of commits
+        https://bugs.webkit.org/show_bug.cgi?id=224890
+        <rdar://problem/76975733>
+
+        Rubber-stamped by Aakash Jain.
+
+        While it is possible to simple iterate through a range of commits to define them,
+        every API we use to define commits has much more efficient techniques.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor): Add revision to SVN_AUTHOR_RE and add regex without lines.
+        (Contributor.from_scm_log): Strip leading whitespace from author.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git._args_from_content):
+        (Git.commits): Use `git log` to efficiently compute a range of commits.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn._args_from_content):
+        (Svn.commits): Use `svn log` to efficiently compute a range of commits.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add `git log` mock.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__): Add `svn log` mock and more explicit `svn info` mock.
+        (Svn._log_range):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub._commits_response): Return all parent commits to provided ref.
+        (GitHub.request):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/svn.py:
+        (Svn.range): More efficiently compute the range.
+        (Svn.request):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.request): Allow caller to disable pagination.
+        (GitHub.commit): Reduce number of requests required to compute order.
+        (GitHub.commits): Using the `commits` endpoint, more efficiently
+        compute a range of commits.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn): Generalize HISTORY_RE to match any single-line SVN XML response.
+        (Svn._cache_revisions): Replace HISTORY_RE with DATA_RE.
+        (Svn.commits): Use svn/rvr to efficiently compute a range of commits.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase._commit_range): Return a pair of commits representing the range
+        the caller is requesting, and preform some basic sanity checks.
+        (ScmBase.commits): Declare function implemented by decedents.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_commits):
+        (TestGit.test_commits_branch):
+        (TestGitHub.test_commits):
+        (TestGitHub.test_commits_branch):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_commits):
+        (TestLocalSvn.test_commits_branch):
+        (TestRemoteSvn.test_commits):
+        (TestRemoteSvn.test_commits_branch):
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r272414?): [macOS] TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo is a flaky failure

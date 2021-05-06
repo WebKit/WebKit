@@ -132,6 +132,52 @@ class GitHub(mocks.Requests):
             } for reference, commit in (self.commits if type == 'branches' else self.tags).items()
         ], url=url)
 
+    def _commits_response(self, url, ref):
+        from datetime import datetime, timedelta
+
+        base = self.commit(ref)
+        if not base:
+            return mocks.Response(
+                status_code=404,
+                url=url,
+                text=json.dumps(dict(message='No commit found for SHA: {}'.format(ref))),
+            )
+
+        response = []
+        for branch in [self.default_branch] if base.branch == self.default_branch else [base.branch, self.default_branch]:
+            in_range = False
+            previous = None
+            for commit in reversed(self.commits[branch]):
+                if commit.hash == ref:
+                    in_range = True
+                if not in_range:
+                    continue
+                previous = commit
+                response.append({
+                    'sha': commit.hash,
+                    'commit': {
+                        'author': {
+                            'name': commit.author.name,
+                            'email': commit.author.email,
+                            'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                        }, 'committer': {
+                            'name': commit.author.name,
+                            'email': commit.author.email,
+                            'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                        }, 'message': commit.message + ('\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
+                            'trunk' if commit.branch == self.default_branch else commit.branch, commit.revision,
+                        ) if commit.revision else ''),
+                        'url': 'https://{}/git/commits/{}'.format(self.api_remote, commit.hash),
+                    }, 'url': 'https://{}/commits/{}'.format(self.api_remote, commit.hash),
+                    'html_url': 'https://{}/commit/{}'.format(self.remote, commit.hash),
+                })
+            if branch != self.default_branch:
+                for commit in reversed(self.commits[self.default_branch]):
+                    if previous.branch_point == commit.identifier:
+                        ref = commit.hash
+
+        return mocks.Response.fromJson(response, url=url)
+
     def _commit_response(self, url, ref):
         from datetime import datetime, timedelta
 
@@ -153,9 +199,9 @@ class GitHub(mocks.Requests):
                     'name': commit.author.name,
                     'email': commit.author.email,
                     'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
-                }, 'message': commit.message + '\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
+                }, 'message': commit.message + ('\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
                     'trunk' if commit.branch == self.default_branch else commit.branch, commit.revision,
-                ) if commit.revision else '',
+                ) if commit.revision else ''),
                 'url': 'https://{}/git/commits/{}'.format(self.api_remote, commit.hash),
             }, 'url': 'https://{}/commits/{}'.format(self.api_remote, commit.hash),
             'html_url': 'https://{}/commit/{}'.format(self.remote, commit.hash),
@@ -233,10 +279,11 @@ class GitHub(mocks.Requests):
             ), url=url
         )
 
-    def request(self, method, url, data=None, **kwargs):
+    def request(self, method, url, data=None, params=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
+        params = params or {}
         stripped_url = url.split('://')[-1]
 
         # Top-level API request
@@ -246,6 +293,10 @@ class GitHub(mocks.Requests):
         # Branches/Tags
         if stripped_url in ['{}/branches'.format(self.api_remote), '{}/tags'.format(self.api_remote)]:
             return self._list_refs_response(url=url, type=stripped_url.split('/')[-1])
+
+        # Return a commit and it's parents
+        if stripped_url == '{}/commits'.format(self.api_remote) and params.get('sha'):
+            return self._commits_response(url=url, ref=params['sha'])
 
         # Extract single commit
         if stripped_url.startswith('{}/commits/'.format(self.api_remote)):

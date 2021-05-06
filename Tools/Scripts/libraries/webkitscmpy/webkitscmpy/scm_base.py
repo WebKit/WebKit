@@ -73,6 +73,38 @@ class ScmBase(object):
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         raise NotImplementedError()
 
+    def _commit_range(self, begin=None, end=None, include_log=False, include_identifier=True):
+        begin_args = begin or dict()
+        end_args = end or dict()
+
+        if not begin_args:
+            raise TypeError("_commit_range() missing required 'begin' arguments")
+        if not end_args:
+            raise TypeError("_commit_range() missing required 'end' arguments")
+
+        if list(begin_args.keys()) == ['argument']:
+            begin_result = self.find(include_log=include_log, include_identifier=False, **begin_args)
+        else:
+            begin_result = self.commit(include_log=include_log, include_identifier=False, **begin_args)
+
+        if list(end_args.keys()) == ['argument']:
+            end_result = self.find(include_log=include_log, include_identifier=include_identifier, **end_args)
+        else:
+            end_result = self.commit(include_log=include_log, include_identifier=include_identifier, **end_args)
+
+        if not begin_result:
+            raise TypeError("'{}' failed to define begin in _commit_range()".format(begin_args))
+        if not end_result:
+            raise TypeError("'{}' failed to define begin in _commit_range()".format(end_args))
+        if begin_result.timestamp > end_result.timestamp:
+            raise TypeError("'{}' pre-dates '{}' in _commit_range()".format(begin_result, end_result))
+        if end_result.branch == self.default_branch and begin_result.branch != self.default_branch:
+            raise TypeError("'{}' and '{}' do not share linear history".format(begin_result, end_result))
+        return begin_result, end_result
+
+    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
+        raise NotImplementedError()
+
     def prioritize_branches(self, branches):
         if len(branches) == 1:
             return branches[0]

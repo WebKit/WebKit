@@ -28,7 +28,7 @@ import unittest
 from datetime import datetime
 from webkitcorepy import LoggerCapture, OutputCapture
 from webkitcorepy.mocks import Time as MockTime
-from webkitscmpy import local, mocks, remote
+from webkitscmpy import Commit, local, mocks, remote
 
 
 class TestGit(unittest.TestCase):
@@ -283,6 +283,28 @@ class TestGit(unittest.TestCase):
                 self.assertEqual(0, local.Git(self.path).commit(hash='bae5d1e90999').order)
                 self.assertEqual(1, local.Git(self.path).commit(hash='d8bce26fa65c').order)
 
+    def test_commits(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock:
+                git = local.Git(self.path)
+                self.assertEqual(Commit.Encoder().default([
+                    git.commit(hash='bae5d1e9'),
+                    git.commit(hash='1abe25b4'),
+                    git.commit(hash='fff83bb2'),
+                    git.commit(hash='9b8311f2'),
+                ]), Commit.Encoder().default(list(git.commits(begin=dict(hash='9b8311f2'), end=dict(hash='bae5d1e9')))))
+
+    def test_commits_branch(self):
+        for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
+            with mock:
+                git = local.Git(self.path)
+                self.assertEqual(Commit.Encoder().default([
+                    git.commit(hash='621652ad'),
+                    git.commit(hash='a30ce849'),
+                    git.commit(hash='fff83bb2'),
+                    git.commit(hash='9b8311f2'),
+                ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
+
 
 class TestGitHub(unittest.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
@@ -414,6 +436,27 @@ class TestGitHub(unittest.TestCase):
 
     def test_id(self):
         self.assertEqual(remote.GitHub(self.remote).id, 'webkit')
+
+    def test_commits(self):
+        with mocks.remote.GitHub():
+            git = remote.GitHub(self.remote)
+            self.assertEqual(Commit.Encoder().default([
+                git.commit(hash='bae5d1e9'),
+                git.commit(hash='1abe25b4'),
+                git.commit(hash='fff83bb2'),
+                git.commit(hash='9b8311f2'),
+            ]), Commit.Encoder().default(list(git.commits(begin=dict(hash='9b8311f2'), end=dict(hash='bae5d1e9')))))
+
+    def test_commits_branch(self):
+        with mocks.remote.GitHub():
+            git = remote.GitHub(self.remote)
+            self.assertEqual(Commit.Encoder().default([
+                git.commit(hash='621652ad'),
+                git.commit(hash='a30ce849'),
+                git.commit(hash='fff83bb2'),
+                git.commit(hash='9b8311f2'),
+            ]), Commit.Encoder().default(list(git.commits(begin=dict(argument='9b8311f2'), end=dict(argument='621652ad')))))
+
 
 
 class TestBitBucket(unittest.TestCase):

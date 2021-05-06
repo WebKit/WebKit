@@ -65,13 +65,17 @@ class Svn(mocks.Subprocess):
 
         super(Svn, self).__init__(
             mocks.Subprocess.Route(
-                self.executable, 'info',
-                cwd=self.path,
-                generator=lambda *args, **kwargs: self._info(cwd=kwargs.get('cwd', ''))
-            ), mocks.Subprocess.Route(
                 self.executable, 'info', self.BRANCH_RE,
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._info(branch=self.BRANCH_RE.match(args[2]).group('branch'), cwd=kwargs.get('cwd', ''))
+            ), mocks.Subprocess.Route(
+                self.executable, 'info', '-r', re.compile(r'\d+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self._info(revision=int(args[3]), cwd=kwargs.get('cwd', ''))
+            ), mocks.Subprocess.Route(
+                self.executable, 'info',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self._info(cwd=kwargs.get('cwd', ''))
             ), mocks.Subprocess.Route(
                 self.executable, 'list', '^/branches',
                 cwd=self.path,
@@ -117,6 +121,14 @@ class Svn(mocks.Subprocess):
                 generator=lambda *args, **kwargs: self._log_for(
                     branch=self.BRANCH_RE.match(args[6]).group('branch'),
                     revision=args[5],
+                ) if self.connected else mocks.ProcessCompletion(returncode=1)
+            ), mocks.Subprocess.Route(
+                self.executable, 'log', '-r', re.compile(r'\d+:\d+'), self.BRANCH_RE,
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self._log_range(
+                    branch=self.BRANCH_RE.match(args[4]).group('branch'),
+                    end=int(args[3].split(':')[0]),
+                    begin=int(args[3].split(':')[-1]),
                 ) if self.connected else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'up', '-r', re.compile(r'\d+'),
@@ -203,6 +215,28 @@ class Svn(mocks.Subprocess):
                     log=commit.message
                 ),
         )
+
+    def _log_range(self, branch=None, end=None, begin=None):
+        if end < begin:
+            return mocks.ProcessCompletion(returncode=1)
+
+        output = ''
+        previous = None
+        for b in [branch, 'trunk']:
+            for candidate in reversed(self.commits.get(b, [])):
+                if candidate.revision > end or candidate.revision < begin:
+                    continue
+                if previous and previous.revision <= candidate.revision:
+                    continue
+                previous = candidate
+                output += ('------------------------------------------------------------------------\n'
+                    '{line} | {lines} lines\n\n'
+                    '{log}\n').format(
+                        line=self.log_line(candidate),
+                        lines=len(candidate.message.splitlines()),
+                        log=candidate.message
+                )
+        return mocks.ProcessCompletion(returncode=0, stdout=output)
 
     def find(self, branch=None, revision=None):
         if not branch and not revision:
