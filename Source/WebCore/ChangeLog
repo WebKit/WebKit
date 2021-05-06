@@ -1,3 +1,16 @@
+2021-05-06  Devin Rousso  <drousso@apple.com>
+
+        Sampled Page Top Color: don't snapshot if the hit test location is a canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225418
+
+        Reviewed by Tim Horton.
+
+        Tests: SampledPageTopColor.HitTestHTMLCanvasWithoutRenderingContext
+               SampledPageTopColor.HitTestHTMLCanvasWithRenderingContext
+
+        * dom/Document.cpp:
+        (WebCore::isValidPageSampleLocation):
+
 2021-05-06  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r276870): ASSERTION FAILED: !m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread() under WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer
