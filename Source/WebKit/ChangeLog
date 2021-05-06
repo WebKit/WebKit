@@ -1,3 +1,25 @@
+2021-05-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove network website data when a user clears an individual domain
+        https://bugs.webkit.org/show_bug.cgi?id=225350
+        <rdar://problem/76029480>
+
+        Reviewed by Brent Fulgham.
+
+        Convert parameters to Optional values now that we use the function
+        for individual domains.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        We should check all possible website data entries and delete
+        network domain data if any of them contain a domain.
+
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::removeNetworkWebsiteData):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::removeNetworkWebsiteData):
+
 2021-05-05  Per Arne Vollan  <pvollan@apple.com>
 
         Reduce sandbox telemetry

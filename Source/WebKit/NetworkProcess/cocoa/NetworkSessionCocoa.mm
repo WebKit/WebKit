@@ -66,7 +66,7 @@
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
 #define NETWORK_SESSION_COCOA_ADDITIONS_2
 #define NETWORK_SESSION_COCOA_ADDITIONS_3
-void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(WallTime, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(Optional<WallTime>, Optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
 #import "DeviceManagementSoftLink.h"

@@ -106,7 +106,7 @@ public:
     
     _NSHSTSStorage *hstsStorage() const;
 
-    void removeNetworkWebsiteData(WallTime, CompletionHandler<void()>&&) override;
+    void removeNetworkWebsiteData(Optional<WallTime>, Optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&&) override;
 
 private:
     void invalidateAndCancel() override;
