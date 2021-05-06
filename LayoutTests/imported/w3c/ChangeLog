@@ -1,5 +1,70 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-will-change WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=225444
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-will-change/w3c-import.log:
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-contain-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-contain-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-height-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-height-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-offset-path-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-offset-path-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-perspective-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-perspective-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-position-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-position-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-style-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-style-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-translate-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixpos-cb-translate-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-001-expected.html: Removed.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-001.html: Removed.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-002-expected.html: Removed.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-003-expected.html: Removed.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-002.html.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-clip-path-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-clip-path-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-filter-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-filter-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-height-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-height-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-isolation-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-isolation-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-mask-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-mask-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-mix-blend-mode-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-mix-blend-mode-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-offset-path-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-offset-path-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-2-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-003.html.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-perspective-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-perspective-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-position-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-position-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-transform-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-transform-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-transform-style-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-transform-style-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-translate-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-translate-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-1-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-1.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html: Added.
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-counter-styles WPT
 
         Unreviewed. Trivial WPT re-import.

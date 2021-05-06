@@ -1,3 +1,12 @@
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
+        Re-import css/css-will-change WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=225444
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+
 2021-05-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r271341): media/media-fullscreen-inline.html times out on GTK
