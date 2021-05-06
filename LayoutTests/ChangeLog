@@ -1,5 +1,13 @@
 2021-05-06  Lauro Moura  <lmoura@igalia.com>
 
+        [WPE] Garden accessibility failure and merge other expectations with glib one
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+
+2021-05-06  Lauro Moura  <lmoura@igalia.com>
+
         [WPE][WebXR] Gardening regressions after r277099
 
         Unreviewed test gardening.
