@@ -281,7 +281,7 @@ private:
     bool mediaPlayerShouldCheckHardwareSupport() const final;
 
     void startUpdateCachedStateMessageTimer();
-    void updateCachedState();
+    void updateCachedState(bool = false);
     void sendCachedState();
     void timerFired();
 
@@ -290,6 +290,8 @@ private:
 
     void createAudioSourceProvider();
     void setShouldEnableAudioSourceProvider(bool);
+
+    void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
     void nativeImageForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&&);
@@ -346,6 +348,8 @@ private:
     RefPtr<RemoteAudioSourceProviderProxy> m_remoteAudioSourceProvider;
 #endif
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
+
+    bool m_observingTimeChanges { false };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;

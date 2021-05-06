@@ -1453,12 +1453,21 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::currentMediaTime() const
     return std::min(std::max(itemTime, MediaTime::zeroTime()), m_cachedDuration);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange(WTF::MediaTime&& time) const
+bool MediaPlayerPrivateAVFoundationObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
 {
-    m_cachedCurrentMediaTime = time;
+    m_currentTimeDidChangeCallback = WTFMove(callback);
+    return true;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange(MediaTime&& time) const
+{
+    m_cachedCurrentMediaTime = WTFMove(time);
     m_wallClockAtCachedCurrentTime = WallTime::now();
     m_timeControlStatusAtCachedCurrentTime = m_cachedTimeControlStatus;
     m_requestedRateAtCachedCurrentTime = m_requestedRate;
+
+    if (m_currentTimeDidChangeCallback)
+        m_currentTimeDidChangeCallback(time.isFinite() ? m_cachedCurrentMediaTime : MediaTime::zeroTime());
 }
 
 void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)

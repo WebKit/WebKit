@@ -37,8 +37,6 @@
 namespace WebKit {
 
 struct RemoteMediaPlayerState {
-    MonotonicTime timestamp;
-    MediaTime currentTime;
     MediaTime duration;
     MediaTime minTimeSeekable;
     MediaTime maxTimeSeekable;
@@ -72,8 +70,6 @@ struct RemoteMediaPlayerState {
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
-        encoder << timestamp;
-        encoder << currentTime;
         encoder << duration;
         encoder << minTimeSeekable;
         encoder << maxTimeSeekable;
@@ -108,16 +104,6 @@ struct RemoteMediaPlayerState {
     template <class Decoder>
     static Optional<RemoteMediaPlayerState> decode(Decoder& decoder)
     {
-        Optional<MonotonicTime> timestamp;
-        decoder >> timestamp;
-        if (!timestamp)
-            return WTF::nullopt;
-
-        Optional<MediaTime> currentTime;
-        decoder >> currentTime;
-        if (!currentTime)
-            return WTF::nullopt;
-
         Optional<MediaTime> duration;
         decoder >> duration;
         if (!duration)
@@ -260,8 +246,6 @@ struct RemoteMediaPlayerState {
             return WTF::nullopt;
 
         return {{
-            WTFMove(*timestamp),
-            WTFMove(*currentTime),
             WTFMove(*duration),
             WTFMove(*minTimeSeekable),
             WTFMove(*maxTimeSeekable),

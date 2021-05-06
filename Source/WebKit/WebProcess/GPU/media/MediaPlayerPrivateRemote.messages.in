@@ -39,6 +39,8 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     SizeChanged(WebCore::FloatSize naturalSize)
     RenderingModeChanged()
 
+    CurrentTimeChanged(MediaTime mediaTime, MonotonicTime wallTime)
+
     AddRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
     RemoveRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
     RemoteAudioTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)

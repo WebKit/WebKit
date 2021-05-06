@@ -396,6 +396,9 @@ public:
     void seekWhenPossible(const MediaTime&);
     void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
 
+    using CurrentTimeDidChangeCallback = std::function<void(const MediaTime&)>;
+    bool setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&&);
+
     MediaTime startTime() const;
     MediaTime initialTime() const;
 

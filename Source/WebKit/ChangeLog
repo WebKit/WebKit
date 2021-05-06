@@ -1,3 +1,55 @@
+2021-05-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Reduce MediaPlayer polling frequency when possible
+        https://bugs.webkit.org/show_bug.cgi?id=225396
+        <rdar://problem/77562643>
+
+        Reviewed by Jer Noble.
+
+        When the MediaPlayerPrivate supports the new "current time changed" callback, use it
+        know when currentTime changes instead of polling at a fixed frequency. Current time
+        changes much more frequently than the other state that needs to be pushed to the
+        web process periodically so split current time out of the "cached state" struct
+        and push it separately when it changes, which also allow us to reduce the polling
+        frequency significantly.
+
+        Some of the state we were updating every time the cached state timer fired only
+        changes at known times, so reduce the number of things updated every time state 
+        is pushed.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::getConfiguration): Set the timeChanged callback.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged): Update cached 
+        readyState and networkState since they aren't updated by updateCachedState.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged): Ditto.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDurationChanged): Update cached duration.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged): Update hasAudio
+        and hasVideo.
+        (WebKit::RemoteMediaPlayerProxy::startUpdateCachedStateMessageTimer): Decrease the
+        time frequency to 200ms when the player supports the time change callback. Decrease
+        it to 250ms even when it doesn't because we interpolate time in the WP anyway.
+        (WebKit::RemoteMediaPlayerProxy::currentTimeChanged): Send the time change.
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState): Send CurrentTimeChanged if
+        the player doesn't support the new callback. Don't update properties that change
+        at predictable times.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::pause): Use m_cachedMediaTime and m_cachedMediaTimeQueryTime
+        instead of m_cachedState.currentTime and m_cachedState.timestamp.
+        (WebKit::MediaPlayerPrivateRemote::currentMediaTime const): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::playbackStateChanged): Ditto.
+        (WebKit::MediaPlayerPrivateRemote::currentTimeChanged): Update time instance variables.
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState):
+        (WebKit::MediaPlayerPrivateRemote::performTaskAtMediaTime): Use m_cachedMediaTime 
+        and m_cachedMediaTimeQueryTime instead of m_cachedState.currentTime and m_cachedState.timestamp.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::encode const): Remove currentTime and timestamp.
+        (WebKit::RemoteMediaPlayerState::decode): Ditto.
+
 2021-05-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix crash when WebsiteDataStore is destroyed with outstanding getNetworkProcessConnection request

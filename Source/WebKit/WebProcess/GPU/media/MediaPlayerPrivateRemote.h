@@ -110,6 +110,8 @@ public:
     void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
 #endif
 
+    void currentTimeChanged(const MediaTime&, const MonotonicTime&);
+
     void addRemoteAudioTrack(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
     void removeRemoteAudioTrack(TrackPrivateRemoteIdentifier);
     void remoteAudioTrackConfigurationChanged(TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);
@@ -414,6 +416,9 @@ private:
 
     WebCore::SecurityOriginData m_documentSecurityOrigin;
     mutable HashMap<WebCore::SecurityOriginData, Optional<bool>> m_wouldTaintOriginCache;
+
+    MediaTime m_cachedMediaTime;
+    MonotonicTime m_cachedMediaTimeQueryTime;
 
     MonotonicTime m_lastPlaybackQualityMetricsQueryTime;
     Seconds m_videoPlaybackMetricsUpdateInterval;

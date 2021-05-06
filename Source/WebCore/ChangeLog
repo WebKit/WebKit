@@ -1,3 +1,24 @@
+2021-05-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Reduce MediaPlayer polling frequency when possible
+        https://bugs.webkit.org/show_bug.cgi?id=225396
+        <rdar://problem/77562643>
+
+        Reviewed by Jer Noble.
+
+        Add a currentTime changed callback to MediaPlayerPrivateInterface so a client
+        doens't have to poll for time changes.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setCurrentTimeDidChangeCallback):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setCurrentTimeDidChangeCallback):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTimeDidChangeCallback):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange const):
+
 2021-05-06  Antoine Quint  <graouts@webkit.org>
 
         CSS custom properties on pseudo elements background gradients causes infinite layout and high CPU load

@@ -204,8 +204,8 @@ void MediaPlayerPrivateRemote::pause()
 {
     m_cachedState.paused = true;
     auto now = MonotonicTime::now();
-    m_cachedState.currentTime += MediaTime::createWithDouble(m_rate * (now - m_cachedState.timestamp).value());
-    m_cachedState.timestamp = now;
+    m_cachedMediaTime += MediaTime::createWithDouble(m_rate * (now - m_cachedMediaTimeQueryTime).value());
+    m_cachedMediaTimeQueryTime = now;
     connection().send(Messages::RemoteMediaPlayerProxy::Pause(), m_id);
 }
 
@@ -251,10 +251,10 @@ MediaTime MediaPlayerPrivateRemote::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
 {
-    if (m_cachedState.paused || !m_cachedState.currentTime)
-        return m_cachedState.currentTime;
+    if (m_cachedState.paused || !m_cachedMediaTime)
+        return m_cachedMediaTime;
 
-    return m_cachedState.currentTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedState.timestamp).seconds());
+    return m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
 }
 
 void MediaPlayerPrivateRemote::seek(const MediaTime& time)
@@ -351,8 +351,8 @@ void MediaPlayerPrivateRemote::rateChanged(double rate)
 void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& mediaTime, MonotonicTime&& wallTime)
 {
     m_cachedState.paused = paused;
-    m_cachedState.currentTime = mediaTime;
-    m_cachedState.timestamp = wallTime;
+    m_cachedMediaTime = mediaTime;
+    m_cachedMediaTimeQueryTime = wallTime;
     m_player->playbackStateChanged();
 }
 
@@ -372,6 +372,12 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 {
     m_cachedState.naturalSize = naturalSize;
     m_player->sizeChanged();
+}
+
+void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, const MonotonicTime& queryTime)
+{
+    m_cachedMediaTime = mediaTime;
+    m_cachedMediaTimeQueryTime = queryTime;
 }
 
 void MediaPlayerPrivateRemote::firstVideoFrameAvailable()
@@ -427,8 +433,6 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 {
     const Seconds playbackQualityMetricsTimeout = 30_s;
 
-    m_cachedState.timestamp = state.timestamp;
-    m_cachedState.currentTime = state.currentTime;
     m_cachedState.duration = state.duration;
     m_cachedState.minTimeSeekable = state.minTimeSeekable;
     m_cachedState.maxTimeSeekable = state.maxTimeSeekable;
@@ -1220,12 +1224,12 @@ void MediaPlayerPrivateRemote::applicationDidBecomeActive()
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime, Optional<MonotonicTime> wallTime) mutable {
-        if (!weakThis || !currentTime || !wallTime)
+    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime, Optional<MonotonicTime> queryTime) mutable {
+        if (!weakThis || !currentTime || !queryTime)
             return;
 
-        m_cachedState.currentTime = *currentTime;
-        m_cachedState.timestamp = *wallTime;
+        m_cachedMediaTime = *currentTime;
+        m_cachedMediaTimeQueryTime = *queryTime;
         completionHandler();
     };
 
