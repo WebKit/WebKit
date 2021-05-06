@@ -1,3 +1,29 @@
+2021-05-06  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Add IOSurface to FrameData::LayerData
+        https://bugs.webkit.org/show_bug.cgi?id=225428
+        <rdar://problem/77586270>
+
+        Reviewed by Tim Horton.
+
+        Original patch by Ada Chan.
+
+        Cocoa platforms will use IOSurfaces on FrameData::LayerData.
+        Add this member, allow it to be encoded and decoded, and fix up
+        some places where we were copying a FrameData unnecessarily, or
+        where we have to explicitly copy.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::onFrame): Use WTFMove instead of copying.
+        * platform/graphics/cocoa/IOSurface.h: Export createFromSurface.
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::FrameData::LayerData::encode const):
+        (PlatformXR::Device::FrameData::LayerData::decode):
+        (PlatformXR::Device::FrameData::decode):
+        (PlatformXR::Device::FrameData::copy const):
+        * testing/WebFakeXRDevice.cpp:
+        (WebCore::SimulatedXRDevice::frameTimerFired):
+
 2021-05-06  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Remove webKitMediaSrcFinalize

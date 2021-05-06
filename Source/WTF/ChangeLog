@@ -1,3 +1,16 @@
+2021-05-06  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Add IOSurface to FrameData::LayerData
+        https://bugs.webkit.org/show_bug.cgi?id=225428
+        <rdar://problem/77586270>
+
+        Reviewed by Tim Horton.
+
+        Add USE(IOSURFACE_FOR_XR_LAYER_DATA) and make it true
+        for Cocoa platforms.
+
+        * wtf/PlatformUse.h:
+
 2021-05-06  Darin Adler  <darin@apple.com>
 
         Streamline codec parsing, replacing uses of HashMap with SortedArrayMap

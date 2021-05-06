@@ -141,7 +141,7 @@ void SimulatedXRDevice::stopTimer()
 
 void SimulatedXRDevice::frameTimerFired()
 {
-    FrameData data = m_frameData;
+    FrameData data = m_frameData.copy();
     data.shouldRender = true;
 
     for (auto& layer : m_layers)

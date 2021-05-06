@@ -522,7 +522,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
         if (m_ended)
             return;
 
-        m_frameData = frameData;
+        m_frameData = WTFMove(frameData);
         //  1.Let now be the current high resolution time.
         auto now = (MonotonicTime::now() - m_timeOrigin).milliseconds();
 
