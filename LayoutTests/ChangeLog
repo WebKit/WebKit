@@ -1,3 +1,13 @@
+2021-05-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening. Emit platform baselines after r277071.
+
+        Platform baselines are needed because platforms have different values
+        for screen resolution sizes, which are referred in the test results.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries-expected.txt: Added.
+
 2021-05-06  Darin Adler  <darin@apple.com>
 
         Streamline codec parsing, replacing uses of HashMap with SortedArrayMap
