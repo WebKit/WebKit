@@ -1,3 +1,17 @@
+2021-05-06  Cameron McCormack  <heycam@apple.com>
+
+        Make DisplayList::dump print out the display list contents
+        https://bugs.webkit.org/show_bug.cgi?id=225431
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::description const):
+        (WebCore::DisplayList::operator<<): This needs to move so that
+        argument-dependent lookup for the operator<< call in description()
+        works.
+        * platform/graphics/displaylists/DisplayList.h:
+
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
         [mediaqueries] Remove "on-demand" value for any-hover/hover & "forced" value for prefers-contrast

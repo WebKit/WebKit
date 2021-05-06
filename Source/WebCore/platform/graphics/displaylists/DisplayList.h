@@ -148,8 +148,8 @@ void DisplayList::append(Args&&... args)
     itemBuffer().append<T>(std::forward<Args>(args)...);
 }
 
-} // DisplayList
+WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList&);
 
-WTF::TextStream& operator<<(WTF::TextStream&, const DisplayList::DisplayList&);
+} // DisplayList
 
 } // WebCore
