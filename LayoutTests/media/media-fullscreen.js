@@ -33,16 +33,23 @@ function clickEnterFullscreenButton()
 function fullscreenchange()
 {
     if (document.webkitIsFullScreen)
-        beginfullscreen();
+        beginfullscreen(true);
     else
         endfullscreen();
 }
 
-async function beginfullscreen()
+async function beginfullscreen(wasTriggeredFromFullscreenChangeEvent)
 {
     if (window.internals)
         await testExpectedEventually("internals.isChangingPresentationMode(mediaElement)", false);
-    run("mediaElement.webkitExitFullScreen()");
+    if (!wasTriggeredFromFullscreenChangeEvent)
+        run("mediaElement.webkitExitFullScreen()");
+    else {
+        // Call asynchronously to give time to the WebCore FullscreenManager to notify the video
+        // element that it entered full-screen, and thus allowing the exitFullScreen() call to go
+        // through.
+        setTimeout('run("mediaElement.webkitExitFullScreen()")', 0);
+    }
 }
 
 function endfullscreen()

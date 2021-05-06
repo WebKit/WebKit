@@ -2776,9 +2776,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (!m_audioSink)
         m_audioSink = createAudioSink();
 
-    g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), nullptr);
-    if (m_player->isVideoPlayer())
-        g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), nullptr);
+    g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), "video-sink", createVideoSink(), nullptr);
 
     if (m_shouldPreservePitch) {
         GstElement* scale = gst_element_factory_make("scaletempo", nullptr);
@@ -3419,6 +3417,11 @@ void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
 GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 {
     acceleratedRenderingStateChanged();
+
+    if (!m_player->isVideoPlayer()) {
+        m_videoSink = gst_element_factory_make("fakevideosink", nullptr);
+        return m_videoSink.get();
+    }
 
 #if USE(GSTREAMER_HOLEPUNCH)
     m_videoSink = createHolePunchVideoSink();

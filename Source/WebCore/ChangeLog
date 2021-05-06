@@ -1,3 +1,28 @@
+2021-05-06  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r271341): media/media-fullscreen-inline.html times out on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=220540
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        When the GStreamer player client is an <audio> tag it won't render any video, but setting no
+        explicit video sink on playbin will not prevent video rendering per-se. In that situation
+        playbin will use autovideosink which will end-up creating a standalone window through
+        glimagesink or whatever has the highest rank. For now with playbin2 we can use fakevideosink
+        for such situation. For the playbin3 case we might be able to entirely deactivate video
+        rendering through stream selection.
+
+        Internals::isChangingPresentationMode was enabled for ports not implementing
+        VIDEO_PRESENTATION_MODE yet, because this test makes use of it.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSink):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isChangingPresentationMode const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace raw pointers in SVGElementRareData and SVGDocumentExtensions with WeakHashMap and WeakPtr

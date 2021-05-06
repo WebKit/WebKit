@@ -539,8 +539,11 @@ public:
     void setFullscreenAutoHideDuration(double);
     void setFullscreenControlsHidden(bool);
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO)
     bool isChangingPresentationMode(HTMLVideoElement&) const;
+#endif
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     void setMockVideoPresentationModeEnabled(bool);
 #endif
 

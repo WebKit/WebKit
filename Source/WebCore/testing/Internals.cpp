@@ -3431,12 +3431,19 @@ void Internals::setFullscreenControlsHidden(bool hidden)
     page->setFullscreenControlsHidden(hidden);
 }
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO)
 bool Internals::isChangingPresentationMode(HTMLVideoElement& element) const
 {
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     return element.isChangingPresentationMode();
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
 }
+#endif
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 void Internals::setMockVideoPresentationModeEnabled(bool enabled)
 {
     Document* document = contextDocument();
