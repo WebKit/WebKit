@@ -1,5 +1,18 @@
 2021-05-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove old and unused memory barrier abstractions
+        https://bugs.webkit.org/show_bug.cgi?id=225487
+
+        Reviewed by Mark Lam.
+
+        We don't use memoryBarrierBlahBlah anymore.
+
+        * wtf/Atomics.h:
+        (WTF::memoryBarrierAfterLock): Deleted.
+        (WTF::memoryBarrierBeforeUnlock): Deleted.
+
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
         Reduce use of dmb ish on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=225465
 
