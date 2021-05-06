@@ -1,5 +1,112 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-flexbox WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225450
+
+        Reviewed by Youenn Fablet.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-flexbox/align-items-baseline-overflow-non-visible-expected.html:
+        * web-platform-tests/css/css-flexbox/align-items-baseline-overflow-non-visible.html:
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-001.html: Added.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-002.html: Added.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-003.html: Added.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-004.html: Added.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-005-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-005.html: Added.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-006-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html.
+        * web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-006.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-item-compressible-001.html:
+        * web-platform-tests/css/css-flexbox/flex-item-compressible-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001a-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001b-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-006-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-007-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-008-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-001-block-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-001-table-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-003-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-004-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-align-self-baseline-horiz-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-align-self-baseline-vert-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-001.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-002-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-001.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-002-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-003-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-003.html:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-mbp-horiz-004-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-mbp-horiz-004.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-overflow-padding-001-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-overflow-padding-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-overflow-padding-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-overflow-padding-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-table-fixup-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-center-3-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html.
+        * web-platform-tests/css/css-flexbox/flexbox_align-items-center-3.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-left-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-left-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-left-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-left-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-right-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-right-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-right-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-right-002.html: Added.
+        * web-platform-tests/css/css-flexbox/negative-overflow-expected.txt:
+        * web-platform-tests/css/css-flexbox/negative-overflow.html:
+        * web-platform-tests/css/css-flexbox/overflow-auto-005-expected.html:
+        * web-platform-tests/css/css-flexbox/overflow-auto-005.html:
+        * web-platform-tests/css/css-flexbox/overflow-top-left-expected.html:
+        * web-platform-tests/css/css-flexbox/padding-overflow-crash-expected.html:
+        * web-platform-tests/css/css-flexbox/padding-overflow-crash.html:
+        * web-platform-tests/css/css-flexbox/select-element-zero-height-001-expected.html:
+        * web-platform-tests/css/css-flexbox/select-element-zero-height-001.html:
+        * web-platform-tests/css/css-flexbox/table-as-item-min-content-height-1.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-min-content-height-1.tentative.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-min-content-height-2.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-min-content-height-2.tentative.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-min-height-1-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-min-height-1.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-3.html:
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-4-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-4.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-5-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-stretch-cross-size-5.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-display WPT
         https://bugs.webkit.org/show_bug.cgi?id=225448
 
