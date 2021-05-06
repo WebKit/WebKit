@@ -118,6 +118,12 @@ AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer()
     }
 
     setClient(nullptr);
+#if ENABLE(MEDIA_STREAM)
+    if (m_pipeline) {
+        disconnectSimpleBusMessageCallback(m_pipeline.get());
+        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+    }
+#endif
 }
 
 void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstElement* audioSink)

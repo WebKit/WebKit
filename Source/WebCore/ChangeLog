@@ -1,3 +1,17 @@
+2021-05-06  Philippe Normand  <pnormand@igalia.com>
+
+        [WebAudio][GStreamer] socketpair leaks
+        https://bugs.webkit.org/show_bug.cgi?id=225463
+
+        Reviewed by Žan Doberšek.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer): Properly dispose of
+        the GStreamer pipeline and the resources it has hold on.
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcChangeState): The ref returned by gst_buffer_pool_new() is transfer-full,
+        so we need to adopt it here.
+
 2021-05-06  Dean Jackson  <dino@apple.com>
 
         [WebXR] Add IOSurface to FrameData::LayerData
