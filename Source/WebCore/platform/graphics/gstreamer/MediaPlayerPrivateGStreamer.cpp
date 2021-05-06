@@ -3368,6 +3368,11 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
     GstElement* sink = gst_element_factory_make("webkitglvideosink", nullptr);
     ASSERT(sink);
     webKitGLVideoSinkSetMediaPlayerPrivate(WEBKIT_GL_VIDEO_SINK(sink), this);
+
+    gboolean handlesRotationTags;
+    g_object_get(sink, "handles-rotation-tags", &handlesRotationTags, nullptr);
+    m_shouldHandleOrientationTags = !handlesRotationTags;
+
     return sink;
 }
 #endif // USE(GSTREAMER_GL)
