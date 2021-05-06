@@ -90,9 +90,8 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
     }
 #endif
 
-    if (!dumpDisassembly || m_alreadyDisassembled)
-        return result;
-    
+    bool justDumpingHeader = !dumpDisassembly || m_alreadyDisassembled;
+
     StringPrintStream out;
     out.printf("Generated JIT code for ");
     va_list argList;
@@ -102,9 +101,15 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
     out.printf(":\n");
 
     uint8_t* executableAddress = result.code().untaggedExecutableAddress<uint8_t*>();
-    out.printf("    Code at [%p, %p):\n", executableAddress, executableAddress + result.size());
+    out.printf("    Code at [%p, %p)%s\n", executableAddress, executableAddress + result.size(), justDumpingHeader ? "." : ":");
     
     CString header = out.toCString();
+    
+    if (justDumpingHeader) {
+        if (Options::logJIT())
+            dataLog(header);
+        return result;
+    }
     
     if (Options::asyncDisassembly()) {
         CodeRef<DisassemblyPtrTag> codeRefForDisassembly = result.retagged<DisassemblyPtrTag>();

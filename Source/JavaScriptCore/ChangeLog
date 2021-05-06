@@ -1,3 +1,20 @@
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to --logJIT=true
+        https://bugs.webkit.org/show_bug.cgi?id=225464
+
+        Reviewed by Mark Lam.
+
+        This makes it easy to just log when JITing happens. It's like --dumpDisassembly=true but
+        without the disassembly.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassemblyImpl):
+        * assembler/LinkBuffer.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+
 2021-05-06  Mark Lam  <mark.lam@apple.com>
 
         Forbid further execution in jsc shell if execution is terminated.
