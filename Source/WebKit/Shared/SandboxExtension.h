@@ -56,7 +56,8 @@ public:
 
     enum class Flags : uint8_t {
         Default,
-        NoReport
+        NoReport,
+        DoNotCanonicalize,
     };
     
     class Handle {

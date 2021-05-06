@@ -1,3 +1,15 @@
+2021-05-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Add sandbox extension flag to specify that path contains no symlinks
+        https://bugs.webkit.org/show_bug.cgi?id=219428
+        <rdar://problem/66551986>
+
+        Reviewed by Brent Fulgham.
+
+        Declare canonical sandbox flag.
+
+        * wtf/spi/darwin/SandboxSPI.h:
+
 2021-05-06  Dean Jackson  <dino@apple.com>
 
         [WebXR] Add IOSurface to FrameData::LayerData

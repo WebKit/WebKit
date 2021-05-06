@@ -748,7 +748,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
     String javaScriptConfigurationDirectory;
     if (!m_javaScriptConfigurationDirectory.isEmpty())
-        javaScriptConfigurationDirectory = m_javaScriptConfigurationDirectory;
+        javaScriptConfigurationDirectory = resolvePathForSandboxExtension(m_javaScriptConfigurationDirectory);
     else if (javaScriptConfigurationFileEnabled())
         javaScriptConfigurationDirectory = websiteDataStore.resolvedJavaScriptConfigurationDirectory();
 

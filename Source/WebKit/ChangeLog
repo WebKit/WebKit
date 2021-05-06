@@ -1,3 +1,24 @@
+2021-05-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Add sandbox extension flag to specify that path contains no symlinks
+        https://bugs.webkit.org/show_bug.cgi?id=219428
+        <rdar://problem/66551986>
+
+        Reviewed by Brent Fulgham.
+
+        In general, when SandboxExtension::createHandleWithoutResolvingPath is called, it is assumed that there are no symlinks
+        in the provided path. Add a 'canonical' flag, which can be used by platform APIs to verify that this is the case. This
+        patch also stops resolving symlinks with [NSString stringByResolvingSymlinksInPath] in favor of realpath, since realpath
+        correcly replaces /var with /private/var, which [NSString stringByResolvingSymlinksInPath] does not.
+       
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+        (WebKit::stringByResolvingSymlinksInPath):
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        * Shared/SandboxExtension.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+
 2021-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] UI process hangs when showing a modal JavaScript dialog while focusing an input field
