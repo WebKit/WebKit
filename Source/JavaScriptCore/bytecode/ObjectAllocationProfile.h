@@ -52,7 +52,7 @@ public:
     {
         Structure* structure = m_structure.get();
         // Ensure that if we see the structure, it has been properly created
-        WTF::loadLoadFence();
+        WTF::dependentLoadLoadFence();
         return structure;
     }
 
@@ -100,7 +100,7 @@ public:
     JSObject* prototype()
     {
         JSObject* prototype = m_prototype.get();
-        WTF::loadLoadFence();
+        WTF::dependentLoadLoadFence();
         return prototype;
     }
 

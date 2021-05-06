@@ -328,6 +328,13 @@ inline void crossModifyingCodeFence() { std::atomic_thread_fence(std::memory_ord
 
 #endif
 
+#if CPU(ARM64) || CPU(X86) || CPU(X86_64)
+// Use this fence if you want a fence between loads that are already depdendent.
+inline void dependentLoadLoadFence() { compilerFence(); }
+#else
+inline void dependentLoadLoadFence() { loadLoadFence(); }
+#endif
+
 typedef unsigned InternalDependencyType;
 
 inline InternalDependencyType opaqueMixture()

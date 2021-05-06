@@ -434,9 +434,7 @@ public:
     JITType jitType() const
     {
         JITCode* jitCode = m_jitCode.get();
-        WTF::loadLoadFence();
         JITType result = JITCode::jitTypeFor(jitCode);
-        WTF::loadLoadFence(); // This probably isn't needed. Oh well, paranoia is good.
         return result;
     }
 

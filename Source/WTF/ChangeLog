@@ -1,3 +1,13 @@
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Reduce use of dmb ish on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=225465
+
+        Reviewed by Keith Miller.
+
+        * wtf/Atomics.h:
+        (WTF::dependentLoadLoadFence):
+
 2021-05-06  Per Arne Vollan  <pvollan@apple.com>
 
         Add sandbox extension flag to specify that path contains no symlinks

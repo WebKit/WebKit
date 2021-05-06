@@ -89,7 +89,7 @@ public:
     JSObject* getterConcurrently() const
     {
         JSObject* result = getter();
-        WTF::loadLoadFence();
+        WTF::dependentLoadLoadFence();
         return result;
     }
 

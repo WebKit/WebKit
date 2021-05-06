@@ -2404,7 +2404,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
         JSGlobalObject* globalObject = m_jit.globalObjectFor(node->origin.semantic);
         Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure(vm);
         Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm);
-        WTF::loadLoadFence();
+        WTF::dependentLoadLoadFence();
 
         if (globalObject->stringPrototypeChainIsSane()) {
             // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
