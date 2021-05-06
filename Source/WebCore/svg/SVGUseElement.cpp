@@ -534,7 +534,7 @@ void SVGUseElement::invalidateShadowTree()
 
 void SVGUseElement::invalidateDependentShadowTrees()
 {
-    for (auto* instance : instances()) {
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(instances())) {
         if (auto element = instance->correspondingUseElement())
             element->invalidateShadowTree();
     }

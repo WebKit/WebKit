@@ -1,3 +1,103 @@
+2021-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace raw pointers in SVGElementRareData and SVGDocumentExtensions with WeakHashMap and WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=225440
+
+        Reviewed by Antti Koivisto.
+
+        Replaced the remaining use of raw pointers to Element in SVGElementRareData and SVGDocumentExtensions
+        with WeakHashSet and WeakPtr.
+
+        This patch also replaces SVGDocumentExtensions::m_elementDependencies with a new WeakHashMap
+        in SVGElementRareData for clarify & simplicity with a new terminology. When a SVG element A refers
+        to another element B via href, A's SVGElementRareData::m_referenceTarget is set to B, and A is added
+        to B's SVGElementRareData::m_referencingElements.
+
+        No new tests since there should be no observable behavior differences.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::isElementWithPendingResources const):
+        (WebCore::SVGDocumentExtensions::isPendingResource const): Directly check the existence of
+        the id in m_pendingResources instead of calling isIdOfPendingResource.
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources):
+        (WebCore::SVGDocumentExtensions::removePendingResource): Moved to the header to be inlined.
+        (WebCore::SVGDocumentExtensions::removePendingResourceForRemoval): Deleted. The code is
+        inlined in removeElementFromPendingResources instead.
+        (WebCore::SVGDocumentExtensions::markPendingResourcesForRemoval):
+        (WebCore::SVGDocumentExtensions::takeElementFromPendingResourcesForRemovalMap): Renamed
+        from removeElementFromPendingResourcesForRemovalMap.
+        (WebCore::SVGDocumentExtensions::addElementToRebuild): Added.
+        (WebCore::SVGDocumentExtensions::removeElementToRebuild): Added.
+        (WebCore::SVGDocumentExtensions::setOfElementsReferencingTarget): Deleted.
+        (WebCore::SVGDocumentExtensions::addElementReferencingTarget): Deleted.
+        (WebCore::SVGDocumentExtensions::removeAllTargetReferencesForElement): Deleted.
+        (WebCore::SVGDocumentExtensions::clearTargetDependencies):
+        (WebCore::SVGDocumentExtensions::rebuildAllElementReferencesForTarget):
+        (WebCore::SVGDocumentExtensions::removeAllElementReferencesForTarget): Deleted.
+        * svg/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::removedFromAncestor): Moved the most of logic in SVGDocumentExtensions's
+        clearTargetDependencies and removeAllElementReferencesForTarget here.
+        (WebCore::SVGElement::instances const):
+        (WebCore::SVGElement::referencingElements const): Added.
+        (WebCore::SVGElement::addReferencingElement): Added.
+        (WebCore::SVGElement::removeReferencingElement): Added.
+        (WebCore::SVGElement::removeElementReference): Added.
+        (WebCore::SVGElement::setCorrespondingElement):
+        (WebCore::SVGElement::addEventListener):
+        (WebCore::SVGElement::removeEventListener):
+        (WebCore::SVGElement::createAnimator):
+        (WebCore::SVGElement::buildPendingResourcesIfNeeded):
+        (WebCore::SVGElement::updateRelativeLengthsInformation):
+        (WebCore::SVGElement::invalidateInstances):
+        (WebCore:: const): Deleted.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::hasRelativeLengths const):
+        (WebCore::SVGElement::updateRelativeLengthsInformation):
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::addInstance):
+        (WebCore::SVGElementRareData::removeInstance):
+        (WebCore::SVGElementRareData::instances const):
+        (WebCore::SVGElementRareData::addReferencingElement):
+        (WebCore::SVGElementRareData::removeReferencingElement):
+        (WebCore::SVGElementRareData::referencingElements const):
+        (WebCore::SVGElementRareData::takeReferencingElements):
+        (WebCore::SVGElementRareData::referenceTarget const):
+        (WebCore::SVGElementRareData::setReferenceTarget):
+        (WebCore::SVGElementRareData::correspondingElement):
+        (WebCore::SVGElementRareData::setCorrespondingElement):
+        (): Deleted.
+        (WebCore::SVGElementRareData:: const): Deleted.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::clearResourceReferences):
+        (WebCore::SVGFEImageElement::buildPendingResource):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+        (WebCore::SVGMPathElement::clearResourceReferences):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::invalidateMPathDependencies):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::clearResourceReferences):
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::invalidateDependentShadowTrees):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::clearResourceReferences):
+        (WebCore::SVGSMILElement::buildPendingResource):
+        * svg/properties/SVGAttributeAnimator.cpp:
+        (WebCore::SVGAttributeAnimator::applyAnimatedStylePropertyChange):
+        (WebCore::SVGAttributeAnimator::removeAnimatedStyleProperty):
+        (WebCore::SVGAttributeAnimator::applyAnimatedPropertyChange):
+
 2021-05-06  Cameron McCormack  <heycam@apple.com>
 
         Split context state change item appending out of DisplayList::Recorder::canAppendItemOfType.

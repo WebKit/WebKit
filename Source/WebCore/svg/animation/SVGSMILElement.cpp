@@ -163,7 +163,7 @@ SVGSMILElement::~SVGSMILElement()
 
 void SVGSMILElement::clearResourceReferences()
 {
-    document().accessSVGExtensions().removeAllTargetReferencesForElement(*this);
+    removeElementReference();
 }
 
 void SVGSMILElement::clearTarget()
@@ -191,13 +191,10 @@ void SVGSMILElement::buildPendingResource()
         target = WTFMove(result.element);
         id = WTFMove(result.identifier);
     }
-    SVGElement* svgTarget = is<SVGElement>(target) ? downcast<SVGElement>(target.get()) : nullptr;
-
-    if (svgTarget && !svgTarget->isConnected())
-        svgTarget = nullptr;
+    auto svgTarget = makeRefPtr(is<SVGElement>(target) && target->isConnected() ? downcast<SVGElement>(target.get()) : nullptr);
 
     if (svgTarget != targetElement())
-        setTargetElement(svgTarget);
+        setTargetElement(svgTarget.get());
 
     if (!svgTarget) {
         // Do not register as pending if we are already pending this resource.
@@ -208,11 +205,8 @@ void SVGSMILElement::buildPendingResource()
             document().accessSVGExtensions().addPendingResource(id, *this);
             ASSERT(hasPendingResources());
         }
-    } else {
-        // Register us with the target in the dependencies map. Any change of hrefElement
-        // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions().addElementReferencingTarget(*this, *svgTarget);
-    }
+    } else
+        svgTarget->addReferencingElement(*this);
 }
 
 inline QualifiedName SVGSMILElement::constructAttributeName() const

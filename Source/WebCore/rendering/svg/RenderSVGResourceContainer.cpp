@@ -199,15 +199,15 @@ void RenderSVGResourceContainer::registerResource()
         return;
     }
 
-    std::unique_ptr<SVGDocumentExtensions::PendingElements> clients = extensions.removePendingResource(m_id);
+    auto elements = copyToVectorOf<Ref<Element>>(extensions.removePendingResource(m_id));
 
     // Cache us with the new id.
     extensions.addResource(m_id, *this);
 
     // Update cached resources of pending clients.
-    for (auto* client : *clients) {
+    for (auto& client : elements) {
         ASSERT(client->hasPendingResources());
-        extensions.clearHasPendingResourcesIfPossible(*client);
+        extensions.clearHasPendingResourcesIfPossible(client);
         auto* renderer = client->renderer();
         if (!renderer)
             continue;
