@@ -1,5 +1,26 @@
 2021-05-06  Cameron McCormack  <heycam@apple.com>
 
+        Split context state change item appending out of DisplayList::Recorder::canAppendItemOfType.
+        https://bugs.webkit.org/show_bug.cgi?id=225424
+
+        Reviewed by Simon Fraser.
+
+        It's non-obvious from the name that canAppendItemOfType can also end
+        up appending an item.  So let's split out the context state change
+        item out into a separate function.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::canAppendItemOfType):
+        (WebCore::DisplayList::Recorder::appendStateChangeItemIfNecessary):
+        Added.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        (WebCore::DisplayList::Recorder::append):
+        (WebCore::DisplayList::Recorder::itemNeedsState): Added this as a
+        constexpr helper function, to ensure we make a decision about needing
+        to call appendStateChangeItemIfNecessary at compile time.
+
+2021-05-06  Cameron McCormack  <heycam@apple.com>
+
         Make DisplayList::dump print out the display list contents
         https://bugs.webkit.org/show_bug.cgi?id=225431
 

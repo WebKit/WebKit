@@ -160,6 +160,9 @@ private:
         if (UNLIKELY(!canAppendItemOfType(T::itemType)))
             return;
 
+        if constexpr (itemNeedsState<T>())
+            appendStateChangeItemIfNecessary();
+
         m_displayList.append<T>(std::forward<Args>(args)...);
 
         if constexpr (T::isDrawingItem) {
@@ -176,10 +179,14 @@ private:
         }
     }
 
-    WEBCORE_EXPORT bool canAppendItemOfType(ItemType);
+    WEBCORE_EXPORT bool canAppendItemOfType(ItemType) const;
+
+    template<typename T>
+    static constexpr bool itemNeedsState();
 
     void cacheNativeImage(NativeImage&);
 
+    void appendStateChangeItemIfNecessary();
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 
     FloatRect extentFromLocalBounds(const FloatRect&) const;
@@ -231,6 +238,20 @@ private:
 
     DrawGlyphsRecorder m_drawGlyphsRecorder;
 };
+
+template<typename T>
+constexpr bool Recorder::itemNeedsState()
+{
+    if (T::isDrawingItem)
+        return true;
+
+#if USE(CG)
+    if (T::itemType == ItemType::ApplyFillPattern || T::itemType == ItemType::ApplyStrokePattern)
+        return true;
+#endif
+
+    return false;
+}
 
 }
 }

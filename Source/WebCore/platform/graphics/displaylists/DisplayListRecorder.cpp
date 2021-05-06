@@ -121,27 +121,22 @@ void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, 
         append<SetInlineFillGradient>(*changes.m_state.fillGradient, changes.m_state.fillGradientSpaceTransform);
 }
 
-bool Recorder::canAppendItemOfType(ItemType type)
+bool Recorder::canAppendItemOfType(ItemType type) const
 {
-    if (m_delegate && !m_delegate->canAppendItemOfType(type))
-        return false;
+    return !m_delegate || m_delegate->canAppendItemOfType(type);
+}
 
-    if (isDrawingItem(type)
-#if USE(CG)
-        || type == ItemType::ApplyFillPattern || type == ItemType::ApplyStrokePattern
-#endif
-    ) {
-        GraphicsContextStateChange& stateChanges = currentState().stateChange;
-        GraphicsContextState::StateChangeFlags changesFromLastState = stateChanges.changesFromState(currentState().lastDrawingState);
-        if (changesFromLastState) {
-            LOG_WITH_STREAM(DisplayLists, stream << "pre-drawing, saving state " << GraphicsContextStateChange(stateChanges.m_state, changesFromLastState));
-            appendStateChangeItem(stateChanges, changesFromLastState);
-            stateChanges.m_changeFlags = { };
-            currentState().lastDrawingState = stateChanges.m_state;
-        }
-    }
+void Recorder::appendStateChangeItemIfNecessary()
+{
+    auto& stateChanges = currentState().stateChange;
+    auto changesFromLastState = stateChanges.changesFromState(currentState().lastDrawingState);
+    if (!changesFromLastState)
+        return;
 
-    return true;
+    LOG_WITH_STREAM(DisplayLists, stream << "pre-drawing, saving state " << GraphicsContextStateChange(stateChanges.m_state, changesFromLastState));
+    appendStateChangeItem(stateChanges, changesFromLastState);
+    stateChanges.m_changeFlags = { };
+    currentState().lastDrawingState = stateChanges.m_state;
 }
 
 void Recorder::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
