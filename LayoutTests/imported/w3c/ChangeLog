@@ -1,5 +1,25 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-contain WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225445
+
+        Reviewed by Rob Buis.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-contain/content-visibility/animation-display-lock-expected.txt: Added.
+        * web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-044-expected.txt:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-044.html:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-continuations-crash.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/element-reassigned-to-skipped-slot-expected.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/element-reassigned-to-skipped-slot.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/element-reassigned-to-slot-in-skipped-subtree-expected.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/element-reassigned-to-slot-in-skipped-subtree.html: Added.
+        * web-platform-tests/css/css-contain/content-visibility/w3c-import.log:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-will-change WPTs
         https://bugs.webkit.org/show_bug.cgi?id=225444
 

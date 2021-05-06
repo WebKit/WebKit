@@ -1,3 +1,12 @@
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
+        Re-import css/css-contain WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225445
+
+        Reviewed by Rob Buis.
+
+        * TestExpectations:
+
 2021-05-06  Alicia Boya García  <aboya@igalia.com>
 
         [EME][GStreamer] Unreviewed micro-gardening
