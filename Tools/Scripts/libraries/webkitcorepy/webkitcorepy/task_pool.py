@@ -332,6 +332,8 @@ class TaskPool(object):
         self.block_size = block_size
 
     def __enter__(self):
+        from mock import patch
+
         with Timeout(seconds=10, patch=False, handler=self.Exception('Failed to start all workers')):
             for worker in self.workers:
                 worker.start()

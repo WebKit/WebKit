@@ -1,3 +1,39 @@
+2021-05-05  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-api-tests] Use webkitcorepy's TaskPool
+        https://bugs.webkit.org/show_bug.cgi?id=225221
+        <rdar://problem/77352465>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (TaskPool.__enter__): Ensure that mock has been imported before spawning child processes.
+        * Scripts/run-api-tests: Moved from webkitpy/api_tests/run_api_tests.py.
+        * Scripts/webkitpy/api_tests/run_api_tests.py: Moved to run-api-tests.
+        * Scripts/webkitpy/api_tests/runner.py:
+        (_Worker): Representation of Worker process.
+        (_Worker.setup): Pass port object to worker process.
+        (_Worker.teardown): Un-set port object on worker process.
+        (_Worker.__init__): Construct object to hold a Worker process's variables.
+        (_Worker._run_single_test): Log test results, post results to parent.
+        (_Worker.run): Run shard with and post results to parent process.
+        (setup_shard): Run setup in Worker process.
+        (run_shard): Run test shard in Worker process.
+        (report_result): Receive result in the parent process.
+        ((teardown_shard): Tear down Worker process.
+        (Runner.__init__):
+        (Runner.command_for_port):
+        (Runner._shard_tests): Split tests into shards to be efficiently run.
+        (Runner.run): Use TaskPool to run tests in sub processes.
+        (Runner.callback): Save results in parent process.
+        (Runner.result_map_by_status):
+        (Runner.handle): Deleted.
+        (_Worker._run_shard_with_binary): Deleted.
+        (_Worker.post): Deleted.
+        (_Worker.handle): Deleted.
+
 2021-05-05  Devin Rousso  <drousso@apple.com>
 
         Sampled Page Top Color: don't snapshot if the hit test location is an image or has an animation
