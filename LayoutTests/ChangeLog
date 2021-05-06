@@ -1,3 +1,14 @@
+2021-05-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Gardened latest test failures.
+
+        imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html
+        is failing after r277031.
+
+        fast/canvas/canvas-composite-text-alpha.html is an image failure after r277024.
+
+        * platform/glib/TestExpectations:
+
 2021-05-05  Robert Jenner  <jenner@apple.com>
 
         [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html is a flaky text failure
