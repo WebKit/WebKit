@@ -1,3 +1,27 @@
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/eventsource/format-utf-8.htm is failing on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=225416
+        <rdar://77529801>
+
+        Reviewed by Youenn Fablet.
+
+        The HTML specification [1] states that EventSource streams should always be decoded as UTF-8.
+        However, we had logic in WebKit that was checking the charset of the response and aborting
+        when the charset is not UTF-8. It looks like we were lucky until now that we would fail to
+        determine the charset of the response and proceed anyway. However, due to underlying system
+        changes, in the context of this test, we are now properly detecting the response charset as
+        "windows-1252" and (incorrectly) aborting. To address the issue, I no longer abort the
+        connection if the charset is not "utf-8". We do still log a console warning but we proceed
+        decoding the stream as UTF-8 no matter the response's charset, as per the specification.
+
+        [1] https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation
+
+        No new tests, covered by existing test that is failing on some platforms.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::responseIsValid const):
+
 2021-05-06  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Compute proximity information while snapping

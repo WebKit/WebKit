@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: EventSource's response has a charset ("windows-1251") that is not UTF-8. Aborting the connection.
+CONSOLE MESSAGE: EventSource's response has a charset ("windows-1251") that is not UTF-8. The response will be decoded as UTF-8.
 CONSOLE MESSAGE: EventSource's response has a MIME type ("text/event-stream-foobar") that is not "text/event-stream". Aborting the connection.
 Test for bug 45372: https://bugs.webkit.org/show_bug.cgi?id=45372
 

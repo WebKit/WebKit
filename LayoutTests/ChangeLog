@@ -1,3 +1,16 @@
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/eventsource/format-utf-8.htm is failing on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=225416
+        <rdar://77529801>
+
+        Reviewed by Youenn Fablet.
+
+        Dump JS Console messages to stderr for this test as it will only get logged on some
+        platforms.
+
+        * TestExpectations:
+
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
         Re-import css/css-flexbox WPT

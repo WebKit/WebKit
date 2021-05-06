@@ -183,13 +183,13 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
         return false;
     }
 
-    // If we have a charset, the only allowed value is UTF-8 (case-insensitive).
+    // The specification states we should always decode as UTF-8. If there is a provided charset and it is not UTF-8, then log a warning
+    // message but keep going anyway.
     auto& charset = response.textEncodingName();
     if (!charset.isEmpty() && !equalLettersIgnoringASCIICase(charset, "utf-8")) {
-        auto message = makeString("EventSource's response has a charset (\"", charset, "\") that is not UTF-8. Aborting the connection.");
+        auto message = makeString("EventSource's response has a charset (\"", charset, "\") that is not UTF-8. The response will be decoded as UTF-8.");
         // FIXME: Console message would be better with a source code location; where would we get that?
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, WTFMove(message));
-        return false;
     }
 
     return true;
