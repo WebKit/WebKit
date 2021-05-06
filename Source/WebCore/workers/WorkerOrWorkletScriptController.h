@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -122,7 +122,6 @@ private:
     JSC::Strong<JSDOMGlobalObject> m_globalScopeWrapper;
     std::unique_ptr<WorkerConsoleClient> m_consoleClient;
     mutable Lock m_scheduledTerminationMutex;
-    bool m_executionForbidden { false };
     bool m_isTerminatingExecution { false };
 };
 

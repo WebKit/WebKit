@@ -3048,8 +3048,11 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
             NakedPtr<Exception> evaluationException;
             JSValue returnValue = evaluate(globalObject, jscSource(scriptBuffer, sourceOrigin , fileName), JSValue(), evaluationException);
             scope.assertNoException();
-            if (evaluationException)
+            if (evaluationException) {
+                if (vm.isTerminationException(evaluationException.get()))
+                    vm.setExecutionForbidden();
                 returnValue = evaluationException->value();
+            }
             checkException(globalObject, isLastFile, evaluationException, returnValue, options, success);
         }
 

@@ -1,5 +1,24 @@
 2021-05-06  Mark Lam  <mark.lam@apple.com>
 
+        Forbid further execution in jsc shell if execution is terminated.
+        https://bugs.webkit.org/show_bug.cgi?id=225410
+        rdar://77548608
+
+        Reviewed by Michael Saboff.
+
+        1. Introduce a VM::m_executionForbidden flag.
+        2. In the jsc shell, forbid further execution if termination was encountered.
+
+        * jsc.cpp:
+        (runWithOptions):
+        * runtime/VM.cpp:
+        (JSC::VM::drainMicrotasks):
+        * runtime/VM.h:
+        (JSC::VM::executionForbidden const):
+        (JSC::VM::setExecutionForbidden):
+
+2021-05-06  Mark Lam  <mark.lam@apple.com>
+
         Fix missing exception check in objectConstructorGetOwnPropertyDescriptors().
         https://bugs.webkit.org/show_bug.cgi?id=225413
         rdar://77551530

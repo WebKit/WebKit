@@ -341,6 +341,9 @@ public:
     bool terminationInProgress() const { return m_terminationInProgress; }
     void setTerminationInProgress(bool value) { m_terminationInProgress = value; }
 
+    bool executionForbidden() const { return m_executionForbidden; }
+    void setExecutionForbidden() { m_executionForbidden = true; }
+
     JS_EXPORT_PRIVATE Exception* ensureTerminationException();
     Exception* terminationException() const
     {
@@ -1263,6 +1266,7 @@ private:
     uintptr_t m_currentWeakRefVersion { 0 };
 
     bool m_terminationInProgress { false };
+    bool m_executionForbidden { false };
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uint64_t>>> m_loopHintExecutionCounts;

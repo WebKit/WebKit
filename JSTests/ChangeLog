@@ -1,3 +1,13 @@
+2021-05-06  Mark Lam  <mark.lam@apple.com>
+
+        Forbid further execution in jsc shell if execution is terminated.
+        https://bugs.webkit.org/show_bug.cgi?id=225410
+        rdar://77548608
+
+        Reviewed by Michael Saboff.
+
+        * stress/jsc-shell-forbid-execution-after-termination.js: Added.
+
 2021-05-05  Saam Barati  <sbarati@apple.com>
 
         Update tests to use collectExtraSamplingProfilerData instead of collectSamplingProfilerDataForJSCShell
