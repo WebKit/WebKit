@@ -1,5 +1,33 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-cascade WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225437
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-cascade/all-prop-001-expected.html:
+        * web-platform-tests/css/css-cascade/all-prop-001.html:
+        * web-platform-tests/css/css-cascade/all-prop-revert-visited-expected.html: Added.
+        * web-platform-tests/css/css-cascade/all-prop-revert-visited.html: Added.
+        * web-platform-tests/css/css-cascade/all-prop-unset-visited-expected.html: Added.
+        * web-platform-tests/css/css-cascade/all-prop-unset-visited.html: Added.
+        * web-platform-tests/css/css-cascade/import-conditional-001-expected.xht: Added.
+        * web-platform-tests/css/css-cascade/import-conditional-001.html: Added.
+        * web-platform-tests/css/css-cascade/important-prop.html:
+        * web-platform-tests/css/css-cascade/initial-background-color-expected.html: Added.
+        * web-platform-tests/css/css-cascade/initial-background-color.html: Added.
+        * web-platform-tests/css/css-cascade/support/test-green.css: Added.
+        (.test):
+        * web-platform-tests/css/css-cascade/support/test-red.css: Added.
+        (.test):
+        * web-platform-tests/css/css-cascade/support/w3c-import.log: Added.
+        * web-platform-tests/css/css-cascade/unset-val-001.html:
+        * web-platform-tests/css/css-cascade/unset-value-storage.html: Added.
+        * web-platform-tests/css/css-cascade/unset-value-storage-expected.txt: Added.
+        * web-platform-tests/css/css-cascade/w3c-import.log:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-sync css/css-break WPTs
         https://bugs.webkit.org/show_bug.cgi?id=225436
 
