@@ -1,3 +1,14 @@
+2021-05-06  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] imported/w3c/web-platform-tests/css/css-animations/translation-animation-subpixel-offset.html (layout-test) is a flakey ImageOnly failure
+        https://bugs.webkit.org/show_bug.cgi?id=225484
+
+        Unreviewed test gardening.
+
+        Marking test as flaky ( Pass ImageOnlyFailure ) while test is reviewed.
+
+        * platform/mac/TestExpectations:
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r254389?) navigator.languages returns all lowercase languages for ports using CF
