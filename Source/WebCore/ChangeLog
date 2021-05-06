@@ -1,3 +1,23 @@
+2021-05-06  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Fallback to texture mapper video orientation handling when glvideoflip is not available
+        https://bugs.webkit.org/show_bug.cgi?id=225454
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        r275412 introduced a new runtime dependency on gst-plugins-good's glvideoflip element, which
+        is not desirable for the 2.32 branch. This patch let's the player handle rotation tags if
+        the glvideoflip element wasn't found at runtime. Ideally we should probably not rely on
+        glvideoflip in the first place as it might induce a performance impact, to be handled in a
+        follow-up patch.
+
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (webKitGLVideoSinkConstructed):
+        (webKitGLVideoSinkGetProperty):
+        (webkit_gl_video_sink_class_init):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSinkGL):
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/eventsource/format-utf-8.htm is failing on some platforms

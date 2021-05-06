@@ -40,12 +40,14 @@ using namespace WebCore;
 enum {
     PROP_0,
     PROP_STATS,
+    PROP_HANDLES_ROTATION_TAGS,
     PROP_LAST
 };
 
 struct _WebKitGLVideoSinkPrivate {
     GRefPtr<GstElement> appSink;
     MediaPlayerPrivateGStreamer* mediaPlayerPrivate;
+    bool handlesRotationTags;
 };
 
 GST_DEBUG_CATEGORY_STATIC(webkit_gl_video_sink_debug);
@@ -81,13 +83,18 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     GstElement* upload = gst_element_factory_make("glupload", nullptr);
     GstElement* colorconvert = gst_element_factory_make("glcolorconvert", nullptr);
+
     GstElement* videoFlip = gst_element_factory_make("glvideoflip", nullptr);
-    gst_util_set_object_arg(G_OBJECT(videoFlip), "method", "automatic");
+    sink->priv->handlesRotationTags = videoFlip;
+
+    if (videoFlip) {
+        gst_util_set_object_arg(G_OBJECT(videoFlip), "method", "automatic");
+        gst_bin_add(GST_BIN_CAST(sink), videoFlip);
+    }
 
     ASSERT(upload);
     ASSERT(colorconvert);
-    ASSERT(videoFlip);
-    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, videoFlip, sink->priv->appSink.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, sink->priv->appSink.get(), nullptr);
 
     // Workaround until we can depend on GStreamer 1.16.2.
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
@@ -113,7 +120,12 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     if (imxVideoConvertG2D)
         gst_element_link(imxVideoConvertG2D, upload);
-    gst_element_link_many(upload, colorconvert, videoFlip, sink->priv->appSink.get(), nullptr);
+    gst_element_link(upload, colorconvert);
+
+    if (videoFlip)
+        gst_element_link_many(colorconvert, videoFlip, sink->priv->appSink.get(), nullptr);
+    else
+        gst_element_link(colorconvert, sink->priv->appSink.get());
 
     GstElement* sinkElement =
         [&] {
@@ -210,6 +222,9 @@ static void webKitGLVideoSinkGetProperty(GObject* object, guint propertyId, GVal
             gst_value_set_structure(value, stats.get());
         }
         break;
+    case PROP_HANDLES_ROTATION_TAGS:
+        g_value_set_boolean(value, sink->priv->handlesRotationTags);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, paramSpec);
         RELEASE_ASSERT_NOT_REACHED();
@@ -231,6 +246,9 @@ static void webkit_gl_video_sink_class_init(WebKitGLVideoSinkClass* klass)
 
     g_object_class_install_property(objectClass, PROP_STATS, g_param_spec_boxed("stats", "Statistics",
         "Sink Statistics", GST_TYPE_STRUCTURE, static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
+
+    g_object_class_install_property(objectClass, PROP_HANDLES_ROTATION_TAGS, g_param_spec_boolean("handles-rotation-tags", "Handles Rotation Tags",
+        "True if the sink is relying on glvideoflip to handle frame rotation", FALSE, static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 
     elementClass->change_state = GST_DEBUG_FUNCPTR(webKitGLVideoSinkChangeState);
 }
