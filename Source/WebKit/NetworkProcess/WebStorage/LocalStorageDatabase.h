@@ -26,23 +26,19 @@
 #pragma once
 
 #include <WebCore/SQLiteDatabase.h>
-#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 class SQLiteStatementAutoResetScope;
-class SuddenTerminationDisabler;
 
 struct SecurityOriginData;
 }
 
 namespace WebKit {
 
-class LocalStorageDatabaseTracker;
-
 class LocalStorageDatabase : public RefCounted<LocalStorageDatabase> {
 public:
-    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
+    static Ref<LocalStorageDatabase> create(String&& databasePath, unsigned quotaInBytes);
     ~LocalStorageDatabase();
 
     HashMap<String, String> items() const;
@@ -58,29 +54,22 @@ public:
     void handleLowMemoryWarning();
 
 private:
-    LocalStorageDatabase(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
+    LocalStorageDatabase(String&& databasePath, unsigned quotaInBytes);
 
     enum class ShouldCreateDatabase : bool { No, Yes };
-    bool tryToOpenDatabase(ShouldCreateDatabase);
-    void openDatabase(ShouldCreateDatabase);
+    bool openDatabase(ShouldCreateDatabase);
 
     bool migrateItemTableIfNeeded();
     bool databaseIsEmpty() const;
 
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, const String& query) const;
 
-    Ref<WorkQueue> m_queue;
-    Ref<LocalStorageDatabaseTracker> m_tracker;
-    WebCore::SecurityOriginData m_securityOrigin;
-
     String m_databasePath;
     mutable WebCore::SQLiteDatabase m_database;
     const unsigned m_quotaInBytes { 0 };
-    bool m_failedToOpenDatabase { false };
     bool m_isClosed { false };
     Optional<unsigned> m_databaseSize;
 
-    std::unique_ptr<WebCore::SuddenTerminationDisabler> m_disableSuddenTerminationWhileWritingToLocalStorage;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_clearStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_insertStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_getItemStatement;

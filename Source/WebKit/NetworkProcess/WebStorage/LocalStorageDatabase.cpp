@@ -26,37 +26,27 @@
 #include "config.h"
 #include "LocalStorageDatabase.h"
 
-#include "LocalStorageDatabaseTracker.h"
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
-#include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageMap.h>
-#include <WebCore/SuddenTermination.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RunLoop.h>
-#include <wtf/WorkQueue.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 static const char getItemsQueryString[] = "SELECT key, value FROM ItemTable";
 
-Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
+Ref<LocalStorageDatabase> LocalStorageDatabase::create(String&& databasePath, unsigned quotaInBytes)
 {
-    return adoptRef(*new LocalStorageDatabase(WTFMove(queue), WTFMove(tracker), securityOrigin, quotaInBytes));
+    return adoptRef(*new LocalStorageDatabase(WTFMove(databasePath), quotaInBytes));
 }
 
-LocalStorageDatabase::LocalStorageDatabase(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
-    : m_queue(WTFMove(queue))
-    , m_tracker(WTFMove(tracker))
-    , m_securityOrigin(securityOrigin)
-    , m_databasePath(m_tracker->databasePath(m_securityOrigin))
+LocalStorageDatabase::LocalStorageDatabase(String&& databasePath, unsigned quotaInBytes)
+    : m_databasePath(WTFMove(databasePath))
     , m_quotaInBytes(quotaInBytes)
 {
     ASSERT(!RunLoop::isMain());
@@ -68,22 +58,7 @@ LocalStorageDatabase::~LocalStorageDatabase()
     ASSERT(m_isClosed);
 }
 
-void LocalStorageDatabase::openDatabase(ShouldCreateDatabase shouldCreateDatabase)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(!m_database.isOpen());
-    ASSERT(!m_failedToOpenDatabase);
-
-    if (!tryToOpenDatabase(shouldCreateDatabase)) {
-        m_failedToOpenDatabase = true;
-        return;
-    }
-
-    if (m_database.isOpen())
-        m_tracker->didOpenDatabaseWithOrigin(m_securityOrigin);
-}
-
-bool LocalStorageDatabase::tryToOpenDatabase(ShouldCreateDatabase shouldCreateDatabase)
+bool LocalStorageDatabase::openDatabase(ShouldCreateDatabase shouldCreateDatabase)
 {
     ASSERT(!RunLoop::isMain());
     if (!FileSystem::fileExists(m_databasePath) && shouldCreateDatabase == ShouldCreateDatabase::No)
@@ -140,7 +115,7 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
         0,
     };
 
-    SQLiteTransaction transaction(m_database, false);
+    SQLiteTransaction transaction(m_database);
     transaction.begin();
 
     for (size_t i = 0; commands[i]; ++i) {
@@ -148,7 +123,6 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
             continue;
 
         LOG_ERROR("Failed to migrate table ItemTable for local storage when executing: %s", commands[i]);
-        transaction.rollback();
 
         return false;
     }
@@ -319,7 +293,7 @@ void LocalStorageDatabase::close()
         m_database.close();
 
     if (isEmpty)
-        m_tracker->deleteDatabaseWithOrigin(m_securityOrigin);
+        SQLiteFileSystem::deleteDatabaseFile(m_databasePath);
 }
 
 bool LocalStorageDatabase::databaseIsEmpty() const

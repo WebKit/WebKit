@@ -1,3 +1,25 @@
+2021-05-06  Sihui Liu  <sihui_liu@apple.com>
+
+        Drop some unnecessary code in LocalStorageDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=225435
+
+        Reviewed by Chris Dumez.
+
+        No behavior change.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::create): 
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase): Remove two paremeters that are no longer needed after 
+        dropping code.
+        (WebKit::LocalStorageDatabase::openDatabase):
+        (WebKit::LocalStorageDatabase::migrateItemTableIfNeeded): SQLiteTransaction() by default sets readOnly to false,
+        and it will be rolled back for failure in ~SQLiteTransaction.
+        (WebKit::LocalStorageDatabase::close):
+        (WebKit::LocalStorageDatabase::tryToOpenDatabase): Deleted. Merged to openDatabase.
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::ensureDatabase const):
+
 2021-05-06  Per Arne Vollan  <pvollan@apple.com>
 
         Add sandbox extension flag to specify that path contains no symlinks
