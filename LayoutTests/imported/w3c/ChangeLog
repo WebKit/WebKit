@@ -1,5 +1,27 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        [mediaqueries] Remove "on-demand" value for any-hover/hover & "forced" value for prefers-contrast
+        https://bugs.webkit.org/show_bug.cgi?id=225400
+
+        Reviewed by Antti Koivisto.
+
+        These were both removed from the spec and currently never evaluate to true. They also won't eval to true after this change.
+        Only change is serialization, since the values will become invalid.
+
+        Also:
+        - Re-synced css/mediaqueries WPTs
+        - Adjusted any-hover/hover parsing tests accordingly.
+
+        * web-platform-tests/css/mediaqueries/mq-dynamic-empty-children-expected.txt: Added.
+        * web-platform-tests/css/mediaqueries/mq-dynamic-empty-children.html: Added.
+        * web-platform-tests/css/mediaqueries/prefers-contrast-expected.txt: Added.
+        * web-platform-tests/css/mediaqueries/prefers-contrast.html: Added.
+        * web-platform-tests/css/mediaqueries/test_media_queries-expected.txt:
+        * web-platform-tests/css/mediaqueries/test_media_queries.html:
+        * web-platform-tests/css/mediaqueries/w3c-import.log:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-sync css/css-box/parsing/padding-valid.html WPT
 
         Unreviewed. Trivial WPT sync on one single test.

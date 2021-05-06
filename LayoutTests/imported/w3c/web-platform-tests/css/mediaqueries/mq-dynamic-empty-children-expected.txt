@@ -1,0 +1,4 @@
+
+
+PASS Dynamic evaluation of media queries works fine in presence of empty media rule
+

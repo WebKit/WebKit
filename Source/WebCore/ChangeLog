@@ -1,3 +1,23 @@
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
+        [mediaqueries] Remove "on-demand" value for any-hover/hover & "forced" value for prefers-contrast
+        https://bugs.webkit.org/show_bug.cgi?id=225400
+
+        Reviewed by Antti Koivisto.
+
+        These were both removed from the spec and currently never evaluate to true. They also won't eval to true after this change.
+        Only change is serialization, since the values will become invalid.
+
+        Also:
+        - Re-synced css/mediaqueries WPTs
+        - Adjusted any-hover/hover parsing tests accordingly.
+
+        * css/CSSValueKeywords.in:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersContrastEvaluate):
+        * css/MediaQueryExpression.cpp:
+        (WebCore::isValidValueForIdentMediaFeature):
+
 2021-05-05  Megan Gardner  <megan_gardner@apple.com>
 
         AppHighlight scrolls should be smooth

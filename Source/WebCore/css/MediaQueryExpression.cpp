@@ -46,8 +46,8 @@ static inline bool isValidValueForIdentMediaFeature(const AtomString& feature, c
         return valueID == CSSValuePortrait || valueID == CSSValueLandscape;
     if (feature == MediaFeatureNames::colorGamut)
         return valueID == CSSValueSRGB || valueID == CSSValueP3 || valueID == CSSValueRec2020;
-    if (feature == MediaFeatureNames::anyHover || feature == MediaFeatureNames::hover) // FIXME: remove `on-demand` that's no longer in the spec.
-        return valueID == CSSValueOnDemand || valueID == CSSValueHover || valueID == CSSValueNone;
+    if (feature == MediaFeatureNames::anyHover || feature == MediaFeatureNames::hover)
+        return valueID == CSSValueHover || valueID == CSSValueNone;
     if (feature == MediaFeatureNames::anyPointer || feature == MediaFeatureNames::pointer)
         return valueID == CSSValueFine || valueID == CSSValueCoarse || valueID == CSSValueNone;
     if (feature == MediaFeatureNames::invertedColors)
@@ -60,8 +60,8 @@ static inline bool isValidValueForIdentMediaFeature(const AtomString& feature, c
     if (feature == MediaFeatureNames::prefersColorScheme)
         return valueID == CSSValueLight || valueID == CSSValueDark;
 #endif
-    if (feature == MediaFeatureNames::prefersContrast) // FIXME: remove `forced` that's no longer in the spec.
-        return valueID == CSSValueNoPreference || valueID == CSSValueMore || valueID == CSSValueLess || valueID == CSSValueForced;
+    if (feature == MediaFeatureNames::prefersContrast)
+        return valueID == CSSValueNoPreference || valueID == CSSValueMore || valueID == CSSValueLess;
     if (feature == MediaFeatureNames::prefersReducedMotion)
         return valueID == CSSValueNoPreference || valueID == CSSValueReduce;
     if (feature == MediaFeatureNames::prefersDarkInterface)
