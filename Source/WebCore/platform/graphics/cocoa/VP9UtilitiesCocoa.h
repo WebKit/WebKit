@@ -41,13 +41,13 @@ namespace WebCore {
 struct MediaCapabilitiesInfo;
 struct VideoConfiguration;
 
-WEBCORE_EXPORT extern void registerWebKitVP9Decoder();
-WEBCORE_EXPORT extern void registerWebKitVP8Decoder();
-WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
-extern bool isVP9DecoderAvailable();
-extern bool isVP8DecoderAvailable();
-extern bool isVPCodecConfigurationRecordSupported(VPCodecConfigurationRecord&);
-extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
+WEBCORE_EXPORT void registerWebKitVP9Decoder();
+WEBCORE_EXPORT void registerWebKitVP8Decoder();
+WEBCORE_EXPORT void registerSupplementalVP9Decoder();
+bool isVP9DecoderAvailable();
+bool isVP8DecoderAvailable();
+bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
+Optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const VideoConfiguration&);
 
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Element<webm::Colour>&);
 

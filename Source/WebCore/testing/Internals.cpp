@@ -5758,19 +5758,39 @@ bool Internals::capsLockIsOn()
     return WebCore::PlatformKeyboardEvent::currentCapsLockState();
 }
 
-Optional<HEVCParameterSet> Internals::parseHEVCCodecParameters(const String& codecString)
+auto Internals::parseHEVCCodecParameters(StringView string) -> Optional<HEVCParameterSet>
 {
-    return WebCore::parseHEVCCodecParameters(codecString);
+    return WebCore::parseHEVCCodecParameters(string);
 }
 
-Optional<DoViParameterSet> Internals::parseDoViCodecParameters(const String& codecString)
+auto Internals::parseDoViCodecParameters(StringView string) -> Optional<DoViParameterSet>
 {
-    return WebCore::parseDoViCodecParameters(codecString);
+    auto parseResult = WebCore::parseDoViCodecParameters(string);
+    if (!parseResult)
+        return WTF::nullopt;
+    DoViParameterSet convertedResult;
+    switch (parseResult->codec) {
+    case DoViParameters::Codec::AVC1:
+        convertedResult.codecName = "avc1"_s;
+        break;
+    case DoViParameters::Codec::AVC3:
+        convertedResult.codecName = "avc3"_s;
+        break;
+    case DoViParameters::Codec::HEV1:
+        convertedResult.codecName = "hev1"_s;
+        break;
+    case DoViParameters::Codec::HVC1:
+        convertedResult.codecName = "hvc1"_s;
+        break;
+    }
+    convertedResult.bitstreamProfileID = parseResult->bitstreamProfileID;
+    convertedResult.bitstreamLevelID = parseResult->bitstreamLevelID;
+    return convertedResult;
 }
 
-Optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(const String& codecString)
+Optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(StringView string)
 {
-    return WebCore::parseVPCodecParameters(codecString);
+    return WebCore::parseVPCodecParameters(string);
 }
 
 auto Internals::getCookies() const -> Vector<CookieData>

@@ -1,3 +1,108 @@
+2021-05-06  Darin Adler  <darin@apple.com>
+
+        Streamline codec parsing, replacing uses of HashMap with SortedArrayMap
+        https://bugs.webkit.org/show_bug.cgi?id=225368
+
+        Reviewed by Sam Weinig.
+
+        * platform/ContentType.cpp:
+        (WebCore::ContentType::parameter const): Use early return instead of nesting.
+        Strip HTML spaces, not all whitespace, and do it only once rather than twice.
+        Fixed a small bug where we search for the second quotation mark in a way that
+        could find the same quotation mark twice if there is a space before the first
+        one. Added FIXME comments about a few obvious problems in the parsing algorithm.
+        Improved efficiency by using StringView, saving the allocation of one temporary
+        StringImpl in the case where we have some HTML spaces to strip.
+        (WebCore::ContentType::containerType const): Simplified the implemementation
+        by taking advantage of the fact that our notFound value is designed to be used
+        as an argument to functions like String::left, telling them to return the
+        entire string. Strip HTML spaces, not all whitespace.
+
+        * platform/graphics/HEVCUtilities.cpp:
+        (WebCore::parseHEVCCodecParameters): Take a StringView instead of a String
+        for greater flexibility and efficiency. Don't store codecName, which is
+        never used after verifying that it is a legal value here. Don't store the
+        generalTierFlag, which is never used after verifying that it is a legal
+        value here. Don't store the constraint flags, which are never used after
+        verifying that they are legal values here.
+        (WebCore::makeOptionalFromPointer): Added to make code below cleaner.
+        (WebCore::parseDoViCodecType): Renamed from codecStringForDoViCodecType
+        since it now returns an enumeration value instead of a string. Also
+        take a StringView instead of a String for greater flexibility and efficiency.
+        Also use a SortedArrayMap instead of a MemoryCompactLookupOnlyRobinHoodHashMap.
+        (WebCore::profileIDForAlphabeticDoViProfile): Take a StringView instead of
+        a String for greater flexibility and efficiency. Use a SortedArrayMap instead
+        of a MemoryCompactLookupOnlyRobinHoodHashMap.
+        (WebCore::isValidProfileIDForCodec): Take a codec enumeration value parameter
+        instead of a string.
+        (WebCore::parseDoViCodecParameters): Take a StringView instead of a String
+        for greater flexibility and efficiency. Store the codec as an enumeration
+        instead of a String. Don't create a temporary String just so we can call the
+        profileIDForAlphabeticDoViProfile function.
+
+        * platform/graphics/HEVCUtilities.h: Renamed HEVCParameterSet and
+        DoViParameterSet to HEVCParameters and DoViParameters. The word "set" is not
+        helpful in these names. Removed codecName, generalTierFlag, and constraintFlags
+        from HEVCParameterSet. Changed the parse functions to take StringView instead
+        of String. Replaced the string codecName in DoViParameterSet with an enumeration
+        since there are only a few valid values.
+
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.h: Use Optional return value
+        instead of a bool and an out argument.
+
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.mm:
+        (WebCore::validateHEVCParameters): Updated to return Optional.
+        (WebCore::codecType): Updated to take an enumeration value and no longer
+        need to return an optional. Also renamed from codecTypeForDoViCodecString
+        since the type now makes this clear without a long function name.
+        (WebCore::parseStringArrayFromDictionaryToUInt16Vector): Renamed from
+        CFStringArrayToNumberVector, and moved the dictionary lookup in here.
+        The old name was a little vague; "NumberVector" doesn't say 16-bit unsigned.
+        Simplified code by using an Objective-C for loop instead of a block and
+        enumeration. This cut the size of the function down quite a bit.
+        (WebCore::validateDoViParameters): Updated to return Optional. Also
+        refactored to use the imrpoved helper functions above.
+
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp:
+        (WebCore::videoCodecTypeFromRFC4281Type): Take a StringView instead of a String
+        for greater flexibility and efficiency.
+        (WebCore::computeMediaCapabilitiesInfo): Factored out this helper function
+        so we don't have such complicated callback logic. Refactored to use the new
+        versions of validateHEVCParameters, validateDoViParameters, and
+        validateVPParameters.
+        (WebCore::createMediaPlayerDecodingConfigurationCocoa): Moved most of the
+        code into computeMediaCapabilitiesInfo; this mostly deals with the callback.
+
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h: Removed extraneous use of extern.
+        Added const for input-only reference arguments. Changed validateVPParameters to
+        return Optional instead of a bool with an out argument.
+
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::isVP9CodecConfigurationRecordSupported): Added const.
+        (WebCore::isVP8CodecConfigurationRecordSupported): Ditto.
+        (WebCore::isVPCodecConfigurationRecordSupported): Ditto.
+        (WebCore::validateVPParameters): Refactored to return Optional.
+
+        * platform/network/HTTPHeaderMap.h: Removed unneeded includes.
+
+        * platform/text/LocaleToScriptMapping.cpp: Moved PackedASCIILowerCodes from
+        here into the SortedArrayMap.h header.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::parseHEVCCodecParameters): Tweaked since HEVCParameterSet
+        is now only the correct name here in the Internals class.
+        (WebCore::Internals::parseDoViCodecParameters): Ditto. Also added code to
+        expose the codec enumeration as a string. This is now a testing-only thing.
+        (WebCore::Internals::parseVPCodecParameters): Ditto.
+
+        * testing/Internals.h: Tweaked the ParameterSet types since they now don't
+        exactly match the structures used in the real code.
+
+        * testing/Internals.idl: Removed codecName, generalTierFlag, and
+        constraintFlags from HEVCParameterSet. Neither codecName nor constraintFlags
+        was used in any test. And the generalTierFlag test was something we can
+        do without; the parsed value isn't actually used in any WebKit code.
+
 2021-05-06  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Fallback to texture mapper video orientation handling when glvideoflip is not available

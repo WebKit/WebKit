@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,25 @@
 
 #pragma once
 
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-struct HEVCParameterSet {
-    String codecName;
-    unsigned short generalProfileSpace { 0 };
-    unsigned short generalProfileIDC { 0 };
+struct HEVCParameters {
+    uint16_t generalProfileSpace { 0 };
+    uint16_t generalProfileIDC { 0 };
     uint32_t generalProfileCompatibilityFlags { 0 };
-    bool generalTierFlag { false };
-    unsigned short generalLevelIDC { 0 };
-    Vector<unsigned short> constraintFlags { 6, 0 };
+    uint16_t generalLevelIDC { 0 };
 };
 
-WEBCORE_EXPORT Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
+WEBCORE_EXPORT Optional<HEVCParameters> parseHEVCCodecParameters(StringView);
 
-struct DoViParameterSet {
-    String codecName;
-    unsigned short bitstreamProfileID { 0 };
-    unsigned short bitstreamLevelID { 0 };
+struct DoViParameters {
+    enum class Codec { AVC1, AVC3, HEV1, HVC1 } codec;
+    uint16_t bitstreamProfileID { 0 };
+    uint16_t bitstreamLevelID { 0 };
 };
 
-WEBCORE_EXPORT Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString);
+WEBCORE_EXPORT Optional<DoViParameters> parseDoViCodecParameters(StringView);
 
 }

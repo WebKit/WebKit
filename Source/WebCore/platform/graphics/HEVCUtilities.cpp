@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,12 @@
 #include "HEVCUtilities.h"
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashMap.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
-Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
+Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 {
     // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
     StringView codecView(codecString);
@@ -42,11 +41,11 @@ Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
     if (nextElement == codecSplit.end())
         return WTF::nullopt;
 
-    HEVCParameterSet parameters;
+    HEVCParameters parameters;
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
-    parameters.codecName = (*nextElement).toString();
-    if (!equal(parameters.codecName, "hvc1") && !equal(parameters.codecName, "hev1"))
+    auto codecName = *nextElement;
+    if (codecName != "hvc1" && codecName != "hev1")
         return WTF::nullopt;
 
     if (++nextElement == codecSplit.end())
@@ -91,21 +90,18 @@ Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
     if (firstCharacter != 'L' && firstCharacter != 'H')
         return WTF::nullopt;
 
-    parameters.generalTierFlag = firstCharacter == 'H';
     bool isValidGeneralLevelIDC = false;
     parameters.generalLevelIDC = toIntegralType<uint8_t>(generalTier.substring(1), &isValidGeneralLevelIDC);
     if (!isValidGeneralLevelIDC)
         return WTF::nullopt;
 
-    // Optional fourth and remaning elements: a sequence of 6 1-byte constraint flags, each byte encoded
+    // Optional fourth and remaining elements: a sequence of 6 1-byte constraint flags, each byte encoded
     // in hex, and separated by a period, with trailing zero bytes omitted.
-    parameters.constraintFlags.fill(0, 6);
-    for (auto& flag : parameters.constraintFlags) {
+    for (unsigned i = 0; i < 6; ++i) {
         if (++nextElement == codecSplit.end())
             break;
-
         bool isValidFlag = false;
-        flag = toIntegralType<uint8_t>(*nextElement, &isValidFlag, 16);
+        toIntegralType<uint8_t>(*nextElement, &isValidFlag, 16);
         if (!isValidFlag)
             return WTF::nullopt;
     }
@@ -113,41 +109,40 @@ Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
     return parameters;
 }
 
-static String codecStringForDoViCodecType(const String& codec)
+template<typename ValueType> inline Optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
 {
-    using MapType = MemoryCompactLookupOnlyRobinHoodHashMap<String, String>;
-    static NeverDestroyed<MapType> types = std::initializer_list<MapType::KeyValuePairType>({
-        { "dvhe"_s, "hev1"_s },
-        { "dvh1"_s, "hvc1"_s },
-        { "dvav"_s, "avc3"_s },
-        { "dva1"_s, "avc1"_s }
-    });
-
-    auto findResults = types.get().find(codec);
-    if (findResults == types.get().end())
-        return nullString();
-    return findResults->value;
+    if (!pointer)
+        return WTF::nullopt;
+    return *pointer;
 }
 
-static Optional<unsigned short> profileIDForAlphabeticDoViProfile(const String& profile)
+static Optional<DoViParameters::Codec> parseDoViCodecType(StringView string)
+{
+    static constexpr std::pair<PackedASCIILowerCodes<uint32_t>, DoViParameters::Codec> typesArray[] = {
+        { "dva1", DoViParameters::Codec::AVC1 },
+        { "dvav", DoViParameters::Codec::AVC3 },
+        { "dvh1", DoViParameters::Codec::HVC1 },
+        { "dvhe", DoViParameters::Codec::HEV1 },
+    };
+    static constexpr SortedArrayMap typesMap { typesArray };
+    return makeOptionalFromPointer(typesMap.tryGet(string));
+}
+
+static Optional<uint16_t> profileIDForAlphabeticDoViProfile(StringView profile)
 {
     // See Table 7 of "Dolby Vision Profiles and Levels Version 1.3.2"
-    using MapType = MemoryCompactLookupOnlyRobinHoodHashMap<String, unsigned short>;
-    static NeverDestroyed<MapType> map = std::initializer_list<MapType::KeyValuePairType>({
-        { "dvhe.dtr"_s, 4 },
-        { "dvhe.stn"_s, 5 },
-        { "dvhe.dtb"_s, 7 },
-        { "dvhe.st"_s, 8 },
-        { "dvav.se"_s, 9 }
-    });
-
-    auto findResults = map.get().find(profile);
-    if (findResults == map.get().end())
-        return WTF::nullopt;
-    return findResults->value;
+    static constexpr std::pair<PackedASCIILowerCodes<uint64_t>, uint16_t> profilesArray[] = {
+        { "dvav.se", 9 },
+        { "dvhe.dtb", 7 },
+        { "dvhe.dtr", 4 },
+        { "dvhe.st", 8 },
+        { "dvhe.stn", 5 },
+    };
+    static constexpr SortedArrayMap profilesMap { profilesArray };
+    return makeOptionalFromPointer(profilesMap.tryGet(profile));
 }
 
-static bool isValidDoViProfileID(unsigned short profileID)
+static bool isValidDoViProfileID(uint16_t profileID)
 {
     switch (profileID) {
     case 4:
@@ -161,7 +156,7 @@ static bool isValidDoViProfileID(unsigned short profileID)
     }
 }
 
-static Optional<unsigned short> maximumLevelIDForDoViProfileID(unsigned short profileID)
+static Optional<uint16_t> maximumLevelIDForDoViProfileID(uint16_t profileID)
 {
     // See Section 4.1 of "Dolby Vision Profiles and Levels Version 1.3.2"
     switch (profileID) {
@@ -174,27 +169,27 @@ static Optional<unsigned short> maximumLevelIDForDoViProfileID(unsigned short pr
     }
 }
 
-static bool isValidProfileIDForCodecName(unsigned short profileID, const String& codecName)
+static bool isValidProfileIDForCodec(uint16_t profileID, DoViParameters::Codec codec)
 {
     if (profileID == 9)
-        return codecName == "avc1" || codecName == "avc3";
-    return codecName == "hvc1" || codecName == "hev1";
+        return codec == DoViParameters::Codec::AVC1 || codec == DoViParameters::Codec::AVC3;
+    return codec == DoViParameters::Codec::HVC1 || codec == DoViParameters::Codec::HEV1;
 }
 
-Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString)
+Optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
 {
     // The format of the DoVi codec string is specified in "Dolby Vision Profiles and Levels Version 1.3.2"
-    StringView codecView(codecString);
     auto codecSplit = codecView.split('.');
     auto nextElement = codecSplit.begin();
     if (nextElement == codecSplit.end())
         return WTF::nullopt;
 
-    DoViParameterSet parameters;
+    DoViParameters parameters;
 
-    parameters.codecName = codecStringForDoViCodecType((*nextElement).toString());
-    if (!parameters.codecName)
+    auto codec = parseDoViCodecType(*nextElement);
+    if (!codec)
         return WTF::nullopt;
+    parameters.codec = *codec;
 
     if (++nextElement == codecSplit.end())
         return WTF::nullopt;
@@ -211,17 +206,16 @@ Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString)
         if (!isIntegral)
             return WTF::nullopt;
     } else {
-        auto alphanumericProfileString = codecView.left(5 + profileID.length()).toString();
-        auto profileID = profileIDForAlphabeticDoViProfile(alphanumericProfileString);
-        if (!profileID)
+        auto bitstreamProfileID = profileIDForAlphabeticDoViProfile(codecView.left(5 + profileID.length()));
+        if (!bitstreamProfileID)
             return WTF::nullopt;
-        parameters.bitstreamProfileID = profileID.value();
+        parameters.bitstreamProfileID = *bitstreamProfileID;
     }
 
     if (!isValidDoViProfileID(parameters.bitstreamProfileID))
         return WTF::nullopt;
 
-    if (!isValidProfileIDForCodecName(parameters.bitstreamProfileID, parameters.codecName))
+    if (!isValidProfileIDForCodec(parameters.bitstreamProfileID, parameters.codec))
         return WTF::nullopt;
 
     if (++nextElement == codecSplit.end())
@@ -236,7 +230,7 @@ Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString)
         return WTF::nullopt;
 
     auto maximumLevelID = maximumLevelIDForDoViProfileID(parameters.bitstreamProfileID);
-    if (!maximumLevelID || parameters.bitstreamLevelID > maximumLevelID.value())
+    if (!maximumLevelID || parameters.bitstreamLevelID > *maximumLevelID)
         return WTF::nullopt;
 
     return parameters;

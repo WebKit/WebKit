@@ -148,7 +148,7 @@ static bool vp9HardwareDecoderAvailable()
     return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
 }
 
-static bool isVP9CodecConfigurationRecordSupported(VPCodecConfigurationRecord& codecConfiguration)
+static bool isVP9CodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)
 {
     if (!isVP9DecoderAvailable())
         return false;
@@ -199,7 +199,7 @@ static bool isVP9CodecConfigurationRecordSupported(VPCodecConfigurationRecord& c
     return has4kScreen;
 }
 
-static bool isVP8CodecConfigurationRecordSupported(VPCodecConfigurationRecord& codecConfiguration)
+static bool isVP8CodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)
 {
     if (!isVP8DecoderAvailable())
         return false;
@@ -219,7 +219,7 @@ static bool isVP8CodecConfigurationRecordSupported(VPCodecConfigurationRecord& c
     return true;
 }
 
-bool isVPCodecConfigurationRecordSupported(VPCodecConfigurationRecord& codecConfiguration)
+bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)
 {
     if (codecConfiguration.codecName == "vp08" || codecConfiguration.codecName == "vp8")
         return isVP8CodecConfigurationRecordSupported(codecConfiguration);
@@ -230,36 +230,38 @@ bool isVPCodecConfigurationRecordSupported(VPCodecConfigurationRecord& codecConf
     return false;
 }
 
-bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaCapabilitiesInfo& info, const VideoConfiguration& videoConfiguration)
+Optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord& codecConfiguration, const VideoConfiguration& videoConfiguration)
 {
     if (!isVPCodecConfigurationRecordSupported(codecConfiguration))
-        return false;
+        return WTF::nullopt;
 
     // VideoConfiguration and VPCodecConfigurationRecord can have conflicting values for HDR properties. If so, reject.
     if (videoConfiguration.transferFunction) {
         // Note: Transfer Characteristics are defined by ISO/IEC 23091-2:2019.
         if (*videoConfiguration.transferFunction == TransferFunction::SRGB && codecConfiguration.transferCharacteristics > 15)
-            return false;
+            return WTF::nullopt;
         if (*videoConfiguration.transferFunction == TransferFunction::PQ && codecConfiguration.transferCharacteristics != 16)
-            return false;
+            return WTF::nullopt;
         if (*videoConfiguration.transferFunction == TransferFunction::HLG && codecConfiguration.transferCharacteristics != 18)
-            return false;
+            return WTF::nullopt;
     }
 
     if (videoConfiguration.colorGamut) {
         if (*videoConfiguration.colorGamut == ColorGamut::Rec2020 && codecConfiguration.colorPrimaries != 9)
-            return false;
+            return WTF::nullopt;
     }
+
+    MediaCapabilitiesInfo info;
 
     if (vp9HardwareDecoderAvailable()) {
         // HW VP9 Decoder does not support alpha channel:
         if (videoConfiguration.alphaChannel && *videoConfiguration.alphaChannel)
-            return false;
+            return WTF::nullopt;
 
         // HW VP9 Decoder can support up to 4K @ 120 or 8K @ 30
         auto resolution = resolutionCategory({ (float)videoConfiguration.width, (float)videoConfiguration.height });
         if (resolution > ResolutionCategory::R_8K)
-            return false;
+            return WTF::nullopt;
         if (resolution == ResolutionCategory::R_8K && videoConfiguration.framerate > 30)
             info.smooth = false;
         else if (resolution <= ResolutionCategory::R_4K && videoConfiguration.framerate > 120)
@@ -269,7 +271,7 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
 
         info.powerEfficient = true;
         info.supported = true;
-        return true;
+        return info;
     }
 
     info.powerEfficient = false;
@@ -287,7 +289,7 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
     // For wall-powered devices, always report VP9 as supported, even if not powerEfficient.
     if (!systemHasBattery()) {
         info.supported = true;
-        return true;
+        return info;
     }
 
     // For battery-powered devices, always report VP9 as supported when running on AC power,
@@ -295,7 +297,7 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
     // to support 4K video.
     if (systemHasAC()) {
         info.supported = true;
-        return true;
+        return info;
     }
 
     bool has4kScreen = false;
@@ -313,10 +315,10 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
     }
 
     if (!has4kScreen)
-        return false;
+        return WTF::nullopt;
 
     info.supported = true;
-    return true;
+    return info;
 }
 
 static uint8_t convertToColorPrimaries(const Primaries& coefficients)

@@ -4,22 +4,20 @@
     <script src="video-test.js"></script>
     <script>
     function HEVCParameterSetToString(set) {
-        return `{ ${set.generalProfileSpace }, ${set.generalProfileIDC }, ${set.generalProfileCompatibilityFlags }, ${set.generalTierFlag }, ${set.generalLevelIDC } }`;
+        return `{ ${set.generalProfileSpace }, ${set.generalProfileIDC }, ${set.generalProfileCompatibilityFlags }, ${set.generalLevelIDC } }`;
     }
     function isEqualHEVCParameterSet(setA, setB) {
         return setA.generalProfileSpace === setB.generalProfileSpace
             && setA.generalProfileIDC === setB.generalProfileIDC
             && setA.generalProfileCompatibilityFlags === setB.generalProfileCompatibilityFlags
-            && setA.generalTierFlag === setB.generalTierFlag
             && setA.generalLevelIDC === setB.generalLevelIDC
     }
-    function makeHEVCParameterSet(generalProfileSpace, generalProfileIDC, generalProfileCompatibilityFlags, generalTierFlag, generalLevelIDC)
+    function makeHEVCParameterSet(generalProfileSpace, generalProfileIDC, generalProfileCompatibilityFlags, generalLevelIDC)
     {
         return {
             generalProfileSpace: generalProfileSpace,
             generalProfileIDC: generalProfileIDC,
             generalProfileCompatibilityFlags: generalProfileCompatibilityFlags,
-            generalTierFlag: generalTierFlag,
             generalLevelIDC: generalLevelIDC,
         };
     }
@@ -32,9 +30,9 @@
     window.addEventListener('load', event => {
         testExpected('internals.parseHEVCCodecParameters("bad-parameter")', null);
         testExpected('internals.parseHEVCCodecParameters("hvc1")', null);
-        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.1.6.L93")', makeHEVCParameterSet(0, 1, 6, false, 93));
-        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.A4.41.H120")', makeHEVCParameterSet(1, 4, 65, true, 120));
-        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.B1.4.L63")', makeHEVCParameterSet(2, 1, 4, false, 63));
+        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.1.6.L93")', makeHEVCParameterSet(0, 1, 6, 93));
+        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.A4.41.H120")', makeHEVCParameterSet(1, 4, 65, 120));
+        testExpectedHEVCParameterSet('internals.parseHEVCCodecParameters("hev1.B1.4.L63")', makeHEVCParameterSet(2, 1, 4, 63));
         testExpected('internals.parseHEVCCodecParameters("hev1.D1.4.L63")', null);
         testExpected('internals.parseHEVCCodecParameters("hev1.B1.4.L68000")', null);
         endTest();

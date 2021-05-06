@@ -81,7 +81,7 @@ enum class ASCIISubset { All, NoUppercaseLetters, NoUppercaseLettersOptimized };
 
 template<ASCIISubset> struct ComparableASCIISubsetLiteral {
     ASCIILiteral literal;
-    template<std::size_t size> constexpr ComparableASCIISubsetLiteral(const char (&characters)[size]);
+    template<unsigned size> constexpr ComparableASCIISubsetLiteral(const char (&characters)[size]);
     static Optional<ComparableStringView> parse(StringView string) { return { { string } }; }
 };
 
@@ -103,7 +103,23 @@ bool operator<(ComparableCaseFoldingASCIILiteral, ComparableStringView);
 bool operator<(ComparableLettersLiteral, ComparableStringView);
 
 template<typename OtherType> bool operator==(OtherType, ComparableStringView);
-template<typename OtherType> bool operator!=(ComparableStringView, OtherType);
+
+template<typename StorageInteger> class PackedASCIILowerCodes {
+public:
+    static_assert(std::is_unsigned_v<StorageInteger>);
+
+    template<unsigned size> constexpr PackedASCIILowerCodes(const char (&characters)[size]);
+    static Optional<PackedASCIILowerCodes> parse(StringView);
+    constexpr StorageInteger value() const { return m_value; }
+
+private:
+    template<unsigned size> static constexpr StorageInteger pack(const char (&characters)[size]);
+    explicit constexpr PackedASCIILowerCodes(StorageInteger);
+    StorageInteger m_value { 0 };
+};
+
+template<typename StorageInteger> constexpr bool operator==(PackedASCIILowerCodes<StorageInteger>, PackedASCIILowerCodes<StorageInteger>);
+template<typename StorageInteger> constexpr bool operator<(PackedASCIILowerCodes<StorageInteger>, PackedASCIILowerCodes<StorageInteger>);
 
 template<ASCIISubset subset> constexpr bool isInSubset(char character)
 {
@@ -119,7 +135,7 @@ template<ASCIISubset subset> constexpr bool isInSubset(char character)
     }
 }
 
-template<ASCIISubset subset> template<std::size_t size> constexpr ComparableASCIISubsetLiteral<subset>::ComparableASCIISubsetLiteral(const char (&characters)[size])
+template<ASCIISubset subset> template<unsigned size> constexpr ComparableASCIISubsetLiteral<subset>::ComparableASCIISubsetLiteral(const char (&characters)[size])
     : literal { ASCIILiteral::fromLiteralUnsafe(characters) }
 {
     ASSERT_UNDER_CONSTEXPR_CONTEXT(allOfConstExpr(&characters[0], &characters[size - 1], [] (char character) {
@@ -301,17 +317,62 @@ template<typename OtherType> inline bool operator==(OtherType a, ComparableStrin
     return b == a;
 }
 
-template<typename OtherType> inline bool operator!=(ComparableStringView a, OtherType b)
+template<typename StorageInteger> template<unsigned size> constexpr PackedASCIILowerCodes<StorageInteger>::PackedASCIILowerCodes(const char (&string)[size])
+    : m_value { pack(string) }
 {
-    return !(a == b);
+}
+
+template<typename StorageInteger> constexpr PackedASCIILowerCodes<StorageInteger>::PackedASCIILowerCodes(StorageInteger value)
+    : m_value { value }
+{
+}
+
+template<typename StorageInteger> template<unsigned size> constexpr StorageInteger PackedASCIILowerCodes<StorageInteger>::pack(const char (&string)[size])
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(size);
+    constexpr unsigned length = size - 1;
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(!string[length]);
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(length <= sizeof(StorageInteger));
+    StorageInteger result = 0;
+    for (unsigned index = 0; index < length; ++index) {
+        StorageInteger code = static_cast<uint8_t>(string[index]);
+        result |= code << ((sizeof(StorageInteger) - index - 1) * 8);
+    }
+    return result;
+}
+
+template<typename StorageInteger> auto PackedASCIILowerCodes<StorageInteger>::parse(StringView string) -> Optional<PackedASCIILowerCodes>
+{
+    if (string.length() > sizeof(StorageInteger))
+        return WTF::nullopt;
+    StorageInteger result = 0;
+    for (unsigned index = 0; index < string.length(); ++index) {
+        UChar code = string[index];
+        if (!isASCII(code))
+            return WTF::nullopt;
+        result |= static_cast<StorageInteger>(toASCIILower(code)) << ((sizeof(StorageInteger) - index - 1) * 8);
+    }
+    return PackedASCIILowerCodes(result);
+}
+
+template<typename StorageInteger> constexpr bool operator==(PackedASCIILowerCodes<StorageInteger> a, PackedASCIILowerCodes<StorageInteger> b)
+{
+    return a.value() == b.value();
+}
+
+template<typename StorageInteger> constexpr bool operator<(PackedASCIILowerCodes<StorageInteger> a, PackedASCIILowerCodes<StorageInteger> b)
+{
+    return a.value() < b.value();
 }
 
 }
 
+// FIXME: Rename the Comparable and Packed types for clarity and to align them better with each other.
 using WTF::ASCIISubset;
 using WTF::ComparableASCIILiteral;
 using WTF::ComparableASCIISubsetLiteral;
 using WTF::ComparableCaseFoldingASCIILiteral;
 using WTF::ComparableLettersLiteral;
+using WTF::PackedASCIILowerCodes;
 using WTF::SortedArrayMap;
 using WTF::SortedArraySet;

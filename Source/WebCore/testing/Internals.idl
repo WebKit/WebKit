@@ -171,13 +171,10 @@ enum TreeType {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary HEVCParameterSet {
-    DOMString codecName;
     unsigned short generalProfileSpace;
     unsigned short generalProfileIDC;
     unsigned long generalProfileCompatibilityFlags;
-    boolean generalTierFlag;
     unsigned short generalLevelIDC;
-    sequence<unsigned short> constraintFlags;
 };
 
 [

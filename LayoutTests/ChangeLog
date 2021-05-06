@@ -1,3 +1,14 @@
+2021-05-06  Darin Adler  <darin@apple.com>
+
+        Streamline codec parsing, replacing uses of HashMap with SortedArrayMap
+        https://bugs.webkit.org/show_bug.cgi?id=225368
+
+        Reviewed by Sam Weinig.
+
+        * media/hevc-codec-parameters-expected.txt: Remove testing of generalTierFlag, which is ignored
+        by our actual media code after parsing.
+        * media/hevc-codec-parameters.html: Ditto.
+
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
         Re-import css/css-fonts WPT

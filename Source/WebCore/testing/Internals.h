@@ -974,14 +974,18 @@ public:
 
     bool capsLockIsOn();
         
-    using HEVCParameterSet = WebCore::HEVCParameterSet;
-    Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
+    using HEVCParameterSet = WebCore::HEVCParameters;
+    Optional<HEVCParameterSet> parseHEVCCodecParameters(StringView);
 
-    using DoViParameterSet = WebCore::DoViParameterSet;
-    Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString);
+    struct DoViParameterSet {
+        String codecName;
+        uint16_t bitstreamProfileID;
+        uint16_t bitstreamLevelID;
+    };
+    Optional<DoViParameterSet> parseDoViCodecParameters(StringView);
 
     using VPCodecConfigurationRecord = WebCore::VPCodecConfigurationRecord;
-    Optional<VPCodecConfigurationRecord> parseVPCodecParameters(const String& codecString);
+    Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView);
 
     struct CookieData {
         String name;
