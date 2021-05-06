@@ -1,4 +1,4 @@
-FAIL navigator.language should be ja. Was ja-jp.
+FAIL navigator.language should be ja. Was ja-JP.
 PASS successfullyParsed is true
 Some tests failed.
 

@@ -1,4 +1,4 @@
-FAIL navigator.language should be zh-hk. Was zh-tw.
+FAIL navigator.language should be zh-HK. Was zh-TW.
 PASS successfullyParsed is true
 Some tests failed.
 

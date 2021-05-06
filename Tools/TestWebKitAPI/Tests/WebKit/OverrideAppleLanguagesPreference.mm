@@ -49,7 +49,7 @@ TEST(WebKit, OverrideAppleLanguagesPreference)
         return [webView stringByEvaluatingJavaScript:@"window.internals.userPreferredLanguages()[0]"];
     };
 
-    ASSERT_TRUE([preferredLanguage() isEqual:@"en-gb"]);
+    ASSERT_TRUE([preferredLanguage() isEqual:@"en-GB"]);
 }
 
 #endif // WK_HAVE_C_SPI
@@ -101,7 +101,7 @@ TEST_F(AppleLanguagesTest, UpdateAppleLanguages)
     auto preferredLanguage = [&] {
         return [webView stringByEvaluatingJavaScript:@"navigator.language"];
     };
-    EXPECT_WK_STREQ(@"en-gb", preferredLanguage());
+    EXPECT_WK_STREQ(@"en-GB", preferredLanguage());
 
     __block bool done = false;
     [webView evaluateJavaScript:@"onlanguagechange = () => { webkit.messageHandlers.testHandler.postMessage(navigator.language); }; true;" completionHandler:^(id value, NSError *error) {
@@ -113,7 +113,7 @@ TEST_F(AppleLanguagesTest, UpdateAppleLanguages)
     done = false;
     __block bool didChangeLanguage = false;
     [webView performAfterReceivingAnyMessage:^(NSString *newLanguage) {
-        EXPECT_WK_STREQ(@"en-us", newLanguage);
+        EXPECT_WK_STREQ(@"en-US", newLanguage);
         didChangeLanguage = true;
         done = true;
     }];

@@ -1,3 +1,20 @@
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r254389?) navigator.languages returns all lowercase languages for ports using CF
+        https://bugs.webkit.org/show_bug.cgi?id=225461
+
+        Reviewed by Darin Adler.
+
+        Stop lowercasing the languages returned by navigator.language / navigator.languages
+        as this does not match the specification [1][2] or other Web browsers. The proper format is
+        'en-US', not 'en-us'.
+
+        [1] https://html.spec.whatwg.org/#dom-navigator-language
+        [2] https://tools.ietf.org/html/bcp47
+
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::httpStyleLanguageCode):
+
 2021-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         Remove old and unused memory barrier abstractions

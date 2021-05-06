@@ -1,4 +1,4 @@
-FAIL navigator.language should be hi-in. Was hi.
+FAIL navigator.language should be hi-IN. Was hi.
 PASS successfullyParsed is true
 Some tests failed.
 

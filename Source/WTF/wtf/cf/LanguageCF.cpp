@@ -85,9 +85,7 @@ static String httpStyleLanguageCode(CFStringRef language)
     if (CFStringGetLength(mutableLanguageCode.get()) >= 3 && CFStringGetCharacterAtIndex(mutableLanguageCode.get(), 2) == '_')
         CFStringReplace(mutableLanguageCode.get(), CFRangeMake(2, 1), CFSTR("-"));
 
-    CFStringLowercase(mutableLanguageCode.get(), nullptr);
     return mutableLanguageCode.get();
-
 }
 
 void platformLanguageDidChange()
