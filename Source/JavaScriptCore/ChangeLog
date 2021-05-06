@@ -1,5 +1,19 @@
 2021-05-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Make some things easier to dataLog in wasm
+        https://bugs.webkit.org/show_bug.cgi?id=225472
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/WasmMemoryMode.cpp:
+        (WTF::printInternal):
+        * wasm/WasmMemoryMode.h:
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::dump const):
+        * wasm/WasmWorklist.h:
+
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
         Reduce use of dmb ish on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=225465
 
