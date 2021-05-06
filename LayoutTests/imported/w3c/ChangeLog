@@ -1,5 +1,51 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-sync css/css-break WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=225436
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-break/animation/w3c-import.log: Added.
+        * web-platform-tests/css/css-break/parsing/box-decoration-break-computed-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/box-decoration-break-computed.html: Added.
+        * web-platform-tests/css/css-break/parsing/box-decoration-break-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/box-decoration-break-invalid.html: Added.
+        * web-platform-tests/css/css-break/parsing/box-decoration-break-valid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/box-decoration-break-valid.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-after-computed-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-after-computed.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-after-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-after-invalid.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-after-valid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-after-valid.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-before-computed-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-before-computed.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-before-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-before-invalid.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-before-valid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-before-valid.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-inside-computed-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-inside-computed.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-inside-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-inside-invalid.html: Added.
+        * web-platform-tests/css/css-break/parsing/break-inside-valid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/break-inside-valid.html: Added.
+        * web-platform-tests/css/css-break/parsing/orphans-computed-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/orphans-computed.html: Added.
+        * web-platform-tests/css/css-break/parsing/orphans-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/orphans-invalid.html: Added.
+        * web-platform-tests/css/css-break/parsing/orphans-valid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/orphans-valid.html: Added.
+        * web-platform-tests/css/css-break/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-break/parsing/widows-computed-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/widows-computed.html: Added.
+        * web-platform-tests/css/css-break/parsing/widows-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/widows-invalid.html: Added.
+        * web-platform-tests/css/css-break/parsing/widows-valid-expected.txt: Added.
+        * web-platform-tests/css/css-break/parsing/widows-valid.html: Added.
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-backgrounds WPTs
         https://bugs.webkit.org/show_bug.cgi?id=225408
 

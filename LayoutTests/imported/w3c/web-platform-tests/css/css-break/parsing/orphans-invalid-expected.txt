@@ -1,0 +1,7 @@
+
+PASS e.style['orphans'] = "auto" should not set the property value
+PASS e.style['orphans'] = "1 234" should not set the property value
+PASS e.style['orphans'] = "-234" should not set the property value
+PASS e.style['orphans'] = "-1" should not set the property value
+PASS e.style['orphans'] = "0" should not set the property value
+
