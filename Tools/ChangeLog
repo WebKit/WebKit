@@ -1,3 +1,26 @@
+2021-05-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [build.webkit.org] Add new post-commit builder WPE-Linux-64-bit-Release-Non-Unified-Build
+        https://bugs.webkit.org/show_bug.cgi?id=225385
+
+        Reviewed by Aakash Jain.
+
+        This new post-commit builder will build WPE with Unified builds disabled.
+
+        By default, builders build WebKit using Unified sources to speed up
+        time compilation. Unfortunately, unified source compilation may hide
+        compilation errors sometimes. A common hidden error are missing headers
+        in some source files. This hidden compilation errors might be discovered
+        later when a group of source files are stashed together in a different 
+        manner.
+        
+        Having a Non-Unified source post-commit builder will help to detect 
+        regressions in unified source compilation for a certain WebKit port, 
+        in this case WPE Release. Usually when these regressions happen they 
+        tend to happen too in other ports such as WebKitGTK, Win or PlayStation.
+
+        * CISupport/build-webkit-org/config.json:
+
 2021-05-05  Jonathan Bedard  <jbedard@apple.com>
 
         [run-api-tests] Use webkitcorepy's TaskPool
