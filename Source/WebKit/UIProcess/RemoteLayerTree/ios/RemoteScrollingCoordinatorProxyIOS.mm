@@ -230,7 +230,7 @@ float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(Sc
 
     float scaledScrollDestination = scrollDestination / m_webPageProxy.displayedContentScale();
     float rawClosestSnapOffset;
-    std::tie(rawClosestSnapOffset, currentIndex) = snapOffsetsInfo.closestSnapOffset(axis, scaledScrollDestination, velocity);
+    std::tie(rawClosestSnapOffset, currentIndex) = snapOffsetsInfo.closestSnapOffset(axis, rootScrollingNode->layoutViewport().size(), scaledScrollDestination, velocity);
     return rawClosestSnapOffset * m_webPageProxy.displayedContentScale();
 }
 

@@ -532,6 +532,7 @@ void ArgumentCoder<SnapOffset<float>>::encode(Encoder& encoder, const SnapOffset
 {
     encoder << offset.offset;
     encoder << offset.stop;
+    encoder << offset.snapAreaIndex;
 }
 
 bool ArgumentCoder<SnapOffset<float>>::decode(Decoder& decoder, SnapOffset<float>& offset)
@@ -539,6 +540,8 @@ bool ArgumentCoder<SnapOffset<float>>::decode(Decoder& decoder, SnapOffset<float
     if (!decoder.decode(offset.offset))
         return false;
     if (!decoder.decode(offset.stop))
+        return false;
+    if (!decoder.decode(offset.snapAreaIndex))
         return false;
     return true;
 }
@@ -548,8 +551,7 @@ void ArgumentCoder<FloatScrollSnapOffsetsInfo>::encode(Encoder& encoder, const F
 {
     encoder << info.horizontalSnapOffsets;
     encoder << info.verticalSnapOffsets;
-    encoder << info.horizontalSnapOffsetRanges;
-    encoder << info.verticalSnapOffsetRanges;
+    encoder << info.snapAreas;
 }
 
 bool ArgumentCoder<FloatScrollSnapOffsetsInfo>::decode(Decoder& decoder, FloatScrollSnapOffsetsInfo& info)
@@ -558,9 +560,7 @@ bool ArgumentCoder<FloatScrollSnapOffsetsInfo>::decode(Decoder& decoder, FloatSc
         return false;
     if (!decoder.decode(info.verticalSnapOffsets))
         return false;
-    if (!decoder.decode(info.horizontalSnapOffsetRanges))
-        return false;
-    if (!decoder.decode(info.verticalSnapOffsetRanges))
+    if (!decoder.decode(info.snapAreas))
         return false;
     return true;
 }

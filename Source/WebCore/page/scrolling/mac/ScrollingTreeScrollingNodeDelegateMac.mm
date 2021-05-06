@@ -65,7 +65,7 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
 
 #if ENABLE(CSS_SCROLL_SNAP)
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::SnapOffsetsInfo))
-        m_scrollController.updateScrollSnapPoints(scrollingStateNode.snapOffsetsInfo().convertUnits<LayoutUnit>());
+        m_scrollController.updateScrollSnapPoints(scrollingStateNode.snapOffsetsInfo().convertUnits<LayoutScrollSnapOffsetsInfo>());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex))
         m_scrollController.setActiveScrollSnapIndexForAxis(ScrollEventAxis::Horizontal, scrollingStateNode.currentHorizontalSnapPointIndex());

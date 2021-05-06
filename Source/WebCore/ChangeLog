@@ -1,3 +1,49 @@
+2021-05-06  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Compute proximity information while snapping
+        https://bugs.webkit.org/show_bug.cgi?id=224326
+
+        Reviewed by Simon Fraser.
+
+        Have ScrollSnapOffsetsInfo carry snap area rectangles instead of scroll offset
+        ranges. This allows proximity information to be handled during snap point selection.
+        The geometry will be used in a future patch to follow spec behavior for snap
+        areas that overflow the snapport and when handling masonry layouts.
+
+        No new tests. This is just a refactor. It should not change behavior at all.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::setStateScrollingNodeSnapOffsetsAsFloat): Pass in the new template argument.
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::isNearEnoughToOffsetForProximity): Added.
+        (WebCore::closestSnapOffsetWithInfoAndAxis): Modified to take in the ScrollSnapOffsetsInfo data
+        structure and axis along with the viewport size. This function now explicitly determines if a
+        snap point is too far away to affect scrolling due to scroll-snap proximity.
+        (WebCore::updateSnapOffsetsForScrollableArea): Add snap areas and snap area indices to SnapOffset.
+        (WebCore::convertOffsetInfo): Instead of converting scroll offset ranges, convert the snap
+        area rectangles.
+        (WebCore::FloatScrollSnapOffsetsInfo::convertUnits const): Ditto.
+        (WebCore::LayoutScrollSnapOffsetsInfo::convertUnits const): Ditto.
+        (WebCore::LayoutScrollSnapOffsetsInfo::closestSnapOffset const): Updated to reflect new
+        internal function.
+        (WebCore::FloatScrollSnapOffsetsInfo::closestSnapOffset const): Ditto.
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+        (WebCore::ScrollSnapOffsetsInfo::isEqual const): Update to reflect new mem ers.
+        (WebCore::ScrollSnapOffsetsInfo::offsetsForAxis const): Changed template parameter name.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode): ::convertUnits
+        takes a new template parameter.
+        * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp:
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent): Pass in viewport size.
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset): Ditto.
+        (WebCore::ScrollController::adjustScrollDestination): Ditto.
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState): Ditto.
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset const): Ditto.
+        (WebCore::operator<<): No longer print snap offset ranges.
+        * platform/ScrollSnapAnimatorState.h: Remove references to snap offset ranges.
+
 2021-05-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r271341): media/media-fullscreen-inline.html times out on GTK

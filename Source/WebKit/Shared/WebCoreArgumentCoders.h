@@ -742,15 +742,6 @@ template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
 
 #endif
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
-template<> struct ArgumentCoder<WebCore::ScrollOffsetRange<float>> {
-    static void encode(Encoder&, const WebCore::ScrollOffsetRange<float>&);
-    static Optional<WebCore::ScrollOffsetRange<float>> decode(Decoder&);
-};
-
-#endif
-
 template<> struct ArgumentCoder<WebCore::MediaSelectionOption> {
     static void encode(Encoder&, const WebCore::MediaSelectionOption&);
     static Optional<WebCore::MediaSelectionOption> decode(Decoder&);

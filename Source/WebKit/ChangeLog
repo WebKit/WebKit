@@ -1,3 +1,23 @@
+2021-05-06  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Compute proximity information while snapping
+        https://bugs.webkit.org/show_bug.cgi?id=224326
+
+        Reviewed by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<SnapOffset<float>>::encode): Add the snap area index to the encoded arguments.
+        (ArgumentCoder<SnapOffset<float>>::decode): Add the snap area index to the decoded arguments.
+        (ArgumentCoder<FloatScrollSnapOffsetsInfo>::encode): No longer encode ranges, but encode snap areas.
+        (ArgumentCoder<FloatScrollSnapOffsetsInfo>::decode): Ditto for decode.
+        * Shared/WebCoreArgumentCoders.cpp: Remove code dealing with scroll offset ranges.
+        * Shared/WebCoreArgumentCoders.h: Ditto.
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling const): Pass
+        in viewport size to closestSnapOffset which is necessary for calculating proximity.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Ditto.
+
 2021-05-05  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove network website data when a user clears an individual domain
