@@ -46,12 +46,13 @@ class SetupGitClone(Command):
             return
 
         username, email = self._get_username_and_email(tool)
+        remote_branch = tool.scm().remote_branch_ref()
 
         # FIXME: We shouldn't be using a private method.
         run_git = tool.scm()._run_git
         run_git(["pull"])
         run_git(["svn", "init", "--prefix=origin/", "-T", "trunk", "https://svn.webkit.org/repository/webkit"])
-        run_git(["config", "--replace", "svn-remote.svn.fetch", "trunk:refs/remotes/origin/master"])
+        run_git(["config", "--replace", "svn-remote.svn.fetch", "trunk:{}".format(remote_branch)])
         run_git(["svn", "fetch"])
 
         run_git(["config", "user.name", username])

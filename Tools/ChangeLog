@@ -1,3 +1,14 @@
+2021-05-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit-patch] setup-git-clone uses master instead of main
+        https://bugs.webkit.org/show_bug.cgi?id=225460
+        <rdar://problem/77616439>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone.execute): Pair the remote branch ref with the Svn remote.
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Add API test for FileSystem::fileExists() on a broken symbolic link
