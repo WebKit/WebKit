@@ -1917,11 +1917,17 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
 
 void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, CompletionHandler<void(const NetworkProcessConnectionInfo&)>&& reply)
 {
-    networkProcess().getNetworkProcessConnection(webProcessProxy, [this, weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
-        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
-            terminateNetworkProcess();
-            RELEASE_LOG_IF(isPersistent(), Process, "getNetworkProcessConnection: Failed first attempt, retrying");
-            networkProcess().getNetworkProcessConnection(*webProcessProxy, WTFMove(reply));
+    networkProcess().getNetworkProcessConnection(webProcessProxy, [weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
+            // Retry on the next RunLoop iteration because we may be inside the WebsiteDataStore destructor.
+            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
+                if (RefPtr<WebsiteDataStore> strongThis = weakThis.get(); strongThis && webProcessProxy) {
+                    strongThis->terminateNetworkProcess();
+                    RELEASE_LOG_IF(strongThis->isPersistent(), Process, "getNetworkProcessConnection: Failed first attempt, retrying");
+                    strongThis->networkProcess().getNetworkProcessConnection(*webProcessProxy, WTFMove(reply));
+                } else
+                    reply({ });
+            });
             return;
         }
         reply(connectionInfo);
