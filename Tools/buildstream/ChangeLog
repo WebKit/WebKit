@@ -1,3 +1,15 @@
+2021-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] TestWebExtensions web-process-crashed is flaky failing after latest WPE libs update
+        https://bugs.webkit.org/show_bug.cgi?id=225503
+
+        Reviewed by Carlos Garcia Campos.
+
+        The update to 1.9.91 triggers critical warnings in tests. Might be fixed by
+        https://github.com/Igalia/WPEBackend-fdo/pull/158 which is not merged yet.
+
+        * elements/sdk/wpebackend-fdo.bst: Downgrade to latest stable release until the bug is fixed.
+
 2021-05-05  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update libwpe and wpebackend-fdo
