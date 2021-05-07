@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,17 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if PLATFORM(COCOA)
 
-#include "ShareableBitmap.h"
-#include "SharedBufferCopy.h"
-#include <wtf/MachSendRight.h>
-#include <wtf/Variant.h>
+#import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
 
-namespace WebKit {
+@interface WKCompositingLayer : CALayer
 
-using ImageBufferBackendHandle = Variant<
-    ShareableBitmap::Handle
-#if PLATFORM(COCOA) // FIXME: This is really about IOSurface.
-    , MachSendRight
-#endif
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    , IPC::SharedBufferCopy
+@property (nonatomic, retain, setter=_setWKContentsDisplayList:) __attribute__((NSObject)) CFDataRef _wkContentsDisplayList;
 #endif
->;
 
-} // namespace WebKit
+@end
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // PLATFORM(COCOA)

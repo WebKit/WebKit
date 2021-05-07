@@ -55,6 +55,9 @@ public:
     enum class Type : uint8_t {
         IOSurface,
         Bitmap,
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        CGDisplayList,
+#endif
     };
 
     void ensureBackingStore(Type, WebCore::FloatSize, float scale, bool deepColor, bool isOpaque);
@@ -103,6 +106,8 @@ private:
     void clearBackingStore();
     void swapToValidFrontBuffer();
 
+    bool supportsPartialRepaint();
+
     WebCore::PixelFormat pixelFormat() const;
 
     PlatformCALayerRemote* m_layer;
@@ -146,9 +151,12 @@ namespace WTF {
 
 template<> struct EnumTraits<WebKit::RemoteLayerBackingStore::Type> {
     using values = EnumValues<
-        WebKit::RemoteLayerBackingStore::Type,
-        WebKit::RemoteLayerBackingStore::Type::IOSurface,
-        WebKit::RemoteLayerBackingStore::Type::Bitmap
+        WebKit::RemoteLayerBackingStore::Type
+        , WebKit::RemoteLayerBackingStore::Type::IOSurface
+        , WebKit::RemoteLayerBackingStore::Type::Bitmap
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , WebKit::RemoteLayerBackingStore::Type::CGDisplayList
+#endif
     >;
 };
 

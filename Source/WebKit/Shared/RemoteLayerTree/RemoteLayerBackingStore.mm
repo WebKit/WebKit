@@ -1,5 +1,5 @@
  /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,13 @@
 #import "RemoteLayerBackingStore.h"
 
 #import "ArgumentCoders.h"
+#import "CGDisplayListImageBufferBackend.h"
 #import "MachPort.h"
 #import "PlatformCALayerRemote.h"
 #import "PlatformRemoteImageBufferProxy.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
+#import "RemoteLayerTreeLayers.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebProcess.h"
@@ -44,6 +46,10 @@
 #import <WebCore/WebLayer.h>
 #import <mach/mach_port.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
+#endif
 
 namespace WebKit {
 
@@ -115,6 +121,11 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
         case Type::Bitmap:
             handle = static_cast<UnacceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
             break;
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        case Type::CGDisplayList:
+            handle = static_cast<CGDisplayListImageBufferBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
+            break;
+#endif
         }
     }
 
@@ -209,7 +220,27 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
         else
             m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
         break;
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    case Type::CGDisplayList:
+        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+        break;
+#endif
     }
+}
+
+bool RemoteLayerBackingStore::supportsPartialRepaint()
+{
+    switch (m_type) {
+    case Type::IOSurface:
+    case Type::Bitmap:
+        return true;
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    case Type::CGDisplayList:
+        return false;
+#endif
+    }
+
+    return true;
 }
 
 bool RemoteLayerBackingStore::display()
@@ -229,7 +260,7 @@ bool RemoteLayerBackingStore::display()
         return needToEncodeBackingStore;
 
     WebCore::IntRect layerBounds(WebCore::IntPoint(), WebCore::expandedIntSize(m_size));
-    if (!hasFrontBuffer())
+    if (!hasFrontBuffer() || !supportsPartialRepaint())
         m_dirtyRegion.unite(layerBounds);
 
     if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
@@ -354,24 +385,37 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
     ASSERT(m_bufferHandle);
     layer.contentsOpaque = m_isOpaque;
 
-    switch (m_type) {
-    case Type::IOSurface:
-        switch (contentsType) {
-        case LayerContentsType::IOSurface: {
-            auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(*m_bufferHandle)), WebCore::sRGBColorSpaceRef());
-            layer.contents = surface ? surface->asLayerContents() : nil;
-            break;
+    WTF::switchOn(*m_bufferHandle,
+        [&] (ShareableBitmap::Handle& handle) {
+            ASSERT(m_type == Type::Bitmap);
+            auto bitmap = ShareableBitmap::create(handle);
+            layer.contents = (__bridge id)bitmap->makeCGImageCopy().get();
+        },
+        [&] (MachSendRight& machSendRight) {
+            ASSERT(m_type == Type::IOSurface);
+            switch (contentsType) {
+            case LayerContentsType::IOSurface: {
+                auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight), WebCore::sRGBColorSpaceRef());
+                layer.contents = surface ? surface->asLayerContents() : nil;
+                break;
+            }
+            case LayerContentsType::CAMachPort:
+                layer.contents = (__bridge id)adoptCF(CAMachPortCreate(machSendRight.leakSendRight())).get();
+                break;
+            }
         }
-        case LayerContentsType::CAMachPort:
-            layer.contents = (__bridge id)adoptCF(CAMachPortCreate(WTF::get<MachSendRight>(*m_bufferHandle).leakSendRight())).get();
-            break;
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , [&] (IPC::SharedBufferCopy& buffer) {
+            ASSERT(m_type == Type::CGDisplayList);
+            ASSERT([layer isKindOfClass:[WKCompositingLayer class]]);
+            if (![layer isKindOfClass:[WKCompositingLayer class]])
+                return;
+            [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
+            auto data = buffer.buffer()->createCFData();
+            [(WKCompositingLayer *)layer _setWKContentsDisplayList:data.get()];
         }
-        break;
-    case Type::Bitmap:
-        auto bitmap = ShareableBitmap::create(WTF::get<ShareableBitmap::Handle>(*m_bufferHandle));
-        layer.contents = (__bridge id)bitmap->makeCGImageCopy().get();
-        break;
-    }
+#endif
+    );
 }
 
 std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> RemoteLayerBackingStore::takePendingFlusher()

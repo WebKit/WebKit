@@ -26,22 +26,13 @@
 #import "config.h"
 #import "RemoteLayerTreeNode.h"
 
+#import "RemoteLayerTreeLayers.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
 #endif
-
-@interface WKPlainRemoteLayer : CALayer
-@end
-
-@implementation WKPlainRemoteLayer
-- (NSString *)description
-{
-    return WebKit::RemoteLayerTreeNode::appendLayerDescription(super.description, self);
-}
-@end
 
 namespace WebKit {
 
@@ -72,7 +63,7 @@ RemoteLayerTreeNode::~RemoteLayerTreeNode()
 
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID layerID)
 {
-    RetainPtr<CALayer> layer = adoptNS([[WKPlainRemoteLayer alloc] init]);
+    RetainPtr<CALayer> layer = adoptNS([[WKCompositingLayer alloc] init]);
     return makeUnique<RemoteLayerTreeNode>(layerID, WTFMove(layer));
 }
 

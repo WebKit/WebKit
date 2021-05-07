@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "RemoteLayerTreeLayers.h"
 
-#if ENABLE(GPU_PROCESS)
+#if PLATFORM(COCOA)
 
-#include "ShareableBitmap.h"
-#include "SharedBufferCopy.h"
-#include <wtf/MachSendRight.h>
-#include <wtf/Variant.h>
+#import "Logging.h"
+#import "RemoteLayerTreeNode.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-namespace WebKit {
-
-using ImageBufferBackendHandle = Variant<
-    ShareableBitmap::Handle
-#if PLATFORM(COCOA) // FIXME: This is really about IOSurface.
-    , MachSendRight
-#endif
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    , IPC::SharedBufferCopy
+#import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
 #endif
->;
 
-} // namespace WebKit
+@implementation WKCompositingLayer {
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    RetainPtr<CFDataRef> _contentsDisplayList;
+#endif
+}
 
-#endif // ENABLE(GPU_PROCESS)
+- (NSString *)description
+{
+    return WebKit::RemoteLayerTreeNode::appendLayerDescription(super.description, self);
+}
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+- (void)_setWKContentsDisplayList:(CFDataRef)data
+{
+    _contentsDisplayList = data;
+    [self setNeedsDisplay];
+}
+
+- (CFDataRef)_wkContentsDisplayList
+{
+    return _contentsDisplayList.get();
+}
+
+- (void)drawInContext:(CGContextRef)context
+{
+    if (!_contentsDisplayList)
+        return;
+    WKCGContextDrawCGCommandsEncodedData(context, _contentsDisplayList.get(), nullptr);
+}
+#endif // ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+
+@end
+
+#endif // PLATFORM(COCOA)

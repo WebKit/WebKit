@@ -1,3 +1,76 @@
+2021-05-07  Tim Horton  <timothy_horton@apple.com>
+
+        Add an experimental alternative display-list-based RemoteLayerBackingStore implementation
+        https://bugs.webkit.org/show_bug.cgi?id=225508
+
+        Reviewed by Sam Weinig.
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp: Added.
+        (WebKit::CGDisplayListImageBufferBackend::calculateMemoryCost):
+        (WebKit::CGDisplayListImageBufferBackend::create):
+        (WebKit::CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend):
+        (WebKit::CGDisplayListImageBufferBackend::createImageBufferBackendHandle const):
+        (WebKit::CGDisplayListImageBufferBackend::context const):
+        (WebKit::CGDisplayListImageBufferBackend::backendSize const):
+        (WebKit::CGDisplayListImageBufferBackend::bytesPerRow const):
+        (WebKit::CGDisplayListImageBufferBackend::copyNativeImage const):
+        (WebKit::CGDisplayListImageBufferBackend::toBGRAData const):
+        (WebKit::CGDisplayListImageBufferBackend::getImageData const):
+        (WebKit::CGDisplayListImageBufferBackend::putImageData):
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h: Added.
+        Add an ImageBuffer backend backed by a CG display list.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        Add a new RemoteLayerBackingStore type that uses CGDisplayListImageBufferBackend.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::supportsPartialRepaint):
+        Disable partial repaint if using display-list-based backing store,
+        because we don't currently have any way to mutate display lists.
+
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        When applying a display-list-based backing store to a layer, we just
+        pass the encodede data directly to the layer, and tell it to use the
+        display list to render.
+
+        * SourcesCocoa.txt:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm:
+        (WebKit::RemoteLayerTreeNode::createWithPlainLayer):
+        (-[WKPlainRemoteLayer description]): Deleted.
+        Move WKPlainRemoteLayer to RemoteLayerTreeLayers, and rename it to WKCompositingLayer.
+        It will now back all WKCompositingViews.
+
+        * UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.h: Added.
+        * UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm: Added.
+        (-[WKCompositingLayer description]):
+        (-[WKCompositingLayer _setWKContentsDisplayList:]):
+        (-[WKCompositingLayer _wkContentsDisplayList]):
+        (-[WKCompositingLayer drawInContext:]):
+        Make WKCompositingLayer replay the given display list in drawRect
+        (just because we're currently missing API to actually directly pass
+        the encoded display list data to CA).
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (+[WKCompositingView layerClass]):
+        Use WKCompositingLayer as the layer class for all WKCompositingViews.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/ImageBufferBackendHandle.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::updateBackingStore):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h:
+        (WebKit::RemoteLayerTreeContext::useCGDisplayListsForDOMRendering const):
+        (WebKit::RemoteLayerTreeContext::setUseCGDisplayListsForDOMRendering):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updatePreferences):
+        Plumb the internal feature flag from WebPreferences to RemoteLayerTreeContext
+        to PlatformCALayerRemote to RemoteLayerBackingStore; if the preference is
+        on and the feature is available, we'll always prefer display-list backed
+        surfaces over either of the bitmap types.
+
 2021-05-07  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Make AccessibilityReduceMotion test case work on iOS

@@ -738,6 +738,17 @@ UpgradeKnownHostsToHTTPSEnabled:
     WebKit:
       default: true
 
+UseCGDisplayListsForDOMRendering:
+  type: bool
+  humanReadableName: "Use CG Display Lists for DOM rendering"
+  humanReadableDescription: "Use CG Display Lists for DOM rendering"
+  webcoreBinding: none
+  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 UseGPUProcessForDOMRenderingEnabled:
   type: bool
   humanReadableName: "GPU Process: DOM Rendering"
