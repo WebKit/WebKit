@@ -642,6 +642,10 @@
     (literal "/dev/random")
     (literal "/dev/urandom"))
 
+(allow file-read* file-write-data
+    (literal "/dev/null")
+    (literal "/dev/zero"))
+
 (if (system-attribute apple-internal)
     (allow file-read* file-write-data file-ioctl
         (literal "/dev/dtracehelper"))

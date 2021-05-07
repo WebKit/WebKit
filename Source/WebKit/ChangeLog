@@ -1,3 +1,15 @@
+2021-05-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow file-read* and file-write-data for /dev/null and /dev/zero
+        https://bugs.webkit.org/show_bug.cgi?id=225482
+        <rdar://problem/77503594>
+
+        Reviewed by Per Arne Vollan.
+
+        Revise sandbox to allow read and write-data access to /dev/null and /dev/zero.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Retry asynchronously in WebProcessPool::getGPUProcessConnection() in case of failure
