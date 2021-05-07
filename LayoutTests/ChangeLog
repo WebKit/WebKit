@@ -1,5 +1,49 @@
 2021-05-06  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r276630. rdar://problem/77581089
+
+    [MathML] Assertion failure in RenderTreeNeedsLayoutChecker
+    https://bugs.webkit.org/show_bug.cgi?id=224903
+    
+    Patch by Frédéric Wang <fwang@igalia.com> on 2021-04-27
+    Reviewed by Alan Bujtas.
+    
+    Source/WebCore:
+    
+    After r226180, RenderMathMLRow no longer performs layout of its "embellished operator"
+    children only its core <mo> descendant, which is causing dirty layout.
+    
+    Test: mathml/vertical-embellished-op-dirty-layout.html
+    
+    * rendering/mathml/RenderMathMLRow.cpp:
+    (WebCore::RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren): always layout the
+    "embellished operator" child, after its core <mo>.
+    
+    LayoutTests:
+    
+    Add regression test with all vertical embellished operators (other than <mo>) supported
+    by WebKit.
+    
+    * mathml/vertical-embellished-op-dirty-layout-expected.txt: Added.
+    * mathml/vertical-embellished-op-dirty-layout.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276630 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-27  Frédéric Wang  <fwang@igalia.com>
+
+            [MathML] Assertion failure in RenderTreeNeedsLayoutChecker
+            https://bugs.webkit.org/show_bug.cgi?id=224903
+
+            Reviewed by Alan Bujtas.
+
+            Add regression test with all vertical embellished operators (other than <mo>) supported
+            by WebKit.
+
+            * mathml/vertical-embellished-op-dirty-layout-expected.txt: Added.
+            * mathml/vertical-embellished-op-dirty-layout.html: Added.
+
+2021-05-06  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275607. rdar://problem/77581135
 
     REGRESSION (r270849): Button content fails to render on apple.com "Blood Oxygen"/"ECG"
