@@ -159,6 +159,10 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-count
 # WPE Pass but marked as fail in wk2
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html
 
+# Avoid libsoup console messages as suggested in bug185254
+http/tests/cache/network-error-during-revalidation.html [ DumpJSConsoleLogInStdErr ]
+http/tests/xmlhttprequest/state-after-network-error.html [ DumpJSConsoleLogInStdErr ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
 # * KEEP THE SECTIONS SORTED ALPHABETICALLY.

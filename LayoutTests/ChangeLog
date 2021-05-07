@@ -1,3 +1,19 @@
+2021-05-06  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Garden a few more failures
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/inline/crash-when-revert-has-trailing-line-break-expected.txt: Added to keep
+          testing whether the crash happens instead of skipping.
+        * platform/wpe/fonts/sans-serif-expected.txt: Rebaseline after r275515.
+        * platform/wpe/fonts/serif-expected.txt: Ditto.
+        * platform/wpe/http/tests/cache/network-error-during-revalidation-expected.txt: Removed.
+          Using DumpJSConsoleLogInStdErr instead to reuse root baseline.
+        * platform/wpe/http/tests/xmlhttprequest/state-after-network-error-expected.txt: Ditto.
+        * platform/wpe/tables/mozilla/bugs/adforce_imgis_com-expected.txt: Added after r275515.
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Port Filesystem::fileMetadata() & Filesystem::getFileModificationTime() to std::filesystem
