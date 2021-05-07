@@ -1,3 +1,16 @@
+2021-05-06  Jean-Yves Avenard  <jya@apple.com>
+
+        ArtworkImageLoader can call callback with null value.
+        https://bugs.webkit.org/show_bug.cgi?id=225496
+        rdar://problem/77631799
+
+        Reviewed by Eric Carlson.
+
+        The ArtworkImageLoader can call the callback with null to indicate an error.
+
+        * Modules/mediasession/MediaMetadata.cpp:
+        (WebCore::MediaMetadata::refreshArtworkImage): Add null check
+
 2021-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [OpenSSL] Implement CryptoAlgorithmRSA*
