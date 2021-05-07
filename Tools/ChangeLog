@@ -1,3 +1,17 @@
+2021-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Add API test for FileSystem::fileExists() and FileSystem::fileMetadata() when dealing with symlinks to symlinks
+        https://bugs.webkit.org/show_bug.cgi?id=225491
+
+        Reviewed by Sam Weinig.
+
+        Update FileSystemTest::SetUp() to use a valid path when constructing the test symlink
+        (tempFileSymlinkPath). Add API test for FileSystem::fileExists() and FileSystem::fileMetadata()
+        when dealing with symlinks to symlinks.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-05-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WPE gardening

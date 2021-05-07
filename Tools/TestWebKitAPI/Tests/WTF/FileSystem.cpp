@@ -50,7 +50,9 @@ public:
         FileSystem::writeToFile(handle, FileSystemTestData, strlen(FileSystemTestData));
         FileSystem::closeFile(handle);
 
-        m_tempFileSymlinkPath = "tempTestFile-symlink";
+        m_tempFileSymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink", handle);
+        FileSystem::closeFile(handle);
+        FileSystem::deleteFile(m_tempFileSymlinkPath);
         FileSystem::createSymbolicLink(m_tempFilePath, m_tempFileSymlinkPath);
 
         // Create temp directory.
@@ -289,6 +291,45 @@ TEST_F(FileSystemTest, fileExistsBrokenSymlink)
     auto symlinkMetadata = FileSystem::fileMetadata(symlinkPath);
     ASSERT_TRUE(!!symlinkMetadata);
     EXPECT_EQ(symlinkMetadata->type, FileMetadata::Type::SymbolicLink);
+    EXPECT_TRUE(FileSystem::deleteFile(symlinkPath));
+}
+
+TEST_F(FileSystemTest, fileExistsSymlinkToSymlink)
+{
+    // Create a valid symlink to a symlink to a regular file.
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlink"_s);
+    EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkPath));
+    EXPECT_TRUE(FileSystem::fileExists(symlinkPath));
+
+    auto metadata = FileSystem::fileMetadata(symlinkPath);
+    ASSERT_TRUE(!!metadata);
+    EXPECT_EQ(metadata->type, FileMetadata::Type::SymbolicLink);
+
+    auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(symlinkPath);
+    ASSERT_TRUE(!!targetMetadata);
+    EXPECT_EQ(targetMetadata->type, FileMetadata::Type::File);
+
+    // Break the symlink by deleting the target.
+    EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
+
+    EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
+    EXPECT_FALSE(FileSystem::fileExists(tempFileSymlinkPath())); // fileExists() follows symlinks.
+    EXPECT_FALSE(FileSystem::fileExists(symlinkPath)); // fileExists() follows symlinks.
+
+    metadata = FileSystem::fileMetadata(symlinkPath);
+    ASSERT_TRUE(!!metadata);
+    EXPECT_EQ(metadata->type, FileMetadata::Type::SymbolicLink);
+
+    metadata = FileSystem::fileMetadata(tempFileSymlinkPath());
+    ASSERT_TRUE(!!metadata);
+    EXPECT_EQ(metadata->type, FileMetadata::Type::SymbolicLink);
+
+    targetMetadata = FileSystem::fileMetadataFollowingSymlinks(tempFileSymlinkPath());
+    EXPECT_TRUE(!targetMetadata);
+
+    targetMetadata = FileSystem::fileMetadataFollowingSymlinks(symlinkPath);
+    EXPECT_TRUE(!targetMetadata);
+
     EXPECT_TRUE(FileSystem::deleteFile(symlinkPath));
 }
 
