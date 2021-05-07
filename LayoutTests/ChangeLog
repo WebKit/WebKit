@@ -1,3 +1,10 @@
+2021-05-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
         Re-import css/mediaqueries/test_media_queries.html WPT
