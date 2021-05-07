@@ -1,5 +1,18 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/mediaqueries/test_media_queries.html WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225469
+
+        Unreviewed. Test gardening.
+
+        Pulls in https://github.com/web-platform-tests/wpt/pull/28881 to fix device specific test failures.
+        Also removes platform-specific test expectations which were added to that issue.
+
+        * web-platform-tests/css/mediaqueries/test_media_queries-expected.txt:
+        * web-platform-tests/css/mediaqueries/test_media_queries.html:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-fonts WPT
         https://bugs.webkit.org/show_bug.cgi?id=225455
 
