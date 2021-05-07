@@ -118,6 +118,10 @@ enum class TemporarySelectionOption : uint8_t {
 
     // Force the render tree to update selection state. Only respected on iOS.
     EnableAppearanceUpdates = 1 << 3,
+    
+    SmoothScroll = 1 << 4,
+    
+    OverrideSmoothScrollFeatureEnablment = 1 << 5,
 };
 
 class TemporarySelectionChange {

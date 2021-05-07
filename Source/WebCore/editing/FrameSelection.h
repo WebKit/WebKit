@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "ScrollAlignment.h"
+#include "ScrollBehavior.h"
 #include "Timer.h"
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
@@ -122,6 +123,8 @@ public:
         IsUserTriggered = 1 << 6,
         RevealSelection = 1 << 7,
         RevealSelectionUpToMainFrame = 1 << 8,
+        SmoothScroll = 1 << 9,
+        OverrideSmoothScrollFeatureEnablement = 1 << 10
     };
     static constexpr OptionSet<SetSelectionOption> defaultSetSelectionOptions(EUserTriggered = NotUserTriggered);
 
@@ -245,7 +248,7 @@ public:
 
     WEBCORE_EXPORT HTMLFormElement* currentForm() const;
 
-    WEBCORE_EXPORT void revealSelection(SelectionRevealMode = SelectionRevealMode::Reveal, const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
+    WEBCORE_EXPORT void revealSelection(SelectionRevealMode = SelectionRevealMode::Reveal, const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent, ScrollBehavior = ScrollBehavior::Instant, SmoothScrollFeatureEnablement = SmoothScrollFeatureEnablement::Default);
     WEBCORE_EXPORT void setSelectionFromNone();
 
     bool shouldShowBlockCursor() const { return m_shouldShowBlockCursor; }
@@ -260,7 +263,7 @@ public:
     void updateFromAssociatedLiveRange();
 
 private:
-    void updateAndRevealSelection(const AXTextStateChangeIntent&);
+    void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, SmoothScrollFeatureEnablement = SmoothScrollFeatureEnablement::Override);
     void updateDataDetectorsForSelection();
 
     bool setSelectionWithoutUpdatingAppearance(const VisibleSelection&, OptionSet<SetSelectionOption>, CursorAlignOnScroll, TextGranularity);

@@ -139,6 +139,7 @@ struct ScrollRectToVisibleOptions {
     const ScrollAlignment& alignY { ScrollAlignment::alignCenterIfNeeded };
     ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
     ScrollBehavior behavior { ScrollBehavior::Auto };
+    SmoothScrollFeatureEnablement overrideFeatureEnablement { SmoothScrollFeatureEnablement::Default };
 };
 
 using ScrollingScope = uint64_t;

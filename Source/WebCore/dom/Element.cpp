@@ -932,7 +932,8 @@ void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& ar
         isHorizontal ? alignX : alignY,
         isHorizontal ? alignY : alignX,
         ShouldAllowCrossOriginScrolling::No,
-        options.behavior.valueOr(ScrollBehavior::Auto)
+        options.behavior.valueOr(ScrollBehavior::Auto),
+        SmoothScrollFeatureEnablement::Default
     };
     renderer()->scrollRectToVisible(absoluteBounds, insideFixed, visibleOptions);
 }

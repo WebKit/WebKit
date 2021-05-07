@@ -260,11 +260,9 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     
     strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
     
-    if (scroll == ScrollToHighlight::Yes) {
-        OptionSet<TemporarySelectionOption> temporarySelectionOptions;
-        temporarySelectionOptions.add(TemporarySelectionOption::RevealSelection);
-        TemporarySelectionChange selectionChange(*strongDocument, { range.value() }, temporarySelectionOptions);
-    }
+    if (scroll == ScrollToHighlight::Yes)
+        TemporarySelectionChange selectionChange(*strongDocument, { range.value() }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::SmoothScroll, TemporarySelectionOption::OverrideSmoothScrollFeatureEnablment });
+
     return true;
 }
 
