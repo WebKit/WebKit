@@ -2261,3 +2261,5 @@ webkit.org/b/224842 [ BigSur Debug ] http/tests/security/webaudio-render-remote-
 webkit.org/b/225421 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Pass Failure ]
 
 webkit.org/b/225484 imported/w3c/web-platform-tests/css/css-animations/translation-animation-subpixel-offset.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/225425 [ Debug ] webgl/1.0.3/conformance/glsl/misc/expression-list-in-declarator-initializer.html [ Pass Timeout ]
