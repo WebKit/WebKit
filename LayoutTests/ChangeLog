@@ -1,5 +1,16 @@
 2021-05-07  Robert Jenner  <jenner@apple.com>
 
+        REGRESSION: [ BigSurE Release wk 2] webrtc/direction-change.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=225523
+
+        Unreviewed test gardening.
+
+        Updating test expectation to Pass Failure. 
+
+        * platform/mac/TestExpectations:
+
+2021-05-07  Robert Jenner  <jenner@apple.com>
+
         [ Mac ] accessibility/mac/expanded-notification.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=205410
 

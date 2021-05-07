@@ -2267,3 +2267,5 @@ webkit.org/b/225425 [ Debug ] webgl/1.0.3/conformance/glsl/misc/expression-list-
 webkit.org/b/225469 imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Failure ]
 
 webkit.org/b/205410 accessibility/mac/expanded-notification.html [ Pass Failure ]
+
+webkit.org/b/225523 webrtc/direction-change.html [ Pass Failure ]
