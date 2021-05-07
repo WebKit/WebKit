@@ -1,3 +1,21 @@
+2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Set the -isSourceEditable property when presenting webpage translation popup
+        https://bugs.webkit.org/show_bug.cgi?id=225515
+        <rdar://problem/77658040>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::handleTranslation):
+        * WebView/WebView.mm:
+        (-[WebView _handleContextMenuTranslation:]):
+        (-[WebView _handleContextMenuTranslation:selectionBounds:menuLocation:]): Deleted.
+        * WebView/WebViewInternal.h:
+
 2021-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused references to PageGroup from WebKitLegacy

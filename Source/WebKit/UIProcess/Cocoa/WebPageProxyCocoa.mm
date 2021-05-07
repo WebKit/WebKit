@@ -626,9 +626,9 @@ bool WebPageProxy::canHandleContextMenuTranslation() const
     return pageClient().canHandleContextMenuTranslation();
 }
 
-void WebPageProxy::handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& locationInView)
+void WebPageProxy::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
-    return pageClient().handleContextMenuTranslation(text, boundsInView, locationInView);
+    return pageClient().handleContextMenuTranslation(info);
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)

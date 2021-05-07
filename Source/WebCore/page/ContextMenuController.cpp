@@ -63,6 +63,7 @@
 #include "ResourceRequest.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "TranslationContextMenuInfo.h"
 #include "TypingCommand.h"
 #include "UserTypingGestureIndicator.h"
 #include "WindowFeatures.h"
@@ -527,9 +528,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagTranslate:
 #if HAVE(TRANSLATION_UI_SERVICES)
         if (auto view = makeRefPtr(frame->view())) {
-            auto selectionBounds = view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds()));
-            auto location = view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame());
-            m_client.handleTranslation(m_context.hitTestResult().selectedText(), selectionBounds, location);
+            m_client.handleTranslation({
+                m_context.hitTestResult().selectedText(),
+                view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())),
+                view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame()),
+                m_context.hitTestResult().isContentEditable() ? TranslationContextMenuMode::Editable : TranslationContextMenuMode::NonEditable,
+            });
         }
 #endif
         break;

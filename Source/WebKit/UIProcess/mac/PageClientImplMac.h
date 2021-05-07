@@ -283,7 +283,7 @@ private:
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuTranslation() const override;
-    void handleContextMenuTranslation(const String&, const WebCore::IntRect&, const WebCore::IntPoint&) override;
+    void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) override;
 #endif
 
     NSView *m_view;

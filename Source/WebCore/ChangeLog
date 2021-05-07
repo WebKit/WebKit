@@ -1,3 +1,30 @@
+2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Set the -isSourceEditable property when presenting webpage translation popup
+        https://bugs.webkit.org/show_bug.cgi?id=225515
+        <rdar://problem/77658040>
+
+        Reviewed by Tim Horton.
+
+        Set `-[LTUITranslationViewController isSourceEditable]` to `YES` when showing the context menu for editable
+        content. Instead of plumbing another boolean flag through `ContextMenuClient` and into the client layers through
+        `handleTranslation()`, we roll all of the webpage translation context menu parameters into a single object
+        (`TranslationContextMenuInfo`), including a new flag indicating whether or not the translation controller should
+        be shown in "editable" mode.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        * page/ContextMenuClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/TranslationContextMenuInfo.h: Added.
+
+        Pull the translated text string, selection bounds, menu location, and the new mode flag into a separate struct.
+
+        (WebCore::TranslationContextMenuInfo::encode const):
+        (WebCore::TranslationContextMenuInfo::decode):
+
 2021-05-07  Chris Dumez  <cdumez@apple.com>
 
         AudioWorkletProcessor which does not extend base class crashes Safari

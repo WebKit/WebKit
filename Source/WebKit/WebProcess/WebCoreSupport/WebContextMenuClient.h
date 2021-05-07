@@ -57,7 +57,7 @@ private:
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)
-    void handleTranslation(const String&, const WebCore::IntRect& selectionBoundsInRootView, const WebCore::IntPoint& locationInRootView) final;
+    void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
 #endif
 
 #if PLATFORM(GTK)

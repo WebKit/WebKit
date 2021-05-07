@@ -228,7 +228,7 @@ messages -> WebPageProxy {
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
-    HandleContextMenuTranslation(String text, WebCore::IntRect boundsInView, WebCore::IntPoint locationInView)
+    HandleContextMenuTranslation(struct WebCore::TranslationContextMenuInfo info)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

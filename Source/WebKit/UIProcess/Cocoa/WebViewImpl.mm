@@ -107,6 +107,7 @@
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
+#import <WebCore/TranslationContextMenuInfo.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
@@ -144,6 +145,10 @@
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 #import <TranslationUIServices/LTUITranslationViewController.h>
+
+@interface LTUITranslationViewController (Staging_77660675)
+@property (nonatomic, copy) void(^replacementHandler)(NSAttributedString *);
+@end
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
 SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
@@ -5586,7 +5591,7 @@ bool WebViewImpl::canHandleContextMenuTranslation() const
     return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
 }
 
-void WebViewImpl::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const IntPoint& menuLocation)
+void WebViewImpl::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
     if (!canHandleContextMenuTranslation()) {
         ASSERT_NOT_REACHED();
@@ -5595,8 +5600,15 @@ void WebViewImpl::handleContextMenuTranslation(const String& text, const IntRect
 
     auto view = m_view.get();
     auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
-    auto textToTranslate = adoptNS([[NSAttributedString alloc] initWithString:text]);
-    [translationViewController setText:textToTranslate.get()];
+    [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text]).get()];
+    if (info.mode == WebCore::TranslationContextMenuMode::Editable && [translationViewController respondsToSelector:@selector(setReplacementHandler:)]) {
+        [translationViewController setIsSourceEditable:YES];
+        [translationViewController setReplacementHandler:[this, weakThis = makeWeakPtr(*this)](NSAttributedString *string) {
+            if (weakThis)
+                insertText(string.string);
+        }];
+    }
+
     if (NSEqualSizes([translationViewController preferredContentSize], NSZeroSize))
         [translationViewController setPreferredContentSize:NSMakeSize(400, 400)];
 
@@ -5608,14 +5620,14 @@ void WebViewImpl::handleContextMenuTranslation(const String& text, const IntRect
     [popover setContentSize:[translationViewController preferredContentSize]];
 
     NSRectEdge preferredEdge;
-    auto aim = menuLocation.x();
-    auto highlight = boundsInView.center().x();
+    auto aim = info.locationInRootView.x();
+    auto highlight = info.selectionBoundsInRootView.center().x();
     if (aim == highlight)
         preferredEdge = [view userInterfaceLayoutDirection] == NSUserInterfaceLayoutDirectionRightToLeft ? NSRectEdgeMinX : NSRectEdgeMaxX;
     else
         preferredEdge = aim > highlight ? NSRectEdgeMaxX : NSRectEdgeMinX;
 
-    [popover showRelativeToRect:boundsInView ofView:view.get() preferredEdge:preferredEdge];
+    [popover showRelativeToRect:info.selectionBoundsInRootView ofView:view.get() preferredEdge:preferredEdge];
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

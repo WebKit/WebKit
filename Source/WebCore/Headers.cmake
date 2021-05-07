@@ -945,6 +945,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/SuspendableTimer.h
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
+    page/TranslationContextMenuInfo.h
     page/UserContentController.h
     page/UserContentProvider.h
     page/UserContentTypes.h

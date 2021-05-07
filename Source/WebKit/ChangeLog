@@ -1,3 +1,31 @@
+2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Set the -isSourceEditable property when presenting webpage translation popup
+        https://bugs.webkit.org/show_bug.cgi?id=225515
+        <rdar://problem/77658040>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::handleContextMenuTranslation):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleContextMenuTranslation):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::handleContextMenuTranslation):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::handleTranslation):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleContextMenuTranslation):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-05-07  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK4] Rewrite GTK gesture support to work for both 3.x and 4.x.

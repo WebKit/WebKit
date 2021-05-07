@@ -247,6 +247,10 @@ struct ViewportArguments;
 #if ENABLE(ATTACHMENT_ELEMENT)
 class HTMLAttachmentElement;
 #endif
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+struct TranslationContextMenuInfo;
+#endif
 }
 
 namespace WebKit {
@@ -1396,7 +1400,7 @@ public:
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
-    void handleContextMenuTranslation(const String& text, const WebCore::IntRect& selectionBoundsInView, const WebCore::IntPoint& menuLocationInView);
+    void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

@@ -149,9 +149,9 @@ bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) c
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 
-void WebContextMenuClient::handleTranslation(const String& text, const IntRect& selectionBoundsInRootView, const IntPoint& locationInRootView)
+void WebContextMenuClient::handleTranslation(const TranslationContextMenuInfo& info)
 {
-    [m_webView _handleContextMenuTranslation:text selectionBounds:selectionBoundsInRootView menuLocation:locationInRootView];
+    [m_webView _handleContextMenuTranslation:info];
 }
 
 #endif

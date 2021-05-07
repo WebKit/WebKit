@@ -215,6 +215,7 @@
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
+#import <WebCore/TranslationContextMenuInfo.h>
 #import <WebCore/UTIRegistry.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/UserContentController.h>
@@ -351,6 +352,10 @@
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 #import <TranslationUIServices/LTUITranslationViewController.h>
+
+@interface LTUITranslationViewController (Staging_77660675)
+@property (nonatomic, copy) void(^replacementHandler)(NSAttributedString *);
+@end
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
 SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
@@ -9638,7 +9643,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
 }
 
-- (void)_handleContextMenuTranslation:(const String&)text selectionBounds:(const WebCore::IntRect&)selectionBoundsInRootView menuLocation:(const WebCore::IntPoint&)locationInRootView
+- (void)_handleContextMenuTranslation:(const WebCore::TranslationContextMenuInfo&)info
 {
     if (!WebView._canHandleContextMenuTranslation) {
         ASSERT_NOT_REACHED();
@@ -9646,10 +9651,17 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     }
 
     auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
-    [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:text]).get()];
+    [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text]).get()];
+    if (info.mode == WebCore::TranslationContextMenuMode::Editable && [translationViewController respondsToSelector:@selector(setReplacementHandler:)]) {
+        [translationViewController setIsSourceEditable:YES];
+        [translationViewController setReplacementHandler:[weakSelf = WeakObjCPtr<WebView>(self)](NSAttributedString *string) {
+            auto strongSelf = weakSelf.get();
+            [strongSelf insertText:string.string];
+        }];
+    }
 
-    auto convertedSelectionBounds = [self _convertRectFromRootView:selectionBoundsInRootView];
-    auto convertedMenuLocation = [self _convertPointFromRootView:locationInRootView];
+    auto convertedSelectionBounds = [self _convertRectFromRootView:info.selectionBoundsInRootView];
+    auto convertedMenuLocation = [self _convertPointFromRootView:info.locationInRootView];
 
     auto popover = adoptNS([[NSPopover alloc] init]);
     [popover setBehavior:NSPopoverBehaviorTransient];

@@ -244,6 +244,7 @@
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/TranslationContextMenuInfo.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <WebCore/UserInputBridge.h>
@@ -7571,9 +7572,9 @@ void WebPage::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completi
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
-void WebPage::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const IntPoint& locationInView)
+void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
-    send(Messages::WebPageProxy::HandleContextMenuTranslation(text, boundsInView, locationInView));
+    send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
 }
 
 #endif
