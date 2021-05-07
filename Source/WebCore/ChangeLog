@@ -1,3 +1,22 @@
+2021-05-07  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in InsertTextCommand::positionInsideTextNode
+        https://bugs.webkit.org/show_bug.cgi?id=223753
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/deleting/selection-on-empty-table-row.html
+
+        This is a follow-up of bug 213514, where removePreviouslySelectedEmptyTableRows was
+        modified to ensure the selection is properly updated after deleting the last row. This
+        patch does the same for other rows.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows): Update comment
+        about calling raw removeNode and move it to the top of the function. Replace all the calls
+        to CompositeEditCommand::removeNode with CompositeEditCommand::removeNodeUpdatingStates so
+        that the selection is adjusted.
+
 2021-05-07  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Closing the GPU Process should clear all the back pointers from ItemBuffer to RemoteRenderingBackendProxy

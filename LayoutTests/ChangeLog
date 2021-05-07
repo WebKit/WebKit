@@ -1,3 +1,15 @@
+2021-05-07  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in InsertTextCommand::positionInsideTextNode
+        https://bugs.webkit.org/show_bug.cgi?id=223753
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * editing/deleting/selection-on-empty-table-row-expected.txt: Added.
+        * editing/deleting/selection-on-empty-table-row.html: Added.
+
 2021-05-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
