@@ -1,5 +1,16 @@
 2021-05-06  Robert Jenner  <jenner@apple.com>
 
+        [ macOS ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224396
+
+        Unreviewed test gardening.
+
+        Updating expectations to slow.
+
+        * platform/mac/TestExpectations:
+
+2021-05-06  Robert Jenner  <jenner@apple.com>
+
         [MacOS] animations/keyframe-pseudo-shadow.html is flakey failing
         https://bugs.webkit.org/show_bug.cgi?id=221491
 
