@@ -679,3 +679,10 @@ WI.DefaultAudits.testForInvalidAriaHiddenValue = function() {
     let domNodes = Array.from(document.querySelectorAll(`[aria-hidden]:not([aria-hidden="true"], [aria-hidden="false"])`));
     return {level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["aria-hidden"]};
 };
+
+WI.DefaultAudits.newAuditPlaceholder = function() {
+    let result = {
+        level: "pass",
+    };
+    return result;
+};

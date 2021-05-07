@@ -1,3 +1,22 @@
+2021-05-07  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Default source for new test cases is minified
+        https://bugs.webkit.org/show_bug.cgi?id=225546
+
+        Reviewed by Devin Rousso.
+
+        Move the placeholder test code to `WI.DefaultAudits` as part of the non-minified sources so that new audit test
+        cases do not have their default placeholder script minified. This also allows us to remove
+        `WI.AuditTestCase.stringifyFunction` as it is no longer needed.
+
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.stringifyFunction): Deleted.
+        * UserInterface/NonMinified/DefaultAudits.js:
+        (WI.DefaultAudits.newAuditPlaceholder):
+        * UserInterface/Views/CreateAuditPopover.js:
+        (WI.CreateAuditPopover.prototype.dismiss):
+        (WI.CreateAuditPopover.prototype.dismiss.const.placeholderTestFunction): Deleted.
+
 2021-05-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add assertion for `WI.View` re-entrancy
