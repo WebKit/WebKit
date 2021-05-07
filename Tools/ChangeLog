@@ -1,3 +1,19 @@
+2021-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not try to remove and already removed node while deleting selection
+        https://bugs.webkit.org/show_bug.cgi?id=224893
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new API to allow tests to trigger a force repaint on load finished.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::frameDidChangeLocation):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::displayOnLoadFinish):
+        (WTR::TestRunner::shouldDisplayOnLoadFinish):
+
 2021-05-07  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Make AccessibilityReduceMotion test case work on iOS

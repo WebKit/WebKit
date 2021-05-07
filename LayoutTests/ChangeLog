@@ -1,3 +1,13 @@
+2021-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not try to remove and already removed node while deleting selection
+        https://bugs.webkit.org/show_bug.cgi?id=224893
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/inserting/insert-text-force-repaint-on-load-crash-expected.txt: Added.
+        * editing/inserting/insert-text-force-repaint-on-load-crash.html: Added.
+
 2021-05-07  Robert Jenner  <jenner@apple.com>
 
         REGRESSION: [ BigSurE Release wk 2] webrtc/video-replace-muted-track.html is a flaky text failure

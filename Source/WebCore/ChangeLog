@@ -1,3 +1,15 @@
+2021-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not try to remove and already removed node while deleting selection
+        https://bugs.webkit.org/show_bug.cgi?id=224893
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/inserting/insert-text-force-repaint-on-load-crash.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode): Return early if the given node doesn't have a parent anymore.
+
 2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Set the -isSourceEditable property when presenting webpage translation popup
