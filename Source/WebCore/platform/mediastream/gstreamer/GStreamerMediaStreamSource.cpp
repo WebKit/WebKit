@@ -240,28 +240,46 @@ public:
 
     void trackStarted(MediaStreamTrackPrivate&) final { };
     void trackEnded(MediaStreamTrackPrivate&) final;
-
-    void trackEnabledChanged(MediaStreamTrackPrivate& track) final
-    {
-        m_enabled = track.enabled();
-    }
-
+    void trackEnabledChanged(MediaStreamTrackPrivate&) final { };
     void trackMutedChanged(MediaStreamTrackPrivate&) final { };
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { };
     void readyStateChanged(MediaStreamTrackPrivate&) final { };
 
     void videoSampleAvailable(MediaSample& sample) final
     {
-        if (!m_enabled || !m_parent)
+        if (!m_parent)
             return;
 
         auto* gstSample = static_cast<MediaSampleGStreamer*>(&sample)->platformSample().sample.gstSample;
-        pushSample(gstSample);
+        if (m_track.enabled()) {
+            pushSample(gstSample);
+            return;
+        }
+
+        // In case the track is disabled, emit a black I420 frame.
+        auto caps = adoptGRef(gst_caps_copy(gst_sample_get_caps(gstSample)));
+        gst_caps_set_simple(caps.get(), "format", G_TYPE_STRING, "I420", nullptr);
+
+        GstVideoInfo info;
+        gst_video_info_from_caps(&info, caps.get());
+
+        auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
+        {
+            GstMappedBuffer data(buffer, GST_MAP_WRITE);
+            auto yOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 1);
+            auto uOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 2);
+            memset(data.data(), 0, yOffset);
+            memset(data.data() + yOffset, 128, uOffset);
+        }
+        gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, GST_VIDEO_INFO_WIDTH(&info), GST_VIDEO_INFO_HEIGHT(&info), 3, info.offset, info.stride);
+        auto blackSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
+        pushSample(blackSample.get());
     }
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription&, size_t) final
     {
-        if (!m_enabled || !m_parent)
+        // TODO: We likely need to emit silent audio frames in case the track is disabled.
+        if (!m_track.enabled() || !m_parent)
             return;
 
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
@@ -273,7 +291,6 @@ private:
     GstElement* m_parent { nullptr };
     MediaStreamTrackPrivate& m_track;
     GRefPtr<GstElement> m_src;
-    bool m_enabled { true };
     GstClockTime m_firstBufferPts { GST_CLOCK_TIME_NONE };
     bool m_enoughData { false };
     bool m_needsDiscont { false };

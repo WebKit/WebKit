@@ -1,3 +1,12 @@
+2021-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][MediaStream] Emit black frames for disabled video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=225511
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag mediastream test now passing.
+
 2021-05-07  Frédéric Wang  <fwang@igalia.com>
 
         Crash in ApplyStyleCommand::applyRelativeFontStyleChange
