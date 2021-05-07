@@ -1,3 +1,14 @@
+2021-05-06  Eleni Maria Stea  <estea@igalia.com>
+
+        Removed the assertion m_numParameters >= 0, it is always true as
+        m_numParameters is unsigned.
+        https://bugs.webkit.org/show_bug.cgi?id=225457
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+
 2021-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         Make some things easier to dataLog in wasm

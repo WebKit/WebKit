@@ -497,7 +497,6 @@ public:
 
     unsigned numberOfArgumentValueProfiles()
     {
-        ASSERT(m_numParameters >= 0);
         ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters) || !Options::useJIT());
         return m_argumentValueProfiles.size();
     }
