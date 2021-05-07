@@ -1,3 +1,14 @@
+2021-05-07  Robert Jenner  <jenner@apple.com>
+
+        [ Mac ] accessibility/mac/expanded-notification.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205410
+
+        Unreviewed test gardening.
+
+        Updating test expectations to include all mac. 
+
+        * platform/mac/TestExpectations:
+
 2021-05-07  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION (r277071): [Intel Mac] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html is failing
