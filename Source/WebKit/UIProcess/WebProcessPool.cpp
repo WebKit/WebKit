@@ -527,10 +527,16 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, G
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, protectedThis = makeRef(*this), parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
-        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy)) {
-            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
-            ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, parameters, WTFMove(reply));
+    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = makeWeakPtr(*this), parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
+            // Retry on the next RunLoop iteration because we may be inside the WebProcessPool destructor.
+            RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), parameters = WTFMove(parameters), reply = WTFMove(reply)] () mutable {
+                if (weakThis && webProcessProxy) {
+                    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
+                    ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, parameters, WTFMove(reply));
+                } else
+                    reply({ });
+            });
             return;
         }
         reply(connectionInfo);

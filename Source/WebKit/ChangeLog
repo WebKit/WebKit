@@ -1,3 +1,18 @@
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Retry asynchronously in WebProcessPool::getGPUProcessConnection() in case of failure
+        https://bugs.webkit.org/show_bug.cgi?id=225486
+
+        Reviewed by Alex Christensen.
+
+        Retry asynchronously in WebProcessPool::getGPUProcessConnection(), similarly to what
+        we do in WebsiteDataStore::getNetworkProcessConnection(). As a result, we no longer
+        need to ref the WebProcessPool in the lambda and we avoid retrying unnecessarily
+        when the WebProcessPool is getting destroyed.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+
 2021-05-06  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] Reduce MediaPlayer polling frequency when possible
