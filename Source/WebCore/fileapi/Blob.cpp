@@ -266,7 +266,17 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
         void didStartLoading() final { }
         void didReceiveData() final
         {
-            controller().enqueue(m_loader->takeRawData());
+            auto result = m_loader->arrayBufferResult();
+            if (!result)
+                return;
+
+            if (m_loader->isCompleted() && !m_bytesRead)
+                controller().enqueue(WTFMove(result));
+            else {
+                auto bytesLoaded = m_loader->bytesLoaded();
+                controller().enqueue(result->slice(m_bytesRead, bytesLoaded));
+                m_bytesRead = bytesLoaded;
+            }
         }
         void didFinishLoading() final
         {
@@ -278,6 +288,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
         }
 
         UniqueRef<FileReaderLoader> m_loader;
+        size_t m_bytesRead { 0 };
     };
 
     auto* globalObject = scriptExecutionContext.globalObject();

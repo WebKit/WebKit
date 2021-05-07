@@ -1,3 +1,45 @@
+2021-05-06  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r271669. rdar://problem/77580999
+
+    Fix nullptr dereference introduced in r268228
+    https://bugs.webkit.org/show_bug.cgi?id=220776
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-01-20
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Instead of taking data from the FileReaderLoader, which it assumes it still has later,
+    only give the bytes to JavaScript that have been received since last time we called didReceiveData.
+    This makes blob.stream correct and not crash.
+    
+    Test: fast/files/blob-stream-crash-2.html
+    
+    * fileapi/Blob.cpp:
+    (WebCore::Blob::stream):
+    * fileapi/FileReaderLoader.cpp:
+    (WebCore::FileReaderLoader::takeRawData): Deleted.
+    * fileapi/FileReaderLoader.h:
+    (WebCore::FileReaderLoader::totalBytes const):
+    
+    LayoutTests:
+    
+    * fast/files/blob-stream-crash-2-expected.txt: Added.
+    * fast/files/blob-stream-crash-2.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271669 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-20  Alex Christensen  <achristensen@webkit.org>
+
+            Fix nullptr dereference introduced in r268228
+            https://bugs.webkit.org/show_bug.cgi?id=220776
+
+            Reviewed by Chris Dumez.
+
+            * fast/files/blob-stream-crash-2-expected.txt: Added.
+            * fast/files/blob-stream-crash-2.html: Added.
+
 2021-04-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276688. rdar://problem/77326513

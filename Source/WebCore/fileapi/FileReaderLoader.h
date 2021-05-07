@@ -79,7 +79,6 @@ public:
     WEBCORE_EXPORT RefPtr<JSC::ArrayBuffer> arrayBufferResult() const;
     unsigned bytesLoaded() const { return m_bytesLoaded; }
     unsigned totalBytes() const { return m_totalBytes; }
-    RefPtr<JSC::ArrayBuffer> takeRawData();
     Optional<ExceptionCode> errorCode() const { return m_errorCode; }
 
     void setEncoding(const String&);
@@ -87,14 +86,14 @@ public:
 
     const URL& url() { return m_urlForReading; }
 
+    bool isCompleted() const;
+
 private:
     void terminate();
     void cleanup();
     void failed(ExceptionCode);
     void convertToText();
     void convertToDataURL();
-
-    bool isCompleted() const;
 
     static ExceptionCode httpStatusCodeToErrorCode(int);
     static ExceptionCode toErrorCode(BlobResourceHandle::Error);
