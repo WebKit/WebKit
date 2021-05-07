@@ -11,10 +11,6 @@ list(APPEND WebKit_SOURCES
     Platform/haiku/ModuleHaiku.cpp
     Platform/unix/SharedMemoryUnix.cpp
 
-    PluginProcess/unix/PluginControllerProxyUnix.cpp
-    PluginProcess/unix/PluginProcessMainUnix.cpp
-    PluginProcess/unix/PluginProcessUnix.cpp
-
     Shared/WebCoreArgumentCoders.cpp
     Shared/haiku/AuxiliaryProcessMainHaiku.cpp
     Shared/haiku/ProcessExecutablePathHaiku.cpp
@@ -26,9 +22,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/DefaultUndoController.cpp
     UIProcess/Launcher/haiku/ProcessLauncherHaiku.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
-    UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
-    UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
-    UIProcess/WebStorage/StorageManager.cpp
     UIProcess/WebsiteData/haiku/WebsiteDataStoreHaiku.cpp
     UIProcess/haiku/BackingStoreHaiku.cpp
     UIProcess/haiku/TextCheckerHaiku.cpp
@@ -40,7 +33,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/Cookies/haiku/WebCookieManagerHaiku.cpp
     WebProcess/InjectedBundle/haiku/InjectedBundleHaiku.cpp
     WebProcess/InjectedBundle/haiku/InjectedBundleHaiku.cpp
-    WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
     WebProcess/WebCoreSupport/haiku/WebContextMenuClientHaiku.cpp
     WebProcess/WebCoreSupport/haiku/WebEditorClientHaiku.cpp
     WebProcess/WebCoreSupport/haiku/WebFrameNetworkingContext.cpp
@@ -81,7 +73,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/text"
-    "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/fileapi"
 )
 
@@ -149,6 +140,6 @@ set(WebKit_FORWARDING_HEADERS_FILES
     Platform/IPC/unix/UnixMessage.h
 )
 
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit_FORWARDING_HEADERS_FILES} DIRECTORIES 
-${WebKit_FORWARDING_HEADERS_DIRECTORIES})
+#WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit_FORWARDING_HEADERS_FILES} DIRECTORIES 
+#${WebKit_FORWARDING_HEADERS_DIRECTORIES})
 
