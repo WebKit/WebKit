@@ -1,5 +1,16 @@
 2021-05-06  Robert Jenner  <jenner@apple.com>
 
+        [MacOS] animations/keyframe-pseudo-shadow.html is flakey failing
+        https://bugs.webkit.org/show_bug.cgi?id=221491
+
+        Unreviewed test garending.
+
+        Updating test expectation. Was previously set as Pass Failure, but is an Image failure. Added ImageOnly to Failure expectation.
+
+        * platform/mac/TestExpectations:
+
+2021-05-06  Robert Jenner  <jenner@apple.com>
+
         [ macOS wk2 ] fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html (layout-test) is a flaky
         https://bugs.webkit.org/show_bug.cgi?id=225498
 
