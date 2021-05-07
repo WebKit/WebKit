@@ -1,3 +1,38 @@
+2021-05-06  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276671. rdar://problem/77620763
+
+    HashTableConstIterator's consistency assertion fails while closing m_webIDBServers in NetworkProcess::didClose since r275846
+    https://bugs.webkit.org/show_bug.cgi?id=225089
+    
+    Reviewed by Chris Dumez.
+    
+    The items of m_webIDBServers were removed while iterating
+    m_webIDBServers.
+    
+    Move m_webIDBServers to a temporary HashMap before iterating.
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::didClose):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276671 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+            HashTableConstIterator's consistency assertion fails while closing m_webIDBServers in NetworkProcess::didClose since r275846
+            https://bugs.webkit.org/show_bug.cgi?id=225089
+
+            Reviewed by Chris Dumez.
+
+            The items of m_webIDBServers were removed while iterating
+            m_webIDBServers.
+
+            Move m_webIDBServers to a temporary HashMap before iterating.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::didClose):
+
 2021-05-03  Russell Epstein  <repstein@apple.com>
 
        Cherry-pick r276618. rdar://problem/77326484
