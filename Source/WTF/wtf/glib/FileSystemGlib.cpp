@@ -118,24 +118,6 @@ String filenameForDisplay(const String& string)
 #endif
 }
 
-static bool getFileStat(const String& path, GStatBuf* statBuffer)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return false;
-
-    return g_stat(filename.data(), statBuffer) != -1;
-}
-
-static bool getFileLStat(const String& path, GStatBuf* statBuffer)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return false;
-
-    return g_lstat(filename.data(), statBuffer) != -1;
-}
-
 bool getFileSize(PlatformFileHandle handle, long long& resultSize)
 {
     GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
