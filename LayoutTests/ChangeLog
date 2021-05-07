@@ -1,3 +1,14 @@
+2021-05-07  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Release wk2 ARM64 ] http/tests/misc/repeat-open-cancel.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225526
+
+        Unreviewed test gardening.
+
+        Updating test expectations to Pass Timeout for Bigsur wk2 Release arm64.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not try to remove and already removed node while deleting selection
