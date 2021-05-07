@@ -1,3 +1,20 @@
+2021-05-07  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Closing the GPU Process should clear all the back pointers from ItemBuffer to RemoteRenderingBackendProxy
+        https://bugs.webkit.org/show_bug.cgi?id=224744
+        <rdar://74592639>
+
+        Reviewed by Ryosuke Niwa.
+
+        RemoteRenderingBackendProxy::gpuProcessConnectionDidClose() clears the
+        the backends of all its RemoteImageBufferProxys. It also clears all the
+        SharedMemory which are referenced by the ItemBufferHandles.
+
+        So DisplayList::ImageBuffer::clearBackend() should clear all the
+        ItemBufferHandles of its DisplayList.
+
+        * platform/graphics/displaylists/DisplayListImageBuffer.h:
+
 2021-05-06  Jean-Yves Avenard  <jya@apple.com>
 
         ArtworkImageLoader can call callback with null value.
