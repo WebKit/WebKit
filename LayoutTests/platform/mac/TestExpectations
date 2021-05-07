@@ -2229,7 +2229,7 @@ webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeou
 
 webkit.org/b/222748 [ Debug ] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html [ Pass Failure ]
 
-webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
+webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Slow ]
 
 webkit.org/b/223973 [ Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html [ Pass Failure ]
 
