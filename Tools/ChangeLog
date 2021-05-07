@@ -1,3 +1,13 @@
+2021-05-07  Aakash Jain  <aakash_jain@apple.com>
+
+        Use test-tube emoji for EWS status bubbles for tester queues
+        https://bugs.webkit.org/show_bug.cgi?id=225517
+
+        Reviewed by Alan Bujtas.
+
+        * CISupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+
 2021-05-07  Chris Dumez  <cdumez@apple.com>
 
         Add API test for FileSystem::fileExists() and FileSystem::fileMetadata() when dealing with symlinks to symlinks

@@ -74,7 +74,7 @@ class StatusBubble(View):
                      '^Updated branch information$', '^worker .* ready$']
     DAYS_TO_CHECK = 1
     BUILDER_ICON = u'\U0001f6e0'
-    TESTER_ICON = u'\U0001f52c'
+    TESTER_ICON = u'\U0001f9ea'
     BUILD_RETRY_MSG = 'retrying build'
 
     def _build_bubble(self, patch, queue, hide_icons=False):
