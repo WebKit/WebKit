@@ -4606,3 +4606,14 @@ webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Skip ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Skip ]
 
+# CSS will-change failures
+webkit.org/b/224928 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html [ ImageOnlyFailure ]
+webkit.org/b/225035 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html [ ImageOnlyFailure ]
+webkit.org/b/225034 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003.html [ ImageOnlyFailure ]
+webkit.org/b/224902 [ Debug ] imported/w3c/web-platform-tests/css/css-will-change/parsing/will-change-invalid.html [ Skip ]
+
+# Needs -webkit-backdrop-filter to be unprefixed
+webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html [ ImageOnlyFailure ]
+webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html [ ImageOnlyFailure ]
+webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html [ ImageOnlyFailure ]
+

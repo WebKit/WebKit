@@ -423,7 +423,9 @@ inline Element* RenderElement::generatingElement() const
 inline bool RenderElement::canContainFixedPositionObjects() const
 {
     return isRenderView()
-        || (hasTransform() && isRenderBlock())
+        || (isRenderBlock() && hasTransform())
+        // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
+        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
         || isSVGForeignObject()
         || isOutOfFlowRenderFragmentedFlow();
 }
@@ -432,6 +434,8 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
 {
     return style().position() != PositionType::Static
         || (isRenderBlock() && hasTransformRelatedProperty())
+        // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
+        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
         || isSVGForeignObject()
         || isRenderView();
 }

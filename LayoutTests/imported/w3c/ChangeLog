@@ -1,3 +1,57 @@
+2021-05-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276627. rdar://problem/77580982
+
+    Create a containing block when relevant properties are set in the current element will-change
+    https://bugs.webkit.org/show_bug.cgi?id=167868
+    
+    Patch by Tim Nguyen <ntim@apple.com> on 2021-04-26
+    Reviewed by Alan Bujtas.
+    
+    Per spec, any CSS property that is susceptible to create a containing block should create one when put on the
+    current element's will-change.
+    
+    Relevant WPT are enabled.
+    
+    Test: fast/css/will-change/will-change-creates-containing-block.html
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-box/parsing/padding-computed-expected.txt:
+    
+    Source/WebCore:
+    
+    * rendering/RenderElement.h:
+    (WebCore::RenderElement::canContainFixedPositionObjects const):
+    (WebCore::RenderElement::canContainAbsolutelyPositionedObjects const):
+    * rendering/style/WillChangeData.cpp:
+    (WebCore::WillChangeData::createsContainingBlockForOutOfFlowPositioned const):
+    * rendering/style/WillChangeData.h:
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * fast/css/will-change/will-change-creates-containing-block-expected.html: Added.
+    * fast/css/will-change/will-change-creates-containing-block.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276627 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-26  Tim Nguyen  <ntim@apple.com>
+
+            Create a containing block when relevant properties are set in the current element will-change
+            https://bugs.webkit.org/show_bug.cgi?id=167868
+
+            Reviewed by Alan Bujtas.
+
+            Per spec, any CSS property that is susceptible to create a containing block should create one when put on the
+            current element's will-change.
+
+            Relevant WPT are enabled.
+
+            Test: fast/css/will-change/will-change-creates-containing-block.html
+
+            * web-platform-tests/css/css-box/parsing/padding-computed-expected.txt:
+
 2021-02-24  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r272911. rdar://problem/74501076
