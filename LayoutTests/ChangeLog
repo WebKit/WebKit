@@ -1,5 +1,46 @@
 2021-05-06  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275607. rdar://problem/77581135
+
+    REGRESSION (r270849): Button content fails to render on apple.com "Blood Oxygen"/"ECG"
+    https://bugs.webkit.org/show_bug.cgi?id=224261
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    1. The changeRequiresRecompositeLayer check in RenderStyle::diff should come after
+    changeRequiresRepaintIfTextOrBorderOrOutline since RepaintIfTextOrBorderOrOutline is at
+    a higher priority in StyleDifference.
+    2. Ensure that we trigger setNeedsCompositingConfigurationUpdate on diff >= StyleDifference::RecompositeLayer.
+    
+    Test: fast/text/text-repaint-when-pointer-event-property-changes.html
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::layerStyleChanged):
+    * rendering/style/RenderStyle.cpp:
+    (WebCore::RenderStyle::diff const):
+    
+    LayoutTests:
+    
+    * fast/text/text-repaint-when-pointer-event-property-changes-expected.html: Added.
+    * fast/text/text-repaint-when-pointer-event-property-changes.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275607 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-07  Zalan Bujtas  <zalan@apple.com>
+
+            REGRESSION (r270849): Button content fails to render on apple.com "Blood Oxygen"/"ECG"
+            https://bugs.webkit.org/show_bug.cgi?id=224261
+
+            Reviewed by Simon Fraser.
+
+            * fast/text/text-repaint-when-pointer-event-property-changes-expected.html: Added.
+            * fast/text/text-repaint-when-pointer-event-property-changes.html: Added.
+
+2021-05-06  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271669. rdar://problem/77580999
 
     Fix nullptr dereference introduced in r268228
