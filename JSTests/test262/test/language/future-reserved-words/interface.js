@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-identifiers-static-semantics-early-errors
 info: |
     The "interface" token can be used as identifier in
     non-strict code
@@ -13,3 +14,10 @@ flags: [noStrict]
 ---*/
 
 var interface = 1;
+var int\u0065rface = 2;
+
+{ let interface = 3; }
+{ let int\u0065rface = 4; }
+
+{ const interface = 5; }
+{ const int\u0065rface = 6; }

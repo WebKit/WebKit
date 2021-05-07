@@ -21,8 +21,11 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
     - legacy-regexp
-
     - cleanupSome
+    # https://bugs.webkit.org/show_bug.cgi?id=221093
+    - class-fields-private-in
+    # https://bugs.webkit.org/show_bug.cgi?id=225535
+    - error-cause
   paths:
   files:
     # Slightly different formatting. We should update test262 side.
