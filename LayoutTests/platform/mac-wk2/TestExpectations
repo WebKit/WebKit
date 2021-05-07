@@ -1381,3 +1381,5 @@ webkit.org/b/225430 [ BigSur arm64 ] http/tests/inspector/network/resource-sizes
 webkit.org/b/225488 fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html [ Pass Timeout ]
 
 webkit.org/b/225498 fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/225500 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
