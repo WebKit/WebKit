@@ -1,5 +1,16 @@
 2021-05-07  Robert Jenner  <jenner@apple.com>
 
+        REGRESSION: [ BigSurE Release wk 2] webrtc/video-replace-muted-track.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=225525
+
+        Unreviewed test gardening.
+
+        Updating test expectations to Pass Failure 
+
+        * platform/mac/TestExpectations:
+
+2021-05-07  Robert Jenner  <jenner@apple.com>
+
         REGRESSION: [ BigSurE Release wk 2] webrtc/direction-change.html is a flaky text failure
         https://bugs.webkit.org/show_bug.cgi?id=225523
 
