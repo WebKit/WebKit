@@ -32,6 +32,7 @@
 #include "IDBCursorDirection.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStoreInfo.h"
+#include <wtf/IsoMalloc.h>
 
 namespace JSC {
 class CallFrame;
@@ -56,8 +57,7 @@ enum class ObjectStoreOverwriteMode;
 }
 
 class IDBObjectStore final : public ActiveDOMObject {
-    WTF_MAKE_NONCOPYABLE(IDBObjectStore);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(IDBObjectStore);
 public:
     IDBObjectStore(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
     ~IDBObjectStore();

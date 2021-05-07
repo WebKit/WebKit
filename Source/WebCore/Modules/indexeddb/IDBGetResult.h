@@ -33,11 +33,12 @@
 #include "IDBKeyPath.h"
 #include "IDBValue.h"
 #include "SharedBuffer.h"
+#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
 class IDBGetResult {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBGetResult, WEBCORE_EXPORT);
 public:
     IDBGetResult()
         : m_isDefined(false)

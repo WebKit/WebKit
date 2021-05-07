@@ -29,11 +29,12 @@
 
 #include "IDBObjectStoreInfo.h"
 #include <wtf/HashMap.h>
+#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
 class IDBDatabaseInfo {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBDatabaseInfo, WEBCORE_EXPORT);
 public:
     explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID);
 

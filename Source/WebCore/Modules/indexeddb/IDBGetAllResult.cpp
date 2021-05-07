@@ -30,8 +30,11 @@
 
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/HashSet.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IDBGetAllResult);
 
 IDBGetAllResult::IDBGetAllResult(const IDBGetAllResult& that, IsolatedCopyTag)
 {

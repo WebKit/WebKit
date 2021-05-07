@@ -32,12 +32,13 @@
 #include "IDBValue.h"
 #include "IndexedDB.h"
 
+#include <wtf/IsoMalloc.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
 
 class IDBGetAllResult {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBGetAllResult, WEBCORE_EXPORT);
 public:
     IDBGetAllResult()
     {

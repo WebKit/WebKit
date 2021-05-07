@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -58,9 +59,8 @@ namespace IDBClient {
 
 class IDBConnectionToServer;
 
-class WEBCORE_EXPORT IDBConnectionProxy {
-    WTF_MAKE_NONCOPYABLE(IDBConnectionProxy);
-    WTF_MAKE_FAST_ALLOCATED;
+class WEBCORE_EXPORT IDBConnectionProxy final {
+    WTF_MAKE_ISO_ALLOCATED(IDBConnectionProxy);
 public:
     IDBConnectionProxy(IDBConnectionToServer&);
 

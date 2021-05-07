@@ -40,6 +40,7 @@
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Function.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/Scope.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
