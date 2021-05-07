@@ -1,3 +1,17 @@
+2021-05-07  Chris Dumez  <cdumez@apple.com>
+
+        AudioWorkletProcessor which does not extend base class crashes Safari
+        https://bugs.webkit.org/show_bug.cgi?id=225449
+        <rdar://problem/77624792>
+
+        Reviewed by Sam Weinig.
+
+        Update AudioWorkletGlobalScope::createProcessor() to validate the type of the processor
+        after constructing it.
+
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        (WebCore::AudioWorkletGlobalScope::createProcessor):
+
 2021-05-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][MediaStream] Emit black frames for disabled video tracks
