@@ -1,5 +1,16 @@
 2021-05-06  Robert Jenner  <jenner@apple.com>
 
+        REGRESSION (r272039): [Big Sur release WK2] imported/w3c/web-platform-t ests/media-source/mediasource-changetype-play-implicit.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=221143
+
+        Unreviewed test gardening.
+
+        Rebasing test for BigSur wk2.
+
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit-expected.txt: Added.
+
+2021-05-06  Robert Jenner  <jenner@apple.com>
+
         [ macOS iOS ] crypto/crypto-random-values-oom.html is a flakey timeout 
         https://bugs.webkit.org/show_bug.cgi?id=223949
 
