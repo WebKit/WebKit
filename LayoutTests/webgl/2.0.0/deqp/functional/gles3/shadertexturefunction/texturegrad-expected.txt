@@ -1,38 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadertexturefunction/texturegrad.html
-
-[ 1: PASS ] texture_functions.texturegrad.sampler2d_fixed_vertex: Pass
-[ 2: PASS ] texture_functions.texturegrad.sampler2d_fixed_fragment: Pass
-[ 3: PASS ] texture_functions.texturegrad.sampler2d_float_vertex: Pass
-[ 4: PASS ] texture_functions.texturegrad.sampler2d_float_fragment: Pass
-[ 5: PASS ] texture_functions.texturegrad.isampler2d_vertex: Pass
-[ 6: PASS ] texture_functions.texturegrad.isampler2d_fragment: Pass
-[ 7: PASS ] texture_functions.texturegrad.usampler2d_vertex: Pass
-[ 8: PASS ] texture_functions.texturegrad.usampler2d_fragment: Pass
-[ 9: FAIL ] texture_functions.texturegrad.samplercube_fixed_vertex: Fail
-[ 10: FAIL ] texture_functions.texturegrad.samplercube_fixed_fragment: Fail
-[ 11: FAIL ] texture_functions.texturegrad.samplercube_float_vertex: Fail
-[ 12: FAIL ] texture_functions.texturegrad.samplercube_float_fragment: Fail
-[ 13: FAIL ] texture_functions.texturegrad.isamplercube_vertex: Fail
-[ 14: FAIL ] texture_functions.texturegrad.isamplercube_fragment: Fail
-[ 15: FAIL ] texture_functions.texturegrad.usamplercube_vertex: Fail
-[ 16: FAIL ] texture_functions.texturegrad.usamplercube_fragment: Fail
-[ 17: PASS ] texture_functions.texturegrad.sampler2darray_fixed_vertex: Pass
-[ 18: PASS ] texture_functions.texturegrad.sampler2darray_fixed_fragment: Pass
-[ 19: PASS ] texture_functions.texturegrad.sampler2darray_float_vertex: Pass
-[ 20: PASS ] texture_functions.texturegrad.sampler2darray_float_fragment: Pass
-[ 21: PASS ] texture_functions.texturegrad.isampler2darray_vertex: Pass
-[ 22: PASS ] texture_functions.texturegrad.isampler2darray_fragment: Pass
-[ 23: PASS ] texture_functions.texturegrad.usampler2darray_vertex: Pass
-[ 24: PASS ] texture_functions.texturegrad.usampler2darray_fragment: Pass
-[ 25: PASS ] texture_functions.texturegrad.sampler3d_fixed_vertex: Pass
-[ 26: PASS ] texture_functions.texturegrad.sampler3d_fixed_fragment: Pass
-[ 27: PASS ] texture_functions.texturegrad.sampler3d_float_vertex: Pass
-[ 28: PASS ] texture_functions.texturegrad.sampler3d_float_fragment: Pass
-[ 29: PASS ] texture_functions.texturegrad.isampler3d_vertex: Pass
-[ 30: PASS ] texture_functions.texturegrad.isampler3d_fragment: Pass
-[ 31: PASS ] texture_functions.texturegrad.usampler3d_vertex: Pass
-[ 32: PASS ] texture_functions.texturegrad.usampler3d_fragment: Pass
-[ 33: PASS ] texture_functions.texturegrad.sampler2darrayshadow_fragment: successfullyParsed is true
-[ FAIL ] 8 failures reported
+[ PASS ] All tests passed
