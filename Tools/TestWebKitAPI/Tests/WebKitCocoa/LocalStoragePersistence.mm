@@ -27,6 +27,8 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -414,4 +416,35 @@ TEST(WKWebView, AuxiliaryWindowsShareLocalStorage)
     }];
     TestWebKitAPI::Util::run(&finishedRunningScript);
     finishedRunningScript = false;
+}
+
+TEST(WKWebView, LocalStorageGroup)
+{
+    auto runTest = [] (bool setGroupIdentifier) {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+        if (setGroupIdentifier)
+            [configuration _setGroupIdentifier:@"testgroupidentifier"];
+        auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        NSString *html1 = @""
+        "<script>"
+        "localStorage.setItem('testkey', 'testvalue1');"
+        "window.onstorage = function(e) { alert('storage changed key ' + e.key + ' value from ' + e.oldValue + ' to ' + e.newValue) };"
+        "</script>";
+        [webView1 loadHTMLString:html1 baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        [webView1 _test_waitForDidFinishNavigation];
+
+        auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        NSString *html2 = @""
+        "<script>"
+        "alert('second web view got value ' + localStorage.getItem('testkey'));"
+        "localStorage.setItem('testkey', 'testvalue2');"
+        "</script>";
+        [webView2 loadHTMLString:html2 baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        EXPECT_WK_STREQ([webView2 _test_waitForAlert], "second web view got value testvalue1");
+
+        EXPECT_WK_STREQ([webView1 _test_waitForAlert], "storage changed key testkey value from testvalue1 to testvalue2");
+    };
+    runTest(true);
+    runTest(false);
 }

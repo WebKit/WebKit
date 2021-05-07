@@ -68,7 +68,13 @@ static WebPageGroupData pageGroupData(const String& identifier)
 {
     WebPageGroupData data;
 
-    data.pageGroupID = generatePageGroupID();
+    static NeverDestroyed<HashMap<String, uint64_t>> map;
+    if (HashMap<String, uint64_t>::isValidKey(identifier)) {
+        data.pageGroupID = map.get().ensure(identifier, [] {
+            return generatePageGroupID();
+        }).iterator->value;
+    } else
+        data.pageGroupID = generatePageGroupID();
 
     if (!identifier.isEmpty())
         data.identifier = identifier;

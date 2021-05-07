@@ -1,3 +1,46 @@
+2021-05-06  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276983. rdar://problem/77581150
+
+    localStorage changes aren't reflected between WKWebViews using WKWebViewConfiguration._groupIdentifier
+    https://bugs.webkit.org/show_bug.cgi?id=225344
+    <rdar://77496721>
+    
+    Reviewed by Brady Eidson.
+    
+    Source/WebKit:
+    
+    When we switched from using _pageGroup to _groupIdentifier, we also broke localStorage by making a new pageGroupID for each WKWebView.
+    This is the low-risk solution to this problem that remembers what pageGroupID we used for this same identifier, creating the effect of
+    using the same StorageNamespaceIdentifier for each _groupIdentifier like we did when we used _pageGroup.
+    See the comment in StorageAreaMap::dispatchLocalStorageEvent.
+    
+    The higher-risk solution that needs to be done but probably shouldn't be merged to a branch at this point is to remove StorageNamespaceIdentifier.
+    I plan to do that in a follow-up patch.
+    
+    * UIProcess/WebPageGroup.cpp:
+    (WebKit::pageGroupData):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+    (TEST):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276983 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-04  Alex Christensen  <achristensen@webkit.org>
+
+            localStorage changes aren't reflected between WKWebViews using WKWebViewConfiguration._groupIdentifier
+            https://bugs.webkit.org/show_bug.cgi?id=225344
+            <rdar://77496721>
+
+            Reviewed by Brady Eidson.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+            (TEST):
+
 2021-04-21  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r276193. rdar://problem/76962916
