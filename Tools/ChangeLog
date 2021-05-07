@@ -1,3 +1,11 @@
+2021-05-06  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Garden web-process-crashed API test flakiness after SDK update
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r254389?) navigator.languages returns all lowercase languages for ports using CF
