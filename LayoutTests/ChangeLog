@@ -1,5 +1,48 @@
 2021-05-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r276739. rdar://problem/77581103
+
+    Don't create custom scrollbars for fullscreen placeholders.
+    https://bugs.webkit.org/show_bug.cgi?id=225141
+    Source/WebCore:
+    
+    <rdar://64800098>
+    
+    Reviewed by Darin Adler.
+    
+    We can end up calling RenderScrollbar::createCustomScrollbar with
+    `element = nullptr` from RenderLayer::createScrollbar,
+    when the renderer is a RenderFullscreenPlaceholder.
+    
+    We don't need to bother with scrollbars for the placeholder, so check to
+    make sure we have a valid element before creating custom scollbars.
+    
+    Test: fullscreen/full-screen-crash-custom-scrollbars.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::createScrollbar):
+    
+    LayoutTests:
+    
+    Reviewed by Darin Adler.
+    
+    * fullscreen/full-screen-crash-custom-scrollbars-expected.txt: Added.
+    * fullscreen/full-screen-crash-custom-scrollbars.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276739 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-28  Cameron McCormack  <heycam@apple.com>
+
+            Don't create custom scrollbars for fullscreen placeholders.
+            https://bugs.webkit.org/show_bug.cgi?id=225141
+
+            Reviewed by Darin Adler.
+
+            * fullscreen/full-screen-crash-custom-scrollbars-expected.txt: Added.
+            * fullscreen/full-screen-crash-custom-scrollbars.html: Added.
+
+2021-05-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r276627. rdar://problem/77580982
 
     Create a containing block when relevant properties are set in the current element will-change
