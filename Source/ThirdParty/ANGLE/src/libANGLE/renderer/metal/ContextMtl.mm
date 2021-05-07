@@ -2167,7 +2167,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
         }
     }
 
-    mDirtyBits.reset();
+
 
     if (transformFeedbackDraw)
     {
@@ -2189,7 +2189,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
         invalidateState(context);
         ANGLE_TRY(setupDraw(context, mode, firstVertex, vertexOrIndexCount, instances, indexTypeOrNone, indices, transformFeedbackDraw));
     }
-
+    mDirtyBits.reset();
     return angle::Result::Continue;
 }
 
