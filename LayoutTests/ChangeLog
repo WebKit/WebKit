@@ -1,3 +1,14 @@
+2021-05-07  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Release wk2 ARM64 ] http/tests/workers/service/self_registration.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225527
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass Timeout for BigSur Release wk 2 on Apple Silicon. 
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not try to remove and already removed node while deleting selection
