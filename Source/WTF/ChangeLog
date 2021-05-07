@@ -1,3 +1,22 @@
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Port Filesystem::fileMetadata() & Filesystem::getFileModificationTime() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225362
+
+        Reviewed by Darin Adler.
+
+        Port Filesystem::fileMetadata() & Filesystem::getFileModificationTime() to std::filesystem
+        and get rid of platform-specific implementations.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::toWallTime):
+        (WTF::FileSystemImpl::getFileModificationTime):
+        (WTF::FileSystemImpl::fileMetadata):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
 2021-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [OpenSSL] Implement CryptoAlgorithmRSA*

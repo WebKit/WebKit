@@ -27,6 +27,7 @@
 #include "config.h"
 
 #include "Test.h"
+#include "Utilities.h"
 #include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
@@ -142,18 +143,93 @@ TEST_F(FileSystemTest, FilesHaveSameVolume)
     EXPECT_TRUE(FileSystem::filesHaveSameVolume(bangContainingFilePath(), quoteContainingFilePath()));
 }
 
-TEST_F(FileSystemTest, GetFileMetadataSymlink)
+TEST_F(FileSystemTest, GetFileMetadataFileSymlink)
 {
     auto symlinkMetadata = FileSystem::fileMetadata(tempFileSymlinkPath());
     ASSERT_TRUE(symlinkMetadata.hasValue());
-    EXPECT_TRUE(symlinkMetadata.value().type == FileMetadata::Type::SymbolicLink);
-    EXPECT_FALSE(static_cast<size_t>(symlinkMetadata.value().length) == strlen(FileSystemTestData));
+    EXPECT_TRUE(symlinkMetadata->type == FileMetadata::Type::SymbolicLink);
+    EXPECT_FALSE(symlinkMetadata->isHidden);
+    EXPECT_TRUE(static_cast<size_t>(symlinkMetadata->length) == strlen(FileSystemTestData));
 
     auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(tempFileSymlinkPath());
     ASSERT_TRUE(targetMetadata.hasValue());
-    EXPECT_TRUE(targetMetadata.value().type == FileMetadata::Type::File);
-    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata.value().length));
+    EXPECT_TRUE(targetMetadata->type == FileMetadata::Type::File);
+    EXPECT_FALSE(targetMetadata->isHidden);
+    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata->length));
+
+    auto actualTargetMetadata = FileSystem::fileMetadata(tempFilePath());
+    ASSERT_TRUE(actualTargetMetadata.hasValue());
+    EXPECT_TRUE(actualTargetMetadata->type == FileMetadata::Type::File);
+    EXPECT_EQ(targetMetadata->modificationTime, actualTargetMetadata->modificationTime);
+    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata->length));
+    EXPECT_FALSE(actualTargetMetadata->isHidden);
 }
+
+TEST_F(FileSystemTest, GetFileMetadataSymlinkToFileSymlink)
+{
+    // Create a symbolic link pointing the tempFileSymlinkPath().
+    auto symlinkToSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
+    EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToSymlinkPath));
+
+    auto symlinkMetadata = FileSystem::fileMetadata(symlinkToSymlinkPath);
+    ASSERT_TRUE(symlinkMetadata.hasValue());
+    EXPECT_TRUE(symlinkMetadata->type == FileMetadata::Type::SymbolicLink);
+    EXPECT_FALSE(symlinkMetadata->isHidden);
+
+    auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(symlinkToSymlinkPath);
+    ASSERT_TRUE(targetMetadata.hasValue());
+    EXPECT_TRUE(targetMetadata->type == FileMetadata::Type::File);
+    EXPECT_FALSE(targetMetadata->isHidden);
+    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata->length));
+
+    EXPECT_TRUE(FileSystem::deleteFile(symlinkToSymlinkPath));
+}
+
+TEST_F(FileSystemTest, GetFileMetadataDirectorySymlink)
+{
+    auto symlinkMetadata = FileSystem::fileMetadata(tempEmptyFolderSymlinkPath());
+    ASSERT_TRUE(symlinkMetadata.hasValue());
+    EXPECT_TRUE(symlinkMetadata->type == FileMetadata::Type::SymbolicLink);
+    EXPECT_FALSE(symlinkMetadata->isHidden);
+
+    auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(tempEmptyFolderSymlinkPath());
+    ASSERT_TRUE(targetMetadata.hasValue());
+    EXPECT_TRUE(targetMetadata->type == FileMetadata::Type::Directory);
+    EXPECT_FALSE(targetMetadata->isHidden);
+
+    auto actualTargetMetadata = FileSystem::fileMetadata(tempEmptyFolderPath());
+    ASSERT_TRUE(actualTargetMetadata.hasValue());
+    EXPECT_TRUE(actualTargetMetadata->type == FileMetadata::Type::Directory);
+    EXPECT_EQ(targetMetadata->modificationTime, actualTargetMetadata->modificationTime);
+    EXPECT_EQ(targetMetadata->length, actualTargetMetadata->length);
+    EXPECT_FALSE(actualTargetMetadata->isHidden);
+}
+
+TEST_F(FileSystemTest, GetFileMetadataFileDoesNotExist)
+{
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    auto metadata = FileSystem::fileMetadata(doesNotExistPath);
+    EXPECT_TRUE(!metadata);
+}
+
+#if OS(UNIX)
+TEST_F(FileSystemTest, GetFileMetadataHiddenFile)
+{
+    auto hiddenFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".hiddenFile");
+    auto fileHandle = FileSystem::openFile(hiddenFilePath, FileSystem::FileOpenMode::Write);
+    EXPECT_TRUE(FileSystem::isHandleValid(fileHandle));
+    FileSystem::writeToFile(fileHandle, FileSystemTestData, strlen(FileSystemTestData));
+    FileSystem::closeFile(fileHandle);
+
+    auto metadata = FileSystem::fileMetadata(hiddenFilePath);
+    ASSERT_TRUE(metadata.hasValue());
+    EXPECT_TRUE(metadata->type == FileMetadata::Type::File);
+    EXPECT_TRUE(metadata->isHidden);
+    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(metadata->length));
+
+    EXPECT_TRUE(FileSystem::deleteFile(hiddenFilePath));
+}
+#endif
 
 TEST_F(FileSystemTest, UnicodeDirectoryName)
 {
@@ -539,6 +615,54 @@ TEST_F(FileSystemTest, createHardLinkOrCopyFile)
     linkFileSize = 0;
     EXPECT_TRUE(FileSystem::getFileSize(hardlinkPath, linkFileSize));
     EXPECT_EQ(linkFileSize, fileSize);
+}
+
+static void runGetFileModificationTimeTest(const String& path, Function<Optional<WallTime>(const String&)>&& getFileModificationTime)
+{
+    auto modificationTime = getFileModificationTime(path);
+    EXPECT_TRUE(!!modificationTime);
+    if (!modificationTime)
+        return;
+
+    unsigned timeout = 0;
+    while (*modificationTime >= WallTime::now() && ++timeout < 20)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_LT(modificationTime->secondsSinceEpoch().value(), WallTime::now().secondsSinceEpoch().value());
+
+    auto timeBeforeModification = WallTime::now();
+
+    TestWebKitAPI::Util::sleep(2);
+
+    // Modify the file.
+    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite);
+    EXPECT_TRUE(FileSystem::isHandleValid(fileHandle));
+    FileSystem::writeToFile(fileHandle, "foo", strlen("foo"));
+    FileSystem::closeFile(fileHandle);
+
+    auto newModificationTime = getFileModificationTime(path);
+    EXPECT_TRUE(!!newModificationTime);
+    if (!newModificationTime)
+        return;
+
+    EXPECT_GT(newModificationTime->secondsSinceEpoch().value(), modificationTime->secondsSinceEpoch().value());
+    EXPECT_GT(newModificationTime->secondsSinceEpoch().value(), timeBeforeModification.secondsSinceEpoch().value());
+}
+
+TEST_F(FileSystemTest, getFileModificationTime)
+{
+    runGetFileModificationTimeTest(tempFilePath(), [](const String& path) {
+        return FileSystem::getFileModificationTime(path);
+    });
+}
+
+TEST_F(FileSystemTest, getFileModificationTimeViaFileMetadata)
+{
+    runGetFileModificationTimeTest(tempFilePath(), [](const String& path) -> Optional<WallTime> {
+        auto metadata = FileSystem::fileMetadata(path);
+        if (!metadata)
+            return WTF::nullopt;
+        return metadata->modificationTime;
+    });
 }
 
 } // namespace TestWebKitAPI

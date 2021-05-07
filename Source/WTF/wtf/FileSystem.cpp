@@ -37,6 +37,7 @@
 
 #if !OS(WINDOWS)
 #include <sys/mman.h>
+#include <sys/param.h>
 #include <sys/stat.h>
 #endif
 
@@ -103,6 +104,43 @@ static inline bool shouldEscapeUChar(UChar character, UChar previousCharacter, U
         return true;
 
     return false;
+}
+
+template<typename ClockType, typename = void> struct has_to_time_t : std::false_type { };
+template<typename ClockType> struct has_to_time_t<ClockType, std::void_t<
+    std::enable_if_t<std::is_same_v<std::time_t, decltype(ClockType::to_time_t(std::filesystem::file_time_type()))>>
+>> : std::true_type { };
+
+template <typename FileTimeType>
+typename std::enable_if_t<has_to_time_t<typename FileTimeType::clock>::value, std::time_t> toTimeT(FileTimeType fileTime)
+{
+    return decltype(fileTime)::clock::to_time_t(fileTime);
+}
+
+template <typename FileTimeType>
+typename std::enable_if_t<!has_to_time_t<typename FileTimeType::clock>::value, std::time_t> toTimeT(FileTimeType fileTime)
+{
+    return std::chrono::system_clock::to_time_t(std::chrono::time_point_cast<std::chrono::system_clock::duration>(fileTime - decltype(fileTime)::clock::now() + std::chrono::system_clock::now()));
+}
+
+static WallTime toWallTime(std::filesystem::file_time_type fileTime)
+{
+    // FIXME: Use std::chrono::file_clock::to_sys() once we can use C++20.
+    return WallTime::fromRawSeconds(toTimeT(fileTime));
+}
+
+static std::filesystem::path resolveSymlinks(std::filesystem::path path, std::error_code& ec)
+{
+#ifdef MAXSYMLINKS
+    static constexpr unsigned maxSymlinkDepth = MAXSYMLINKS;
+#else
+    static constexpr unsigned maxSymlinkDepth = 40;
+#endif
+
+    unsigned currentDepth = 0;
+    while (++currentDepth <= maxSymlinkDepth && !ec && std::filesystem::is_symlink(path, ec))
+        path = std::filesystem::read_symlink(path, ec);
+    return path;
 }
 
 String encodeForFileName(const String& inputString)
@@ -621,6 +659,66 @@ bool deleteNonEmptyDirectory(const String& path)
     std::error_code ec;
     std::filesystem::remove_all(fileSystemRepresentation(path).data(), ec);
     return !ec;
+}
+
+Optional<WallTime> getFileModificationTime(const String& path)
+{
+    std::error_code ec;
+    auto modificationTime = std::filesystem::last_write_time(fileSystemRepresentation(path).data(), ec);
+    if (ec)
+        return WTF::nullopt;
+    return toWallTime(modificationTime);
+}
+
+static Optional<FileMetadata> fileMetadataPotentiallyFollowingSymlinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+{
+    if (path.isEmpty())
+        return WTF::nullopt;
+
+    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+
+    std::error_code ec;
+    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes && std::filesystem::is_symlink(fsPath, ec)) {
+        fsPath = resolveSymlinks(fsPath, ec);
+        if (ec)
+            return WTF::nullopt;
+    }
+
+    ec = { };
+    std::filesystem::directory_entry entry(fsPath, ec);
+    if (ec)
+        return WTF::nullopt;
+
+    auto modificationTime = toWallTime(entry.last_write_time(ec));
+
+    // Note that the result of attempting to determine the size of a directory is implementation-defined.
+    auto fileSize = entry.file_size(ec);
+    if (ec)
+        fileSize = 0;
+
+#if OS(UNIX)
+    std::filesystem::path::string_type filename = fsPath.filename();
+    bool isHidden = !filename.empty() && filename[0] == '.';
+#else
+    bool isHidden = false;
+#endif
+    FileMetadata::Type type = FileMetadata::Type::File;
+    if (entry.is_symlink(ec))
+        type = FileMetadata::Type::SymbolicLink;
+    else if (entry.is_directory(ec))
+        type = FileMetadata::Type::Directory;
+
+    return FileMetadata { modificationTime, static_cast<long long>(fileSize), isHidden, type };
+}
+
+Optional<FileMetadata> fileMetadata(const String& path)
+{
+    return fileMetadataPotentiallyFollowingSymlinks(path, ShouldFollowSymbolicLinks::No);
+}
+
+Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
+{
+    return fileMetadataPotentiallyFollowingSymlinks(path, ShouldFollowSymbolicLinks::Yes);
 }
 
 } // namespace FileSystemImpl

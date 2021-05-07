@@ -186,61 +186,6 @@ Optional<WallTime> getFileCreationTime(const String& path)
 #endif
 }
 
-Optional<WallTime> getFileModificationTime(const String& path)
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
-
-    struct stat fileInfo;
-
-    if (stat(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
-
-    return WallTime::fromRawSeconds(fileInfo.st_mtime);
-}
-
-static FileMetadata::Type toFileMetataType(struct stat fileInfo)
-{
-    if (S_ISDIR(fileInfo.st_mode))
-        return FileMetadata::Type::Directory;
-    if (S_ISLNK(fileInfo.st_mode))
-        return FileMetadata::Type::SymbolicLink;
-    return FileMetadata::Type::File;
-}
-
-static Optional<FileMetadata> fileMetadataUsingFunction(const String& path, int (*statFunc)(const char*, struct stat*))
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
-
-    struct stat fileInfo;
-    if (statFunc(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
-
-    String filename = pathGetFileName(path);
-    bool isHidden = !filename.isEmpty() && filename[0] == '.';
-    return FileMetadata {
-        WallTime::fromRawSeconds(fileInfo.st_mtime),
-        fileInfo.st_size,
-        isHidden,
-        toFileMetataType(fileInfo)
-    };
-}
-
-Optional<FileMetadata> fileMetadata(const String& path)
-{
-    return fileMetadataUsingFunction(path, &lstat);
-}
-
-Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
-{
-    return fileMetadataUsingFunction(path, &stat);
-}
-
 String pathByAppendingComponent(const String& path, const String& component)
 {
     if (path.endsWith('/'))

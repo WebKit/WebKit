@@ -114,17 +114,6 @@ bool getFileSize(PlatformFileHandle fileHandle, long long& size)
     return getFileSizeFromByHandleFileInformationStructure(fileInformation, size);
 }
 
-Optional<WallTime> getFileModificationTime(const String& path)
-{
-    WIN32_FIND_DATAW findData;
-    if (!getFindData(path, findData))
-        return WTF::nullopt;
-
-    time_t time = 0;
-    getFileModificationTimeFromFindData(findData, time);
-    return WallTime::fromRawSeconds(time);
-}
-
 Optional<WallTime> getFileCreationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
@@ -152,63 +141,6 @@ static String getFinalPathName(const String& path)
 
     buffer.shrink(wcslen(wcharFrom(buffer.data())));
     return String::adopt(WTFMove(buffer));
-}
-
-static inline bool isSymbolicLink(WIN32_FIND_DATAW findData)
-{
-    return findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT && findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK;
-}
-
-static FileMetadata::Type toFileMetadataType(WIN32_FIND_DATAW findData)
-{
-    if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-        return FileMetadata::Type::Directory;
-    if (isSymbolicLink(findData))
-        return FileMetadata::Type::SymbolicLink;
-    return FileMetadata::Type::File;
-}
-
-static Optional<FileMetadata> findDataToFileMetadata(WIN32_FIND_DATAW findData)
-{
-    long long length;
-    if (!getFileSizeFromFindData(findData, length))
-        return WTF::nullopt;
-
-    time_t modificationTime;
-    getFileModificationTimeFromFindData(findData, modificationTime);
-
-    return FileMetadata {
-        WallTime::fromRawSeconds(modificationTime),
-        length,
-        static_cast<bool>(findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN),
-        toFileMetadataType(findData)
-    };
-}
-
-Optional<FileMetadata> fileMetadata(const String& path)
-{
-    WIN32_FIND_DATAW findData;
-    if (!getFindData(path, findData))
-        return WTF::nullopt;
-
-    return findDataToFileMetadata(findData);
-}
-
-Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
-{
-    WIN32_FIND_DATAW findData;
-    if (!getFindData(path, findData))
-        return WTF::nullopt;
-
-    if (isSymbolicLink(findData)) {
-        String targetPath = getFinalPathName(path);
-        if (targetPath.isNull())
-            return WTF::nullopt;
-        if (!getFindData(targetPath, findData))
-            return WTF::nullopt;
-    }
-
-    return findDataToFileMetadata(findData);
 }
 
 String pathByAppendingComponent(const String& path, const String& component)
