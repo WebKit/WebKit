@@ -36,6 +36,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -292,17 +293,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     : m_client(client)
     , m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
-    , m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(false)
-    , m_shouldExitOnSyncMessageSendFailure(false)
-    , m_didCloseOnConnectionWorkQueueCallback(0)
-    , m_isConnected(false)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
-    , m_inSendSyncCount(0)
-    , m_inDispatchMessageCount(0)
-    , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
-    , m_didReceiveInvalidMessage(false)
-    , m_shouldWaitForSyncReplies(true)
-    , m_shouldWaitForMessages(true)
 {
     ASSERT(RunLoop::isMain());
     allConnections().add(m_uniqueID, this);
@@ -489,9 +480,6 @@ bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption>
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
 
-#if ENABLE(IPC_TESTING_API)
-#endif
-
     {
         auto locker = holdLock(m_outgoingMessagesMutex);
         m_outgoingMessages.append(WTFMove(encoder));
@@ -579,6 +567,12 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
         Locker lock { m_waitForMessageMutex };
 
         if (wasMessageToWaitForAlreadyDispatched) {
+            m_waitingForMessage = nullptr;
+            break;
+        }
+
+        if (UNLIKELY(m_inDispatchSyncMessageCount && !timeout.isInfinity())) {
+            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%{public}s): Exiting immediately, since we're handling a sync message already", description(messageName));
             m_waitingForMessage = nullptr;
             break;
         }
@@ -935,6 +929,7 @@ void Connection::sendOutgoingMessages()
 
 void Connection::dispatchSyncMessage(Decoder& decoder)
 {
+    ASSERT(isMainRunLoop());
     ASSERT(decoder.isSyncMessage());
 
     SyncRequestID syncRequestID;
@@ -942,6 +937,12 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         // We received an invalid sync message.
         return;
     }
+
+    ++m_inDispatchSyncMessageCount;
+    auto decrementSyncMessageCount = makeScopeExit([&] {
+        ASSERT(m_inDispatchSyncMessageCount);
+        --m_inDispatchSyncMessageCount;
+    });
 
     auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
 

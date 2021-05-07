@@ -388,20 +388,21 @@ private:
     bool m_isServer;
     std::atomic<bool> m_isValid { true };
 
-    bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
-    bool m_shouldExitOnSyncMessageSendFailure;
-    DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback;
+    bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage { false };
+    bool m_shouldExitOnSyncMessageSendFailure { false };
+    DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback { nullptr };
 
-    bool m_isConnected;
+    bool m_isConnected { false };
     Ref<WorkQueue> m_connectionQueue;
 
-    unsigned m_inSendSyncCount;
-    unsigned m_inDispatchMessageCount;
-    unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
+    unsigned m_inSendSyncCount { 0 };
+    unsigned m_inDispatchMessageCount { 0 };
+    unsigned m_inDispatchSyncMessageCount { 0 };
+    unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount { 0 };
     unsigned m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting { 0 };
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreTimeoutsForTesting { false };
-    bool m_didReceiveInvalidMessage;
+    bool m_didReceiveInvalidMessage { false };
 
     // Incoming messages.
     Lock m_incomingMessagesMutex;
@@ -422,8 +423,8 @@ private:
     class SyncMessageState;
 
     Lock m_syncReplyStateMutex;
-    bool m_shouldWaitForSyncReplies;
-    bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageMutex);
+    bool m_shouldWaitForSyncReplies { true };
+    bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageMutex) { true };
     struct PendingSyncReply;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 

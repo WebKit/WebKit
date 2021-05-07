@@ -1,3 +1,45 @@
+2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Safari sometimes hangs underneath `WebKit::UIDelegate::UIClient::createNewPage`
+        https://bugs.webkit.org/show_bug.cgi?id=225481
+        rdar://77565282
+
+        Reviewed by Chris Dumez.
+
+        Consider the scenario where a webpage programmatically opens a window in a new tab on iOS while the keyboard is
+        visible. In certain configurations, Safari indirectly tells the `WKWebView` containing the original webpage to
+        `-resignFirstResponder` and then `-becomeFirstResponder` again, while creating a new web view and shuffling
+        around the view hierarchy under `-webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:`.
+
+        Since the keyboard is up, this causes UIKit to ask for an autocorrection context via `-[WKContentView
+        requestAutocorrectionContextWithCompletionHandler:]`, which blocks the main thread on a response from the web
+        process. Of course, since we're handling synchronous IPC, the web process isn't capable of sending a response
+        back to the UI process, so we deadlock until we exceed the IPC timeout, and then exit the call stack.
+
+        Instead, it's possible in this case to recognize that we're already handling a synchronous IPC message, and any
+        attempts to wait for a response will time out anyways. Instead of waiting for the entire timeout duration, we
+        can fail eagerly to avoid hanging the process that is waiting.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::dispatchSyncMessage):
+        * Platform/IPC/Connection.h:
+
+        Add a new counter variable, `m_inDispatchSyncMessageCount`, that is incremented and decremented while we're
+        in the process of dispatching an incoming sync IPC message. If `m_inDispatchSyncMessageCount` is nonzero and
+        we have a non-infinite IPC timeout duration, then we should fail sooner inside `Connection::waitForMessage`,
+        instead of waiting to time out.
+
+        Drive-by refactoring: while we're here, let's also move initialization for some of the members on `Connection`
+        into the class declaration, instead of the constructor.
+
+        (IPC::Connection::WTF_GUARDED_BY_LOCK):
+        * Platform/IPC/Timeout.h:
+        (IPC::Timeout::isInfinity const):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Allow file-read* and file-write-data for /dev/null and /dev/zero

@@ -37,16 +37,20 @@ public:
         : m_deadline(MonotonicTime::now() + timeDelta)
     {
     }
+
     static constexpr Timeout infinity() { return Timeout { }; }
+    bool isInfinity() const { return std::isinf(m_deadline); }
     static Timeout now() { return 0_s; }
     Seconds secondsUntilDeadline() const { return std::max(m_deadline - MonotonicTime::now(), 0_s ); }
     constexpr MonotonicTime deadline() const { return m_deadline; }
     bool didTimeOut() const { return MonotonicTime::now() >= m_deadline; }
+
 private:
     explicit constexpr Timeout()
         : m_deadline(MonotonicTime::infinity())
     {
     }
+
     MonotonicTime m_deadline;
 };
 
