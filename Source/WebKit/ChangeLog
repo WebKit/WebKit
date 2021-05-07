@@ -1,3 +1,28 @@
+2021-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Add WebRTC logging control in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=225346
+
+        Reviewed by Eric Carlson.
+
+        Implement setting of WebRTC log level using LibWebRTCCodecs and LibWebRTCCodecsProxy.
+        This will help debugging issues with GPU-running webrtc codecs.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::toWebRTCVideoRotation):
+        (WebKit::LibWebRTCCodecsProxy::setRTCLoggingLevel):
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThread):
+        (WebKit::LibWebRTCCodecs::setLoggingLevel):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::setLoggingLevel):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+
 2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Safari sometimes hangs underneath `WebKit::UIDelegate::UIClient::createNewPage`

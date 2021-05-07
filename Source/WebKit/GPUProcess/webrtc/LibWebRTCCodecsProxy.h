@@ -81,6 +81,7 @@ private:
     void initializeEncoder(RTCEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     void encodeFrame(RTCEncoderIdentifier, WebCore::RemoteVideoSample&&, uint32_t timeStamp, bool shouldEncodeAsKeyFrame);
     void setEncodeRates(RTCEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
+    void setRTCLoggingLevel(WTFLogLevel);
 
     CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
 

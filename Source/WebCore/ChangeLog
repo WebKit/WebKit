@@ -1,3 +1,26 @@
+2021-05-07  Youenn Fablet  <youenn@apple.com>
+
+        Add WebRTC logging control in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=225346
+
+        Reviewed by Eric Carlson.
+
+        Migrate setEnableLogging to setLoggingLevel as a virtual method so that it can be implemented by WebKit to send logging level to GPUProcess.
+        Simplify WebCore::LibWebRTCProvider::setLoggingLevel to not differentiate debug from non debug builds.
+        Manually tested.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        * page/Page.cpp:
+        (WebCore::Page::configureLoggingChannel):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::computeLogLevel):
+        (WebCore::LibWebRTCProvider::setRTCLogging):
+        (WebCore::LibWebRTCProvider::setLoggingLevel):
+        (WebCore::setLogging): Deleted.
+        (WebCore::LibWebRTCProvider::setEnableLogging): Deleted.
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2021-05-07  Frédéric Wang  <fwang@igalia.com>
 
         Crash in InsertTextCommand::positionInsideTextNode

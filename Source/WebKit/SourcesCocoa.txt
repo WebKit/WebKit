@@ -67,7 +67,7 @@ GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
 GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
 GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm
 GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
-GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
+GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @no-unify
 
 Platform/cf/ModuleCF.cpp
 
