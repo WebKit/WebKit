@@ -74,8 +74,13 @@ class Navigation;
 #if PLATFORM(MAC)
 typedef NSEvent* PlatformScrollEvent;
 #elif PLATFORM(GTK)
-typedef struct _GdkEventScroll GdkEventScroll;
-typedef GdkEventScroll* PlatformScrollEvent;
+typedef struct {
+    double delta;
+    int32_t eventTime;
+    bool isTouch;
+    bool isEnd;
+} PlatformGtkScrollData;
+typedef PlatformGtkScrollData* PlatformScrollEvent;
 #endif
 
 namespace WebKit {
@@ -173,7 +178,11 @@ public:
 
 #if PLATFORM(GTK)
     void cancelSwipe();
+#if USE(GTK4)
+    void snapshot(GtkSnapshot*, GskRenderNode*);
+#else
     void draw(cairo_t*, cairo_pattern_t*);
+#endif
 #endif
 
     // Testing

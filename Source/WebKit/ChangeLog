@@ -1,3 +1,116 @@
+2021-05-07  Carlos Garnacho  <carlosg@gnome.org>
+
+        [GTK4] Rewrite GTK gesture support to work for both 3.x and 4.x.
+        https://bugs.webkit.org/show_bug.cgi?id=212324
+
+        Reviewed by Carlos Garcia Campos.
+
+        Rewrite the touch gesture handling to avoid GdkEvent as an exchange
+        token, and not rely on the web view being able to hold and re-route
+        these at whim. This makes touch and touchpad gestures work on GTK3
+        and GTK4 in similar ways, and so that both work.
+
+        For this, touch event propagation got some substantial changes, it
+        used to work by first delivering the touch events to the web page,
+        and manually feeding the returned+unhandled ones to gesture controllers.
+        Now event delivery is delegated on GTK, and happens right away on
+        gesture controllers, it is the WebkitWebViewBase which chooses to make
+        them effective after the web page (maybe) handled the events. Gestures
+        are reset whenever the web page is considered to be handling touch
+        events.
+
+        Also fix some buglets accumulated along the way, web view zoom conflicted
+        with in-page zoom handling, and ViewGestureController page switching
+        conflicted with press-drag-release emulation on the web page. These now
+        work better and closer to GtkScrolledWindow behavior.
+
+        No new tests, the GTK touch tests that should catch this were disabled
+        in the past and need fixing. This patch will require manual testing.
+
+        * PlatformGTK.cmake: Drop GTK4 conditionals around ViewGestureController
+        * SourcesGTK.txt: Drop GestureController.cpp. Build ViewGestureController
+        code files unconditionally.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent): Delegate handling on
+        WebKitWebViewBase.
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore): Use platform
+        independent struct to forward scroll to ViewGestureController.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSnapshot): Involve ViewGestureController in rendering.
+        (webkitWebViewBaseButtonPressEvent):
+        (webkitWebViewBaseButtonReleaseEvent):
+        (webkitWebViewBaseButtonPressed):
+        (webkitWebViewBaseButtonReleased):
+        (webkitWebViewBaseMotionNotifyEvent): Ignore pointer-emulated events from
+        touchscreens.
+        (webkitWebViewBaseHandleWheelEvent):
+        (webkitWebViewBaseScroll):  Use platform independent struct
+        to forward scroll to ViewGestureController.
+        (appendTouchEvent):
+        (touchPointStateForEvents):
+        (webkitWebViewBaseGetTouchPointsForEvent):
+        (webkitWebViewBaseTouchEvent):
+        Generalized to work on both GTK3 and GTK4.
+        (webkitWebViewBaseZoomBegin):
+        (webkitWebViewBaseZoomChanged):
+        (webkitWebViewBaseTouchLongPress):
+        (webkitWebViewBaseTouchPress):
+        (webkitWebViewBaseTouchRelease):
+        (webkitWebViewBaseTouchDragBegin):
+        (webkitWebViewBaseTouchDragUpdate):
+        (webkitWebViewBaseTouchDragEnd):
+        (webkitWebViewBaseTouchDragCancel):
+        (webkitWebViewBaseTouchSwipe): Newly added touch gesture implementation
+        callbacks. Not delegated anymore on GestureController.
+        (webkitWebViewBaseConstructed): Create touch gestures in the base view
+        widget, let them handle events automatically instead of relying on
+        manual event feeding via gtk_event_controller_handle_event(). Also add
+        a GtkEventControllerLegacy to handle forwarding of raw touch events to
+        the web page in GTK4.
+        (webkitWebViewBaseSetEnableBackForwardNavigationGesture):
+        (webkitWebViewBaseViewGestureController):
+        (webkitWebViewBaseBeginBackSwipeForTesting):
+        (webkitWebViewBaseCompleteBackSwipeForTesting):
+        (webkitWebViewBaseWillSwapWebProcess):
+        (webkitWebViewBaseDidExitWebProcess):
+        (webkitWebViewBaseDidRelaunchWebProcess):
+        (webkitWebViewBaseDidStartProvisionalLoadForMainFrame):
+        (webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame):
+        (webkitWebViewBaseDidFinishNavigation):
+        (webkitWebViewBaseDidFailNavigation):
+        (webkitWebViewBaseDidSameDocumentNavigationForMainFrame):
+        (webkitWebViewBaseDidRestoreScrollPosition): Remove conditionals around
+        ViewGestureController for GTK4.
+        (webkitWebViewBasePageGrabbedTouch): New method to tag touch events
+        altogether as handled by the web page, thus resetting any ongoing view-level
+        gesture handling. This inversion is necessary as gesture controllers are now
+        always fed input events parallel to web page touch event handling.
+        (webkitWebViewBaseGestureController): Deleted.
+        (webkit_web_view_base_class_init):
+        (webkitWebViewBaseEvent): Removed widget_class->event vfunc. Touchpad gesture
+        event forwarding to event controllers is delegated on GTK.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/gtk/GestureController.cpp: Removed. Gestures are implemented in
+        the base view.
+        * UIProcess/gtk/GestureController.h: Removed.
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::isEventStop):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe):
+        (WebKit::isTouchEvent):
+        (WebKit::createScrollEvent):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas):
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        (WebKit::ViewGestureController::SwipeProgressTracker::handleEvent):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::beginSimulatedSwipeInDirectionForTesting):
+        (WebKit::ViewGestureController::completeSimulatedSwipeInDirectionForTesting): Declare
+        PlatformGtkScrollData, and use it as "platform scroll event" for both GTK3 and GTK4.
+        (WebKit::ViewGestureController::snapshot): New GTK4 specific method to render
+        the page switching gesture action.
+
 2021-05-07  Youenn Fablet  <youenn@apple.com>
 
         Add WebRTC logging control in GPUProcess

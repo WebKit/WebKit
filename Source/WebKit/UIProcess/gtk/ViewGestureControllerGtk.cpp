@@ -48,9 +48,9 @@ static const double swipeAnimationDurationMultiplier = 3;
 static const double swipeCancelArea = 0.5;
 static const double swipeCancelVelocityThreshold = 0.4;
 
-static bool isEventStop(GdkEventScroll* event)
+static bool isEventStop(PlatformGtkScrollData* event)
 {
-    return gdk_event_is_scroll_stop_event(reinterpret_cast<GdkEvent*>(event));
+    return event->isEnd;
 }
 
 void ViewGestureController::platformTeardown()
@@ -58,45 +58,34 @@ void ViewGestureController::platformTeardown()
     cancelSwipe();
 }
 
-bool ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe(GdkEventScroll*)
+bool ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe(PlatformGtkScrollData*)
 {
     return true;
 }
 
-bool ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe(GdkEventScroll* event)
+bool ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe(PlatformGtkScrollData* event)
 {
     return isEventStop(event);
 }
 
-bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(GdkEventScroll* event)
+bool ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe(PlatformGtkScrollData* event)
 {
-    GdkDevice* device = gdk_event_get_source_device(reinterpret_cast<GdkEvent*>(event));
-    GdkInputSource source = gdk_device_get_source(device);
-
-    bool isDeviceAllowed = source == GDK_SOURCE_TOUCHPAD || source == GDK_SOURCE_TOUCHSCREEN || m_viewGestureController.m_isSimulatedSwipe;
-
-    return gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), nullptr, nullptr) && isDeviceAllowed;
+    return true;
 }
 
-static bool isTouchEvent(GdkEventScroll* event)
+static bool isTouchEvent(PlatformGtkScrollData* event)
 {
-    GdkDevice* device = gdk_event_get_source_device(reinterpret_cast<GdkEvent*>(event));
-    GdkInputSource source = gdk_device_get_source(device);
-
-    return source == GDK_SOURCE_TOUCHSCREEN;
+    return event->isTouch;
 }
 
-FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas(GdkEventScroll* event)
+FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas(PlatformGtkScrollData* event)
 {
     double multiplier = isTouchEvent(event) ? Scrollbar::pixelsPerLineStep() : gtkScrollDeltaMultiplier;
-    double xDelta, yDelta;
-    gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &xDelta, &yDelta);
-
-    // GdkEventScroll deltas are inverted compared to NSEvent, so invert them again
-    return -FloatSize(xDelta, yDelta) * multiplier;
+    // GTK deltas are inverted compared to NSEvent, so invert them again
+    return -FloatSize(event->delta, 0) * multiplier;
 }
 
-bool ViewGestureController::handleScrollWheelEvent(GdkEventScroll* event)
+bool ViewGestureController::handleScrollWheelEvent(PlatformGtkScrollData* event)
 {
     return m_swipeProgressTracker.handleEvent(event) || m_pendingSwipeTracker.handleEvent(event);
 }
@@ -146,7 +135,7 @@ void ViewGestureController::SwipeProgressTracker::reset()
     m_cancelled = false;
 }
 
-bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* event)
+bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollData* event)
 {
     // Don't allow scrolling while the next page is loading
     if (m_state == State::Finishing)
@@ -175,9 +164,8 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* ev
         return false;
     }
 
-    uint32_t eventTime = gdk_event_get_time(reinterpret_cast<GdkEvent*>(event));
-    double eventDeltaX;
-    gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event), &eventDeltaX, nullptr);
+    uint32_t eventTime = event->eventTime;
+    double eventDeltaX = event->delta;
 
     double deltaX = -eventDeltaX;
     if (isTouchEvent(event)) {
@@ -281,6 +269,7 @@ void ViewGestureController::SwipeProgressTracker::endAnimation()
     m_viewGestureController.endSwipeGesture(m_targetItem.get(), m_cancelled);
 }
 
+#if !USE(GTK4)
 GRefPtr<GtkStyleContext> ViewGestureController::createStyleContext(const char* name)
 {
     bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
@@ -320,6 +309,7 @@ static int elementWidth(GtkStyleContext* context)
 
     return width;
 }
+#endif
 
 void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem, SwipeDirection direction)
 {
@@ -346,6 +336,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         }
     }
 
+#if !USE(GTK4)
     if (!m_currentSwipeSnapshotPattern) {
         GdkRGBA color;
         auto* context = gtk_widget_get_style_context(m_webPageProxy.viewWidget());
@@ -382,6 +373,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     m_swipeOutlineSize = elementWidth(context.get());
     if (m_swipeOutlineSize)
         m_swipeOutlinePattern = createElementPattern(context.get(), m_swipeOutlineSize, size.height(), scale);
+#endif
 }
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, SwipeDirection)
@@ -399,6 +391,49 @@ void ViewGestureController::cancelSwipe()
     }
 }
 
+#if USE(GTK4)
+void ViewGestureController::snapshot(GtkSnapshot* snapshot, GskRenderNode* pageRenderNode)
+{
+    bool swipingLeft = isPhysicallySwipingLeft(m_swipeProgressTracker.direction());
+    bool swipingBack = m_swipeProgressTracker.direction() == SwipeDirection::Back;
+    bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
+    float progress = m_swipeProgressTracker.progress();
+
+    auto size = m_webPageProxy.drawingArea()->size();
+    int width = size.width();
+    int height = size.height();
+    double scale = m_webPageProxy.deviceScaleFactor();
+
+    double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
+
+    double dimmingProgress = swipingLeft ? 1 - progress : -progress;
+    if (isRTL) {
+        dimmingProgress = 1 - dimmingProgress;
+        swipingLayerOffset = -(width - swipingLayerOffset);
+    }
+
+    gtk_snapshot_save(snapshot);
+
+    graphene_point_t translation = { static_cast<float>(swipingLayerOffset), 0 };
+    if (!swipingBack) {
+        gtk_snapshot_append_node(snapshot, pageRenderNode);
+        gtk_snapshot_translate(snapshot, &translation);
+    }
+
+    graphene_rect_t rect = { 0, 0, (float)width, (float)height };
+    auto* cr = gtk_snapshot_append_cairo(snapshot, &rect);
+    cairo_set_source(cr, m_currentSwipeSnapshotPattern.get());
+    cairo_rectangle(cr, 0, 0, width, height);
+    cairo_fill(cr);
+
+    if (swipingBack) {
+        gtk_snapshot_translate(snapshot, &translation);
+        gtk_snapshot_append_node(snapshot, pageRenderNode);
+    }
+
+    gtk_snapshot_restore(snapshot);
+}
+#else
 void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
 {
     bool swipingLeft = isPhysicallySwipingLeft(m_swipeProgressTracker.direction());
@@ -489,6 +524,7 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
 
     cairo_restore(cr);
 }
+#endif
 
 void ViewGestureController::removeSwipeSnapshot()
 {
@@ -518,37 +554,6 @@ void ViewGestureController::removeSwipeSnapshot()
     m_swipeProgressTracker.reset();
 }
 
-static GUniquePtr<GdkEvent> createScrollEvent(GtkWidget* widget, double xDelta, double yDelta)
-{
-    GdkWindow* window = gtk_widget_get_window(widget);
-
-    int x, y;
-    gdk_window_get_root_origin(window, &x, &y);
-
-    int width = gdk_window_get_width(window);
-    int height = gdk_window_get_height(window);
-
-    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_SCROLL));
-    event->scroll.time = GDK_CURRENT_TIME;
-    event->scroll.x = width / 2;
-    event->scroll.y = height / 2;
-    event->scroll.x_root = x + width / 2;
-    event->scroll.y_root = y + height / 2;
-    event->scroll.direction = GDK_SCROLL_SMOOTH;
-    event->scroll.delta_x = xDelta;
-    event->scroll.delta_y = yDelta;
-    event->scroll.state = 0;
-    event->scroll.is_stop = !xDelta && !yDelta;
-    event->scroll.window = GDK_WINDOW(g_object_ref(window));
-    gdk_event_set_screen(event.get(), gdk_window_get_screen(window));
-
-    GdkDevice* pointer = gdk_seat_get_pointer(gdk_display_get_default_seat(gdk_window_get_display(window)));
-    gdk_event_set_device(event.get(), pointer);
-    gdk_event_set_source_device(event.get(), pointer);
-
-    return event;
-}
-
 bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
 {
     if (!canSwipeInDirection(direction))
@@ -561,17 +566,16 @@ bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirect
     if (isPhysicallySwipingLeft(direction))
         delta = -delta;
 
-    GUniquePtr<GdkEvent> event = createScrollEvent(m_webPageProxy.viewWidget(), delta, 0);
-    gtk_widget_event(m_webPageProxy.viewWidget(), event.get());
+    PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = GDK_CURRENT_TIME, .isTouch = false, .isEnd = false };
+    handleScrollWheelEvent(&scrollData);
 
     return true;
 }
 
 bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection)
 {
-    GUniquePtr<GdkEvent> event = createScrollEvent(m_webPageProxy.viewWidget(), 0, 0);
-    gtk_widget_event(m_webPageProxy.viewWidget(), event.get());
-
+    PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = GDK_CURRENT_TIME, .isTouch = false, .isEnd = true };
+    handleScrollWheelEvent(&scrollData);
     m_isSimulatedSwipe = false;
 
     return true;
