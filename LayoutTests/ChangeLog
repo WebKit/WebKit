@@ -1,3 +1,9 @@
+2021-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, glib WebAudio gardening
+
+        * platform/glib/TestExpectations: Unflag webaudio test now passing since r276978.
+
 2021-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.5
