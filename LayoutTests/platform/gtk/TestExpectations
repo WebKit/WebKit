@@ -1356,9 +1356,6 @@ webkit.org/b/224524 editing/selection/user-select-all-with-single-click.html [ F
 
 webkit.org/b/224791 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-screenx-screeny.html [ Timeout Pass ]
 
-webkit.org/b/224966 imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Crash Pass ]
-webkit.org/b/224966 imported/w3c/web-platform-tests/worklets/paint-worklet-csp.https.html [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
