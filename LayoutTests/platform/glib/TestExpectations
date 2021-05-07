@@ -161,6 +161,7 @@ webkit.org/b/222020 imported/w3c/web-platform-tests/html/canvas/element/fill-and
 imported/w3c/web-platform-tests/css/css-display/display-contents-button.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-017.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-auto-min-width.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ Pass ]
@@ -2376,6 +2377,9 @@ webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-r
 
 # Failing after r277077.
 webkit.org/b/225466 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-system-colors.html [ Failure ]
+
+# Failing since r277091.
+webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 

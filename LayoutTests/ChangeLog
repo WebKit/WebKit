@@ -1,3 +1,9 @@
+2021-05-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update test expectations after WPT re-imports in r277086 and r277091.
+
+        * platform/glib/TestExpectations:
+
 2021-05-06  Dean Jackson  <dino@apple.com>
 
         Rebaseline the following tests that now pass.
