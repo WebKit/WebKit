@@ -1,3 +1,16 @@
+2021-05-07  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=225235
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * editing/execCommand/font-size-delta-same-node-for-start-and-end-crash-expected.txt: Added.
+        * editing/execCommand/font-size-delta-same-node-for-start-and-end-crash.html: Added.
+        * platform/ios/editing/execCommand/font-size-delta-same-node-for-start-and-end-crash-expected.txt: Added.
+
 2021-05-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, glib WebAudio gardening

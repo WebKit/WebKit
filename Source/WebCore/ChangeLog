@@ -1,3 +1,23 @@
+2021-05-07  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=225235
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/execCommand/font-size-delta-same-node-for-start-and-end-crash.html
+
+        In ApplyStyleCommand::applyRelativeFontStyleChange, when the selection start and end have the
+        same anchor node, the start node of the loop is obtained by calling Position::upstream on the
+        selection start while end node of the loop is obtained by calling NodeTraversal::next on the
+        anchor node. This can result in the former being after the latter. This patch fixes this by
+        moving the end of the loop after the anchor node (similar to what is already done when the
+        start anchor node is a strict descendant of the end anchor node).
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Also include the case where
+        end.deprecatedNode() == start.deprecatedNode() in the conditional.
+
 2021-05-07  Carlos Garnacho  <carlosg@gnome.org>
 
         [GTK4] Rewrite GTK gesture support to work for both 3.x and 4.x.
