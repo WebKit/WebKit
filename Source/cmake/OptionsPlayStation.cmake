@@ -145,9 +145,6 @@ set(CMAKE_CXX_STANDARD_LIBRARIES
     "${CMAKE_CXX_STANDARD_LIBRARIES} ${C_STD_LIBRARY}"
   )
 
-# TODO: Add a check for HAVE_RSA_PSS for support of CryptoAlgorithmRSA_PSS
-# https://bugs.webkit.org/show_bug.cgi?id=206635
-
 SET_AND_EXPOSE_TO_BUILD(HAVE_PTHREAD_SETNAME_NP ON)
 
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO ON)

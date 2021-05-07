@@ -51,8 +51,9 @@ typedef std::unique_ptr<typename std::remove_pointer<gcry_sexp_t>::type, PAL::GC
 #endif
 
 #if USE(OPENSSL)
-typedef void* PlatformRSAKey;
-typedef std::unique_ptr<PlatformRSAKey> PlatformRSAKeyContainer;
+#include "crypto/openssl/OpenSSLCryptoUniquePtr.h"
+typedef EVP_PKEY* PlatformRSAKey;
+typedef WebCore::EvpPKeyPtr PlatformRSAKeyContainer;
 #endif
 
 namespace WebCore {

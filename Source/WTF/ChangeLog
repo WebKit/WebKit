@@ -1,3 +1,22 @@
+2021-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement CryptoAlgorithmRSA*
+        https://bugs.webkit.org/show_bug.cgi?id=225294
+
+        Reviewed by Don Olmstead.
+
+        Implement RSA for OpenSSL.
+
+        Implement CryptoAlgorithmRSA_OAEP, CryptoAlgorithmRSA_PSS,
+        CryptoAlgorithmRSAES_PKCS1_v1_5, CryptoAlgorithmRSASA_PKCS1_v1_5,
+        and CryptoKeyRSA for OpenSSL.
+
+        Note that if such OpenSSL version that does not support RSA_OAEP or
+        RSA_PSS, the WebCrypto API for those algorithm will return a
+        NotSupportedError.
+
+        * wtf/Platform.h: Set HAVE_RSA_PSS for USE(OPENSSL)
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r254389?) navigator.languages returns all lowercase languages for ports using CF

@@ -27,7 +27,7 @@
 #pragma once
 
 #include <memory>
-#include <openssl/evp.h>
+#include <openssl/X509.h>
 
 namespace WebCore {
 
@@ -68,5 +68,56 @@ struct OpenSSLCryptoPtrDeleter<EVP_PKEY> {
 };
 
 using EvpPKeyPtr = OpenSSLCryptoPtr<EVP_PKEY>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<EVP_PKEY_CTX> {
+    void operator()(EVP_PKEY_CTX* ptr) const
+    {
+        EVP_PKEY_CTX_free(ptr);
+    }
+};
+
+using EvpPKeyCtxPtr = OpenSSLCryptoPtr<EVP_PKEY_CTX>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<RSA> {
+    void operator()(RSA* ptr) const
+    {
+        RSA_free(ptr);
+    }
+};
+
+using RSAPtr = OpenSSLCryptoPtr<RSA>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<PKCS8_PRIV_KEY_INFO> {
+    void operator()(PKCS8_PRIV_KEY_INFO* ptr) const
+    {
+        PKCS8_PRIV_KEY_INFO_free(ptr);
+    }
+};
+
+using PKCS8PrivKeyInfoPtr = OpenSSLCryptoPtr<PKCS8_PRIV_KEY_INFO>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<BIGNUM> {
+    void operator()(BIGNUM* ptr) const
+    {
+        BN_clear_free(ptr);
+    }
+};
+
+using BIGNUMPtr = OpenSSLCryptoPtr<BIGNUM>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<BN_CTX> {
+    void operator()(BN_CTX* ptr) const
+    {
+        BN_CTX_free(ptr);
+    }
+};
+
+using BNCtxPtr = OpenSSLCryptoPtr<BN_CTX>;
+
 
 } // namespace WebCore

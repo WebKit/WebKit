@@ -1,3 +1,24 @@
+2021-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement CryptoAlgorithmRSA*
+        https://bugs.webkit.org/show_bug.cgi?id=225294
+
+        Reviewed by Don Olmstead.
+
+        Implement RSA for OpenSSL.
+
+        Implement CryptoAlgorithmRSA_OAEP, CryptoAlgorithmRSA_PSS,
+        CryptoAlgorithmRSAES_PKCS1_v1_5, CryptoAlgorithmRSASA_PKCS1_v1_5,
+        and CryptoKeyRSA for OpenSSL.
+
+        Add wincairo platform expectations for
+        rsa-generate/import-key-malformed-parameters, modifying RSA-PSS
+        related results from NotSupported to appropriate errors.
+
+        * platform/wincairo/TestExpectations: Unskip tests that are now supported.
+        * platform/wincairo/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/wincairo/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt: Added.
+
 2021-05-06  Robert Jenner  <jenner@apple.com>
 
         [ BigSur Debug ] webgl/1.0.3/conformance/glsl/misc/expression-list-in-declarator-initializer.html is a flaky timeout

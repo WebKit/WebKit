@@ -1,3 +1,23 @@
+2021-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement CryptoAlgorithmRSA*
+        https://bugs.webkit.org/show_bug.cgi?id=225294
+
+        Reviewed by Don Olmstead.
+
+        Implement RSA for OpenSSL.
+
+        Implement CryptoAlgorithmRSA_OAEP, CryptoAlgorithmRSA_PSS,
+        CryptoAlgorithmRSAES_PKCS1_v1_5, CryptoAlgorithmRSASA_PKCS1_v1_5,
+        and CryptoKeyRSA for OpenSSL.
+
+        Note that if such OpenSSL version that does not support RSA_OAEP or
+        RSA_PSS, the WebCrypto API for those algorithm will return a
+        NotSupportedError.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2021-05-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         USE_64KB_PAGE_BLOCK build option is broken

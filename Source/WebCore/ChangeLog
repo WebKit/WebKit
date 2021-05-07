@@ -1,3 +1,78 @@
+2021-05-06  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [OpenSSL] Implement CryptoAlgorithmRSA*
+        https://bugs.webkit.org/show_bug.cgi?id=225294
+
+        Reviewed by Don Olmstead.
+
+        Implement RSA for OpenSSL.
+
+        Implement CryptoAlgorithmRSA_OAEP, CryptoAlgorithmRSA_PSS,
+        CryptoAlgorithmRSAES_PKCS1_v1_5, CryptoAlgorithmRSASA_PKCS1_v1_5,
+        and CryptoKeyRSA for OpenSSL.
+
+        Note that if such OpenSSL version that does not support RSA_OAEP or
+        RSA_PSS, the WebCrypto API for those algorithm will return a
+        NotSupportedError.
+
+        Also note that OpenSSL accepts RSA_PSS salt length longer than the hash
+        length. This makes the
+        crypto/subtle/rsa-pss-import-key-sign-large-salt.html test fail.
+
+        Test: Existing crypto/subtle tests
+
+        * crypto/keys/CryptoKeyRSA.h: Use the EVP_PKEY struct for the platform
+        key.
+        * crypto/openssl/CryptoAlgorithmHMACOpenSSL.cpp: Move HMACAlgorithm()
+        to OpenSSLUtilities as DigestAlgorithm().
+        * crypto/openssl/CryptoAlgorithmRSAES_PKCS1_v1_5OpenSSL.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        Implemented.
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+        Implemented.
+        * crypto/openssl/CryptoAlgorithmRSASSA_PKCS1_v1_5OpenSSL.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        Implemented.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+        Implemented.
+        * crypto/openssl/CryptoAlgorithmRSA_OAEPOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt): Implemented.
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt): Implemented.
+        * crypto/openssl/CryptoAlgorithmRSA_PSSOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign): Implemented.
+        (WebCore::CryptoAlgorithmRSA_PSS::platformVerify): Implemented.
+        * crypto/openssl/CryptoAlgorithmRegistryOpenSSL.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        Registered RSAES_PKCS1_v_1_5, RSASSA_PKCS1_v1_5, RSA_OAEP, and RSA_PSS.
+        * crypto/openssl/CryptoKeyRSAOpenSSL.cpp:
+        (WebCore::getRSAModulusLength):
+        (WebCore::convertToBytes):
+        (WebCore::convertToBigNumber):
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::CryptoKeyRSA):
+        (WebCore::CryptoKeyRSA::isRestrictedToHash const):
+        (WebCore::CryptoKeyRSA::keySizeInBits const):
+        (WebCore::exponentVectorToUInt32):
+        (WebCore::CryptoKeyRSA::generatePair):
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::exportSpki const):
+        (WebCore::CryptoKeyRSA::exportPkcs8 const):
+        (WebCore::CryptoKeyRSA::algorithm const):
+        (WebCore::CryptoKeyRSA::exportData const):
+        * crypto/openssl/OpenSSLCryptoUniquePtr.h:
+        (WebCore::OpenSSLCryptoPtrDeleter<EVP_PKEY_CTX>::operator() const):
+        Added.
+        (WebCore::OpenSSLCryptoPtrDeleter<RSA>::operator() const): Added.
+        (WebCore::OpenSSLCryptoPtrDeleter<PKCS8_PRIV_KEY_INFO>::operator() const): Added.
+        (WebCore::OpenSSLCryptoPtrDeleter<BIGNUM>::operator() const): Added.
+        (WebCore::OpenSSLCryptoPtrDeleter<BN_CTX>::operator() const): Added.
+        * crypto/openssl/OpenSSLUtilities.cpp:
+        (WebCore::digestAlgorithm): Added.
+        (WebCore::calculateDigest): Added.
+        * crypto/openssl/OpenSSLUtilities.h: 
+        * platform/OpenSSL.cmake:
+
 2021-05-06  Eric Carlson  <eric.carlson@apple.com>
 
         r277122 caused a crash in GPU Process

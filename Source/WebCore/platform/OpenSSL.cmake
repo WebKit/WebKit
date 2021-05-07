@@ -17,6 +17,7 @@ if (ENABLE_WEB_CRYPTO)
         crypto/openssl/CryptoAlgorithmRegistryOpenSSL.cpp
         crypto/openssl/CryptoKeyECOpenSSL.cpp
         crypto/openssl/CryptoKeyRSAOpenSSL.cpp
+        crypto/openssl/OpenSSLUtilities.cpp
         crypto/openssl/SerializedCryptoKeyWrapOpenSSL.cpp
     )
 endif ()
