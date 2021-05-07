@@ -1,4 +1,4 @@
-#if WK_DISABLE_HARDWARE_ACCELERATION
+#if WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #include "vp8_rtcd_no_acceleration.h"
 #else
 
@@ -655,11 +655,15 @@ static void setup_rtcd_internal(void) {
   vp8_full_search_sad = vp8_full_search_sad_c;
   if (flags & HAS_SSE3)
     vp8_full_search_sad = vp8_full_search_sadx3;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vp8_full_search_sad = vp8_full_search_sadx8;
+#endif
   vp8_regular_quantize_b = vp8_regular_quantize_b_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vp8_regular_quantize_b = vp8_regular_quantize_b_sse4_1;
+#endif
   vp8_sixtap_predict16x16 = vp8_sixtap_predict16x16_sse2;
   if (flags & HAS_SSSE3)
     vp8_sixtap_predict16x16 = vp8_sixtap_predict16x16_ssse3;
@@ -681,4 +685,4 @@ static void setup_rtcd_internal(void) {
 
 #endif
 
-#endif // WK_DISABLE_HARDWARE_ACCELERATION
+#endif // WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
