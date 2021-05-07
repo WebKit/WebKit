@@ -209,7 +209,42 @@ TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToGPUProcessWithoutTermination)
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"result.arguments[0].type"].UTF8String, "bool");
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"result.arguments[0].value"].boolValue);
 }
+
+TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "const semaphore = IPC.createSemaphore();"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,"
+        "    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);"
+        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_SemaphoreForGetImageData.name, 100, []);"
+        "semaphore.signal();"
+        "alert(result.arguments.length + ':' + result.arguments[0].type + ':' + result.arguments[0].value.waitFor(100));"
+        "</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "1:Semaphore:false");
+}
 #endif
+
+TEST(IPCTestingAPI, CanCreateIPCSemaphore)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>alert(IPC.createSemaphore().waitFor(100));</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_FALSE([alertMessage boolValue]);
+}
 
 TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
 {

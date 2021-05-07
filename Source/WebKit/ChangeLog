@@ -1,3 +1,52 @@
+2021-05-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing API should have the ability to create and receive IPC::Semaphore
+        https://bugs.webkit.org/show_bug.cgi?id=225537
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds the capability to create IPC::Semaphore for IPC testing purposes.
+        It adds IPC.createSemaphore which creates a JavaScript object representing a semaphore
+        with signal and waitFor methods like IPC::Semaphore but waitFor taking milliseconds
+        to be consistent with other JavaScript APIs.
+
+        This patch also adds the support for encoding RemoteRenderingBackendCreationParameters
+        to facilitate creating a remote rendering backend during IPC testing.
+
+        Tests: TestWebKitAPI.IPCTestingAPI.CanReceiveIPCSemaphore
+               TestWebKitAPI.IPCTestingAPI.CanCreateIPCSemaphore
+
+        * Platform/IPC/JSIPCBinding.cpp:
+        (IPC::jsValueForDecodedArgumentValue): Takes r-value reference since IPC::Semaphore
+        doesn't have a copy constructor.
+        * Platform/IPC/JSIPCBinding.h:
+        (IPC::jsValueForDecodedArgumentValue): Ditto. Added a specialization for IPC::Semaphore.
+        (IPC::putJSValueForDecodeArgumentInArray):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCSemaphore): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::create): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::exchange): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::JSIPCSemaphore): Added.
+        (WebKit::IPCTestingAPI::createTypeError): Moved up.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::createJSWrapper): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::wrapperClass): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::unwrap): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::toWrapped): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::initialize): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::finalize): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::staticFunctions): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::signal): Added.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::waitFor): Added.
+        (WebKit::IPCTestingAPI::JSIPC::wrapperClass):
+        (WebKit::IPCTestingAPI::JSIPC::staticFunctions): Added IPC.createSemaphore.
+        (WebKit::IPCTestingAPI::getObjectIdentifierFromProperty): Added.
+        (WebKit::IPCTestingAPI::encodeRemoteRenderingBackendCreationParameters): Added.
+        (WebKit::IPCTestingAPI::encodeArgument): Added the support for encoding
+        RemoteRenderingBackendCreationParameters as an IPC argument.
+        (WebKit::IPCTestingAPI::JSIPC::createSemaphore): Added.
+        (IPC::jsValueForDecodedArgumentValue): Defined the aforementioned specialization for
+        IPC::Semaphore with IPCTestingAPI .
+
 2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Set the -isSourceEditable property when presenting webpage translation popup

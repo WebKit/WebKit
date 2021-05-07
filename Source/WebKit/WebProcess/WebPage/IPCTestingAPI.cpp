@@ -31,8 +31,11 @@
 #include "Encoder.h"
 #include "FrameInfoData.h"
 #include "GPUProcessConnection.h"
+#include "IPCSemaphore.h"
+#include "JSIPCBinding.h"
 #include "MessageArgumentDescriptions.h"
 #include "NetworkProcessConnection.h"
+#include "RemoteRenderingBackendCreationParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -50,10 +53,45 @@
 #include <WebCore/Frame.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
+#include <wtf/PageBlock.h>
 
 namespace WebKit {
 
 namespace IPCTestingAPI {
+
+class JSIPCSemaphore : public RefCounted<JSIPCSemaphore> {
+public:
+    static Ref<JSIPCSemaphore> create(IPC::Semaphore&& semaphore = { })
+    {
+        return adoptRef(*new JSIPCSemaphore(WTFMove(semaphore)));
+    }
+
+    JSObjectRef createJSWrapper(JSContextRef);
+
+    static JSIPCSemaphore* toWrapped(JSContextRef, JSValueRef);
+
+    IPC::Semaphore exchange(IPC::Semaphore&& semaphore = { })
+    {
+        return std::exchange(m_semaphore, WTFMove(semaphore));
+    }
+
+private:
+    JSIPCSemaphore(IPC::Semaphore&& semaphore)
+        : m_semaphore(WTFMove(semaphore))
+    { }
+
+    static JSClassRef wrapperClass();
+    static JSIPCSemaphore* unwrap(JSObjectRef);
+    static void initialize(JSContextRef, JSObjectRef);
+    static void finalize(JSObjectRef);
+
+    static const JSStaticFunction* staticFunctions();
+
+    static JSValueRef signal(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef waitFor(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+
+    IPC::Semaphore m_semaphore;
+};
 
 class JSIPC;
 
@@ -106,6 +144,8 @@ private:
     static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
+    static JSValueRef createSemaphore(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+
     static JSValueRef visitedLinkStoreID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef webPageProxyID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef sessionID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
@@ -120,13 +160,125 @@ private:
     Vector<UniqueRef<JSMessageListener>> m_messageListeners;
 };
 
+static JSValueRef createTypeError(JSContextRef context, const String& message)
+{
+    JSC::JSLockHolder lock(toJS(context)->vm());
+    return toRef(JSC::createTypeError(toJS(context), message));
+}
+
+JSObjectRef JSIPCSemaphore::createJSWrapper(JSContextRef context)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSObjectRef wrapperObject = JSObjectMake(toGlobalRef(globalObject), wrapperClass(), this);
+    scope.clearException();
+    return wrapperObject;
+}
+
+JSClassRef JSIPCSemaphore::wrapperClass()
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
+        definition.className = "Semaphore";
+        definition.parentClass = nullptr;
+        definition.staticValues = nullptr;
+        definition.staticFunctions = staticFunctions();
+        definition.initialize = initialize;
+        definition.finalize = finalize;
+        jsClass = JSClassCreate(&definition);
+    }
+    return jsClass;
+}
+
+inline JSIPCSemaphore* JSIPCSemaphore::unwrap(JSObjectRef object)
+{
+    return static_cast<JSIPCSemaphore*>(JSObjectGetPrivate(object));
+}
+
+JSIPCSemaphore* JSIPCSemaphore::toWrapped(JSContextRef context, JSValueRef value)
+{
+    if (!context || !value || !JSValueIsObjectOfClass(context, value, wrapperClass()))
+        return nullptr;
+    return unwrap(JSValueToObject(context, value, 0));
+}
+
+void JSIPCSemaphore::initialize(JSContextRef, JSObjectRef object)
+{
+    unwrap(object)->ref();
+}
+
+void JSIPCSemaphore::finalize(JSObjectRef object)
+{
+    unwrap(object)->deref();
+}
+
+const JSStaticFunction* JSIPCSemaphore::staticFunctions()
+{
+    static const JSStaticFunction functions[] = {
+        { "signal", signal, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "waitFor", waitFor, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { 0, 0, 0 }
+    };
+    return functions;
+}
+
+JSValueRef JSIPCSemaphore::signal(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    JSC::JSLockHolder lock(globalObject->vm());
+    auto isIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
+    if (!isIPCSemaphore) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    isIPCSemaphore->m_semaphore.signal();
+
+    return JSValueMakeUndefined(context);
+}
+
+JSValueRef JSIPCSemaphore::waitFor(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    JSC::JSLockHolder lock(globalObject->vm());
+    auto isIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
+    if (!isIPCSemaphore) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    if (argumentCount < 1) {
+        *exception = createTypeError(context, "Must specify the timeout in milliseconds as the first argument"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto jsValue = toJS(globalObject, arguments[0]);
+    Seconds timeout;
+    if (jsValue.isNumber()) {
+        double milliseconds = jsValue.asNumber();
+        if (std::isfinite(milliseconds) && milliseconds > 0)
+            timeout = Seconds::fromMilliseconds(milliseconds);
+    }
+    if (!timeout) {
+        *exception = createTypeError(context, "Timeout must be a positive number"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto result = isIPCSemaphore->m_semaphore.waitFor(timeout);
+
+    return JSValueMakeBoolean(context, result);
+}
+
 JSClassRef JSIPC::wrapperClass()
 {
     static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
         definition.className = "IPC";
-        definition.parentClass = 0;
+        definition.parentClass = nullptr;
         definition.staticValues = staticValues();
         definition.staticFunctions = staticFunctions();
         definition.initialize = initialize;
@@ -165,6 +317,7 @@ const JSStaticFunction* JSIPC::staticFunctions()
         { "addOutgoingMessageListener", addOutgoingMessageListener, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendMessage", sendMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendSyncMessage", sendSyncMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "createSemaphore", createSemaphore, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
     };
     return functions;
@@ -195,12 +348,6 @@ static Optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
     if (jsValue.isBigInt())
         return JSC::JSBigInt::toBigUInt64(jsValue);
     return WTF::nullopt;
-}
-
-static JSValueRef createTypeError(JSContextRef context, const String& message)
-{
-    JSC::JSLockHolder lock(toJS(context)->vm());
-    return toRef(JSC::createTypeError(toJS(context), message));
 }
 
 static RefPtr<IPC::Connection> processTargetFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
@@ -363,6 +510,49 @@ template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JS
     return true;
 }
 
+#if ENABLE(GPU_PROCESS)
+template <typename ObjectIdentifierType>
+Optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::CatchScope& scope)
+{
+    auto jsPropertyValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), propertyName));
+    if (scope.exception())
+        return WTF::nullopt;
+    if (jsPropertyValue.isBigInt()) 
+        return makeObjectIdentifier<ObjectIdentifierType>(JSC::JSBigInt::toBigUInt64(jsPropertyValue));
+    if (jsPropertyValue.isNumber())
+        return makeObjectIdentifier<ObjectIdentifierType>(jsPropertyValue.asNumber());
+    return WTF::nullopt;
+}
+
+static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
+{
+    auto identifier = getObjectIdentifierFromProperty<RenderingBackendIdentifierType>(globalObject, jsObject, "identifier"_s, scope);
+    if (!identifier)
+        return false;
+
+    auto jsSemaphore = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "semaphore"_s));
+    if (scope.exception())
+        return false;
+    auto semaphoreObject = makeRefPtr(JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsSemaphore)));
+    if (!semaphoreObject)
+        return false;
+
+    auto pageProxyID = getObjectIdentifierFromProperty<WebPageProxyIdentifierType>(globalObject, jsObject, "pageProxyID"_s, scope);
+    if (!pageProxyID)
+        return false;
+
+    auto pageID = getObjectIdentifierFromProperty<WebCore::PageIdentifierType>(globalObject, jsObject, "pageID"_s, scope);
+    if (!pageID)
+        return false;
+
+    auto semaphore = semaphoreObject->exchange();
+    RemoteRenderingBackendCreationParameters parameters { *identifier, WTFMove(semaphore), *pageProxyID, *pageID };
+    encoder << parameters;
+    semaphoreObject->exchange(WTFMove(parameters.resumeDisplayListSemaphore));
+    return true;
+}
+#endif
+
 static bool encodeArgument(IPC::Encoder&, JSIPC&, JSContextRef, JSValueRef, JSValueRef* exception);
 
 struct VectorEncodeHelper {
@@ -474,6 +664,16 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
         }
         return true;
     }
+
+#if ENABLE(GPU_PROCESS)
+    if (type == "RemoteRenderingBackendCreationParameters") {
+        if (!encodeRemoteRenderingBackendCreationParameters(encoder, globalObject, jsObject, scope)) {
+            *exception = createTypeError(context, "Failed to convert RemoteRenderingBackendCreationParameters"_s);
+            return false;
+        }
+        return true;
+    }
+#endif
 
     if (type == "FrameInfoData") {
         auto webFrame = makeRefPtr(jsIPC.webFrame());
@@ -760,6 +960,11 @@ JSValueRef JSIPC::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef
     return JSValueMakeUndefined(context);
 }
 
+JSValueRef JSIPC::createSemaphore(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSIPCSemaphore::create()->createJSWrapper(context);
+}
+
 JSValueRef JSIPC::visitedLinkStoreID(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
     return retrieveID(context, thisObject, exception, [](JSIPC& wrapped) {
@@ -1016,5 +1221,24 @@ void inject(WebPage& webPage, WebFrame& webFrame, WebCore::DOMWrapperWorld& worl
 } // namespace IPCTestingAPI
 
 } // namespace WebKit
+
+namespace IPC {
+
+template<>
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, IPC::Semaphore&& value)
+{
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "Semaphore"));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    auto jsValue = toJS(globalObject, WebKit::IPCTestingAPI::JSIPCSemaphore::create(WTFMove(value))->createJSWrapper(toRef(globalObject)));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), jsValue);
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    return object;
+}
+
+} // namespace IPC
 
 #endif
