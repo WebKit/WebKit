@@ -196,6 +196,13 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     if (!_rate)
         return;
 
+    // In AVKit, the `defaultPlaybackRate` is used when playback starts, such as resuming after
+    // pausing. In WebKit, however, `defaultPlaybackRate` is only used when first loading and after
+    // ending scanning, with the `playbackRate` being used in all other cases, including when
+    // resuming after pausing. As such, WebKit should return the `playbackRate` instead of the
+    // `defaultPlaybackRate` in these cases when communicating with AVKit.
+    [self setDefaultPlaybackRate:_rate];
+
     if (self.delegate && self.delegate->playbackRate() != _rate)
         self.delegate->setPlaybackRate(_rate);
 }

@@ -126,8 +126,8 @@ void PlaybackSessionInterfaceAVKit::bufferedTimeChanged(double bufferedTime)
 
 void PlaybackSessionInterfaceAVKit::rateChanged(bool isPlaying, float playbackRate, float defaultPlaybackRate)
 {
-    [m_playerController setRate:isPlaying ? playbackRate : 0.];
     [m_playerController setDefaultPlaybackRate:defaultPlaybackRate];
+    [m_playerController setRate:isPlaying ? playbackRate : 0.];
 }
 
 void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
