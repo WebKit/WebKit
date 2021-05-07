@@ -93,9 +93,6 @@
                     "gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"},
                     "wpe": {"status": ["FAIL", "TIMEOUT", "PASS", "CRASH"], "bug": ["webkit.org/b/211336", "webkit.org/b/219980"]}
                 }
-            },
-            "/webkit/WebKitWebView/web-process-crashed": {
-                "expected": {"wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/225503"}}
             }
         }
     },

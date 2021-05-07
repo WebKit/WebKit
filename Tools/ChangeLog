@@ -1,3 +1,10 @@
+2021-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE gardening
+
+        * TestWebKitAPI/glib/TestExpectations.json: Unflag test, wpebackend-fdo was downgraded in
+        the SDK revision r277166.
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Port Filesystem::fileMetadata() & Filesystem::getFileModificationTime() to std::filesystem
