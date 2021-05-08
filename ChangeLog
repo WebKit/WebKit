@@ -1,3 +1,9 @@
+2021-05-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.32.1 release
+
+        * Source/cmake/OptionsWPE.cmake: Bump version numbers.
+
 2021-05-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         USE_64KB_PAGE_BLOCK build option is broken
