@@ -1142,6 +1142,16 @@
             ;;; FIXME(207716): End services to remove.
 )))
 
+;; Silence warnings about these connections if we have decided not to extend access to them:
+(deny mach-lookup (with no-report)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.mach"))
+        (global-name
+            "com.apple.audio.AudioComponentRegistrar"
+        )
+    )
+)
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")

@@ -1,5 +1,22 @@
 2021-05-07  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] [GPU] Silence warning about com.apple.audio.AudioComponentRegistrar in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=225547
+        <rdar://problem/77334436>
+
+        Reviewed by Per Arne Vollan.
+
+        We block access to various media things (like 'com.apple.audio.AudioComponentRegistrar') when the GPU Process is being used.
+        Some AudioToolbox code continues to try to connect even though we are not activating relevant parts of the audio subsystem.
+        AudioToolbox doesn't care about this blocked connection when running in this mode, but they have not had a chance to modify
+        the framework to avoid attempting to connect.
+
+        To avoid spurious logging and telemetry, silence the sandbox violation when the GPU Process is active.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2021-05-07  Brent Fulgham  <bfulgham@apple.com>
+
         [macOS] [GPU] Process is missing access to IOMobileFramebufferUserClient on Apple Silicon
         https://bugs.webkit.org/show_bug.cgi?id=225545
         <rdar://problem/77591664>
