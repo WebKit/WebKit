@@ -598,8 +598,6 @@ bool getFileSize(const String& path, long long& result)
 
 bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
-    if (path.isEmpty())
-        return false;
     std::error_code ec;
     std::filesystem::file_status fileStatus;
     if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes)

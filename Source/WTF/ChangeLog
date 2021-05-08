@@ -1,3 +1,15 @@
+2021-05-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] REGRESSION(r277158) imported/w3c/web-platform-tests/xhr/FormData-append.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225551
+
+        Reviewed by Chris Dumez.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::fileIsDirectory): Remove unnecessary path.isEmpty check.
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::fileSystemRepresentation): Return empty CString if path is empty.
+
 2021-05-07  Chris Dumez  <cdumez@apple.com>
 
         Port FileSystem::pathGetFileName() & Filesystem::directoryName() to std::filesystem

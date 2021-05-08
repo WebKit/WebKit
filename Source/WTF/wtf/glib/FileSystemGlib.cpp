@@ -73,8 +73,10 @@ String stringFromFileSystemRepresentation(const char* representation)
 
 CString fileSystemRepresentation(const String& path)
 {
-    if (path.isEmpty())
+    if (path.isNull())
         return { };
+    if (path.isEmpty())
+        return CString("");
 
     CString utf8 = path.utf8();
 
