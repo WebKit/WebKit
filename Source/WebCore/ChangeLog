@@ -1,3 +1,12 @@
+2021-05-08  Megan Gardner  <megan_gardner@apple.com>
+
+        Increase stored AppHighlight character limit to 500
+        https://bugs.webkit.org/show_bug.cgi?id=225558
+
+        Reviewed by Tim Horton.
+
+        * Modules/highlight/AppHighlightStorage.cpp:
+
 2021-05-07  Zalan Bujtas  <zalan@apple.com>
 
         [css-flexbox] Flex item construction may affect sibling flex item height computation

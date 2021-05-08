@@ -46,7 +46,7 @@ namespace WebCore {
 
 #if ENABLE(APP_HIGHLIGHTS)
 
-static constexpr unsigned textPreviewLength = 100;
+static constexpr unsigned textPreviewLength = 500;
 
 static RefPtr<Node> findNodeByPathIndex(const Node& parent, unsigned pathIndex, const String& nodeName)
 {
