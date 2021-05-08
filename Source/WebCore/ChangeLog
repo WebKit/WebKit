@@ -1,3 +1,13 @@
+2021-05-08  Ricky Mondello  <rmondello@apple.com>
+
+        Fix a typo
+        https://bugs.webkit.org/show_bug.cgi?id=225502
+
+        Reviewed by Chris Dumez.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preconnectIfNeeded):
+
 2021-05-08  Megan Gardner  <megan_gardner@apple.com>
 
         Increase stored AppHighlight character limit to 500

@@ -1,3 +1,17 @@
+2021-05-08  Ricky Mondello  <rmondello@apple.com>
+
+        Fix a typo
+        https://bugs.webkit.org/show_bug.cgi?id=225502
+
+        Reviewed by Chris Dumez.
+
+        Update test expectations.
+
+        * http/tests/in-app-browser-privacy/context-string-preconnect-expected.txt:
+        * http/tests/preconnect/link-header-rel-preconnect-http-expected.txt:
+        * http/tests/preconnect/link-rel-preconnect-http-expected.txt:
+        * http/tests/preconnect/link-rel-preconnect-https-expected.txt:
+
 2021-05-07  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Tentative gardening of crashes after last sdk update

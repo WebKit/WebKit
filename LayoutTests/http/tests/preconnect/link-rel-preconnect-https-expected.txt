@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Successfuly preconnected to https://localhost:8443/
+CONSOLE MESSAGE: Successfully preconnected to https://localhost:8443/
 Tests that Link's rel=preconnect works as expected over HTTPS.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
