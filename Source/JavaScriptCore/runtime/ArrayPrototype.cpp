@@ -147,22 +147,14 @@ static ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject*
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
+
     if (JSValue result = object->tryGetIndexQuickly(index))
         return result;
-    // We want to perform get and has in the same operation.
-    // We can only do so when this behavior is not observable. The
-    // only time it is observable is when we encounter an opaque objects (ProxyObject and JSModuleNamespaceObject)
-    // somewhere in the prototype chain.
-    PropertySlot slot(object, PropertySlot::InternalMethodType::HasProperty);
-    bool hasProperty = object->getPropertySlot(globalObject, index, slot);
-    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-    if (!hasProperty)
-        return { };
-    if (UNLIKELY(slot.isTaintedByOpaqueObject()))
-        RELEASE_AND_RETURN(scope, object->get(globalObject, index));
 
-    RELEASE_AND_RETURN(scope, slot.getValue(globalObject, index));
+    // Don't return undefined if the property is not found.
+    auto property = object->getIfPropertyExists(globalObject, Identifier::from(vm, index));
+    RETURN_IF_EXCEPTION(scope, { });
+    return property.valueOr(JSValue());
 }
 
 static ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, uint64_t value)

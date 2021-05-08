@@ -135,22 +135,12 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     if (!messageWithSource.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, messageWithSource), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    // Since `throw undefined;` is valid, the spec specially recognizes the case where `cause` is an explicit undefined.
     if (options.isObject()) {
-        auto object = asObject(options);
-
-        PropertySlot slot(object, PropertySlot::InternalMethodType::HasProperty);
-        bool hasProperty = object->getPropertySlot(globalObject, vm.propertyNames->cause, slot);
+        // Since `throw undefined;` is valid, we need to distinguish the case where `cause` is an explicit undefined.
+        auto cause = asObject(options)->getIfPropertyExists(globalObject, vm.propertyNames->cause);
         RETURN_IF_EXCEPTION(scope, void());
-
-        if (hasProperty) {
-            JSValue cause = UNLIKELY(slot.isTaintedByOpaqueObject())
-                ? object->get(globalObject, vm.propertyNames->cause)
-                : slot.getValue(globalObject, vm.propertyNames->cause);
-            RETURN_IF_EXCEPTION(scope, void());
-
-            putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
-        }
+        if (cause)
+            putDirect(vm, vm.propertyNames->cause, cause.value(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 }
 
