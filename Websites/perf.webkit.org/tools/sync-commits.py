@@ -16,6 +16,9 @@ from util import load_server_config
 from util import submit_commits
 from util import text_content
 
+# There are some buggy commit messages:
+# Canonical link: https://commits.webkit.org/https://commits.webkit.org/232477@main
+REVISION_IDENTIFIER_RE = re.compile(r'Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+@[\w\.\-]+)\n')
 
 def main(argv):
     parser = argparse.ArgumentParser()
@@ -43,7 +46,10 @@ def main(argv):
 
 def load_repository(repository):
     if 'gitCheckout' in repository:
-        return GitRepository(name=repository['name'], git_url=repository['url'], git_checkout=repository['gitCheckout'], git_branch=repository.get('branch'))
+        return GitRepository(
+            name=repository['name'], git_url=repository['url'], git_checkout=repository['gitCheckout'],
+            git_branch=repository.get('branch'), report_revision_identifier_in_commit_msg=repository.get('reportRevisionIdentifier'),
+            report_svn_revison=repository.get('reportSVNRevision'))
     return SVNRepository(name=repository['name'], svn_url=repository['url'], should_trust_certificate=repository.get('trustCertificate', False),
         use_server_auth=repository.get('useServerAuth', False), account_name_script_path=repository.get('accountNameFinderScript'))
 
@@ -192,19 +198,29 @@ class SVNRepository(Repository):
 
 class GitRepository(Repository):
 
-    def __init__(self, name, git_checkout, git_url, git_branch=None):
+    def __init__(self, name, git_checkout, git_url, git_branch=None, report_revision_identifier_in_commit_msg=False, report_svn_revison=False):
         assert(os.path.isdir(git_checkout))
         super(GitRepository, self).__init__(name)
         self._git_checkout = git_checkout
         self._git_url = git_url
         self._git_branch = git_branch
         self._tokenized_hashes = []
+        self._report_revision_identifier_in_commit_msg = report_revision_identifier_in_commit_msg
+        self._report_svn_revision = report_svn_revison
 
     def fetch_next_commit(self, server_config, last_fetched):
         if not last_fetched:
             self._fetch_all_hashes()
             tokens = self._tokenized_hashes[0]
         else:
+            if self._report_svn_revision:
+                last_fetched_git_hash = self._git_hash_from_svn_revision(last_fetched)
+                if not last_fetched_git_hash:
+                    self._fetch_remote()
+                    last_fetched_git_hash = self._git_hash_from_svn_revision(last_fetched)
+                    if not last_fetched_git_hash:
+                        raise ValueError('Cannot find the git hash for the last fetched svn revision')
+                last_fetched = last_fetched_git_hash
             tokens = self._find_next_hash(last_fetched)
             if not tokens:
                 self._fetch_all_hashes()
@@ -220,6 +236,12 @@ class GitRepository(Repository):
                 return self._revision_from_tokens(tokens)
         return None
 
+    def _svn_revision_from_git_hash(self, git_hash):
+        return self._run_git_command(['svn', 'find-rev', git_hash]).strip()
+
+    def _git_hash_from_svn_revision(self, revision):
+        return self._run_git_command(['svn', 'find-rev', 'r{}'.format(revision)]).strip()
+
     def _revision_from_tokens(self, tokens):
         current_hash = tokens[0]
         commit_time = int(tokens[1])
@@ -229,10 +251,29 @@ class GitRepository(Repository):
         author_name = self._run_git_command(['log', current_hash, '-1', '--pretty=%cn'])
         message = self._run_git_command(['log', current_hash, '-1', '--pretty=%B'])
 
+        revision_identifier = None
+        if self._report_revision_identifier_in_commit_msg:
+            revision_identifier_match = REVISION_IDENTIFIER_RE.search(message)
+            if not revision_identifier_match:
+                raise ValueError('Expected commit message to include revision identifier, but cannot find it, will need a history rewrite to fix it')
+            revision_identifier = revision_identifier_match.group('revision_identifier')
+
+        current_revision = current_hash
+        previous_revision = previous_hash
+        if self._report_svn_revision:
+            current_revision = self._svn_revision_from_git_hash(current_hash)
+            if not current_revision:
+                raise ValueError('Cannot find SVN revison for {}'.format(current_hash))
+            if previous_hash:
+                previous_revision = self._svn_revision_from_git_hash(previous_hash)
+                if not previous_revision:
+                    raise ValueError('Cannot find SVN revison for {}'.format(previous_hash))
+
         return {
             'repository': self._name,
-            'revision': current_hash,
-            'previousCommit': previous_hash,
+            'revision': current_revision,
+            'revisionIdentifier': revision_identifier,
+            'previousCommit': previous_revision,
             'time': datetime.fromtimestamp(commit_time).strftime(r'%Y-%m-%dT%H:%M:%S.%f'),
             'author': {'account': author_email, 'name': author_name},
             'message': message,
@@ -244,8 +285,13 @@ class GitRepository(Repository):
                 return self._tokenized_hashes[i + 1] if i + 1 < len(self._tokenized_hashes) else None
         return None
 
-    def _fetch_all_hashes(self):
+    def _fetch_remote(self):
         self._run_git_command(['pull', self._git_url])
+        if self._report_svn_revision:
+            self._run_git_command(['svn', 'fetch'])
+
+    def _fetch_all_hashes(self):
+        self._fetch_remote()
         scope = self._git_branch or '--all'
         lines = self._run_git_command(['log', scope, '--date-order', '--reverse', '--pretty=%H %ct %ce %P']).split('\n')
         self._tokenized_hashes = [line.split() for line in lines]
