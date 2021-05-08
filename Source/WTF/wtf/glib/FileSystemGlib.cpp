@@ -136,24 +136,6 @@ Optional<WallTime> getFileCreationTime(const String&)
     return WTF::nullopt;
 }
 
-String pathByAppendingComponent(const String& path, const String& component)
-{
-    if (path.endsWith(G_DIR_SEPARATOR_S))
-        return path + component;
-    return path + G_DIR_SEPARATOR_S + component;
-}
-
-String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
-{
-    StringBuilder builder;
-    builder.append(path);
-    for (auto& component : components) {
-        builder.append(G_DIR_SEPARATOR_S);
-        builder.append(component);
-    }
-    return builder.toString();
-}
-
 String homeDirectoryPath()
 {
     return stringFromFileSystemRepresentation(g_get_home_dir());

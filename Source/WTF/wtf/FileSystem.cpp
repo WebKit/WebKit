@@ -50,6 +50,16 @@ namespace WTF {
 
 namespace FileSystemImpl {
 
+static std::filesystem::path toStdFileSystemPath(StringView path)
+{
+    return std::filesystem::u8path(path.utf8().data());
+}
+
+static String fromStdFileSystemPath(const std::filesystem::path& path)
+{
+    return String::fromUTF8(path.u8string().c_str());
+}
+
 // The following lower-ASCII characters need escaping to be used in a filename
 // across all systems, including Windows:
 //     - Unprintable ASCII (00-1F)
@@ -525,13 +535,13 @@ bool fileExists(const String& path)
 {
     std::error_code ec;
     // exists() returns false on error so no need to check ec.
-    return std::filesystem::exists(fileSystemRepresentation(path).data(), ec);
+    return std::filesystem::exists(toStdFileSystemPath(path), ec);
 }
 
 bool deleteFile(const String& path)
 {
     std::error_code ec;
-    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+    auto fsPath = toStdFileSystemPath(path);
 
     auto fileStatus = std::filesystem::symlink_status(fsPath, ec);
     if (ec || fileStatus.type() == std::filesystem::file_type::directory)
@@ -544,7 +554,7 @@ bool deleteFile(const String& path)
 bool deleteEmptyDirectory(const String& path)
 {
     std::error_code ec;
-    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+    auto fsPath = toStdFileSystemPath(path);
 
     auto fileStatus = std::filesystem::symlink_status(fsPath, ec);
     if (ec || fileStatus.type() != std::filesystem::file_type::directory)
@@ -570,8 +580,8 @@ bool deleteEmptyDirectory(const String& path)
 
 bool moveFile(const String& oldPath, const String& newPath)
 {
-    std::filesystem::path fsOldPath = fileSystemRepresentation(oldPath).data();
-    std::filesystem::path fsNewPath = fileSystemRepresentation(newPath).data();
+    auto fsOldPath = toStdFileSystemPath(oldPath);
+    auto fsNewPath = toStdFileSystemPath(newPath);
 
     std::error_code ec;
     std::filesystem::rename(fsOldPath, fsNewPath, ec);
@@ -589,7 +599,7 @@ bool moveFile(const String& oldPath, const String& newPath)
 bool getFileSize(const String& path, long long& result)
 {
     std::error_code ec;
-    auto size = std::filesystem::file_size(fileSystemRepresentation(path).data(), ec);
+    auto size = std::filesystem::file_size(toStdFileSystemPath(path), ec);
     if (ec)
         return false;
     result = size;
@@ -601,23 +611,23 @@ bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowS
     std::error_code ec;
     std::filesystem::file_status fileStatus;
     if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes)
-        fileStatus = std::filesystem::status(fileSystemRepresentation(path).data(), ec);
+        fileStatus = std::filesystem::status(toStdFileSystemPath(path), ec);
     else
-        fileStatus = std::filesystem::symlink_status(fileSystemRepresentation(path).data(), ec);
+        fileStatus = std::filesystem::symlink_status(toStdFileSystemPath(path), ec);
     return fileStatus.type() == std::filesystem::file_type::directory;
 }
 
 bool makeAllDirectories(const String& path)
 {
     std::error_code ec;
-    std::filesystem::create_directories(fileSystemRepresentation(path).data(), ec);
+    std::filesystem::create_directories(toStdFileSystemPath(path), ec);
     return !ec;
 }
 
 bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
 {
     std::error_code ec;
-    auto spaceInfo = std::filesystem::space(fileSystemRepresentation(path).data(), ec);
+    auto spaceInfo = std::filesystem::space(toStdFileSystemPath(path), ec);
     if (ec)
         return false;
     freeSpace = spaceInfo.available;
@@ -627,21 +637,21 @@ bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
 {
     std::error_code ec;
-    std::filesystem::create_symlink(fileSystemRepresentation(targetPath).data(), fileSystemRepresentation(symbolicLinkPath).data(), ec);
+    std::filesystem::create_symlink(toStdFileSystemPath(targetPath), toStdFileSystemPath(symbolicLinkPath), ec);
     return !ec;
 }
 
 bool hardLink(const String& targetPath, const String& linkPath)
 {
     std::error_code ec;
-    std::filesystem::create_hard_link(fileSystemRepresentation(targetPath).data(), fileSystemRepresentation(linkPath).data(), ec);
+    std::filesystem::create_hard_link(toStdFileSystemPath(targetPath), toStdFileSystemPath(linkPath), ec);
     return !ec;
 }
 
 bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath)
 {
-    std::filesystem::path fsTargetPath = fileSystemRepresentation(targetPath).data();
-    std::filesystem::path fsLinkPath = fileSystemRepresentation(linkPath).data();
+    auto fsTargetPath = toStdFileSystemPath(targetPath);
+    auto fsLinkPath = toStdFileSystemPath(linkPath);
 
     std::error_code ec;
     std::filesystem::create_hard_link(fsTargetPath, fsLinkPath, ec);
@@ -655,14 +665,14 @@ bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath)
 bool deleteNonEmptyDirectory(const String& path)
 {
     std::error_code ec;
-    std::filesystem::remove_all(fileSystemRepresentation(path).data(), ec);
+    std::filesystem::remove_all(toStdFileSystemPath(path), ec);
     return !ec;
 }
 
 Optional<WallTime> getFileModificationTime(const String& path)
 {
     std::error_code ec;
-    auto modificationTime = std::filesystem::last_write_time(fileSystemRepresentation(path).data(), ec);
+    auto modificationTime = std::filesystem::last_write_time(toStdFileSystemPath(path), ec);
     if (ec)
         return WTF::nullopt;
     return toWallTime(modificationTime);
@@ -673,7 +683,7 @@ static Optional<FileMetadata> fileMetadataPotentiallyFollowingSymlinks(const Str
     if (path.isEmpty())
         return WTF::nullopt;
 
-    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+    auto fsPath = toStdFileSystemPath(path);
 
     std::error_code ec;
     if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes && std::filesystem::is_symlink(fsPath, ec)) {
@@ -721,14 +731,25 @@ Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
 
 String pathGetFileName(const String& path)
 {
-    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
-    return String::fromUTF8(fsPath.filename().u8string().c_str());
+    return fromStdFileSystemPath(toStdFileSystemPath(path).filename());
 }
 
 String directoryName(const String& path)
 {
-    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
-    return String::fromUTF8(fsPath.parent_path().u8string().c_str());
+    return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());
+}
+
+String pathByAppendingComponent(const String& path, const String& component)
+{
+    return fromStdFileSystemPath(toStdFileSystemPath(path) / toStdFileSystemPath(component));
+}
+
+String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
+{
+    auto fsPath = toStdFileSystemPath(path);
+    for (auto& component : components)
+        fsPath /= toStdFileSystemPath(component);
+    return fromStdFileSystemPath(fsPath);
 }
 
 } // namespace FileSystemImpl

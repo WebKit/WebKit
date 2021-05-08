@@ -186,22 +186,6 @@ Optional<WallTime> getFileCreationTime(const String& path)
 #endif
 }
 
-String pathByAppendingComponent(const String& path, const String& component)
-{
-    if (path.endsWith('/'))
-        return path + component;
-    return path + "/" + component;
-}
-
-String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
-{
-    StringBuilder builder;
-    builder.append(path);
-    for (auto& component : components)
-        builder.append('/', component);
-    return builder.toString();
-}
-
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;

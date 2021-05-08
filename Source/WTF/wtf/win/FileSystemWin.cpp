@@ -143,30 +143,6 @@ static String getFinalPathName(const String& path)
     return String::adopt(WTFMove(buffer));
 }
 
-String pathByAppendingComponent(const String& path, const String& component)
-{
-    Vector<UChar> buffer(MAX_PATH);
-    if (path.length() + 1 > buffer.size())
-        return String();
-
-    StringView(path).getCharactersWithUpconvert(buffer.data());
-    buffer[path.length()] = '\0';
-
-    if (!PathAppendW(wcharFrom(buffer.data()), component.wideCharacters().data()))
-        return String();
-
-    buffer.shrink(wcslen(wcharFrom(buffer.data())));
-    return String::adopt(WTFMove(buffer));
-}
-
-String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
-{
-    String result = path.toString();
-    for (auto& component : components)
-        result = pathByAppendingComponent(result, component.toString());
-    return result;
-}
-
 #if !USE(CF)
 
 CString fileSystemRepresentation(const String& path)

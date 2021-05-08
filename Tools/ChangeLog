@@ -1,3 +1,15 @@
+2021-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Port Filesystem::pathByAppendingComponent() & Filesystem:: pathByAppendingComponents() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225550
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-05-07  Chris Dumez  <cdumez@apple.com>
 
         Port FileSystem::pathGetFileName() & Filesystem::directoryName() to std::filesystem

@@ -1,3 +1,20 @@
+2021-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Port Filesystem::pathByAppendingComponent() & Filesystem:: pathByAppendingComponents() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225550
+
+        Reviewed by Darin Adler.
+
+        Port Filesystem::pathByAppendingComponent() & Filesystem:: pathByAppendingComponents() to std::filesystem
+        and get rid of platform-specific implementations.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+        (WTF::FileSystemImpl::pathByAppendingComponents):
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
 2021-05-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] REGRESSION(r277158) imported/w3c/web-platform-tests/xhr/FormData-append.html is crashing

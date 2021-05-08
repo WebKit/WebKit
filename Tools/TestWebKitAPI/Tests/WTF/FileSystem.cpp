@@ -744,4 +744,40 @@ TEST_F(FileSystemTest, directoryName)
 #endif
 }
 
+TEST_F(FileSystemTest, pathByAppendingComponent)
+{
+#if OS(UNIX)
+    EXPECT_STREQ("/var", FileSystem::pathByAppendingComponent("/", "var").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::pathByAppendingComponent("/var/", "tmp").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::pathByAppendingComponent("/var", "tmp").utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponent("/var/tmp", "file.txt").utf8().data());
+    EXPECT_STREQ("/var/", FileSystem::pathByAppendingComponent("/var", "").utf8().data());
+    EXPECT_STREQ("/var/", FileSystem::pathByAppendingComponent("/var/", "").utf8().data());
+#endif
+#if OS(WINDOWS)
+    EXPECT_STREQ("C:\\Foo", FileSystem::pathByAppendingComponent("C:\\", "Foo").utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar", FileSystem::pathByAppendingComponent("C:\\Foo", "Bar").utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponent("C:\\Foo\\Bar", "File.txt").utf8().data());
+#endif
+}
+
+TEST_F(FileSystemTest, pathByAppendingComponents)
+{
+    EXPECT_STREQ(tempEmptyFolderPath().utf8().data(), FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { }).utf8().data());
+    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "file.txt").utf8().data(), FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "file.txt" }).utf8().data());
+#if OS(UNIX)
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/", { "var", "tmp", "file.txt" }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var", { "tmp", "file.txt" }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/", { "tmp", "file.txt" }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/tmp", { "file.txt" }).utf8().data());
+#endif
+#if OS(WINDOWS)
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\", { "Foo", "Bar", "File.txt" }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo", { "Bar", "File.txt" }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\", { "Bar", "File.txt" }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar", { "File.txt" }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar\\", { "File.txt" }).utf8().data());
+#endif
+}
+
 } // namespace TestWebKitAPI
