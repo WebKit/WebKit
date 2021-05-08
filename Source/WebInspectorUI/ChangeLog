@@ -1,5 +1,18 @@
 2021-05-07  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Breakpoint action add/remove buttons are not vertically aligned with action dropdown
+        https://bugs.webkit.org/show_bug.cgi?id=225543
+
+        Reviewed by Devin Rousso.
+
+        Change the breakpoint action add/remove button's `margin-top` to `margin-block-start`, and adjust the value to
+        properly vertically center the buttons with the action type menu.
+
+        * UserInterface/Views/BreakpointActionView.css:
+        (:matches(.breakpoint-action-append-button, .breakpoint-action-remove-button)):
+
+2021-05-07  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Default source for new test cases is minified
         https://bugs.webkit.org/show_bug.cgi?id=225546
 
