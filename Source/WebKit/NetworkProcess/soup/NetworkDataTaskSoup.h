@@ -127,6 +127,12 @@ private:
 #endif
     void didWriteBodyData(uint64_t bytesSent);
 
+#if !USE(SOUP2)
+    static void wroteHeadersCallback(SoupMessage*, NetworkDataTaskSoup*);
+    static void wroteBodyCallback(SoupMessage*, NetworkDataTaskSoup*);
+    static void gotBodyCallback(SoupMessage*, NetworkDataTaskSoup*);
+#endif
+
     void download();
     static void writeDownloadCallback(GOutputStream*, GAsyncResult*, NetworkDataTaskSoup*);
     void writeDownload();
@@ -137,8 +143,11 @@ private:
 
     void didFail(const WebCore::ResourceError&);
 
+#if USE(SOUP2)
     static void networkEventCallback(SoupMessage*, GSocketClientEvent, GIOStream*, NetworkDataTaskSoup*);
     void networkEvent(GSocketClientEvent, GIOStream*);
+#endif
+
 #if SOUP_CHECK_VERSION(2, 49, 91)
     static void startingCallback(SoupMessage*, NetworkDataTaskSoup*);
 #else
