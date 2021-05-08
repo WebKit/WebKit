@@ -52,10 +52,7 @@ ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* st
     String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    JSValue cause = !options.isObject() ? jsUndefined() : options.get(globalObject, vm.propertyNames->cause);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
-    return create(globalObject, vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
+    return create(globalObject, vm, structure, messageString, options, appender, type, errorType, useCurrentFrame);
 }
 
 static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
@@ -110,10 +107,11 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
     return appender(message, codeBlock->source().provider()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
 }
 
-void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue options, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     m_sourceAppender = appender;
     m_runtimeTypeForCause = type;
@@ -137,8 +135,23 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     if (!messageWithSource.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, messageWithSource), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    if (!cause.isUndefined())
-        putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    // Since `throw undefined;` is valid, the spec specially recognizes the case where `cause` is an explicit undefined.
+    if (options.isObject()) {
+        auto object = asObject(options);
+
+        PropertySlot slot(object, PropertySlot::InternalMethodType::HasProperty);
+        bool hasProperty = object->getPropertySlot(globalObject, vm.propertyNames->cause, slot);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        if (hasProperty) {
+            JSValue cause = UNLIKELY(slot.isTaintedByOpaqueObject())
+                ? object->get(globalObject, vm.propertyNames->cause)
+                : slot.getValue(globalObject, vm.propertyNames->cause);
+            RETURN_IF_EXCEPTION(scope, void());
+
+            putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        }
+    }
 }
 
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to

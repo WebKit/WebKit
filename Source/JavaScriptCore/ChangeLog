@@ -1,3 +1,27 @@
+2021-05-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Error#cause must recognize explicit undefined
+        https://bugs.webkit.org/show_bug.cgi?id=225535
+
+        Reviewed by Alexey Shvayka.
+
+        Error#cause is specified such that `new Error(message, {})` and `new Error(message, { cause: undefined })`
+        are not the same -- namely, the latter should create a property descriptor with an undefined `value`.
+
+        This would seem absurd, but the reason is because the `cause` field is meant to store a thrown object,
+        and `throw undefined;` is valid code.
+
+        In aligning our implementation with the spec, this patch also consolidates the relevant logic in one place
+        (ErrorInstance::finishCreation) to minimize confusion.
+
+        * runtime/AggregateError.cpp:
+        (JSC::createAggregateError):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+
 2021-05-06  Chris Dumez  <cdumez@apple.com>
 
         Port Filesystem::fileMetadata() & Filesystem::getFileModificationTime() to std::filesystem
