@@ -157,26 +157,6 @@ String homeDirectoryPath()
     return stringFromFileSystemRepresentation(g_get_home_dir());
 }
 
-String pathGetFileName(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return path;
-
-    GUniquePtr<gchar> baseName(g_path_get_basename(filename.data()));
-    return String::fromUTF8(baseName.get());
-}
-
-String directoryName(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return String();
-
-    GUniquePtr<char> dirname(g_path_get_dirname(filename.data()));
-    return String::fromUTF8(dirname.get());
-}
-
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;

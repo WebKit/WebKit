@@ -189,22 +189,6 @@ String homeDirectoryPath()
     return "";
 }
 
-String pathGetFileName(const String& path)
-{
-    return String(::PathFindFileName(path.wideCharacters().data()));
-}
-
-String directoryName(const String& path)
-{
-    String name = path.left(path.length() - pathGetFileName(path).length());
-    if (name.characterStartingAt(name.length() - 1) == '\\'
-        || name.characterStartingAt(name.length() - 1) == '/') {
-        // Remove any trailing "\" or "/"
-        name.truncate(name.length() - 1);
-    }
-    return name;
-}
-
 static String bundleName()
 {
     static const NeverDestroyed<String> name = [] {

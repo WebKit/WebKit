@@ -706,4 +706,42 @@ TEST_F(FileSystemTest, getFileModificationTimeViaFileMetadata)
     });
 }
 
+TEST_F(FileSystemTest, pathGetFileName)
+{
+    auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "filename.txt" });
+    EXPECT_STREQ("filename.txt", FileSystem::pathGetFileName(testPath).utf8().data());
+
+#if OS(UNIX)
+    EXPECT_STREQ(".", FileSystem::pathGetFileName(".").utf8().data());
+    EXPECT_STREQ("..", FileSystem::pathGetFileName("..").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathGetFileName("/").utf8().data());
+    EXPECT_STREQ(".", FileSystem::pathGetFileName("/foo/.").utf8().data());
+    EXPECT_STREQ("..", FileSystem::pathGetFileName("/foo/..").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathGetFileName("/foo/").utf8().data());
+    EXPECT_STREQ("host", FileSystem::pathGetFileName("//host").utf8().data());
+#endif
+#if OS(WINDOWS)
+    EXPECT_STREQ("", FileSystem::pathGetFileName("C:\\").utf8().data());
+    EXPECT_STREQ("foo", FileSystem::pathGetFileName("C:\\foo").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathGetFileName("C:\\foo\\").utf8().data());
+    EXPECT_STREQ("bar.txt", FileSystem::pathGetFileName("C:\\foo\\bar.txt").utf8().data());
+#endif
+}
+
+TEST_F(FileSystemTest, directoryName)
+{
+    auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "filename.txt" });
+    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder").utf8().data(), FileSystem::directoryName(testPath).utf8().data());
+#if OS(UNIX)
+    EXPECT_STREQ("/var/tmp", FileSystem::directoryName("/var/tmp/example.txt").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::directoryName("/var/tmp/").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::directoryName("/var/tmp/.").utf8().data());
+    EXPECT_STREQ("/", FileSystem::directoryName("/").utf8().data());
+#endif
+#if OS(WINDOWS)
+    EXPECT_STREQ("C:\\foo", FileSystem::directoryName("C:\\foo\\example.txt").utf8().data());
+    EXPECT_STREQ("C:\\", FileSystem::directoryName("C:\\").utf8().data());
+#endif
+}
+
 } // namespace TestWebKitAPI

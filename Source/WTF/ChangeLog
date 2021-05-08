@@ -1,3 +1,26 @@
+2021-05-07  Chris Dumez  <cdumez@apple.com>
+
+        Port FileSystem::pathGetFileName() & Filesystem::directoryName() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225524
+
+        Reviewed by Darin Adler.
+
+        Port FileSystem::pathGetFileName() & Filesystem::directoryName() to std::filesystem so
+        that we can get rid of platform-specific implementions.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::pathGetFileName):
+        (WTF::FileSystemImpl::directoryName):
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::pathGetFileName): Deleted.
+        (WTF::FileSystemImpl::directoryName): Deleted.
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::pathGetFileName): Deleted.
+        (WTF::FileSystemImpl::directoryName): Deleted.
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::pathGetFileName): Deleted.
+        (WTF::FileSystemImpl::directoryName): Deleted.
+
 2021-05-07  Tim Horton  <timothy_horton@apple.com>
 
         Add an experimental alternative display-list-based RemoteLayerBackingStore implementation

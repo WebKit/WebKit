@@ -202,21 +202,6 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
     return builder.toString();
 }
 
-String pathGetFileName(const String& path)
-{
-    return path.substring(path.reverseFind('/') + 1);
-}
-
-String directoryName(const String& path)
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return String();
-
-    return String::fromUTF8(dirname(fsRep.mutableData()));
-}
-
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;

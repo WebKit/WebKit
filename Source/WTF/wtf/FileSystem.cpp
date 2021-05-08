@@ -721,5 +721,17 @@ Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
     return fileMetadataPotentiallyFollowingSymlinks(path, ShouldFollowSymbolicLinks::Yes);
 }
 
+String pathGetFileName(const String& path)
+{
+    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+    return String::fromUTF8(fsPath.filename().u8string().c_str());
+}
+
+String directoryName(const String& path)
+{
+    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+    return String::fromUTF8(fsPath.parent_path().u8string().c_str());
+}
+
 } // namespace FileSystemImpl
 } // namespace WTF
