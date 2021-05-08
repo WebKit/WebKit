@@ -60,7 +60,7 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
   @param dataTypes The website data types to fetch records for.
   @param completionHandler A block to invoke when the data records have been fetched.
 */
-- (void)fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler;
+- (void)fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler WK_SWIFT_ASYNC_NAME(dataRecords(ofTypes:));
 
 /*! @abstract Removes website data of the given types for the given data records.
  @param dataTypes The website data types that should be removed.

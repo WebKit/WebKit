@@ -32,6 +32,18 @@
 #define WK_EXTERN extern __attribute__((visibility ("default")))
 #endif
 
+#ifdef NS_SWIFT_ASYNC_NAME
+#define WK_SWIFT_ASYNC_NAME(...) NS_SWIFT_ASYNC_NAME(__VA_ARGS__)
+#else
+#define WK_SWIFT_ASYNC_NAME(...)
+#endif
+
+#ifdef NS_SWIFT_ASYNC
+#define WK_SWIFT_ASYNC(...) NS_SWIFT_ASYNC(__VA_ARGS__)
+#else
+#define WK_SWIFT_ASYNC(...)
+#endif
+
 #ifndef WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED
 
 #define WK_API_AVAILABLE(...)

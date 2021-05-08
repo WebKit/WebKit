@@ -1,3 +1,44 @@
+2021-05-07  James Savage  <james.savage@apple.com>
+
+        Validate Swift async imports.
+        https://bugs.webkit.org/show_bug.cgi?id=225134
+        <rdar://73620237>
+
+        Reviewed by Sam Weinig.
+
+        Audit our imported Objective-C API for correct translations to Swift's
+        upcoming concurrency feature. This mostly entails removing redundant
+        words, tagging methods which Swift's heuristics missed, and in some
+        cases disabling methods that do not follow Swift's async conventions.
+
+        * Shared/API/Cocoa/WKFoundation.h: Because the Foundation macros used
+        for Swift async won't exist in all SDKs, provide our own wrapper around
+        them to avoid undefined macro errors.
+        * SwiftOverlay/Configurations/WebKitSwiftOverlay.xcconfig: Passing these
+        flags to older tools will result in errors, so only so conditionally.
+        * SwiftOverlay/WebKitSwiftOverlay.xcodeproj/project.pbxproj: Added a
+        new source file reference for generated sources. These will be copied
+        from WebKitAdditions if available, or replaced with empty sources for
+        compatibility.
+        * UIProcess/API/Cocoa/NSAttributedString.h: Adopt new attributes to
+        define an explicit Swift async name.
+        * UIProcess/API/Cocoa/WKContentRuleListStore.h: Ditto.
+        * UIProcess/API/Cocoa/WKDownloadDelegate.h: In this case I also apply
+        NS_SWIFT_NAME as the "decisionHandler" argument would otherwise not
+        import as async. Despite using a different macro, I'm just using
+        NS_SWIFT_ASYNC_NAME to check for these changes as all these annotations
+        should exist or not-exist at once.
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.h: Ditto.
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h: Ditto.
+        * UIProcess/API/Cocoa/WKScriptMessageHandlerWithReply.h: Ditto.
+        * UIProcess/API/Cocoa/WKUIDelegate.h: Ditto.
+        * UIProcess/API/Cocoa/WKWebView.h: _Nullable_result is a new annotation
+        which specifies that the result and error are not mutually exclusive,
+        but rather than we can expect a nil result in cases where there are not
+        an error. For the same reason as above, we only want to refer to this
+        keyword conditionally.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h: Ditto.
+
 2021-05-07  Tim Horton  <timothy_horton@apple.com>
 
         Add an experimental alternative display-list-based RemoteLayerBackingStore implementation

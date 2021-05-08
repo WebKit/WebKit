@@ -17,6 +17,8 @@
 		B3B8FECD250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */; };
 		B3B8FEEF2502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */; };
 		B3B8FEF02502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */; };
+		B3DF244C2638BE240038D95A /* WebKitSwiftOverlayAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31B03FD2637EF6500D67EAD /* WebKitSwiftOverlayAdditions.swift */; };
+		B3DF244D2638BE290038D95A /* WebKitSwiftOverlayAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31B03FD2637EF6500D67EAD /* WebKitSwiftOverlayAdditions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +43,7 @@
 		7D20068722F26721008DF640 /* libswiftWebKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libswiftWebKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D20070722F4EB72008DF640 /* WebKitSwiftOverlayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebKitSwiftOverlayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D20071622F4ECCA008DF640 /* WebKitSwiftOverlayTests-maccatalyst.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WebKitSwiftOverlayTests-maccatalyst.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B31B03FD2637EF6500D67EAD /* WebKitSwiftOverlayAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebKitSwiftOverlayAdditions.swift; path = usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A5D38823F78F5400B17727 /* WebKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebKitTests.swift; sourceTree = "<group>"; };
 		B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebKitSwiftOverlay.swift; path = ../UIProcess/API/Cocoa/WebKitSwiftOverlay.swift; sourceTree = SOURCE_ROOT; };
 		B3A5D39423F790E100B17727 /* WebKitSwiftOverlay.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitSwiftOverlay.xcconfig; sourceTree = "<group>"; };
@@ -94,6 +97,7 @@
 				B3A5D39923F790E100B17727 /* install-swiftmodules.sh */,
 				B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */,
 				B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */,
+				B31B03FD2637EF6500D67EAD /* WebKitSwiftOverlayAdditions.swift */,
 			);
 			name = "Swift Overlay";
 			path = SwiftOverlay;
@@ -174,6 +178,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7D20067B22F2652E008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlay" */;
 			buildPhases = (
+				B31B03FC2637EEBD00D67EAD /* Copy Additional Sources */,
 				7D20067122F2652E008DF640 /* Headers */,
 				7D20067222F2652E008DF640 /* Sources */,
 				7D20067322F2652E008DF640 /* Frameworks */,
@@ -192,6 +197,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7D20068D22F26721008DF640 /* Build configuration list for PBXNativeTarget "WebKitSwiftOverlay-maccatalyst" */;
 			buildPhases = (
+				B31B04002637F22E00D67EAD /* Copy Additional Sources */,
 				7D20068322F26721008DF640 /* Headers */,
 				7D20068422F26721008DF640 /* Sources */,
 				7D20068522F26721008DF640 /* Frameworks */,
@@ -345,6 +351,46 @@
 			shellPath = /bin/sh;
 			shellScript = "exec \"${SOURCE_ROOT}/SwiftOverlay/install-swiftmodules.sh\"\n";
 		};
+		B31B03FC2637EEBD00D67EAD /* Copy Additional Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift",
+			);
+			name = "Copy Additional Sources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift\"\nSOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nDESTINATION_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nif [[ -e \"$SOURCE_PATH\" ]]; then\n    ditto \"$SOURCE_PATH\" \"$DESTINATION_PATH\"\nelse\n    touch \"$DESTINATION_PATH\"\nfi\n";
+		};
+		B31B04002637F22E00D67EAD /* Copy Additional Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift",
+			);
+			name = "Copy Additional Sources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift\"\nSOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nDESTINATION_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nif [[ -e \"$SOURCE_PATH\" ]]; then\n    ditto \"$SOURCE_PATH\" \"$DESTINATION_PATH\"\nelse\n    touch \"$DESTINATION_PATH\"\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -354,6 +400,7 @@
 			files = (
 				B3B8FEEF2502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
 				B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
+				B3DF244C2638BE240038D95A /* WebKitSwiftOverlayAdditions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +410,7 @@
 			files = (
 				B3B8FEF02502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
 				B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
+				B3DF244D2638BE290038D95A /* WebKitSwiftOverlayAdditions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
