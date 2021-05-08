@@ -1,3 +1,13 @@
+2021-05-07  Zalan Bujtas  <zalan@apple.com>
+
+        [css-flexbox] Flex item construction may affect sibling flex item height computation
+        https://bugs.webkit.org/show_bug.cgi?id=225489
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/flexbox/flex-column-with-percent-height-descendants-expected.html: Added.
+        * fast/flexbox/flex-column-with-percent-height-descendants.html: Added.
+
 2021-05-07  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur Release Wk2 Arm64] imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html is flaky failing

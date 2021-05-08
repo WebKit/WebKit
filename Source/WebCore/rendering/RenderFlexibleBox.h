@@ -175,7 +175,7 @@ private:
     void prepareOrderIteratorAndMargins();
     LayoutUnit adjustChildSizeForMinAndMax(RenderBox& child, LayoutUnit childSize);
     LayoutUnit adjustChildSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& child, LayoutUnit childSize);
-    FlexItem constructFlexItem(RenderBox&, bool relayoutChildren);
+    Vector<FlexItem> constructFlexItems(bool relayoutChildren);
     
     void freezeInflexibleItems(FlexSign, Vector<FlexItem>& children, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
     bool resolveFlexibleLengths(FlexSign, Vector<FlexItem>&, LayoutUnit initialFreeSpace, LayoutUnit& remainingFreeSpace, double& totalFlexGrow, double& totalFlexShrink, double& totalWeightedFlexShrink);
@@ -220,7 +220,7 @@ private:
     
     // This is SizeIsUnknown outside of layoutBlock()
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
-    bool m_inLayout { false };
+    bool m_inFlexItemConstruction { false };
     bool m_shouldResetChildLogicalHeightBeforeLayout { false };
 };
 
