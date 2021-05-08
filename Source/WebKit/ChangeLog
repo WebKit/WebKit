@@ -1,3 +1,16 @@
+2021-05-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] [GPU] Process is missing access to IOMobileFramebufferUserClient on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=225545
+        <rdar://problem/77591664>
+
+        Reviewed by Jer Noble.
+
+        Apple Silicon GPU Process needs access to IOMobileFramebufferUserClient for certain types of media playback. We allow this
+        on iOS, and in the WebContent process, but missed it in the GPU Process.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-05-07  James Savage  <james.savage@apple.com>
 
         Validate Swift async imports.
