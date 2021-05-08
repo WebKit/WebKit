@@ -1,3 +1,14 @@
+2021-05-07  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Tentative gardening of crashes after last sdk update
+
+        Unreviewed test gardening.
+
+        Likely more crashes will appear from tests not run due to these
+        gardened.
+
+        * platform/wpe/TestExpectations:
+
 2021-05-07  Zalan Bujtas  <zalan@apple.com>
 
         [css-flexbox] Flex item construction may affect sibling flex item height computation

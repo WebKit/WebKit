@@ -173,6 +173,38 @@ http/tests/xmlhttprequest/state-after-network-error.html [ DumpJSConsoleLogInStd
 # ask for triaging.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+
+# SDK ISSUES
+webkit.org/b/225555 fast/dom/Window/mozilla-focus-blur.html [ Crash ]
+webkit.org/b/225555 http/tests/appcache/crash-when-navigating-away-then-back.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-after-top-level-same-origin-redirect.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-cookies-set-in-about-blank-iframe.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-in-about-blank-page.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-in-about-blank-popup.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-in-cross-origin-iframe.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-in-same-origin-page.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-in-same-origin-srcdoc-iframe.html [ Crash ]
+webkit.org/b/225555 http/tests/cookies/same-site/fetch-in-same-origin-worker.html [ Crash ]
+webkit.org/b/225555 http/wpt/prefetch/link-prefetch-main-resource-redirect.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/fetch/http-cache/split-cache.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/failure-check-sequence.https.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/history/the-session-history-of-browsing-contexts/navigation-in-onload.tentative.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/creating_browsing_context_test_01.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-innerwidth-innerheight.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-screenx-screeny.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-top-left.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-width-height.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/close-method.window.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/closed-attribute.window.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/self-et-al.window.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/browsing-context-_blank.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-001.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/supported-elements.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/semantics/forms/autofocus/supported-elements.html [ Crash ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-job-queue/promise-job-entry-different-function-realm.html [ Crash ]
+
 # Accessibility
 webkit.org/b/225479 accessibility/aria-modal.html [ Timeout ]
 
@@ -885,7 +917,9 @@ webkit.org/b/216650 fast/events/mouse-moved-remove-frame-crash.html [ Timeout Pa
 webkit.org/b/219425 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
 
 webkit.org/b/219465 fast/loader/font-load-timer.html [ ImageOnlyFailure Pass ]
-webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Failure Pass ]
+
+# Uncomment when line below is fixed webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Failure Pass ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Crash ]
 
 webkit.org/b/219470 fast/visual-viewport/visual-viewport-resize-subframe-in-rendering-update.html [ Timeout Pass ]
 
@@ -1053,7 +1087,8 @@ webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-007.html [ ImageOnlyFailure ]
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
 
-webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html [ Failure ]
+# Uncomment when line below is fixed webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html [ Failure ]
+webkit.org/b/225555 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html [ Crash ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerheight.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-innerwidth.html [ Failure ]
 webkit.org/b/180967 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-left.html [ Failure ]
@@ -1282,8 +1317,10 @@ webkit.org/b/188508 fast/dom/Window/window-postmessage-clone.html [ Timeout ]
 webkit.org/b/188508 fast/dom/Window/window-postmessage-clone-frames.html [ Timeout ]
 
 webkit.org/b/188509 fast/dom/Window/child-window-focus.html [ Timeout ]
-webkit.org/b/188509 fast/dom/Window/new-window-opener.html [ Failure ]
-webkit.org/b/188509 fast/dom/Window/open-window-min-size.html [ Failure ]
+# Uncomment when line below is fixed webkit.org/b/188509 fast/dom/Window/new-window-opener.html [ Failure ]
+webkit.org/b/225555 fast/dom/Window/new-window-opener.html [ Crash ]
+# Uncomment when line below is fixed webkit.org/b/188509 fast/dom/Window/open-window-min-size.html [ Failure ]
+webkit.org/b/225555 fast/dom/Window/open-window-min-size.html [ Crash ]
 webkit.org/b/188509 fast/dom/Window/timeout-released-on-close.html [ Failure ]
 webkit.org/b/188509 fast/dom/Window/window-onFocus.html [ Failure ]
 webkit.org/b/188509 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
