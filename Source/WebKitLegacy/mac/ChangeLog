@@ -1,3 +1,15 @@
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove the one use of String::toInt from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=225568
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMHTMLInputElement.mm:
+        (-[DOMHTMLInputElement setSize:]): Use -[NSString intValue] instead of WTF::String::toInt.
+        Both functions ignore leading spaces, and both ignore trailing junk, so there is no
+        significant change in behavior.
+
 2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Set the -isSourceEditable property when presenting webpage translation popup

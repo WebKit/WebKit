@@ -397,7 +397,7 @@
 - (void)setSize:(NSString *)newSize
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setSize(WTF::String(newSize).toInt());
+    IMPL->setSize(newSize.intValue);
 }
 
 - (NSString *)src
