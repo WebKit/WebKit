@@ -1,3 +1,12 @@
+2021-05-09  Khem Raj  <raj.khem@gmail.com>
+
+        [Tools] Generate marshalling code without source reference
+        https://bugs.webkit.org/show_bug.cgi?id=225283
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * MiniBrowser/gtk/CMakeLists.txt:
+
 2021-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing API should have the ability to send and receive shared memory
