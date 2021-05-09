@@ -1,3 +1,27 @@
+2021-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add bounds checks around calls to GlyphBuffer::stringOffsetAt()
+        https://bugs.webkit.org/show_bug.cgi?id=225335
+        <rdar://problem/75663608>
+
+        Reviewed by Simon Fraser and Geoff Garen.
+
+        We're getting crash reports that look like they're from string offsets being out-of-bounds.
+        These string offsets round-trip through Core Text, which is allowed to modify them, which
+        can end up making them out-of-bounds.
+
+        No new tests because I don't have a reproducible test case; just crash reports.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::computeUnderlineType):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::uncheckedStringOffsetAt const):
+        (WebCore::GlyphBuffer::checkedStringOffsetAt const):
+        (WebCore::GlyphBuffer::stringOffsetAt const): Deleted.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+        (WebCore::WidthIterator::applyExtraSpacingAfterShaping):
+
 2021-05-08  Ricky Mondello  <rmondello@apple.com>
 
         Fix a typo
