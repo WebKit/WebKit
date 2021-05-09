@@ -39,6 +39,7 @@
 #include <wtf/Scope.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 
@@ -570,16 +571,17 @@ Optional<uint64_t> Engine::readSizeFile(const String& path)
     if (!FileSystem::getFileSize(path, fileSize) || !fileSize)
         return WTF::nullopt;
 
-    size_t bytesToRead;
+    unsigned bytesToRead;
     if (!WTF::convertSafely(fileSize, bytesToRead))
         return WTF::nullopt;
 
-    Vector<unsigned char> buffer(bytesToRead);
-    size_t totalBytesRead = FileSystem::readFromFile(fileHandle, reinterpret_cast<char*>(buffer.data()), buffer.size());
+    // FIXME: No reason we need a heap buffer to read an arbitrary number of bytes when we only support small files that contain numerals.
+    Vector<char> buffer(bytesToRead);
+    unsigned totalBytesRead = FileSystem::readFromFile(fileHandle, buffer.data(), buffer.size());
     if (totalBytesRead != bytesToRead)
         return WTF::nullopt;
 
-    return charactersToUIntStrict(buffer.data(), totalBytesRead);
+    return parseInteger<uint64_t>({ buffer.data(), totalBytesRead });
 }
 
 class ReadOriginsTaskCounter : public RefCounted<ReadOriginsTaskCounter> {

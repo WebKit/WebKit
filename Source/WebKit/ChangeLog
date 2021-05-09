@@ -1,3 +1,49 @@
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        Remove uses of the WTF::String::toInt family of functions from WebKit framework sources
+        https://bugs.webkit.org/show_bug.cgi?id=225570
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::readSizeFile): Use parseInteger<uint64_t>
+        instead of charactersToUIntStrict. Also simplified the code a bit by
+        reducing the mixing of integer types in the function.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::deleteOldVersions): Use parseInteger<unsigned>
+        instead of String::toUIntStrict. Also use StringView::substring so we don't
+        have to allocate a copy of a substring just to parse it.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getClientSDKVersion): Use
+        parseInteger<uint32_t> instead of charactersToUIntStrict. Also let the
+        StringView constructor take care of converting the const char*
+        so we don't have to write explicit calls to std::strlen here.
+        (WebKit::XPCServiceInitializerDelegate::getProcessIdentifier): Use
+        parseInteger<uint64_t> instead of String::toUInt64Strict. Also pass the
+        const char* as a StringView rather than converting it to a String so we
+        don't have to allocate a copy of the string just to parse it.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::PluginVersion::parse): Use parseIntegerAllowingTrailingJunk<unsigned>
+        instead of String::toUInt. Also use StringView::split instead of String::split
+        so we don't have to allocate memory for all the substrings and a range-based
+        for loop for simplicity.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (coreTextManipulationItemIdentifierFromString): Use -[NSString longLongValue]
+        instead of String::toUInt64. There's no need to parse this unsigned because
+        the values will fit in 63 bits just fine, and it's nice to use NSString
+        directly rather than copying the string just to parse the integer in it.
+        (coreTextManipulationTokenIdentifierFromString): Ditto.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer): Use parseIntegerAllowingTrailingJunk<unsigned>
+        instead of String::toInt. The length can't be negative; it was not helpful
+        to parse negative numbers before and this is a small bug fix, but in a code
+        path that is probably not used for much of anything any more.
+
 2021-05-08  Sam Weinig  <weinig@apple.com>
 
         Factor out pixel buffer from DOM specific ImageData class

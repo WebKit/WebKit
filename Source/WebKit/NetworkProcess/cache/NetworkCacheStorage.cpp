@@ -40,6 +40,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -1183,17 +1184,11 @@ void Storage::deleteOldVersions()
                 return;
             if (!subdirName.startsWith(versionDirectoryPrefix))
                 return;
-            auto versionString = subdirName.substring(strlen(versionDirectoryPrefix));
-            bool success;
-            unsigned directoryVersion = versionString.toUIntStrict(&success);
-            if (!success)
+            auto directoryVersion = parseInteger<unsigned>(StringView { subdirName }.substring(strlen(versionDirectoryPrefix)));
+            if (!directoryVersion || *directoryVersion >= version)
                 return;
-            if (directoryVersion >= version)
-                return;
-
             auto oldVersionPath = FileSystem::pathByAppendingComponent(cachePath, subdirName);
             LOG(NetworkCacheStorage, "(NetworkProcess) deleting old cache version, path %s", oldVersionPath.utf8().data());
-
             FileSystem::deleteNonEmptyDirectory(oldVersionPath);
         });
     });
