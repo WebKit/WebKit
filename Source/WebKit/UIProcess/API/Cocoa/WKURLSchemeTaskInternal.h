@@ -25,15 +25,15 @@
 
 #import "WKURLSchemeTaskPrivate.h"
 
-#import "APIURLSchemeTask.h"
 #import "WKObject.h"
+#import "WebURLSchemeTask.h"
 
 @interface WKURLSchemeTaskImpl : NSObject <WKURLSchemeTaskPrivate>
 @end
 
 namespace WebKit {
 
-template<> struct WrapperTraits<API::URLSchemeTask> {
+template<> struct WrapperTraits<WebURLSchemeTask> {
     using WrapperClass = WKURLSchemeTaskImpl;
 };
 
@@ -41,6 +41,6 @@ template<> struct WrapperTraits<API::URLSchemeTask> {
 
 @interface WKURLSchemeTaskImpl () <WKObject> {
 @package
-    API::ObjectStorage<API::URLSchemeTask> _urlSchemeTask;
+    API::ObjectStorage<WebKit::WebURLSchemeTask> _urlSchemeTask;
 }
 @end

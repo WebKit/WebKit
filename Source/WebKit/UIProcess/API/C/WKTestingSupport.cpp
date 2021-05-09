@@ -26,13 +26,7 @@
 #include "config.h"
 #include "WKTestingSupport.h"
 
-#include "APIURLSchemeTask.h"
 #include "WebURLSchemeTask.h"
-
-size_t WKGetAPIURLSchemeTaskInstanceCount()
-{
-    return API::URLSchemeTask::instanceCount();
-}
 
 size_t WKGetWebURLSchemeTaskInstanceCount()
 {

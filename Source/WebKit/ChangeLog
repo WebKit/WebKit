@@ -1,3 +1,55 @@
+2021-05-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r276797?): [ macOS/iOS ] TestWebKitAPI.URLSchemeHandler.Exceptions is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225373
+
+        Reviewed by Sam Weinig.
+
+        This patch fixes three problems related to the lifetime of WKURLSchemeTasks:
+
+        1. There was an unneeded abstraction API::URLSchemeTask which wrapped a WebURLSchemeTask, which could have a different lifetime than its owner.
+           This is especially bad since at least one was used on multiple threads.
+        2. We weren't explicitly keeping a strong reference to the task given to the API client in startURLSchemeTask: and stopURLSchemeTask: which could
+           cause all our internal maps to release their references to the task after the first call to didFailWithError and there was a test that did multiple
+           calls to didFailWithError and verifies it throws an NSException the second time.
+        3. We were keeping a HashSet of raw WebURLSchemeHandler pointers, then using each of them without keeping it alive.
+
+        This is covered by at least the URLSchemeHandler.Exceptions API test which would crash in many exciting places before this but doesn't crash after this.
+
+        * Sources.txt:
+        * UIProcess/API/APIURLSchemeTask.cpp: Removed.
+        * UIProcess/API/APIURLSchemeTask.h: Removed.
+        * UIProcess/API/C/WKTestingSupport.cpp:
+        (WKGetAPIURLSchemeTaskInstanceCount): Deleted.
+        * UIProcess/API/C/WKTestingSupport.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (-[WKURLSchemeTaskImpl init]):
+        (-[WKURLSchemeTaskImpl dealloc]):
+        (-[WKURLSchemeTaskImpl request]):
+        (-[WKURLSchemeTaskImpl _requestOnlyIfCached]):
+        (-[WKURLSchemeTaskImpl _willPerformRedirection:newRequest:completionHandler:]):
+        (-[WKURLSchemeTaskImpl didReceiveResponse:]):
+        (-[WKURLSchemeTaskImpl didReceiveData:]):
+        (-[WKURLSchemeTaskImpl didFinish]):
+        (-[WKURLSchemeTaskImpl didFailWithError:]):
+        (-[WKURLSchemeTaskImpl _didPerformRedirection:newRequest:]):
+        (-[WKURLSchemeTaskImpl _frame]):
+        * UIProcess/API/Cocoa/WKURLSchemeTaskInternal.h:
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.h:
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+        (WebKit::WebURLSchemeHandlerCocoa::platformStartTask):
+        (WebKit::WebURLSchemeHandlerCocoa::platformStopTask):
+        (WebKit::WebURLSchemeHandlerCocoa::platformTaskCompleted): Deleted.
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.h:
+        * UIProcess/Inspector/win/InspectorResourceURLSchemeHandler.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::stopAllURLSchemeTasks):
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::taskCompleted):
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use the new libsoup network metrics API

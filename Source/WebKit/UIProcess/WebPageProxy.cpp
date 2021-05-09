@@ -7550,11 +7550,7 @@ void WebPageProxy::resetRecentCrashCount()
 
 void WebPageProxy::stopAllURLSchemeTasks(WebProcessProxy* process)
 {
-    HashSet<WebURLSchemeHandler*> handlers;
-    for (auto& handler : m_urlSchemeHandlersByScheme.values())
-        handlers.add(handler.ptr());
-
-    for (auto* handler : handlers)
+    for (auto& handler : copyToVectorOf<Ref<WebURLSchemeHandler>>(m_urlSchemeHandlersByScheme.values()))
         handler->stopAllTasksForPage(*this, process);
 }
 

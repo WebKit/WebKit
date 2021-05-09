@@ -55,7 +55,6 @@ private:
     // WebURLSchemeHandler
     void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final { }
-    void platformTaskCompleted(WebURLSchemeTask&) final { }
 
     void updateTargetList();
 

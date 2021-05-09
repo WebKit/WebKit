@@ -4147,8 +4147,6 @@
 		51D124311E6DE521002B2820 /* WebURLSchemeHandlerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLSchemeHandlerCocoa.h; sourceTree = "<group>"; };
 		51D124321E6DE521002B2820 /* WebURLSchemeHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebURLSchemeHandlerCocoa.mm; sourceTree = "<group>"; };
 		51D124371E6DFD2A002B2820 /* WKURLSchemeTaskInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskInternal.h; sourceTree = "<group>"; };
-		51D124381E6DFDB9002B2820 /* APIURLSchemeTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIURLSchemeTask.cpp; sourceTree = "<group>"; };
-		51D124391E6DFDB9002B2820 /* APIURLSchemeTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIURLSchemeTask.h; sourceTree = "<group>"; };
 		51D124821E734AC8002B2820 /* APIHTTPCookieStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIHTTPCookieStore.cpp; sourceTree = "<group>"; };
 		51D124831E734AC8002B2820 /* APIHTTPCookieStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIHTTPCookieStore.h; sourceTree = "<group>"; };
 		51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHTTPCookieStore.h; sourceTree = "<group>"; };
@@ -10195,8 +10193,6 @@
 				1AFDE65F1954E9B100C48FFA /* APISessionState.cpp */,
 				1AFDE6601954E9B100C48FFA /* APISessionState.h */,
 				1A4D664718A2D91A00D82E21 /* APIUIClient.h */,
-				51D124381E6DFDB9002B2820 /* APIURLSchemeTask.cpp */,
-				51D124391E6DFDB9002B2820 /* APIURLSchemeTask.h */,
 				7CB365AF1D31DD1E007158CA /* APIUserInitiatedAction.h */,
 				7C89D2A51A6789EA003A5FDE /* APIUserScript.cpp */,
 				7C89D2921A67122F003A5FDE /* APIUserScript.h */,
