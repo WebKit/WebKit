@@ -1,5 +1,15 @@
 2021-05-09  Darin Adler  <darin@apple.com>
 
+        Follow-up to: Remove uses of the String::toInt family of functions from the WebCore/platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=225575
+
+        Reviewed by Sam Weinig.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFilesizeString): Change format to "1000.0" as we discussed.
+
+2021-05-09  Darin Adler  <darin@apple.com>
+
         Remove uses of the String::toInt family of functions from the WebCore/platform directory
         https://bugs.webkit.org/show_bug.cgi?id=225575
 
