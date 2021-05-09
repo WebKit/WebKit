@@ -1,3 +1,28 @@
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        Remove calls to the String::toInt family of functions from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=225571
+
+        Reviewed by Sam Weinig.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::parseLocation): Use parseIntegerAllowingTrailingJunk<JSC::SourceID>
+        instead of String::toIntPtr. There was no reason to parse the source ID as a
+        signed integer, and it's more elegant to parse the type we intend to store and
+        process, not a different but similar type.
+        (Inspector::InspectorDebuggerAgent::searchInContent): Ditto.
+        (Inspector::InspectorDebuggerAgent::getScriptSource): Ditto.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets): Use
+        parseInteger<uintptr_t> instead of String::toIntPtrStrict.
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks): Use
+        parseIntegerAllowingTrailingJunk<uintptr_t> instead of String::toIntPtr.
+
+        * runtime/FuzzerPredictions.cpp:
+        (JSC::FuzzerPredictions::FuzzerPredictions): Use parseInteger<uint64_t>
+        instead of String::toUInt64Strict.
+
 2021-05-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Fix invalid exception checks after recent ErrorInstance changes

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FuzzerPredictions.h"
 
+#include <wtf/text/StringToIntegerConversion.h>
+
 namespace JSC {
 
 static String readFileIntoString(const char* fileName)
@@ -75,11 +77,10 @@ FuzzerPredictions::FuzzerPredictions(const char* filename)
         RELEASE_ASSERT_WITH_MESSAGE(lineParts.size() == 2, "Expected line with two parts delimited by a colon. Found line with %zu parts.", lineParts.size());
         const String& lookupKey = lineParts[0];
         const String& predictionString = lineParts[1];
-        bool ok;
-        SpeculatedType prediction = predictionString.toUInt64Strict(&ok, 0x10);
-        RELEASE_ASSERT_WITH_MESSAGE(ok, "Could not parse prediction from '%s'", predictionString.utf8().data());
-        RELEASE_ASSERT(speculationChecked(prediction, SpecFullTop));
-        m_predictions.set(lookupKey, prediction);
+        auto prediction = parseInteger<uint64_t>(predictionString, 0x10);
+        RELEASE_ASSERT_WITH_MESSAGE(prediction, "Could not parse prediction from '%s'", predictionString.utf8().data());
+        RELEASE_ASSERT(speculationChecked(*prediction, SpecFullTop));
+        m_predictions.set(lookupKey, *prediction);
     }
 }
 
