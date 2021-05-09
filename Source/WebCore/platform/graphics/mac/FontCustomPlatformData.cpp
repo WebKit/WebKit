@@ -56,8 +56,6 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
 
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
-// FIXME: Likely we can remove this special case for watchOS and tvOS.
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     auto array = adoptCF(CTFontManagerCreateFontDescriptorsFromData(bufferData.get()));
     if (!array)
         return nullptr;
@@ -78,12 +76,6 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     }
     if (!fontDescriptor)
         fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(array.get(), 0));
-#else
-    UNUSED_PARAM(itemInCollection);
-    fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(bufferData.get()));
-    if (!fontDescriptor)
-        return nullptr;
-#endif
 
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
     return makeUnique<FontCustomPlatformData>(fontDescriptor.get(), WTFMove(creationData));

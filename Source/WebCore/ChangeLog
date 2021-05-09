@@ -1,5 +1,19 @@
 2021-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Unify font collection handling between all Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=225566
+
+        Reviewed by Darin Adler.
+
+        Just remove an unnecessary #if.
+
+        Covered by existing tests.
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+
+2021-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Add bounds checks around calls to GlyphBuffer::stringOffsetAt()
         https://bugs.webkit.org/show_bug.cgi?id=225335
         <rdar://problem/75663608>
