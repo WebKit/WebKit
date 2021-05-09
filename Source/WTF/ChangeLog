@@ -1,3 +1,40 @@
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        Rename toIntegralType to parseInteger and prepare to use it to replace all our integer-parsing functions
+        https://bugs.webkit.org/show_bug.cgi?id=225560
+
+        Reviewed by Sam Weinig.
+
+        I have a much larger patch that replaces all the many toInt functions with these parseInteger
+        function templates. The parseInteger ones take StringView, which means we can pass almost any
+        type of string or character/length pair including a substring without allocating a new string,
+        return Optional rather than using an out argument to report failure, take the integer type as
+        a template parameter so can be used for precisely the desired type at each call site, and make
+        the "allow trailing junk" feature explicit, rather than implicitly including it in the shortest
+        named functions, which I hope will discourage people from using that junk-ignoring mode
+        when it's not desirable.
+
+        Also includes adoption of parseInteger within WTF itself, outside the string classes.
+
+        My plan is to land the rest of adoption of this in chunks so we can review carefully and spot
+        mistakes as we go. Then return to files like WTFString.h and remove the many old functions
+        this replaces, including the String::toInt and charactersToInt families of functions.
+
+        * wtf/URL.cpp:
+        (WTF::URL::port const): Use parseInteger<uint16_t>.
+        (WTF::URL::setHostAndPort): Ditto.
+
+        * wtf/text/StringToIntegerConversion.h: Refactored the existing code to tighten things up
+        a bit, and got rid of overloads that take pointer and length and the the generic "any string
+        type" feature, since StringView already works well for that. Renamed toIntegralType to
+        parseInteger, leaving the old name behind to ease the transition while adopting parseInteger.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::toDoubleType): Use the TrailingJunkPolicy enumeration from the
+        StringToIntegerConversion.h header.
+        (WTF::charactersToDouble): Ditto.
+        (WTF::charactersToFloat): Ditto.
+
 2021-05-08  Chris Dumez  <cdumez@apple.com>
 
         Port Filesystem::pathByAppendingComponent() & Filesystem:: pathByAppendingComponents() to std::filesystem

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +25,35 @@
 
 #pragma once
 
-#include <unicode/utypes.h>
-#include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/text/StringView.h>
 
 namespace WTF {
 
-inline bool isCharacterAllowedInBase(UChar c, int base)
+// The parseInteger function template allows leading and trailing spaces as defined by isASCIISpace, and, after the leading spaces, allows a single leading "+".
+// The parseIntegerAllowingTrailingJunk function template is like parseInteger, but allows any characters after the integer.
+
+// FIXME: Should we add a version that does not allow "+"?
+// FIXME: Should we add a version that allows other definitions of spaces, like isHTMLSpace or isHTTPSpace?
+// FIXME: Should we add a version that does not allow leading and trailing spaces?
+
+template<typename IntegralType> Optional<IntegralType> parseInteger(StringView, uint8_t base = 10);
+template<typename IntegralType> Optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView, uint8_t base = 10);
+
+enum class TrailingJunkPolicy { Disallow, Allow };
+
+template<typename IntegralType, typename CharacterType> Optional<IntegralType> parseInteger(const CharacterType* data, size_t length, uint8_t base, TrailingJunkPolicy policy)
 {
-    if (c > 0x7F)
-        return false;
-    if (isASCIIDigit(c))
-        return c - '0' < base;
-    if (isASCIIAlpha(c)) {
-        if (base > 36)
-            base = 36;
-        return (c >= 'a' && c < 'a' + base - 10)
-            || (c >= 'A' && c < 'A' + base - 10);
-    }
-    return false;
-}
-
-template<typename IntegralType, typename CharacterType>
-inline IntegralType toIntegralType(const CharacterType* data, size_t length, bool* ok, int base = 10)
-{
-    static constexpr bool isSigned = std::numeric_limits<IntegralType>::is_signed;
-
-    Checked<IntegralType, RecordOverflow> value;
-    bool isOk = false;
-    bool isNegative = false;
-
     if (!data)
-        goto bye;
+        return WTF::nullopt;
 
-    // skip leading whitespace
-    while (length && isSpaceOrNewline(*data)) {
+    while (length && isASCIISpace(*data)) {
         --length;
         ++data;
     }
 
-    if (isSigned && length && *data == '-') {
+    bool isNegative = false;
+    if (std::is_signed_v<IntegralType> && length && *data == '-') {
         --length;
         ++data;
         isNegative = true;
@@ -73,73 +62,83 @@ inline IntegralType toIntegralType(const CharacterType* data, size_t length, boo
         ++data;
     }
 
-    if (!length || !isCharacterAllowedInBase(*data, base))
-        goto bye;
+    auto isCharacterAllowedInBase = [] (auto character, auto base) {
+        if (isASCIIDigit(character))
+            return character - '0' < base;
+        return toASCIILowerUnchecked(character) >= 'a' && toASCIILowerUnchecked(character) < 'a' + std::min(base - 10, 26);
+    };
 
-    while (length && isCharacterAllowedInBase(*data, base)) {
-        --length;
-        IntegralType digitValue;
-        auto c = *data;
-        if (isASCIIDigit(c))
-            digitValue = c - '0';
-        else if (c >= 'a')
-            digitValue = c - 'a' + 10;
-        else
-            digitValue = c - 'A' + 10;
+    if (!(length && isCharacterAllowedInBase(*data, base)))
+        return WTF::nullopt;
 
+    Checked<IntegralType, RecordOverflow> value;
+    do {
+        IntegralType digitValue = isASCIIDigit(*data) ? *data - '0' : toASCIILowerUnchecked(*data) - 'a' + 10;
         value *= static_cast<IntegralType>(base);
         if (isNegative)
             value -= digitValue;
         else
             value += digitValue;
-        ++data;
-    }
+    } while (--length && isCharacterAllowedInBase(*++data, base));
 
     if (UNLIKELY(value.hasOverflowed()))
-        goto bye;
+        return WTF::nullopt;
 
-    // skip trailing space
-    while (length && isSpaceOrNewline(*data)) {
-        --length;
-        ++data;
+    if (policy == TrailingJunkPolicy::Disallow) {
+        while (length && isASCIISpace(*data)) {
+            --length;
+            ++data;
+        }
+        if (length)
+            return WTF::nullopt;
     }
 
-    if (!length)
-        isOk = true;
-bye:
+    return value.unsafeGet();
+}
+
+template<typename IntegralType> Optional<IntegralType> parseInteger(StringView string, uint8_t base)
+{
+    if (string.is8Bit())
+        return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Disallow);
+    return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Disallow);
+}
+
+template<typename IntegralType> Optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView string, uint8_t base)
+{
+    if (string.is8Bit())
+        return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Allow);
+    return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Allow);
+}
+
+// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
+template<typename IntegralType, typename StringOrStringView> IntegralType toIntegralType(const StringOrStringView& stringView, bool* ok, int base = 10)
+{
+    auto result = parseInteger<IntegralType>(stringView, base);
     if (ok)
-        *ok = isOk;
-    return isOk ? value.unsafeGet() : 0;
+        *ok = result.hasValue();
+    return result.valueOr(0);
 }
 
-template<typename IntegralType, typename StringOrStringView>
-inline IntegralType toIntegralType(const StringOrStringView& stringView, bool* ok, int base = 10)
+// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
+template<typename IntegralType, typename CharacterType> IntegralType toIntegralType(const CharacterType* data, unsigned length, bool* ok, int base = 10)
 {
-    if (stringView.is8Bit())
-        return toIntegralType<IntegralType, LChar>(stringView.characters8(), stringView.length(), ok, base);
-    return toIntegralType<IntegralType, UChar>(stringView.characters16(), stringView.length(), ok, base);
+    return toIntegralType<IntegralType>(StringView { data, length }, ok, base);
 }
 
-template<typename IntegralType, typename CharacterType>
-inline Optional<IntegralType> toIntegralType(const CharacterType* data, size_t length, int base = 10)
+// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
+template<typename IntegralType, typename StringOrStringView> Optional<IntegralType> toIntegralType(const StringOrStringView& stringView, int base = 10)
 {
-    bool ok = false;
-    IntegralType value = toIntegralType<IntegralType>(data, length, &ok, base);
-    if (!ok)
-        return WTF::nullopt;
-    return value;
+    return parseInteger<IntegralType>(stringView, base);
 }
 
-template<typename IntegralType, typename StringOrStringView>
-inline Optional<IntegralType> toIntegralType(const StringOrStringView& stringView, int base = 10)
+// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
+template<typename IntegralType, typename CharacterType> Optional<IntegralType> toIntegralType(const CharacterType* data, unsigned length, int base = 10)
 {
-    bool ok = false;
-    IntegralType value = toIntegralType<IntegralType>(stringView, &ok, base);
-    if (!ok)
-        return WTF::nullopt;
-    return value;
+    return parseInteger<IntegralType>(StringView { data, length }, base);
 }
 
 }
 
+using WTF::parseInteger;
+using WTF::parseIntegerAllowingTrailingJunk;
 using WTF::toIntegralType;

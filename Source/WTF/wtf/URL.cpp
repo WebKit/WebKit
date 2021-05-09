@@ -38,6 +38,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
 
 namespace WTF {
@@ -133,7 +134,7 @@ StringView URL::host() const
 
 Optional<uint16_t> URL::port() const
 {
-    return m_portLength ? parseUInt16(StringView(m_string).substring(m_hostEnd + 1, m_portLength - 1)) : WTF::nullopt;
+    return m_portLength ? parseInteger<uint16_t>(StringView(m_string).substring(m_hostEnd + 1, m_portLength - 1)) : WTF::nullopt;
 }
 
 String URL::hostAndPort() const
@@ -503,7 +504,7 @@ void URL::setHostAndPort(StringView hostAndPort)
         // Multiple colons are acceptable only in case of IPv6.
         if (hostName.contains(':') && !hostName.startsWith('['))
             return;
-        if (!parseUInt16(portString))
+        if (!parseInteger<uint16_t>(portString))
             portString = { };
     }
     if (hostName.isEmpty()) {
