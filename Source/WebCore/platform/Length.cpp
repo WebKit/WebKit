@@ -32,6 +32,7 @@
 #include <wtf/MallocPtr.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 
@@ -67,14 +68,11 @@ static Length parseLength(const UChar* data, unsigned length)
             return Length(r, LengthType::Percent);
         return Length(1, LengthType::Relative);
     }
-    int r = charactersToIntStrict(data, intLength, &ok);
-    if (next == '*') {
-        if (ok)
-            return Length(r, LengthType::Relative);
-        return Length(1, LengthType::Relative);
-    }
-    if (ok)
-        return Length(r, LengthType::Fixed);
+    auto r = parseInteger<int>({ data, intLength });
+    if (next == '*')
+        return Length(r.valueOr(1), LengthType::Relative);
+    if (r)
+        return Length(*r, LengthType::Fixed);
     return Length(0, LengthType::Relative);
 }
 

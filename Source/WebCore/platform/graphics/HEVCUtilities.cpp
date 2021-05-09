@@ -64,21 +64,20 @@ Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
         profileSpace = profileSpace.substring(1);
     }
 
-    bool isValidProfileIDC = false;
-    parameters.generalProfileIDC = toIntegralType<uint8_t>(profileSpace, &isValidProfileIDC);
-    if (!isValidProfileIDC)
+    auto profileIDC = parseInteger<uint8_t>(profileSpace);
+    if (!profileIDC)
         return WTF::nullopt;
+    parameters.generalProfileIDC = *profileIDC;
 
     if (++nextElement == codecSplit.end())
         return WTF::nullopt;
 
     // Second element: 32 bit of General Profile Compatibility Flags, in reverse bit order,
     // in hex with leading zeros omitted.
-    auto compatibilityFlags = *nextElement;
-    bool isValidCompatibilityFlags = false;
-    parameters.generalProfileCompatibilityFlags = toIntegralType<uint32_t>(compatibilityFlags, &isValidCompatibilityFlags, 16);
-    if (!isValidCompatibilityFlags)
+    auto compatibilityFlags = parseInteger<uint32_t>(*nextElement, 16);
+    if (!compatibilityFlags)
         return WTF::nullopt;
+    parameters.generalProfileCompatibilityFlags = *compatibilityFlags;
 
     if (++nextElement == codecSplit.end())
         return WTF::nullopt;
@@ -90,19 +89,17 @@ Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     if (firstCharacter != 'L' && firstCharacter != 'H')
         return WTF::nullopt;
 
-    bool isValidGeneralLevelIDC = false;
-    parameters.generalLevelIDC = toIntegralType<uint8_t>(generalTier.substring(1), &isValidGeneralLevelIDC);
-    if (!isValidGeneralLevelIDC)
+    auto generalLevelIDC = parseInteger<uint8_t>(generalTier.substring(1));
+    if (!generalLevelIDC)
         return WTF::nullopt;
+    parameters.generalLevelIDC = *generalLevelIDC;
 
     // Optional fourth and remaining elements: a sequence of 6 1-byte constraint flags, each byte encoded
     // in hex, and separated by a period, with trailing zero bytes omitted.
     for (unsigned i = 0; i < 6; ++i) {
         if (++nextElement == codecSplit.end())
             break;
-        bool isValidFlag = false;
-        toIntegralType<uint8_t>(*nextElement, &isValidFlag, 16);
-        if (!isValidFlag)
+        if (!parseInteger<uint8_t>(*nextElement, 16))
             return WTF::nullopt;
     }
 
@@ -198,13 +195,13 @@ Optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
     if (!profileID.length())
         return WTF::nullopt;
 
-    bool isIntegral = false;
     auto firstCharacter = profileID[0];
     // Profile definition can either be numeric or alpha:
     if (firstCharacter == '0') {
-        parameters.bitstreamProfileID = toIntegralType<uint8_t>(profileID, &isIntegral, 10);
-        if (!isIntegral)
+        auto bitstreamProfileID = parseInteger<uint8_t>(profileID);
+        if (!bitstreamProfileID)
             return WTF::nullopt;
+        parameters.bitstreamProfileID = *bitstreamProfileID;
     } else {
         auto bitstreamProfileID = profileIDForAlphabeticDoViProfile(codecView.left(5 + profileID.length()));
         if (!bitstreamProfileID)
@@ -221,13 +218,10 @@ Optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
     if (++nextElement == codecSplit.end())
         return WTF::nullopt;
 
-    auto levelID = *nextElement;
-    if (!levelID.length())
+    auto bitstreamLevelID = parseInteger<uint8_t>(*nextElement);
+    if (!bitstreamLevelID)
         return WTF::nullopt;
-
-    parameters.bitstreamLevelID = toIntegralType<uint8_t>(levelID, &isIntegral, 10);
-    if (!isIntegral)
-        return WTF::nullopt;
+    parameters.bitstreamLevelID = *bitstreamLevelID;
 
     auto maximumLevelID = maximumLevelIDForDoViProfileID(parameters.bitstreamProfileID);
     if (!maximumLevelID || parameters.bitstreamLevelID > *maximumLevelID)

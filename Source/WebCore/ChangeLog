@@ -1,5 +1,147 @@
 2021-05-09  Darin Adler  <darin@apple.com>
 
+        Remove uses of the String::toInt family of functions from the WebCore/platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=225575
+
+        Reviewed by Sam Weinig.
+
+        * platform/DateComponents.cpp: Tweak a comment on the local parseInt function here
+        that should likely be consolidated with parseInteger at some point.
+
+        * platform/Length.cpp:
+        (WebCore::parseLength): Use parseInteger<int> instead of charactersToIntStrict.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMPrivateClearKey::sanitizeSessionId const): Use parseInteger<uint32_t>
+        instead of String::toUIntStrict.
+
+        * platform/graphics/HEVCUtilities.cpp:
+        (WebCore::parseHEVCCodecParameters): Use parseInteger<uint8/32_t> instead of
+        toIntegralType<uint8/32_t>.
+        (WebCore::parseDoViCodecParameters): Ditto.
+        * platform/graphics/VP9Utilities.cpp:
+        (WebCore::parseVPCodecParameters): Ditto.
+
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::parseKeySystem): Use parseInteger<int>
+        instead of String::toInt. There's no need for the "allow trailing junk" here
+        because a regular expression is used to check format before we call parseInteger.
+        Also removed an unnecessary empty string check, since the regular expression
+        match check will fail on an empty string.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeSelected): Use
+        parseIntegerAllowingTrailingJunk<uint64_t> instead ot toUInt64.
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::flush): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime const): Ditto.
+
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.mm:
+        (WebCore::parseStringArrayFromDictionaryToUInt16Vector): Use
+        parseInteger<uint16_t> instead of toIntegralType<uint16_t>. We could also
+        consider using -[NSString intValue] here with some range checking instead
+        of converting to WTF::String.
+        
+        * platform/mediastream/mac/ScreenDisplayCapturerMac.mm:
+        (WebCore::ScreenDisplayCapturerMac::create): Use parseInteger<uint32_t>
+        instead of String::toUIntStrict.
+        (WebCore::ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID): Ditto.
+        * platform/mediastream/mac/WindowDisplayCapturerMac.mm:
+        (WebCore::WindowDisplayCapturerMac::create): Ditto.
+        (WebCore::WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID): Ditto.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseRange): Use parseInteger<long long> instead of
+        String::toInt64Strict. Also use StringView so we don't allocate substrings on
+        the heap just to parse integers within an existing string. And removed unneeded
+        call to stripWhiteSpace in one place since parseInteger already allows leading
+        and trailing spaces, and in another case where we need to strip because of an
+        empty string check, used stripLeadingAndTrailingHTTPSpaces instead.
+
+        * platform/network/ParsedContentRange.cpp:
+        (WebCore::parseContentRange): Use parseInteger<int64_t> instead of
+        StringView::toInt64Strict.
+
+        * platform/network/ParsedRequestRange.cpp:
+        (WebCore::ParsedRequestRange::parse): Use parseInteger<uint64_t> instead of
+        StringView::toUInt64Strict.
+
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        Remove uses of the String::toInt family of functions from the WebCore/platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=225575
+
+        Reviewed by Sam Weinig.
+
+        * platform/DateComponents.cpp: Tweak a comment on the local parseInt function here
+        that should likely be consolidated with parseInteger at some point.
+
+        * platform/Length.cpp:
+        (WebCore::parseLength): Use parseInteger<int> instead of charactersToIntStrict.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMPrivateClearKey::sanitizeSessionId const): Use parseInteger<uint32_t>
+        instead of String::toUIntStrict.
+
+        * platform/graphics/HEVCUtilities.cpp:
+        (WebCore::parseHEVCCodecParameters): Use parseInteger<uint8/32_t> instead of
+        toIntegralType<uint8/32_t>.
+        (WebCore::parseDoViCodecParameters): Ditto.
+        * platform/graphics/VP9Utilities.cpp:
+        (WebCore::parseVPCodecParameters): Ditto.
+
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::parseKeySystem): Use parseInteger<int>
+        instead of String::toInt. There's no need for the "allow trailing junk" here
+        because a regular expression is used to check format before we call parseInteger.
+        Also removed an unnecessary empty string check, since the regular expression
+        match check will fail on an empty string.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeSelected): Use
+        parseIntegerAllowingTrailingJunk<uint64_t> instead ot toUInt64.
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::flush): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime const): Ditto.
+
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.mm:
+        (WebCore::parseStringArrayFromDictionaryToUInt16Vector): Use
+        parseInteger<uint16_t> instead of toIntegralType<uint16_t>. We could also
+        consider using -[NSString intValue] here with some range checking instead
+        of converting to WTF::String.
+        
+        * platform/mediastream/mac/ScreenDisplayCapturerMac.mm:
+        (WebCore::ScreenDisplayCapturerMac::create): Use parseInteger<uint32_t>
+        instead of String::toUIntStrict.
+        (WebCore::ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID): Ditto.
+        * platform/mediastream/mac/WindowDisplayCapturerMac.mm:
+        (WebCore::WindowDisplayCapturerMac::create): Ditto.
+        (WebCore::WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID): Ditto.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseRange): Use parseInteger<long long> instead of
+        String::toInt64Strict. Also use StringView so we don't allocate substrings on
+        the heap just to parse integers within an existing string. And removed unneeded
+        call to stripWhiteSpace in one place since parseInteger already allows leading
+        and trailing spaces, and in another case where we need to strip because of an
+        empty string check, used stripLeadingAndTrailingHTTPSpaces instead.
+
+        * platform/network/ParsedContentRange.cpp:
+        (WebCore::parseContentRange): Use parseInteger<int64_t> instead of
+        StringView::toInt64Strict.
+
+        * platform/network/ParsedRequestRange.cpp:
+        (WebCore::ParsedRequestRange::parse): Use parseInteger<uint64_t> instead of
+        StringView::toUInt64Strict.
+
+2021-05-09  Darin Adler  <darin@apple.com>
+
         Remove uses of the String::toInt family of functions from WebCore/html and similar directories
         https://bugs.webkit.org/show_bug.cgi?id=225577
 

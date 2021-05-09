@@ -35,6 +35,7 @@
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import <JavaScriptCore/RegularExpression.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/StringView.h>
 
 #import "VideoToolboxSoftLink.h"
@@ -47,21 +48,16 @@ auto CDMPrivateMediaSourceAVFObjC::parseKeySystem(const String& keySystem) -> Op
 {
     static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$", JSC::Yarr::TextCaseInsensitive);
 
-    if (keySystem.isEmpty())
-        return WTF::nullopt;
-    
     if (keySystemRE.get().match(keySystem) < 0)
         return WTF::nullopt;
-    
+
     StringView keySystemView { keySystem };
 
-    int cdmVersion = keySystemView.substring(14, 1).toInt();
-    
+    int cdmVersion = parseInteger<int>(keySystemView.substring(14, 1)).value();
     Vector<int> protocolVersions;
-    for (StringView protocolVersionString : keySystemView.substring(16).split(','))
-        protocolVersions.append(protocolVersionString.toInt());
-    
-    return {{ cdmVersion, WTFMove(protocolVersions) }};
+    for (auto protocolVersionString : keySystemView.substring(16).split(','))
+        protocolVersions.append(parseInteger<int>(protocolVersionString).value());
+    return { { cdmVersion, WTFMove(protocolVersions) } };
 }
 
 CDMPrivateMediaSourceAVFObjC::~CDMPrivateMediaSourceAVFObjC()
@@ -72,12 +68,13 @@ CDMPrivateMediaSourceAVFObjC::~CDMPrivateMediaSourceAVFObjC()
 
 static bool queryDecoderAvailability()
 {
-    if (!canLoad_VideoToolbox_VTGetGVADecoderAvailability())
+    if (!canLoad_VideoToolbox_VTGetGVADecoderAvailability()) {
 #if HAVE(AVSTREAMSESSION)
         return false;
 #else
         return true;
 #endif
+    }
     uint32_t totalInstanceCount = 0;
     OSStatus status = VTGetGVADecoderAvailability(&totalInstanceCount, nullptr);
     return status == noErr && totalInstanceCount;

@@ -62,6 +62,7 @@
 #import <wtf/WeakPtr.h>
 #import <wtf/text/AtomString.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 #pragma mark - Soft Linking
 
@@ -768,7 +769,7 @@ bool SourceBufferPrivateAVFObjC::hasSelectedVideo() const
 
 void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track, bool selected)
 {
-    auto trackID = track.id().string().toUInt64();
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).valueOr(0);
 
     ALWAYS_LOG(LOGIDENTIFIER, "video trackID = ", trackID, ", selected = ", selected);
 
@@ -794,7 +795,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
 
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track, bool enabled)
 {
-    auto trackID = track.id().string().toUInt64();
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).valueOr(0);
 
     ALWAYS_LOG(LOGIDENTIFIER, "audio trackID = ", trackID, ", selected = ", enabled);
 
@@ -1016,7 +1017,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 void SourceBufferPrivateAVFObjC::flush(const AtomString& trackIDString)
 {
-    auto trackID = trackIDString.string().toUInt64();
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
     DEBUG_LOG(LOGIDENTIFIER, trackID);
 
     if (trackID == m_enabledVideoTrackID) {
@@ -1058,7 +1059,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackIDString)
 {
-    auto trackID = trackIDString.string().toUInt64();
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
     if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID))
         return;
 
@@ -1171,7 +1172,7 @@ void SourceBufferPrivateAVFObjC::bufferWasConsumed()
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackIDString)
 {
-    auto trackID = trackIDString.string().toUInt64();
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
     if (trackID == m_enabledVideoTrackID) {
         if (m_decompressionSession)
             return m_decompressionSession->isReadyForMoreMediaData();
@@ -1235,7 +1236,7 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
 
 void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomString& trackIDString)
 {
-    auto trackID = trackIDString.string().toUInt64();
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
     if (trackID == m_enabledVideoTrackID) {
         if (m_decompressionSession) {
             m_decompressionSession->requestMediaDataWhenReady([this, trackID] {
@@ -1260,10 +1261,8 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomS
 
 bool SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime(const AtomString& trackIDString) const
 {
-    auto trackID = trackIDString.string().toUInt64();
-    if (trackID == m_enabledVideoTrackID)
-        return [getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(expectMinimumUpcomingSampleBufferPresentationTime:)];
-    return false;
+    return parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0) == m_enabledVideoTrackID
+        && [getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(expectMinimumUpcomingSampleBufferPresentationTime:)];
 }
 
 void SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime(const AtomString& trackIDString, const MediaTime& presentationTime)

@@ -31,12 +31,10 @@
 #import "FourCC.h"
 #import "HEVCUtilities.h"
 #import "MediaCapabilitiesInfo.h"
-
-#import <wtf/RobinHoodHashMap.h>
 #import <wtf/text/StringToIntegerConversion.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
 
 #import "VideoToolboxSoftLink.h"
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
@@ -150,11 +148,10 @@ static Optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(C
     for (id value in array) {
         if (![value isKindOfClass:NSString.class])
             return WTF::nullopt;
-        bool isValidNumber = false;
-        auto numericValue = toIntegralType<uint16_t>(String((NSString *)value), &isValidNumber);
-        if (!isValidNumber)
+        auto numericValue = parseInteger<uint16_t>(String((NSString *)value));
+        if (!numericValue)
             return WTF::nullopt;
-        vector.uncheckedAppend(numericValue);
+        vector.uncheckedAppend(*numericValue);
     }
     return vector;
 }
