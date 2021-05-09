@@ -1,3 +1,14 @@
+2021-05-08  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo] Remove linker warning on ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=225501
+
+        Reviewed by Darin Adler.
+
+        libANGLE is statically linked to libGLESv2.dll so that __declspec(dllimport) is not required here.
+
+        * include/platform/PlatformMethods.h:
+
 2021-05-06  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE] Only clear dirty state bits after all state has been successfully set
