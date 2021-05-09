@@ -107,7 +107,7 @@ public:
     void firstVideoFrameAvailable();
     void renderingModeChanged();
 #if PLATFORM(COCOA)
-    void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
+    void setVideoInlineSizeFenced(const WebCore::FloatSize&, const WTF::MachSendRight&);
 #endif
 
     void currentTimeChanged(const MediaTime&, const MonotonicTime&);
@@ -145,6 +145,10 @@ public:
     void resourceNotSupported();
 
     void activeSourceBuffersChanged();
+
+#if PLATFORM(COCOA)
+    bool inVideoFullscreenOrPictureInPicture() const;
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     void waitingForKeyChanged(bool);

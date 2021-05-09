@@ -1,3 +1,23 @@
+2021-05-08  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] A small video element enters fullscreen with strange animations
+        https://bugs.webkit.org/show_bug.cgi?id=225548
+
+        Reviewed by Eric Carlson.
+
+        Use `FloatRect` instead of `IntRect` to exchange video element location/size
+        information between WebContent processes and the UI process to avoid information
+        mismatch due to floating-point rounding.
+
+        Manually tested.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::setupFullscreen):
+        (VideoFullscreenInterfaceAVKit::exitFullscreen):
+        (VideoFullscreenInterfaceAVKit::preparedToReturnToInline):
+        (VideoFullscreenInterfaceAVKit::setInlineRect):
+
 2021-05-08  Sam Weinig  <weinig@apple.com>
 
         Factor out pixel buffer from DOM specific ImageData class

@@ -66,7 +66,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy policy)
 
 #if PLATFORM(COCOA)
-    SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
+    SetVideoInlineSizeFenced(WebCore::FloatSize size, MachSendRight machSendRight)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

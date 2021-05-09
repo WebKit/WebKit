@@ -871,7 +871,7 @@ unsigned long long MediaPlayerPrivateRemote::totalBytes() const
 }
 
 #if PLATFORM(COCOA)
-void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const IntSize& size, const WTF::MachSendRight& machSendRight)
+void MediaPlayerPrivateRemote::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& machSendRight)
 {
     connection().send(Messages::RemoteMediaPlayerProxy::SetVideoInlineSizeFenced(size, machSendRight), m_id);
 }
@@ -1211,6 +1211,17 @@ void MediaPlayerPrivateRemote::notifyActiveSourceBuffersChanged()
     // FIXME: this just rounds trip up and down to activeSourceBuffersChanged(). Should this call ::activeSourceBuffersChanged directly?
     connection().send(Messages::RemoteMediaPlayerProxy::NotifyActiveSourceBuffersChanged(), m_id);
 }
+
+#if PLATFORM(COCOA)
+bool MediaPlayerPrivateRemote::inVideoFullscreenOrPictureInPicture() const
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    return !!m_videoLayerManager->videoFullscreenLayer();
+#else
+    return false;
+#endif
+}
+#endif
 
 void MediaPlayerPrivateRemote::applicationWillResignActive()
 {

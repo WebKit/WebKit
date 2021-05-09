@@ -1,3 +1,45 @@
+2021-05-08  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] A small video element enters fullscreen with strange animations
+        https://bugs.webkit.org/show_bug.cgi?id=225548
+
+        Reviewed by Eric Carlson.
+
+        Use `FloatRect` instead of `IntRect` to exchange video element location/size
+        information between WebContent processes and the UI process to avoid information
+        mismatch due to floating-point rounding.
+
+        Deal with the video element resizing differently for two cases:
+        1) Video is playing in the inline mode.
+        2) Video is entering fullscreen/picture-in-picture.
+        For the latter case, `-[WKVideoLayerRemote layoutSublayers]` will scale the layer
+        with the same factor in both X and Y direction.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::setVideoInlineSizeIfPossible):
+        (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeFenced):
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::setInlineRect):
+        (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::setVideoInlineSizeFenced):
+        (WebKit::MediaPlayerPrivateRemote::inVideoFullscreenOrPictureInPicture const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm:
+        (-[WKVideoLayerRemote layoutSublayers]):
+        (-[WKVideoLayerRemote resolveBounds]):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::inlineVideoFrame):
+        (WebKit::VideoFullscreenManager::requestUpdateInlineRect):
+
 2021-05-08  Darin Adler  <darin@apple.com>
 
         Remove uses of the WTF::String::toInt family of functions from WebKit framework sources

@@ -59,7 +59,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static IntRect inlineVideoFrame(HTMLVideoElement& element)
+static FloatRect inlineVideoFrame(HTMLVideoElement& element)
 {
     auto& document = element.document();
     if (!document.hasLivingRenderTree() || document.activeDOMObjectsAreStopped())
@@ -73,7 +73,7 @@ static IntRect inlineVideoFrame(HTMLVideoElement& element)
     if (renderer->hasLayer() && renderer->enclosingLayer()->isComposited()) {
         FloatQuad contentsBox = static_cast<FloatRect>(renderer->enclosingLayer()->backing()->contentsBox());
         contentsBox = renderer->localToAbsoluteQuad(contentsBox);
-        return element.document().view()->contentsToRootView(contentsBox.enclosingBoundingBox());
+        return element.document().view()->contentsToRootView(contentsBox.boundingBox());
     }
 
     auto rect = renderer->videoBox();
@@ -393,7 +393,7 @@ void VideoFullscreenManager::requestUpdateInlineRect(PlaybackSessionContextIdent
         return;
 
     auto& model = ensureModel(contextId);
-    IntRect inlineRect = inlineVideoFrame(*model.videoElement());
+    auto inlineRect = inlineVideoFrame(*model.videoElement());
     m_page->send(Messages::VideoFullscreenManagerProxy::SetInlineRect(contextId, inlineRect, inlineRect != IntRect(0, 0, 0, 0)));
 }
 

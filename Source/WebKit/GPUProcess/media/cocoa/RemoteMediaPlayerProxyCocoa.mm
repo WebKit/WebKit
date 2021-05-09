@@ -31,15 +31,15 @@
 #import "LayerHostingContext.h"
 #import "MediaPlayerPrivateRemoteMessages.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/FloatSize.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/IntSize.h>
 #import <wtf/MachSendRight.h>
 
 namespace WebKit {
 
-static void setVideoInlineSizeIfPossible(LayerHostingContext& context, const WebCore::IntSize& size)
+static void setVideoInlineSizeIfPossible(LayerHostingContext& context, const WebCore::FloatSize& size)
 {
-    if (!context.rootLayer())
+    if (!context.rootLayer() || size.isEmpty())
         return;
 
     // We do not want animations here.
@@ -70,7 +70,7 @@ void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
-void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::IntSize& size, const WTF::MachSendRight& machSendRight)
+void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& size, const WTF::MachSendRight& machSendRight)
 {
     m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
 

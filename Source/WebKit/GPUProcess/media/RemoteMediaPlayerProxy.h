@@ -146,7 +146,7 @@ public:
     void didLoadingProgress(CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(COCOA)
-    void setVideoInlineSizeFenced(const WebCore::IntSize&, const WTF::MachSendRight&);
+    void setVideoInlineSizeFenced(const WebCore::FloatSize&, const WTF::MachSendRight&);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -333,7 +333,7 @@ private:
     Seconds m_videoPlaybackMetricsUpdateInterval;
     MonotonicTime m_nextPlaybackQualityMetricsUpdateTime;
 
-    WebCore::IntSize m_videoInlineSize;
+    WebCore::FloatSize m_videoInlineSize;
     float m_videoContentScale { 1.0 };
 
     bool m_bufferedChanged { true };
