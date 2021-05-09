@@ -1,3 +1,58 @@
+2021-05-09  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Remove reference cycle in WebXRSession
+        https://bugs.webkit.org/show_bug.cgi?id=225025
+        <rdar://problem/77111217>
+
+        Reviewed by Sam Weinig.
+
+        Patch by Sam Weinig, who took my bad patch and made it better.
+
+        WebXRSession was attempting to create an WebXRInputSourceArray in
+        its constructor, which itself was trying to hold a strong reference
+        back to WebXRSession - causing a crash.
+
+        * Modules/webxr/WebXRBoundedReferenceSpace.h: Fix small typo.
+
+        * Modules/webxr/WebXRFrame.cpp: Use reference in constructor, since we
+        know the session exists.
+        (WebCore::WebXRFrame::create):
+        (WebCore::WebXRFrame::WebXRFrame):
+        * Modules/webxr/WebXRFrame.h:
+
+        * Modules/webxr/WebXRInputSource.cpp: Use a WeakPtr as a reference back
+        to the WebXRSession.
+        (WebCore::WebXRInputSource::create):
+        (WebCore::WebXRInputSource::WebXRInputSource):
+        (WebCore::WebXRInputSource::session): Add this getter.
+        (WebCore::WebXRInputSource::update): Check for null.
+        (WebCore::WebXRInputSource::pollEvents):
+        (WebCore::WebXRInputSource::createEvent): Deleted - moved to lambda.
+        * Modules/webxr/WebXRInputSource.h:
+        * Modules/webxr/WebXRInputSource.idl:
+
+        * Modules/webxr/WebXRInputSourceArray.cpp: Add GenerateIsReachable.
+        (WebCore::WebXRInputSourceArray::create):
+        (WebCore::WebXRInputSourceArray::WebXRInputSourceArray):
+        (WebCore::WebXRInputSourceArray::ref):
+        (WebCore::WebXRInputSourceArray::deref):
+        (WebCore::WebXRInputSourceArray::update):
+        (WebCore::WebXRInputSourceArray::handleAddedOrUpdatedInputSources):
+        * Modules/webxr/WebXRInputSourceArray.h:
+        * Modules/webxr/WebXRInputSourceArray.idl:
+
+        * Modules/webxr/WebXRInputSpace.cpp: Use reference in constructor.
+        (WebCore::WebXRInputSpace::create):
+        (WebCore::WebXRInputSpace::WebXRInputSpace):
+        * Modules/webxr/WebXRInputSpace.h:
+
+        * Modules/webxr/WebXRSession.cpp: Use a UniqueRef for input source array.
+        (WebCore::WebXRSession::onFrame):
+        * Modules/webxr/WebXRSession.h:
+
+        * bindings/scripts/CodeGeneratorJS.pm: Add ImplWebXRSessionRoot to GenerateIsReachable.
+        (GenerateImplementation):
+
 2021-05-09  Darin Adler  <darin@apple.com>
 
         Remove uses of the String::toInt family of functions from the WebCore/platform directory

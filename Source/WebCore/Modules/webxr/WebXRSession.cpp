@@ -526,7 +526,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
         //  1.Let now be the current high resolution time.
         auto now = (MonotonicTime::now() - m_timeOrigin).milliseconds();
 
-        auto frame = WebXRFrame::create(makeRef(*this), WebXRFrame::IsAnimationFrame::Yes);
+        auto frame = WebXRFrame::create(*this, WebXRFrame::IsAnimationFrame::Yes);
         //  2.Let frame be session’s animation frame.
         //  3.Set frame’s time to frameTime.
         frame->setTime(static_cast<DOMHighResTimeStamp>(frameData.predictedDisplayTime));

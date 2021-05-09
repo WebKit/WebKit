@@ -36,7 +36,7 @@ namespace WebCore {
 
 class DOMPointReadOnly;
 
-class WebXRBoundedReferenceSpace final: public WebXRReferenceSpace {
+class WebXRBoundedReferenceSpace final : public WebXRReferenceSpace {
     WTF_MAKE_ISO_ALLOCATED(WebXRBoundedReferenceSpace);
 public:
     static Ref<WebXRBoundedReferenceSpace> create(Document&, Ref<WebXRSession>&&, XRReferenceSpaceType);

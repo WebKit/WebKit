@@ -5087,6 +5087,12 @@ sub GenerateImplementation
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ScriptExecutionContext\";\n";
+            } elsif (GetGenerateIsReachable($interface) eq "ImplWebXRSessionRoot") {
+                $rootString  = "    WebXRSession* root = WTF::getPtr(js${interfaceName}->wrapped().session());\n";
+                $rootString .= "    if (!root)\n";
+                $rootString .= "        return false;\n";
+                $rootString .= "    if (UNLIKELY(reason))\n";
+                $rootString .= "        *reason = \"Reachable from WebXRSession\";\n";
             } else {
                 $rootString  = "    void* root = WebCore::root(&js${interfaceName}->wrapped());\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";

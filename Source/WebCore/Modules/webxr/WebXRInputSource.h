@@ -53,7 +53,7 @@ public:
     using InputSource = PlatformXR::Device::FrameData::InputSource;
     using InputSourceButton = PlatformXR::Device::FrameData::InputSourceButton;
 
-    static Ref<WebXRInputSource> create(Document&, Ref<WebXRSession>&&, double timestamp, const InputSource&);
+    static Ref<WebXRInputSource> create(Document&, WebXRSession&, double timestamp, const InputSource&);
     ~WebXRInputSource();
 
     PlatformXR::InputSourceHandle handle() const { return m_source.handle; }
@@ -72,12 +72,13 @@ public:
     
     void pollEvents(Vector<Ref<XRInputSourceEvent>>&);
 
+    // For GC reachablitiy.
+    WebXRSession* session();
+
 private:
-    WebXRInputSource(Document&, Ref<WebXRSession>&&, double timestamp, const InputSource&);
+    WebXRInputSource(Document&, WebXRSession&, double timestamp, const InputSource&);
 
-    Ref<XRInputSourceEvent> createEvent(const AtomString&);
-
-    Ref<WebXRSession> m_session;
+    WeakPtr<WebXRSession> m_session;
     InputSource m_source;
     Ref<WebXRInputSpace> m_targetRaySpace;
     RefPtr<WebXRInputSpace> m_gripSpace;
