@@ -201,11 +201,11 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     
     // We could get to a value where imageData could be nullptr. A case where ImageRect.size() is huge, imageData::create
     // can return a nullptr because data size has overflowed. Refer rdar://problem/61793884
-    if (!imageData || !imageData->data())
+    if (!imageData)
         return createShape();
 
-    auto* pixelArray = imageData->data();
-    unsigned pixelArrayLength = pixelArray->length();
+    auto& pixelArray = imageData->data();
+    unsigned pixelArrayLength = pixelArray.length();
     unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
     uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
 
@@ -216,7 +216,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         for (int y = minBufferY; y < maxBufferY; ++y) {
             int startX = -1;
             for (int x = 0; x < imageRect.width(); ++x, pixelArrayOffset += 4) {
-                uint8_t alpha = pixelArray->item(pixelArrayOffset);
+                uint8_t alpha = pixelArray.item(pixelArrayOffset);
                 bool alphaAboveThreshold = alpha > alphaPixelThreshold;
                 if (startX == -1 && alphaAboveThreshold) {
                     startX = x;

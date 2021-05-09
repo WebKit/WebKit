@@ -376,9 +376,11 @@ void FEConvolveMatrix::platformApplySoftware()
         resultImage = createUnmultipliedImageResult();
     else
         resultImage = createPremultipliedImageResult();
-    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
-    if (!dstPixelArray)
+
+    if (!resultImage)
         return;
+
+    auto& dstPixelArray = resultImage->data();
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
 
@@ -395,7 +397,7 @@ void FEConvolveMatrix::platformApplySoftware()
 
     PaintingData paintingData = {
         *srcPixelArray,
-        *dstPixelArray,
+        dstPixelArray,
         paintSize.width(),
         paintSize.height(),
         m_bias * 255,

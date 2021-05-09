@@ -782,7 +782,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //      internal slot.
     // 6.2. If IsDetachedBuffer(buffer) is true, then return p rejected with an
     //      "InvalidStateError" DOMException.
-    if (imageData->data()->isDetached()) {
+    if (imageData->data().isDetached()) {
         promise.reject(InvalidStateError, "ImageData's viewed buffer has been detached");
         return;
     }

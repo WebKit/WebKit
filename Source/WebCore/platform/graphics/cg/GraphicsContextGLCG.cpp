@@ -529,7 +529,7 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
     auto imageSize = imageData->size();
     int rowBytes = imageSize.width() * 4;
         size_t dataSize = rowBytes * imageSize.height();
-    uint8_t* imagePixels = imageData->data()->data();
+    uint8_t* imagePixels = imageData->data().data();
         verifyImageBufferIsBigEnough(imagePixels, dataSize);
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithData(&imageData.leakRef(), imagePixels, dataSize, releaseImageData));
 

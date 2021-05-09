@@ -1082,7 +1082,7 @@ private:
             return;
         }
 
-        RefPtr<ArrayBuffer> arrayBuffer = imageData->data()->possiblySharedBuffer();
+        auto arrayBuffer = imageData->data().possiblySharedBuffer();
         if (!arrayBuffer) {
             code = SerializationReturnCode::ValidationError;
             return;
@@ -1226,8 +1226,8 @@ private:
                 write(ImageDataTag);
                 write(data->width());
                 write(data->height());
-                write(data->data()->length());
-                write(data->data()->data(), data->data()->length());
+                write(data->data().length());
+                write(data->data().data(), data->data().length());
                 return true;
             }
             if (auto* regExp = jsDynamicCast<RegExpObject*>(vm, obj)) {
@@ -3390,9 +3390,9 @@ private:
                 return JSValue();
             }
             if (length)
-                memcpy(result->data()->data(), m_ptr, length);
+                memcpy(result->data().data(), m_ptr, length);
             else
-                result->data()->zeroFill();
+                result->data().zeroFill();
             m_ptr += length;
             return getJSValue(result.get());
         }

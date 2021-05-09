@@ -244,16 +244,17 @@ void FEMorphology::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
 
     auto* resultImage = createPremultipliedImageResult();
-    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
-    if (!dstPixelArray)
+    if (!resultImage)
         return;
+
+    auto& destinationPixelArray = resultImage->data();
 
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
 
     IntSize radius = flooredIntSize(FloatSize(m_radiusX, m_radiusY));
-    if (platformApplyDegenerate(*dstPixelArray, effectDrawingRect, radius.width(), radius.height()))
+    if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radius.width(), radius.height()))
         return;
 
     Filter& filter = this->filter();
@@ -265,12 +266,12 @@ void FEMorphology::platformApplySoftware()
     int radiusX = std::min(effectDrawingRect.width() - 1, radius.width());
     int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
 
-    if (platformApplyDegenerate(*dstPixelArray, effectDrawingRect, radiusX, radiusY))
+    if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radiusX, radiusY))
         return;
     
     PaintingData paintingData;
     paintingData.srcPixelArray = srcPixelArray.get();
-    paintingData.dstPixelArray = dstPixelArray;
+    paintingData.dstPixelArray = &destinationPixelArray;
     paintingData.width = ceilf(effectDrawingRect.width() * filter.filterScale());
     paintingData.height = ceilf(effectDrawingRect.height() * filter.filterScale());
     paintingData.radiusX = ceilf(radiusX * filter.filterScale());

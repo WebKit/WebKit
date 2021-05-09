@@ -105,8 +105,8 @@ void FEDropShadow::platformApplySoftware()
     if (!imageData)
         return;
 
-    auto* srcPixelArray = imageData->data();
-    contextShadow.blurLayerImage(srcPixelArray->data(), imageData->size(), 4 * imageData->size().width());
+    auto& srcPixelArray = imageData->data();
+    contextShadow.blurLayerImage(srcPixelArray.data(), imageData->size(), 4 * imageData->size().width());
     
     resultImage->putImageData(AlphaPremultiplication::Premultiplied, *imageData, shadowArea);
 

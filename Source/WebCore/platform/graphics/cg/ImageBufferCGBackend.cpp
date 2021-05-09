@@ -184,7 +184,6 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
     ASSERT(uti);
 
     PlatformImagePtr image;
-    RefPtr<Uint8ClampedArray> protectedPixelArray;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
@@ -192,7 +191,7 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
         if (!imageData)
             return nullptr;
 
-        protectedPixelArray = makeRefPtr(imageData->data());
+        auto protectedPixelArray = makeRef(imageData->data());
         size_t dataSize = protectedPixelArray->byteLength();
         IntSize pixelArrayDimensions = imageData->size();
 

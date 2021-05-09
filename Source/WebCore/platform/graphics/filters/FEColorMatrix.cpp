@@ -290,7 +290,7 @@ void FEColorMatrix::platformApplySoftware()
     if (!imageData)
         return;
 
-    auto* pixelArray = imageData->data();
+    auto& pixelArray = imageData->data();
     IntSize pixelArrayDimensions = imageData->size();
 
     Vector<float> values = normalizedFloats(m_values);
@@ -299,16 +299,16 @@ void FEColorMatrix::platformApplySoftware()
     case FECOLORMATRIX_TYPE_UNKNOWN:
         break;
     case FECOLORMATRIX_TYPE_MATRIX:
-        effectType<FECOLORMATRIX_TYPE_MATRIX>(*pixelArray, values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray, values, pixelArrayDimensions);
         break;
     case FECOLORMATRIX_TYPE_SATURATE: 
-        effectType<FECOLORMATRIX_TYPE_SATURATE>(*pixelArray, values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray, values, pixelArrayDimensions);
         break;
     case FECOLORMATRIX_TYPE_HUEROTATE:
-        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(*pixelArray, values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray, values, pixelArrayDimensions);
         break;
     case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(*pixelArray, values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray, values, pixelArrayDimensions);
         setIsAlphaImage(true);
         break;
     }

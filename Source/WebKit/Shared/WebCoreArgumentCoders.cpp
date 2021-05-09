@@ -3119,9 +3119,9 @@ void ArgumentCoder<Ref<WebCore::ImageData>>::encode(Encoder& encoder, const Ref<
 {
     encoder << imageData->size();
 
-    auto rawData = imageData->data();
-    encoder << static_cast<uint64_t>(rawData->byteLength());
-    encoder.encodeFixedLengthData(rawData->data(), rawData->byteLength(), 1);
+    auto& rawData = imageData->data();
+    encoder << static_cast<uint64_t>(rawData.byteLength());
+    encoder.encodeFixedLengthData(rawData.data(), rawData.byteLength(), 1);
 }
 
 template

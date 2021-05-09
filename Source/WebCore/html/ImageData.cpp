@@ -57,7 +57,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
         return Exception { RangeError, "Out of memory"_s };
     }
     byteArray->zeroFill();
-    return adoptRef(*new ImageData(size, byteArray.releaseNonNull()));
+    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, byteArray.releaseNonNull() }));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size)
@@ -68,7 +68,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size)
     auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
     if (!byteArray)
         return nullptr;
-    return adoptRef(*new ImageData(size, byteArray.releaseNonNull()));
+    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, byteArray.releaseNonNull() }));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray)
@@ -76,7 +76,8 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&
     auto dataSize = ImageData::dataSize(size);
     if (dataSize.hasOverflowed() || dataSize.unsafeGet() > byteArray->length())
         return nullptr;
-    return adoptRef(*new ImageData(size, WTFMove(byteArray)));
+
+    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, WTFMove(byteArray) }));
 }
 
 ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh)
@@ -99,22 +100,22 @@ ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray
     return result.releaseNonNull();
 }
 
-ImageData::ImageData(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray)
-    : m_size(size)
-    , m_data(WTFMove(byteArray))
+ImageData::ImageData(PixelBuffer&& pixelBuffer)
+    : m_pixelBuffer(WTFMove(pixelBuffer))
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((size.area() * 4).unsafeGet() <= m_data->length());
 }
+
+ImageData::~ImageData() = default;
 
 Ref<ImageData> ImageData::deepClone() const
 {
-    return adoptRef(*new ImageData(m_size, Uint8ClampedArray::create(m_data->data(), m_data->length())));
+    return adoptRef(*new ImageData(m_pixelBuffer.deepClone()));
 }
 
 TextStream& operator<<(TextStream& ts, const ImageData& imageData)
 {
     // Print out the address of the pixel data array
-    return ts << imageData.data();
+    return ts << &imageData.data();
 }
 
 }

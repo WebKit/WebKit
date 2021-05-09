@@ -1,3 +1,103 @@
+2021-05-08  Sam Weinig  <weinig@apple.com>
+
+        Factor out pixel buffer from DOM specific ImageData class
+        https://bugs.webkit.org/show_bug.cgi?id=225554
+
+        Reviewed by Darin Adler.
+
+        Prepare to fix layering violating use of DOM level ImageData being
+        used by platform code by factoring out the pixel storage into a new
+        PixelBuffer class. Since it will be a little more general that 
+        ImageData is now (though ImageData will need to gain these soon)
+        PixelBuffer also captures the pixel format and color space the pixel
+        data represents.
+
+        While here, update ImageData::data() to return a reference rather than
+        a pointer to indicate it is never null and update all the callers.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpImageBitmap):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::readTerminal):
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createPromise):
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create):
+        (WebCore::ImageData::ImageData):
+        (WebCore::ImageData::deepClone const):
+        (WebCore::operator<<):
+        * html/ImageData.h:
+        (WebCore::ImageData::size const):
+        (WebCore::ImageData::width const):
+        (WebCore::ImageData::height const):
+        (WebCore::ImageData::data const):
+        (WebCore::ImageData::colorSpace const):
+        (WebCore::ImageData::format const):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::createEmptyImageData):
+        (WebCore::CanvasRenderingContext2DBase::putImageData):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildArrayForImageData):
+        * platform/graphics/GraphicsContextGL.cpp:
+        (WebCore::GraphicsContextGL::extractImageData):
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::convertToLuminanceMask):
+        (WebCore::ImageBufferBackend::getImageData const):
+        (WebCore::ImageBufferBackend::putImageData):
+        * platform/graphics/PixelBuffer.cpp: Added.
+        (WebCore::PixelBuffer::PixelBuffer):
+        (WebCore::PixelBuffer::deepClone const):
+        * platform/graphics/PixelBuffer.h: Added.
+        (WebCore::PixelBuffer::colorSpace const):
+        (WebCore::PixelBuffer::format const):
+        (WebCore::PixelBuffer::size const):
+        (WebCore::PixelBuffer::data const):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::blurShadowBuffer):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::readPixelsForPaintResults):
+        * platform/graphics/cg/GraphicsContextGLCG.cpp:
+        (WebCore::GraphicsContextGLOpenGL::paintToCanvas):
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::toCFData const):
+        * platform/graphics/cg/ImageBufferUtilitiesCG.cpp:
+        (WebCore::cfData):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::platformApplySoftware):
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::platformApplySoftware):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::platformApplySoftware):
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::platformApplySoftware):
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::platformApplySoftware):
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::platformApplySoftware):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplySoftware):
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplySoftware):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::forceValidPreMultipliedPixels):
+        (WebCore::FilterEffect::copyConvertedImageBufferToDestination):
+        (WebCore::FilterEffect::copyConvertedImageDataToDestination):
+        (WebCore::FilterEffect::copyUnmultipliedResult):
+        (WebCore::FilterEffect::copyPremultipliedResult):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+
 2021-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Unify font collection handling between all Cocoa ports

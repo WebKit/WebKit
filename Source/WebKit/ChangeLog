@@ -1,3 +1,18 @@
+2021-05-08  Sam Weinig  <weinig@apple.com>
+
+        Factor out pixel buffer from DOM specific ImageData class
+        https://bugs.webkit.org/show_bug.cgi?id=225554
+
+        Reviewed by Darin Adler.
+
+        Update for ImageData::data() returning a reference.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::populateGetImageDataSharedMemory):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<WebCore::ImageData>>::encode):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2021-05-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r276797?): [ macOS/iOS ] TestWebKitAPI.URLSchemeHandler.Exceptions is flakey crashing

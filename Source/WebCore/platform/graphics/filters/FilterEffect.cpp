@@ -201,9 +201,9 @@ void FilterEffect::forceValidPreMultipliedPixels()
     if (!m_premultipliedImageResult)
         return;
 
-    Uint8ClampedArray* imageArray = m_premultipliedImageResult->data();
-    uint8_t* pixelData = imageArray->data();
-    int pixelArrayLength = imageArray->length();
+    auto& imageArray = m_premultipliedImageResult->data();
+    uint8_t* pixelData = imageArray.data();
+    int pixelArrayLength = imageArray.length();
 
     // We must have four bytes per pixel, and complete pixels
     ASSERT(!(pixelArrayLength % 4));
@@ -464,7 +464,7 @@ void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& dest
     auto convertedImageData = convertImageBufferToColorSpace(colorSpace, *m_imageBufferResult, { IntPoint(), m_absolutePaintRect.size() }, outputFormat);
     if (!convertedImageData)
         return;
-    copyImageBytes(*convertedImageData->data(), destination, destRect);
+    copyImageBytes(convertedImageData->data(), destination, destRect);
 }
 
 void FilterEffect::copyConvertedImageDataToDestination(Uint8ClampedArray& destination, ImageData& imageData, DestinationColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
@@ -474,7 +474,7 @@ void FilterEffect::copyConvertedImageDataToDestination(Uint8ClampedArray& destin
     auto convertedImageData = convertImageDataToColorSpace(colorSpace, imageData, outputFormat);
     if (!convertedImageData)
         return;
-    copyImageBytes(*convertedImageData->data(), destination, destRect);
+    copyImageBytes(convertedImageData->data(), destination, destRect);
 }
 
 void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
@@ -500,14 +500,14 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
             m_unmultipliedImageResult = ImageData::create(inputSize);
             if (!m_unmultipliedImageResult)
                 return;
-            copyUnpremultiplyingAlpha(*m_premultipliedImageResult->data(), *m_unmultipliedImageResult->data(), inputSize);
+            copyUnpremultiplyingAlpha(m_premultipliedImageResult->data(), m_unmultipliedImageResult->data(), inputSize);
         }
     }
     if (requiresImageDataColorSpaceConversion(colorSpace)) {
         copyConvertedImageDataToDestination(destination, *m_unmultipliedImageResult, *colorSpace, AlphaPremultiplication::Unpremultiplied, rect);
         return;
     }
-    copyImageBytes(*m_unmultipliedImageResult->data(), destination, rect);
+    copyImageBytes(m_unmultipliedImageResult->data(), destination, rect);
 }
 
 void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
@@ -533,7 +533,7 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
             m_premultipliedImageResult = ImageData::create(inputSize);
             if (!m_premultipliedImageResult)
                 return;
-            copyPremultiplyingAlpha(*m_unmultipliedImageResult->data(), *m_premultipliedImageResult->data(), inputSize);
+            copyPremultiplyingAlpha(m_unmultipliedImageResult->data(), m_premultipliedImageResult->data(), inputSize);
         }
     }
 
@@ -541,7 +541,7 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
         copyConvertedImageDataToDestination(destination, *m_premultipliedImageResult, *colorSpace, AlphaPremultiplication::Premultiplied, rect);
         return;
     }
-    copyImageBytes(*m_premultipliedImageResult->data(), destination, rect);
+    copyImageBytes(m_premultipliedImageResult->data(), destination, rect);
 }
 
 ImageBuffer* FilterEffect::createImageBufferResult()

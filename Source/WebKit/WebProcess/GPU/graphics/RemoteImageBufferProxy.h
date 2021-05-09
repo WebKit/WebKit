@@ -200,9 +200,9 @@ protected:
             return nullptr;
 
         auto imageData = WebCore::ImageData::create(srcRect.size());
-        if (!imageData || !imageData->data())
+        if (!imageData)
             return nullptr;
-        size_t dataSize = imageData->data()->byteLength();
+        size_t dataSize = imageData->data().byteLength();
 
         IPC::Timeout timeout = 5_s;
         SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize, timeout);
@@ -214,9 +214,9 @@ protected:
         mutableThis.flushDrawingContextAsync();
 
         if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete(timeout))
-            memcpy(imageData->data()->data(), sharedMemory->data(), dataSize);
+            memcpy(imageData->data().data(), sharedMemory->data(), dataSize);
         else
-            memset(imageData->data()->data(), 0, dataSize);
+            memset(imageData->data().data(), 0, dataSize);
         return imageData;
     }
 

@@ -524,14 +524,15 @@ void FEGaussianBlur::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
 
     auto* resultImage = createPremultipliedImageResult();
-    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
-    if (!dstPixelArray)
+    if (!resultImage)
         return;
+
+    auto& dstPixelArray = resultImage->data();
 
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyPremultipliedResult(*dstPixelArray, effectDrawingRect, operatingColorSpace());
+    in->copyPremultipliedResult(dstPixelArray, effectDrawingRect, operatingColorSpace());
     if (!m_stdX && !m_stdY)
         return;
 
@@ -544,7 +545,7 @@ void FEGaussianBlur::platformApplySoftware()
     if (!tmpImageData)
         return;
 
-    platformApply(*dstPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
+    platformApply(dstPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
 }
 
 IntOutsets FEGaussianBlur::outsets() const

@@ -2155,7 +2155,7 @@ static RefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
     auto data = ImageData::create(size);
     if (data)
-        data->data()->zeroFill();
+        data->data().zeroFill();
     return data;
 }
 
@@ -2220,7 +2220,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     if (!buffer)
         return;
 
-    if (!data.data() || data.data()->isDetached())
+    if (data.data().isDetached())
         return;
 
     if (dirtyWidth < 0) {

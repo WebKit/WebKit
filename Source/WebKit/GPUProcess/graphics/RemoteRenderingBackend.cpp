@@ -367,9 +367,9 @@ void RemoteRenderingBackend::populateGetImageDataSharedMemory(WebCore::ImageData
 {
     MESSAGE_CHECK(m_getImageDataSharedMemory, "We can't run getImageData without a buffer to write into");
 
-    if (imageData && imageData->data()) {
-        MESSAGE_CHECK(imageData->data()->byteLength() <= m_getImageDataSharedMemory->size(), "Shmem for return of getImageData is too small");
-        memcpy(m_getImageDataSharedMemory->data(), imageData->data()->data(), imageData->data()->byteLength());
+    if (imageData) {
+        MESSAGE_CHECK(imageData->data().byteLength() <= m_getImageDataSharedMemory->size(), "Shmem for return of getImageData is too small");
+        memcpy(m_getImageDataSharedMemory->data(), imageData->data().data(), imageData->data().byteLength());
     } else
         memset(m_getImageDataSharedMemory->data(), 0, m_getImageDataSharedMemory->size());
 
