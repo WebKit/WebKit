@@ -145,16 +145,11 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 static ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject* object, uint64_t index)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (JSValue result = object->tryGetIndexQuickly(index))
         return result;
 
     // Don't return undefined if the property is not found.
-    auto property = object->getIfPropertyExists(globalObject, Identifier::from(vm, index));
-    RETURN_IF_EXCEPTION(scope, { });
-    return property.valueOr(JSValue());
+    return object->getIfPropertyExists(globalObject, Identifier::from(globalObject->vm(), index));
 }
 
 static ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, uint64_t value)

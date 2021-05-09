@@ -1,3 +1,47 @@
+2021-05-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Fix invalid exception checks after recent ErrorInstance changes
+        https://bugs.webkit.org/show_bug.cgi?id=225565
+
+        Reviewed by Alexey Shvayka.
+
+        r277221 and r277224 each introduced issues under validateExceptionChecks=1; this patch fixes them.
+
+        Of particular note:
+        The earlier patch sought to consolidate Error#cause logic under ErrorInstance::finishCreation.
+        This part must be undone as it is crucial that non-user-thrown errors be able to bypass that logic
+        (otherwise throwException itself would need to be exception-checked).
+
+        * runtime/AggregateError.cpp:
+        (JSC::createAggregateError):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (JSC::createGetterTypeError):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getIfPropertyExists):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::createJSWebAssemblyCompileError):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::createJSWebAssemblyLinkError):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::createJSWebAssemblyRuntimeError):
+
 2021-05-08  Chris Dumez  <cdumez@apple.com>
 
         Port Filesystem::pathByAppendingComponent() & Filesystem:: pathByAppendingComponents() to std::filesystem

@@ -35,7 +35,7 @@ namespace JSC {
 JSObject* createJSWebAssemblyRuntimeError(JSGlobalObject* globalObject, VM& vm, const String& message)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, vm, globalObject->webAssemblyRuntimeErrorStructure(), message, jsUndefined(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
+    return ErrorInstance::create(globalObject, vm, globalObject->webAssemblyRuntimeErrorStructure(), message, JSValue(), defaultSourceAppender, TypeNothing, ErrorType::Error, true);
 }
     
 } // namespace JSC
