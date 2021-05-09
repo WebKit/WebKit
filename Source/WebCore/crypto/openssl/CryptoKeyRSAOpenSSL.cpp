@@ -31,6 +31,7 @@
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSAComponents.h"
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <openssl/X509.h>
 #include <openssl/evp.h>
 

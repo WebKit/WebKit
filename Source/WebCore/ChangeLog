@@ -1,3 +1,12 @@
+2021-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][Clang] lld-link: error: undefined symbol: public: static class GenericTypedArrayView<>::tryCreate() in CryptoKeyRSAOpenSSL.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=225581
+
+        Unreviewed build for r277142.
+
+        * crypto/openssl/CryptoKeyRSAOpenSSL.cpp: Include <JavaScriptCore/TypedArrayInlines.h>.
+
 2021-05-09  Dean Jackson  <dino@apple.com>
 
         [WebXR] Remove reference cycle in WebXRSession
