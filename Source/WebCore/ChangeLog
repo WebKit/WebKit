@@ -1,5 +1,45 @@
 2021-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [GPU Process] Simplify DisplayList::Iterator part 6: Migrate ItemBufferWritingClient from ItemHandle to a const Variant&
+        https://bugs.webkit.org/show_bug.cgi?id=224270
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds a new Variant that contains all the DisplayList item types, named DisplayListItem. It also migrates
+        ItemBufferWritingClient from ItemHandle to this new Variant.
+
+        There are two benefits to this:
+        1. The templated overload of ItemBuffer::append() is way simpler now. Previously, we used to allocate a byte buffer
+               on the stack and run a placement new of the display list item type into it. Now, we can just run the DisplayListItem
+               constructor instead. Using the Variant does require more stack space, but we only will ever have one of these objects
+               on the stack at a time.
+        2. The big table inside RemoteImageBufferProxy::encodeItemOutOfLine() is gone, and is replaced with just 7 lines. This is
+               one fewer place where we'll have to make sure the DisplayListItem types match a function in an entirely different
+               framework.
+
+        No new tests, because there is no behavior change.
+
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::copyInto):
+        (WebCore::DisplayList::safeCopyHelper):
+        (WebCore::DisplayList::safeCopy):
+        (WebCore::DisplayList::ItemBuffer::append):
+        * platform/graphics/displaylists/DisplayListItemBuffer.h:
+        (WebCore::DisplayList::ItemBufferWritingClient::requiredSizeForItem const):
+        (WebCore::DisplayList::ItemBufferWritingClient::encodeItemOutOfLine const):
+        (WebCore::DisplayList::ItemBufferWritingClient::encodeItemInline const):
+        (WebCore::DisplayList::ItemBuffer::append):
+        * platform/graphics/displaylists/DisplayListItemType.cpp:
+        (WebCore::DisplayList::paddedSizeOfTypeAndItemInBytes):
+        (WebCore::DisplayList::displayListItemType):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        * platform/graphics/displaylists/InMemoryDisplayList.cpp:
+        (WebCore::DisplayList::InMemoryDisplayList::WritingClient::requiredSizeForItem const):
+        (WebCore::DisplayList::InMemoryDisplayList::WritingClient::encodeItemInline const):
+        * platform/graphics/displaylists/InMemoryDisplayList.h:
+
+2021-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Unify last resort fallback font between all Cocoa ports
         https://bugs.webkit.org/show_bug.cgi?id=225569
 

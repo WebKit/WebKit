@@ -1,3 +1,14 @@
+2021-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 6: Migrate ItemBufferWritingClient from ItemHandle to a const Variant&
+        https://bugs.webkit.org/show_bug.cgi?id=224270
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+
 2021-05-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r276797?): [ macOS/iOS ] TestWebKitAPI.URLSchemeHandler.Exceptions is flakey crashing

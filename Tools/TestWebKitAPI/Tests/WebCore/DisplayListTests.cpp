@@ -202,10 +202,10 @@ TEST(DisplayListTests, ItemBufferClient)
             return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
         }
 
-        RefPtr<SharedBuffer> encodeItemOutOfLine(ItemHandle handle) const final
+        RefPtr<SharedBuffer> encodeItemOutOfLine(const DisplayListItem& displayListItem) const final
         {
             auto index = m_items.size();
-            m_items.append(handle.get<StrokePath>());
+            m_items.append(WTF::get<StrokePath>(displayListItem));
             return SharedBuffer::create(reinterpret_cast<uint8_t*>(&index), sizeof(size_t));
         }
 

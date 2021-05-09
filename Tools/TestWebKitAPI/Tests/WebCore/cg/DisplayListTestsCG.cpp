@@ -100,7 +100,7 @@ private:
         return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
     }
 
-    RefPtr<SharedBuffer> encodeItemOutOfLine(ItemHandle) const final
+    RefPtr<SharedBuffer> encodeItemOutOfLine(const DisplayListItem&) const final
     {
         return SharedBuffer::create();
     }
