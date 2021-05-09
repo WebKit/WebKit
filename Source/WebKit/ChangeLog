@@ -1,3 +1,73 @@
+2021-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing API should have the ability to send and receive shared memory
+        https://bugs.webkit.org/show_bug.cgi?id=225576
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds the capability to send & receive shared memory for IPC testing purposes.
+        It adds IPC.createSharedMemory which creates a JavaScript object representing a newly
+        allocated IPC-sharable memory. It has readBytes and writeBytes methods. Both takes offset
+        and the number of bytes to read / write. readBytes will return a new ArrayBuffer and
+        writeBytes takes an ArrayBuffer or a typed array as the first argument.
+
+        IPC.sendMessage and IPC.sendSyncMessage now supprts encoding this SharedMemory JavaScript
+        object. It supports the type specific arguments of "protection" and "dataSize" in addition
+        to the regular "value" property for the SharedMemory object.
+
+        This patch also adds the support for sending Semaphore object over IPC created via
+        IPC.createSemaphore, which was supposed to be added in r277199.
+
+        Finally, this patch also exposes the VM page size via IPC.vmPageSize to facilitate
+        the allocation of a sharable memory of an interesting size for testing purposes.
+
+        Tests: TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory
+               TestWebKitAPI.IPCTestingAPI.CanCreateSharedMemory
+               TestWebKitAPI.IPCTestingAPI.CanSendSemaphpre
+               TestWebKitAPI.IPCTestingAPI.CanSendSharedMemory
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetImageData): Use uint32_t instead
+        of size_t since the latter depends on the specific architecture (e.g. 32-bit vs 64-bit).
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetImageData): Ditto.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in: Ditto.
+        * Platform/IPC/JSIPCBinding.h: Added a specialization for SharedMemory::IPCHandle.
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::encode const): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::create): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::size): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::JSSharedMemory): Added.
+        (WebKit::IPCTestingAPI::convertToUint64): Moved up here.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::signal): Fixed a typo.
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::waitFor): Ditto.
+        (WebKit::IPCTestingAPI::JSSharedMemory::createHandle): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::createJSWrapper): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::wrapperClass): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::unwrap): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::toWrapped): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::initialize): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::finalize): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::staticFunctions): Added.
+        (WebKit::IPCTestingAPI::JSSharedMemory::readBytes): Added.
+        (WebKit::IPCTestingAPI::arrayBufferDataFromValueRef): Extracted out of encodeTypedArray.
+        (WebKit::IPCTestingAPI::JSSharedMemory::writeBytes): Added.
+        (WebKit::IPCTestingAPI::JSIPC::staticFunctions): Added IPC.createSharedMemory.
+        (WebKit::IPCTestingAPI::JSIPC::staticValues): Added IPC.vmPageSize.
+        (WebKit::IPCTestingAPI::encodeTypedArray): 
+        (WebKit::IPCTestingAPI::getObjectIdentifierFromProperty): Now uses convertToUint64.
+        (WebKit::IPCTestingAPI::encodeSharedMemory): Added.
+        (WebKit::IPCTestingAPI::encodeSemaphore): Added.
+        (WebKit::IPCTestingAPI::encodeArgument): Added the support for encoding SharedMemory and
+        Semaphore.
+        (WebKit::IPCTestingAPI::JSIPC::createSharedMemory): Added.
+        (WebKit::IPCTestingAPI::JSIPC::vmPageSize): Added.
+        (IPC::jsValueForDecodedArgumentValue): Added. Creates a newly added SharedMemory JavaScript
+        object for SharedMemory::IPCHandle. It also exposes dataSize and protection value.
+        This decoder detects whether the shared memory is writable or not by attempting to map it
+        as Protection::ReadWrite and falling back to Protection::ReadOnly if the former fails.
+
 2021-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 6: Migrate ItemBufferWritingClient from ItemHandle to a const Variant&

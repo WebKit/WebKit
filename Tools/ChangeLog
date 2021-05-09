@@ -1,3 +1,19 @@
+2021-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        IPC testing API should have the ability to send and receive shared memory
+        https://bugs.webkit.org/show_bug.cgi?id=225576
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests for sending and receiving shared memory in the IPC testing API.
+        Also added a test to send semaphore, which was missing in r277199.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        (IPCTestingAPI.CanReceiveSharedMemory): Added.
+        (IPCTestingAPI.CanCreateSharedMemory): Added.
+        (IPCTestingAPI.CanSendSemaphpre): Added after r277199.
+        (IPCTestingAPI.CanSendSharedMemory): Added.
+
 2021-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 6: Migrate ItemBufferWritingClient from ItemHandle to a const Variant&

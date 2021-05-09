@@ -332,7 +332,7 @@ Optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemoryForG
     return SharedMemory::IPCHandle { WTFMove(handle), m_getImageDataSharedMemory ? m_getImageDataSharedMemory->size() : 0 };
 }
 
-void RemoteRenderingBackend::updateSharedMemoryForGetImageData(size_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&& completionHandler)
+void RemoteRenderingBackend::updateSharedMemoryForGetImageData(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -348,7 +348,7 @@ void RemoteRenderingBackend::semaphoreForGetImageData(CompletionHandler<void(con
     completionHandler(m_getImageDataSemaphore);
 }
 
-void RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetImageData(size_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&, const IPC::Semaphore&)>&& completionHandler)
+void RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetImageData(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&, const IPC::Semaphore&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 

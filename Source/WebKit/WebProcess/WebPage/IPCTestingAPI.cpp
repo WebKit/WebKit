@@ -67,9 +67,9 @@ public:
     }
 
     JSObjectRef createJSWrapper(JSContextRef);
-
     static JSIPCSemaphore* toWrapped(JSContextRef, JSValueRef);
 
+    void encode(IPC::Encoder& encoder) const { m_semaphore.encode(encoder); }
     IPC::Semaphore exchange(IPC::Semaphore&& semaphore = { })
     {
         return std::exchange(m_semaphore, WTFMove(semaphore));
@@ -91,6 +91,47 @@ private:
     static JSValueRef waitFor(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     IPC::Semaphore m_semaphore;
+};
+
+class JSSharedMemory : public RefCounted<JSSharedMemory> {
+public:
+    static Ref<JSSharedMemory> create(size_t size)
+    {
+        return adoptRef(*new JSSharedMemory(size));
+    }
+
+    static Ref<JSSharedMemory> create(Ref<SharedMemory>&& sharedMemory)
+    {
+        return adoptRef(*new JSSharedMemory(WTFMove(sharedMemory)));
+    }
+
+    size_t size() const { return m_sharedMemory->size(); }
+    SharedMemory::Handle createHandle(SharedMemory::Protection);
+
+    JSObjectRef createJSWrapper(JSContextRef);
+    static JSSharedMemory* toWrapped(JSContextRef, JSValueRef);
+
+private:
+    JSSharedMemory(size_t size)
+        : m_sharedMemory(*SharedMemory::allocate(size))
+    { }
+
+    JSSharedMemory(Ref<SharedMemory>&& sharedMemory)
+        : m_sharedMemory(WTFMove(sharedMemory))
+    {
+    }
+
+    static JSClassRef wrapperClass();
+    static JSSharedMemory* unwrap(JSObjectRef);
+    static void initialize(JSContextRef, JSObjectRef);
+    static void finalize(JSObjectRef);
+
+    static const JSStaticFunction* staticFunctions();
+
+    static JSValueRef readBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef writeBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+
+    Ref<SharedMemory> m_sharedMemory;
 };
 
 class JSIPC;
@@ -145,7 +186,9 @@ private:
     static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     static JSValueRef createSemaphore(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef createSharedMemory(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
+    static JSValueRef vmPageSize(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef visitedLinkStoreID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef webPageProxyID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef sessionID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
@@ -164,6 +207,19 @@ static JSValueRef createTypeError(JSContextRef context, const String& message)
 {
     JSC::JSLockHolder lock(toJS(context)->vm());
     return toRef(JSC::createTypeError(toJS(context), message));
+}
+
+static Optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
+{
+    if (jsValue.isNumber()) {
+        double value = jsValue.asNumber();
+        if (value < 0 || trunc(value) != value)
+            return WTF::nullopt;
+        return value;
+    }
+    if (jsValue.isBigInt())
+        return JSC::JSBigInt::toBigUInt64(jsValue);
+    return WTF::nullopt;
 }
 
 JSObjectRef JSIPCSemaphore::createJSWrapper(JSContextRef context)
@@ -202,7 +258,7 @@ JSIPCSemaphore* JSIPCSemaphore::toWrapped(JSContextRef context, JSValueRef value
 {
     if (!context || !value || !JSValueIsObjectOfClass(context, value, wrapperClass()))
         return nullptr;
-    return unwrap(JSValueToObject(context, value, 0));
+    return unwrap(JSValueToObject(context, value, nullptr));
 }
 
 void JSIPCSemaphore::initialize(JSContextRef, JSObjectRef object)
@@ -229,13 +285,13 @@ JSValueRef JSIPCSemaphore::signal(JSContextRef context, JSObjectRef, JSObjectRef
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
-    auto isIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
-    if (!isIPCSemaphore) {
+    auto jsIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
+    if (!jsIPCSemaphore) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
     }
 
-    isIPCSemaphore->m_semaphore.signal();
+    jsIPCSemaphore->m_semaphore.signal();
 
     return JSValueMakeUndefined(context);
 }
@@ -244,8 +300,8 @@ JSValueRef JSIPCSemaphore::waitFor(JSContextRef context, JSObjectRef, JSObjectRe
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
-    auto isIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
-    if (!isIPCSemaphore) {
+    auto jsIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
+    if (!jsIPCSemaphore) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
     }
@@ -267,9 +323,212 @@ JSValueRef JSIPCSemaphore::waitFor(JSContextRef context, JSObjectRef, JSObjectRe
         return JSValueMakeUndefined(context);
     }
 
-    auto result = isIPCSemaphore->m_semaphore.waitFor(timeout);
+    auto result = jsIPCSemaphore->m_semaphore.waitFor(timeout);
 
     return JSValueMakeBoolean(context, result);
+}
+
+SharedMemory::Handle JSSharedMemory::createHandle(SharedMemory::Protection protection)
+{
+    SharedMemory::Handle handle;
+    m_sharedMemory->createHandle(handle, protection);
+    return handle;
+}
+
+JSObjectRef JSSharedMemory::createJSWrapper(JSContextRef context)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSObjectRef wrapperObject = JSObjectMake(toGlobalRef(globalObject), wrapperClass(), this);
+    scope.clearException();
+    return wrapperObject;
+}
+
+JSClassRef JSSharedMemory::wrapperClass()
+{
+    static JSClassRef jsClass;
+    if (!jsClass) {
+        JSClassDefinition definition = kJSClassDefinitionEmpty;
+        definition.className = "SharedMemory";
+        definition.parentClass = nullptr;
+        definition.staticValues = nullptr;
+        definition.staticFunctions = staticFunctions();
+        definition.initialize = initialize;
+        definition.finalize = finalize;
+        jsClass = JSClassCreate(&definition);
+    }
+    return jsClass;
+}
+
+inline JSSharedMemory* JSSharedMemory::unwrap(JSObjectRef object)
+{
+    return static_cast<JSSharedMemory*>(JSObjectGetPrivate(object));
+}
+
+JSSharedMemory* JSSharedMemory::toWrapped(JSContextRef context, JSValueRef value)
+{
+    if (!context || !value || !JSValueIsObjectOfClass(context, value, wrapperClass()))
+        return nullptr;
+    return unwrap(JSValueToObject(context, value, 0));
+}
+
+void JSSharedMemory::initialize(JSContextRef, JSObjectRef object)
+{
+    unwrap(object)->ref();
+}
+
+void JSSharedMemory::finalize(JSObjectRef object)
+{
+    unwrap(object)->deref();
+}
+
+const JSStaticFunction* JSSharedMemory::staticFunctions()
+{
+    static const JSStaticFunction functions[] = {
+        { "readBytes", readBytes, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "writeBytes", writeBytes, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { 0, 0, 0 }
+    };
+    return functions;
+}
+
+JSValueRef JSSharedMemory::readBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto jsSharedMemory = makeRefPtr(toWrapped(context, thisObject));
+    if (!jsSharedMemory) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    size_t offset = 0;
+    size_t length = jsSharedMemory->m_sharedMemory->size();
+
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    if (argumentCount) {
+        auto offsetValue = convertToUint64(toJS(globalObject, arguments[0]));
+        if (!offsetValue) {
+            *exception = createTypeError(context, "The first argument must be a byte offset to read"_s);
+            return JSValueMakeUndefined(context);
+        }
+        if (*offsetValue > length)
+            offset = length;
+        else
+            offset = *offsetValue;
+        length -= offset;
+    }
+
+    if (argumentCount > 1) {
+        auto lengthValue = convertToUint64(toJS(globalObject, arguments[1]));
+        if (!lengthValue) {
+            *exception = createTypeError(context, "The second argument must be the number of bytes to read"_s);
+            return JSValueMakeUndefined(context);
+        }
+        if (*lengthValue < length)
+            length = *lengthValue;
+    }
+
+    auto arrayBuffer = JSC::ArrayBuffer::create(static_cast<uint8_t*>(jsSharedMemory->m_sharedMemory->data()) + offset, length);
+    JSC::JSArrayBuffer* jsArrayBuffer = nullptr;
+    if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
+        jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer));
+    if (!jsArrayBuffer) {
+        *exception = createTypeError(context, "Failed to create the array buffer for the read bytes"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    return toRef(jsArrayBuffer);
+}
+
+struct ArrayBufferData {
+    void* buffer { nullptr };
+    size_t length { 0 };
+};
+
+static ArrayBufferData arrayBufferDataFromValueRef(JSContextRef context, JSTypedArrayType type, JSValueRef valueRef, JSValueRef* exception)
+{
+    auto objectRef = JSValueToObject(context, valueRef, exception);
+    if (!objectRef)
+        return { };
+
+    void* buffer = nullptr;
+    if (type == kJSTypedArrayTypeArrayBuffer)
+        buffer = JSObjectGetArrayBufferBytesPtr(context, objectRef, exception);
+    else
+        buffer = JSObjectGetTypedArrayBytesPtr(context, objectRef, exception);
+
+    if (!buffer)
+        return { };
+
+    size_t length;
+    if (type == kJSTypedArrayTypeArrayBuffer)
+        length = JSObjectGetArrayBufferByteLength(context, objectRef, exception);
+    else
+        length = JSObjectGetTypedArrayByteLength(context, objectRef, exception);
+
+    return { buffer, length };
+}
+
+JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto jsSharedMemory = makeRefPtr(toWrapped(context, thisObject));
+    if (!jsSharedMemory) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto type = argumentCount ? JSValueGetTypedArrayType(context, arguments[0], exception) : kJSTypedArrayTypeNone;
+    if (type == kJSTypedArrayTypeNone) {
+        *exception = createTypeError(context, "The first argument must be an array buffer or a typed array"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto data = arrayBufferDataFromValueRef(context, type, arguments[0], exception);
+    if (!data.buffer) {
+        *exception = createTypeError(context, "Could not read the buffer"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    size_t offset = 0;
+    size_t length = data.length;
+    size_t sharedMemorySize = jsSharedMemory->m_sharedMemory->size();
+
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+
+    if (argumentCount > 1) {
+        auto offsetValue = convertToUint64(toJS(globalObject, arguments[1]));
+        if (!offsetValue) {
+            *exception = createTypeError(context, "The second argument must be a byte offset to write"_s);
+            return JSValueMakeUndefined(context);
+        }
+        if (*offsetValue >= sharedMemorySize) {
+            *exception = createTypeError(context, "Offset is too big"_s);
+            return JSValueMakeUndefined(context);
+        }
+        offset = *offsetValue;
+    }
+
+    if (argumentCount > 2) {
+        auto lengthValue = convertToUint64(toJS(globalObject, arguments[2]));
+        if (!lengthValue) {
+            *exception = createTypeError(context, "The third argument must be the number of bytes to write"_s);
+            return JSValueMakeUndefined(context);
+        }
+        if (*lengthValue >= sharedMemorySize - offset || *lengthValue > length) {
+            *exception = createTypeError(context, "The number of bytes to write is too big"_s);
+            return JSValueMakeUndefined(context);
+        }
+        length = *lengthValue;
+    }
+
+    memcpy(static_cast<uint8_t*>(jsSharedMemory->m_sharedMemory->data()) + offset, data.buffer, length);
+
+    return JSValueMakeUndefined(context);
 }
 
 JSClassRef JSIPC::wrapperClass()
@@ -318,6 +577,7 @@ const JSStaticFunction* JSIPC::staticFunctions()
         { "sendMessage", sendMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendSyncMessage", sendSyncMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "createSemaphore", createSemaphore, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "createSharedMemory", createSharedMemory, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
     };
     return functions;
@@ -326,6 +586,7 @@ const JSStaticFunction* JSIPC::staticFunctions()
 const JSStaticValue* JSIPC::staticValues()
 {
     static const JSStaticValue values[] = {
+        { "vmPageSize", vmPageSize, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "visitedLinkStoreID", visitedLinkStoreID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "frameID", frameID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "pageID", pageID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
@@ -335,19 +596,6 @@ const JSStaticValue* JSIPC::staticValues()
         { 0, 0, 0, 0 }
     };
     return values;
-}
-
-static Optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
-{
-    if (jsValue.isNumber()) {
-        double value = jsValue.asNumber();
-        if (value < 0 || trunc(value) != value)
-            return WTF::nullopt;
-        return value;
-    }
-    if (jsValue.isBigInt())
-        return JSC::JSBigInt::toBigUInt64(jsValue);
-    return WTF::nullopt;
 }
 
 static RefPtr<IPC::Connection> processTargetFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
@@ -439,27 +687,11 @@ static bool encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValu
 {
     ASSERT(type != kJSTypedArrayTypeNone);
 
-    auto objectRef = JSValueToObject(context, valueRef, exception);
-    if (!objectRef)
+    auto data = arrayBufferDataFromValueRef(context, type, valueRef, exception);
+    if (!data.buffer)
         return false;
 
-    void* buffer;
-    if (type == kJSTypedArrayTypeArrayBuffer)
-        buffer = JSObjectGetArrayBufferBytesPtr(context, objectRef, exception);
-    else
-        buffer = JSObjectGetTypedArrayBytesPtr(context, objectRef, exception);
-    if (!buffer)
-        return false;
-
-    size_t bufferSize;
-    if (type == kJSTypedArrayTypeArrayBuffer)
-        bufferSize = JSObjectGetArrayBufferByteLength(context, objectRef, exception);
-    else
-        bufferSize = JSObjectGetTypedArrayByteLength(context, objectRef, exception);
-    if (!bufferSize)
-        return false;
-
-    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(buffer), bufferSize, 1);
+    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.buffer), data.length, 1);
     return true;
 }
 
@@ -517,11 +749,10 @@ Optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromProperty
     auto jsPropertyValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), propertyName));
     if (scope.exception())
         return WTF::nullopt;
-    if (jsPropertyValue.isBigInt()) 
-        return makeObjectIdentifier<ObjectIdentifierType>(JSC::JSBigInt::toBigUInt64(jsPropertyValue));
-    if (jsPropertyValue.isNumber())
-        return makeObjectIdentifier<ObjectIdentifierType>(jsPropertyValue.asNumber());
-    return WTF::nullopt;
+    auto number = convertToUint64(jsPropertyValue);
+    if (!number)
+        return WTF::nullopt;
+    return makeObjectIdentifier<ObjectIdentifierType>(*number);
 }
 
 static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
@@ -552,6 +783,53 @@ static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder
     return true;
 }
 #endif
+
+static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
+{
+    auto jsSharedMemoryValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "value"_s));
+    if (scope.exception())
+        return false;
+    auto jsSharedMemory = makeRefPtr(JSSharedMemory::toWrapped(toRef(globalObject), toRef(jsSharedMemoryValue)));
+    if (!jsSharedMemory)
+        return false;
+
+    uint32_t dataSize = jsSharedMemory->size();
+
+    auto jsDataSizeValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "dataSize"_s));
+    if (scope.exception())
+        return false;
+    if (!jsDataSizeValue.isUndefined()) {
+        if (auto dataSizeValue = convertToUint64(jsDataSizeValue))
+            dataSize = *dataSizeValue;
+    }
+
+    auto jsProtectionValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "protection"_s));
+    if (scope.exception())
+        return false;
+    if (jsProtectionValue.isUndefined())
+        return false;
+    auto protectionValue = jsProtectionValue.toWTFString(globalObject);
+    if (scope.exception())
+        return false;
+    auto protection = SharedMemory::Protection::ReadWrite;
+    if (equalLettersIgnoringASCIICase(protectionValue, "readonly"))
+        protection = SharedMemory::Protection::ReadOnly;
+    else if (equalLettersIgnoringASCIICase(protectionValue, "readwrite"))
+        return false;
+
+    encoder << SharedMemory::IPCHandle { jsSharedMemory->createHandle(protection), dataSize };
+    return true;
+}
+
+static bool encodeSemaphore(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::CatchScope& scope)
+{
+    auto jsIPCSemaphore = makeRefPtr(JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsValue)));
+    if (!jsIPCSemaphore)
+        return false;
+
+    jsIPCSemaphore->encode(encoder);
+    return true;
+}
 
 static bool encodeArgument(IPC::Encoder&, JSIPC&, JSContextRef, JSValueRef, JSValueRef* exception);
 
@@ -675,6 +953,14 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
     }
 #endif
 
+    if (type == "SharedMemory") {
+        if (!encodeSharedMemory(encoder, globalObject, jsObject, scope)) {
+            *exception = createTypeError(context, "Failed to convert SharedMemory"_s);
+            return false;
+        }
+        return true;
+    }
+
     if (type == "FrameInfoData") {
         auto webFrame = makeRefPtr(jsIPC.webFrame());
         if (!webFrame) {
@@ -688,6 +974,14 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
     auto jsValue = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "value"_s));
     if (scope.exception())
         return false;
+
+    if (type == "Semaphore") {
+        if (!encodeSemaphore(encoder, globalObject, jsValue, scope)) {
+            *exception = createTypeError(context, "Failed to convert Semaphore"_s);
+            return false;
+        }
+        return true;
+    }
 
     if (type == "Vector") {
         if (!jsValue.isObject() || !jsValue.inherits<JSC::JSArray>(vm)) {
@@ -965,6 +1259,36 @@ JSValueRef JSIPC::createSemaphore(JSContextRef context, JSObjectRef, JSObjectRef
     return JSIPCSemaphore::create()->createJSWrapper(context);
 }
 
+JSValueRef JSIPC::createSharedMemory(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (!toWrapped(context, thisObject)) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+
+    auto size = argumentCount ? convertToUint64(toJS(globalObject, arguments[0])) : Optional<uint64_t> { };
+    if (!size) {
+        *exception = createTypeError(context, "Must specify the size"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    return JSSharedMemory::create(*size)->createJSWrapper(context);
+}
+
+JSValueRef JSIPC::vmPageSize(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
+{
+    auto jsIPC = makeRefPtr(toWrapped(context, thisObject));
+    if (!jsIPC) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+    return JSValueMakeNumber(context, pageSize());
+}
+
 JSValueRef JSIPC::visitedLinkStoreID(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
     return retrieveID(context, thisObject, exception, [](JSIPC& wrapped) {
@@ -1236,6 +1560,40 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, I
     auto jsValue = toJS(globalObject, WebKit::IPCTestingAPI::JSIPCSemaphore::create(WTFMove(value))->createJSWrapper(toRef(globalObject)));
     object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), jsValue);
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    return object;
+}
+
+template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebKit::SharedMemory::IPCHandle&& value)
+{
+    using SharedMemory = WebKit::SharedMemory;
+    using Protection = WebKit::SharedMemory::Protection;
+
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "SharedMemory"));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+
+    auto protection = Protection::ReadWrite;
+    auto sharedMemory = SharedMemory::map(value.handle, protection);
+    if (!sharedMemory) {
+        protection = Protection::ReadOnly;
+        sharedMemory = SharedMemory::map(value.handle, protection);
+        if (!sharedMemory)
+            return JSC::JSValue();
+    }
+
+    auto jsValue = toJS(globalObject, WebKit::IPCTestingAPI::JSSharedMemory::create(sharedMemory.releaseNonNull())->createJSWrapper(toRef(globalObject)));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), jsValue);
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "dataSize"_s), JSC::JSValue(value.dataSize));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "protection"_s), JSC::jsNontrivialString(vm, protection == Protection::ReadWrite ? "ReadWrite" : "ReadOnly"));
+    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+
     return object;
 }
 
