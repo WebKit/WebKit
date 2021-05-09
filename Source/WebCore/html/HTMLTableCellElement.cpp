@@ -32,6 +32,7 @@
 #include "HTMLTableElement.h"
 #include "RenderTableCell.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -102,17 +103,11 @@ void HTMLTableCellElement::collectStyleForPresentationAttribute(const QualifiedN
     if (name == nowrapAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
     else if (name == widthAttr) {
-        if (!value.isEmpty()) {
-            int widthInt = value.toInt();
-            if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
-                addHTMLLengthToStyle(style, CSSPropertyWidth, value);
-        }
+        if (parseIntegerAllowingTrailingJunk<int>(value).valueOr(0) > 0) // width="0" is ignored for compatibility with WinIE.
+            addHTMLLengthToStyle(style, CSSPropertyWidth, value);
     } else if (name == heightAttr) {
-        if (!value.isEmpty()) {
-            int heightInt = value.toInt();
-            if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
-                addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-        }
+        if (parseIntegerAllowingTrailingJunk<int>(value).valueOr(0) > 0) // height="0" is ignored for compatibility with WinIE.
+            addHTMLLengthToStyle(style, CSSPropertyHeight, value);
     } else
         HTMLTablePartElement::collectStyleForPresentationAttribute(name, value, style);
 }

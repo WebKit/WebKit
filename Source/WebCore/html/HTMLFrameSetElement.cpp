@@ -41,6 +41,7 @@
 #include "RenderFrameSet.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -131,7 +132,7 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
 
     if (name == borderAttr) {
         if (!value.isNull()) {
-            m_border = value.toInt();
+            m_border = parseIntegerAllowingTrailingJunk<int>(value).valueOr(0);
             m_borderSet = true;
         } else
             m_borderSet = false;

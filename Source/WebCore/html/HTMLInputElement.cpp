@@ -71,6 +71,7 @@
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"
@@ -801,7 +802,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (name == resultsAttr)
-        m_maxResults = !value.isNull() ? std::min(value.toInt(), maxSavedResults) : -1;
+        m_maxResults = value.isNull() ? -1 : std::min(parseIntegerAllowingTrailingJunk<int>(value).valueOr(0), maxSavedResults);
     else if (name == autosaveAttr || name == incrementalAttr)
         invalidateStyleForSubtree();
     else if (name == maxAttr || name == minAttr || name == multipleAttr || name == patternAttr || name == precisionAttr || name == stepAttr)

@@ -79,7 +79,7 @@ void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomSt
         if (!value.isEmpty()) {
             if (is<RenderTableCol>(renderer())) {
                 RenderTableCol& col = downcast<RenderTableCol>(*renderer());
-                int newWidth = width().toInt();
+                int newWidth = parseIntegerAllowingTrailingJunk<int>(width()).valueOr(0);
                 if (newWidth != col.width())
                     col.setNeedsLayoutAndPrefWidthsRecalc();
             }

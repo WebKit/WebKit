@@ -5207,7 +5207,7 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
     // Please do *not* add new event classes to this function unless they are required
     // for compatibility with the DOM specification or some actual legacy web content.
 
-    // This mechanism is superceded by use of event constructors.
+    // This mechanism is superseded by use of event constructors.
     // That is what we should use for any new event classes.
 
     // The following strings are the ones from the DOM specification

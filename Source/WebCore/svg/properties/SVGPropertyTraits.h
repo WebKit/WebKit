@@ -66,7 +66,7 @@ struct SVGPropertyTraits<unsigned> {
 template<>
 struct SVGPropertyTraits<int> {
     static int initialValue() { return 0; }
-    static int fromString(const String&string) { return string.toIntStrict(); }
+    static int fromString(const String&);
     static Optional<int> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(int type) { return String::number(type); }
 };

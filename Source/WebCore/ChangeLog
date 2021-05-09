@@ -1,3 +1,141 @@
+2021-05-09  Darin Adler  <darin@apple.com>
+
+        Remove uses of the String::toInt family of functions from WebCore/html and similar directories
+        https://bugs.webkit.org/show_bug.cgi?id=225577
+
+        Reviewed by Sam Weinig.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent): Fix spelling error.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFilesizeString): Use parseIntegerAllowingTrailingJunk<uint64_t>
+        instead of String::toUInt64.
+
+        * html/FormController.cpp:
+        (WebCore::deserializeFormControlState): Use parseIntegerAllowingTrailingJunk<size_t>
+        instead of String::toUInt.
+        (WebCore::SavedFormState::deserialize): Ditto.
+
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSize): Use parseInteger<int> instead of
+        charactersToIntStrict.
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::parseAttribute): Use parseIntegerAllowingTrailingJunk<int>
+        instead of String::toInt.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute): Ditto.
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute): Ditto.
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseValue): Ditto.
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::loop const): Ditto.
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute): Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseAttribute): Ditto.
+
+        * html/LinkIconCollector.cpp:
+        (WebCore::LinkIconCollector::iconsOfTypes): Use parseIntegerAllowingTrailingJunk<unsigned>
+        instead of String::toUInt. Also removed unneeded call to stripWhiteSpace since the
+        integer parsing function already skips leading and trailing spaces.
+
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseNPTTime): Use parseInteger<int> instead of
+        String::toInt. The strings passsed in are fixed size and all digits.
+
+        * html/TypeAhead.cpp:
+        (WebCore::TypeAhead::handleEvent): Use parseIntegerAllowingTrailingJunk<int>
+        instead of String::toInt.
+
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHost): Use parseInteger<uint16_t> instead of parseUInt16.
+        (WebCore::parsePort): Ditto.
+
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::handleKeyboardEvent): Use
+        parseIntegerAllowingTrailingJunk<int> instead of String::toInt.
+
+        * html/track/VTTScanner.cpp:
+        (WebCore::VTTScanner::scanDigits): Use parseInteger<int> instead of
+        charactersToIntStrict.
+
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::getSelectedActionChildAndIndex): Use
+        parseIntegerAllowingTrailingJunk<int> instead of AtomString::toInt.
+
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        Remove uses of the String::toInt family of functions from the WebCore/svg and WebCore/workers directories
+        https://bugs.webkit.org/show_bug.cgi?id=225573
+
+        Reviewed by Sam Weinig.
+
+        Both SVG and service workers had code that should be moved from headers
+        into implementation files. This allowed us to use the new parseInteger
+        function templates without including the header in headers, which may help
+        keep compile times from getting out of hand.
+
+        * Sources.txt: Added the new source files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute): Use parseInteger<unsigned>
+        instead of String::toUIntStrict.
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseAttribute): Ditto.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendOS2Table): Use
+        parseIntegerAllowingTrailingJunk<int> instead of String::toInt. Use
+        parseIntegerAllowingTrailingJunk<uint8_t> instead of String::toInt,
+        allowing us to remove range checking to reject values that are out of range.
+        (WebCore::SVGToOTFFontConverter::appendVORGTable): Ditto.
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter): Ditto.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseClockValue): Use parseInteger<uint8_t>
+        instead of String::toUIntStrict. These are all 2-character numeric
+        strings. Also simplified the logic and used StringView so we don't have to
+        allocate memory for the substrings.
+        (WebCore::SVGSMILElement::parseCondition): Use parseInteger<unsigned>
+        instead of String::toUIntStrict. Also used StringView.
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp:
+        (WebCore::SVGAnimationIntegerFunction::calculateDistance const): Moved
+        this file here from the header, and used parseInteger<int> rather than
+        String::toIntStrict.
+
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h: Moved
+        SVGAnimationIntegerFunction::calculateDistance out of the header.
+        Also marked the class and member functions final. (Could do that for
+        a lot more of the classes in this file.)
+
+        * svg/properties/SVGPropertyTraits.cpp: Added.
+        (WebCore::SVGPropertyTraits<int>::fromString): Moved this here from the
+        header and use parseInteger<int> instead of String::toIntStrict.
+        * svg/properties/SVGPropertyTraits.h: Updated for the above.
+
+        * workers/service/ServiceWorkerClientIdentifier.cpp: Added.
+        (WebCore::ServiceWorkerClientIdentifier::fromString): Moved this here
+        from the header and use parseInteger<uint64_t> instead of
+        StringView::toUInt64Strict.
+        * workers/service/ServiceWorkerClientIdentifier.h: Updated for the above.
+        Also moved ServiceWorkerClientIdentifierHash from the WTF namespace
+        to the WebCore namespace.
+
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::fromDatabaseKey): Use
+        parseInteger<uint16_t> instead of charactersToUIntStrict, allowing us
+        to remove range checking. Also use StringView::substring instead of
+        writing out special cases for 8-bit and 16-bit characters.
+
 2021-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 6: Migrate ItemBufferWritingClient from ItemHandle to a const Variant&

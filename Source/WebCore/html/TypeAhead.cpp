@@ -29,11 +29,10 @@
 #include "TypeAhead.h"
 
 #include "KeyboardEvent.h"
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
-
 namespace WebCore {
-using namespace WTF::Unicode;
 
 TypeAhead::TypeAhead(TypeAheadDataSource* dataSource)
     : m_dataSource(dataSource)
@@ -103,8 +102,7 @@ int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
     }
 
     if (matchMode & MatchIndex) {
-        bool ok = false;
-        int index = m_buffer.toString().toInt(&ok);
+        int index = parseIntegerAllowingTrailingJunk<int>(m_buffer).valueOr(0);
         if (index > 0 && index <= optionCount)
             return index - 1;
     }

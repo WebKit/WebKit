@@ -39,6 +39,7 @@
 #include "SVGVKernElement.h"
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -489,13 +490,11 @@ void SVGToOTFFontConverter::appendNAMETable()
 void SVGToOTFFontConverter::appendOS2Table()
 {
     int16_t averageAdvance = s_outputUnitsPerEm;
-    bool ok;
-    int value = m_fontElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr).toInt(&ok);
-    if (!ok && m_missingGlyphElement)
-        value = m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr).toInt(&ok);
-    value = scaleUnitsPerEm(value);
-    if (ok)
-        averageAdvance = clampTo<int16_t>(value);
+    auto horizAdvX = parseIntegerAllowingTrailingJunk<int>(m_fontElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
+    if (!horizAdvX && m_missingGlyphElement)
+        horizAdvX = parseIntegerAllowingTrailingJunk<int>(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
+    if (horizAdvX)
+        averageAdvance = clampTo<int16_t>(scaleUnitsPerEm(*horizAdvX));
 
     append16(2); // Version
     append16(clampTo<int16_t>(averageAdvance));
@@ -522,10 +521,8 @@ void SVGToOTFFontConverter::appendOS2Table()
         Vector<String> segments = m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr).string().split(' ');
         if (segments.size() == panoseSize) {
             for (auto& segment : segments) {
-                bool ok;
-                int value = segment.toInt(&ok);
-                if (ok && value >= std::numeric_limits<uint8_t>::min() && value <= std::numeric_limits<uint8_t>::max())
-                    panoseBytes[numPanoseBytes++] = value;
+                if (auto value = parseIntegerAllowingTrailingJunk<uint8_t>(segment))
+                    panoseBytes[numPanoseBytes++] = *value;
             }
         }
     }
@@ -947,20 +944,18 @@ void SVGToOTFFontConverter::appendVORGTable()
     append16(1); // Major version
     append16(0); // Minor version
 
-    bool ok;
-    int defaultVerticalOriginY = m_fontElement.attributeWithoutSynchronization(SVGNames::vert_origin_yAttr).toInt(&ok);
-    if (!ok && m_missingGlyphElement)
-        defaultVerticalOriginY = m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr).toInt();
-    defaultVerticalOriginY = scaleUnitsPerEm(defaultVerticalOriginY);
-    append16(clampTo<int16_t>(defaultVerticalOriginY));
+    auto vertOriginY = parseIntegerAllowingTrailingJunk<int>(m_fontElement.attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
+    if (!vertOriginY && m_missingGlyphElement)
+        vertOriginY = parseIntegerAllowingTrailingJunk<int>(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
+    append16(clampTo<int16_t>(scaleUnitsPerEm(vertOriginY.valueOr(0))));
 
     auto tableSizeOffset = m_result.size();
     append16(0); // Place to write table size.
     for (Glyph i = 0; i < m_glyphs.size(); ++i) {
         if (auto* glyph = m_glyphs[i].glyphElement) {
-            if (int verticalOriginY = glyph->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr).toInt()) {
+            if (auto verticalOriginY = parseIntegerAllowingTrailingJunk<int>(glyph->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr))) {
                 append16(i);
-                append16(clampTo<int16_t>(scaleUnitsPerEm(verticalOriginY)));
+                append16(clampTo<int16_t>(scaleUnitsPerEm(*verticalOriginY)));
             }
         }
     }
@@ -1450,21 +1445,17 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
 
     // FIXME: Handle commas.
     if (m_fontFaceElement) {
-        auto& fontWeightAttribute = m_fontFaceElement->attributeWithoutSynchronization(SVGNames::font_weightAttr);
-        for (auto segment : StringView(fontWeightAttribute).split(' ')) {
+        for (auto segment : StringView(m_fontFaceElement->attributeWithoutSynchronization(SVGNames::font_weightAttr)).split(' ')) {
             if (equalLettersIgnoringASCIICase(segment, "bold")) {
                 m_weight = 7;
                 break;
             }
-            bool ok;
-            int value = segment.toInt(ok);
-            if (ok && value >= 0 && value < 1000) {
-                m_weight = std::max(std::min((value + 50) / 100, static_cast<int>(std::numeric_limits<uint8_t>::max())), static_cast<int>(std::numeric_limits<uint8_t>::min()));
+            if (auto value = parseIntegerAllowingTrailingJunk<uint16_t>(segment); value && *value >= 0 && *value < 1000) {
+                m_weight = (*value + 50) / 100;
                 break;
             }
         }
-        auto& fontStyleAttribute = m_fontFaceElement->attributeWithoutSynchronization(SVGNames::font_styleAttr);
-        for (auto segment : StringView(fontStyleAttribute).split(' ')) {
+        for (auto segment : StringView(m_fontFaceElement->attributeWithoutSynchronization(SVGNames::font_styleAttr)).split(' ')) {
             if (equalLettersIgnoringASCIICase(segment, "italic") || equalLettersIgnoringASCIICase(segment, "oblique")) {
                 m_italic = true;
                 break;

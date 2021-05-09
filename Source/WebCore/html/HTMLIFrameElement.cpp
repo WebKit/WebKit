@@ -35,6 +35,7 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -86,7 +87,7 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName
     else if (name == frameborderAttr) {
         // Frame border doesn't really match the HTML4 spec definition for iframes. It simply adds
         // a presentational hint that the border should be off if set to zero.
-        if (!value.toInt()) {
+        if (!parseIntegerAllowingTrailingJunk<int>(value).valueOr(0)) {
             // Add a rule that nulls out our border width.
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::CSS_PX);
         }

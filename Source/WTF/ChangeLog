@@ -1,3 +1,14 @@
+2021-05-09  Darin Adler  <darin@apple.com>
+
+        Remove uses of the String::toInt family of functions from WebCore/html and similar directories
+        https://bugs.webkit.org/show_bug.cgi?id=225577
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/StringBuilder.h: Added conversion operator to make a StringView, built on the exiting
+        is8Bit, characters8, characters16 and length functions. Removed now-uneeded equal function and
+        == and != operators since the StringView ones work for those same cases with the same syntax.
+
 2021-05-08  Darin Adler  <darin@apple.com>
 
         Rename toIntegralType to parseInteger and prepare to use it to replace all our integer-parsing functions
