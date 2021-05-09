@@ -1,3 +1,17 @@
+2021-05-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify last resort fallback font between all Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=225569
+
+        Reviewed by Darin Adler.
+
+        Just remove an unnecessary #if.
+
+        Covered by existing tests.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::lastResortFallbackFont):
+
 2021-05-08  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] A small video element enters fullscreen with strange animations
