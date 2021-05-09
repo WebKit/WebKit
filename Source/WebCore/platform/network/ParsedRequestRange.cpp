@@ -44,13 +44,13 @@ Optional<ParsedRequestRange> ParsedRequestRange::parse(StringView input)
         return WTF::nullopt;
 
     auto beginString = input.substring(rangeBeginPosition, dashPosition - rangeBeginPosition);
-    auto optionalBegin = beginString.toUInt64Strict();
+    auto optionalBegin = parseInteger<uint64_t>(beginString);
     if (!optionalBegin)
         return WTF::nullopt;
     begin = *optionalBegin;
 
     auto endString = input.substring(dashPosition + 1);
-    auto optionalEnd = endString.toUInt64Strict();
+    auto optionalEnd = parseInteger<uint64_t>(endString);
     if (!optionalEnd)
         return WTF::nullopt;
     end = *optionalEnd;

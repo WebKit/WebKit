@@ -39,6 +39,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -601,11 +602,8 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     // Example:
     //     -500
     if (!index) {
-        String suffixLengthString = byteRange.substring(index + 1).stripWhiteSpace();
-        bool ok;
-        long long value = suffixLengthString.toInt64Strict(&ok);
-        if (ok)
-            rangeSuffixLength = value;
+        if (auto value = parseInteger<long long>(StringView { byteRange }.substring(index + 1)))
+            rangeSuffixLength = *value;
         return true;
     }
 
@@ -613,24 +611,23 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     // Examples:
     //     0-499
     //     500-
-    String firstBytePosStr = byteRange.left(index).stripWhiteSpace();
-    bool ok;
-    long long firstBytePos = firstBytePosStr.toInt64Strict(&ok);
-    if (!ok)
+    auto firstBytePos = parseInteger<long long>(StringView { byteRange }.left(index));
+    if (!firstBytePos)
         return false;
 
-    String lastBytePosStr = byteRange.substring(index + 1).stripWhiteSpace();
+    auto lastBytePosStr = stripLeadingAndTrailingHTTPSpaces(StringView { byteRange }.substring(index + 1));
     long long lastBytePos = -1;
     if (!lastBytePosStr.isEmpty()) {
-        lastBytePos = lastBytePosStr.toInt64Strict(&ok);
-        if (!ok)
+        auto value = parseInteger<long long>(lastBytePosStr);
+        if (!value)
             return false;
+        lastBytePos = *value;
     }
 
-    if (firstBytePos < 0 || !(lastBytePos == -1 || lastBytePos >= firstBytePos))
+    if (*firstBytePos < 0 || !(lastBytePos == -1 || lastBytePos >= *firstBytePos))
         return false;
 
-    rangeOffset = firstBytePos;
+    rangeOffset = *firstBytePos;
     rangeEnd = lastBytePos;
     return true;
 }

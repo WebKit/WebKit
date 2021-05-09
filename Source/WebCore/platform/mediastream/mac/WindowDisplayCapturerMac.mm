@@ -104,16 +104,15 @@ static RetainPtr<CFDictionaryRef> windowDescription(CGWindowID id)
 
 Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> WindowDisplayCapturerMac::create(const String& deviceID)
 {
-    bool ok;
-    auto displayID = deviceID.toUIntStrict(&ok);
-    if (!ok)
+    auto displayID = parseInteger<uint32_t>(deviceID);
+    if (!displayID)
         return makeUnexpected("Invalid window device ID"_s);
 
-    auto windowInfo = windowDescription(displayID);
+    auto windowInfo = windowDescription(*displayID);
     if (!windowInfo)
         return makeUnexpected("Invalid window ID"_s);
 
-    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<WindowDisplayCapturerMac>(displayID));
+    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<WindowDisplayCapturerMac>(*displayID));
 }
 
 WindowDisplayCapturerMac::WindowDisplayCapturerMac(uint32_t windowID)
@@ -137,9 +136,8 @@ DisplayCaptureSourceCocoa::DisplayFrameType WindowDisplayCapturerMac::generateFr
 
 Optional<CaptureDevice> WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID(const String& idString)
 {
-    bool ok;
-    auto windowID = idString.toUIntStrict(&ok);
-    if (!ok) {
+    auto windowID = parseInteger<uint32_t>(idString);
+    if (!windowID) {
         RELEASE_LOG(WebRTC, "WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID: window ID does not convert to 32-bit integer");
         return WTF::nullopt;
     }
@@ -157,7 +155,7 @@ Optional<CaptureDevice> WindowDisplayCapturerMac::windowCaptureDeviceWithPersist
         return WTF::nullopt;
     }
 
-    auto device = CaptureDevice(String::number(windowID), CaptureDevice::DeviceType::Window, windowTitle);
+    auto device = CaptureDevice(String::number(*windowID), CaptureDevice::DeviceType::Window, windowTitle);
     device.setEnabled(true);
 
     return device;
