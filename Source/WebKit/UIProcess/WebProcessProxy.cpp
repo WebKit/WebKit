@@ -1854,8 +1854,8 @@ void WebProcessProxy::updateServiceWorkerProcessAssertion()
     if (!m_serviceWorkerInformation)
         return;
 
-    bool shouldTakeForegroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [](auto& process) {
-        return !!process.m_foregroundToken;
+    bool shouldTakeForegroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [&](auto& process) {
+        return &process != this && !!process.m_foregroundToken;
     });
     if (shouldTakeForegroundActivity) {
         if (!ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity))
@@ -1863,8 +1863,8 @@ void WebProcessProxy::updateServiceWorkerProcessAssertion()
         return;
     }
 
-    bool shouldTakeBackgroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [](auto& process) {
-        return !!process.m_backgroundToken;
+    bool shouldTakeBackgroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [&](auto& process) {
+        return &process != this && !!process.m_backgroundToken;
     });
     if (shouldTakeBackgroundActivity) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity))

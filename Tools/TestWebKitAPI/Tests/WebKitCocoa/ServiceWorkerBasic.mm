@@ -1667,7 +1667,8 @@ void waitUntilServiceWorkerProcessBackgroundActivityState(WKWebView *page, bool 
     } while (true);
 }
 
-void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServiceWorkerProcess)
+enum class UseSeparateServiceWorkerProcess : bool { No, Yes };
+void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess useSeparateServiceWorkerProcess)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
@@ -1689,7 +1690,7 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServi
     });
 
     auto *processPool = configuration.get().processPool;
-    [processPool _setUseSeparateServiceWorkerProcess: useSeparateServiceWorkerProcess];
+    [processPool _setUseSeparateServiceWorkerProcess:(useSeparateServiceWorkerProcess == UseSeparateServiceWorkerProcess::Yes)];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -1697,21 +1698,21 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServi
 
     waitUntilServiceWorkerProcessCount(processPool, 1);
 
-    [webView _setAssertionTypeForTesting: 1];
-    waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
-    waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), true);
-
-    [webView _setAssertionTypeForTesting: 3];
-    waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), true);
-    waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), false);
-
-    [webView _setAssertionTypeForTesting: 0];
-    waitUntilServiceWorkerProcessBackgroundActivityState(webView.get(), false);
-    waitUntilServiceWorkerProcessForegroundActivityState(webView.get(), false);
-
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
     [webView2 loadRequest:server.request()];
+
+    auto webViewToUpdate = useSeparateServiceWorkerProcess == UseSeparateServiceWorkerProcess::Yes ? webView : webView2;
+    [webViewToUpdate _setAssertionTypeForTesting: 1];
+    waitUntilServiceWorkerProcessForegroundActivityState(webViewToUpdate.get(), false);
+    waitUntilServiceWorkerProcessBackgroundActivityState(webViewToUpdate.get(), true);
+
+    [webViewToUpdate _setAssertionTypeForTesting: 3];
+    waitUntilServiceWorkerProcessForegroundActivityState(webViewToUpdate.get(), true);
+    waitUntilServiceWorkerProcessBackgroundActivityState(webViewToUpdate.get(), false);
+
+    [webViewToUpdate _setAssertionTypeForTesting: 0];
+    waitUntilServiceWorkerProcessBackgroundActivityState(webViewToUpdate.get(), false);
+    waitUntilServiceWorkerProcessForegroundActivityState(webViewToUpdate.get(), false);
 
     [webView _close];
     webView = nullptr;
@@ -1734,13 +1735,14 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(bool useSeparateServi
     }
 }
 
-TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcesses)
+TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithSeparateServiceWorkerProcess)
 {
-    bool useSeparateServiceWorkerProcess = false;
-    testSuspendServiceWorkerProcessBasedOnClientProcesses(useSeparateServiceWorkerProcess);
+    testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess::Yes);
+}
 
-    useSeparateServiceWorkerProcess = true;
-    testSuspendServiceWorkerProcessBasedOnClientProcesses(useSeparateServiceWorkerProcess);
+TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithoutSeparateServiceWorkerProcess)
+{
+    testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess::No);
 }
 
 TEST(ServiceWorkers, ThrottleCrash)

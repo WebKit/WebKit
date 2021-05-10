@@ -1,3 +1,26 @@
+2021-05-10  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Pages with service workers do not suspend promptly
+        https://bugs.webkit.org/show_bug.cgi?id=225598
+
+        Reviewed by Youenn Fablet.
+
+        WebProcessProxy::updateServiceWorkerProcessAssertion() was starting a foreground/background activity
+        if there is a service worker in-process and if any of the client processes are foreground/background.
+        The issue is that a common case is that one of the client process is the service worker process
+        itself (since we run the service worker in-process whenever possible nowadays). As a result, it would
+        create a process assertion cycle. We'd start a foreground activity due to the service worker but we
+        would not release it when the view is no longer foreground, because the process would stay "foreground"
+        due to the service worker process assertion.
+
+        To address this, updateServiceWorkerProcessAssertion() now only takes process assertions if there
+        are client processes other than the current process. This avoids the cycle and this is really the only
+        case we need to make sure the service worker process doesn't suspend. In the case where the service
+        worker and the client are in the same process, then the normal process assertions are sufficient.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateServiceWorkerProcessAssertion):
+
 2021-05-10  Alex Christensen  <achristensen@webkit.org>
 
         Add ObjC API similar to WKBundlePageCopyGroupIdentifier
