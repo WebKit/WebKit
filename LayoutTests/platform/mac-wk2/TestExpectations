@@ -873,8 +873,6 @@ webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pas
 
 webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 
-webkit.org/b/207474 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
-
 webkit.org/b/207476 webgpu/whlsl/store-to-property-updates-properly.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207508 webgpu/whlsl/textures-load.html [ Pass ImageOnlyFailure ]
@@ -1391,3 +1389,5 @@ webkit.org/b/225527 [ BigSur Release arm64 ] http/tests/workers/service/self_reg
 webkit.org/b/224788 [ BugSur Release arm64 ] inspector/css/node-styles-refreshed.html [ Pass Failure ]
 
 webkit.org/b/224784 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]
+
+webkit.org/b/225522 [ Release ] http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure Crash ]
