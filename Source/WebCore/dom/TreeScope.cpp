@@ -395,7 +395,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
     if (!absolutePoint)
         return elements;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::CollectMultipleElements, HitTestRequest::IncludeAllElementsUnderPoint };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::CollectMultipleElements, HitTestRequest::Type::IncludeAllElementsUnderPoint };
     HitTestResult result { absolutePoint.value() };
     documentScope().hitTest(hitType, result);
 

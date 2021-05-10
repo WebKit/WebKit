@@ -80,7 +80,7 @@
 {
     auto types = WebKit::WebFrame::defaultHitTestRequestTypes();
     if (options & WKHitTestOptionAllowUserAgentShadowRootContent)
-        types.remove(WebCore::HitTestRequest::DisallowUserAgentShadowContent);
+        types.remove(WebCore::HitTestRequest::Type::DisallowUserAgentShadowContent);
     return wrapper(_frame->hitTest(WebCore::IntPoint(point), types));
 }
 

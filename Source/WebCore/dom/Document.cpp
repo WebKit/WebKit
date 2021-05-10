@@ -3914,7 +3914,7 @@ static bool isValidPageSampleLocation(Document& document, const IntPoint& locati
 {
     // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitTestRequestTypes { HitTestRequest::ReadOnly, HitTestRequest::IgnoreCSSPointerEventsProperty, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::CollectMultipleElements, HitTestRequest::IncludeAllElementsUnderPoint };
+    constexpr OptionSet<HitTestRequest::Type> hitTestRequestTypes { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::IgnoreCSSPointerEventsProperty, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::CollectMultipleElements, HitTestRequest::Type::IncludeAllElementsUnderPoint };
     HitTestResult hitTestResult(location);
     document.hitTest(hitTestRequestTypes, hitTestResult);
 

@@ -1,3 +1,40 @@
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make WebCore::HitTestRequest::RequestType an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=225597
+
+        Reviewed by Sam Weinig.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame hitTest:options:]):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::hitTest const):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::defaultHitTestRequestTypes):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleContextMenuEvent):
+        (WebKit::WebPage::characterIndexForPointAsync):
+        (WebKit::WebPage::updateWithImageExtractionResult):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rectForElementAtInteractionLocation const):
+        (WebKit::rangeForPointInRootViewCoordinates):
+        (WebKit::WebPage::setFocusedFrameBeforeSelectingTextAtLocation):
+        (WebKit::isObscuredElement):
+        (WebKit::selectionPositionInformation):
+        (WebKit::textInteractionPositionInformation):
+        (WebKit::WebPage::positionInformation):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent):
+        (WebKit::WebPage::acceptsFirstMouse):
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+        (WebKit::WebPage::lookupTextAtLocation):
+
 2021-05-10  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Pages with service workers do not suspend promptly

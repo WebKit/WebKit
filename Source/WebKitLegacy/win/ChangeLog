@@ -1,3 +1,19 @@
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make WebCore::HitTestRequest::RequestType an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=225597
+
+        Reviewed by Sam Weinig.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read):
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent):
+        (WebView::gestureNotify):
+        (WebView::elementAtPoint):
+
 2021-05-09  Darin Adler  <darin@apple.com>
 
         Remove all remaining uses of the String::toInt family of functions

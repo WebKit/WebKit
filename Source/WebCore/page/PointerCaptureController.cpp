@@ -497,7 +497,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     auto target = [&]() -> RefPtr<Element> {
         if (capturingData.targetOverride)
             return capturingData.targetOverride;
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         return m_page.mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
     }();
 

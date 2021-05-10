@@ -288,7 +288,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
 
         IntPoint hitPoint;
         HitTestResult result(hitPoint);
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::SVGClipContent, HitTestRequest::DisallowUserAgentShadowContent };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::SVGClipContent, HitTestRequest::Type::DisallowUserAgentShadowContent };
         if (renderer->nodeAtFloatPoint(hitType, result, point, HitTestForeground))
             return true;
     }

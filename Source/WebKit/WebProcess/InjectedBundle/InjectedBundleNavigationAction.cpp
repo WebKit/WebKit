@@ -104,7 +104,7 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
     , m_shouldTryAppLinks(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow)
 {
     if (auto mouseEventData = navigationAction.mouseEventData()) {
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType));
         m_mouseButton = mouseButtonForMouseEventData(mouseEventData);
         m_syntheticClickType = syntheticClickTypeForNavigationAction(navigationAction);
