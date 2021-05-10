@@ -46,8 +46,9 @@ void Semaphore::signal()
 {
 }
 
-void Semaphore::wait()
+bool Semaphore::wait()
 {
+    return false;
 }
 
 bool Semaphore::waitFor(Timeout)

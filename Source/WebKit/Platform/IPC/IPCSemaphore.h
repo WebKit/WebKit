@@ -55,7 +55,7 @@ public:
     static Optional<Semaphore> decode(Decoder&);
 
     void signal();
-    void wait();
+    bool wait();
     bool waitFor(Timeout);
 
 #if OS(DARWIN)

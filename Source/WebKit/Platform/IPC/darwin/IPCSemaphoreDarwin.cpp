@@ -72,10 +72,11 @@ void Semaphore::signal()
     ASSERT_UNUSED(ret, ret == KERN_SUCCESS || ret == KERN_TERMINATED);
 }
 
-void Semaphore::wait()
+bool Semaphore::wait()
 {
     auto ret = semaphore_wait(m_semaphore);
-    ASSERT_UNUSED(ret, ret == KERN_SUCCESS || ret == KERN_TERMINATED);
+    ASSERT(ret == KERN_SUCCESS || ret == KERN_TERMINATED);
+    return ret == KERN_SUCCESS;
 }
 
 bool Semaphore::waitFor(Timeout timeout)

@@ -177,8 +177,8 @@ void RemoteCaptureSampleManager::RemoteAudio::startThread()
     auto threadLoop = [this]() mutable {
         m_readOffset = 0;
         do {
-            // If waitFor fails, the semaphore on the other side was probably destroyed and we should just exit here and wait to launch a new thread.
-            if (!m_semaphore.waitFor(Seconds::infinity()))
+            // If wait fails, the semaphore on the other side was probably destroyed and we should just exit here and wait to launch a new thread.
+            if (!m_semaphore.wait())
                 break;
             if (m_shouldStopThread)
                 break;

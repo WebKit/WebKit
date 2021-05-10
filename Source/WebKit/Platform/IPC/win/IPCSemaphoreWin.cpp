@@ -68,9 +68,9 @@ void Semaphore::signal()
     ReleaseSemaphore(m_semaphoreHandle, 1, nullptr);
 }
 
-void Semaphore::wait()
+bool Semaphore::wait()
 {
-    WaitForSingleObject(m_semaphoreHandle, INFINITE);
+    return WAIT_OBJECT_0 == WaitForSingleObject(m_semaphoreHandle, INFINITE);
 }
 
 bool Semaphore::waitFor(Timeout timeout)

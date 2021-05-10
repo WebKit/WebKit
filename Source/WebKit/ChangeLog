@@ -1,3 +1,25 @@
+2021-05-10  Youenn Fablet  <youenn@apple.com>
+
+        Have IPC::Semaphore::wait return a state boolean
+        https://bugs.webkit.org/show_bug.cgi?id=225587
+
+        Reviewed by Alex Christensen.
+
+        Semaphore::wait might return early, in particular if its sempahore is destroyed.
+        To handle this case, return false in that case to allow specific handling by caller.
+        Use return state in RemoteCaptureSampleManager::RemoteAudio::startThread as a way to stop the capture thread.
+        Covered by existing tests.
+
+        * Platform/IPC/IPCSemaphore.h:
+        * Platform/IPC/darwin/IPCSemaphoreDarwin.cpp:
+        (IPC::Semaphore::wait):
+        * Platform/IPC/unix/IPCSemaphoreUnix.cpp:
+        (IPC::Semaphore::wait):
+        * Platform/IPC/win/IPCSemaphoreWin.cpp:
+        (IPC::Semaphore::wait):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::startThread):
+
 2021-05-10  Aditya Keerthi  <akeerthi@apple.com>
 
         [iPadOS] Do not present custom input peripherals when switching back to a tab with a focused element
