@@ -46,6 +46,7 @@
 #include "ThreadableLoader.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -383,12 +384,10 @@ void EventSource::parseEventStreamLine(unsigned position, Optional<unsigned> fie
         if (!valueLength)
             m_reconnectDelay = defaultReconnectDelay;
         else {
-            // FIXME: Do we really want to ignore trailing garbage here? Should we be using the strict version instead?
-            // FIXME: If we can't parse the value, should we leave m_reconnectDelay alone or set it to defaultReconnectDelay?
-            bool ok;
-            auto reconnectDelay = charactersToUInt64(&m_receiveBuffer[position], valueLength, &ok);
-            if (ok)
-                m_reconnectDelay = reconnectDelay;
+            // FIXME: Do we really want to ignore trailing junk here?
+            // FIXME: When we can't parse the value, should we really leave m_reconnectDelay alone? Shouldn't we set it to defaultReconnectDelay?
+            if (auto reconnectDelay = parseIntegerAllowingTrailingJunk<uint64_t>({ &m_receiveBuffer[position], valueLength }))
+                m_reconnectDelay = *reconnectDelay;
         }
     }
 }

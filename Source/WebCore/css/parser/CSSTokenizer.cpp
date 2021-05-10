@@ -36,6 +36,7 @@
 #include "CSSTokenizerInputStream.h"
 #include "HTMLParserIdioms.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -836,9 +837,7 @@ UChar32 CSSTokenizer::consumeEscape()
             consumedHexDigits++;
         };
         consumeSingleWhitespaceIfNext();
-        bool ok = false;
-        UChar32 codePoint = hexChars.toString().toUIntStrict(&ok, 16);
-        ASSERT(ok);
+        auto codePoint = parseInteger<uint32_t>(hexChars, 16).value();
         if (!codePoint || (0xD800 <= codePoint && codePoint <= 0xDFFF) || codePoint > 0x10FFFF)
             return replacementCharacter;
         return codePoint;

@@ -29,6 +29,7 @@
 #include "CSSStyleDeclaration.h"
 #include "ElementChildIterator.h"
 #include "Glyph.h"
+#include "HTMLParserIdioms.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGGlyphElement.h"
@@ -490,9 +491,9 @@ void SVGToOTFFontConverter::appendNAMETable()
 void SVGToOTFFontConverter::appendOS2Table()
 {
     int16_t averageAdvance = s_outputUnitsPerEm;
-    auto horizAdvX = parseIntegerAllowingTrailingJunk<int>(m_fontElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
+    auto horizAdvX = parseHTMLInteger(m_fontElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
     if (!horizAdvX && m_missingGlyphElement)
-        horizAdvX = parseIntegerAllowingTrailingJunk<int>(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
+        horizAdvX = parseHTMLInteger(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
     if (horizAdvX)
         averageAdvance = clampTo<int16_t>(scaleUnitsPerEm(*horizAdvX));
 
@@ -944,16 +945,16 @@ void SVGToOTFFontConverter::appendVORGTable()
     append16(1); // Major version
     append16(0); // Minor version
 
-    auto vertOriginY = parseIntegerAllowingTrailingJunk<int>(m_fontElement.attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
+    auto vertOriginY = parseHTMLInteger(m_fontElement.attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
     if (!vertOriginY && m_missingGlyphElement)
-        vertOriginY = parseIntegerAllowingTrailingJunk<int>(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
-    append16(clampTo<int16_t>(scaleUnitsPerEm(vertOriginY.valueOr(0))));
+        vertOriginY = parseHTMLInteger(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
+    append16(clampTo<int16_t>(scaleUnitsPerEm(vertOriginY.value_or(0))));
 
     auto tableSizeOffset = m_result.size();
     append16(0); // Place to write table size.
     for (Glyph i = 0; i < m_glyphs.size(); ++i) {
         if (auto* glyph = m_glyphs[i].glyphElement) {
-            if (auto verticalOriginY = parseIntegerAllowingTrailingJunk<int>(glyph->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr))) {
+            if (auto verticalOriginY = parseHTMLInteger(glyph->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr))) {
                 append16(i);
                 append16(clampTo<int16_t>(scaleUnitsPerEm(*verticalOriginY)));
             }

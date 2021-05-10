@@ -54,6 +54,7 @@
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringBuilder.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 #import "DataDetectorsCoreSoftLink.h"
 
@@ -194,19 +195,23 @@ bool DataDetection::canPresentDataDetectorsUIForElement(Element& element)
     if (softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForURL(downcast<HTMLAnchorElement>(element).href()))
         return true;
     
-    const AtomString& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
+    auto& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
     if (resultAttribute.isEmpty())
         return false;
     NSArray *results = element.document().frame()->dataDetectionResults();
     if (!results)
         return false;
-    Vector<String> resultIndices = resultAttribute.string().split('/');
-    DDResultRef result = [[results objectAtIndex:resultIndices[0].toInt()] coreResult];
-    // Handle the case of a signature block, where we need to check the correct subresult.
-    for (size_t i = 1; i < resultIndices.size(); i++) {
-        results = (NSArray *)softLink_DataDetectorsCore_DDResultGetSubResults(result);
-        result = (DDResultRef)[results objectAtIndex:resultIndices[i].toInt()];
+
+    auto resultIndices = StringView { resultAttribute }.split('/');
+    auto indexIterator = resultIndices.begin();
+    auto result = [results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).valueOr(0)] coreResult];
+
+    // Handle the case of a signature block, where we need to follow the path down one or more subresult levels.
+    while (++indexIterator != resultIndices.end()) {
+        results = (__bridge NSArray *)softLink_DataDetectorsCore_DDResultGetSubResults(result);
+        result = (__bridge DDResultRef)results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).valueOr(0)];
     }
+
     return softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result);
 }
 
@@ -316,30 +321,20 @@ static NSString *dataDetectorTypeForCategory(DDResultCategory category)
 
 static String dataDetectorStringForPath(NSIndexPath *path)
 {
-    NSUInteger length = path.length;
-    
+    auto length = path.length;
     switch (length) {
     case 0:
         return { };
     case 1:
-        return String::number([path indexAtPosition:0]);
-    case 2: {
-        StringBuilder stringBuilder;
-        stringBuilder.appendNumber([path indexAtPosition:0]);
-        stringBuilder.append('/');
-        stringBuilder.appendNumber([path indexAtPosition:1]);
-        return stringBuilder.toString();
-    }
-    default: {
-        StringBuilder stringBuilder;
-        stringBuilder.appendNumber([path indexAtPosition:0]);
-        for (NSUInteger i = 1 ; i < length ; i++) {
-            stringBuilder.append('/');
-            stringBuilder.appendNumber([path indexAtPosition:i]);
-        }
-
-        return stringBuilder.toString();
-    }
+        return makeString([path indexAtPosition:0]);
+    case 2:
+        return makeString([path indexAtPosition:0], '/', [path indexAtPosition:1]);
+    default:
+        StringBuilder builder;
+        builder.appendNumber([path indexAtPosition:0]);
+        for (NSUInteger i = 1; i < length; i++)
+            builder.append('/', [path indexAtPosition:i]);
+        return builder.toString();
     }
 }
 
@@ -688,4 +683,3 @@ bool DataDetection::isDataDetectorElement(const Element& element)
 } // namespace WebCore
 
 #endif
-

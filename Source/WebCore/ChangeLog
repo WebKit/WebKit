@@ -1,3 +1,190 @@
+2021-05-09  Darin Adler  <darin@apple.com>
+
+        Remove all remaining uses of the String::toInt family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=225580
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        Use parseInteger<uint64_t> instead of String::toUInt64Strict.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameAndVersionFromFile):
+        Ditto.
+
+        * Modules/websockets/WebSocketDeflateFramer.cpp:
+        (WebCore::WebSocketExtensionDeflateFrame::WebSocketExtensionDeflateFrame):
+        Use a reference instead of a pointer.
+        (WebCore::WebSocketExtensionDeflateFrame::processResponse): Use
+        ASCIILiteral. Use parseIntegerAllowingTrailingJunk<int> instead of
+        String::toInt. Use auto. Use references instead of pointers.
+        (WebCore::DeflateResultHolder::DeflateResultHolder): Use a reference.
+        (WebCore::DeflateResultHolder::~DeflateResultHolder): Ditto.
+        (WebCore::InflateResultHolder::InflateResultHolder): Ditto.
+        (WebCore::InflateResultHolder::~InflateResultHolder): Ditto.
+        (WebCore::WebSocketDeflateFramer::WebSocketDeflateFramer): Deleted.
+        (WebCore::WebSocketDeflateFramer::createExtensionProcessor): Pass a reference.
+        (WebCore::WebSocketDeflateFramer::deflate): Ditto.
+        (WebCore::WebSocketDeflateFramer::inflate): Ditto.
+
+        * Modules/websockets/WebSocketDeflateFramer.h: Use forward declarations
+        instead of includes, references instead of pointers, initialize data members
+        in the class definition, and remove an unnecessary explicit default constructor.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::headerHasValidHTTPVersion): Use parseInteger<int> instead of
+        StringView::toIntStrict.
+        (WebCore::WebSocketHandshake::readStatusLine): Ditto.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::headingLevel const): Use
+        getIntegralAttribute instead of AtomString::toInt.
+        (WebCore::AccessibilityNodeObject::hierarchicalLevel const): Ditto.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::getIntegralAttribute const): Added.
+        Since AccessibilityObject has its own getAttribute function, we need to
+        re-implement Element::getIntegralAttribute here.
+        (WebCore::AccessibilityObject::setSize const): Use getIntegralAttribute
+        instead of AtomString::toInt.
+        (WebCore::AccessibilityObject::posInSet const): Ditto.
+
+        * accessibility/AccessibilityObject.h: Added getIntegralAttribute.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable const):Use getIntegralAttribute
+        instead of AtomString::toInt.
+        (WebCore::AccessibilityTable::axColumnCount const): Ditto.
+        (WebCore::AccessibilityTable::axRowCount const): Ditto.
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::axColumnIndex const): Ditto.
+        (WebCore::AccessibilityTableCell::axRowIndex const): Ditto.
+        (WebCore::AccessibilityTableCell::axColumnSpan const): Ditto.
+        (WebCore::AccessibilityTableCell::axRowSpan const): Ditto.
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::axColumnIndex const): Ditto.
+        (WebCore::AccessibilityTableRow::axRowIndex const): Ditto.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::consumeANPlusB): Use parseInteger<int> instead of String::toIntStrict
+        * css/parser/CSSTokenizer.cpp:
+        (WebCore::CSSTokenizer::consumeEscape): Use parseInteger<uint32_t> instead of
+        String::toUIntStrict.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::canPresentDataDetectorsUIForElement):
+        Use parseIntegerAllowingTrailingJunk<int> instead of String::toInt.
+        Also use StringView instead of String.
+        (WebCore::dataDetectorStringForPath): Use makeString instead of StringBuilder.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::computedAttributesForElement): Use
+        parseIntegerAllowingTrailingJunk<int> instead of String::toInt.
+
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::parseAttribute): Use parseHTMLInteger instead
+        of parseIntegerAllowingTrailingJunk<int>.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute): Ditto.
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute): Ditto.
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseValue): Ditto.
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::loop const): Use getIntegralAttribute
+        instead of parseIntegerAllowingTrailingJunk<int>.
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::collectStyleForPresentationAttribute):
+        Use parseHTMLInteger instead of parseIntegerAllowingTrailingJunk<int>.
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute): Ditto.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseAttribute): Ditto.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::restoreAttachedWindowHeight):
+        Use parseIntegerAllowingTrailingJunk<unsigned> instead of
+        String::toUInt.
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::nodeForPath): Use
+        parseIntegerAllowingTrailingJunk<unsigned> instead of String::toUInt.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox): Use parseHTMLInteger
+        instead of AtomString::toInt.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::parseAccessControlMaxAge): Use parseInteger<uint64_t> instead
+        of String::toUIntStrict.
+
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::parseOneFTPLine): Use parseIntegerAllowingTrailingJunk<unsigned>
+        instead of String::toUInt.
+
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::PrivateClickMeasurement::parseAttributionRequest): Use
+        parseInteger<uint64_t> instead of String::toUInt64Strict.
+
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::getSelectedActionChildAndIndex):
+        Use getIntegralAttribute instead of parseIntegerAllowingTrailingJunk<int>.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::parseEventStreamLine): Use
+        parseIntegerAllowingTrailingJunk<uint64_t> instead of charactersToUInt64.
+
+        * page/Location.cpp:
+        (WebCore::Location::setPort): Use parseInteger<uint16_t> instead of parseUInt16.
+
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::fromDatabaseIdentifier): Use
+        parseIntegerAllowingTrailingJunk<uint16_t> instead of String::toInt, which
+        allows us to remove some range checking and type conversion.
+
+        * page/WindowFeatures.cpp:
+        (WebCore::setWindowFeature): Use parseIntegerAllowingTrailingJunk<int>
+        instead of StringView::toInt.
+
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::parsePort): Use
+        parseInteger<uint16_t> instead of charactersToIntStrict.
+
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::collectCPUUsage): Use parseInteger<pid_t> instead of
+        String::toIntStrict. Also removed unneeded special cases for "." and
+        ".." since both will fail to parse as an integer, and this no longer
+        need to put d_name into a WTF::String.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::responseReceived): Use
+        parseIntegerAllowingTrailingJunk<int> instead of String::toInt.
+
+        * platform/graphics/gstreamer/eme/CDMThunder.cpp:
+        (WebCore::ParsedResponseMessage::ParsedResponseMessage): Use
+        parseInteger<int> instead of String::toInt to parse a single-digit.
+        Probably should write this another way.
+
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::parseCookieAttributes): Use
+        parseIntegerAllowingTrailingJunk<int64_t> instead of String::toInt64.
+
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::setResponseFromCachedHeaders): Use
+        parseIntegerAllowingTrailingJunk<long long> instead of String::toInt64.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendOS2Table): Use parseHTMLInteger
+        instead of parseIntegerAllowingTrailingJunk<int>. Might be even better
+        to refactor to use getIntegralAttribute later.
+        (WebCore::SVGToOTFFontConverter::appendVORGTable): Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setSFrameCounter): Use parseInteger<uint64_t>
+        instead of StringView::toUInt64Strict.
+
 2021-05-10  Alex Christensen  <achristensen@webkit.org>
 
         css-display-none actions from WKContentRuleList should apply to pages loaded with loadData and loadHTMLString

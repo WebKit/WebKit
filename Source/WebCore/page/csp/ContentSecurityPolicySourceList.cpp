@@ -36,6 +36,7 @@
 #include <wtf/URL.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringParsingBuffer.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -435,14 +436,14 @@ template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Port>
     
     if (!buffer.atEnd())
         return WTF::nullopt;
-    
-    bool ok;
-    int portInt = charactersToIntStrict(begin, buffer.position() - begin, &ok);
-    if (!ok || portInt < 0 || portInt > std::numeric_limits<uint16_t>::max())
+
+    unsigned length = buffer.position() - begin;
+    auto portInteger = parseInteger<uint16_t>({ begin, length }).valueOr(0);
+    if (!portInteger)
         return WTF::nullopt;
 
     Port port;
-    port.value = portInt;
+    port.value = portInteger;
     return port;
 }
 

@@ -34,6 +34,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -884,9 +885,9 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
         return false;
 
     if (nString.length() > 2) {
-        bool valid;
-        result.second = nString.substring(1).toIntStrict(&valid);
-        return valid;
+        auto parsedNumber = parseInteger<int>(StringView { nString }.substring(1));
+        result.second = parsedNumber.valueOr(0);
+        return parsedNumber.hasValue();
     }
 
     NumericSign sign = nString.length() == 1 ? NoSign : MinusSign;

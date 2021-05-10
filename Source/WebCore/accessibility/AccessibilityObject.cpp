@@ -1956,6 +1956,11 @@ const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribu
     return nullAtom();
 }
 
+int AccessibilityObject::getIntegralAttribute(const QualifiedName& attributeName) const
+{
+    return parseHTMLInteger(getAttribute(attributeName)).value_or(0);
+}
+
 bool AccessibilityObject::replaceTextInRange(const String& replacementString, const PlainTextRange& range)
 {
     // If this is being called on the web area, redirect it to be on the body, which will have a renderer associated with it.
@@ -2663,12 +2668,12 @@ bool AccessibilityObject::supportsPosInSet() const
     
 int AccessibilityObject::setSize() const
 {
-    return getAttribute(aria_setsizeAttr).toInt();
+    return getIntegralAttribute(aria_setsizeAttr);
 }
 
 int AccessibilityObject::posInSet() const
 {
-    return getAttribute(aria_posinsetAttr).toInt();
+    return getIntegralAttribute(aria_posinsetAttr);
 }
     
 String AccessibilityObject::identifierAttribute() const

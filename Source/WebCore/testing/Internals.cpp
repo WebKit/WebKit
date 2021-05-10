@@ -233,6 +233,7 @@
 #include <wtf/URLHelpers.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
@@ -362,10 +363,9 @@ using JSC::PropertySlot;
 using JSC::ScriptExecutable;
 using JSC::StackVisitor;
 
-
 namespace WebCore {
-using namespace Inspector;
 
+using namespace Inspector;
 using namespace HTMLNames;
 
 class InspectorStubFrontend final : public InspectorFrontendClientLocal, public FrontendChannel {
@@ -1601,7 +1601,7 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
 
 void Internals::setSFrameCounter(RTCRtpSFrameTransform& transform, const String& counter)
 {
-    if (auto value = StringView(counter).toUInt64Strict())
+    if (auto value = parseInteger<uint64_t>(counter))
         transform.setCounterForTesting(*value);
 }
 

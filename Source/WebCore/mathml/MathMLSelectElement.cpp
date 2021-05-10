@@ -37,7 +37,6 @@
 #include "RenderTreeUpdater.h"
 #include "SVGElement.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -118,7 +117,7 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
     if (!selectedChild)
         return 1;
 
-    int selection = parseIntegerAllowingTrailingJunk<int>(attributeWithoutSynchronization(MathMLNames::selectionAttr)).valueOr(0);
+    int selection = getIntegralAttribute(MathMLNames::selectionAttr);
     int i;
     for (i = 1; i < selection; i++) {
         auto* nextChild = selectedChild->nextElementSibling();

@@ -36,12 +36,12 @@
 #include "HTMLCollection.h"
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Length.h"
 #include "MouseEvent.h"
 #include "RenderFrameSet.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -132,7 +132,7 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
 
     if (name == borderAttr) {
         if (!value.isNull()) {
-            m_border = parseIntegerAllowingTrailingJunk<int>(value).valueOr(0);
+            m_border = parseHTMLInteger(value).value_or(0);
             m_borderSet = true;
         } else
             m_borderSet = false;

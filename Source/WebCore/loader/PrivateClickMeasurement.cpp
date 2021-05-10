@@ -32,6 +32,7 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -70,7 +71,7 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
 
     auto prefixLength = sizeof(privateClickMeasurementTriggerAttributionPath) - 1;
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize) {
-        auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
+        auto attributionTriggerDataUInt64 = parseInteger<uint64_t>(path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize));
         if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)
             return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
 
@@ -78,11 +79,11 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
     }
     
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1 + privateClickMeasurementPriorityPathSegmentSize) {
-        auto attributionTriggerDataUInt64 = path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize).toUInt64Strict();
+        auto attributionTriggerDataUInt64 = parseInteger<uint64_t>(path.substring(prefixLength, privateClickMeasurementAttributionTriggerDataPathSegmentSize));
         if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)
             return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
 
-        auto attributionPriorityUInt64 = path.substring(prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1, privateClickMeasurementPriorityPathSegmentSize).toUInt64Strict();
+        auto attributionPriorityUInt64 = parseInteger<uint64_t>(path.substring(prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1, privateClickMeasurementPriorityPathSegmentSize));
         if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > Priority::MaxEntropy)
             return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, Priority::MaxEntropy, "."_s));
 

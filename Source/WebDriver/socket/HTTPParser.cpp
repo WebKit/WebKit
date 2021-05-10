@@ -26,6 +26,8 @@
 #include "config.h"
 #include "HTTPParser.h"
 
+#include <wtf/text/StringToIntegerConversion.h>
+
 namespace WebDriver {
 
 HTTPParser::Phase HTTPParser::parse(Vector<uint8_t>&& data)
@@ -145,10 +147,8 @@ size_t HTTPParser::expectedBodyLength() const
     const size_t nameLength = std::strlen(name);
 
     for (const auto& header : m_message.requestHeaders) {
-        if (header.startsWithIgnoringASCIICase(name)) {
-            auto value = header.substringSharingImpl(nameLength).stripWhiteSpace();
-            return value.toInt();
-        }
+        if (header.startsWithIgnoringASCIICase(name))
+            return parseIntegerAllowingTrailingJunk<size_t>(StringView { header }.substring(nameLength)).valueOr(0);
     }
 
     return 0;

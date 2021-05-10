@@ -1,3 +1,19 @@
+2021-05-09  Darin Adler  <darin@apple.com>
+
+        Remove all remaining uses of the String::toInt family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=225580
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/PluginDatabaseWin.cpp:
+        (WebCore::parseVersionString): Use parseIntegerAllowinTrailingJunk<int>
+        isnstead of String::toInt.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::handlePost): Use
+        parseIntegerAllowingTrailingJunk<unsigned> instead of String::toInt,
+        and then assigning to an unsigned.
+
 2021-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused references to PageGroup from WebKitLegacy

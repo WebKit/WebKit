@@ -57,7 +57,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <wtf/Deque.h>
 #include <wtf/text/CString.h>
-
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -317,8 +317,8 @@ void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 {
     unsigned inspectedPageHeight = m_inspectedPageController->inspectedPage().mainFrame().view()->visibleHeight();
     String value = m_settings->getProperty(inspectorAttachedHeightSetting);
-    unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : value.toUInt();
-    
+    unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : parseIntegerAllowingTrailingJunk<unsigned>(value).valueOr(0);
+
     // This call might not go through (if the window starts out detached), but if the window is initially created attached,
     // InspectorController::attachWindow is never called, so we need to make sure to set the attachedWindowHeight.
     // FIXME: Clean up code so we only have to call setAttachedWindowHeight in InspectorController::attachWindow

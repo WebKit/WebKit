@@ -1,3 +1,15 @@
+2021-05-09  Darin Adler  <darin@apple.com>
+
+        Remove all remaining uses of the String::toInt family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=225580
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::numberAttributeValue): Use
+        parseIntegerAllowingTrailingJunk<int> instead of String::toInt.
+        (WTR::AccessibilityUIElement::hierarchicalLevel const): Ditto.
+
 2021-05-10  Alex Christensen  <achristensen@webkit.org>
 
         css-display-none actions from WKContentRuleList should apply to pages loaded with loadData and loadHTMLString

@@ -34,9 +34,10 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "NavigationScheduler.h"
+#include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
-#include "SecurityOrigin.h"
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -165,7 +166,7 @@ ExceptionOr<void> Location::setPort(DOMWindow& activeWindow, DOMWindow& firstWin
     if (!frame)
         return { };
     URL url = frame->document()->url();
-    url.setPort(parseUInt16(portString));
+    url.setPort(parseInteger<uint16_t>(portString));
     return setLocation(activeWindow, firstWindow, url.string());
 }
 

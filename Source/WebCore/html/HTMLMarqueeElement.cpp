@@ -32,7 +32,6 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMarquee.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -148,8 +147,8 @@ void HTMLMarqueeElement::setScrollDelay(unsigned scrollDelay)
     
 int HTMLMarqueeElement::loop() const
 {
-    auto loopValue = parseIntegerAllowingTrailingJunk<int>(attributeWithoutSynchronization(loopAttr));
-    return loopValue && *loopValue > 0 ? *loopValue : -1;
+    int loopValue = getIntegralAttribute(loopAttr);
+    return loopValue > 0 ? loopValue : -1;
 }
     
 ExceptionOr<void> HTMLMarqueeElement::setLoop(int loop)

@@ -175,20 +175,14 @@ void AccessibilityTableRow::addChildren()
 
 int AccessibilityTableRow::axColumnIndex() const
 {
-    const AtomString& colIndexValue = getAttribute(aria_colindexAttr);
-    if (colIndexValue.toInt() >= 1)
-        return colIndexValue.toInt();
-    
-    return -1;
+    int value = getIntegralAttribute(aria_colindexAttr);
+    return value >= 1 ? value : -1;
 }
 
 int AccessibilityTableRow::axRowIndex() const
 {
-    const AtomString& rowIndexValue = getAttribute(aria_rowindexAttr);
-    if (rowIndexValue.toInt() >= 1)
-        return rowIndexValue.toInt();
-    
-    return -1;
+    int value = getIntegralAttribute(aria_rowindexAttr);
+    return value >= 1 ? value : -1;
 }
     
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/Optional.h>
 #include <wtf/WallTime.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
 /* This is the maximum line length we accept for a cookie line. RFC 2109
@@ -117,10 +118,8 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
         result.domain = attributeValue.convertToASCIILowercase();
 
     } else if (equalIgnoringASCIICase(attributeName, "max-age")) {
-        bool ok;
-        double maxAgeSeconds = attributeValue.toInt64(&ok);
-        if (ok) {
-            result.expires = (WallTime::now().secondsSinceEpoch().value() + maxAgeSeconds) * WTF::msPerSecond;
+        if (auto maxAgeSeconds = parseIntegerAllowingTrailingJunk<int64_t>(attributeValue)) {
+            result.expires = (WallTime::now().secondsSinceEpoch().value() + *maxAgeSeconds) * WTF::msPerSecond;
             result.session = false;
 
             // If there is a max-age attribute as well as an expires attribute

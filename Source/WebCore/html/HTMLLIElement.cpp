@@ -117,7 +117,10 @@ void HTMLLIElement::didAttachRenderers()
 inline void HTMLLIElement::parseValue(const AtomString& value)
 {
     ASSERT(renderer());
-    downcast<RenderListItem>(*renderer()).setExplicitValue(parseIntegerAllowingTrailingJunk<int>(value));
+    Optional<int> explicitValue;
+    if (auto parsedValue = parseHTMLInteger(value))
+        explicitValue = *parsedValue;
+    downcast<RenderListItem>(*renderer()).setExplicitValue(explicitValue);
 }
 
 }

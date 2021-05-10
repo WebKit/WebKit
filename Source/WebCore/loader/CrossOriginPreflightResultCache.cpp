@@ -33,6 +33,7 @@
 #include "ResourceResponse.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -46,10 +47,10 @@ CrossOriginPreflightResultCache::CrossOriginPreflightResultCache()
 
 static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
 {
-    // FIXME: this will not do the correct thing for a number starting with a '+'
-    bool ok = false;
-    expiryDelta = Seconds(static_cast<double>(string.toUIntStrict(&ok)));
-    return ok;
+    // FIXME: This should probably reject strings that have a leading "+".
+    auto parsedInteger = parseInteger<uint64_t>(string);
+    expiryDelta = Seconds(static_cast<double>(parsedInteger.valueOr(0)));
+    return parsedInteger.hasValue();
 }
 
 Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> CrossOriginPreflightResultCacheItem::create(StoredCredentialsPolicy policy, const ResourceResponse& response)
