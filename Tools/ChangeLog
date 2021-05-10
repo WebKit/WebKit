@@ -1,3 +1,27 @@
+2021-05-10  Chris Dumez  <cdumez@apple.com>
+
+        Fix potential races in AppleLanguagesTest.UpdateAppleLanguages API test
+        https://bugs.webkit.org/show_bug.cgi?id=225429
+
+        Reviewed by Darin Adler.
+
+        Calling [TestWKWebView performAfterReceivingAnyMessage] registers a MessageHandler which sends an
+        async WebUserContentController::AddUserScriptMessageHandlers IPC to the WebProcess. We want to
+        make sure that that message handler is registered in the WebProcess before the JS on the page
+        calls `webkit.messageHandlers.testHandler.postMessage()`. To address this issue, I moved the
+        call to `[TestWKWebView performAfterReceivingAnyMessage]` before the call to evaluateJavaScript
+        that registers the event listener that may call `webkit.messageHandlers.testHandler.postMessage()`.
+
+        Also make sure the PreferenceObserver has been allocated after sending the
+        "NSApplicationDidBecomeActiveNotification" and before proceeding with the test.
+
+        I am also adding an extra check at the end to make sure that the value of navigator.language is
+        correct and to make sure that WKPreferenceObserver.preferenceDidChange was called. This was done
+        to help diagnose flakiness issues on the bots that I cannot reproduce locally.
+
+        * TestWebKitAPI/Tests/WebKit/OverrideAppleLanguagesPreference.mm:
+        (TEST_F):
+
 2021-05-10  Aditya Keerthi  <akeerthi@apple.com>
 
         [iPadOS] Do not present custom input peripherals when switching back to a tab with a focused element
