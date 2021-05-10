@@ -1,3 +1,13 @@
+2021-05-09  Lauro Moura  <lmoura@igalia.com>
+
+        [WebXR] Remove reference cycle in WebXRSession
+        https://bugs.webkit.org/show_bug.cgi?id=225025
+        <rdar://problem/77111217>
+
+        Unreviewed WPE build fix.
+
+        * Modules/webxr/WebXRInputSourceArray.h: Add missing namespace.
+
 2021-05-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][Clang] lld-link: error: undefined symbol: public: static class GenericTypedArrayView<>::tryCreate() in CryptoKeyRSAOpenSSL.cpp
