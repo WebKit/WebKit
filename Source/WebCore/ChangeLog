@@ -1,3 +1,18 @@
+2021-05-10  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove stale PlaybackPipeline.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=225595
+
+        Reviewed by Adrian Perez de Castro.
+
+        The WebKitMediaSrc v2 patch removed PlaybackPipeline but accidentally
+        the .cpp file survived the rebases.
+
+        This patch introduces no behavior changes, the file was not being
+        compiled anymore.
+
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp: Removed.
+
 2021-05-10  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/MediaStream-video-element-video-tracks-disabled.html fails
