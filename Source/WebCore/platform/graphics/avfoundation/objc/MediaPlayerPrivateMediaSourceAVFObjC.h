@@ -263,6 +263,8 @@ private:
 
     bool isVideoOutputAvailable() const;
 
+    bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
+
     friend class MediaSourcePrivateAVFObjC;
 
     struct PendingSeek {
@@ -295,6 +297,8 @@ private:
     HashMap<RetainPtr<CFTypeRef>, AudioRendererProperties> m_sampleBufferAudioRendererMap;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     ALLOW_NEW_API_WITHOUT_GUARDS_END
+    mutable MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
+    RetainPtr<id> m_timeChangedObserver;
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
     RetainPtr<id> m_performTaskObserver;

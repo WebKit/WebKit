@@ -169,6 +169,9 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
 
         if (m_pendingSeek)
             seekInternal();
+
+        if (m_currentTimeDidChangeCallback)
+            m_currentTimeDidChangeCallback(CMTIME_IS_NUMERIC(time) ? PAL::toMediaTime(time) : MediaTime::zeroTime());
     }];
 }
 
@@ -180,6 +183,8 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 
     if (m_timeJumpedObserver)
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
+    if (m_timeChangedObserver)
+        [m_synchronizer removeTimeObserver:m_timeChangedObserver.get()];
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
     flushPendingSizeChanges();
@@ -408,6 +413,22 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
     if (synchronizerTime < m_lastSeekTime)
         return m_lastSeekTime;
     return synchronizerTime;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
+{
+    m_currentTimeDidChangeCallback = WTFMove(callback);
+
+    if (m_currentTimeDidChangeCallback) {
+        m_timeChangedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+            if (m_currentTimeDidChangeCallback)
+                m_currentTimeDidChangeCallback(CMTIME_IS_NUMERIC(time) ? PAL::toMediaTime(time) : MediaTime::zeroTime());
+        }];
+
+    } else
+        m_timeChangedObserver = nullptr;
+
+    return true;
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::startTime() const
