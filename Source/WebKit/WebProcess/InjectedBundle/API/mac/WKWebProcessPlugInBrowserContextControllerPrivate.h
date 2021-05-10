@@ -47,6 +47,8 @@
 
 @property (nonatomic, readonly) BOOL _usesNonPersistentWebsiteDataStore;
 
+@property (nonatomic, readonly) NSString *_groupIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
 
 @end

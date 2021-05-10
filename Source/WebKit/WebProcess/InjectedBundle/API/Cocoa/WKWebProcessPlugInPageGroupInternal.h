@@ -31,7 +31,9 @@
 namespace WebKit {
 
 template<> struct WrapperTraits<WebPageGroupProxy> {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     using WrapperClass = WKWebProcessPlugInPageGroup;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
 }

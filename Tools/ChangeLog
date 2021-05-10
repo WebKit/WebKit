@@ -1,3 +1,16 @@
+2021-05-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC API similar to WKBundlePageCopyGroupIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=225477
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn getGroupIdentifier:]):
+
 2021-05-10  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Rename master_buildbot2.cfg to master.cfg

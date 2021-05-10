@@ -696,4 +696,9 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
     return _page->usesEphemeralSession();
 }
 
+- (NSString *)_groupIdentifier
+{
+    return _page->pageGroup()->identifier();
+}
+
 @end

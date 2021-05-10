@@ -1,3 +1,22 @@
+2021-05-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC API similar to WKBundlePageCopyGroupIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=225477
+
+        Reviewed by Chris Dumez.
+
+        Once adopted this will allow us to remove WKWebProcessPlugInPageGroup
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroupInternal.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _groupIdentifier]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+
 2021-05-10  Antoine Quint  <graouts@webkit.org>
 
         Fix some unified build errors
