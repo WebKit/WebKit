@@ -485,8 +485,10 @@ void CachedResource::responseReceived(const ResourceResponse& response)
 
 void CachedResource::clearLoader()
 {
-    ASSERT(m_loader);
-    m_identifierForLoadWithoutResourceLoader = m_loader->identifier();
+    if (m_loader)
+        m_identifierForLoadWithoutResourceLoader = m_loader->identifier();
+    else
+        ASSERT_NOT_REACHED();
     m_loader = nullptr;
     deleteIfPossible();
 }

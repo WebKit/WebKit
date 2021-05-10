@@ -1,3 +1,17 @@
+2021-05-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add null check in CachedResource::clearLoader
+        https://bugs.webkit.org/show_bug.cgi?id=225605
+        <rdar://69912354>
+
+        Reviewed by Geoffrey Garen.
+
+        As much as we would like it not to be the case, we have records that m_loader can be null.
+        If it's null, let's not crash.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::clearLoader):
+
 2021-05-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for assert crash in AXObjectCache::visiblePositionForTextMarkerData.
