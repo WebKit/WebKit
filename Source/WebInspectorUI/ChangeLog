@@ -1,3 +1,62 @@
+2021-05-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add support for panning/zooming on images
+        https://bugs.webkit.org/show_bug.cgi?id=224655
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/GestureController.js: Added.
+        (WI.GestureController):
+        (WI.GestureController.prototype.get scale):
+        (WI.GestureController.prototype.set scale):
+        (WI.GestureController.prototype.get translate):
+        (WI.GestureController.prototype.set translate):
+        (WI.GestureController.prototype.reset):
+        (WI.GestureController.prototype._startScaleInteraction):
+        (WI.GestureController.prototype._updateScaleInteraction):
+        (WI.GestureController.prototype._endScaleInteraction):
+        (WI.GestureController.prototype._handleWheel):
+        (WI.GestureController.prototype._handleGestureStart):
+        (WI.GestureController.prototype._handleGestureChange):
+        (WI.GestureController.prototype._handleGestureEnd):
+        (WI.GestureController.prototype._handleMouseDown):
+        (WI.GestureController.prototype._handleMouseMove):
+        (WI.GestureController.prototype._handleMouseUp):
+        Add a general controller class that takes a `target` (and optionally a `container`) and adds
+        event listeners to handle various gestures:
+         - scale (both via trackpad and mouse wheel)
+         - transform (mouse click and drag)
+
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView):
+        (WI.ImageResourceContentView.prototype.get navigationItems):
+        (WI.ImageResourceContentView.prototype.contentAvailable):
+        (WI.ImageResourceContentView.prototype.gestureControllerDidScale): Added.
+        (WI.ImageResourceContentView.prototype.gestureControllerDidTranslate): Added.
+        (WI.ImageResourceContentView.prototype._updateResetGestureButtonNavigationItemLabel): Added.
+        (WI.ImageResourceContentView.prototype._handleResetGestureButtonNavitationItemClicked): Added.
+        (WI.ImageResourceContentView.prototype._handleZoomOutGestureButtonNavitationItemClicked): Added.
+        (WI.ImageResourceContentView.prototype._handleZoomInGestureButtonNavitationItemClicked): Added.
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image > .img-container):
+        (.navigation-bar > .item.image-gesture-reset): Added.
+        Add a `WI.GestureController` and manipulate the `scale` and `transform` of the `<img>`.
+        Add navigation items that show the current scale (clicking it will reset the gesture), zoom
+        in, and zoom out.
+
+        * UserInterface/Views/LocalResourceOverrideLabelView.css:
+        (.local-resource-override-label-view):
+        Add a `z-index` so that zoomed images don't appear on top.
+
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView.prototype.get contentViewConstructorOptions):
+        Don't create the `WI.GestureController` in collection views.
+
+        * UserInterface/Main.html:
+        * UserInterface/Images/ZoomIn.svg: Added.
+        * UserInterface/Images/ZoomOut.svg: Added.
+        * Localizations/en.lproj/localizedStrings.js:
+
 2021-05-07  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Breakpoint action add/remove buttons are not vertically aligned with action dropdown

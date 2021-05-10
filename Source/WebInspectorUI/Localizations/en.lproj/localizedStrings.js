@@ -313,6 +313,8 @@ localizedStrings["Clear watch expressions"] = "Clear watch expressions";
 localizedStrings["Click Listener"] = "Click Listener";
 localizedStrings["Click to create a Local Override from this content"] = "Click to create a Local Override from this content";
 localizedStrings["Click to import a file and create a Local Override\nShift-click to create a Local Override from this content"] = "Click to import a file and create a Local Override\nShift-click to create a Local Override from this content";
+/* Title of text button that resets the gesture controls in the image resource content view. */
+localizedStrings["Click to reset @ Image Resource Content View Gesture Controls"] = "Click to reset";
 localizedStrings["Click to select a color"] = "Click to select a color";
 localizedStrings["Click to select a color\nShift-click to switch color formats"] = "Click to select a color\nShift-click to switch color formats";
 localizedStrings["Click to show %d error in the Console"] = "Click to show %d error in the Console";
@@ -1703,6 +1705,10 @@ localizedStrings["XHR Breakpoint\u2026"] = "XHR Breakpoint\u2026";
 localizedStrings["XHRs"] = "XHRs";
 localizedStrings["XPath"] = "XPath";
 localizedStrings["Yes"] = "Yes";
+/* Title of image button that increases the zoom of the image resource content view. */
+localizedStrings["Zoom In @ Image Resource Content View Gesture Controls"] = "Zoom In";
+/* Title of image button that decreases the zoom of the image resource content view. */
+localizedStrings["Zoom Out @ Image Resource Content View Gesture Controls"] = "Zoom Out";
 localizedStrings["Zoom:"] = "Zoom:";
 localizedStrings["\u0022%s\u0022 has a non-array \u0022%s\u0022 value"] = "\u0022%s\u0022 has a non-array \u0022%s\u0022 value";
 localizedStrings["\u0022%s\u0022 has a non-number \u0022%s\u0022 value"] = "\u0022%s\u0022 has a non-number \u0022%s\u0022 value";
