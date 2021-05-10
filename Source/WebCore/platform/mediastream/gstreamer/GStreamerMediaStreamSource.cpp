@@ -267,9 +267,8 @@ public:
         {
             GstMappedBuffer data(buffer, GST_MAP_WRITE);
             auto yOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 1);
-            auto uOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 2);
             memset(data.data(), 0, yOffset);
-            memset(data.data() + yOffset, 128, uOffset);
+            memset(data.data() + yOffset, 128, data.size() - yOffset);
         }
         gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, GST_VIDEO_INFO_WIDTH(&info), GST_VIDEO_INFO_HEIGHT(&info), 3, info.offset, info.stride);
         auto blackSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));

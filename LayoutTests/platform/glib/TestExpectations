@@ -1110,9 +1110,7 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout Pass ]
 webkit.org/b/79203 webkit.org/b/186678 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Failure Crash ]
-webkit.org/b/160996 webkit.org/b/176801 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
 
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
 

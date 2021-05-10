@@ -1,3 +1,12 @@
+2021-05-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/mediastream/MediaStream-video-element-video-tracks-disabled.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=225518
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag a couple more mediastream tests that are passing now.
+
 2021-05-10  Rob Buis  <rbuis@igalia.com>
 
         Implement <form>.requestSubmit()
