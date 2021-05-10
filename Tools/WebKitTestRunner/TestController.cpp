@@ -2684,6 +2684,16 @@ void TestController::appBoundRequestContextDataForDomain(WKStringRef)
 {
 }
 
+bool TestController::didLoadAppBoundRequest()
+{
+    return false;
+}
+
+bool TestController::didLoadNonAppBoundRequest()
+{
+    return false;
+}
+
 void TestController::clearAppBoundNavigationData()
 {
 }

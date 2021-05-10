@@ -2285,6 +2285,20 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     });
 }
 
+- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler
+{
+    _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
+        completionHandler(appBoundData.hasLoadedAppBoundRequestTesting);
+    });
+}
+
+- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler
+{
+    _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
+        completionHandler(appBoundData.hasLoadedNonAppBoundRequestTesting);
+    });
+}
+
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())

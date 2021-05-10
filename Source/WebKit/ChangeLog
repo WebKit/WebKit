@@ -1,3 +1,19 @@
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preflight requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225596
+        <rdar://problem/77664272>
+
+        Reviewed by Brent Fulgham.
+
+        Testing SPI to request load data to check if preflight requests
+        were properly marked.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didLoadAppBoundRequest:]):
+        (-[WKWebView _didLoadNonAppBoundRequest:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make WebCore::HitTestRequest::RequestType an enum class

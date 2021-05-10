@@ -264,6 +264,8 @@ public:
     void reinitializeAppBoundDomains();
     void appBoundRequestContextDataForDomain(WKStringRef);
     void clearAppBoundNavigationData();
+    bool didLoadAppBoundRequest();
+    bool didLoadNonAppBoundRequest();
 
     void updateBundleIdentifierInNetworkProcess(const std::string& bundleIdentifier);
     void clearBundleIdentifierInNetworkProcess();

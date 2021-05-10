@@ -2128,6 +2128,16 @@ void TestRunner::callDidReceiveAppBoundRequestContextDataForDomainCallback(Strin
     callTestRunnerCallback(AppBoundRequestContextDataForDomainCallbackID, 1, &resultValue);
 }
 
+bool TestRunner::didLoadAppBoundRequest()
+{
+    return postSynchronousPageMessageReturningBoolean("DidLoadAppBoundRequest");
+}
+
+bool TestRunner::didLoadNonAppBoundRequest()
+{
+    return postSynchronousPageMessageReturningBoolean("DidLoadNonAppBoundRequest");
+}
+
 void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
 {
     postSynchronousPageMessage("SetIsSpeechRecognitionPermissionGranted", granted);

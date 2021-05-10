@@ -407,6 +407,8 @@ for this property.
 - (void)_switchFromStaticFontRegistryToUserFontRegistry WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 - (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler;
+- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler;
 
 @end
 

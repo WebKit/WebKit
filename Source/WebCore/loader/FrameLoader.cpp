@@ -3110,7 +3110,10 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 #endif
 
     m_frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newRequest, ContentSecurityPolicy::InsecureRequestType::Load);
-    
+
+    if (m_documentLoader)
+        newRequest.setIsAppBound(m_documentLoader->lastNavigationWasAppBound());
+
     if (error.isNull()) {
         ASSERT(!newRequest.isNull());
 

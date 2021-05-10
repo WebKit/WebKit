@@ -1,0 +1,46 @@
+<p>Tests app bound requests get marked for async preflights</p>
+
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+var preflightLinkDomain = "localhost";
+var contextHost = "127.0.0.1";
+var url = "http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py"
+
+function runTest()
+{
+    var req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.setRequestHeader("x-webkit", "foo");
+
+    req.onerror = function() {
+        var didLoadAppBoundRequest = testRunner.didLoadAppBoundRequest();
+        var didLoadNonAppBoundRequest = testRunner.didLoadNonAppBoundRequest();
+
+        if (didLoadNonAppBoundRequest) {
+            log("FAIL did load non app-bound request");
+            testRunner.notifyDone();
+        }
+
+        if (!didLoadAppBoundRequest) {
+            log("FAIL did not load app-bound request");
+            testRunner.notifyDone();
+        }
+
+        log("PASS successfully loaded only app-bound requests");
+        testRunner.notifyDone();
+    }
+    req.send(null);
+}
+
+runTest();
+</script>

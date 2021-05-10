@@ -1070,7 +1070,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         bool statisticInDatabaseOnce = TestController::singleton().isStatisticsOnlyInDatabaseOnce(subHost, topHost);
         return adoptWK(WKBooleanCreate(statisticInDatabaseOnce));
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DidLoadAppBoundRequest"))
+        return adoptWK(WKBooleanCreate(TestController::singleton().didLoadAppBoundRequest()));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DidLoadNonAppBoundRequest"))
+        return adoptWK(WKBooleanCreate(TestController::singleton().didLoadNonAppBoundRequest()));
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsGrandfathered")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");

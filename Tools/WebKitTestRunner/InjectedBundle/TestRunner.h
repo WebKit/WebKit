@@ -499,6 +499,8 @@ public:
     void didSetAppBoundDomainsCallback();
     void appBoundRequestContextDataForDomain(JSStringRef, JSValueRef);
     void callDidReceiveAppBoundRequestContextDataForDomainCallback(String&&);
+    bool didLoadAppBoundRequest();
+    bool didLoadNonAppBoundRequest();
 
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);

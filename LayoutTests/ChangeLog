@@ -1,3 +1,21 @@
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preflight requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225596
+        <rdar://problem/77664272>
+
+        Reviewed by Brent Fulgham.
+
+        Add two tests for sync and async preflight requests.
+
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async.html: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        These tests rely on internal additions, we should skip them in open
+        source expectations.
+
 2021-05-10  Robert Jenner  <jenner@apple.com>
 
         [ BigSur ARM64] http/wpt/fetch/fetch-response-body-stop-in-worker.html is a flaky crash

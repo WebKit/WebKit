@@ -1,3 +1,23 @@
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preflight requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225596
+        <rdar://problem/77664272>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async.html
+               http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync.html
+
+        A preflight request initiated by a main navigation that was app-bound
+        should also be app-bound. Testing sync preflight requests revealed
+        that we also need to mark this when loading a synchronous resource.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+
 2021-05-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277222.

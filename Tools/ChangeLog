@@ -1,3 +1,32 @@
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preflight requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225596
+        <rdar://problem/77664272>
+
+        Reviewed by Brent Fulgham.
+
+        Add test infrastructure.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::didLoadAppBoundRequest):
+        (WTR::TestRunner::didLoadNonAppBoundRequest):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didLoadAppBoundRequest):
+        (WTR::TestController::didLoadNonAppBoundRequest):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::didLoadAppBoundRequest):
+        (WTR::TestController::didLoadNonAppBoundRequest):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _didLoadAppBoundRequest:]):
+        (-[TestRunnerWKWebView _didLoadNonAppBoundRequest:]):
+
 2021-05-10  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Pages with service workers do not suspend promptly
