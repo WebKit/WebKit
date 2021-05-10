@@ -1433,7 +1433,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
     Jump done = jump();
 
-    LinkBuffer patchBuffer(*this, m_codeBlock);
+    LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
     
     patchBuffer.link(badType, byValInfo->slowPathTarget);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);

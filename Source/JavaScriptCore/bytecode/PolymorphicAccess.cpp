@@ -734,7 +734,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
     }
 
-    LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
+    LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate()) {
         if (PolymorphicAccessInternal::verbose)
             dataLog("Did fail to allocate.\n");

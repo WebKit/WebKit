@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,7 +135,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
             linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
         });
 
-    state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
+    state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
 
     if (state.finalizer->b3CodeLinkBuffer->didFailToAllocate()) {
         state.allocationFailed = true;

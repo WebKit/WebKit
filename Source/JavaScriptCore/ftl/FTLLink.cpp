@@ -168,7 +168,7 @@ void link(State& state)
             jit.untagReturnAddress();
             mainPathJumps.append(jit.jump());
 
-            linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
+            linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
             if (linkBuffer->didFailToAllocate()) {
                 state.allocationFailed = true;
                 return;
@@ -193,7 +193,7 @@ void link(State& state)
         jit.untagReturnAddress();
         CCallHelpers::Jump mainPathJump = jit.jump();
         
-        linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
+        linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
         if (linkBuffer->didFailToAllocate()) {
             state.allocationFailed = true;
             return;

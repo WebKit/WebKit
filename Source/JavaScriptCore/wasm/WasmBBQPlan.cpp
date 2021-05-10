@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,7 +101,7 @@ void BBQPlan::work(CompilationEffort effort)
     std::unique_ptr<TierUpCount> tierUp = makeUnique<TierUpCount>();
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, context, unlinkedWasmToWasmCalls, tierUp.get());
 
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Base::fail(holdLock(m_lock), makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
         return;
@@ -220,7 +220,7 @@ void BBQPlan::didCompleteCompilation(const AbstractLocker& locker)
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         ASSERT(functionIndexSpace < m_moduleInformation->functionIndexSpaceSize());
         {
-            LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
+            LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
                 Base::fail(locker, makeString("Out of executable memory in function at index ", String::number(functionIndex)));
                 return;
@@ -232,7 +232,7 @@ void BBQPlan::didCompleteCompilation(const AbstractLocker& locker)
         }
 
         if (const auto& embedderToWasmInternalFunction = m_embedderToWasmInternalFunctions.get(functionIndex)) {
-            LinkBuffer linkBuffer(*context.embedderEntrypointJIT, nullptr, JITCompilationCanFail);
+            LinkBuffer linkBuffer(*context.embedderEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
                 Base::fail(locker, makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
                 return;

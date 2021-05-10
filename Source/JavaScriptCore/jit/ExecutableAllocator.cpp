@@ -233,7 +233,7 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
     jit.ret();
 
     auto stubBaseCodePtr = MacroAssemblerCodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
-    LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize);
+    LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize, LinkBuffer::Profile::Thunk);
     // We don't use FINALIZE_CODE() for two reasons.
     // The first is that we don't want the writeable address, as disassembled instructions,
     // to appear in the console or anywhere in memory, via the PrintStream buffer.
@@ -644,7 +644,7 @@ private:
 
                 MacroAssembler jit;
                 auto jump = jit.jump();
-                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, JITCompilationMustSucceed, false);
+                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::Thunk, JITCompilationMustSucceed, false);
                 RELEASE_ASSERT(linkBuffer.isValid());
 
                 // We use this to appease the assertion that we're not finalizing on a compiler thread. In this situation, it's

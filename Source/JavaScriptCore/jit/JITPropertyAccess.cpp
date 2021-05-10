@@ -1579,7 +1579,7 @@ void JIT::privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo* byValInfo
     
     Jump done = jump();
 
-    LinkBuffer patchBuffer(*this, m_codeBlock);
+    LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
     patchBuffer.link(badType, byValInfo->slowPathTarget);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
     patchBuffer.link(done, byValInfo->doneTarget);
@@ -1618,7 +1618,7 @@ void JIT::privateCompilePutPrivateNameWithCachedId(ByValInfo* byValInfo, ReturnA
     JITPutByIdGenerator gen = emitPutPrivateNameWithCachedId(bytecode, propertyName, doneCases, slowCases);
 
     ConcurrentJSLocker locker(m_codeBlock->m_lock);
-    LinkBuffer patchBuffer(*this, m_codeBlock);
+    LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
     patchBuffer.link(doneCases, byValInfo->doneTarget);
     if (!m_exceptionChecks.empty())
@@ -1656,7 +1656,7 @@ void JIT::privateCompilePutByValWithCachedId(ByValInfo* byValInfo, ReturnAddress
     JITPutByIdGenerator gen = emitPutByValWithCachedId(bytecode, putKind, propertyName, doneCases, slowCases);
 
     ConcurrentJSLocker locker(m_codeBlock->m_lock);
-    LinkBuffer patchBuffer(*this, m_codeBlock);
+    LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
     patchBuffer.link(doneCases, byValInfo->doneTarget);
     if (!m_exceptionChecks.empty())

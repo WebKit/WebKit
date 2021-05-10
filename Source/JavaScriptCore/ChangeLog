@@ -1,3 +1,132 @@
+2021-05-10  Mark Lam  <mark.lam@apple.com>
+
+        Add support to collect stats on cumulative LinkBuffer linked sizes based on profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=225617
+
+        Reviewed by Saam Barati.
+
+        There are 2 ways to dump the stats:
+        1. Specify --dumpLinkBufferStats as an argument to the jsc shell.
+        2. Call $vm.dumpLinkBufferStats() from your JS script to get the stats as a string.
+           e.g.
+                $vm.print($vm.dumpLinkBufferStats());
+
+        Here's an example of what the dump looks like:
+
+            Cummulative LinkBuffer profile sizes:
+                       BaselineJIT: 79480320 (75.798340 MB)
+                               DFG: 36108672 (34.435913 MB)
+                             Thunk: 22495360 (21.453247 MB)
+                       InlineCache: 19538521 (18.633386 MB)
+                               FTL: 5186240 (4.945984 MB)
+                              Wasm: 1998272 (1.905701 MB)
+                           YarrJIT: 1331072 (1.269409 MB)
+                            CSSJIT: 0
+                     Uncategorized: 0
+
+        The stats are currently grouped into some coarse profiles.  If needed, we can
+        break these down into more fine grain profiles later.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::performFinalization):
+        (JSC::LinkBuffer::dumpProfileStatistics):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        * bytecode/InlineAccess.cpp:
+        (JSC::linkCodeInline):
+        (JSC::InlineAccess::rewireStubAsJump):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::jitWriteThunkGenerator):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateOutOfLine):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutPrivateNameWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::stringGetByValGenerator):
+        (JSC::boundFunctionCallGenerator):
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        (jscmain):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::generateThunkWithJumpToPrologue):
+        (JSC::LLInt::generateThunkWithJumpToLLIntReturnPoint):
+        (JSC::LLInt::getHostCallReturnValueThunk):
+        (JSC::LLInt::createJSGateThunk):
+        (JSC::LLInt::createWasmGateThunk):
+        (JSC::LLInt::createTailCallGate):
+        (JSC::LLInt::loopOSREntryGateThunk):
+        (JSC::LLInt::entryOSREntryGateThunk):
+        (JSC::LLInt::wasmOSREntryGateThunk):
+        (JSC::LLInt::exceptionHandlerGateThunk):
+        (JSC::LLInt::returnFromLLIntGateThunk):
+        (JSC::LLInt::tagGateThunk):
+        (JSC::LLInt::untagGateThunk):
+        (JSC::LLInt::jitCagePtrThunk):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * yarr/YarrJIT.cpp:
+
 2021-05-08  Darin Adler  <darin@apple.com>
 
         Remove calls to the String::toInt family of functions from JavaScriptCore

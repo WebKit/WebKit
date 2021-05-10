@@ -40,6 +40,7 @@
 #include "JSCInlines.h"
 #include "JSONObject.h"
 #include "JSString.h"
+#include "LinkBuffer.h"
 #include "Options.h"
 #include "Parser.h"
 #include "ProbeContext.h"
@@ -1937,6 +1938,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDumpRegisters);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpCell);
 static JSC_DECLARE_HOST_FUNCTION(functionIndexingMode);
 static JSC_DECLARE_HOST_FUNCTION(functionInlineCapacity);
+static JSC_DECLARE_HOST_FUNCTION(functionLinkBufferStats);
 static JSC_DECLARE_HOST_FUNCTION(functionValue);
 static JSC_DECLARE_HOST_FUNCTION(functionGetPID);
 static JSC_DECLARE_HOST_FUNCTION(functionHaveABadTime);
@@ -2534,6 +2536,21 @@ JSC_DEFINE_HOST_FUNCTION(functionInlineCapacity, (JSGlobalObject* globalObject, 
         return JSValue::encode(jsNumber(object->structure(vm)->inlineCapacity()));
 
     return encodedJSUndefined();
+}
+
+// Dumps the LinkBuffer profile statistics as a string.
+// Usage: $vm.print($vm.linkBufferStats())
+JSC_DEFINE_HOST_FUNCTION(functionLinkBufferStats, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+#if ENABLE(ASSEMBLER)
+    WTF::StringPrintStream stream;
+    LinkBuffer::dumpProfileStatistics(&stream);
+    return JSValue::encode(jsString(globalObject->vm(), stream.toString()));
+#else
+    UNUSED_PARAM(globalObject);
+    return JSValue::encode(jsUndefined());
+#endif
 }
 
 // Gets the dataLog dump of a given JS value as a string.
@@ -3633,6 +3650,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "indexingMode", functionIndexingMode, 1);
     addFunction(vm, "inlineCapacity", functionInlineCapacity, 1);
+    addFunction(vm, "linkBufferStats", functionLinkBufferStats, 0);
     addFunction(vm, "value", functionValue, 1);
     addFunction(vm, "getpid", functionGetPID, 0);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,7 +127,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
             jumps[i] = jit.jump();
         }
 
-        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
         if (UNLIKELY(linkBuffer.didFailToAllocate())) {
             Base::fail(locker, "Out of executable memory in Wasm LLInt entry thunks");
             return;
@@ -154,7 +154,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
             MemoryMode mode = MemoryMode::BoundsChecking;
             std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
-            LinkBuffer linkBuffer(jit, nullptr, JITCompilationCanFail);
+            LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
                 Base::fail(locker, makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
                 return;
