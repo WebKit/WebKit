@@ -1,4 +1,27 @@
 ================
+WebKitGTK 2.32.1
+================
+
+What's new in WebKitGTK 2.32.1?
+
+  - Support building against the Musl C library.
+  - Support building against ICU version 69 or newer.
+  - Improve handling of Media Capture devices.
+  - Improve WebAudio playback.
+  - Improve video orientation handling.
+  - Improve seeking support for MSE playback.
+  - Improve flush support in EME decryptors.
+  - Fix HTTP status codes for requests done through a custom URI handler.
+  - Fix the Bubblewrap sandbox in certain 32-bit systems.
+  - Fix inconsistencies between the WebKitWebView.is-muted property state
+    and values returned by webkit_web_view_is_playing_audio().
+  - Fix the build with ENABLE_VIDEO=OFF.
+  - Fix wrong timestamps for long-lived cookies.
+  - Fix UI process crash when failing to load favicons.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Swedish.
+
+================
 WebKitGTK 2.32.0
 ================
 
