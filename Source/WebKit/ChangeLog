@@ -1,3 +1,36 @@
+2021-05-10  Youenn Fablet  <youenn@apple.com>
+
+        Use IPC::Semaphore instead of sending an IPC message for every captured audio sample
+        https://bugs.webkit.org/show_bug.cgi?id=225452
+
+        Reviewed by Eric Carlson.
+
+        Previously, we were sending an IPC message from UIProcess or GPUProcess to WebProcess for every microphone audio sample chunk.
+        We are now using IPC::Semaphore to signal that a new chunk is to be processed.
+
+        We no longer send the chunk timestamp. Instead, we reconstruct it from the number of previously processed samples.
+        At audio storage change, we send the start time and we assume that there is continuous timing based on sample counts after that.
+        That is why we recreate a new audio storage change anytime we need to reset or the configuration changes, which should not happen often in practice.
+
+        We process fixed-size chunks on WebProcess side and signal it on GPUProcess/UIProcess side.
+        This size is sent through IPC at audio storage change time and is the max of 128 samples (WebAudio quantum) and AudioSession preferred size.
+        In case WebAudio is used, it should be 128 samples. In case WebAudio is not used, it should be 20 ms of audio data.
+
+        Covered by existing tests and manually tested.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::start):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::storageChanged):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::audioStorageChanged):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::RemoteAudio):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::~RemoteAudio):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::stopThread):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::startThread):
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::setStorage):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in:
+
 2021-05-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         IPC testing API should have the ability to send and receive shared memory
