@@ -191,12 +191,16 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
         if (!imageData)
             return nullptr;
 
-        auto protectedPixelArray = makeRef(imageData->data());
-        size_t dataSize = protectedPixelArray->byteLength();
-        IntSize pixelArrayDimensions = imageData->size();
+        auto& pixelArray = imageData->data();
+        auto dataSize = pixelArray.byteLength();
+        auto pixelArrayDimensions = imageData->size();
 
-        verifyImageBufferIsBigEnough(protectedPixelArray->data(), dataSize);
-        auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, protectedPixelArray->data(), dataSize, nullptr));
+        verifyImageBufferIsBigEnough(pixelArray.data(), dataSize);
+
+        auto dataProvider = adoptCF(CGDataProviderCreateWithData(imageData.leakRef(), pixelArray.data(), dataSize, [] (void* context, const void*, size_t) {
+            reinterpret_cast<ImageData*>(context)->deref();
+        }));
+        
         if (!dataProvider)
             return nullptr;
 

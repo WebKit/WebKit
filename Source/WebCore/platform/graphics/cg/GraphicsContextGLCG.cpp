@@ -506,11 +506,6 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-static void releaseImageData(void* imageData, const void*, size_t)
-{
-    reinterpret_cast<ImageData*>(imageData)->deref();
-}
-
 void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<ImageData>&& imageData, const IntSize& canvasSize, GraphicsContext& context)
 {
     ASSERT(!imageData->size().isEmpty());
@@ -528,13 +523,14 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
 
     auto imageSize = imageData->size();
     int rowBytes = imageSize.width() * 4;
-        size_t dataSize = rowBytes * imageSize.height();
+    size_t dataSize = rowBytes * imageSize.height();
     uint8_t* imagePixels = imageData->data().data();
-        verifyImageBufferIsBigEnough(imagePixels, dataSize);
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithData(&imageData.leakRef(), imagePixels, dataSize, releaseImageData));
+    verifyImageBufferIsBigEnough(imagePixels, dataSize);
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&imageData.leakRef(), imagePixels, dataSize, [] (void* context, const void*, size_t) {
+        reinterpret_cast<ImageData*>(context)->deref();
+    }));
 
-    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, rowBytes, sRGBColorSpaceRef(), bitmapInfo,
-        dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
+    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, rowBytes, sRGBColorSpaceRef(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 
     // CSS styling may cause the canvas's content to be resized on
     // the page. Go back to the Canvas to figure out the correct

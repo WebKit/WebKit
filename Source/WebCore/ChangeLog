@@ -1,3 +1,29 @@
+2021-05-09  Sam Weinig  <weinig@apple.com>
+
+        Add back protection of the pixel buffer in ImageBufferCGBackend::toCFData removed in r277237
+        https://bugs.webkit.org/show_bug.cgi?id=225574
+
+        Reviewed by Darin Adler.
+
+        In r277237, I accidentally removed a `RefPtr<Uint8ClampedArray> protectedPixelArray`
+        in ImageBufferCGBackend::toCFData that was needed to avoided crashing in some cases
+        when running fast/canvas/canvas-toDataURL-jpeg-crash.html.
+
+        Since it wasn't super clear what it was doing, this switches to using the more idiomatic
+        method of keeping the data alive in a CGDataProviderRef by passing the leaked image data
+        as the context and derefing in the callback lambda.
+
+        Just to be consistent, I went to other callers of CGDataProviderCreateWithData and
+        updated them to be idiomatically consistent.
+
+        * platform/graphics/cg/GraphicsContextGLCG.cpp:
+        (WebCore::GraphicsContextGLOpenGL::paintToCanvas):
+        (WebCore::releaseImageData): Deleted.
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::toCFData const):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::create):
+
 2021-05-09  Lauro Moura  <lmoura@igalia.com>
 
         [WebXR] Remove reference cycle in WebXRSession
