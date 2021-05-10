@@ -1,3 +1,24 @@
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] ImageOverlayController should paint selection quads instead of bounding rects
+        https://bugs.webkit.org/show_bug.cgi?id=225585
+        <rdar://problem/77725745>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to cover the change. Currently, the below test case renders a visible selection rect in
+        the image overlay since we render the bounding rect of the overlay text quad, which intersects with the image
+        overlay's bounds. However, the text quad is positioned outside of the image overlay, so there shouldn't be any
+        visible selection rect. As such, this test is expected to render the same content as a plain image (even without
+        an image overlay).
+
+        Unfortunately, I couldn't write a matching ref-test for the case where the selection rect is inside the bounds
+        of the image overlay, since doing so led to tiny subpixel differences between the transparent image case (using
+        `ImageOverlayController`) and the regular image overlay selection case.
+
+        * fast/images/image-extraction/mac/select-rotated-transparent-image-overlay-expected.html: Added.
+        * fast/images/image-extraction/mac/select-rotated-transparent-image-overlay.html: Added.
+
 2021-05-10  Aditya Keerthi  <akeerthi@apple.com>
 
         [iPadOS] Do not present custom input peripherals when switching back to a tab with a focused element

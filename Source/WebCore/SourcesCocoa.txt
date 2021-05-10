@@ -141,7 +141,7 @@ dom/DataTransferMac.mm
 dom/ios/MouseEventIOS.cpp
 dom/ios/PointerEventIOS.cpp
 dom/ios/TouchEvents.cpp
-editing/SelectionRectGatherer.cpp
+editing/SelectionGeometryGatherer.cpp
 editing/SmartReplaceCF.cpp
 editing/cocoa/AlternativeTextContextController.mm
 editing/cocoa/AlternativeTextUIController.mm

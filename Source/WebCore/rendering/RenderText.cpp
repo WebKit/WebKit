@@ -1593,7 +1593,7 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObjec
     return rendererToRepaint->clippedOverflowRectForRepaint(repaintContainer);
 }
 
-LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>* rects)
+LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>* quads)
 {
     ASSERT(!needsLayout());
 
@@ -1633,8 +1633,8 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
         resultRect.unite(rect);
 
-        if (rects)
-            rects->append(localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox());
+        if (quads)
+            quads->append(localToContainerQuad(FloatRect(rect), repaintContainer));
     }
 
     if (clipToVisibleContent)
@@ -1642,9 +1642,9 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
     return localToContainerQuad(FloatRect(resultRect), repaintContainer).enclosingBoundingBox();
 }
 
-LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>& rects)
+LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>& quads)
 {
-    return collectSelectionGeometriesForLineBoxes(repaintContainer, clipToVisibleContent, &rects);
+    return collectSelectionGeometriesForLineBoxes(repaintContainer, clipToVisibleContent, &quads);
 }
 
 LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)

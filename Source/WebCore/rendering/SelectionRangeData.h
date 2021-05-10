@@ -33,7 +33,7 @@
 #include "RenderSelectionInfo.h"
 
 #if ENABLE(SERVICE_CONTROLS)
-#include "SelectionRectGatherer.h"
+#include "SelectionGeometryGatherer.h"
 #endif
 
 namespace WebCore {
@@ -53,7 +53,7 @@ public:
 private:
     const RenderView& m_renderView;
 #if ENABLE(SERVICE_CONTROLS)
-    SelectionRectGatherer m_selectionRectGatherer;
+    SelectionGeometryGatherer m_selectionGeometryGatherer;
 #endif
     bool m_selectionWasCaret { false };
     enum class ClipToVisibleContent { Yes, No };

@@ -1,3 +1,83 @@
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] ImageOverlayController should paint selection quads instead of bounding rects
+        https://bugs.webkit.org/show_bug.cgi?id=225585
+        <rdar://problem/77725745>
+
+        Reviewed by Tim Horton.
+
+        Teach `SelectionRectGatherer` (now renamed to `SelectionGeometryGatherer`) to emit quads, rather than bounding
+        rects around each quad. We use these quads in `ImageOverlayController` to render selection quads via page
+        overlay (i.e., in the case where the image containing the overlay is transparent).
+
+        Test: fast/images/image-extraction/mac/select-rotated-transparent-image-overlay.html
+
+        * Headers.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/SelectionGeometryGatherer.cpp: Renamed from Source/WebCore/editing/SelectionRectGatherer.cpp.
+
+        Rename `SelectionRectGatherer` to `SelectionGeometryGatherer`, to reflect the fact that this helper class now
+        aggregates both selection quads and gap rects.
+
+        (WebCore::SelectionGeometryGatherer::SelectionGeometryGatherer):
+        (WebCore::SelectionGeometryGatherer::addQuad):
+
+        Rename `addRect` to `addQuad`, and make it take a `FloatQuad` instead.
+
+        (WebCore::SelectionGeometryGatherer::addGapRects):
+        (WebCore::SelectionGeometryGatherer::Notifier::Notifier):
+        (WebCore::SelectionGeometryGatherer::Notifier::~Notifier):
+        (WebCore::SelectionGeometryGatherer::boundingRects const):
+        (WebCore::SelectionGeometryGatherer::clearAndCreateNotifier):
+        * editing/SelectionGeometryGatherer.h: Renamed from Source/WebCore/editing/SelectionRectGatherer.h.
+        (WebCore::SelectionGeometryGatherer::setTextOnly):
+        (WebCore::SelectionGeometryGatherer::isTextOnly const):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithImageExtractionResult):
+
+        Minor tweak - don't add any margin around the word when the line only contains a single word.
+
+        * page/ImageOverlayController.cpp:
+        (WebCore::ImageOverlayController::selectionQuadsDidChange):
+
+        Rename `selectionRectsDidChange` to `selectionQuadsDidChange`, and take a `FloatQuad` in absolute coordinates
+        instead of a `LayoutRect`. Store these quads in `m_overlaySelectionQuads` (also renamed from
+        `m_overlaySelectionRects`).
+
+        (WebCore::ImageOverlayController::uninstallPageOverlayIfNeeded):
+        (WebCore::ImageOverlayController::drawRect):
+
+        Make a few changes when painting selections using the `ImageOverlayController`:
+
+        1.  Instead of painting with `fillRect()`, coalesce all of the collected selection quads into a single `Path`
+            object, and pass that `Path` into `fillPath()`. This allows us to render each piece of selected content as a
+            quad instead of a bounding rect, and additionally prevents us from rendering overlapping selections
+            when using `ImageOverlayController`.
+
+        2.  Clip selections to the absolute bounds of the image overlay host element's renderer, which prevents the new
+            selection quads from spilling out of the host element.
+
+        (WebCore::ImageOverlayController::selectionRectsDidChange): Deleted.
+        * page/ImageOverlayController.h:
+        * rendering/RenderSelectionInfo.cpp:
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo):
+        * rendering/RenderSelectionInfo.h:
+        (WebCore::RenderSelectionInfo::collectedSelectionQuads const):
+        (WebCore::RenderSelectionInfo::collectedSelectionRects const): Deleted.
+
+        More minor refactoring: rename `collectedSelectionRects` to `collectedSelectionQuads`, and make it take the
+        original `FloatQuad` instead of the quad's bounding box.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionGeometriesForLineBoxes):
+        * rendering/RenderText.h:
+        * rendering/SelectionRangeData.cpp:
+        (WebCore::SelectionRangeData::SelectionRangeData):
+        (WebCore::SelectionRangeData::set):
+        (WebCore::SelectionRangeData::apply):
+        * rendering/SelectionRangeData.h:
+
 2021-05-10  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP-MSE] Implement time changed callback

@@ -1384,11 +1384,12 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
             if (child.normalizedQuad.isEmpty())
                 continue;
 
-            constexpr float horizontalMarginToMinimizeSelectionGaps = 0.125;
-            float horizontalOffset = -horizontalMarginToMinimizeSelectionGaps;
-            float horizontalExtent = horizontalMarginToMinimizeSelectionGaps;
+            bool lineHasOneChild = line.children.size() == 1;
+            float horizontalMarginToMinimizeSelectionGaps = lineHasOneChild ? 0 : 0.125;
+            float horizontalOffset = lineHasOneChild ? 0 : -horizontalMarginToMinimizeSelectionGaps;
+            float horizontalExtent = lineHasOneChild ? 0 : horizontalMarginToMinimizeSelectionGaps;
 
-            if (line.children.size() == 1) {
+            if (lineHasOneChild) {
                 horizontalOffset += offsetsAlongHorizontalAxis[childIndex].begin();
                 horizontalExtent += offsetsAlongHorizontalAxis[childIndex].end();
             } else if (!childIndex) {
