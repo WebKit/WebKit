@@ -1,3 +1,14 @@
+2021-05-10  Antoine Quint  <graouts@webkit.org>
+
+        Fix some unified build errors
+        https://bugs.webkit.org/show_bug.cgi?id=225594
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/ios/WKTextSelectionRect.mm:
+        * UIProcess/mac/WKTextInputWindowController.mm:
+
 2021-05-10  Youenn Fablet  <youenn@apple.com>
 
         Have IPC::Semaphore::wait return a state boolean

@@ -31,6 +31,7 @@
 #import <WebCore/ScrollingTreeScrollingNodeDelegate.h>
 
 @class CALayer;
+@class UIScrollEvent;
 @class UIScrollView;
 @class WKScrollingNodeScrollViewDelegate;
 

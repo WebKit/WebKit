@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import <WebCore/SelectionGeometry.h>
 
 #if HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
