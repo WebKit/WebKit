@@ -561,7 +561,6 @@ WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp
 WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp
 WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePage.cpp
-WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp
 WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp
 WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp

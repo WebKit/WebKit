@@ -38,7 +38,6 @@ public:
 
     virtual void didCreatePage(WKBundleRef, WKBundlePageRef) { }
     virtual void willDestroyPage(WKBundleRef, WKBundlePageRef) { }
-    virtual void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef) { }
     virtual void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody) { }
     virtual void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody) { }
 
@@ -52,9 +51,9 @@ public:
         }
 
     private:
-        static InjectedBundleTest* create(const std::string& identifier) 
+        static std::unique_ptr<InjectedBundleTest> create(const std::string& identifier)
         {
-            return new TestClassTy(identifier);
+            return makeUniqueWithoutFastMallocCheck<TestClassTy>(identifier);
         }
     };
 

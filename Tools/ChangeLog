@@ -1,3 +1,43 @@
+2021-05-10  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WKBundlePageGroupRef
+        https://bugs.webkit.org/show_bug.cgi?id=225471
+
+        Reviewed by Darin Adler.
+
+        Also use some smart pointers instead of raw pointers to keep things safe.
+
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::InjectedBundleController):
+        (TestWebKitAPI::InjectedBundleController::initialize):
+        (TestWebKitAPI::InjectedBundleController::didInitializePageGroup): Deleted.
+        * TestWebKitAPI/InjectedBundleController.h:
+        (TestWebKitAPI::InjectedBundleController::bundle const):
+        * TestWebKitAPI/InjectedBundleTest.h:
+        (TestWebKitAPI::InjectedBundleTest::willDestroyPage):
+        (TestWebKitAPI::InjectedBundleTest::Register::create):
+        (TestWebKitAPI::InjectedBundleTest::didInitializePageGroup): Deleted.
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionNoCache_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit/DocumentStartUserScriptAlertCrash_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleDisableOverrideBuiltinsBehavior_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize):
+        (WTR::InjectedBundle::didCreatePage):
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::reportLiveDocuments):
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::statisticsNotifyObserver):
+        (WTR::InjectedBundle::didInitializePageGroup): Deleted.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::bundle const):
+        (WTR::InjectedBundle::pageGroup const): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setUserStyleSheetEnabled):
+        (WTR::TestRunner::setAsynchronousSpellCheckingEnabled):
+
 2021-05-09  Khem Raj  <raj.khem@gmail.com>
 
         [Tools] Generate marshalling code without source reference

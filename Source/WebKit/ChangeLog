@@ -1,3 +1,51 @@
+2021-05-10  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WKBundlePageGroupRef
+        https://bugs.webkit.org/show_bug.cgi?id=225471
+
+        Reviewed by Darin Adler.
+
+        Its last use was removed in rdar://60987265
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/APIInjectedBundleBundleClient.h:
+        (API::InjectedBundle::Client::willDestroyPage):
+        (API::InjectedBundle::Client::didInitializePageGroup): Deleted.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetAsynchronousSpellCheckingEnabledForTesting):
+        (WKBundleGetLiveDocumentURLsForTesting):
+        (WKBundleSetUserStyleSheetLocationForTesting):
+        (WKBundleAddUserScript): Deleted.
+        (WKBundleAddUserStyleSheet): Deleted.
+        (WKBundleRemoveUserScript): Deleted.
+        (WKBundleRemoveUserStyleSheet): Deleted.
+        (WKBundleRemoveUserScripts): Deleted.
+        (WKBundleRemoveUserStyleSheets): Deleted.
+        (WKBundleRemoveAllUserContent): Deleted.
+        (WKBundleSetAsynchronousSpellCheckingEnabled): Deleted.
+        (WKBundleGetLiveDocumentURLs): Deleted.
+        (WKBundleSetUserStyleSheetLocation): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetPageGroup): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h: Removed.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAsynchronousSpellCheckingEnabled):
+        (WebKit::InjectedBundle::setUserStyleSheetLocation):
+        (WebKit::InjectedBundle::liveDocumentURLs):
+        (WebKit::InjectedBundle::didInitializePageGroup): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.cpp:
+        (WebKit::InjectedBundleClient::didInitializePageGroup): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::create):
+
 2021-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add picker UI for <input type=date> and <input type=datetime-local>

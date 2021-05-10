@@ -139,7 +139,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePageFormClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePageFullScreenClient.h
-    WebProcess/InjectedBundle/API/c/WKBundlePageGroup.h
     WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h
     WebProcess/InjectedBundle/API/c/WKBundlePagePolicyClient.h

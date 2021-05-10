@@ -1759,7 +1759,6 @@
 		BC7B621512A4219A00D174A4 /* WebPageGroupProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B621312A4219A00D174A4 /* WebPageGroupProxy.h */; };
 		BC7B625212A43C9600D174A4 /* WebPageGroupData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B625012A43C9600D174A4 /* WebPageGroupData.h */; };
 		BC7B633712A45ABA00D174A4 /* WKPageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B633512A45ABA00D174A4 /* WKPageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC7B633D12A45D1200D174A4 /* WKBundlePageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7B633B12A45D1200D174A4 /* WKBundlePageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC8147A912F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8147A712F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h */; };
 		BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */; };
 		BC8283DA16B4DB9300A278FE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
@@ -5384,8 +5383,6 @@
 		BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageGroupData.cpp; sourceTree = "<group>"; };
 		BC7B633512A45ABA00D174A4 /* WKPageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageGroup.h; sourceTree = "<group>"; };
 		BC7B633612A45ABA00D174A4 /* WKPageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageGroup.cpp; sourceTree = "<group>"; };
-		BC7B633B12A45D1200D174A4 /* WKBundlePageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageGroup.h; sourceTree = "<group>"; };
-		BC7B633C12A45D1200D174A4 /* WKBundlePageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundlePageGroup.cpp; sourceTree = "<group>"; };
 		BC8147A712F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePagePolicyClient.h; sourceTree = "<group>"; wrapsLines = 0; };
 		BC8147A812F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePagePolicyClient.cpp; sourceTree = "<group>"; wrapsLines = 0; };
 		BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleNavigationAction.h; sourceTree = "<group>"; };
@@ -10564,8 +10561,6 @@
 				1AB474DF184D446A0051B622 /* WKBundlePageEditorClient.h */,
 				1AB474E1184D44800051B622 /* WKBundlePageFormClient.h */,
 				1AB474E5184D44B40051B622 /* WKBundlePageFullScreenClient.h */,
-				BC7B633C12A45D1200D174A4 /* WKBundlePageGroup.cpp */,
-				BC7B633B12A45D1200D174A4 /* WKBundlePageGroup.h */,
 				1AB474D7184D43FD0051B622 /* WKBundlePageLoaderClient.h */,
 				1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */,
 				1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */,
@@ -12669,7 +12664,6 @@
 				1AB474E0184D446A0051B622 /* WKBundlePageEditorClient.h in Headers */,
 				1AB474E2184D44800051B622 /* WKBundlePageFormClient.h in Headers */,
 				1AB474E6184D44B40051B622 /* WKBundlePageFullScreenClient.h in Headers */,
-				BC7B633D12A45D1200D174A4 /* WKBundlePageGroup.h in Headers */,
 				1AB474D8184D43FD0051B622 /* WKBundlePageLoaderClient.h in Headers */,
 				C6A4CA0B2252899800169289 /* WKBundlePageMac.h in Headers */,
 				ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */,

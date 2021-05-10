@@ -49,23 +49,14 @@ WK_EXPORT int WKBundleNumberOfPages(WKBundleRef bundle, WKBundleFrameRef frameRe
 WK_EXPORT int WKBundlePageNumberForElementById(WKBundleRef bundle, WKBundleFrameRef frameRef, WKStringRef idRef, double pageWidthInPixels, double pageHeightInPixels);
 WK_EXPORT WKStringRef WKBundlePageSizeAndMarginsInPixels(WKBundleRef bundle, WKBundleFrameRef frameRef, int, int, int, int, int, int, int);
 WK_EXPORT bool WKBundleIsPageBoxVisible(WKBundleRef bundle, WKBundleFrameRef frameRef, int);
-WK_EXPORT void WKBundleSetUserStyleSheetLocation(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKStringRef location);
+WK_EXPORT void WKBundleSetUserStyleSheetLocationForTesting(WKBundleRef bundle, WKStringRef location);
 WK_EXPORT void WKBundleSetWebNotificationPermission(WKBundleRef bundle, WKBundlePageRef page, WKStringRef originStringRef, bool allowed);
 WK_EXPORT void WKBundleRemoveAllWebNotificationPermissions(WKBundleRef bundle, WKBundlePageRef page);
 WK_EXPORT uint64_t WKBundleGetWebNotificationID(WKBundleRef bundle, JSContextRef context, JSValueRef notification);
 WK_EXPORT WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data);
-WK_EXPORT void WKBundleSetAsynchronousSpellCheckingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled);
+WK_EXPORT void WKBundleSetAsynchronousSpellCheckingEnabledForTesting(WKBundleRef bundleRef, bool enabled);
 // Returns array of dictionaries. Dictionary keys are document identifiers, values are document URLs.
-WK_EXPORT WKArrayRef WKBundleGetLiveDocumentURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool excludeDocumentsInPageGroupPages);
-
-// UserContent API
-WK_EXPORT void WKBundleAddUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef allowlist, WKArrayRef blocklist, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundlePageAddUserScript);
-WK_EXPORT void WKBundleAddUserStyleSheet(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKStringRef source, WKURLRef url, WKArrayRef allowlist, WKArrayRef blocklist, WKUserContentInjectedFrames injectedFrames) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundlePageAddUserStyleSheet);
-WK_EXPORT void WKBundleRemoveUserScript(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKURLRef url) WK_C_API_DEPRECATED;
-WK_EXPORT void WKBundleRemoveUserStyleSheet(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld, WKURLRef url) WK_C_API_DEPRECATED;
-WK_EXPORT void WKBundleRemoveUserScripts(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld) WK_C_API_DEPRECATED;
-WK_EXPORT void WKBundleRemoveUserStyleSheets(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKBundleScriptWorldRef scriptWorld) WK_C_API_DEPRECATED;
-WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle, WKBundlePageGroupRef pageGroup) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKBundlePageRemoveAllUserContent);
+WK_EXPORT WKArrayRef WKBundleGetLiveDocumentURLsForTesting(WKBundleRef bundle, bool excludeDocumentsInPageGroupPages);
 
 // Local storage API
 WK_EXPORT void WKBundleClearAllDatabases(WKBundleRef bundle);

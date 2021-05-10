@@ -98,19 +98,19 @@ public:
     void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void removeOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
     void resetOriginAccessAllowLists();
-    void setAsynchronousSpellCheckingEnabled(WebPageGroupProxy*, bool);
+    void setAsynchronousSpellCheckingEnabled(bool);
     int numberOfPages(WebFrame*, double, double);
     int pageNumberForElementById(WebFrame*, const String&, double, double);
     String pageSizeAndMarginsInPixels(WebFrame*, int, int, int, int, int, int, int);
     bool isPageBoxVisible(WebFrame*, int);
-    void setUserStyleSheetLocation(WebPageGroupProxy*, const String&);
+    void setUserStyleSheetLocation(const String&);
     void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
     void removeAllWebNotificationPermissions(WebPage*);
     uint64_t webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
     
     typedef HashMap<uint64_t, String> DocumentIDToURLMap;
-    DocumentIDToURLMap liveDocumentURLs(WebPageGroupProxy*, bool excludeDocumentsInPageGroupPages);
+    DocumentIDToURLMap liveDocumentURLs(bool excludeDocumentsInPageGroupPages);
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
@@ -120,7 +120,6 @@ public:
     // Callback hooks
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
-    void didInitializePageGroup(WebPageGroupProxy*);
     void didReceiveMessage(const String&, API::Object*);
     void didReceiveMessageToPage(WebPage*, const String&, API::Object*);
 

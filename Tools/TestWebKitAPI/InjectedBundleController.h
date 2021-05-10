@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleController_h
-#define InjectedBundleController_h
+#pragma once
 
 #include <WebKit/WKBundle.h>
+#include <WebKit/WKRetainPtr.h>
 #include <map>
 #include <string>
 
@@ -43,10 +43,10 @@ public:
     void dumpTestNames();
     void initializeTestNamed(WKBundleRef bundle, const std::string&, WKTypeRef userData);
 
-    typedef InjectedBundleTest* (*CreateInjectedBundleTestFunction)(const std::string&);
+    typedef std::unique_ptr<InjectedBundleTest> (*CreateInjectedBundleTestFunction)(const std::string&);
     void registerCreateInjectedBundleTestFunction(const std::string&, CreateInjectedBundleTestFunction);
 
-    WKBundleRef bundle() const { return m_bundle; }
+    WKBundleRef bundle() const { return m_bundle.get(); }
     
 private:
     InjectedBundleController();
@@ -56,15 +56,12 @@ private:
 
     static void didCreatePage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
-    static void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef, const void* clientInfo);
     static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
     static void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
 
     std::map<std::string, CreateInjectedBundleTestFunction> m_createInjectedBundleTestFunctions;
-    WKBundleRef m_bundle;
-    InjectedBundleTest* m_currentTest;
+    WKRetainPtr<WKBundleRef> m_bundle;
+    std::unique_ptr<InjectedBundleTest> m_currentTest;
 };
 
 } // namespace TestWebKitAPI
-
-#endif // InjectedBundleController_h

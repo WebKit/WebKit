@@ -66,7 +66,6 @@ WK_EXPORT void WKBundlePageSetPolicyClient(WKBundlePageRef page, WKBundlePagePol
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClientBase* client);
 WK_EXPORT void WKBundlePageSetFullScreenClient(WKBundlePageRef page, WKBundlePageFullScreenClientBase* client);
 
-WK_EXPORT WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef page);
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);
 WK_EXPORT WKFrameHandleRef WKBundleFrameCreateFrameHandle(WKBundleFrameRef);
 

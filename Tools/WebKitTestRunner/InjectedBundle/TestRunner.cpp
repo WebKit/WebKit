@@ -790,7 +790,7 @@ void TestRunner::setUserStyleSheetEnabled(bool enabled)
     auto emptyString = toWK("");
     auto location = enabled ? m_userStyleSheetLocation.get() : emptyString.get();
     auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetUserStyleSheetLocation(injectedBundle.bundle(), injectedBundle.pageGroup(), location);
+    WKBundleSetUserStyleSheetLocationForTesting(injectedBundle.bundle(), location);
 }
 
 void TestRunner::setUserStyleSheetLocation(JSStringRef location)
@@ -824,7 +824,7 @@ void TestRunner::setCacheModel(int model)
 void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 {
     auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetAsynchronousSpellCheckingEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
+    WKBundleSetAsynchronousSpellCheckingEnabledForTesting(injectedBundle.bundle(), enabled);
 }
 
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)

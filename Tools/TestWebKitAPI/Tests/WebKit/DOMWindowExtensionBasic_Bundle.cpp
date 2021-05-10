@@ -31,7 +31,6 @@
 #include <WebKit/WKBundleDOMWindowExtension.h>
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
-#include <WebKit/WKBundlePageGroup.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKBundleScriptWorld.h>

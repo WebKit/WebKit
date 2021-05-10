@@ -51,8 +51,7 @@ public:
     // Initialize the InjectedBundle.
     void initialize(WKBundleRef, WKTypeRef initializationUserData);
 
-    WKBundleRef bundle() const { return m_bundle; }
-    WKBundlePageGroupRef pageGroup() const { return m_pageGroup; }
+    WKBundleRef bundle() const { return m_bundle.get(); }
 
     TestRunner* testRunner() { return m_testRunner.get(); }
     GCController* gcController() { return m_gcController.get(); }
@@ -152,13 +151,11 @@ private:
 
     static void didCreatePage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
-    static void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef, const void* clientInfo);
     static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
     static void didReceiveMessageToPage(WKBundleRef, WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
 
     void didCreatePage(WKBundlePageRef);
     void willDestroyPage(WKBundlePageRef);
-    void didInitializePageGroup(WKBundlePageGroupRef);
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
     void didReceiveMessageToPage(WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody);
 
@@ -169,8 +166,7 @@ private:
     enum class BegingTestingMode { New, Resume };
     void beginTesting(WKDictionaryRef initialSettings, BegingTestingMode);
 
-    WKBundleRef m_bundle { nullptr };
-    WKBundlePageGroupRef m_pageGroup { nullptr };
+    WKRetainPtr<WKBundleRef> m_bundle;
     Vector<std::unique_ptr<InjectedBundlePage>> m_pages;
 
 #if HAVE(ACCESSIBILITY)
