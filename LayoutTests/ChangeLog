@@ -1,5 +1,16 @@
 2021-05-10  Robert Jenner  <jenner@apple.com>
 
+        [ BigSur ARM64] http/wpt/fetch/fetch-response-body-stop-in-worker.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=225528
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass Crash for arm64 only. 
+
+        * platform/mac/TestExpectations:
+
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
         [ BigSur Release wk2 arm64 ] scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html is a flaky text failure
         https://bugs.webkit.org/show_bug.cgi?id=225529
 

@@ -2268,3 +2268,5 @@ webkit.org/b/225425 [ Debug ] webgl/1.0.3/conformance/glsl/misc/expression-list-
 webkit.org/b/225523 webrtc/direction-change.html [ Pass Failure ]
 
 webkit.org/b/22525 webrtc/video-replace-muted-track.html [ Pass Failure ]
+
+webkit.org/b/225528 [ arm64 ] http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
