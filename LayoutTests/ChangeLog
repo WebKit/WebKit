@@ -1,5 +1,16 @@
 2021-05-10  Robert Jenner  <jenner@apple.com>
 
+        [ BigSur Release wk2 ARM64 ] mathml/scripts-removeChild.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=225533
+
+        Unreviewed test gardening.
+
+        Updating test expectations to Pass ImageOnlyFailure for BigSur Release wk2 arm64 only.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
         [ BigSur Debug wk2 ARM64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html is flaky crashing
         https://bugs.webkit.org/show_bug.cgi?id=225534
 
