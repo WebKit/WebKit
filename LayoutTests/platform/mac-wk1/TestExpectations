@@ -981,6 +981,7 @@ accessibility/aria-sort-changed-notification.html [ Skip ]
 accessibility/aria-sort.html [ Skip ]
 accessibility/mac/aria-details.html [ Skip ]
 accessibility/mac/aria-errormessage.html [ Skip ]
+accessibility/mac/pseudo-element-text-markers.html [ Skip ]
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController

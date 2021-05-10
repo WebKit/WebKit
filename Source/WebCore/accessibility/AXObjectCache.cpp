@@ -1863,23 +1863,24 @@ void AXObjectCache::stopCachingComputedObjectAttributes()
 
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)
 {
-    if (!isNodeInUse(textMarkerData.node))
-        return VisiblePosition();
-    
-    VisiblePosition visiblePos = VisiblePosition(makeContainerOffsetPosition(textMarkerData.node, textMarkerData.offset), textMarkerData.affinity);
-    Position deepPos = visiblePos.deepEquivalent();
-    if (deepPos.isNull())
-        return VisiblePosition();
-    
-    RenderObject* renderer = deepPos.deprecatedNode()->renderer();
-    if (!renderer)
-        return VisiblePosition();
-    
-    AXObjectCache* cache = renderer->document().axObjectCache();
-    if (cache && !cache->m_idsInUse.contains(textMarkerData.axID))
-        return VisiblePosition();
+    if (!isNodeInUse(textMarkerData.node)
+        || textMarkerData.node->isPseudoElement())
+        return { };
 
-    return visiblePos;
+    auto visiblePosition = VisiblePosition(makeContainerOffsetPosition(textMarkerData.node, textMarkerData.offset), textMarkerData.affinity);
+    auto deepPosition = visiblePosition.deepEquivalent();
+    if (deepPosition.isNull())
+        return { };
+
+    auto* renderer = deepPosition.deprecatedNode()->renderer();
+    if (!renderer)
+        return { };
+
+    auto* cache = renderer->document().axObjectCache();
+    if (cache && !cache->m_idsInUse.contains(textMarkerData.axID))
+        return { };
+
+    return visiblePosition;
 }
 
 CharacterOffset AXObjectCache::characterOffsetForTextMarkerData(TextMarkerData& textMarkerData)
