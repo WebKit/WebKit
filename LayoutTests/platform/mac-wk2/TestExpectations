@@ -1391,3 +1391,5 @@ webkit.org/b/224788 [ BugSur Release arm64 ] inspector/css/node-styles-refreshed
 webkit.org/b/224784 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]
 
 webkit.org/b/225522 [ Release ] http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure Crash ]
+
+webkit.org/b/225529 [ BigSur Release arm64 ] scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html [ Pass Failure ]
