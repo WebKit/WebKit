@@ -1,3 +1,12 @@
+2021-05-10  Devin Rousso  <drousso@apple.com>
+
+        `SLEEP_THREAD_FOR_DEBUGGER` should print the PID before sleeping
+        https://bugs.webkit.org/show_bug.cgi?id=225619
+
+        Reviewed by Tim Horton.
+
+        * wtf/DebugUtilities.h:
+
 2021-05-10  Rob Buis  <rbuis@igalia.com>
 
         Implement <form>.requestSubmit()
