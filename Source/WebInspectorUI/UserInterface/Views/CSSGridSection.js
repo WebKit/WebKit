@@ -82,11 +82,12 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
         listHeading.classList.add("heading");
 
         let label = listHeading.createChild("label");
-        this._toggleAllCheckboxElement = label.createChild("input", "toggle-all");
+        this._toggleAllCheckboxElement = label.createChild("input");
         this._toggleAllCheckboxElement.type = "checkbox";
         this._toggleAllCheckboxElement.addEventListener("change", this._handleToggleAllCheckboxChanged.bind(this));
 
-        label.append(WI.UIString("Grid Overlays", "Page Overlays @ Layout Sidebar Section Header", "Heading for list of grid nodes"));
+        let labelInner = label.createChild("span", "toggle-all");
+        labelInner.textContent = WI.UIString("Grid Overlays", "Page Overlays @ Layout Sidebar Section Header", "Heading for list of grid nodes");
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
         this._listElement.classList.add("node-overlay-list");

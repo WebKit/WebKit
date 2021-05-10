@@ -96,25 +96,20 @@
     flex-direction: column;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .editor {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor {
     --settings-editor-child-margin-top: 0;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .editor:first-child > * {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor:first-child > * {
     margin-top: var(--settings-editor-child-margin-top);
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input {
-    font-size: inherit;
-}
-
-.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"] {
-    margin-inline-end: 4px;
+.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="checkbox"] {
     /* Vertically align <select> with the group title text. */
     font-size: 16px;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .editor select {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor select {
     /*
     To set the font-size of <select> to be exactly 13px, it needs to be set to 16px.
     Setting the font-size to 13px actually sets it to 11px.
@@ -125,7 +120,7 @@
     --settings-editor-child-margin-top: -2px;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="number"] {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="number"] {
     max-width: 48px;
     margin-inline: 2px 5px;
     padding-top: 0;
@@ -137,7 +132,7 @@
     --settings-editor-child-margin-top: -2px;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="text"] {
+.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="text"] {
     padding-top: 0;
     padding-bottom: 0;
     vertical-align: 1px;

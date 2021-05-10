@@ -1,3 +1,50 @@
+2021-05-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Layout panel "Grid Overlays" main checkbox has dead space (no interaction) between checkbox and label text
+        https://bugs.webkit.org/show_bug.cgi?id=225433
+        <rdar://problem/77590883>
+
+        Reviewed by Devin Rousso.
+
+        Make the empty space between the checkbox and the label text clickable in:
+        - Everywhere in Settings tab
+        - Layout panel, Page Overlay Options
+        - Grid Overlay header
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .node-display-name):
+        (.css-grid-section .toggle-all):
+        (.css-grid-section :is(.setting-editor, .node-overlay-list-item-container, .heading) input[type="checkbox"]):
+        (.css-grid-section .setting-editor > input[type="checkbox"]):
+        (.css-grid-section .node-display-name,): Deleted.
+        Make all checkbox labels in the Grid section align vertically.
+
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.initialLayout):
+        * UserInterface/Views/SettingEditor.css: Copied from Source/WebInspectorUI/UserInterface/Views/CSSGridSection.css.
+        (.setting-editor input):
+        (.setting-editor > input[type="checkbox"]):
+        (.setting-editor > label):
+
+        * UserInterface/Views/SettingEditor.js:
+        (WI.SettingEditor):
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor:first-child > *):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="checkbox"]):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor select):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="number"]):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="text"]):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor:first-child > *): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor select): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="number"]): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="text"]): Deleted.
+        Rename ".editor" to ".setting-editor" so it matches SettingEditor.css.
+
 2021-05-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add support for panning/zooming on images

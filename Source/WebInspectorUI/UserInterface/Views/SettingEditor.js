@@ -36,7 +36,7 @@ WI.SettingEditor = class SettingEditor extends WI.Object
         console.assert(this._editorElement);
 
         this._element = document.createElement("div");
-        this._element.classList.add("editor");
+        this._element.classList.add("setting-editor");
         this._element.append(this._editorElement);
 
         this.label = label;
