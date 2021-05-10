@@ -1,3 +1,51 @@
+2021-05-10  Rob Buis  <rbuis@igalia.com>
+
+        Implement <form>.requestSubmit()
+        https://bugs.webkit.org/show_bug.cgi?id=197958
+
+        Reviewed by Darin Adler.
+
+        Implement the requestSubmit method as defined here [1].
+
+        Behavior matches Chrome and Firefox.
+
+        [1] https://html.spec.whatwg.org/multipage/forms.html#dom-form-requestsubmit
+
+        Tests: imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-requestsubmit.html
+               imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/request-submit-activation.html
+               imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-requestsubmit-autofocus.html
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        (WebCore::HTMLButtonElement::isSubmitButton const):
+        * html/HTMLButtonElement.h:
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isSubmitButton const):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitImplicitly):
+        (WebCore::HTMLFormElement::submitIfPossible):
+        (WebCore::HTMLFormElement::requestSubmit):
+        (WebCore::HTMLFormElement::findSubmitButton):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::effectiveTarget const):
+        (WebCore::HTMLFormElement::findSubmitter const):
+        (WebCore::HTMLFormElement::reportValidity):
+        (WebCore::HTMLFormElement::prepareForSubmission): Deleted.
+        (WebCore::HTMLFormElement::findSubmitButton const): Deleted.
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.idl:
+        * html/HTMLInputElement.h:
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::handleDOMActivateEvent):
+        * html/ImageInputType.h:
+        * html/InputType.h:
+        (WebCore::InputType::isSubmitButton const):
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::handleDOMActivateEvent):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/FormSubmission.h:
+
 2021-05-09  Sam Weinig  <weinig@apple.com>
 
         Add back protection of the pixel buffer in ImageBufferCGBackend::toCFData removed in r277237

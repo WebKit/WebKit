@@ -1,3 +1,14 @@
+2021-05-10  Rob Buis  <rbuis@igalia.com>
+
+        Implement <form>.requestSubmit()
+        https://bugs.webkit.org/show_bug.cgi?id=197958
+
+        Reviewed by Darin Adler.
+
+        Add requestSubmit as experimental feature, disabled by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-05-09  Darin Adler  <darin@apple.com>
 
         Remove uses of the String::toInt family of functions from WebCore/html and similar directories

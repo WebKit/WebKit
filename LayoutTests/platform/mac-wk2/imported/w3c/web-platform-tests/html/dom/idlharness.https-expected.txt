@@ -1847,7 +1847,7 @@ FAIL HTMLFormElement interface: attribute relList assert_true: The prototype obj
 PASS HTMLFormElement interface: attribute elements
 PASS HTMLFormElement interface: attribute length
 PASS HTMLFormElement interface: operation submit()
-FAIL HTMLFormElement interface: operation requestSubmit(optional HTMLElement?) assert_own_property: interface prototype object missing non-static operation expected property "requestSubmit" missing
+PASS HTMLFormElement interface: operation requestSubmit(optional HTMLElement?)
 PASS HTMLFormElement interface: operation reset()
 PASS HTMLFormElement interface: operation checkValidity()
 PASS HTMLFormElement interface: operation reportValidity()
@@ -1867,8 +1867,8 @@ FAIL HTMLFormElement interface: document.createElement("form") must inherit prop
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "elements" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "length" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "submit()" with the proper type
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "requestSubmit(optional HTMLElement?)" with the proper type assert_inherits: property "requestSubmit" not found in prototype chain
-FAIL HTMLFormElement interface: calling requestSubmit(optional HTMLElement?) on document.createElement("form") with too few arguments must throw TypeError assert_inherits: property "requestSubmit" not found in prototype chain
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "requestSubmit(optional HTMLElement?)" with the proper type
+PASS HTMLFormElement interface: calling requestSubmit(optional HTMLElement?) on document.createElement("form") with too few arguments must throw TypeError
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "reset()" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "checkValidity()" with the proper type
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "reportValidity()" with the proper type

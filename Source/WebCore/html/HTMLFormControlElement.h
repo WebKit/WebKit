@@ -126,6 +126,8 @@ public:
 
     WEBCORE_EXPORT AutofillData autofillData() const;
 
+    virtual bool isSubmitButton() const { return false; }
+
     using Node::ref;
     using Node::deref;
 

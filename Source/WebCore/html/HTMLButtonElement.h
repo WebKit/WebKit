@@ -76,6 +76,8 @@ private:
     bool isOptionalFormControl() const final { return true; }
     bool computeWillValidate() const final;
 
+    bool isSubmitButton() const final;
+
     Type m_type;
     bool m_isActivatedSubmit;
 };

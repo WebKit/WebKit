@@ -45,6 +45,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
+#include "InputTypeNames.h"
 #include "MIMETypeRegistry.h"
 #include "MixedContentChecker.h"
 #include "NodeRareData.h"
@@ -210,7 +211,7 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
 
     // Older iOS apps using WebViews expect the behavior of auto submitting multi-input forms.
     if (fromImplicitSubmissionTrigger && (submissionTriggerCount == 1 || document().settings().allowMultiElementImplicitSubmission()))
-        prepareForSubmission(event);
+        submitIfPossible(&event);
 }
 
 bool HTMLFormElement::validateInteractively()
@@ -253,7 +254,7 @@ bool HTMLFormElement::validateInteractively()
     return false;
 }
 
-void HTMLFormElement::prepareForSubmission(Event& event)
+void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* submitter, FormSubmissionTrigger trigger)
 {
     if (!isConnected())
         return;
@@ -268,7 +269,7 @@ void HTMLFormElement::prepareForSubmission(Event& event)
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
 
     if (shouldValidate) {
-        auto submitElement = findSubmitButton(&event);
+        auto submitElement = makeRefPtr(submitter ? submitter : findSubmitter(event));
         if (submitElement && submitElement->formNoValidate())
             shouldValidate = false;
     }
@@ -279,7 +280,7 @@ void HTMLFormElement::prepareForSubmission(Event& event)
         return;
     }
 
-    auto targetFrame = frame->loader().findFrameForNavigation(effectiveTarget(&event), &document());
+    auto targetFrame = frame->loader().findFrameForNavigation(effectiveTarget(event, submitter), &document());
     if (!targetFrame)
         targetFrame = frame.get();
     auto formState = FormState::create(*this, textFieldValues(), document(), NotSubmittedByJavaScript);
@@ -297,7 +298,7 @@ void HTMLFormElement::prepareForSubmission(Event& event)
     m_isSubmittingOrPreparingForSubmission = false;
 
     if (m_shouldSubmit)
-        submit(&event, true, true, NotSubmittedByJavaScript);
+        submit(event, true, !submitter, trigger, submitter);
 }
 
 void HTMLFormElement::submit()
@@ -308,6 +309,28 @@ void HTMLFormElement::submit()
 void HTMLFormElement::submitFromJavaScript()
 {
     submit(nullptr, false, UserGestureIndicator::processingUserGesture(), SubmittedByJavaScript);
+}
+
+ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
+{
+    // Update layout before processing form actions in case the style changes
+    // the form or button relationships.
+    document().updateLayoutIgnorePendingStylesheets();
+
+    RefPtr<HTMLFormControlElement> control;
+    if (submitter) {
+        // https://html.spec.whatwg.org/multipage/forms.html#dom-form-requestsubmit
+        if (!is<HTMLFormControlElement>(submitter))
+            return Exception { TypeError };
+        control = downcast<HTMLFormControlElement>(submitter);
+        if (!control->isSubmitButton())
+            return Exception { TypeError };
+        if (control->form() != this)
+            return Exception { NotFoundError };
+    }
+
+    submitIfPossible(nullptr, control.get(), SubmittedByJavaScript);
+    return { };
 }
 
 StringPairVector HTMLFormElement::textFieldValues() const
@@ -326,9 +349,28 @@ StringPairVector HTMLFormElement::textFieldValues() const
     return result;
 }
 
-void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger formSubmissionTrigger)
+RefPtr<HTMLFormControlElement> HTMLFormElement::findSubmitButton(HTMLFormControlElement* submitter, bool needButtonActivation)
 {
-    // The prepareForSubmission function also does this check, but we need to do it here
+    if (submitter)
+        return submitter;
+    if (!needButtonActivation)
+        return nullptr;
+    RefPtr<HTMLFormControlElement> firstSuccessfulSubmitButton;
+    for (auto& associatedElement : m_associatedElements) {
+        if (!is<HTMLFormControlElement>(*associatedElement))
+            continue;
+        auto& control = downcast<HTMLFormControlElement>(*associatedElement);
+        if (control.isActivatedSubmit())
+            return nullptr;
+        if (!firstSuccessfulSubmitButton && control.isSuccessfulSubmitButton())
+            firstSuccessfulSubmitButton = &control;
+    }
+    return firstSuccessfulSubmitButton;
+}
+
+void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger trigger, HTMLFormControlElement* submitter)
+{
+    // The submitIfPossible function also does this check, but we need to do it here
     // too, since there are some code paths that bypass that function.
     if (!isConnected())
         return;
@@ -346,28 +388,14 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     m_isSubmittingOrPreparingForSubmission = true;
     m_wasUserSubmitted = processingUserGesture;
 
-    RefPtr<HTMLFormControlElement> firstSuccessfulSubmitButton;
-    bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
-
-    for (auto& associatedElement : m_associatedElements) {
-        if (!is<HTMLFormControlElement>(*associatedElement))
-            continue;
-        if (needButtonActivation) {
-            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
-            if (control.isActivatedSubmit())
-                needButtonActivation = false;
-            else if (!firstSuccessfulSubmitButton && control.isSuccessfulSubmitButton())
-                firstSuccessfulSubmitButton = &control;
-        }
-    }
-
-    if (needButtonActivation && firstSuccessfulSubmitButton)
+    auto firstSuccessfulSubmitButton = findSubmitButton(submitter, activateSubmitButton);
+    if (firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
     auto protectedThis = makeRef(*this); // Form submission can execute arbitary JavaScript.
 
     auto shouldLockHistory = processingUserGesture ? LockHistory::No : LockHistory::Yes;
-    auto formSubmission = FormSubmission::create(*this, m_attributes, event, shouldLockHistory, formSubmissionTrigger);
+    auto formSubmission = FormSubmission::create(*this, submitter, m_attributes, event, shouldLockHistory, trigger);
     if (m_plannedFormSubmission)
         m_plannedFormSubmission->cancel();
 
@@ -385,7 +413,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     m_plannedFormSubmission = makeWeakPtr(formSubmission.get());
     frame->loader().submitForm(WTFMove(formSubmission));
 
-    if (needButtonActivation && firstSuccessfulSubmitButton)
+    if (firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
 
     if (imageOrMediaFiles) {
@@ -682,10 +710,10 @@ String HTMLFormElement::target() const
     return attributeWithoutSynchronization(targetAttr);
 }
 
-String HTMLFormElement::effectiveTarget(const Event* event) const
+String HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlElement* overrideSubmitter) const
 {
-    if (auto* submitButton = findSubmitButton(event)) {
-        auto targetValue = submitButton->attributeWithoutSynchronization(formtargetAttr);
+    if (auto submitter = makeRefPtr(overrideSubmitter ? overrideSubmitter : findSubmitter(event))) {
+        auto targetValue = submitter->attributeWithoutSynchronization(formtargetAttr);
         if (!targetValue.isNull())
             return targetValue;
     }
@@ -702,7 +730,7 @@ bool HTMLFormElement::wasUserSubmitted() const
     return m_wasUserSubmitted;
 }
 
-HTMLFormControlElement* HTMLFormElement::findSubmitButton(const Event* event) const
+HTMLFormControlElement* HTMLFormElement::findSubmitter(const Event* event) const
 {
     if (!event || !is<Node>(event->target()))
         return nullptr;
@@ -776,7 +804,7 @@ bool HTMLFormElement::reportValidity()
     Ref<HTMLFormElement> protectedThis(*this);
 
     // Update layout before processing form actions in case the style changes
-    // the Form or button relationships.
+    // the form or button relationships.
     document().updateLayoutIgnorePendingStylesheets();
 
     return validateInteractively();
