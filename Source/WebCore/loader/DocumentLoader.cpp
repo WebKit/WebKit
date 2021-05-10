@@ -37,6 +37,7 @@
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "ContentExtensionError.h"
+#include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "CustomHeaderFields.h"
 #include "DOMWindow.h"
@@ -88,6 +89,7 @@
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
+#include "UserContentProvider.h"
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -519,6 +521,14 @@ void DocumentLoader::handleSubstituteDataLoadNow()
     ResourceResponse response = m_substituteData.response();
     if (response.url().isEmpty())
         response = ResourceResponse(m_request.url(), m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding());
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (auto* page = m_frame ? m_frame->page() : nullptr) {
+        // We intentionally do nothing with the results of this call.
+        // We want the CSS to be loaded for us, but we ignore any attempt to block or upgrade the connection since there is no connection.
+        page->userContentProvider().processContentRuleListsForLoad(*page, response.url(), ContentExtensions::ResourceType::Document, *this);
+    }
+#endif
 
     responseReceived(response, nullptr);
 }
