@@ -1,3 +1,23 @@
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Speculative revalidation requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225613
+        <rdar://problem/77664358>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test coverage.
+
+        * http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation.html: Added.
+        * http/tests/in-app-browser-privacy/resources/frame-with-authenticated-resource.py: Added.
+        * http/tests/in-app-browser-privacy/resources/resource-with-auth.py: Added.
+        * platform/ios-wk2/TestExpectations:
+        Essentially copied http/tests/cache/disk-cache/speculative-validation/http-auth.html
+        to hit the speculative revalidation code path, and added in a check
+        for app-bound load data at the end to confirm all requests are marked
+        correctly.
+
 2021-05-10  Robert Jenner  <jenner@apple.com>
 
         [ BigSur Release wk2 ARM64 ] mathml/scripts-removeChild.html is a flaky image failure

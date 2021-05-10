@@ -1,5 +1,29 @@
 2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
 
+        Speculative revalidation requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225613
+        <rdar://problem/77664358>
+
+        Reviewed by Brent Fulgham.
+
+        Speculative revalidation requests make network connections and should
+        be attributed as app-bound based on the initiating navigation.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::registerLoad):
+        (WebKit::NetworkCache::SpeculativeLoadManager::startSpeculativeRevalidation):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.h:
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourceInfo::isAppBound const):
+        (WebKit::NetworkCache::SubresourceInfo::setIsAppBound):
+        (WebKit::NetworkCache::SubresourcesEntry::subresources):
+        (WebKit::NetworkCache::SubresourcesEntry::subresources const): Deleted.
+        Remove const qualifier for the SubresourcesEntry::subresources()
+        function now that we need to store the app-bound value.
+
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
         Preflight requests not properly attributed as app-bound
         https://bugs.webkit.org/show_bug.cgi?id=225596
         <rdar://problem/77664272>
