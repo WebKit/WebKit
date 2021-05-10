@@ -1,5 +1,31 @@
 2021-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add picker UI for <input type=date> and <input type=datetime-local>
+        https://bugs.webkit.org/show_bug.cgi?id=224924
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use a GtkPopover with a GtkCalendar.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetFocus): Only notify the web process about focus changes when shouldNotifyFocusEvents is true.
+        (webkitWebViewBaseSetShouldNotifyFocusEvents): Set whether the web view should notify about focus changes to the
+        web process.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/WebDateTimePickerGtk.cpp:
+        (WebKit::WebDateTimePickerGtk::~WebDateTimePickerGtk): Call invalidate instead of endPicker.
+        (WebKit::WebDateTimePickerGtk::invalidate): Destroy the popover and allow the web view to notify about focus
+        events again.
+        (WebKit::WebDateTimePickerGtk::endPicker): Invalidate and notify the parent.
+        (WebKit::timeToString): Helper to convert the time portions of a DateComponents to a string.
+        (WebKit::calendarDateToString): Helper to convert selected date to a string.
+        (WebKit::WebDateTimePickerGtk::didChooseDate): Notify the WebPageProxy about the selected date.
+        (WebKit::WebDateTimePickerGtk::showDateTimePicker): Create or update a GtkPopover with a calendar.
+        (WebKit::WebDateTimePickerGtk::update): Update the calendar and current date.
+        * UIProcess/gtk/WebDateTimePickerGtk.h:
+
+2021-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use always async scrolling in accelerated compositing mode
         https://bugs.webkit.org/show_bug.cgi?id=225512
 

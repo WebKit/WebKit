@@ -115,4 +115,5 @@ WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBa
 void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase*, const String& text, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<WebKit::EditingRange>&&);
 
 void webkitWebViewBaseMakeBlank(WebKitWebViewBase*, bool);
-void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase* webkitWebViewBase);
+void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase*);
+void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase*, bool);

@@ -284,6 +284,7 @@ struct _WebKitWebViewBasePrivate {
     IntSize contentsSize;
     Optional<MotionEvent> lastMotionEvent;
     bool isBlank;
+    bool shouldNotifyFocusEvents { true };
 
     GtkWindow* toplevelOnScreenWindow { nullptr };
 #if USE(GTK4)
@@ -2337,6 +2338,8 @@ GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebView
 void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (!priv->shouldNotifyFocusEvents)
+        return;
     if ((focused && priv->activityState & ActivityState::IsFocused) || (!focused && !(priv->activityState & ActivityState::IsFocused)))
         return;
 
@@ -2917,4 +2920,9 @@ void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase* webViewBase)
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->pageGrabbedTouch = true;
     gtk_gesture_set_state(priv->touchGestureGroup, GTK_EVENT_SEQUENCE_DENIED);
+}
+
+void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase* webViewBase, bool shouldNotifyFocusEvents)
+{
+    webViewBase->priv->shouldNotifyFocusEvents = shouldNotifyFocusEvents;
 }
