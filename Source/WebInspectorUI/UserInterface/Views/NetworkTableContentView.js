@@ -63,29 +63,26 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._typeFilterScopeBarItemAll = new WI.ScopeBarItem("network-type-filter-all", WI.UIString("All"), {exclusive: true});
         let typeFilterScopeBarItems = [this._typeFilterScopeBarItemAll];
 
-        let uniqueTypes = [
-            ["Document", (type) => type === WI.Resource.Type.Document],
-            ["StyleSheet", (type) => type === WI.Resource.Type.StyleSheet],
-            ["Image", (type) => type === WI.Resource.Type.Image],
-            ["Font", (type) => type === WI.Resource.Type.Font],
-            ["Script", (type) => type === WI.Resource.Type.Script],
-            ["XHR", (type) => type === WI.Resource.Type.XHR || type === WI.Resource.Type.Fetch],
-            ["Other", (type) => {
-                return type !== WI.Resource.Type.Document
-                    && type !== WI.Resource.Type.StyleSheet
-                    && type !== WI.Resource.Type.Image
-                    && type !== WI.Resource.Type.Font
-                    && type !== WI.Resource.Type.Script
-                    && type !== WI.Resource.Type.XHR
-                    && type !== WI.Resource.Type.Fetch;
-            }],
-        ];
-        for (let [key, checker] of uniqueTypes) {
-            let type = WI.Resource.Type[key];
-            let scopeBarItem = new WI.ScopeBarItem("network-type-filter-" + key, WI.NetworkTableContentView.shortDisplayNameForResourceType(type));
+        function addScopeBarItem(id, label, checker) {
+            let scopeBarItem = new WI.ScopeBarItem("network-type-filter-" + id, label);
             scopeBarItem.__checker = checker;
             typeFilterScopeBarItems.push(scopeBarItem);
         }
+        addScopeBarItem("document", WI.UIString("Document"), (type) => type === WI.Resource.Type.Document);
+        addScopeBarItem("styleSheet", WI.unlocalizedString("CSS"), (type) => type === WI.Resource.Type.StyleSheet);
+        addScopeBarItem("image", WI.UIString("Image"), (type) => type === WI.Resource.Type.Image);
+        addScopeBarItem("font", WI.UIString("Font"), (type) => type === WI.Resource.Type.Font);
+        addScopeBarItem("script", WI.unlocalizedString("JS"), (type) => type === WI.Resource.Type.Script);
+        addScopeBarItem("xhr-fetch", WI.UIString("%s/Fetch", "%s/Fetch @ Network Tab Table Filter", "Scope bar button that filter for dynamic resource loads, like from the 'fetch' method.").format(WI.unlocalizedString("XHR")), (type) => type === WI.Resource.Type.XHR || type === WI.Resource.Type.Fetch);
+        addScopeBarItem("other", WI.UIString("Other"), (type) => {
+            return type !== WI.Resource.Type.Document
+                && type !== WI.Resource.Type.StyleSheet
+                && type !== WI.Resource.Type.Image
+                && type !== WI.Resource.Type.Font
+                && type !== WI.Resource.Type.Script
+                && type !== WI.Resource.Type.XHR
+                && type !== WI.Resource.Type.Fetch;
+        });
 
         this._typeFilterScopeBar = new WI.ScopeBar("network-type-filter-scope-bar", typeFilterScopeBarItems, typeFilterScopeBarItems[0]);
         this._typeFilterScopeBar.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
@@ -201,38 +198,43 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 return fileExtension;
         }
 
-        return WI.NetworkTableContentView.shortDisplayNameForResourceType(resource.type).toLowerCase();
-    }
-
-    static shortDisplayNameForResourceType(type)
-    {
-        switch (type) {
+        switch (resource.type) {
         case WI.Resource.Type.Document:
-            return WI.UIString("Document");
+            return WI.UIString("document", "document @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for document resources.");
+
         case WI.Resource.Type.StyleSheet:
-            return WI.unlocalizedString("CSS");
+            return WI.unlocalizedString("css");
+
         case WI.Resource.Type.Image:
-            return WI.UIString("Image");
+            return WI.UIString("image", "image @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for image resources.");
+
         case WI.Resource.Type.Font:
-            return WI.UIString("Font");
+            return WI.UIString("font", "font @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for font resources.");
+
         case WI.Resource.Type.Script:
-            return WI.unlocalizedString("JS");
+            return WI.unlocalizedString("js");
+
         case WI.Resource.Type.XHR:
-            return WI.unlocalizedString("XHR");
+            return WI.unlocalizedString("xhr");
+
         case WI.Resource.Type.Fetch:
-            return WI.repeatedUIString.fetch();
+            return WI.UIString("fetch", "fetch @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for resources loaded via the 'fetch' method.");
+
         case WI.Resource.Type.Ping:
-            return WI.UIString("Ping");
+            return WI.UIString("ping", "ping @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for resources loaded via '<a ping>' elements.");
+
         case WI.Resource.Type.Beacon:
-            return WI.UIString("Beacon");
+            return WI.UIString("beacon", "beacon @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for resources loaded via the Beacon API.");
+
         case WI.Resource.Type.WebSocket:
-            return WI.UIString("Socket");
+            return WI.UIString("socket", "socket @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for WebSocket resources.");
+
         case WI.Resource.Type.Other:
-            return WI.UIString("Other");
-        default:
-            console.error("Unknown resource type", type);
-            return null;
+            return WI.UIString("other", "other @ Network Tab Resource Type Column Value", "Shown in the 'Type' column of the Network Table for resources that don't fall into any of the other known types/categories.");
         }
+
+        console.assert(false, resource.type);
+        return "";
     }
 
     static get nodeWaterfallDOMEventSize() { return 8; }

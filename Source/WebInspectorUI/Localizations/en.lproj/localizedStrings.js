@@ -77,6 +77,8 @@ localizedStrings["%s total"] = "%s total";
 localizedStrings["%s transferred"] = "%s transferred";
 /* A single value expressed as a percentage where the value has already been converted from a number to a string. */
 localizedStrings["%s%% @ Font Details Sidebar"] = "%s%%";
+/* Scope bar button that filter for dynamic resource loads, like from the 'fetch' method. */
+localizedStrings["%s/Fetch @ Network Tab Table Filter"] = "%s/Fetch";
 localizedStrings["%s:"] = "%s:";
 localizedStrings["(%s)"] = "(%s)";
 localizedStrings["(Action %s)"] = "(Action %s)";
@@ -1724,6 +1726,8 @@ localizedStrings["\u0022%s\u0022 must be an %s"] = "\u0022%s\u0022 must be an %s
 localizedStrings["\u0022%s\u0022 threw an error"] = "\u0022%s\u0022 threw an error";
 localizedStrings["\u201C%s\u201D Event Fired"] = "\u201C%s\u201D Event Fired";
 localizedStrings["\u201C%s\u201D Profile Recorded"] = "\u201C%s\u201D Profile Recorded";
+/* Shown in the 'Type' column of the Network Table for resources loaded via the Beacon API. */
+localizedStrings["beacon @ Network Tab Resource Type Column Value"] = "beacon";
 /* Part of the 'Blackboxed - %d call frame' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
 localizedStrings["call frame @ Debugger Call Stack"] = "%d call frame";
 /* Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
@@ -1731,8 +1735,16 @@ localizedStrings["call frames @ Debugger Call Stack"] = "%d call frames";
 localizedStrings["computed"] = "computed";
 localizedStrings["default"] = "default";
 localizedStrings["default prevented"] = "default prevented";
+/* Shown in the 'Type' column of the Network Table for document resources. */
+localizedStrings["document @ Network Tab Resource Type Column Value"] = "document";
 localizedStrings["ensuring that common debugging functions are available on every page via the Console"] = "ensuring that common debugging functions are available on every page via the Console";
+/* Shown in the 'Type' column of the Network Table for resources loaded via the 'fetch' method. */
+localizedStrings["fetch @ Network Tab Resource Type Column Value"] = "fetch";
+/* Shown in the 'Type' column of the Network Table for font resources. */
+localizedStrings["font @ Network Tab Resource Type Column Value"] = "font";
 localizedStrings["for changes to take effect"] = "for changes to take effect";
+/* Shown in the 'Type' column of the Network Table for image resources. */
+localizedStrings["image @ Network Tab Resource Type Column Value"] = "image";
 localizedStrings["invalid HAR"] = "invalid HAR";
 localizedStrings["invalid JSON"] = "invalid JSON";
 localizedStrings["key"] = "key";
@@ -1743,12 +1755,18 @@ localizedStrings["non-number %s"] = "non-number %s";
 localizedStrings["non-object %s"] = "non-object %s";
 localizedStrings["non-string %s"] = "non-string %s";
 localizedStrings["originally %s"] = "originally %s";
+/* Shown in the 'Type' column of the Network Table for resources that don't fall into any of the other known types/categories. */
+localizedStrings["other @ Network Tab Resource Type Column Value"] = "other";
 localizedStrings["overriding built-in functions to log call traces or add %s statements"] = "overriding built-in functions to log call traces or add %s statements";
+/* Shown in the 'Type' column of the Network Table for resources loaded via '<a ping>' elements. */
+localizedStrings["ping @ Network Tab Resource Type Column Value"] = "ping";
 localizedStrings["popup"] = "popup";
 localizedStrings["popup, toggle"] = "popup, toggle";
 localizedStrings["requestAnimationFrame Fired"] = "requestAnimationFrame Fired";
 localizedStrings["setInterval Fired"] = "setInterval Fired";
 localizedStrings["setTimeout Fired"] = "setTimeout Fired";
+/* Shown in the 'Type' column of the Network Table for WebSocket resources. */
+localizedStrings["socket @ Network Tab Resource Type Column Value"] = "socket";
 localizedStrings["space"] = "space";
 localizedStrings["spaces"] = "spaces";
 localizedStrings["time before stopping"] = "time before stopping";
