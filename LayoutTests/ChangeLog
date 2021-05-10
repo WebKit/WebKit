@@ -1,3 +1,14 @@
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Debug wk2 ARM64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225534
+
+        Unrviewed test gardening.
+
+        Updating test expectation to Pass Crash for BigSur Debug wk2 arm64 only.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Preflight requests not properly attributed as app-bound
