@@ -169,9 +169,9 @@ void MutationObserver::setHasTransientRegistration(Document& document)
     eventLoop->queueMutationObserverCompoundMicrotask();
 }
 
-HashSet<Ref<Node>> MutationObserver::observedNodes() const
+HashSet<Node*> MutationObserver::observedNodes() const
 {
-    HashSet<Ref<Node>> observedNodes;
+    HashSet<Node*> observedNodes;
     for (auto* registration : m_registrations)
         registration->addRegistrationNodesToSet(observedNodes);
     return observedNodes;

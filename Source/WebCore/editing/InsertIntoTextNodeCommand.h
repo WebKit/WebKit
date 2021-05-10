@@ -49,7 +49,7 @@ private:
     void doReapply() override;
     
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(HashSet<Node*>&) override;
 #endif
     
     Ref<Text> m_node;

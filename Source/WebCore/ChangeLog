@@ -1,3 +1,16 @@
+2021-05-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277281.
+        https://bugs.webkit.org/show_bug.cgi?id=225622
+
+        Broke multiple debug tests
+
+        Reverted changeset:
+
+        "Use HashSet<RefPtr<Node>> instead of HashSet<Node*>"
+        https://bugs.webkit.org/show_bug.cgi?id=220464
+        https://trac.webkit.org/changeset/277281
+
 2021-05-10  Mark Lam  <mark.lam@apple.com>
 
         Add support to collect stats on cumulative LinkBuffer linked sizes based on profiles.

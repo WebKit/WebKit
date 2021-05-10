@@ -47,7 +47,7 @@ private:
     void insertText1AndTrimText2();
     
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
     RefPtr<Text> m_text1;

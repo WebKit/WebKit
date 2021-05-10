@@ -262,7 +262,7 @@ public:
 
 private:
     HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
-    HashSet<Ref<Node>> m_ancestorsUnderCommonAncestor;
+    HashSet<Node*> m_ancestorsUnderCommonAncestor;
 };
 
 @interface NSTextList (WebCoreNSTextListDetails)
@@ -2284,7 +2284,7 @@ Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& st
     Node* ancestor = start.containerNode();
 
     while (ancestor) {
-        m_ancestorsUnderCommonAncestor.add(*ancestor);
+        m_ancestorsUnderCommonAncestor.add(ancestor);
         if (ancestor == commonAncestor)
             break;
         ancestor = ancestor->parentInComposedTree();

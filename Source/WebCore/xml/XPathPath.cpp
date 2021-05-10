@@ -105,7 +105,7 @@ void LocationPath::evaluate(NodeSet& nodes) const
 
     for (auto& step : m_steps) {
         NodeSet newNodes;
-        HashSet<RefPtr<Node>> newNodesSet;
+        HashSet<Node*> newNodesSet;
 
         bool needToCheckForDuplicateNodes = !nodes.subtreesAreDisjoint() || (step->axis() != Step::ChildAxis && step->axis() != Step::SelfAxis
             && step->axis() != Step::DescendantAxis && step->axis() != Step::DescendantOrSelfAxis && step->axis() != Step::AttributeAxis);

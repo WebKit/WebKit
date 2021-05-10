@@ -54,7 +54,7 @@ void SetNodeAttributeCommand::doUnapply()
 }
 
 #ifndef NDEBUG
-void SetNodeAttributeCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
+void SetNodeAttributeCommand::getNodesInCommand(HashSet<Node*>& nodes)
 {
     addNodeAndDescendants(m_element.ptr(), nodes);
 }

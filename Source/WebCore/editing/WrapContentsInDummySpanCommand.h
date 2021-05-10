@@ -47,7 +47,7 @@ private:
     void executeApply();
 
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(HashSet<Node*>&) override;
 #endif
 
     Ref<Element> m_element;

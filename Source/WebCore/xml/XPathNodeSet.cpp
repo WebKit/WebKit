@@ -107,7 +107,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
 
     // Children nodes of the common ancestor induce a subdivision of our node-set.
     // Sort it according to this subdivision, and recursively sort each group.
-    HashSet<RefPtr<Node>> parentNodes;
+    HashSet<Node*> parentNodes;
     for (unsigned i = from; i < to; ++i)
         parentNodes.add(parentWithDepth(commonAncestorDepth + 1, parentMatrix[i]));
 
@@ -192,7 +192,7 @@ static Node* findRootNode(Node* node)
 
 void NodeSet::traversalSort() const
 {
-    HashSet<RefPtr<Node>> nodes;
+    HashSet<Node*> nodes;
     bool containsAttributeNodes = false;
 
     unsigned nodeCount = m_nodes.size();

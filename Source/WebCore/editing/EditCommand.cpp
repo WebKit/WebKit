@@ -216,10 +216,10 @@ void SimpleEditCommand::doReapply()
 }
 
 #ifndef NDEBUG
-void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Ref<Node>>& nodes)
+void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Node*>& nodes)
 {
     for (Node* node = startNode; node; node = NodeTraversal::next(*node, startNode))
-        nodes.add(*node);
+        nodes.add(node);
 }
 #endif
 

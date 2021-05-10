@@ -84,7 +84,7 @@ public:
     void setRangeDeletedByUnapply(const VisiblePositionIndexRange&);
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Ref<Node>>&);
+    virtual void getNodesInCommand(HashSet<Node*>&);
 #endif
 
 private:
