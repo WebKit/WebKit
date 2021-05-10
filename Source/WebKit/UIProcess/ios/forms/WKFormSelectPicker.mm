@@ -1107,9 +1107,11 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([presentationController isKindOfClass:[_UISheetPresentationController class]]) {
             _UISheetPresentationController *sheetPresentationController = (_UISheetPresentationController *)presentationController;
             sheetPresentationController._detents = @[_UISheetDetent._mediumDetent, _UISheetDetent._largeDetent];
+        ALLOW_DEPRECATED_DECLARATIONS_END
             sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
             sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
         }

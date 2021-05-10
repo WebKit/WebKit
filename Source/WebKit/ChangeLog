@@ -58,6 +58,13 @@
         * UIProcess/WebProcessProxy.cpp:
         (WebKit::WebProcessProxy::updateServiceWorkerProcessAssertion):
 
+2021-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix the build with recent SDKs.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectMultiplePicker configurePresentation]):
+
 2021-05-10  Alex Christensen  <achristensen@webkit.org>
 
         Add ObjC API similar to WKBundlePageCopyGroupIdentifier
