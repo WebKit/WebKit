@@ -26,6 +26,9 @@
 
 namespace WebCore {
 
+class Color;
+class MediaQuerySet;
+
 class HTMLMetaElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLMetaElement);
 public:
@@ -35,6 +38,10 @@ public:
     const AtomString& content() const;
     const AtomString& httpEquiv() const;
     const AtomString& name() const;
+
+    bool mediaAttributeMatches();
+
+    const Color& contentColor();
 
 private:
     HTMLMetaElement(const QualifiedName&, Document&);
@@ -46,6 +53,10 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) final;
 
     void process();
+
+    RefPtr<MediaQuerySet> m_media;
+
+    Optional<Color> m_contentColor;
 };
 
 } // namespace WebCore

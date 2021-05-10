@@ -106,6 +106,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLMetaElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
@@ -960,6 +961,20 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
 String Document::compatMode() const
 {
     return inQuirksMode() ? "BackCompat" : "CSS1Compat";
+}
+
+const Color& Document::themeColor()
+{
+    if (!m_cachedThemeColor.isValid()) {
+        if (!m_activeThemeColorMetaElement)
+            m_activeThemeColorMetaElement = determineActiveThemeColorMetaElement();
+        if (m_activeThemeColorMetaElement)
+            m_cachedThemeColor = m_activeThemeColorMetaElement->contentColor();
+
+        if (!m_cachedThemeColor.isValid())
+            m_cachedThemeColor = m_applicationManifestThemeColor;
+    }
+    return m_cachedThemeColor;
 }
 
 void Document::resetLinkColor()
@@ -3846,14 +3861,38 @@ void Document::updateViewportArguments()
     }
 }
 
-void Document::processMetaElementThemeColor(const String& themeColorString)
+void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)
 {
-    auto oldThemeColor = themeColor();
-    m_metaElementThemeColor = CSSParser::parseColor(themeColorString);
+    // If the current content color isn't valid and it wasn't previously in the list of elements
+    // with a valid content color, don't bother recalculating `m_metaThemeColorElements`.
+    if (!metaElement.contentColor().isValid() && m_metaThemeColorElements && !m_metaThemeColorElements->contains(&metaElement))
+        return;
+
+    auto oldThemeColor = std::exchange(m_cachedThemeColor, Color());
+    m_metaThemeColorElements = WTF::nullopt;
+    m_activeThemeColorMetaElement = nullptr;
     if (themeColor() == oldThemeColor)
         return;
 
     themeColorChanged();
+}
+
+WeakPtr<HTMLMetaElement> Document::determineActiveThemeColorMetaElement()
+{
+    if (!m_metaThemeColorElements) {
+        Vector<WeakPtr<HTMLMetaElement>> metaThemeColorElements;
+        for (auto& metaElement : descendantsOfType<HTMLMetaElement>(*this)) {
+            if (equalLettersIgnoringASCIICase(metaElement.name(), "theme-color") && metaElement.contentColor().isValid())
+                metaThemeColorElements.append(makeWeakPtr(metaElement));
+        }
+        m_metaThemeColorElements = WTFMove(metaThemeColorElements);
+    }
+
+    for (auto& metaElement : *m_metaThemeColorElements) {
+        if (metaElement && metaElement->contentColor().isValid() && metaElement->mediaAttributeMatches())
+            return metaElement;
+    }
+    return nullptr;
 }
 
 void Document::themeColorChanged()
@@ -4170,7 +4209,7 @@ void Document::processReferrerPolicy(const String& policy, ReferrerPolicySource 
 
 void Document::processApplicationManifest(const ApplicationManifest& applicationManifest)
 {
-    auto oldThemeColor = themeColor();
+    auto oldThemeColor = std::exchange(m_cachedThemeColor, Color());
     m_applicationManifestThemeColor = applicationManifest.themeColor;
     if (themeColor() == oldThemeColor)
         return;
@@ -4355,6 +4394,13 @@ StyleSheetList& Document::styleSheets()
 void Document::updateElementsAffectedByMediaQueries()
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+    if (auto activeThemeColorElement = determineActiveThemeColorMetaElement(); m_activeThemeColorMetaElement != activeThemeColorElement) {
+        auto oldThemeColor = std::exchange(m_cachedThemeColor, Color());
+        m_activeThemeColorMetaElement = WTFMove(activeThemeColorElement);
+        if (themeColor() != oldThemeColor)
+            themeColorChanged();
+    }
 
     // FIXME: copyToVector doesn't work with WeakHashSet
     Vector<Ref<HTMLImageElement>> images;

@@ -22,6 +22,7 @@
 ] interface HTMLMetaElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString content;
     [CEReactions=NotNeeded, Reflect=http_equiv] attribute DOMString httpEquiv;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString media;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute DOMString scheme;
 };

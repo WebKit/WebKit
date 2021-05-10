@@ -158,6 +158,7 @@ class HTMLIFrameElement;
 class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
+class HTMLMetaElement;
 class HTMLVideoElement;
 class HighlightRegister;
 class HitTestLocation;
@@ -741,7 +742,7 @@ public:
     Seconds timeSinceDocumentCreation() const { return MonotonicTime::now() - m_documentCreationTime; };
 #endif
 
-    const Color& themeColor() const { return m_metaElementThemeColor.isValid() ? m_metaElementThemeColor : m_applicationManifestThemeColor; }
+    const Color& themeColor();
 
     const Color& sampledPageTopColor() const { return m_sampledPageTopColor; }
 
@@ -912,7 +913,8 @@ public:
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
-    void processMetaElementThemeColor(const String& themeColor);
+
+    void metaElementThemeColorChanged(HTMLMetaElement&);
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
@@ -1672,6 +1674,7 @@ private:
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
 
+    WeakPtr<HTMLMetaElement> determineActiveThemeColorMetaElement();
     void themeColorChanged();
 
     void determineSampledPageTopColor();
@@ -1794,7 +1797,9 @@ private:
 
     std::unique_ptr<FormController> m_formController;
 
-    Color m_metaElementThemeColor;
+    Color m_cachedThemeColor;
+    Optional<Vector<WeakPtr<HTMLMetaElement>>> m_metaThemeColorElements;
+    WeakPtr<HTMLMetaElement> m_activeThemeColorMetaElement;
     Color m_applicationManifestThemeColor;
 
     Color m_sampledPageTopColor;
