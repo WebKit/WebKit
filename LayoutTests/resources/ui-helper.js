@@ -1096,6 +1096,30 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.resignFirstResponder()`, resolve));
     }
 
+    static becomeFirstResponder()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.becomeFirstResponder()`, resolve));
+    }
+
+    static removeViewFromWindow()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.removeViewFromWindow()`, resolve));
+    }
+
+    static addViewToWindow()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.addViewToWindow()`, resolve));
+    }
+
     static minimumZoomScale()
     {
         if (!this.isWebKit2())

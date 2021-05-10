@@ -1,3 +1,44 @@
+2021-05-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iPadOS] Do not present custom input peripherals when switching back to a tab with a focused element
+        https://bugs.webkit.org/show_bug.cgi?id=225541
+        <rdar://problem/77537795>
+
+        Reviewed by Wenson Hsieh.
+
+        With the introduction of desktop-class browing on iPad, form control
+        elements began to retain focus even after their input peripheral
+        (popover, menu, etc.) was dismissed. This behavior matches macOS - when
+        a <select> element is clicked, a menu is presented, and when a option
+        is selected, the menu is dismissed but the element retains focus.
+
+        Consequently, when a <select> menu is dismissed by choosing an option on
+        an iPad with a hardware keyboard, the element retains focus. Now, when
+        switching tabs and coming back to the tab with the focused <select>, an
+        activity state update is triggered. Upon recognizing that there is a
+        focused element, an ElementDidFocus message is sent to the UIProcess.
+
+        In [WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:],
+        the focus is given permission to present the input peripheral (menu)
+        when the hardware keyboard is attached. This is necessary when necessary
+        when focusing a text input, because the UCB needs to be displayed and
+        text selection needs to be set up. However, the behavior is undesirable
+        for elements that present a popover or a menu (select, color inputs, and
+        date inputs), since the user is unexpectedly shown an input peripheral.
+        Even worse, the user's scroll position will be changed to ensure the
+        focused element is visible.
+
+        To fix the undesirable behavior, and get closer to the macOS behavior,
+        custom input peripherals should not be displayed when switching back
+        to a tab with a focused element.
+
+        Test: fast/forms/ios/focus-select-and-switch-tabs.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+
+        Only show the input peripheral if it is not a keyboard view.
+
 2021-05-10  Alex Christensen  <achristensen@webkit.org>
 
         Remove WKBundlePageGroupRef

@@ -1,3 +1,21 @@
+2021-05-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iPadOS] Do not present custom input peripherals when switching back to a tab with a focused element
+        https://bugs.webkit.org/show_bug.cgi?id=225541
+        <rdar://problem/77537795>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test which simulates a tab switch by removing and re-adding the
+        webview to the window.
+
+        * fast/forms/ios/focus-select-and-switch-tabs-expected.txt: Added.
+        * fast/forms/ios/focus-select-and-switch-tabs.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.becomeFirstResponder):
+        (window.UIHelper.removeViewFromWindow):
+        (window.UIHelper.addViewToWindow):
+
 2021-05-10  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/mediastream/MediaStream-video-element-video-tracks-disabled.html fails

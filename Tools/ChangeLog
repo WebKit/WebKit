@@ -1,3 +1,31 @@
+2021-05-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iPadOS] Do not present custom input peripherals when switching back to a tab with a focused element
+        https://bugs.webkit.org/show_bug.cgi?id=225541
+        <rdar://problem/77537795>
+
+        Reviewed by Wenson Hsieh.
+
+        Updated a UIScriptController hook that simulates attaching a hardware
+        keyboard to also swizzle [UIKeyboard isInHardwareKeyboardMode].
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Moved the default swizzling behavior into this method so that it remains
+        consistent across tests.
+
+        Unfortunately, the default swizzling behavior contrasts with the default
+        value of GSEventSetHardwareKeyboardAttached. However, this is an existing
+        inconsistency, and should be looked at more carefully in a separate
+        investigation.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::returnYes):
+        (WTR::returnNo):
+        (WTR::UIScriptControllerIOS::setHardwareKeyboardAttached):
+
 2021-05-10  Alex Christensen  <achristensen@webkit.org>
 
         Remove WKBundlePageGroupRef
