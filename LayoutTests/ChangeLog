@@ -1,5 +1,17 @@
 2021-05-10  Andres Gonzalez  <andresg_22@apple.com>
 
+        [ Mac ] accessibility/mac/expanded-notification.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205410
+        rdar://58056289
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/expanded-notification.html:
+        Replaced the setTimeout(..., 10) with the use of Promises to make it
+        time deterministic.
+
+2021-05-10  Andres Gonzalez  <andresg_22@apple.com>
+
         Fix for assert crash in AXObjectCache::visiblePositionForTextMarkerData.
         https://bugs.webkit.org/show_bug.cgi?id=225303
         <rdar://problem/77453921>
