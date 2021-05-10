@@ -66,7 +66,7 @@ void RemoveNodeCommand::doUnapply()
 }
 
 #ifndef NDEBUG
-void RemoveNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+void RemoveNodeCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
     addNodeAndDescendants(m_parent.get(), nodes);
     addNodeAndDescendants(m_refChild.get(), nodes);

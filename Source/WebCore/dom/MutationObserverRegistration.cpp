@@ -112,13 +112,13 @@ bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, Mutatio
     return m_attributeFilter.contains(attributeName->localName());
 }
 
-void MutationObserverRegistration::addRegistrationNodesToSet(HashSet<Node*>& nodes) const
+void MutationObserverRegistration::addRegistrationNodesToSet(HashSet<Ref<Node>>& nodes) const
 {
-    nodes.add(&m_node);
+    nodes.add(m_node);
     if (!m_transientRegistrationNodes)
         return;
     for (auto& node : *m_transientRegistrationNodes)
-        nodes.add(node.ptr());
+        nodes.add(node.get());
 }
 
 } // namespace WebCore

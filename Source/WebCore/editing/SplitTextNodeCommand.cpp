@@ -104,7 +104,7 @@ void SplitTextNodeCommand::insertText1AndTrimText2()
 
 #ifndef NDEBUG
 
-void SplitTextNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+void SplitTextNodeCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
     addNodeAndDescendants(m_text1.get(), nodes);
     addNodeAndDescendants(m_text2.ptr(), nodes);

@@ -1,3 +1,85 @@
+2021-05-10  Alex Christensen  <achristensen@webkit.org>
+
+        Use HashSet<RefPtr<Node>> instead of HashSet<Node*>
+        https://bugs.webkit.org/show_bug.cgi?id=220464
+
+        Reviewed by Chris Dumez.
+
+        This makes us more resistent to lifetime bugs.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::conditionallyAddNodeToFilterList):
+        (WebCore::filterVectorPairForRemoval):
+        (WebCore::filterMapForRemoval):
+        (WebCore::filterListForRemoval):
+        (WebCore::AXObjectCache::prepareForDocumentDestruction):
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverOwner::isReachableFromOpaqueRoots):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::observedNodes const):
+        (WebCore:: const): Deleted.
+        * dom/MutationObserver.h:
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet const):
+        * dom/MutationObserverRegistration.h:
+        * dom/Node.cpp:
+        (WebCore::liveNodeSet):
+        (WebCore::ignoreSet):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::getNodesInCommand):
+        * editing/AppendNodeCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::getNodesInCommand):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::getNodesInCommand):
+        * editing/DeleteFromTextNodeCommand.h:
+        * editing/EditCommand.cpp:
+        (WebCore::SimpleEditCommand::addNodeAndDescendants):
+        * editing/EditCommand.h:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::getNodesInCommand):
+        * editing/InsertIntoTextNodeCommand.h:
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::getNodesInCommand):
+        * editing/InsertNodeBeforeCommand.h:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::getNodesInCommand):
+        * editing/MergeIdenticalElementsCommand.h:
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::getNodesInCommand):
+        * editing/RemoveNodeCommand.h:
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::ReplaceNodeWithSpanCommand::getNodesInCommand):
+        * editing/ReplaceNodeWithSpanCommand.h:
+        * editing/SetNodeAttributeCommand.cpp:
+        (WebCore::SetNodeAttributeCommand::getNodesInCommand):
+        * editing/SetNodeAttributeCommand.h:
+        * editing/SetSelectionCommand.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::getNodesInCommand):
+        * editing/SplitElementCommand.h:
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::getNodesInCommand):
+        * editing/SplitTextNodeCommand.h:
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::getNodesInCommand):
+        * editing/WrapContentsInDummySpanCommand.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::cacheAncestorsOfStartToBeConverted):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightSelector):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate const):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::sortBlock):
+        (WebCore::XPath::NodeSet::traversalSort const):
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::LocationPath::evaluate const):
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::Union::evaluate const):
+
 2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] ImageOverlayController should paint selection quads instead of bounding rects

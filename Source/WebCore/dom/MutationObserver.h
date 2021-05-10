@@ -101,7 +101,7 @@ public:
     void setHasTransientRegistration(Document&);
     bool canDeliver();
 
-    HashSet<Node*> observedNodes() const;
+    HashSet<Ref<Node>> observedNodes() const;
 
     MutationCallback& callback() const { return m_callback.get(); }
 

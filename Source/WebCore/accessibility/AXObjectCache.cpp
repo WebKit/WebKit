@@ -3079,14 +3079,14 @@ const Element* AXObjectCache::rootAXEditableElement(const Node* node)
     return result;
 }
 
-static void conditionallyAddNodeToFilterList(Node* node, const Document& document, HashSet<Node*>& nodesToRemove)
+static void conditionallyAddNodeToFilterList(Node* node, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
 {
     if (node && (!node->isConnected() || &node->document() == &document))
-        nodesToRemove.add(node);
+        nodesToRemove.add(*node);
 }
     
 template<typename T>
-static void filterVectorPairForRemoval(const Vector<std::pair<T, T>>& list, const Document& document, HashSet<Node*>& nodesToRemove)
+static void filterVectorPairForRemoval(const Vector<std::pair<T, T>>& list, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
 {
     for (auto& entry : list) {
         conditionallyAddNodeToFilterList(entry.first, document, nodesToRemove);
@@ -3095,14 +3095,14 @@ static void filterVectorPairForRemoval(const Vector<std::pair<T, T>>& list, cons
 }
     
 template<typename T, typename U>
-static void filterMapForRemoval(const HashMap<T, U>& list, const Document& document, HashSet<Node*>& nodesToRemove)
+static void filterMapForRemoval(const HashMap<T, U>& list, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
 {
     for (auto& entry : list)
         conditionallyAddNodeToFilterList(entry.key, document, nodesToRemove);
 }
 
 template<typename T>
-static void filterListForRemoval(const ListHashSet<T>& list, const Document& document, HashSet<Node*>& nodesToRemove)
+static void filterListForRemoval(const ListHashSet<T>& list, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
 {
     for (auto* node : list)
         conditionallyAddNodeToFilterList(node, document, nodesToRemove);
@@ -3110,7 +3110,7 @@ static void filterListForRemoval(const ListHashSet<T>& list, const Document& doc
 
 void AXObjectCache::prepareForDocumentDestruction(const Document& document)
 {
-    HashSet<Node*> nodesToRemove;
+    HashSet<Ref<Node>> nodesToRemove;
     filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
     filterListForRemoval(m_modalElementsSet, document, nodesToRemove);
     filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
@@ -3119,8 +3119,8 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     filterMapForRemoval(m_deferredAttributeChange, document, nodesToRemove);
     filterVectorPairForRemoval(m_deferredFocusedNodeChange, document, nodesToRemove);
     
-    for (auto* node : nodesToRemove)
-        remove(*node);
+    for (auto& node : nodesToRemove)
+        remove(node);
 }
     
 bool AXObjectCache::nodeIsTextControl(const Node* node)

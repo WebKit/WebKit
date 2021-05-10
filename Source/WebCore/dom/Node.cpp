@@ -95,9 +95,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Node);
 using namespace HTMLNames;
 
 #if DUMP_NODE_STATISTICS
-static HashSet<Node*>& liveNodeSet()
+static HashSet<Ref<Node>>& liveNodeSet()
 {
-    static NeverDestroyed<HashSet<Node*>> liveNodes;
+    static NeverDestroyed<HashSet<Ref<Node>>> liveNodes;
     return liveNodes;
 }
 
@@ -295,9 +295,9 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, nodeCounter, ("WebCoreNode"
 #ifndef NDEBUG
 static bool shouldIgnoreLeaks = false;
 
-static HashSet<Node*>& ignoreSet()
+static HashSet<Ref<Node>>& ignoreSet()
 {
-    static NeverDestroyed<HashSet<Node*>> ignore;
+    static NeverDestroyed<HashSet<Ref<Node>>> ignore;
 
     return ignore;
 }
@@ -322,13 +322,13 @@ void Node::trackForDebugging()
 {
 #ifndef NDEBUG
     if (shouldIgnoreLeaks)
-        ignoreSet().add(this);
+        ignoreSet().add(*this);
     else
         nodeCounter.increment();
 #endif
 
 #if DUMP_NODE_STATISTICS
-    liveNodeSet().add(this);
+    liveNodeSet().add(*this);
 #endif
 }
 
