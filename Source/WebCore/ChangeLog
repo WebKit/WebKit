@@ -1,3 +1,26 @@
+2021-05-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r277228. rdar://problem/77772960
+
+    Increase stored AppHighlight character limit to 500
+    https://bugs.webkit.org/show_bug.cgi?id=225558
+    
+    Reviewed by Tim Horton.
+    
+    * Modules/highlight/AppHighlightStorage.cpp:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277228 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-08  Megan Gardner  <megan_gardner@apple.com>
+
+            Increase stored AppHighlight character limit to 500
+            https://bugs.webkit.org/show_bug.cgi?id=225558
+
+            Reviewed by Tim Horton.
+
+            * Modules/highlight/AppHighlightStorage.cpp:
+
 2021-05-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r277069. rdar://problem/77659420
