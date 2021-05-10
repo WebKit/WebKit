@@ -1,3 +1,29 @@
+2021-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use always async scrolling in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=225512
+
+        Reviewed by Fujii Hironori.
+
+        We currently use async scrolling only when the hardware acceleration policy is set for always, but not when
+        entering accelerating compositing mode in ondemand policy. Since the GTK port still supports the non accelerated
+        compositing mode we need to add and remove the scrolling tree when entering and leaving the accelerated
+        compositing mode.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_set_hardware_acceleration_policy): Always enable async scrolling when accelerated compositing
+        is enabled.
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore): Ditto.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics): Remove the scrolling tree if the
+        drawing area is destroyed in accelerated compositing mode.
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode): Add the scrolling tree.
+        (WebKit::DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode): Remove the scrolling tree.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage): Do not add the scrolling tree from here for the GTK port.
+        (WebKit::WebPage::close): Do not remove the scrolling tree from here for the GTK port.
+
 2021-05-10  Youenn Fablet  <youenn@apple.com>
 
         Use IPC::Semaphore instead of sending an IPC message for every captured audio sample

@@ -781,7 +781,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     webPageCounter.increment();
 #endif
 
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(SCROLLING_THREAD) && !PLATFORM(GTK)
     if (m_useAsyncScrolling)
         webProcess.eventDispatcher().addScrollingTreeForPage(this);
 #endif
@@ -1562,7 +1562,8 @@ void WebPage::close()
         m_remoteObjectRegistry->close();
     ASSERT(!m_remoteObjectRegistry);
 #endif
-#if ENABLE(SCROLLING_THREAD)
+
+#if ENABLE(SCROLLING_THREAD) && !PLATFORM(GTK)
     if (m_useAsyncScrolling)
         webProcess.eventDispatcher().removeScrollingTreeForPage(this);
 #endif

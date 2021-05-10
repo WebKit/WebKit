@@ -29,6 +29,7 @@
 #include "DrawingAreaCoordinatedGraphics.h"
 
 #include "DrawingAreaProxyMessages.h"
+#include "EventDispatcher.h"
 #include "LayerTreeHost.h"
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
@@ -80,7 +81,13 @@ DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage,
 #endif
 }
 
-DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics() = default;
+DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics()
+{
+#if PLATFORM(GTK)
+    if (m_supportsAsyncScrolling && m_layerTreeHost)
+        WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(&m_webPage);
+#endif
+}
 
 void DrawingAreaCoordinatedGraphics::setNeedsDisplay()
 {
@@ -579,6 +586,9 @@ void DrawingAreaCoordinatedGraphics::resumePainting()
 void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
 #if PLATFORM(GTK)
+    if (m_supportsAsyncScrolling)
+        WebProcess::singleton().eventDispatcher().addScrollingTreeForPage(&m_webPage);
+
     if (!m_alwaysUseCompositing) {
         m_webPage.corePage()->settings().setForceCompositingMode(true);
         m_alwaysUseCompositing = true;
@@ -639,6 +649,11 @@ void DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode()
 
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
+
+#if PLATFORM(GTK)
+    if (m_supportsAsyncScrolling)
+        WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(&m_webPage);
+#endif
 
     ASSERT(m_layerTreeHost);
     m_previousLayerTreeHost = WTFMove(m_layerTreeHost);
