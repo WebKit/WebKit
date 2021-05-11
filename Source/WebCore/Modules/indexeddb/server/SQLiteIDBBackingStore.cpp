@@ -247,7 +247,7 @@ SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDB
     : m_sessionID(sessionID)
     , m_identifier(identifier)
     , m_databaseRootDirectory(databaseRootDirectory)
-    , m_serializationContext(IDBSerializationContext::getOrCreateIDBSerializationContext(sessionID))
+    , m_serializationContext(IDBSerializationContext::getOrCreateForCurrentThread())
 {
     m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();
 }

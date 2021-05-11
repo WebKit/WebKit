@@ -29,7 +29,6 @@
 #include "DOMWrapperWorld.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSObjectInlines.h>
-#include <pal/SessionID.h>
 
 namespace WebCore {
 
@@ -37,18 +36,19 @@ namespace IDBServer {
 
 static Lock serializationContextMapMutex;
 
-static HashMap<PAL::SessionID, IDBSerializationContext*>& serializationContextMap()
+static HashMap<Thread*, IDBSerializationContext*>& serializationContextMap(Locker<Lock>&)
 {
-    static NeverDestroyed<HashMap<PAL::SessionID, IDBSerializationContext*>> map;
+    static NeverDestroyed<HashMap<Thread*, IDBSerializationContext*>> map;
     return map;
 }
 
-Ref<IDBSerializationContext> IDBSerializationContext::getOrCreateIDBSerializationContext(PAL::SessionID sessionID)
+Ref<IDBSerializationContext> IDBSerializationContext::getOrCreateForCurrentThread()
 {
+    auto& thread = Thread::current();
     Locker<Lock> locker(serializationContextMapMutex);
-    auto[iter, isNewEntry] = serializationContextMap().add(sessionID, nullptr);
+    auto[iter, isNewEntry] = serializationContextMap(locker).add(&thread, nullptr);
     if (isNewEntry) {
-        Ref<IDBSerializationContext> protectedContext = adoptRef(*new IDBSerializationContext(sessionID));
+        Ref<IDBSerializationContext> protectedContext = adoptRef(*new IDBSerializationContext(thread));
         iter->value = protectedContext.ptr();
         return protectedContext;
     }
@@ -59,14 +59,14 @@ Ref<IDBSerializationContext> IDBSerializationContext::getOrCreateIDBSerializatio
 IDBSerializationContext::~IDBSerializationContext()
 {
     Locker<Lock> locker(serializationContextMapMutex);
-    ASSERT(this == serializationContextMap().get(m_sessionID));
+    ASSERT(this == serializationContextMap(locker).get(&m_thread));
 
     if (m_vm) {
         JSC::JSLockHolder lock(*m_vm);
         m_globalObject.clear();
         m_vm = nullptr;
     }
-    serializationContextMap().remove(m_sessionID);
+    serializationContextMap(locker).remove(&m_thread);
 }
 
 void IDBSerializationContext::initializeVM()
@@ -85,18 +85,22 @@ void IDBSerializationContext::initializeVM()
 
 JSC::VM& IDBSerializationContext::vm()
 {
+    ASSERT(&m_thread == &Thread::current());
+
     initializeVM();
     return *m_vm;
 }
 
 JSC::JSGlobalObject& IDBSerializationContext::globalObject()
 {
+    ASSERT(&m_thread == &Thread::current());
+
     initializeVM();
     return *m_globalObject.get();
 }
 
-IDBSerializationContext::IDBSerializationContext(PAL::SessionID sessionID)
-    : m_sessionID(sessionID)
+IDBSerializationContext::IDBSerializationContext(Thread& thread)
+    : m_thread(thread)
 {
 }
 

@@ -1,3 +1,38 @@
+2021-05-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Use one VM per thread for IDB serialization work
+        https://bugs.webkit.org/show_bug.cgi?id=225658
+
+        Reviewed by Chris Dumez.
+
+        The vm map in IDBSerializationContext uses sessionID as key instead of thread identifier. Normally IDB has one 
+        thread per session (see WebIDBServer and CrossThreadTaskHandler), so we are using one vm per thread. With 
+        r275799, we remove WebIDBServer more aggressively (when no web process is not using IDB) to make sure its thread
+        does not stay around, and WebIDBServer will be destroyed after it finishes scheduled tasks on the background 
+        thread. Then, it's possible that while a WebIDBServer for some session is removed and finishing last tasks, 
+        a new IDB request for the same session comes in and we create a new WebIDBServer for the session. In this case,
+        two threads ends up using the same VM.
+
+        VM is generally not designed to be used on multiple threads, otherwise we need to acquire lock for each 
+        WTF::String operation to get correct AtomStringTable. So let's just make sure we are using one VM per thread by
+        making the map in IDBSerializationContext keyed by thread pointer.
+
+        New API test: IndexedDB.OneVMPerThread
+
+        * Modules/indexeddb/server/IDBSerializationContext.cpp:
+        (WebCore::IDBServer::IDBSerializationContext::getOrCreateIDBSerializationContext):
+        (WebCore::IDBServer::IDBSerializationContext::~IDBSerializationContext):
+        (WebCore::IDBServer::IDBSerializationContext::vm):
+        (WebCore::IDBServer::IDBSerializationContext::globalObject):
+        (WebCore::IDBServer::IDBSerializationContext::IDBSerializationContext):
+        * Modules/indexeddb/server/IDBSerializationContext.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::MemoryIDBBackingStore):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::MemoryObjectStore):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
         Add SPI to suspend / resume a WKWebView
