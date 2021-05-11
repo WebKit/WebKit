@@ -1,3 +1,14 @@
+2021-05-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Add _STAttributionDisplayName to macOS and iOS GPUProcess Info.plist
+        https://bugs.webkit.org/show_bug.cgi?id=225626
+        rdar://77019240
+
+        Reviewed by Youenn Fablet.
+
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist:
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist:
+
 2021-05-11  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] Return a default layer handle in XRDeviceProxy::createLayerProjection
