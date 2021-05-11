@@ -562,7 +562,7 @@ bool deleteEmptyDirectory(const String& path)
 
 #if PLATFORM(MAC)
     bool containsSingleDSStoreFile = false;
-    for (auto& entry : std::filesystem::directory_iterator(fsPath)) {
+    for (auto& entry : std::filesystem::directory_iterator(fsPath, ec)) {
         if (entry.path().filename() == ".DS_Store")
             containsSingleDSStoreFile = true;
         else {

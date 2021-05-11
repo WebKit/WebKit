@@ -1,3 +1,19 @@
+2021-05-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS Release wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225522
+        <rdar://problem/77680019>
+
+        Reviewed by Darin Adler.
+
+        Pass ec parameter to std::filesystem::directory_iterator() so that it doesn't throw in case of the
+        path does not exist. Normally, the function would return early earlier if the path does not exist
+        or isn't a directory. However, in the context of the test, this function is getting called on a
+        background thread and another thread is deleting the directory in parallel.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+
 2021-05-10  Devin Rousso  <drousso@apple.com>
 
         `SLEEP_THREAD_FOR_DEBUGGER` should print the PID before sleeping

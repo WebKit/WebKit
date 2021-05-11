@@ -1,3 +1,15 @@
+2021-05-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS Release wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225522
+        <rdar://problem/77680019>
+
+        Reviewed by Darin Adler.
+
+        Restore previous expectation for the test, now that it is no longer flaky crashing.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-05-10  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Decouple http/tests/media/resources/create-id3-db.php from webserver
