@@ -2206,11 +2206,13 @@ inline ImageOrientation RenderStyle::imageOrientation() const
     return static_cast<ImageOrientation::Orientation>(m_rareInheritedData->imageOrientation);
 }
 
+#if ENABLE(CSS_COMPOSITING)
 inline void RenderStyle::setBlendMode(BlendMode mode)
 {
     SET_VAR(m_rareNonInheritedData, effectiveBlendMode, static_cast<unsigned>(mode));
     SET_VAR(m_rareInheritedData, isInSubtreeWithBlendMode, mode != BlendMode::Normal);
 }
+#endif
 
 inline void RenderStyle::setLogicalWidth(Length&& logicalWidth)
 {
