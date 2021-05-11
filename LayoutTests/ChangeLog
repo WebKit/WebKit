@@ -1,3 +1,14 @@
+2021-05-11  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 arm64 ] http/tests/cache/disk-cache/redirect-chain-limits.html (layout-test) is a flaky timeout
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=225666
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass timeout.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-05-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r277071): imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html is failing

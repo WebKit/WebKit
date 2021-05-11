@@ -1399,3 +1399,5 @@ webkit.org/b/225534 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/webrt
 webkit.org/b/225533 [ BigSur Release arm64 ] mathml/scripts-removeChild.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/224783 [ BigSur arm64 ] http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Pass Failure ]
+
+webkit.org/b/225666 [ arm64 ] http/tests/cache/disk-cache/redirect-chain-limits.html [ Pass Timeout ]
