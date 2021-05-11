@@ -1,3 +1,12 @@
+2021-05-10  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur Wk1 Release] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=225625
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Speculative revalidation requests not properly attributed as app-bound
