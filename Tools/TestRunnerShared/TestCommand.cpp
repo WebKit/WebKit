@@ -120,7 +120,8 @@ std::filesystem::path testPath(const std::string& pathOrURL)
     if (pathOrURL.find("file://") == 0)
         return pathOrURL.substr(strlen("file:/"));
 
-    return std::filesystem::absolute(pathOrURL);
+    std::error_code ec;
+    return std::filesystem::absolute(pathOrURL, ec);
 }
 
 std::string testURLString(const std::string& pathOrURL)
@@ -128,7 +129,8 @@ std::string testURLString(const std::string& pathOrURL)
     if (pathOrURL.find("http://") == 0 || pathOrURL.find("https://") == 0 || pathOrURL.find("file://") == 0)
         return pathOrURL;
 
-    return "file://" + std::filesystem::absolute(pathOrURL).generic_string();
+    std::error_code ec;
+    return "file://" + std::filesystem::absolute(pathOrURL, ec).generic_string();
 }
 
 }

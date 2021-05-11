@@ -246,7 +246,8 @@ bool parseTestHeaderFeature(TestFeatures& features, std::string key, std::string
 static TestFeatures parseTestHeader(std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     TestFeatures features;
-    if (!std::filesystem::exists(path))
+    std::error_code ec;
+    if (!std::filesystem::exists(path, ec))
         return features;
 
     std::ifstream file(path);
