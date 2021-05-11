@@ -1403,3 +1403,5 @@ webkit.org/b/224783 [ BigSur arm64 ] http/tests/privateClickMeasurement/store-pr
 webkit.org/b/225666 [ arm64 ] http/tests/cache/disk-cache/redirect-chain-limits.html [ Pass Timeout ]
 
 webkit.org/b/225665 [ Release arm64 ] http/tests/appcache/fail-on-update-2.html [ Pass Timeout ]
+
+webkit.org/b/225664 [ BigSur arm64 ] editing/selection/move-by-character-brute-force.html [ Pass Timeout ]
