@@ -29,8 +29,8 @@
 #if USE(CG)
 
 #include "GraphicsContextCG.h"
-#include "ImageData.h"
 #include "MIMETypeRegistry.h"
+#include "PixelBuffer.h"
 #include <ImageIO/ImageIO.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/Base64.h>
@@ -118,7 +118,7 @@ bool encodeImage(CGImageRef image, CFStringRef uti, Optional<double> quality, CF
     return CGImageDestinationFinalize(destination.get());
 }
 
-static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeType, Optional<double> quality)
+static RetainPtr<CFDataRef> cfData(const PixelBuffer& source, const String& mimeType, Optional<double> quality)
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
@@ -126,18 +126,20 @@ static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeTy
     ASSERT(uti);
 
     CGImageAlphaInfo dataAlphaInfo = kCGImageAlphaLast;
-    unsigned char* data = source.data().data();
+    
+    auto data = source.data().data();
+    auto dataSize = source.data().byteLength();
+
     Vector<uint8_t> premultipliedData;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        size_t size = 4 * source.width() * source.height();
-        if (!premultipliedData.tryReserveCapacity(size))
+        if (!premultipliedData.tryReserveCapacity(dataSize))
             return nullptr;
 
-        premultipliedData.grow(size);
+        premultipliedData.grow(dataSize);
         unsigned char* buffer = premultipliedData.data();
-        for (size_t i = 0; i < size; i += 4) {
+        for (size_t i = 0; i < dataSize; i += 4) {
             unsigned alpha = data[i + 3];
             if (alpha != 255) {
                 buffer[i + 0] = data[i + 0] * alpha / 255;
@@ -154,12 +156,14 @@ static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeTy
         data = premultipliedData.data();
     }
 
-    verifyImageBufferIsBigEnough(data, 4 * source.width() * source.height());
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(0, data, 4 * source.width() * source.height(), 0));
+    verifyImageBufferIsBigEnough(data, dataSize);
+
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, dataSize, nullptr));
     if (!dataProvider)
         return nullptr;
 
-    auto image = adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    auto imageSize = source.size();
+    auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(source.colorSpace()), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
     auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
     if (!encodeImage(image.get(), uti.get(), quality, cfData.get()))
@@ -176,7 +180,7 @@ String dataURL(CFDataRef data, const String& mimeType)
     return "data:" + mimeType + ";base64," + base64Data;
 }
 
-String dataURL(const ImageData& source, const String& mimeType, Optional<double> quality)
+String dataURL(const PixelBuffer& source, const String& mimeType, Optional<double> quality)
 {
     if (auto data = cfData(source, mimeType, quality))
         return dataURL(data.get(), mimeType);
@@ -190,7 +194,7 @@ Vector<uint8_t> dataVector(CFDataRef cfData)
     return data;
 }
 
-Vector<uint8_t> data(const ImageData& source, const String& mimeType, Optional<double> quality)
+Vector<uint8_t> data(const PixelBuffer& source, const String& mimeType, Optional<double> quality)
 {
     if (auto data = cfData(source, mimeType, quality))
         return dataVector(data.get());

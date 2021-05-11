@@ -29,7 +29,7 @@
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/ImageData.h>
+#include <WebCore/PixelBuffer.h>
 #include <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -105,13 +105,13 @@ Vector<uint8_t> CGDisplayListImageBufferBackend::toBGRAData() const
     return { };
 }
 
-RefPtr<WebCore::ImageData> CGDisplayListImageBufferBackend::getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const
+Optional<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(WebCore::AlphaPremultiplication, const WebCore::IntRect&) const
 {
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-void CGDisplayListImageBufferBackend::putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
+void CGDisplayListImageBufferBackend::putPixelBuffer(WebCore::AlphaPremultiplication, const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication)
 {
     ASSERT_NOT_REACHED();
 }

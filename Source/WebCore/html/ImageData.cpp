@@ -43,21 +43,16 @@ Checked<unsigned, RecordOverflow> ImageData::dataSize(const IntSize& size)
     return checkedDataSize;
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
+Ref<ImageData> ImageData::create(PixelBuffer&& pixelBuffer)
 {
-    if (!sw || !sh)
-        return Exception { IndexSizeError };
-    IntSize size(sw, sh);
-    auto dataSize = ImageData::dataSize(size);
-    if (dataSize.hasOverflowed())
-        return Exception { RangeError, "Cannot allocate a buffer of this size"_s };
-    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
-    if (!byteArray) {
-        // FIXME: Does this need to be a "real" out of memory error with setOutOfMemoryError called on it?
-        return Exception { RangeError, "Out of memory"_s };
-    }
-    byteArray->zeroFill();
-    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, byteArray.releaseNonNull() }));
+    return adoptRef(*new ImageData(WTFMove(pixelBuffer)));
+}
+
+RefPtr<ImageData> ImageData::create(Optional<PixelBuffer>&& pixelBuffer)
+{
+    if (!pixelBuffer)
+        return nullptr;
+    return ImageData::create(WTFMove(*pixelBuffer));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size)
@@ -78,6 +73,23 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&
         return nullptr;
 
     return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, WTFMove(byteArray) }));
+}
+
+ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
+{
+    if (!sw || !sh)
+        return Exception { IndexSizeError };
+    IntSize size(sw, sh);
+    auto dataSize = ImageData::dataSize(size);
+    if (dataSize.hasOverflowed())
+        return Exception { RangeError, "Cannot allocate a buffer of this size"_s };
+    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
+    if (!byteArray) {
+        // FIXME: Does this need to be a "real" out of memory error with setOutOfMemoryError called on it?
+        return Exception { RangeError, "Out of memory"_s };
+    }
+    byteArray->zeroFill();
+    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, byteArray.releaseNonNull() }));
 }
 
 ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh)

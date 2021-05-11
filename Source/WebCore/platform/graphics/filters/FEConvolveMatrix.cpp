@@ -25,7 +25,7 @@
 #include "FEConvolveMatrix.h"
 
 #include "Filter.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/TextStream.h>
@@ -371,33 +371,28 @@ void FEConvolveMatrix::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    ImageData* resultImage;
-    if (m_preserveAlpha)
-        resultImage = createUnmultipliedImageResult();
-    else
-        resultImage = createPremultipliedImageResult();
-
-    if (!resultImage)
+    auto& destinationPixelBuffer = m_preserveAlpha ? createUnmultipliedImageResult() : createPremultipliedImageResult();
+    if (!destinationPixelBuffer)
         return;
 
-    auto& dstPixelArray = resultImage->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
 
-    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
+    IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
 
-    RefPtr<Uint8ClampedArray> srcPixelArray;
+    RefPtr<Uint8ClampedArray> sourcePixelArray;
     if (m_preserveAlpha)
-        srcPixelArray = in->unmultipliedResult(effectDrawingRect, operatingColorSpace());
+        sourcePixelArray = in->unmultipliedResult(effectDrawingRect, operatingColorSpace());
     else
-        srcPixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
-    if (!srcPixelArray)
+        sourcePixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
+    if (!sourcePixelArray)
         return;
 
     IntSize paintSize = absolutePaintRect().size();
     paintSize.scale(filter().filterScale());
 
     PaintingData paintingData = {
-        *srcPixelArray,
-        dstPixelArray,
+        *sourcePixelArray,
+        destinationPixelArray,
         paintSize.width(),
         paintSize.height(),
         m_bias * 255,

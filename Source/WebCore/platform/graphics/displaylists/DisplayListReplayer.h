@@ -34,7 +34,6 @@ namespace WebCore {
 enum class AlphaPremultiplication : uint8_t;
 class FloatRect;
 class GraphicsContext;
-class ImageData;
 
 namespace DisplayList {
 

@@ -298,10 +298,10 @@ void DisplayList::append(ItemHandle item)
         return append<MetaCommandChangeDestinationImageBuffer>(item.get<MetaCommandChangeDestinationImageBuffer>());
     case ItemType::MetaCommandChangeItemBuffer:
         return append<MetaCommandChangeItemBuffer>(item.get<MetaCommandChangeItemBuffer>());
-    case ItemType::GetImageData:
-        return append<GetImageData>(item.get<GetImageData>());
-    case ItemType::PutImageData:
-        return append<PutImageData>(item.get<PutImageData>());
+    case ItemType::GetPixelBuffer:
+        return append<GetPixelBuffer>(item.get<GetPixelBuffer>());
+    case ItemType::PutPixelBuffer:
+        return append<PutPixelBuffer>(item.get<PutPixelBuffer>());
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return append<PaintFrameForMedia>(item.get<PaintFrameForMedia>());

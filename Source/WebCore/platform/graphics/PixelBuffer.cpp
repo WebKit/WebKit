@@ -27,8 +27,44 @@
 #include "PixelBuffer.h"
 
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+Checked<unsigned, RecordOverflow> PixelBuffer::computeBufferSize(PixelFormat format, const IntSize& size)
+{
+    // NOTE: Only 8-bit formats are currently supported.
+    ASSERT_UNUSED(format, format == PixelFormat::RGBA8 || format == PixelFormat::BGRA8);
+
+    constexpr unsigned bytesPerPixel = 4;
+
+    return size.area<RecordOverflow>() * bytesPerPixel;
+}
+
+Optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(DestinationColorSpace colorSpace, PixelFormat format, const IntSize& size, unsigned dataByteLength)
+{
+    ASSERT(format == PixelFormat::RGBA8 || format == PixelFormat::BGRA8);
+    ASSERT(computeBufferSize(format, size).unsafeGet() == dataByteLength);
+
+    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(dataByteLength);
+    if (!pixelArray)
+        return WTF::nullopt;
+    return { { colorSpace, format, size, pixelArray.releaseNonNull() } };
+}
+
+Optional<PixelBuffer> PixelBuffer::tryCreate(DestinationColorSpace colorSpace, PixelFormat format, const IntSize& size)
+{
+    // NOTE: Only 8-bit formats are currently supported.
+    ASSERT(format == PixelFormat::RGBA8 || format == PixelFormat::BGRA8);
+
+    auto bufferSize = computeBufferSize(format, size);
+    if (bufferSize.hasOverflowed())
+        return WTF::nullopt;
+    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(bufferSize.unsafeGet());
+    if (!pixelArray)
+        return WTF::nullopt;
+    return { { colorSpace, format, size, pixelArray.releaseNonNull() } };
+}
 
 PixelBuffer::PixelBuffer(DestinationColorSpace colorSpace, PixelFormat format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
     : m_colorSpace { colorSpace }
@@ -44,6 +80,11 @@ PixelBuffer::~PixelBuffer() = default;
 PixelBuffer PixelBuffer::deepClone() const
 {
     return { m_colorSpace, m_format, m_size, Uint8ClampedArray::create(m_data->data(), m_data->length()) };
+}
+
+TextStream& operator<<(TextStream& ts, const PixelBuffer& pixelBuffer)
+{
+    return ts << &pixelBuffer.data();
 }
 
 }

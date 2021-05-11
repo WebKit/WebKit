@@ -39,10 +39,10 @@
 #include "ANGLEWebKitBridge.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "ImageData.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "Logging.h"
+#include "PixelBuffer.h"
 #include "TemporaryOpenGLSetting.h"
 #include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/RegularExpression.h>
@@ -178,7 +178,7 @@ void GraphicsContextGLOpenGL::prepareTexture()
     ::glFlush();
 }
 
-RefPtr<ImageData> GraphicsContextGLOpenGL::readRenderingResults()
+Optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResults()
 {
     bool mustRestoreFBO = false;
     if (contextAttributes().antialias) {

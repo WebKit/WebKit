@@ -27,7 +27,7 @@
 #include "FETurbulence.h"
 
 #include "Filter.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/ParallelJobs.h>
 #include <wtf/text/TextStream.h>
@@ -396,17 +396,17 @@ void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 
 void FETurbulence::platformApplySoftware()
 {
-    auto* resultImage = createUnmultipliedImageResult();
-    if (!resultImage)
+    auto& destinationPixelBuffer = createUnmultipliedImageResult();
+    if (!destinationPixelBuffer)
         return;
 
-    auto& pixelArray = resultImage->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     IntSize resultSize(absolutePaintRect().size());
     resultSize.scale(filter().filterScale());
 
     if (resultSize.isEmpty()) {
-        pixelArray.zeroFill();
+        destinationPixelArray.zeroFill();
         return;
     }
 
@@ -441,7 +441,7 @@ void FETurbulence::platformApplySoftware()
             for (unsigned i = 0; i < numJobs; ++i) {
                 FillRegionParameters& params = parallelJobs.parameter(i);
                 params.filter = this;
-                params.pixelArray = &pixelArray;
+                params.pixelArray = &destinationPixelArray;
                 params.paintingData = &paintingData;
                 params.stitchData = stitchData;
                 params.startY = startY;
@@ -457,7 +457,7 @@ void FETurbulence::platformApplySoftware()
     }
 
     // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
-    fillRegion(pixelArray, paintingData, stitchData, 0, height);
+    fillRegion(destinationPixelArray, paintingData, stitchData, 0, height);
 }
 
 static TextStream& operator<<(TextStream& ts, TurbulenceType type)

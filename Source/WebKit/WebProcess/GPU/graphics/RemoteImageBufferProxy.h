@@ -194,38 +194,38 @@ protected:
         return bitmap->createImage();
     }
 
-    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
+    Optional<WebCore::PixelBuffer> getPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return nullptr;
+            return WTF::nullopt;
 
-        auto imageData = WebCore::ImageData::create(srcRect.size());
-        if (!imageData)
-            return nullptr;
-        size_t dataSize = imageData->data().byteLength();
+        auto pixelBuffer = WebCore::PixelBuffer::tryCreate(WebCore::DestinationColorSpace::SRGB, WebCore::PixelFormat::RGBA8, srcRect.size());
+        if (!pixelBuffer)
+            return WTF::nullopt;
+        size_t dataSize = pixelBuffer->data().byteLength();
 
         IPC::Timeout timeout = 5_s;
-        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize, timeout);
+        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetPixelBuffer(dataSize, timeout);
         if (!sharedMemory)
-            return nullptr;
+            return WTF::nullopt;
 
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-        mutableThis.m_drawingContext.recorder().getImageData(outputFormat, srcRect);
+        mutableThis.m_drawingContext.recorder().getPixelBuffer(outputFormat, srcRect);
         mutableThis.flushDrawingContextAsync();
 
-        if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete(timeout))
-            memcpy(imageData->data().data(), sharedMemory->data(), dataSize);
+        if (m_remoteRenderingBackendProxy->waitForGetPixelBufferToComplete(timeout))
+            memcpy(pixelBuffer->data().data(), sharedMemory->data(), dataSize);
         else
-            memset(imageData->data().data(), 0, dataSize);
-        return imageData;
+            memset(pixelBuffer->data().data(), 0, dataSize);
+        return pixelBuffer;
     }
 
-    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
+    void putPixelBuffer(WebCore::AlphaPremultiplication inputFormat, const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
     {
-        // The math inside ImageData::create() doesn't agree with the math inside ImageBufferBackend::putImageData() about how m_resolutionScale interacts with the data in the ImageBuffer.
-        // This means that putImageData() is only called when resolutionScale() == 1.
+        // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
+        // This means that putPixelBuffer() is only called when resolutionScale() == 1.
         ASSERT(resolutionScale() == 1);
-        m_drawingContext.recorder().putImageData(inputFormat, imageData, srcRect, destPoint, destFormat);
+        m_drawingContext.recorder().putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat);
     }
 
     bool prefersPreparationForDisplay() override { return true; }

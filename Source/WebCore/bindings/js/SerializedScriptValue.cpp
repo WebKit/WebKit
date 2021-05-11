@@ -1076,13 +1076,13 @@ private:
         }
 
         const IntSize& logicalSize = buffer->logicalSize();
-        auto imageData = buffer->getImageData(AlphaPremultiplication::Premultiplied, { IntPoint::zero(), logicalSize });
-        if (!imageData) {
+        auto pixelBuffer = buffer->getPixelBuffer(AlphaPremultiplication::Premultiplied, { IntPoint::zero(), logicalSize });
+        if (!pixelBuffer) {
             code = SerializationReturnCode::ValidationError;
             return;
         }
 
-        auto arrayBuffer = imageData->data().possiblySharedBuffer();
+        auto arrayBuffer = pixelBuffer->data().possiblySharedBuffer();
         if (!arrayBuffer) {
             code = SerializationReturnCode::ValidationError;
             return;
@@ -3150,6 +3150,7 @@ private:
         IntSize imageDataSize = logicalSize;
         imageDataSize.scale(resolutionScale);
 
+        // FIXME: Creating this ImageData is not necessary. We should skip right to creating a PixelBuffer directly.
         auto imageData = ImageData::create(imageDataSize, array.releaseNonNull());
         if (!imageData) {
             fail();
@@ -3162,7 +3163,7 @@ private:
             return JSValue();
         }
 
-        buffer->putImageData(AlphaPremultiplication::Premultiplied, *imageData, { IntPoint::zero(), logicalSize });
+        buffer->putPixelBuffer(AlphaPremultiplication::Premultiplied, imageData->pixelBuffer(), { IntPoint::zero(), logicalSize });
 
         auto bitmap = ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer), OptionSet<SerializationState>::fromRaw(serializationState)));
         return getJSValue(bitmap);

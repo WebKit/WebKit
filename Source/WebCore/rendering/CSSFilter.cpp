@@ -427,7 +427,7 @@ IntRect CSSFilter::outputRect() const
     auto& lastEffect = m_effects.last().get();
     
     if (lastEffect.hasResult() || (m_filterRenderer && m_filterRenderer->hasResult()))
-        return lastEffect.requestedRegionOfInputImageData(IntRect { m_filterRegion });
+        return lastEffect.requestedRegionOfInputPixelBuffer(IntRect { m_filterRegion });
     
     return { };
 }

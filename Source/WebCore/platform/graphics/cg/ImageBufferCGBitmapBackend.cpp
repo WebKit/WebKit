@@ -31,8 +31,8 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
-#include "ImageData.h"
 #include "IntRect.h"
+#include "PixelBuffer.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -159,14 +159,14 @@ Vector<uint8_t> ImageBufferCGBitmapBackend::toBGRAData() const
     return ImageBufferBackend::toBGRAData(m_data);
 }
 
-RefPtr<ImageData> ImageBufferCGBitmapBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+Optional<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
 {
-    return ImageBufferBackend::getImageData(outputFormat, srcRect, m_data);
+    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data);
 }
 
-void ImageBufferCGBitmapBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+void ImageBufferCGBitmapBackend::putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, m_data);
+    ImageBufferBackend::putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat, m_data);
 }
 
 } // namespace WebCore

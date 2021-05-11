@@ -35,9 +35,9 @@
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "ImageData.h"
 #include "MediaPlayerIdentifier.h"
 #include "Pattern.h"
+#include "PixelBuffer.h"
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
 #include <wtf/TypeCasts.h>
@@ -49,7 +49,6 @@ class TextStream;
 
 namespace WebCore {
 
-class ImageData;
 class MediaPlayer;
 struct ImagePaintingOptions;
 
@@ -1900,13 +1899,13 @@ private:
     FloatRect m_rect;
 };
 
-class GetImageData {
+class GetPixelBuffer {
 public:
-    static constexpr ItemType itemType = ItemType::GetImageData;
+    static constexpr ItemType itemType = ItemType::GetPixelBuffer;
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    GetImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect)
+    GetPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect)
         : m_srcRect(srcRect)
         , m_outputFormat(outputFormat)
     {
@@ -1920,17 +1919,24 @@ private:
     AlphaPremultiplication m_outputFormat;
 };
 
-class PutImageData {
+class PutPixelBuffer {
 public:
-    static constexpr ItemType itemType = ItemType::PutImageData;
+    static constexpr ItemType itemType = ItemType::PutPixelBuffer;
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
-    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, Ref<ImageData>&&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT PutPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT PutPixelBuffer(AlphaPremultiplication inputFormat, PixelBuffer&&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+
+    PutPixelBuffer(const PutPixelBuffer&);
+    PutPixelBuffer(PutPixelBuffer&&) = default;
+    PutPixelBuffer& operator=(const PutPixelBuffer&);
+    PutPixelBuffer& operator=(PutPixelBuffer&&) = default;
+
+    void swap(PutPixelBuffer&);
 
     AlphaPremultiplication inputFormat() const { return m_inputFormat; }
-    ImageData& imageData() const { return *m_imageData; }
+    const PixelBuffer& pixelBuffer() const { return m_pixelBuffer; }
     IntRect srcRect() const { return m_srcRect; }
     IntPoint destPoint() const { return m_destPoint; }
     AlphaPremultiplication destFormat() const { return m_destFormat; }
@@ -1939,31 +1945,31 @@ public:
     Optional<FloatRect> globalBounds() const { return {{ m_destPoint, m_srcRect.size() }}; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PutImageData> decode(Decoder&);
+    template<class Decoder> static Optional<PutPixelBuffer> decode(Decoder&);
 
 private:
     IntRect m_srcRect;
     IntPoint m_destPoint;
-    RefPtr<ImageData> m_imageData;
+    PixelBuffer m_pixelBuffer;
     AlphaPremultiplication m_inputFormat;
     AlphaPremultiplication m_destFormat;
 };
 
 template<class Encoder>
-void PutImageData::encode(Encoder& encoder) const
+void PutPixelBuffer::encode(Encoder& encoder) const
 {
     encoder << m_inputFormat;
-    encoder << makeRef(*m_imageData);
+    encoder << m_pixelBuffer;
     encoder << m_srcRect;
     encoder << m_destPoint;
     encoder << m_destFormat;
 }
 
 template<class Decoder>
-Optional<PutImageData> PutImageData::decode(Decoder& decoder)
+Optional<PutPixelBuffer> PutPixelBuffer::decode(Decoder& decoder)
 {
     Optional<AlphaPremultiplication> inputFormat;
-    Optional<Ref<ImageData>> imageData;
+    Optional<PixelBuffer> pixelBuffer;
     Optional<IntRect> srcRect;
     Optional<IntPoint> destPoint;
     Optional<AlphaPremultiplication> destFormat;
@@ -1972,8 +1978,8 @@ Optional<PutImageData> PutImageData::decode(Decoder& decoder)
     if (!inputFormat)
         return WTF::nullopt;
 
-    decoder >> imageData;
-    if (!imageData)
+    decoder >> pixelBuffer;
+    if (!pixelBuffer)
         return WTF::nullopt;
 
     decoder >> srcRect;
@@ -1988,7 +1994,7 @@ Optional<PutImageData> PutImageData::decode(Decoder& decoder)
     if (!destFormat)
         return WTF::nullopt;
 
-    return {{ *inputFormat, WTFMove(*imageData), *srcRect, *destPoint, *destFormat }};
+    return {{ *inputFormat, WTFMove(*pixelBuffer), *srcRect, *destPoint, *destFormat }};
 }
 
 #if ENABLE(VIDEO)
@@ -2317,10 +2323,10 @@ using DisplayListItem = Variant
     , FillRectWithRoundedHole
     , FillRoundedRect
     , FlushContext
-    , GetImageData
+    , GetPixelBuffer
     , MetaCommandChangeDestinationImageBuffer
     , MetaCommandChangeItemBuffer
-    , PutImageData
+    , PutPixelBuffer
     , Restore
     , Rotate
     , Save
@@ -2419,8 +2425,8 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FlushContext,
     WebCore::DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer,
     WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer,
-    WebCore::DisplayList::ItemType::GetImageData,
-    WebCore::DisplayList::ItemType::PutImageData,
+    WebCore::DisplayList::ItemType::GetPixelBuffer,
+    WebCore::DisplayList::ItemType::PutPixelBuffer,
 #if ENABLE(VIDEO)
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
 #endif

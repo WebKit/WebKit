@@ -35,9 +35,11 @@ namespace WebCore {
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh);
+    WEBCORE_EXPORT static Ref<ImageData> create(PixelBuffer&&);
+    WEBCORE_EXPORT static RefPtr<ImageData> create(Optional<PixelBuffer>&&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&);
+    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh);
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, Optional<unsigned> sh);
     WEBCORE_EXPORT ~ImageData();
 
@@ -51,6 +53,8 @@ public:
 
     DestinationColorSpace colorSpace() const { return m_pixelBuffer.colorSpace(); }
     PixelFormat format() const { return m_pixelBuffer.format(); }
+
+    const PixelBuffer& pixelBuffer() const { return m_pixelBuffer; }
 
 private:
     explicit ImageData(PixelBuffer&&);

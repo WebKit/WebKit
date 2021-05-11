@@ -30,7 +30,6 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/ImageData.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/MediaSelectionOption.h>
@@ -803,18 +802,6 @@ template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {
     static Optional<WebCore::CDMInstanceSession::Message> decode(Decoder&);
 };
 #endif
-
-template<> struct ArgumentCoder<RefPtr<WebCore::ImageData>> {
-    template<typename Encoder>
-    static void encode(Encoder&, const RefPtr<WebCore::ImageData>&);
-    static Optional<RefPtr<WebCore::ImageData>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::ImageData>> {
-    template<typename Encoder>
-    static void encode(Encoder&, const Ref<WebCore::ImageData>&);
-    static Optional<Ref<WebCore::ImageData>> decode(Decoder&);
-};
 
 #if HAVE(PASSKIT_INSTALLMENTS)
 template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {

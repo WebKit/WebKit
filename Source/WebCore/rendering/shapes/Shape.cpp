@@ -35,8 +35,8 @@
 #include "BoxShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "ImageData.h"
 #include "LengthFunctions.h"
+#include "PixelBuffer.h"
 #include "PolygonShape.h"
 #include "RasterShape.h"
 #include "RectangleShape.h"
@@ -197,14 +197,14 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     if (image)
         graphicsContext.drawImage(*image, IntRect(IntPoint(), imageRect.size()));
 
-    auto imageData = imageBuffer->getImageData(AlphaPremultiplication::Unpremultiplied, { IntPoint(), imageRect.size() });
+    auto pixelBuffer = imageBuffer->getPixelBuffer(AlphaPremultiplication::Unpremultiplied, { IntPoint(), imageRect.size() });
     
-    // We could get to a value where imageData could be nullptr. A case where ImageRect.size() is huge, imageData::create
-    // can return a nullptr because data size has overflowed. Refer rdar://problem/61793884
-    if (!imageData)
+    // We could get to a value where PixelBuffer could be nullopt. A case where ImageRect.size() is huge, PixelBuffer::tryCreate
+    // can return a nullopt because data size has overflowed. Refer rdar://problem/61793884
+    if (!pixelBuffer)
         return createShape();
 
-    auto& pixelArray = imageData->data();
+    auto& pixelArray = pixelBuffer->data();
     unsigned pixelArrayLength = pixelArray.length();
     unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
     uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));

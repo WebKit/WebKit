@@ -30,11 +30,11 @@
 #if ENABLE(WEBGL) && USE(OPENGL)
 
 #include "ExtensionsGLOpenGL.h"
-#include "ImageData.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "NotImplemented.h"
+#include "PixelBuffer.h"
 #include "TemporaryOpenGLSetting.h"
 #include <algorithm>
 #include <cstring>
@@ -61,12 +61,11 @@
 
 namespace WebCore {
 
-
-RefPtr<ImageData> GraphicsContextGLOpenGL::readPixelsForPaintResults()
+Optional<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 {
-    auto imageData = ImageData::create(getInternalFramebufferSize());
-    if (!imageData)
-        return nullptr;
+    auto pixelBuffer = PixelBuffer::tryCreate(DestinationColorSpace::SRGB, PixelFormat::RGBA8, getInternalFramebufferSize());
+    if (!pixelBuffer)
+        return WTF::nullopt;
 
     GLint packAlignment = 4;
     bool mustRestorePackAlignment = false;
@@ -76,12 +75,12 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::readPixelsForPaintResults()
         mustRestorePackAlignment = true;
     }
 
-    ::glReadPixels(0, 0, imageData->width(), imageData->height(), GL_RGBA, GL_UNSIGNED_BYTE, imageData->data().data());
+    ::glReadPixels(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->data().data());
 
     if (mustRestorePackAlignment)
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
-    return imageData;
+    return pixelBuffer;
 }
 
 void GraphicsContextGLOpenGL::validateAttributes()

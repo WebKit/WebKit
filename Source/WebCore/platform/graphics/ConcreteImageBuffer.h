@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ImageBuffer.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 
 namespace WebCore {
 
@@ -230,20 +230,20 @@ protected:
         return { };
     }
 
-    RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const override
+    Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const override
     {
         if (auto* backend = ensureBackendCreated()) {
             const_cast<ConcreteImageBuffer&>(*this).flushContext();
-            return backend->getImageData(outputFormat, srcRect);
+            return backend->getPixelBuffer(outputFormat, srcRect);
         }
-        return nullptr;
+        return WTF::nullopt;
     }
 
-    void putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override
+    void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override
     {
         if (auto* backend = ensureBackendCreated()) {
             flushContext();
-            backend->putImageData(inputFormat, imageData, srcRect, destPoint, destFormat);
+            backend->putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat);
         }
     }
 

@@ -27,7 +27,7 @@
 
 #include "ColorComponents.h"
 #include "Filter.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextStream.h>
@@ -243,23 +243,23 @@ void FEMorphology::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    auto* resultImage = createPremultipliedImageResult();
-    if (!resultImage)
+    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    if (!destinationPixelBuffer)
         return;
 
-    auto& destinationPixelArray = resultImage->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     setIsAlphaImage(in->isAlphaImage());
 
-    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
+    IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
 
     IntSize radius = flooredIntSize(FloatSize(m_radiusX, m_radiusY));
     if (platformApplyDegenerate(destinationPixelArray, effectDrawingRect, radius.width(), radius.height()))
         return;
 
     Filter& filter = this->filter();
-    auto srcPixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
-    if (!srcPixelArray)
+    auto sourcePixelArray = in->premultipliedResult(effectDrawingRect, operatingColorSpace());
+    if (!sourcePixelArray)
         return;
 
     radius = flooredIntSize(filter.scaledByFilterResolution({ m_radiusX, m_radiusY }));
@@ -270,7 +270,7 @@ void FEMorphology::platformApplySoftware()
         return;
     
     PaintingData paintingData;
-    paintingData.srcPixelArray = srcPixelArray.get();
+    paintingData.srcPixelArray = sourcePixelArray.get();
     paintingData.dstPixelArray = &destinationPixelArray;
     paintingData.width = ceilf(effectDrawingRect.width() * filter.filterScale());
     paintingData.height = ceilf(effectDrawingRect.height() * filter.filterScale());

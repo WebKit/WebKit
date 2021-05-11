@@ -36,13 +36,14 @@
 namespace WebCore {
 
 enum class AlphaPremultiplication : uint8_t;
+
+class FloatPoint;
 class FloatPoint;
 class FloatRect;
-class GlyphBuffer;
-class FloatPoint;
 class Font;
+class GlyphBuffer;
 class Image;
-class ImageData;
+class PixelBuffer;
 
 struct GraphicsContextState;
 struct ImagePaintingOptions;
@@ -57,8 +58,8 @@ public:
     WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction = DrawGlyphsRecorder::DrawGlyphsDeconstruction::Deconstruct);
     WEBCORE_EXPORT virtual ~Recorder();
 
-    WEBCORE_EXPORT void getImageData(AlphaPremultiplication outputFormat, const IntRect& sourceRect);
-    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT void getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& sourceRect);
+    WEBCORE_EXPORT void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
 

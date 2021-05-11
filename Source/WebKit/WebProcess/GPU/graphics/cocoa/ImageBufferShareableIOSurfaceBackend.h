@@ -60,8 +60,8 @@ public:
     String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution) const override;
     Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
     Vector<uint8_t> toBGRAData() const override;
-    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
-    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
+    Optional<WebCore::PixelBuffer> getPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
+    void putPixelBuffer(WebCore::AlphaPremultiplication inputFormat, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;
     static constexpr bool canMapBackingStore = false;

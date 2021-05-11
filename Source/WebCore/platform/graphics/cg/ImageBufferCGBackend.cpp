@@ -31,9 +31,9 @@
 #include "BitmapImage.h"
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
-#include "ImageData.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include "PixelBuffer.h"
 #include "RuntimeApplicationChecks.h"
 
 #if USE(ACCELERATE)
@@ -187,24 +187,25 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        auto imageData = getImageData(AlphaPremultiplication::Premultiplied, logicalRect());
-        if (!imageData)
+        auto pixelBuffer = getPixelBuffer(AlphaPremultiplication::Premultiplied, logicalRect());
+        if (!pixelBuffer)
             return nullptr;
 
-        auto& pixelArray = imageData->data();
-        auto dataSize = pixelArray.byteLength();
-        auto pixelArrayDimensions = imageData->size();
+        auto pixelArray = makeRef(pixelBuffer->data());
+        auto dataSize = pixelArray->byteLength();
+        auto data = pixelArray->data();
 
-        verifyImageBufferIsBigEnough(pixelArray.data(), dataSize);
+        verifyImageBufferIsBigEnough(data, dataSize);
 
-        auto dataProvider = adoptCF(CGDataProviderCreateWithData(imageData.leakRef(), pixelArray.data(), dataSize, [] (void* context, const void*, size_t) {
-            reinterpret_cast<ImageData*>(context)->deref();
+        auto dataProvider = adoptCF(CGDataProviderCreateWithData(&pixelArray.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
+            static_cast<JSC::Uint8ClampedArray*>(context)->deref();
         }));
         
         if (!dataProvider)
             return nullptr;
 
-        image = adoptCF(CGImageCreate(pixelArrayDimensions.width(), pixelArrayDimensions.height(), 8, 32, 4 * pixelArrayDimensions.width(), sRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+        auto imageSize = pixelBuffer->size();
+        image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer->colorSpace()), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     } else if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
         auto nativeImage = copyNativeImage(CopyBackingStore);
         if (!nativeImage)

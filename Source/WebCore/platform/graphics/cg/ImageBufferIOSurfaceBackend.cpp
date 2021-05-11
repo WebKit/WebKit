@@ -29,9 +29,9 @@
 #if HAVE(IOSURFACE)
 
 #include "GraphicsContextCG.h"
-#include "ImageData.h"
-#include "IntRect.h"
 #include "IOSurface.h"
+#include "IntRect.h"
+#include "PixelBuffer.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/IsoMallocInlines.h>
@@ -168,11 +168,11 @@ void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, co
 
 RetainPtr<CFDataRef> ImageBufferIOSurfaceBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
 {
-    if (m_requiresDrawAfterPutImageData) {
+    if (m_requiresDrawAfterPutPixelBuffer) {
         // Force recreating the IOSurface cached image.
         // See https://bugs.webkit.org/show_bug.cgi?id=157966 for explaining why this is necessary.
         context().fillRect(FloatRect(1, 1, 0, 0));
-        m_requiresDrawAfterPutImageData = false;
+        m_requiresDrawAfterPutPixelBuffer = false;
     }
     return ImageBufferCGBackend::toCFData(mimeType, quality, preserveResolution);
 }
@@ -183,17 +183,17 @@ Vector<uint8_t> ImageBufferIOSurfaceBackend::toBGRAData() const
     return ImageBufferBackend::toBGRAData(lock.surfaceBaseAddress());
 }
 
-RefPtr<ImageData> ImageBufferIOSurfaceBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+Optional<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
 {
     IOSurface::Locker lock(*m_surface);
-    return ImageBufferBackend::getImageData(outputFormat, srcRect, lock.surfaceBaseAddress());
+    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, lock.surfaceBaseAddress());
 }
 
-void ImageBufferIOSurfaceBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+void ImageBufferIOSurfaceBackend::putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
-    m_requiresDrawAfterPutImageData = true;
+    ImageBufferBackend::putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
+    m_requiresDrawAfterPutPixelBuffer = true;
 }
 
 IOSurface* ImageBufferIOSurfaceBackend::surface()

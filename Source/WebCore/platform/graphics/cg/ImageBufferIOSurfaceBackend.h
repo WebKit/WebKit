@@ -48,6 +48,8 @@ public:
 
     ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&);
 
+    IOSurface* surface();
+
     GraphicsContext& context() const override;
     void flushContext() override;
 
@@ -61,9 +63,8 @@ public:
     RetainPtr<CFDataRef> toCFData(const String& mimeType, Optional<double> quality, PreserveResolution) const override;
     Vector<uint8_t> toBGRAData() const override;
 
-    RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const override;
-    void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
-    IOSurface* surface();
+    Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect&) const override;
+    void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
     bool isInUse() const override;
     void releaseGraphicsContext() override;
@@ -78,7 +79,7 @@ protected:
     unsigned bytesPerRow() const override;
 
     std::unique_ptr<IOSurface> m_surface;
-    mutable bool m_requiresDrawAfterPutImageData { false };
+    mutable bool m_requiresDrawAfterPutPixelBuffer { false };
 
     mutable bool m_needsSetupContext { false };
 };

@@ -1,3 +1,88 @@
+2021-05-10  Sam Weinig  <weinig@apple.com>
+
+        Use PixelBuffer rather than ImageData in platform/ code to fix layering violation
+        https://bugs.webkit.org/show_bug.cgi?id=225584
+
+        Reviewed by Darin Adler.
+
+        Replace all uses of the DOM layer object WebCore::ImageData with the new platform
+        layer WebCore::PixelBuffer, which fixes a layering violation WebCore and avoids
+        unnecessary allocations / reference counting.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<Optional<T>>::encode):
+        (IPC::ArgumentCoder<Optional<T>>::decode):
+        Add templatized Encoder/Decoder to work with streaming encoder.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::paintRenderingResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintCompositedResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintPixelBufferToImageBuffer):
+        (WebKit::RemoteGraphicsContextGL::paintImageDataToImageBuffer): Deleted.
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        (paintRenderingResultsToPixelBuffer):
+        (paintRenderingResultsToImageData): Deleted.
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetPixelBufferHelper):
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetPixelBuffer):
+        (WebKit::RemoteRenderingBackend::semaphoreForGetPixelBuffer):
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetPixelBuffer):
+        (WebKit::RemoteRenderingBackend::destroyGetPixelBufferSharedMemory):
+        (WebKit::RemoteRenderingBackend::populateGetPixelBufferSharedMemory):
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetImageDataHelper): Deleted.
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryForGetImageData): Deleted.
+        (WebKit::RemoteRenderingBackend::semaphoreForGetImageData): Deleted.
+        (WebKit::RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetImageData): Deleted.
+        (WebKit::RemoteRenderingBackend::destroyGetImageDataSharedMemory): Deleted.
+        (WebKit::RemoteRenderingBackend::populateGetImageDataSharedMemory): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::getPixelBuffer const):
+        (WebKit::CGDisplayListImageBufferBackend::putPixelBuffer):
+        (WebKit::CGDisplayListImageBufferBackend::getImageData const): Deleted.
+        (WebKit::CGDisplayListImageBufferBackend::putImageData): Deleted.
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<WebCore::ImageData>>::encode): Deleted.
+        (IPC::ArgumentCoder<Ref<WebCore::ImageData>>::decode): Deleted.
+        (IPC::ArgumentCoder<RefPtr<WebCore::ImageData>>::encode): Deleted.
+        (IPC::ArgumentCoder<RefPtr<WebCore::ImageData>>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::getPixelBuffer const):
+        (WebKit::ImageBufferShareableBitmapBackend::putPixelBuffer):
+        (WebKit::ImageBufferShareableBitmapBackend::getImageData const): Deleted.
+        (WebKit::ImageBufferShareableBitmapBackend::putImageData): Deleted.
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToPixelBuffer):
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToImageData): Deleted.
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::putPixelBuffer):
+        (WebKit::RemoteImageBufferProxy::putImageData): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer):
+        (WebKit::RemoteRenderingBackendProxy::waitForGetPixelBufferToComplete):
+        (WebKit::RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory):
+        (WebKit::RemoteRenderingBackendProxy::sharedMemoryForGetImageData): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::waitForGetImageDataToComplete): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::getPixelBuffer const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::putPixelBuffer):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::getImageData const): Deleted.
+        (WebKit::ImageBufferShareableIOSurfaceBackend::putImageData): Deleted.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+
 2021-05-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Extend Network Process sandbox to access more Network Extension databases

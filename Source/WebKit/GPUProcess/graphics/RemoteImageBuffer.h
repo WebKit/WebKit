@@ -41,7 +41,7 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, publ
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::context;
     using BaseConcreteImageBuffer::m_backend;
-    using BaseConcreteImageBuffer::putImageData;
+    using BaseConcreteImageBuffer::putPixelBuffer;
 
 public:
     static auto create(const WebCore::FloatSize& size, float resolutionScale, WebCore::DestinationColorSpace colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
@@ -76,16 +76,16 @@ public:
 private:
     bool apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& context) override
     {
-        if (item.is<WebCore::DisplayList::GetImageData>()) {
-            auto& getImageDataItem = item.get<WebCore::DisplayList::GetImageData>();
-            auto imageData = BaseConcreteImageBuffer::getImageData(getImageDataItem.outputFormat(), getImageDataItem.srcRect());
-            m_remoteRenderingBackend.populateGetImageDataSharedMemory(imageData.get());
+        if (item.is<WebCore::DisplayList::GetPixelBuffer>()) {
+            auto& getPixelBufferItem = item.get<WebCore::DisplayList::GetPixelBuffer>();
+            auto pixelBuffer = BaseConcreteImageBuffer::getPixelBuffer(getPixelBufferItem.outputFormat(), getPixelBufferItem.srcRect());
+            m_remoteRenderingBackend.populateGetPixelBufferSharedMemory(WTFMove(pixelBuffer));
             return true;
         }
 
-        if (item.is<WebCore::DisplayList::PutImageData>()) {
-            auto& putImageDataItem = item.get<WebCore::DisplayList::PutImageData>();
-            putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint(), putImageDataItem.destFormat());
+        if (item.is<WebCore::DisplayList::PutPixelBuffer>()) {
+            auto& putPixelBufferItem = item.get<WebCore::DisplayList::PutPixelBuffer>();
+            putPixelBuffer(putPixelBufferItem.inputFormat(), putPixelBufferItem.pixelBuffer(), putPixelBufferItem.srcRect(), putPixelBufferItem.destPoint(), putPixelBufferItem.destFormat());
             return true;
         }
 

@@ -391,7 +391,7 @@ public:
 
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
-    RefPtr<ImageData> paintRenderingResultsToImageData();
+    Optional<PixelBuffer> paintRenderingResultsToPixelBuffer();
 
     void removeSharedObject(WebGLSharedObject&);
     void removeContextObject(WebGLContextObject&);

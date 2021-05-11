@@ -31,10 +31,6 @@
 #include <WebCore/PlatformImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
-namespace WebCore {
-class ImageData;
-}
-
 namespace WebKit {
 
 class ShareableBitmap;
@@ -63,8 +59,8 @@ public:
     RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::PreserveResolution = WebCore::PreserveResolution::No) const override;
 
     Vector<uint8_t> toBGRAData() const override;
-    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
-    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
+    Optional<WebCore::PixelBuffer> getPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
+    void putPixelBuffer(WebCore::AlphaPremultiplication inputFormat, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
 private:
     unsigned bytesPerRow() const override;

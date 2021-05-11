@@ -30,7 +30,6 @@
 
 #include "GraphicsContext.h"
 #include "HostWindow.h"
-#include "ImageData.h"
 #include "PlatformImageBuffer.h"
 
 namespace WebCore {

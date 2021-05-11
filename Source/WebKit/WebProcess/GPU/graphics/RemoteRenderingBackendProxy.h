@@ -48,7 +48,7 @@ class DisplayList;
 class Item;
 }
 class FloatSize;
-class ImageData;
+class PixelBuffer;
 enum class AlphaPremultiplication : uint8_t;
 enum class DestinationColorSpace : uint8_t;
 enum class RenderingMode : bool;
@@ -78,9 +78,9 @@ public:
     void willAppendItem(WebCore::RenderingResourceIdentifier);
     void sendDeferredWakeupMessageIfNeeded();
 
-    SharedMemory* sharedMemoryForGetImageData(size_t dataSize, IPC::Timeout);
-    bool waitForGetImageDataToComplete(IPC::Timeout);
-    void destroyGetImageDataSharedMemory();
+    SharedMemory* sharedMemoryForGetPixelBuffer(size_t dataSize, IPC::Timeout);
+    bool waitForGetPixelBufferToComplete(IPC::Timeout);
+    void destroyGetPixelBufferSharedMemory();
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -136,10 +136,10 @@ private:
     Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
     Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
-    Optional<IPC::Semaphore> m_getImageDataSemaphore;
-    RefPtr<SharedMemory> m_getImageDataSharedMemory;
-    uint64_t m_getImageDataSharedMemoryLength { 0 };
-    WebCore::Timer m_destroyGetImageDataSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory };
+    Optional<IPC::Semaphore> m_getPixelBufferSemaphore;
+    RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
+    uint64_t m_getPixelBufferSharedMemoryLength { 0 };
+    WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 

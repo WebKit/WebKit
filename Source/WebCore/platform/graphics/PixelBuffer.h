@@ -30,13 +30,19 @@
 #include "PixelFormat.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class PixelBuffer {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
+    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreate(DestinationColorSpace, PixelFormat, const IntSize&);
+
     PixelBuffer(DestinationColorSpace, PixelFormat, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
-    ~PixelBuffer();
+    WEBCORE_EXPORT ~PixelBuffer();
 
     PixelBuffer(PixelBuffer&&) = default;
     PixelBuffer& operator=(PixelBuffer&&) = default;
@@ -48,11 +54,66 @@ public:
 
     PixelBuffer deepClone() const;
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<PixelBuffer> decode(Decoder&);
+
 private:
+    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreateForDecoding(DestinationColorSpace, PixelFormat, const IntSize&, unsigned dataByteLength);
+
+    WEBCORE_EXPORT static Checked<unsigned, RecordOverflow> computeBufferSize(PixelFormat, const IntSize&);
+
     DestinationColorSpace m_colorSpace;
     PixelFormat m_format;
     IntSize m_size;
     Ref<JSC::Uint8ClampedArray> m_data;
 };
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PixelBuffer&);
+
+template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
+{
+    ASSERT(m_data->byteLength() == (m_size.area().unsafeGet() * 4));
+
+    encoder << m_colorSpace;
+    encoder << m_format;
+    encoder << m_size;
+    encoder.encodeFixedLengthData(m_data->data(), m_data->byteLength(), 1);
+}
+
+template<class Decoder> Optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
+{
+    DestinationColorSpace colorSpace;
+    if (!decoder.decode(colorSpace))
+        return WTF::nullopt;
+
+    PixelFormat format;
+    if (!decoder.decode(format))
+        return WTF::nullopt;
+
+    // FIXME: Support non-8 bit formats.
+    if (!(format == PixelFormat::RGBA8 || format == PixelFormat::BGRA8))
+        return WTF::nullopt;
+
+    IntSize size;
+    if (!decoder.decode(size))
+        return WTF::nullopt;
+
+    auto computedBufferSize = PixelBuffer::computeBufferSize(format, size);
+    if (computedBufferSize.hasOverflowed())
+        return WTF::nullopt;
+
+    auto bufferSize = computedBufferSize.unsafeGet();
+    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
+        return WTF::nullopt;
+
+    auto result = PixelBuffer::tryCreateForDecoding(colorSpace, format, size, bufferSize);
+    if (!result)
+        return WTF::nullopt;
+
+    if (!decoder.decodeFixedLengthData(result->m_data->data(), result->m_data->byteLength(), 1))
+        return WTF::nullopt;
+
+    return result;
+}
 
 }

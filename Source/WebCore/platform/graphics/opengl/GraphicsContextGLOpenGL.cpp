@@ -32,8 +32,8 @@
 
 #include "ExtensionsGL.h"
 #include "ImageBuffer.h"
-#include "ImageData.h"
 #include "MediaPlayerPrivate.h"
+#include "PixelBuffer.h"
 #include <wtf/UniqueArray.h>
 
 #if USE(AVFOUNDATION)
@@ -209,10 +209,10 @@ void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer& imageBu
         return;
     if (getInternalFramebufferSize().isEmpty())
         return;
-    auto imageData = readRenderingResults();
-    if (!imageData)
+    auto pixelBuffer = readRenderingResults();
+    if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), imageData.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
 }
 
 void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
@@ -221,40 +221,40 @@ void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageB
         return;
     if (getInternalFramebufferSize().isEmpty())
         return;
-    auto imageData = readCompositedResults();
-    if (!imageData)
+    auto pixelBuffer = readCompositedResults();
+    if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), imageData.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
 }
 
-RefPtr<ImageData> GraphicsContextGLOpenGL::paintRenderingResultsToImageData()
+Optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer()
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
-        return nullptr;
+        return WTF::nullopt;
     return readRenderingResultsForPainting();
 }
 
-RefPtr<ImageData> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
+Optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
-        return nullptr;
+        return WTF::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return nullptr;
+        return WTF::nullopt;
     return readRenderingResults();
 }
 
-RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
+Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
 {
     if (!makeContextCurrent())
-        return nullptr;
+        return WTF::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return nullptr;
+        return WTF::nullopt;
     return readCompositedResults();
 }
 
 #if !PLATFORM(COCOA)
-RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResults()
+Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 {
     return readRenderingResults();
 }
