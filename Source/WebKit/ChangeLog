@@ -1,3 +1,22 @@
+2021-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Extend access to 'com.apple.print.normalizerd' when canvas drawing is done in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=225623
+        <rdar://problem/77354349>
+
+        Reviewed by Per Arne Vollan.
+
+        We need to dynamically extend access to 'com.apple.print.normalizerd' when the GPU Process is not handling canvas drawing.
+        WebKit needs this access to properly draw EPS images.
+
+        Tested by fast/images/eps-as-image.html
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::gpuMachServices): Add 'com.apple.print.normalizerd' to set of required services.
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in: Remove 'com.apple.print.normalizerd' since it is
+        not possible to use from the Web Authentication process.
+        * WebProcess/com.apple.WebProcess.sb.in: Expect the extension to be dynamically extended on all releases.
+
 2021-05-11  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Add _STAttributionDisplayName to macOS and iOS GPUProcess Info.plist

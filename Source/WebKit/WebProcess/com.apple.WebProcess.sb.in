@@ -866,7 +866,6 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
     (xpc-service-name "com.apple.audio.SandboxHelper")
-    (xpc-service-name "com.apple.print.normalizerd")
 )
 #endif
 
@@ -1760,6 +1759,7 @@
             "com.apple.audio.SandboxHelper"
             "com.apple.coremedia.videodecoder"
             "com.apple.coremedia.videoencoder"
+            "com.apple.print.normalizerd" ;; <rdar://problem/77354349>
             ;;; FIXME(207716): End services to remove.
         )
     )

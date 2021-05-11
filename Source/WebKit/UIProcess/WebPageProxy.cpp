@@ -7828,6 +7828,7 @@ static const Vector<ASCIILiteral>& gpuMachServices()
         "com.apple.MTLCompilerService"_s,
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.cvmsServ"_s,
+        "com.apple.print.normalizerd"_s,
 #endif
     });
     return services;
