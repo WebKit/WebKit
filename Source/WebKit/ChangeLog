@@ -1,3 +1,17 @@
+2021-05-11  Ben Nham  <nham@apple.com>
+
+        Failing sandbox check for media permissions should not generate a violation report
+        https://bugs.webkit.org/show_bug.cgi?id=225662
+
+        Reviewed by Geoffrey Garen.
+
+        We sandbox_check the UIProcess for camera and video permissions. But if the process doesn't
+        have those permissions, sandbox_check fails and generates an expensive violation report that
+        task_suspends the process. We need to suppress the reporting with SANDBOX_CHECK_NO_REPORT.
+
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::checkSandboxRequirementForType):
+
 2021-05-11  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to restrict networking to a set of hosts

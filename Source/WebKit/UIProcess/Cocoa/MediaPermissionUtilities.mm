@@ -61,7 +61,7 @@ bool checkSandboxRequirementForType(MediaPermissionType type)
         if (!currentProcessIsSandboxed())
             return;
 
-        int result = sandbox_check(getpid(), operation, SANDBOX_FILTER_NONE);
+        int result = sandbox_check(getpid(), operation, static_cast<enum sandbox_filter_type>(SANDBOX_CHECK_NO_REPORT | SANDBOX_FILTER_NONE));
         if (result == -1)
             WTFLogAlways("Error checking '%s' sandbox access, errno=%ld", operation, (long)errno);
         *entitled = !result;
