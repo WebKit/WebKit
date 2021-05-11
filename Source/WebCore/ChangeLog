@@ -1,3 +1,40 @@
+2021-05-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Factor out find bounce layer
+        https://bugs.webkit.org/show_bug.cgi?id=225557
+
+        Reviewed by Tim Horton.
+
+        Factor out the text indicator bounce layer in preparation of making this 
+        compatable with iOS. 
+
+        No behavior change. 
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/TextIndicatorWindow.h:
+        * page/mac/TextIndicatorWindow.mm:
+        (WebCore::TextIndicatorWindow::setAnimationProgress):
+        (WebCore::TextIndicatorWindow::clearTextIndicator):
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+        (WebCore::TextIndicatorWindow::closeWindow):
+        (WebCore::TextIndicatorWindow::startFadeOut):
+        (indicatorWantsBounce): Deleted.
+        (indicatorWantsContentCrossfade): Deleted.
+        (indicatorWantsFadeIn): Deleted.
+        (indicatorWantsManualAnimation): Deleted.
+        (-[WebTextIndicatorView initWithFrame:textIndicator:margin:offset:]): Deleted.
+        (createBounceAnimation): Deleted.
+        (createContentCrossfadeAnimation): Deleted.
+        (createShadowFadeAnimation): Deleted.
+        (createFadeInAnimation): Deleted.
+        (-[WebTextIndicatorView _animationDuration]): Deleted.
+        (-[WebTextIndicatorView hasCompletedAnimation]): Deleted.
+        (-[WebTextIndicatorView present]): Deleted.
+        (-[WebTextIndicatorView hideWithCompletionHandler:]): Deleted.
+        (-[WebTextIndicatorView setAnimationProgress:]): Deleted.
+        (-[WebTextIndicatorView isFlipped]): Deleted.
+        
 2021-05-11  Antti Koivisto  <antti@apple.com>
 
         Don't allow :visited link style in subtrees that use mix-blend-mode

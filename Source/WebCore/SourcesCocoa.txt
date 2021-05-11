@@ -182,6 +182,7 @@ page/cocoa/PerformanceLoggingCocoa.mm
 page/cocoa/ResourceUsageOverlayCocoa.mm
 page/cocoa/ResourceUsageThreadCocoa.mm
 page/cocoa/SettingsBaseCocoa.mm
+page/cocoa/WebTextIndicatorLayer.mm
 page/ios/ContentChangeObserver.cpp
 page/ios/DOMTimerHoldingTank.cpp
 page/ios/EventHandlerIOS.mm
