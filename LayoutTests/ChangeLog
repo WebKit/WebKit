@@ -1,5 +1,16 @@
 2021-05-11  Robert Jenner  <jenner@apple.com>
 
+        [ BigSur Release wk2 arm64 ] http/tests/appcache/fail-on-update-2.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225665
+
+        Unreviewed test gardening.
+
+        Updating test expectations to Pass Timeout for BigSur Release wk2 arm64.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-11  Robert Jenner  <jenner@apple.com>
+
         [ BigSur wk2 arm64 ] http/tests/cache/disk-cache/redirect-chain-limits.html (layout-test) is a flaky timeout
         Nhttps://bugs.webkit.org/show_bug.cgi?id=225666
 
