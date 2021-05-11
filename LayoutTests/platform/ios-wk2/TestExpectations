@@ -1350,7 +1350,8 @@ webkit.org/b/208081 http/tests/workers/service/Client-properties-auxiliary.html 
 # webkit.org/b/208078 Continue to skip 2.0.0 on iOS WK2 until discrepancies can be addressed
 webgl/2.0.0 [ Skip ]
 
-webkit.org/b/208355 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Slow ]
+webkit.org/b/208355 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Failure Slow ]
+webkit.org/b/225469 [ Release ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Failure ]
 
 webkit.org/b/208401 compositing/absolute-inside-out-of-view-fixed.html [ Pass Crash Timeout ]
 
