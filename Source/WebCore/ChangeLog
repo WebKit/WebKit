@@ -1,3 +1,15 @@
+2021-05-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Disable IFC when inline level box has box shadow
+        https://bugs.webkit.org/show_bug.cgi?id=225634
+
+        Reviewed by Darin Adler.
+
+        Needs painting support.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+
 2021-05-11  Jean-Yves Avenard  <jya@apple.com>
 
         Adopt CoreMedia SPI to identify audio-only playback for MSE clients
