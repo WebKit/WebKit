@@ -1,3 +1,26 @@
+2021-05-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to restrict networking to a set of hosts
+        https://bugs.webkit.org/show_bug.cgi?id=225426
+        <rdar://77571521>
+
+        Reviewed by Tim Horton.
+
+        In r259392 I added SPI to turn network access on and off, but a client needs finer grained control.
+        This uses the same infrastructure to add a set of hosts to allow.  Setting it to nil (the default) allows all hosts,
+        but setting it to an empty set allows no network access.  This accomplishes the same ability as the old SPI, so I'm deprecating it
+        with this as a replacement.  The new ability to specify a finite number of hosts to allow creates a limited WKWebView.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::validateURL):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        * page/Page.cpp:
+        (WebCore::Page::allowsLoadFromURL const):
+        * page/Page.h:
+        (WebCore::Page::loadsFromNetwork const): Deleted.
+        * page/PageConfiguration.h:
+
 2021-05-11  Megan Gardner  <megan_gardner@apple.com>
 
         Factor out find bounce layer

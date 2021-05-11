@@ -71,6 +71,7 @@ public:
     void send(RetainPtr<dispatch_data_t>&&, CompletionHandler<void()>&& = nullptr) const;
     void receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&&) const;
     void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
+    void webSocketHandshake(CompletionHandler<void()>&& = { });
     void terminate();
     void cancel();
 

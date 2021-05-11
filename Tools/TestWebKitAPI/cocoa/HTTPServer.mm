@@ -30,7 +30,9 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SHA1.h>
 #import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/text/Base64.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -323,6 +325,34 @@ void Connection::send(RetainPtr<dispatch_data_t>&& message, CompletionHandler<vo
         if (completionHandler)
             completionHandler();
     }).get());
+}
+
+void Connection::webSocketHandshake(CompletionHandler<void()>&& connectionHandler)
+{
+    receiveHTTPRequest([connection = Connection(*this), connectionHandler = WTFMove(connectionHandler)] (Vector<char>&& request) mutable {
+
+        auto webSocketAcceptValue = [] (const Vector<char>& request) {
+            constexpr auto* keyHeaderField = "Sec-WebSocket-Key: ";
+            const char* keyBegin = strnstr(request.data(), keyHeaderField, request.size()) + strlen(keyHeaderField);
+            ASSERT(keyBegin);
+            const char* keyEnd = strnstr(keyBegin, "\r\n", request.size() + (keyBegin - request.data()));
+            ASSERT(keyEnd);
+
+            constexpr auto* webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+            SHA1 sha1;
+            sha1.addBytes(reinterpret_cast<const uint8_t*>(keyBegin), keyEnd - keyBegin);
+            sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
+            SHA1::Digest hash;
+            sha1.computeHash(hash);
+            return base64Encode(hash.data(), SHA1::hashSize);
+        };
+
+        connection.send(HTTPResponse(101, {
+            { "Upgrade", "websocket" },
+            { "Connection", "Upgrade" },
+            { "Sec-WebSocket-Accept", webSocketAcceptValue(request) }
+        }).serialize(HTTPResponse::IncludeContentLength::No), WTFMove(connectionHandler));
+    });
 }
 
 void Connection::terminate()

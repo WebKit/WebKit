@@ -87,7 +87,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 
     copy->m_processDisplayName = this->m_processDisplayName;
     copy->m_loadsSubresources = this->m_loadsSubresources;
-    copy->m_loadsFromNetwork = this->m_loadsFromNetwork;
+    copy->m_allowedNetworkHosts = this->m_allowedNetworkHosts;
 #if ENABLE(APP_BOUND_DOMAINS)
     copy->m_ignoresAppBoundDomains = this->m_ignoresAppBoundDomains;
     copy->m_limitsNavigationsToAppBoundDomains = this->m_limitsNavigationsToAppBoundDomains;

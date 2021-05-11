@@ -132,7 +132,7 @@ public:
 
     // FIXME: These should be all be Settings.
     bool loadsSubresources { true };
-    bool loadsFromNetwork { true };
+    Optional<HashSet<String>> allowedNetworkHosts;
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };

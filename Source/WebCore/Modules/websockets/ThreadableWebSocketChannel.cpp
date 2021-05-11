@@ -89,7 +89,7 @@ Optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChannel::v
 {
     ValidatedURL validatedURL { requestedURL, true };
     if (auto* page = document.page()) {
-        if (!page->loadsFromNetwork())
+        if (!page->allowsLoadFromURL(requestedURL))
             return { };
 #if ENABLE(CONTENT_EXTENSIONS)
         if (auto* documentLoader = document.loader()) {

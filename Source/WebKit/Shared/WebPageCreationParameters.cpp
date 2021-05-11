@@ -151,7 +151,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << overriddenMediaType;
     encoder << corsDisablingPatterns;
     encoder << loadsSubresources;
-    encoder << loadsFromNetwork;
+    encoder << allowedNetworkHosts;
     encoder << userScriptsShouldWaitUntilNotification;
     encoder << crossOriginAccessControlCheckEnabled;
     encoder << processDisplayName;
@@ -509,11 +509,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.loadsSubresources = *loadsSubresources;
 
-    Optional<bool> loadsFromNetwork;
-    decoder >> loadsFromNetwork;
-    if (!loadsFromNetwork)
+    Optional<Optional<HashSet<String>>> allowedNetworkHosts;
+    decoder >> allowedNetworkHosts;
+    if (!allowedNetworkHosts)
         return WTF::nullopt;
-    parameters.loadsFromNetwork = *loadsFromNetwork;
+    parameters.allowedNetworkHosts = *allowedNetworkHosts;
 
     Optional<bool> userScriptsShouldWaitUntilNotification;
     decoder >> userScriptsShouldWaitUntilNotification;
