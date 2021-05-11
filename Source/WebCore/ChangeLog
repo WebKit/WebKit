@@ -1,5 +1,27 @@
 2021-05-11  Zalan Bujtas  <zalan@apple.com>
 
+        REGRESSION(r275515): wpt/quirks/blocks-ignore-line-height.html
+        https://bugs.webkit.org/show_bug.cgi?id=225591
+        <rdar://problem/77766308>
+
+        Reviewed by Antti Koivisto.
+
+        Replace the generic line height quirk with a list-item specific one.
+        The original quirk was added to cover fast/lists/list-item-line-height.html but it looks like
+        it only needs a list-item specific quirk. This is copied from legacy line layout (see InlineFlowBox c'tor).
+
+        Test: fast/inline/line-height-in-non-standards-mode.html
+
+        * layout/formattingContexts/inline/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox const):
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::rootBoxStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isOriginalDisplayListItemType const):
+        (WebCore::RenderStyle::isDisplayListItemType):
+
+2021-05-11  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Integration] Disable IFC when inline level box has box shadow
         https://bugs.webkit.org/show_bug.cgi?id=225634
 

@@ -73,23 +73,13 @@ bool InlineFormattingContext::Quirks::inlineLevelBoxAffectsLineBox(const LineBox
         if (inlineLevelBox.hasContent() || inlineBoxHasImaginaryStrut)
             return true;
         if (inlineLevelBox.isRootInlineBox()) {
-            auto shouldRootInlineBoxWithNoContentStretchLineBox = [&] {
-                if (inlineLevelBox.layoutBox().style().lineHeight().isNegative())
-                    return false;
-                // The root inline box with non-initial line height value stretches the line box even when root has no content
-                // but there's at least one inline box with content.
-                // e.g. <div style="line-height: 100px;"><span>content</span></div>
-                if (!lineBox.hasInlineBox())
-                    return false;
-                for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-                    if (!inlineLevelBox.isInlineBox())
-                        continue;
-                    if (inlineLevelBox.hasContent())
-                        return true;
-                }
-                return false;
-            };
-            return shouldRootInlineBoxWithNoContentStretchLineBox();
+            // This root inline box has no direct text content and we are in non-standards mode.
+            // Now according to legacy line layout, we need to apply the following list-item specific quirk:
+            // We do not create markers for list items when the list-style-type is none, while other browsers do.
+            // The side effect of having no marker is that in quirks mode we have to specifically check for list-item
+            // and make sure it is treated as if it had content and stretched the line.
+            // see InlineFlowBox c'tor.
+            return inlineLevelBox.layoutBox().style().isOriginalDisplayListItemType();
         }
         // Non-root inline boxes (e.g. <span>).
         auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
