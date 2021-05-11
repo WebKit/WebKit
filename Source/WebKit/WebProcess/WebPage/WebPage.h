@@ -177,6 +177,7 @@ class FormDataReference;
 
 namespace WebCore {
 
+class CachedPage;
 class CaptureDevice;
 class DocumentLoader;
 class DragData;
@@ -1669,6 +1670,9 @@ private:
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
 
+    void suspend(CompletionHandler<void(bool)>&&);
+    void resume(CompletionHandler<void(bool)>&&);
+
 #if PLATFORM(COCOA)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     void performDictionaryLookupOfCurrentSelection();
@@ -2317,6 +2321,8 @@ private:
     bool m_didUpdateRenderingAfterCommittingLoad { false };
 
     Vector<String> m_corsDisablingPatterns;
+
+    std::unique_ptr<WebCore::CachedPage> m_cachedPage;
 
 #if ENABLE(IPC_TESTING_API)
     bool m_ipcTestingAPIEnabled { false };

@@ -410,6 +410,9 @@ for this property.
 - (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler;
 - (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler;
 
+- (void)_suspendPage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resumePage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE

@@ -608,6 +608,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     history/BackForwardItemIdentifier.h
     history/CachedFrame.h
     history/CachedFramePlatformData.h
+    history/CachedPage.h
     history/HistoryItem.h
 
     html/Autocapitalize.h

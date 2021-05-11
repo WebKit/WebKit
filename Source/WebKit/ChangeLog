@@ -1,3 +1,300 @@
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Add SPI to suspend / resume a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=225333
+        <rdar://77462543>
+
+        Reviewed by Geoffrey Garen.
+
+        Add SPI to suspend / resume a WKWebView. This suspends the page as if it was in
+        the back/forward cache but the suspension happens in-place, no need to navigate.
+        The suspended page is also not part of the Back/Forward cache so its cap on the
+        number of suspended pages does not apply here.
+
+        Most of WKWebView's API / SPI will throw an exception when called on a suspended
+        view (The WKPageRefAPI will RELEASE_ASSERT()). Some of the basic API will stay
+        functional (URL, isLoading, title, ...). It is also safe to deallocate / close
+        a suspended WKWebView.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (crashIfPageIsSuspended):
+        (WKPageLoadURL):
+        (WKPageLoadURLWithShouldOpenExternalURLsPolicy):
+        (WKPageLoadURLWithUserData):
+        (WKPageLoadURLRequest):
+        (WKPageLoadURLRequestWithUserData):
+        (WKPageLoadFile):
+        (WKPageLoadFileWithUserData):
+        (WKPageLoadData):
+        (WKPageLoadDataWithUserData):
+        (WKPageLoadHTMLString):
+        (WKPageLoadHTMLStringWithUserData):
+        (WKPageLoadAlternateHTMLString):
+        (WKPageLoadAlternateHTMLStringWithUserData):
+        (WKPageLoadPlainTextString):
+        (WKPageLoadPlainTextStringWithUserData):
+        (WKPageLoadWebArchiveData):
+        (WKPageLoadWebArchiveDataWithUserData):
+        (WKPageStopLoading):
+        (WKPageReload):
+        (WKPageReloadWithoutContentBlockers):
+        (WKPageReloadFromOrigin):
+        (WKPageReloadExpiredOnly):
+        (WKPageTryClose):
+        (WKPageClose):
+        (WKPageGoForward):
+        (WKPageGoBack):
+        (WKPageGoToBackForwardListItem):
+        (WKPageTryRestoreScrollPosition):
+        (WKPageUpdateWebsitePolicies):
+        (WKPageSetApplicationNameForUserAgent):
+        (WKPageSetCustomUserAgent):
+        (WKPageSetCustomTextEncodingName):
+        (WKPageTerminate):
+        (WKPageRestoreFromSessionState):
+        (WKPageRestoreFromSessionStateWithoutNavigation):
+        (WKPageSetCustomBackingScaleFactor):
+        (WKPageSetTextZoomFactor):
+        (WKPageSetPageZoomFactor):
+        (WKPageSetPageAndTextZoomFactors):
+        (WKPageSetScaleFactor):
+        (WKPageSetUseFixedLayout):
+        (WKPageSetFixedLayoutSize):
+        (WKPageListenForLayoutMilestones):
+        (WKPageSetSuppressScrollbarAnimations):
+        (WKPageSetRubberBandsAtLeft):
+        (WKPageSetRubberBandsAtRight):
+        (WKPageSetRubberBandsAtTop):
+        (WKPageSetRubberBandsAtBottom):
+        (WKPageSetEnableVerticalRubberBanding):
+        (WKPageSetEnableHorizontalRubberBanding):
+        (WKPageSetBackgroundExtendsBeyondPage):
+        (WKPageSetPaginationMode):
+        (WKPageSetPaginationBehavesLikeColumns):
+        (WKPageSetPageLength):
+        (WKPageSetGapBetweenPages):
+        (WKPageSetPaginationLineGridEnabled):
+        (WKPageSetMaintainsInactiveSelection):
+        (WKPageCenterSelectionInVisibleArea):
+        (WKPageFindStringMatches):
+        (WKPageGetImageForFindMatch):
+        (WKPageSelectFindMatch):
+        (WKPageFindString):
+        (WKPageHideFindUI):
+        (WKPageCountStringMatches):
+        (WKPageSetPageContextMenuClient):
+        (WKPageSetPageFindClient):
+        (WKPageSetPageFindMatchesClient):
+        (WKPageSetPageInjectedBundleClient):
+        (WKPageSetPageFormClient):
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageUIClient):
+        (WKPageSetPageNavigationClient):
+        (WKPageSetPageStateClient):
+        (WKPageRunJavaScriptInMainFrame):
+        (WKPageRunJavaScriptInMainFrame_b):
+        (WKPageRenderTreeExternalRepresentation):
+        (WKPageGetSourceForFrame):
+        (WKPageGetContentsAsString):
+        (WKPageGetBytecodeProfile):
+        (WKPageGetSamplingProfilerOutput):
+        (WKPageGetSelectionAsWebArchiveData):
+        (WKPageGetContentsAsMHTMLData):
+        (WKPageForceRepaint):
+        (WKPageValidateCommand):
+        (WKPageExecuteCommand):
+        (WKPageComputePagesForPrinting):
+        (WKPageDrawPagesToPDF):
+        (WKPageBeginPrinting):
+        (WKPageEndPrinting):
+        (WKPageSetControlledByAutomation):
+        (WKPageSetAllowsRemoteInspection):
+        (WKPageSetMediaVolume):
+        (WKPageSetMuted):
+        (WKPageSetMediaCaptureEnabled):
+        (WKPageDidAllowPointerLock):
+        (WKPageClearUserMediaState):
+        (WKPageDidDenyPointerLock):
+        (WKPageSetMayStartMediaWhenInWindow):
+        (WKPageSelectContextMenuItem):
+        (WKPageSetScrollPinningBehavior):
+        (WKPageSetAddsVisitedLinks):
+        (WKPageClearWheelEventTestMonitor):
+        (WKPageCallAfterNextPresentationUpdate):
+        (WKPageSetIgnoresViewportScaleLimits):
+        (WKPageGetApplicationManifest_b):
+        (WKPageDumpPrivateClickMeasurement):
+        (WKPageClearPrivateClickMeasurement):
+        (WKPageSetPrivateClickMeasurementOverrideTimerForTesting):
+        (WKPageMarkAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WKPageSimulateResourceLoadStatisticsSessionRestart):
+        (WKPageSetPrivateClickMeasurementTokenPublicKeyURLForTesting):
+        (WKPageSetPrivateClickMeasurementTokenSignatureURLForTesting):
+        (WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting):
+        (WKPageMarkPrivateClickMeasurementsAsExpiredForTesting):
+        (WKPageSetPCMFraudPreventionValuesForTesting):
+        (WKPageSetMockCameraOrientation):
+        (WKPageLoadedSubresourceDomains):
+        (WKPageClearLoadedSubresourceDomains):
+        (WKPageSetMediaCaptureReportingDelayForTesting):
+        (WKPageDispatchActivityStateUpdateForTesting):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]):
+        (-[WKWebView loadFileURL:allowingReadAccessToURL:]):
+        (-[WKWebView loadHTMLString:baseURL:]):
+        (-[WKWebView loadData:MIMEType:characterEncodingName:baseURL:]):
+        (-[WKWebView startDownloadUsingRequest:completionHandler:]):
+        (-[WKWebView resumeDownloadFromResumeData:completionHandler:]):
+        (-[WKWebView goToBackForwardListItem:]):
+        (-[WKWebView goBack]):
+        (-[WKWebView goForward]):
+        (-[WKWebView reload]):
+        (-[WKWebView reloadFromOrigin]):
+        (-[WKWebView stopLoading]):
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        (-[WKWebView evaluateJavaScript:inFrame:inContentWorld:completionHandler:]):
+        (-[WKWebView callAsyncJavaScript:arguments:inFrame:inContentWorld:completionHandler:]):
+        (-[WKWebView closeAllMediaPresentationsWithCompletionHandler:]):
+        (-[WKWebView pauseAllMediaPlaybackWithCompletionHandler:]):
+        (-[WKWebView setAllMediaPlaybackSuspended:completionHandler:]):
+        (-[WKWebView requestMediaPlaybackStateWithCompletionHandler:]):
+        (-[WKWebView setMicrophoneCaptureState:completionHandler:]):
+        (-[WKWebView setCameraCaptureState:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withSourceURL:withArguments:forceUserGesture:inFrame:inWorld:completionHandler:]):
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        (-[WKWebView setCustomUserAgent:]):
+        (-[WKWebView setAllowsLinkPreview:]):
+        (-[WKWebView setPageZoom:]):
+        (-[WKWebView findString:withConfiguration:completionHandler:]):
+        (-[WKWebView setMediaType:]):
+        (-[WKWebView setInteractionState:]):
+        (-[WKWebView setAllowsMagnification:]):
+        (-[WKWebView setMagnification:centeredAtPoint:]):
+        (-[WKWebView setMagnification:]):
+        (-[WKWebView printOperationWithPrintInfo:]):
+        (-[WKWebView createPDFWithConfiguration:completionHandler:]):
+        (-[WKWebView createWebArchiveDataWithCompletionHandler:]):
+        (-[WKWebView loadSimulatedRequest:response:responseData:]):
+        (-[WKWebView loadSimulatedRequest:withResponse:responseData:]):
+        (-[WKWebView loadSimulatedRequest:responseHTMLString:]):
+        (-[WKWebView loadSimulatedRequest:withResponseHTMLString:]):
+        (-[WKWebView loadFileRequest:allowingReadAccessToURL:]):
+        (-[WKWebView _toggleStrikeThrough:]):
+        (-[WKWebView _increaseListLevel:]):
+        (-[WKWebView _decreaseListLevel:]):
+        (-[WKWebView _changeListType:]):
+        (-[WKWebView _setViewportSizeForCSSViewportUnits:]):
+        (-[WKWebView _didEnableBrowserExtensions:]):
+        (-[WKWebView _didDisableBrowserExtensions:]):
+        (-[WKWebView _setEditable:]):
+        (-[WKWebView _executeEditCommand:argument:completion:]):
+        (-[WKWebView _startTextManipulationsWithConfiguration:completion:]):
+        (-[WKWebView _completeTextManipulation:completion:]):
+        (-[WKWebView _completeTextManipulationForItems:completion:]):
+        (-[WKWebView _takeFindStringFromSelection:]):
+        (-[WKWebView _updateMediaPlaybackControlsManager]):
+        (-[WKWebView _togglePictureInPicture]):
+        (-[WKWebView _closeAllMediaPresentations]):
+        (-[WKWebView _stopMediaCapture]):
+        (-[WKWebView _stopAllMediaPlayback]):
+        (-[WKWebView _suspendAllMediaPlayback]):
+        (-[WKWebView _resumeAllMediaPlayback]):
+        (-[WKWebView _restoreAppHighlights:]):
+        (-[WKWebView _restoreAndScrollToAppHighlight:]):
+        (-[WKWebView _addAppHighlight]):
+        (-[WKWebView _loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        (-[WKWebView _loadData:MIMEType:characterEncodingName:baseURL:userData:]):
+        (-[WKWebView _loadRequest:shouldOpenExternalURLs:]):
+        (-[WKWebView _loadRequest:shouldOpenExternalURLsPolicy:]):
+        (-[WKWebView _grantAccessToAssetServices]):
+        (-[WKWebView _revokeAccessToAssetServices]):
+        (-[WKWebView _switchFromStaticFontRegistryToUserFontRegistry]):
+        (-[WKWebView _appBoundNavigationDataForDomain:completionHandler:]):
+        (-[WKWebView _suspendPage:]):
+        (-[WKWebView _resumePage:]):
+        (-[WKWebView _setApplicationNameForUserAgent:]):
+        (-[WKWebView _killWebContentProcess]):
+        (-[WKWebView _reloadWithoutContentBlockers]):
+        (-[WKWebView _reloadExpiredOnly]):
+        (-[WKWebView _killWebContentProcessAndResetState]):
+        (-[WKWebView _takePDFSnapshotWithConfiguration:completionHandler:]):
+        (-[WKWebView _getPDFFirstPageSizeInFrame:completionHandler:]):
+        (-[WKWebView _restoreFromSessionStateData:]):
+        (-[WKWebView _restoreSessionState:andNavigate:]):
+        (-[WKWebView _close]):
+        (-[WKWebView _tryClose]):
+        (-[WKWebView _insertAttachmentWithFilename:contentType:data:options:completion:]):
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:options:completion:]):
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:completion:]):
+        (-[WKWebView _attachmentForIdentifier:]):
+        (-[WKWebView _simulateDeviceOrientationChangeWithAlpha:beta:gamma:]):
+        (-[WKWebView _showSafeBrowsingWarningWithTitle:warning:details:completionHandler:]):
+        (-[WKWebView _showSafeBrowsingWarningWithURL:title:warning:details:completionHandler:]):
+        (-[WKWebView _showSafeBrowsingWarningWithURL:title:warning:detailsWithLinks:completionHandler:]):
+        (-[WKWebView _isJITEnabled:]):
+        (-[WKWebView _evaluateJavaScriptWithoutUserGesture:completionHandler:]):
+        (-[WKWebView _callAsyncJavaScript:arguments:inFrame:inContentWorld:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:inFrame:inContentWorld:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:withSourceURL:inFrame:inContentWorld:completionHandler:]):
+        (-[WKWebView _updateWebpagePreferences:]):
+        (-[WKWebView _notifyUserScripts]):
+        (-[WKWebView _deferrableUserScriptsNeedNotification]):
+        (-[WKWebView _setAllowsRemoteInspection:]):
+        (-[WKWebView _setRemoteInspectionNameOverride:]):
+        (-[WKWebView _setAddsVisitedLinks:]):
+        (-[WKWebView _getMainResourceDataWithCompletionHandler:]):
+        (-[WKWebView _getWebArchiveDataWithCompletionHandler:]):
+        (-[WKWebView _getContentsAsStringWithCompletionHandler:]):
+        (-[WKWebView _getContentsOfAllFramesAsStringWithCompletionHandler:]):
+        (-[WKWebView _getContentsAsAttributedStringWithCompletionHandler:]):
+        (-[WKWebView _getApplicationManifestWithCompletionHandler:]):
+        (-[WKWebView _setPaginationMode:]):
+        (-[WKWebView _setPaginationBehavesLikeColumns:]):
+        (-[WKWebView _setPageLength:]):
+        (-[WKWebView _setGapBetweenPages:]):
+        (-[WKWebView _setPaginationLineGridEnabled:]):
+        (-[WKWebView _setTextZoomFactor:]):
+        (-[WKWebView _setPageZoomFactor:]):
+        (-[WKWebView _countStringMatches:options:maxCount:]):
+        (-[WKWebView _findString:options:maxCount:]):
+        (-[WKWebView _hideFindUI]):
+        (-[WKWebView _saveBackForwardSnapshotForItem:]):
+        (-[WKWebView _clearServiceWorkerEntitlementOverride:]):
+        (-[WKWebView _preconnectToServer:]):
+        (-[WKWebView _setCanUseCredentialStorage:]):
+        (-[WKWebView _setLayoutMode:]):
+        (-[WKWebView _setFixedLayoutSize:]):
+        (-[WKWebView _setBackgroundExtendsBeyondPage:]):
+        (-[WKWebView _setViewScale:]):
+        (-[WKWebView _setCORSDisablingPatterns:]):
+        (-[WKWebView _getProcessDisplayNameWithCompletionHandler:]):
+        (-[WKWebView _setMinimumEffectiveDeviceWidth:]):
+        (-[WKWebView _grantAccessToPreferenceService]):
+        (-[WKWebView _setScrollPerformanceDataCollectionEnabled:]):
+        (-[WKWebView _setAllowsMediaDocumentInlinePlayback:]):
+        (-[WKWebView _setMediaCaptureEnabled:]):
+        (-[WKWebView _setPageMuted:]):
+        (-[WKWebView _removeDataDetectedLinks:]):
+        (-[WKWebView _doAfterNextPresentationUpdate:]):
+        (-[WKWebView _doAfterNextPresentationUpdateWithoutWaitingForPainting:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::resumeActiveDOMObjectsAndAnimations):
+        (WebKit::WebPageProxy::suspendActiveDOMObjectsAndAnimations):
+        (WebKit::WebPageProxy::suspend):
+        (WebKit::WebPageProxy::resume):
+        (WebKit::WebPageProxy::requestMediaPlaybackState):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::suspend):
+        (WebKit::WebPage::resume):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-05-11  Ben Nham  <nham@apple.com>
 
         Failing sandbox check for media permissions should not generate a violation report

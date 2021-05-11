@@ -1,3 +1,24 @@
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Add SPI to suspend / resume a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=225333
+        <rdar://77462543>
+
+        Reviewed by Geoffrey Garen.
+
+        Add new function to BackForwardCache to suspend a page and return a CachedPage
+        instead of requiring a HistoryItem and storing the CachedPage on that history
+        item. This is useful when we want to suspend the page in-place and do not want
+        to require a history item (or a navigation).
+
+        * Headers.cmake:
+        * history/BackForwardCache.cpp:
+        (WebCore::BackForwardCache::trySuspendPage):
+        (WebCore::BackForwardCache::addIfCacheable):
+        (WebCore::BackForwardCache::suspendPage):
+        * history/BackForwardCache.h:
+        * history/CachedPage.h:
+
 2021-05-11  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to restrict networking to a set of hosts
