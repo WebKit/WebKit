@@ -339,10 +339,12 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
 
 void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (childrenInline())
-        computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
-    else
-        computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    if (!shouldApplySizeContainment(*this)) {
+        if (childrenInline())
+            computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        else
+            computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    }
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
 
@@ -1662,6 +1664,9 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
         }
     }
 
+    if (shouldApplySizeContainment(child))
+        adjustSizeContainmentChildForPagination(child, result);
+
     // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
     LayoutUnit logicalTopBeforeUnsplittableAdjustment = result;
     LayoutUnit logicalTopAfterUnsplittableAdjustment = adjustForUnsplittableChild(child, result);
@@ -2045,6 +2050,24 @@ LayoutUnit RenderBlockFlow::pageRemainingLogicalHeightForOffset(LayoutUnit offse
 LayoutUnit RenderBlockFlow::logicalHeightForChildForFragmentation(const RenderBox& child) const
 {
     return logicalHeightForChild(child);
+}
+
+void RenderBlockFlow::adjustSizeContainmentChildForPagination(RenderBox& child, LayoutUnit offset)
+{
+    if (!shouldApplySizeContainment(child))
+        return;
+
+    LayoutUnit childOverflowHeight = child.isHorizontalWritingMode() ? child.layoutOverflowRect().maxY() : child.layoutOverflowRect().maxX();
+    LayoutUnit childLogicalHeight = std::max(child.logicalHeight(), childOverflowHeight);
+
+    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(offset, ExcludePageBoundary);
+
+    LayoutUnit spaceShortage = childLogicalHeight - remainingLogicalHeight;
+    if (spaceShortage <= 0)
+        return;
+
+    if (RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow())
+        fragmentedFlow->updateSpaceShortageForSizeContainment(this, offsetFromLogicalTopOfFirstPage() + offset, spaceShortage);
 }
 
 void RenderBlockFlow::layoutLineGridBox()

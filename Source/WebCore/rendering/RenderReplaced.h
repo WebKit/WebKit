@@ -40,7 +40,12 @@ public:
     bool hasReplacedLogicalHeight() const;
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
-    LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
+    LayoutSize intrinsicSize() const final
+    {
+        if (shouldApplySizeContainment(*this))
+            return LayoutSize();
+        return m_intrinsicSize;
+    }
     
     RoundedRect roundedContentBoxRect() const;
     

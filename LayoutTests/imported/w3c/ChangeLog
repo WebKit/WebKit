@@ -1,3 +1,20 @@
+2021-05-11  Cathie Chen  <cathiechen@igalia.com>
+
+        [CSS contain] Support contain:size
+        https://bugs.webkit.org/show_bug.cgi?id=223570
+
+        Reviewed by Alan Bujtas.
+
+        <canvas> and <video> don't support computing aspect ratio from width and height attributes yet,
+        so the heights are zero when they are with "contain: size".
+
+        * web-platform-tests/css/css-contain/contain-size-grid-003-expected.txt:
+        * web-platform-tests/css/css-contain/contain-size-grid-004-expected.txt:
+        * web-platform-tests/css/css-contain/contain-size-multicol-as-flex-item-expected.txt:
+        * web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+
 2021-05-10  Rob Buis  <rbuis@igalia.com>
 
         Implement <form>.requestSubmit()

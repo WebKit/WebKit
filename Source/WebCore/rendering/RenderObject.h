@@ -201,7 +201,7 @@ public:
     bool isRenderInline() const;
     bool isRenderLayerModelObject() const;
 
-    inline bool isAtomicInlineLevelBox() const;
+    bool isAtomicInlineLevelBox() const;
 
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
@@ -1173,7 +1173,7 @@ inline RenderObject* RenderObject::nextInFlowSibling() const
     return nextSibling;
 }
 
-bool RenderObject::isAtomicInlineLevelBox() const
+inline bool RenderObject::isAtomicInlineLevelBox() const
 {
     return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplaced());
 }
@@ -1187,6 +1187,7 @@ void printGraphicsLayerTreeForLiveDocuments();
 #endif
 
 bool shouldApplyLayoutContainment(const RenderObject&);
+bool shouldApplySizeContainment(const RenderObject&);
 
 } // namespace WebCore
 

@@ -1,38 +1,18 @@
 
 PASS .grid 1
-FAIL .grid 2 assert_equals:
-<div class="grid percent min-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="0" data-expected-width="0">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 2
 PASS .grid 3
-FAIL .grid 4 assert_equals:
-<div class="grid percent max-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="0" data-expected-width="0">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 4
 PASS .grid 5
 PASS .grid 6
 PASS .grid 7
-FAIL .grid 8 assert_equals:
-<div class="grid calc min-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="100" data-expected-width="100">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 8
 PASS .grid 9
-FAIL .grid 10 assert_equals:
-<div class="grid calc max-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="100" data-expected-width="100">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 10
 PASS .grid 11
 PASS .grid 12
 PASS .grid 13
-FAIL .grid 14 assert_equals:
-<div class="grid minmax-percent-fixed min-content" data-expected-height="100" data-expected-width="0">
-  <div data-expected-height="100" data-expected-width="0">XXXX</div>
-</div>
-width expected 0 but got 100
+PASS .grid 14
 PASS .grid 15
 PASS .grid 16
 PASS .grid 17
@@ -40,67 +20,31 @@ PASS .grid 18
 PASS .grid 19
 PASS .grid 20
 PASS .grid 21
-FAIL .grid 22 assert_equals:
-<div class="grid minmax-fixed-percent max-content" data-expected-height="100" data-expected-width="100">
-  <div data-expected-height="100" data-expected-width="100">XXXX</div>
-</div>
-width expected 100 but got 300
+PASS .grid 22
 PASS .grid 23
 PASS .grid 24
 PASS .grid 25
-FAIL .grid 26 assert_equals:
-<div class="grid minmax-percent-flex min-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="0" data-expected-width="0">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 26
 PASS .grid 27
-FAIL .grid 28 assert_equals:
-<div class="grid minmax-percent-flex max-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="0" data-expected-width="0">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 28
 PASS .grid 29
 PASS .grid 30
 PASS .grid 31
-FAIL .grid 32 assert_equals:
-<div class="grid minmax-intrinsic-percent min-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="75" data-expected-width="300">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 32
 PASS .grid 33
-FAIL .grid 34 assert_equals:
-<div class="grid minmax-intrinsic-percent max-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="75" data-expected-width="300">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 34
 PASS .grid 35
 PASS .grid 36
 PASS .grid 37
-FAIL .grid 38 assert_equals:
-<div class="grid minmax-percent-intrinsic min-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="0" data-expected-width="0">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 38
 PASS .grid 39
-FAIL .grid 40 assert_equals:
-<div class="grid minmax-percent-intrinsic max-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="0" data-expected-width="0">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 40
 PASS .grid 41
 PASS .grid 42
 PASS .grid 43
-FAIL .grid 44 assert_equals:
-<div class="grid fit-content min-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="75" data-expected-width="300">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 44
 PASS .grid 45
-FAIL .grid 46 assert_equals:
-<div class="grid fit-content max-content" data-expected-height="0" data-expected-width="0">
-  <div data-expected-height="75" data-expected-width="300">XXXX</div>
-</div>
-width expected 0 but got 300
+PASS .grid 46
 PASS .grid 47
 PASS .grid 48
 XXXX

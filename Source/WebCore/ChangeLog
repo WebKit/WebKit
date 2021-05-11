@@ -1,3 +1,100 @@
+2021-05-11  Cathie Chen  <cathiechen@igalia.com>
+
+        [CSS contain] Support contain:size
+        https://bugs.webkit.org/show_bug.cgi?id=223570
+
+        Reviewed by Alan Bujtas.
+
+        This patch brings initial support of CSS contain:size according to [1].
+        It adds shouldApplySizeContainment() to indicate whether the object is a size containment box.
+        The intrinsic sizes of size containment box are determined as if it had no content.
+        So the implementation need to cooperate with the layout steps:
+          - Computing logical width: Size containment boxes skip handling children while computing minLogicalWidth
+          and maxLogicalWidth in computeIntrinsicLogicalWidths. So the logical width is not affected by children.
+          - Layout children: The logical height is changed after layout all children.
+          - Computing logical height: At the beginning, size containment boxes need to reset logical height to the empty content height
+          if it is not renderGrid. So the logical height is not affected by children.
+        We also need to calculate the sizes according to the layout algorithms.
+        - Grid layout:
+          To calculate the minLogicalWidth and maxLogicalWidth for indefinite size RenderGrid.
+          The widths are calculated by GridTrackSizingAlgorithm: m_minContentSize and m_maxContentSize which are the sum of
+          m_baseSize/m_growthLimit of all GridTracks. The size containment RenderGrid skips handling content in resolveIntrinsicTrackSizes
+          and the m_maxContentSize will be the sum of m_baseSize. The logical height is same to width, but after calculating
+          RenderGrid's logical height, it needs to calculate the track sizes again, to make sure that they are distributed properly.
+          We use computeTrackSizesForDefiniteSize(ForRows, trackBasedLogicalHeight) to recalculate it.
+        - MultiColumn layout:
+          According to the specification, size containment boxes should be monolithic, so we need to extend column height
+          for overflow and positioned size containment boxes. m_spaceShortageForSizeContainment is added to indicate the shortage space
+          that need to balance the column heights. adjustSizeContainmentChildForPagination() will calculate the shortage.
+
+        [1] https://www.w3.org/TR/css-contain-1/#containment-size
+
+        * rendering/GridTrackSizingAlgorithm.cpp: Add isComputingSizeContainment to indicate if it is calculating sizes
+          for indefinite size RenderGrid which is size containment.
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild const):
+        (WebCore::GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes):
+          It skips resolveIntrinsicTrackSizes if isComputingSizeContainment, so growthLimit might be undefined,
+          if so, use track.baseSize() instead.
+        (WebCore::GridTrackSizingAlgorithm::resolveIntrinsicTrackSizes): Skip resolve the content if isComputingSizeContainment().
+        (WebCore::GridTrackSizingAlgorithm::advanceNextState): Added RowSizingExtraIterationForSizeContainment.
+        (WebCore::GridTrackSizingAlgorithm::isValidTransition const):
+        (WebCore::GridTrackSizingAlgorithm::run): Do not stretch the track sizes if isComputingSizeContainment().
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutPositionedObject): Calculate m_spaceShortageForSizeContainment for positioned size containment.
+        (WebCore::RenderBlock::computeIntrinsicLogicalWidths const): Skip computeBlockPreferredLogicalWidths if shouldApplySizeContainment.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths const): Skip handling the children for size containment box.
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination): Calculate m_spaceShortageForSizeContainment for child.
+        (WebCore::RenderBlockFlow::adjustSizeContainmentChildForPagination): m_spaceShortageForSizeContainment = childOverflowHeight - remainingLogicalHeight.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateLogicalHeight): Reset the logical height to empty content height for size containment box.
+        (WebCore::RenderBox::isUnsplittableForPagination const): Size containment box is unsplittable.
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths const): Ditto.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths const): Ditto.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths const): Ditto.
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock): If it is size containment with infiniteSize, using trackBasedLogicalHeight
+        to compute track sizes again to make sure the height is distributed properly.
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat const): Collapse if shouldApplySizeContainment.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeIntrinsicRatioInformation const): This is handled in RenderReplaced::computeIntrinsicRatioInformation instead.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computeIntrinsicLogicalWidths const): The widths of size containment boxes are optionsSpacingHorizontal.
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::computeIntrinsicLogicalWidths const): The widths of size containment box are theme.minimumMenuListSize.
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::updateSpaceShortageForSizeContainment): Set m_spaceShortageForSizeContainment.
+        * rendering/RenderMultiColumnFlow.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight const): Add m_spaceShortageForSizeContainment to the column height.
+        (WebCore::RenderMultiColumnSet::prepareForLayout): Reset m_spaceShortageForSizeContainment.
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::shouldApplySizeContainment): Check if the object is a size containment box.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAtomicInlineLevelBox const):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox const):
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformation const): Use the empty intrinsicSize.
+        * rendering/RenderReplaced.h: The intrinsicSize of size containment is (0, 0).
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computeIntrinsicLogicalWidths const): Ditto.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeIntrinsicLogicalWidths const): Ditto.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calculateIntrinsicSize): Ditto.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::containsSize const):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatioInformation const): Handled in RenderReplaced::computeIntrinsicRatioInformation instead.
+
 2021-05-11  Antti Koivisto  <antti@apple.com>
 
         Don't allow :visited link style in subtrees that use mix-blend-mode

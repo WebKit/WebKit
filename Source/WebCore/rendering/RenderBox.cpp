@@ -2860,6 +2860,14 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
 
 void RenderBox::updateLogicalHeight()
 {
+    if (shouldApplySizeContainment(*this) && !isRenderGrid()) {
+        // We need the exact width of border and padding here, yet we can't use borderAndPadding* interfaces.
+        // Because these interfaces evetually call borderAfter/Before, and RenderBlock::borderBefore
+        // adds extra border to fieldset by adding intrinsicBorderForFieldset which is not needed here.
+        auto borderAndPadding = RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
+        setLogicalHeight(borderAndPadding + scrollbarLogicalHeight());
+    }
+
     cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
     auto computedValues = computeLogicalHeight(logicalHeight(), logicalTop());
     setLogicalHeight(computedValues.m_extent);
@@ -4857,7 +4865,8 @@ bool RenderBox::isUnsplittableForPagination() const
     return isReplaced()
         || hasUnsplittableScrollingOverflow()
         || (parent() && isWritingModeRoot())
-        || (isFloating() && style().styleType() == PseudoId::FirstLetter && style().initialLetterDrop() > 0);
+        || (isFloating() && style().styleType() == PseudoId::FirstLetter && style().initialLetterDrop() > 0)
+        || shouldApplySizeContainment(*this);
 }
 
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const

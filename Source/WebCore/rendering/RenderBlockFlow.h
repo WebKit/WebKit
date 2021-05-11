@@ -398,6 +398,8 @@ public:
     // column balancer to help set a good minimum column height.
     void updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight);
 
+    void adjustSizeContainmentChildForPagination(RenderBox& child, LayoutUnit offset);
+
     void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
     
     LayoutUnit endPaddingWidthForCaret() const;

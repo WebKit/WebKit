@@ -250,11 +250,17 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
-        if (!hasDefiniteLogicalHeight)
+        bool shouldRecomputeHeight = false;
+        if (!hasDefiniteLogicalHeight) {
             computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows);
-        else
+            if (shouldApplySizeContainment(*this))
+                shouldRecomputeHeight = true;
+        } else
             computeTrackSizesForDefiniteSize(ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
         LayoutUnit trackBasedLogicalHeight = m_trackSizingAlgorithm.computeTrackBasedSize() + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
+        if (shouldRecomputeHeight)
+            computeTrackSizesForDefiniteSize(ForRows, trackBasedLogicalHeight);
+
         setLogicalHeight(trackBasedLogicalHeight);
 
         LayoutUnit oldClientAfterEdge = clientLogicalBottom();
@@ -548,7 +554,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     unsigned firstAutoRepeatTrack = insertionPoint + grid.explicitGridStart(direction);
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + grid.autoRepeatTracks(direction);
 
-    if (!grid.hasGridItems()) {
+    if (!grid.hasGridItems() || shouldApplySizeContainment(*this)) {
         emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);

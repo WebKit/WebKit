@@ -187,6 +187,17 @@ void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const Re
 
 void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    auto addScrollbarWidth = [&]() {
+        LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
+        maxLogicalWidth += scrollbarWidth;
+        minLogicalWidth += scrollbarWidth;
+    };
+
+    if (shouldApplySizeContainment(*this)) {
+        addScrollbarWidth();
+        return;
+    }
+
     if (hasMultipleLines() || isVertical()) {
         for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
             if (childDoesNotAffectWidthOrFlexing(child))
@@ -211,10 +222,7 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
     }
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
-
-    LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
-    maxLogicalWidth += scrollbarWidth;
-    minLogicalWidth += scrollbarWidth;
+    addScrollbarWidth();
 }
 
 void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()

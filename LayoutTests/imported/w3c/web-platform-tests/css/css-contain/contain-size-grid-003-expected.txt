@@ -36,19 +36,8 @@ PASS .grid 34
 PASS .grid 35
 PASS .grid 36
 PASS .grid 37
-FAIL .grid 38 assert_equals:
-<div class="grid" style="grid: repeat(auto-fit, 75px) / repeat(auto-fit, 100px);" data-expected-width="0" data-expected-height="0">
-    <div></div>
-  </div>
-width expected 0 but got 100
-FAIL .grid 39 assert_equals:
-<div class="grid" style="grid: auto 50px / 100px auto;" data-expected-width="100" data-expected-height="50">
-  <div data-expected-width="100" data-expected-height="10" data-offset-x="0" data-offset-y="0">X</div>
-  <div data-expected-width="40" data-expected-height="10" data-offset-x="100" data-offset-y="0">XX</div>
-  <div data-expected-width="100" data-expected-height="50" data-offset-x="0" data-offset-y="10">XXX</div>
-  <div data-expected-width="40" data-expected-height="50" data-offset-x="100" data-offset-y="10">XXXX</div>
-</div>
-width expected 100 but got 140
+PASS .grid 38
+PASS .grid 39
 
 X
 XX

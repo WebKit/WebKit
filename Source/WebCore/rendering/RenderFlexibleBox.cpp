@@ -83,6 +83,17 @@ const char* RenderFlexibleBox::renderName() const
 
 void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    auto addScrollbarWidth = [&]() {
+        LayoutUnit scrollbarWidth(scrollbarLogicalWidth());
+        maxLogicalWidth += scrollbarWidth;
+        minLogicalWidth += scrollbarWidth;
+    };
+
+    if (shouldApplySizeContainment(*this)) {
+        addScrollbarWidth();
+        return;
+    }
+
     LayoutUnit childMinWidth;
     LayoutUnit childMaxWidth;
     bool hadExcludedChildren = computePreferredWidthsForExcludedChildren(childMinWidth, childMaxWidth);
@@ -98,11 +109,11 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         ++numItemsWithNormalLayout;
 
         LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*child);
-        
+
         LayoutUnit minPreferredLogicalWidth;
         LayoutUnit maxPreferredLogicalWidth;
         computeChildPreferredLogicalWidths(*child, minPreferredLogicalWidth, maxPreferredLogicalWidth);
-        
+
         minPreferredLogicalWidth += margin;
         maxPreferredLogicalWidth += margin;
 
@@ -139,9 +150,7 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         maxLogicalWidth = std::max(maxLogicalWidth, childMaxWidth);
     }
 
-    LayoutUnit scrollbarWidth(scrollbarLogicalWidth());
-    maxLogicalWidth += scrollbarWidth;
-    minLogicalWidth += scrollbarWidth;
+    addScrollbarWidth();
 }
 
 LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
