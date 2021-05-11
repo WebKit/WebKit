@@ -78,16 +78,14 @@ namespace JSC {
     template<PtrTag tag>
     struct CallRecord {
         MacroAssembler::Call from;
-        BytecodeIndex bytecodeIndex;
         FunctionPtr<tag> callee;
 
         CallRecord()
         {
         }
 
-        CallRecord(MacroAssembler::Call from, BytecodeIndex bytecodeIndex, FunctionPtr<tag> callee)
+        CallRecord(MacroAssembler::Call from, FunctionPtr<tag> callee)
             : from(from)
-            , bytecodeIndex(bytecodeIndex)
             , callee(callee)
         {
         }
@@ -279,7 +277,7 @@ namespace JSC {
         Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = call(OperationPtrTag);
-            m_farCalls.append(FarCallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
+            m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 
@@ -287,7 +285,7 @@ namespace JSC {
         Call appendCallWithSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = callWithSlowPathReturnType(OperationPtrTag);
-            m_farCalls.append(FarCallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
+            m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 #endif

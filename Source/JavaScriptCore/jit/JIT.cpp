@@ -1027,7 +1027,7 @@ void JIT::privateCompileExceptionHandlers()
         // operationLookupExceptionHandlerFromCallerFrame is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         prepareCallOperation(vm());
-        m_farCalls.append(FarCallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
+        m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
         jumpToExceptionHandler(vm());
     }
 
@@ -1040,7 +1040,7 @@ void JIT::privateCompileExceptionHandlers()
         // operationLookupExceptionHandler is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         prepareCallOperation(vm());
-        m_farCalls.append(FarCallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
+        m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
         jumpToExceptionHandler(vm());
     }
 }

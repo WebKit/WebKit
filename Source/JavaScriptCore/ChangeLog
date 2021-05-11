@@ -1,5 +1,20 @@
 2021-05-10  Mark Lam  <mark.lam@apple.com>
 
+        Removed unused CallRecord::bytecodeIndex field.
+        https://bugs.webkit.org/show_bug.cgi?id=225627
+
+        Reviewed by Yusuke Suzuki.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearCall):
+        (JSC::JIT::emitNakedNearTailCall):
+
+2021-05-10  Mark Lam  <mark.lam@apple.com>
+
         Add support to collect stats on cumulative LinkBuffer linked sizes based on profiles.
         https://bugs.webkit.org/show_bug.cgi?id=225617
 
