@@ -1,3 +1,29 @@
+2021-05-11  Antti Koivisto  <antti@apple.com>
+
+        Don't allow :visited link style in subtrees that use mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=225446
+        rdar://65686091
+
+        Reviewed by Darin Adler.
+        
+        Test: fast/css/visited-link-mix-blend-mode.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::visitedDependentColor const):
+        
+        Return unvisited style in substrees that use mix-blend-mode.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setBlendMode):
+        (WebCore::RenderStyle::isInSubtreeWithBlendMode const):
+        
+        Add an inherited fake property for tracking this.
+        
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+
 2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Allow immediate action gestures to begin when force clicking text inside image overlays

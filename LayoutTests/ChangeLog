@@ -1,3 +1,14 @@
+2021-05-11  Antti Koivisto  <antti@apple.com>
+
+        Don't allow :visited link style in subtrees that use mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=225446
+        rdar://65686091
+
+        Reviewed by Darin Adler.
+
+        * fast/css/visited-link-mix-blend-mode-expected.html: Added.
+        * fast/css/visited-link-mix-blend-mode.html: Added.
+
 2021-05-10  Chris Dumez  <cdumez@apple.com>
 
         [ macOS Release wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky crashing
