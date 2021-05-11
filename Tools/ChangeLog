@@ -1,3 +1,17 @@
+2021-05-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] compositing/overflow/dynamic-composited-scrolling-status.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=225644
+
+        Reviewed by Carlos Garcia Campos.
+
+        The test started failing in r277258, which makes WebKitGTK to use
+        always async scrolling in AC mode. After this change, WebKitTestRunner
+        should always enable AsyncOverflowScrolling.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformSpecificFeatureDefaultsForTest const): Enable AsyncOverflowScrolling.
+
 2021-05-11  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] detect infrastructure failure for remote stress tests
