@@ -1,3 +1,14 @@
+2021-05-11  Youenn Fablet  <youenn@apple.com>
+
+        Improve usrsctp restart handling
+        https://bugs.webkit.org/show_bug.cgi?id=225638
+        <rdar://77582953>
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c:
+        (sctp_process_cookie_existing):
+
 2021-05-07  Alex Christensen  <achristensen@webkit.org>
 
         Allow libwebrtc to build for Mac Catalyst
