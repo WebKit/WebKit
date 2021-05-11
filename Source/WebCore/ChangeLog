@@ -1,3 +1,34 @@
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Allow immediate action gestures to begin when force clicking text inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=225600
+        <rdar://problem/77792365>
+
+        Reviewed by Tim Horton.
+
+        Allow immediate action hit-testing to descend into image overlay content. Currently, this uses the
+        `DisallowsUserAgentShadowContent` hit-testing option, causing us to ignore image overlays (which exist inside
+        the UA shadow root). To fix this, we introduce a `DisallowsUserAgentShadowContentExceptForImageOverlays` option
+        that behaves like the existing `DisallowsUserAgentShadowContent` option, with the exception that we allow hit-
+        testing to pierce the UA shadow root to find nodes inside image overlays.
+
+        Tests:  ImmediateActionTests.ImmediateActionOverText
+                ImmediateActionTests.ImmediateActionOverBody
+                ImmediateActionTests.ImmediateActionOverImageOverlay
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint const):
+        * rendering/HitTestRequest.h:
+
+        Add support for the new hit-test option, which allows hit-testing to descend into image overlays (and is
+        intended to be mutually exclusive with the existing `DisallowsUserAgentShadowContent` option). Specifying both
+        options will lead to an assertion on debug builds, and `DisallowsUserAgentShadowContent` takes precedence on
+        release builds.
+
+        (WebCore::HitTestRequest::disallowsUserAgentShadowContentExceptForImageOverlays const):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToListBasedTestResultCommon):
+
 2021-05-10  Sam Weinig  <weinig@apple.com>
 
         Use PixelBuffer rather than ImageData in platform/ code to fix layering violation

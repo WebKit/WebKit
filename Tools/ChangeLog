@@ -1,3 +1,25 @@
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Allow immediate action gestures to begin when force clicking text inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=225600
+        <rdar://problem/77792365>
+
+        Reviewed by Tim Horton.
+
+        Add new API tests to exercise these changes by grabbing the immediate action `NSGestureRecognizer` from
+        `WKWebView` and calling into its delegate. This patch adds two basic immediate action tests by simulating the
+        immediate action over text and the body element, and includes a third test that installs an image overlay using
+        an injected `internals` object, and verifies that the immediate action in an image overlay matches that of
+        regular text on the page.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/ImmediateActionTests.mm: Added.
+        (swizzledImmediateActionLocationInView):
+        (-[WKWebViewForTestingImmediateActions _immediateActionAnimationControllerForHitTestResult:withType:userData:]):
+        (-[WKWebViewForTestingImmediateActions immediateActionGesture]):
+        (-[WKWebViewForTestingImmediateActions simulateImmediateAction:]):
+        (TestWebKitAPI::TEST):
+
 2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Preflight requests not properly attributed as app-bound

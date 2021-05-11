@@ -1190,7 +1190,9 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, Optio
     if (!request.readOnly())
         m_frame.document()->updateHoverActiveState(request, result.targetElement());
 
-    if (request.disallowsUserAgentShadowContent())
+    auto innerNode = makeRefPtr(result.innerNode());
+    if (request.disallowsUserAgentShadowContent()
+        || (request.disallowsUserAgentShadowContentExceptForImageOverlays() && innerNode && !HTMLElement::isInsideImageOverlay(*innerNode)))
         result.setToNonUserAgentShadowAncestor();
 
     return result;

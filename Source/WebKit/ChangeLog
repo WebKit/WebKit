@@ -1,3 +1,17 @@
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Allow immediate action gestures to begin when force clicking text inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=225600
+        <rdar://problem/77792365>
+
+        Reviewed by Tim Horton.
+
+        Adopt the new hit-test option. See WebCore/ChangeLog for more details.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+        (WebKit::WebPage::lookupTextAtLocation):
+
 2021-05-10  Sam Weinig  <weinig@apple.com>
 
         Use PixelBuffer rather than ImageData in platform/ code to fix layering violation
