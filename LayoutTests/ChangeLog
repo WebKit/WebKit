@@ -1,3 +1,18 @@
+2021-05-10  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Decouple http/tests/media/resources/create-id3-db.php from webserver
+        https://bugs.webkit.org/show_bug.cgi?id=224561
+        <rdar://problem/76653054>
+
+        Reviewed by Jonathan Bedard.
+
+        Replacing the creation of metadata.db with JSON into a new file named metadata.json. This standalone script remains in PHP to be able to still use getid3.
+
+        * http/tests/media/resources/create-id3-db.php: Removed.
+        * http/tests/resources/dir-helpers.php: Removed.
+        * http/tests/resources/portabilityLayer.php: Removed.
+        * media/content/create-id3-db: Copied from LayoutTests/http/tests/media/resources/create-id3-db.php.
+
 2021-05-10  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur Wk1 Release] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html is a flaky image failure
