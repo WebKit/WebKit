@@ -41,6 +41,9 @@ class PlatformXRCoordinator {
 public:
     virtual ~PlatformXRCoordinator() = default;
 
+    // FIXME: Temporary and will be fixed later.
+    static PlatformXR::LayerHandle defaultLayerHandle() { return 1; }
+
     using DeviceInfoCallback = Function<void(Optional<XRDeviceInfo>)>;
     virtual void getPrimaryDeviceInfo(DeviceInfoCallback&&) = 0;
 
