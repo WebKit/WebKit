@@ -352,6 +352,12 @@ static void overrideDefaults()
             Options::gcIncrementScale() = 0;
     }
 
+#if PLATFORM(MAC) && CPU(ARM64)
+    Options::numberOfGCMarkers() = 4;
+    Options::numberOfDFGCompilerThreads() = 2;
+    Options::numberOfFTLCompilerThreads() = 2;
+#endif
+
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
     // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;

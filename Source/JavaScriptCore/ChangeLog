@@ -1,3 +1,18 @@
+2021-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Tune number of threads for AS
+        https://bugs.webkit.org/show_bug.cgi?id=225635
+
+        Reviewed by Mark Lam.
+
+        Using 4 GC markers (which really means 3 parallel GC worker threads -- the mutator thread is
+        the 4th), 2 DFG threads, and 2 FTL threads seems to be more optimal than going off ncpu.
+
+        ~1% JetStream2 speed-up, ~1% Speedometer2 speed-up.
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
 2021-05-10  Mark Lam  <mark.lam@apple.com>
 
         Removed unused CallRecord::bytecodeIndex field.
