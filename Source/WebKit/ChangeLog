@@ -1,3 +1,18 @@
+2021-05-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Extend Network Process sandbox to access more Network Extension databases
+        https://bugs.webkit.org/show_bug.cgi?id=225614
+        <rdar://problem/77696566>
+
+        Reviewed by Per Arne Vollan.
+
+        We don't allow the Network Process to directly memory-map files used by the network extensions
+        feature. We can improve memory performance by allowing the process to mmap these files, rather
+        than forcing a series of XPC operations to build the same database in memory.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Speculative revalidation requests not properly attributed as app-bound

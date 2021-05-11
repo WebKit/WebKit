@@ -1,4 +1,4 @@
-; Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+; Copyright (C) 2014-2021 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -126,7 +126,10 @@
     (with-filter (entitlement-is-present "com.apple.private.networkextension.configuration")
            (allow file-read* (literal "/private/var/preferences/com.apple.networkextension.plist")))
 
-    (allow file-read* (literal "/private/var/preferences/com.apple.networkextension.uuidcache.plist"))
+    (allow file-read*
+        (literal "/private/var/preferences/com.apple.networkextension.uuidcache.plist")
+        (prefix "/private/var/db/com.apple.networkextension.")
+    )
 
     (allow mach-lookup
            (global-name "com.apple.AppSSO.service-xpc"))

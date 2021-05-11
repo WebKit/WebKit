@@ -473,3 +473,7 @@
 
 (allow file-read* file-write*
     (home-subpath "/Library/HTTPStorages"))
+
+(allow file-read*
+    (prefix "/private/var/db/com.apple.networkextension.")
+)
