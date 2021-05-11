@@ -37,7 +37,7 @@ end
 def silentOutputHandler
     Proc.new {
         | name |
-        " | " + pipeAndPrefixCommand((Pathname("..") + (name + ".out")).to_s, name)
+        pipeAndPrefixCommand((Pathname("..") + (name + ".out")).to_s, name)
     }
 end
 
@@ -45,8 +45,14 @@ end
 def noisyOutputHandler
     Proc.new {
         | name |
-        " | cat > " + Shellwords.shellescape((Pathname("..") + (name + ".out")).to_s)
+        "cat > " + Shellwords.shellescape((Pathname("..") + (name + ".out")).to_s)
     }
+end
+
+def getAndTestExitCode(plan, condition)
+    <<-EOF
+    if test "$exitCode" #{condition}
+EOF
 end
 
 # Error handler for tests that fail exactly when they return non-zero exit status.
@@ -54,9 +60,9 @@ end
 def simpleErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if test -e #{plan.failFile}"
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
-        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
@@ -68,7 +74,7 @@ end
 def expectedFailErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts "if test -e #{plan.failFile}"
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
@@ -84,10 +90,10 @@ def noisyErrorHandler
     Proc.new {
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
-    
-        outp.puts "if test -e #{plan.failFile}"
+
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "else"
         outp.puts "    " + plan.successCommand
@@ -101,10 +107,10 @@ def diffErrorHandler(expectedFilename)
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
         diffFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".diff")).to_s)
-        
-        outp.puts "if test -e #{plan.failFile}"
+
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "elif test -e ../#{Shellwords.shellescape(expectedFilename)}"
         outp.puts "then"
@@ -130,9 +136,9 @@ def mozillaErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts "if test -e #{plan.failFile}"
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "elif grep -i -q failed! #{outputFilename}"
         outp.puts "then"
@@ -151,7 +157,7 @@ def mozillaFailErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts "if test -e #{plan.failFile}"
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "elif grep -i -q failed! #{outputFilename}"
@@ -171,9 +177,9 @@ def mozillaExit3ErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts "if test -e #{plan.failFile}"
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
-        outp.puts "    if [ `cat #{plan.failFile}` -eq 3 ]"
+        outp.puts "    if [ \"$exitCode\" -eq 3 ]"
         outp.puts "    then"
         outp.puts "        if grep -i -q failed! #{outputFilename}"
         outp.puts "        then"
@@ -183,7 +189,7 @@ def mozillaExit3ErrorHandler
         outp.puts "            " + plan.successCommand
         outp.puts "        fi"
         outp.puts "    else"
-        outp.puts "        (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "        (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "        " + plan.failCommand
         outp.puts "    fi"
         outp.puts "else"
@@ -200,9 +206,9 @@ def chakraPassFailErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts "if test -e #{plan.failFile}"
+        outp.puts getAndTestExitCode(plan, "-ne 0")
         outp.puts "then"
-        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
         outp.puts "elif grep -i -q FAILED #{outputFilename}"
         outp.puts "then"
@@ -262,25 +268,29 @@ class Plan
         script += "#{shellCommand} || exit 1"
         "echo #{Shellwords.shellescape(script)} > #{Shellwords.shellescape((Pathname.new("..") + @name).to_s)}"
     end
-    
+
+    def statusCommand(status)
+        "echo #{$runUniqueId} $exitCode #{status} > #{statusFile}"
+    end
+
     def failCommand
-        "echo FAIL: #{Shellwords.shellescape(@name)} ; touch #{failFile} ; " + reproScriptCommand
+        "#{statusCommand(STATUS_FILE_FAIL)}; echo FAIL: #{Shellwords.shellescape(@name)}; " + reproScriptCommand
     end
     
     def successCommand
+        command = ""
         executionTimeMessage = ""
         if $reportExecutionTime
             executionTimeMessage = " $(($SECONDS - $START_TIME))s"
         end
         if $progressMeter or $reportExecutionTime or $verbosity >= 2
-            "rm -f #{failFile} ; echo PASS: #{Shellwords.shellescape(@name)}#{executionTimeMessage}"
-        else
-            "rm -f #{failFile}"
+            command = "echo PASS: #{Shellwords.shellescape(@name)}#{executionTimeMessage}"
         end
+        "#{statusCommand(STATUS_FILE_PASS)}; #{command}"
     end
     
-    def failFile
-        "test_fail_#{@index}"
+    def statusFile
+        "#{STATUS_FILE_PREFIX}#{@index}"
     end
     
     def writeRunScript(filename)
@@ -290,8 +300,42 @@ class Plan
                 outp.puts "START_TIME=$SECONDS"
             end
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
-            cmd  = "(" + shellCommand + " || (echo $? > #{failFile})) 2>&1 "
-            cmd += @outputHandler.call(@name)
+            #
+            # +--------------------------------------------------------------------+
+            # | +-----------------------------------------------+                  |
+            # | | +--------------+     +-------------------+    |                  |
+            # | | | cmd 1 ----> 1|---> |0 --> outH 1 ---> 4|-> 4|---------------> 1|
+            # | | |     2 /      |     +-------------------+    |   +-----------+  |
+            # | | |echo $? 0 -> 3|---------------------------> 1|-> |0 read xs  |  |
+            # | | +--------------+                              |   |  exit $xs |  |
+            # | |                                               |   +-----------+  |
+            # | +-----------------------------------------------+                  |
+            # +--------------------------------------------------------------------+
+            # From the top down (i.e. reading from the outer expression inwards):
+            #
+            # - Redirect FD 4 to our stdout
+            #
+            # - Build a pipe of two command sequences. The
+            #   right-hand-side sequence reads a number from stdin and
+            #   exits with it. Since it's the last command in the
+            #   pipeline, this will be the value of $? after the
+            #   pipeline completes.
+            #
+            # - In the left-hand-side sequence, redirect FD 3 to FD 1.
+            #
+            # - Build a pipe of two commands
+            #   - run shellCommand, writing its exit code to FD 3.
+            #   - run the outputHandler, with its stdin coming from
+            #     the pipe, redirecting its output to FD 4. The
+            #     outputHandler needs to be in a command sequence
+            #     (i.e. in { cmd; ...}) as it may do its own
+            #     redirections.
+            #
+            # We do all this
+            # - to avoid having to use a temporary file for the exit code
+            # - to keep within the bounds of POSIX sh (i.e. can't use
+            #   PIPESTATUS)
+            cmd = "{ { { { #{shellCommand} 2>&1; echo $? >&3; } | { #{outputHandler.call(@name)} ;} >&4; } 3>&1; } | { read xs; exit $xs; } } 4>&1\nexitCode=$?\n"
             if $verbosity >= 3
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"
             end
