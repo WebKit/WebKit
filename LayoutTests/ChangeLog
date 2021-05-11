@@ -1,3 +1,14 @@
+2021-05-11  Robert Jenner  <jenner@apple.com>
+
+        js/dom/Promise-reject-large-string.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=225258
+
+        Unreviewed test gardening.
+
+        Updating expectation to Pass Failure for arm64 only.
+
+        * platform/mac/TestExpectations:
+
 2021-05-11  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r275515): wpt/quirks/blocks-ignore-line-height.html
