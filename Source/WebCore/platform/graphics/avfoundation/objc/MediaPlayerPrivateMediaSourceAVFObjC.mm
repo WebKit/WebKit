@@ -1169,10 +1169,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [audioRenderer setMuted:m_player->muted()];
     [audioRenderer setVolume:m_player->volume()];
     [audioRenderer setAudioTimePitchAlgorithm:(m_player->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    if ([audioRenderer respondsToSelector:@selector(setIsUnaccompaniedByVisuals:)])
-        [audioRenderer setIsUnaccompaniedByVisuals:!m_player->isVideoPlayer()];
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
     auto deviceId = m_player->audioOutputDeviceIdOverride();

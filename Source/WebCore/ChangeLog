@@ -1,3 +1,17 @@
+2021-05-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277322.
+        https://bugs.webkit.org/show_bug.cgi?id=225657
+
+        Causing build failure
+
+        Reverted changeset:
+
+        "Adopt CoreMedia SPI to identify audio-only playback for MSE
+        clients"
+        https://bugs.webkit.org/show_bug.cgi?id=225647
+        https://trac.webkit.org/changeset/277322
+
 2021-05-11  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r275515): wpt/quirks/blocks-ignore-line-height.html
