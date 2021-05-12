@@ -491,7 +491,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     m_private->evictCodedFrames(size, m_pendingAppendData.capacity(), maximumBufferSize(), m_source->currentTime(), m_source->duration(), m_source->isEnded());
 
     // 5. If the buffer full flag equals true, then throw a QuotaExceededError exception and abort these step.
-    if (m_private->bufferFull()) {
+    if (m_private->bufferFull() || m_private->totalTrackBufferSizeInBytes() + m_pendingAppendData.capacity() + size >= maximumBufferSize()) {
         ERROR_LOG(LOGIDENTIFIER, "buffer full, failing with QuotaExceededError error");
         return Exception { QuotaExceededError };
     }

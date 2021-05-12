@@ -639,7 +639,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
     // This algorithm is run to free up space in this source buffer when new data is appended.
     // 1. Let new data equal the data that is about to be appended to this SourceBuffer.
     // 2. If the buffer full flag equals false, then abort these steps.
-    if (!m_bufferFull)
+    if (!m_bufferFull && totalTrackBufferSizeInBytes() + pendingAppendDataCapacity + newDataSize < maximumBufferSize)
         return;
 
     // 3. Let removal ranges equal a list of presentation time ranges that can be evicted from

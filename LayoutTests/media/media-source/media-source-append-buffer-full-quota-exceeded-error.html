@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var exception;
+
+    async function appendPtsRange(firstPts, lastPts) {
+        var resultException = null;
+        for (var pts = firstPts; pts <= lastPts; pts++) {
+            try {
+                consoleWrite('Appending PTS='+pts);
+                sourceBuffer.appendBuffer(makeASample(pts, pts, 1, 1, 1, SAMPLE_FLAG.SYNC, 1));
+                await waitFor(sourceBuffer, 'updateend');
+            } catch (e) {
+                resultException = e;
+                sourceBuffer.abort();
+                break;
+            }
+        }
+        return resultException;
+    }
+
+    async function appendConcatenateSamples(start, end) {
+        var resultException = null;
+        const samples = [];
+        for (let time = start; time <= end; time++)
+            samples.push(makeASample(time, time, 1, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+
+        try {
+            consoleWrite('Appending PTS='+start+'-'+end );
+            sourceBuffer.appendBuffer(concatenateSamples(samples));
+            await waitFor(sourceBuffer, 'updateend');
+        } catch (e) {
+            resultException = e;
+            sourceBuffer.abort();
+        }
+        return resultException;
+    }
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+        source = new MediaSource();
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(350, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        sourceBuffer.appendBuffer(initSegment);
+        await waitFor(sourceBuffer, 'updateend');
+        waitFor(sourceBuffer, 'error');
+
+        internals.settings.setMaximumSourceBufferSize(1000);
+
+        exception = await appendPtsRange(0, 12);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
+
+        exception = await appendConcatenateSamples(13, 15);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

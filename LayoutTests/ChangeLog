@@ -1,3 +1,13 @@
+2021-05-11  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize.
+        https://bugs.webkit.org/show_bug.cgi?id=225630
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error-expected.txt: Added.
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error.html: Added.
+
 2021-05-11  Robert Jenner  <jenner@apple.com>
 
         [ BigSur wk2 arm64 ] editing/selection/move-by-character-brute-force.html (layout-test) is a flaky timeout

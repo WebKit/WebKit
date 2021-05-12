@@ -1,3 +1,18 @@
+2021-05-11  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize.
+        https://bugs.webkit.org/show_bug.cgi?id=225630
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-append-buffer-full-quota-exceeded-error.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferInternal):
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::evictCodedFrames):
+        * platform/graphics/SourceBufferPrivate.h:
+
 2021-05-11  Sihui Liu  <sihui_liu@apple.com>
 
         Use one VM per thread for IDB serialization work

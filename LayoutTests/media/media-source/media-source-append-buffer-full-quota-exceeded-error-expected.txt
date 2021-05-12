@@ -1,0 +1,34 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+Appending PTS=0
+EVENT(updateend)
+Appending PTS=1
+EVENT(updateend)
+Appending PTS=2
+EVENT(updateend)
+Appending PTS=3
+EVENT(updateend)
+Appending PTS=4
+EVENT(updateend)
+Appending PTS=5
+EVENT(updateend)
+Appending PTS=6
+EVENT(updateend)
+Appending PTS=7
+EVENT(updateend)
+Appending PTS=8
+EVENT(updateend)
+Appending PTS=9
+EVENT(updateend)
+Appending PTS=10
+EVENT(updateend)
+Appending PTS=11
+EVENT(updateend)
+Appending PTS=12
+EVENT(updateend)
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+Appending PTS=13-15
+EXPECTED (exception == 'QuotaExceededError: The quota has been exceeded.') OK
+END OF TEST
+
