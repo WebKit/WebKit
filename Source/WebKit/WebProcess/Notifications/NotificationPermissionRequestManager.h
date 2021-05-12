@@ -28,15 +28,14 @@
 
 #include <WebCore/NotificationClient.h>
 #include <WebCore/NotificationPermissionCallback.h>
-#include <WebCore/SecurityOriginHash.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class Notification;    
-class SecurityOrigin;
+class Notification;
 }
 
 namespace WebKit {
@@ -49,12 +48,10 @@ public:
     static Ref<NotificationPermissionRequestManager> create(WebPage*);
 
 #if ENABLE(NOTIFICATIONS)
-    void startRequest(WebCore::SecurityOrigin*, RefPtr<WebCore::NotificationPermissionCallback>&&);
+    void startRequest(const WebCore::SecurityOriginData&, RefPtr<WebCore::NotificationPermissionCallback>&&);
 #endif
-    void cancelRequest(WebCore::SecurityOrigin*);
-    bool hasPendingPermissionRequests(WebCore::SecurityOrigin*) const;
     
-    WebCore::NotificationClient::Permission permissionLevel(WebCore::SecurityOrigin*);
+    WebCore::NotificationClient::Permission permissionLevel(const WebCore::SecurityOriginData&);
 
     // For testing purposes only.
     void setPermissionLevelForTesting(const String& originString, bool allowed);
@@ -66,12 +63,8 @@ private:
     NotificationPermissionRequestManager(WebPage*);
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<uint64_t, RefPtr<WebCore::NotificationPermissionCallback>> m_idToCallbackMap;
-#endif
-    HashMap<RefPtr<WebCore::SecurityOrigin>, uint64_t> m_originToIDMap;
-    HashMap<uint64_t, RefPtr<WebCore::SecurityOrigin>> m_idToOriginMap;
-
-#if ENABLE(NOTIFICATIONS)
+    HashMap<WebCore::SecurityOriginData, Vector<RefPtr<WebCore::NotificationPermissionCallback>>> m_requestsPerOrigin;
+    HashMap<uint64_t, WebCore::SecurityOriginData> m_idToOriginMap;
     WebPage* m_page;
 #endif
 };

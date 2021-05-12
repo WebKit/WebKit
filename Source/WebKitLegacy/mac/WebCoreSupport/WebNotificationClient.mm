@@ -135,13 +135,6 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, W
     CallUIDelegate(m_webView, selector, webOrigin.get(), listener);
 }
 
-bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext*) const
-{
-    // We know permission was requested but we don't know if the client responded. In this case, we play it
-    // safe and presume there is one pending so that ActiveDOMObjects don't get suspended.
-    return m_everRequestedPermission;
-}
-
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

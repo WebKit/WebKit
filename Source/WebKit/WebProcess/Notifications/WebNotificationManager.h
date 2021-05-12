@@ -62,7 +62,7 @@ public:
     void didUpdateNotificationDecision(const String& originString, bool allowed);
 
     // Looks in local cache for permission. If not found, returns DefaultDenied.
-    WebCore::NotificationClient::Permission policyForOrigin(WebCore::SecurityOrigin*) const;
+    WebCore::NotificationClient::Permission policyForOrigin(const String& originString) const;
 
     void removeAllPermissionsForTesting();
     uint64_t notificationIDForTesting(WebCore::Notification*);

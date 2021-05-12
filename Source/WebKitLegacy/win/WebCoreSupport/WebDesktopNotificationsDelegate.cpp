@@ -181,17 +181,6 @@ void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin*, RefPtr<
 {
 }
 
-void WebDesktopNotificationsDelegate::cancelRequestsForPermission(ScriptExecutionContext* context)
-{
-}
-
-bool hasPendingPermissionRequests(ScriptExecutionContext*) const
-{
-    // We can safely return false here because our implementation for requestPermission() never calls
-    // the completion callback.
-    return false;
-}
-
 NotificationClient::Permission WebDesktopNotificationsDelegate::checkPermission(const URL& url)
 {
     int out = 0;

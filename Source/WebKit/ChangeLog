@@ -1,3 +1,31 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Queue notification permission requests for the same origin on WebKit side
+        https://bugs.webkit.org/show_bug.cgi?id=225701
+        <rdar://76804977>
+
+        Reviewed by Geoffrey Garen.
+
+        If there are parallel notification permission requests for the same origin, we now queue them on WebKit
+        side and only ask the client once for the origin. Once we've received the permission from the client,
+        we respond to all JS requests at this point.
+
+        This patch also removes some dead code to facilitate refactoring the code to support this.
+        In a follow-up I am planning to use sendWithAsyncReply() and refactor this code further.
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest):
+        (WebKit::NotificationPermissionRequestManager::permissionLevel):
+        (WebKit::NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::policyForOrigin const):
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::requestPermission):
+        (WebKit::WebNotificationClient::checkPermission):
+        * WebProcess/WebCoreSupport/WebNotificationClient.h:
+
 2021-05-12  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in WebPageProxy::endColorPicker()

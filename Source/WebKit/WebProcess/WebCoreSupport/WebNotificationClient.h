@@ -52,8 +52,6 @@ private:
     void notificationObjectDestroyed(WebCore::Notification*) override;
     void notificationControllerDestroyed() override;
     void requestPermission(WebCore::ScriptExecutionContext*, RefPtr<WebCore::NotificationPermissionCallback>&&) override;
-    void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override;
-    bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
     
     WebPage* m_page;

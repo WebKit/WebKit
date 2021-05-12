@@ -1,3 +1,22 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Queue notification permission requests for the same origin on WebKit side
+        https://bugs.webkit.org/show_bug.cgi?id=225701
+        <rdar://76804977>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/NotificationAPI.mm: Added.
+        (-[NotificationPermissionMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[NotificationPermissionUIDelegate initWithHandler:]):
+        (-[NotificationPermissionUIDelegate _webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:]):
+        (TestWebKitAPI::runRequestPermissionTest):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::runParallelPermissionRequestsTest):
+
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
         Port WTF::FileSystem::listDirectory to std::filesystem

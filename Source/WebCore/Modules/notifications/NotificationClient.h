@@ -68,11 +68,6 @@ public:
     // made a decision.
     virtual void requestPermission(ScriptExecutionContext*, RefPtr<NotificationPermissionCallback>&&) = 0;
 
-    virtual bool hasPendingPermissionRequests(ScriptExecutionContext*) const = 0;
-
-    // Cancel all outstanding requests for the ScriptExecutionContext
-    virtual void cancelRequestsForPermission(ScriptExecutionContext*) = 0;
-
     // Checks the current level of permission.
     virtual Permission checkPermission(ScriptExecutionContext*) = 0;
 

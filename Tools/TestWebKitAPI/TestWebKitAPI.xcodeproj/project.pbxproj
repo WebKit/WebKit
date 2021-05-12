@@ -272,6 +272,7 @@
 		46918EFC2237283C00468DFE /* DeviceOrientation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46918EFB2237283500468DFE /* DeviceOrientation.mm */; };
 		46A44A5425A7830300F61E16 /* webaudio-createMediaElementSource.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */; };
 		46A46A1A2575645600A1B118 /* SessionStorage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A46A192575645600A1B118 /* SessionStorage.mm */; };
+		46A80F26264C29D400EEF20D /* NotificationAPI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A80F25264C29D400EEF20D /* NotificationAPI.mm */; };
 		46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A911582108E66B0078D40D /* CustomUserAgent.mm */; };
 		46BBEA1B25F9835700D4987A /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */; };
 		46C1EA9825758820005E409E /* alert.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 46C1EA9725758805005E409E /* alert.html */; };
@@ -2080,6 +2081,7 @@
 		46918EFB2237283500468DFE /* DeviceOrientation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceOrientation.mm; sourceTree = "<group>"; };
 		46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webaudio-createMediaElementSource.html"; sourceTree = "<group>"; };
 		46A46A192575645600A1B118 /* SessionStorage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SessionStorage.mm; sourceTree = "<group>"; };
+		46A80F25264C29D400EEF20D /* NotificationAPI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NotificationAPI.mm; sourceTree = "<group>"; };
 		46A911582108E66B0078D40D /* CustomUserAgent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomUserAgent.mm; sourceTree = "<group>"; };
 		46C1EA9725758805005E409E /* alert.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = alert.html; sourceTree = "<group>"; };
 		46C3AEB223D0E50F001B0680 /* beforeunload.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = beforeunload.html; sourceTree = "<group>"; };
@@ -3481,6 +3483,7 @@
 				6351992722275C6A00890AD3 /* NavigationAction.mm */,
 				5C8BC798218CF3E900813886 /* NetworkProcess.mm */,
 				5CAE4637201937CD0051610F /* NetworkProcessCrashNonPersistentDataStore.mm */,
+				46A80F25264C29D400EEF20D /* NotificationAPI.mm */,
 				CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */,
 				CD2D0D19213465560018C784 /* NowPlaying.mm */,
 				2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */,
@@ -5449,6 +5452,7 @@
 				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
 				CDE77D2525A6591C00D4115E /* FullscreenPointerLeave.mm in Sources */,
 				CDDC7C6925FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm in Sources */,
+				46A80F26264C29D400EEF20D /* NotificationAPI.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
 				83DB79691EF63B3C00BFA5E5 /* Function.cpp in Sources */,
 				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
