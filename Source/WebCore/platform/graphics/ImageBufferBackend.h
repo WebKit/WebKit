@@ -148,10 +148,6 @@ protected:
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
     IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };
 
-    WEBCORE_EXPORT virtual void copyImagePixels(
-        AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-        AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize&) const;
-
     WEBCORE_EXPORT Vector<uint8_t> toBGRAData(void* data) const;
 
     WEBCORE_EXPORT Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect, void* data) const;

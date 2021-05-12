@@ -2013,6 +2013,7 @@ platform/graphics/PathTraversalState.cpp
 platform/graphics/PathUtilities.cpp
 platform/graphics/Pattern.cpp
 platform/graphics/PixelBuffer.cpp
+platform/graphics/PixelBufferConversion.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/Region.cpp
 platform/graphics/RemoteGraphicsContextGLProxyBase.cpp

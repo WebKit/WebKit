@@ -35,10 +35,6 @@
 #include "MIMETypeRegistry.h"
 #include "PixelBuffer.h"
 #include "RuntimeApplicationChecks.h"
-
-#if USE(ACCELERATE)
-#include <Accelerate/Accelerate.h>
-#endif
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
@@ -249,73 +245,6 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlushe
 {
     return WTF::makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
 }
-
-#if USE(ACCELERATE)
-static inline vImage_Buffer makeVImageBuffer(unsigned bytesPerRow, uint8_t* rows, const IntSize& size)
-{
-    vImage_Buffer vImageBuffer;
-
-    vImageBuffer.height = static_cast<vImagePixelCount>(size.height());
-    vImageBuffer.width = static_cast<vImagePixelCount>(size.width());
-    vImageBuffer.rowBytes = bytesPerRow;
-    vImageBuffer.data = rows;
-    return vImageBuffer;
-}
-
-static inline void copyImagePixelsAccelerated(
-    AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, vImage_Buffer& src,
-    AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, vImage_Buffer& dest)
-{
-    if (srcAlphaFormat == destAlphaFormat) {
-        ASSERT(srcPixelFormat != destPixelFormat);
-        // The destination alpha format can be unpremultiplied in the
-        // case of an ImageBitmap created from an ImageData with
-        // premultiplyAlpha=="none".
-
-        // Swap pixel channels BGRA <-> RGBA.
-        const uint8_t map[4] = { 2, 1, 0, 3 };
-        vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
-        return;
-    }
-
-    if (destAlphaFormat == AlphaPremultiplication::Unpremultiplied) {
-        if (srcPixelFormat == PixelFormat::RGBA8)
-            vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
-        else
-            vImageUnpremultiplyData_BGRA8888(&src, &dest, kvImageNoFlags);
-    } else {
-        if (srcPixelFormat == PixelFormat::RGBA8)
-            vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
-        else
-            vImagePremultiplyData_BGRA8888(&src, &dest, kvImageNoFlags);
-    }
-
-    if (srcPixelFormat != destPixelFormat) {
-        // Swap pixel channels BGRA <-> RGBA.
-        const uint8_t map[4] = { 2, 1, 0, 3 };
-        vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
-    }
-}
-
-void ImageBufferCGBackend::copyImagePixels(
-    AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-    AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size) const
-{
-    // We don't currently support getting or putting pixel data with deep color buffers.
-    ASSERT(srcPixelFormat == PixelFormat::RGBA8 || srcPixelFormat == PixelFormat::BGRA8);
-    ASSERT(destPixelFormat == PixelFormat::RGBA8 || destPixelFormat == PixelFormat::BGRA8);
-
-    if (srcAlphaFormat == destAlphaFormat && srcPixelFormat == destPixelFormat) {
-        ImageBufferBackend::copyImagePixels(srcAlphaFormat, srcPixelFormat, srcBytesPerRow, srcRows, destAlphaFormat, destPixelFormat, destBytesPerRow, destRows, size);
-        return;
-    }
-
-    vImage_Buffer src = makeVImageBuffer(srcBytesPerRow, srcRows, size);
-    vImage_Buffer dest = makeVImageBuffer(destBytesPerRow, destRows, size);
-
-    copyImagePixelsAccelerated(srcAlphaFormat, srcPixelFormat, src, destAlphaFormat, destPixelFormat, dest);
-}
-#endif
 
 } // namespace WebCore
 

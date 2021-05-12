@@ -1,3 +1,69 @@
+2021-05-12  Sam Weinig  <weinig@apple.com>
+
+        Factor copyImagePixels pixel conversion code into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=225673
+
+        Reviewed by Darin Adler.
+
+        Removes virtual ImageBufferBackend::copyImagePixels() function and
+        moves functionality to new PixelBufferConversion.h/cpp.
+
+        Merge USE(ACCELERATE) code from ImageBufferCGBackend into the same
+        file and do some light cleanup. 
+        
+        - Function renamed to covert convertImagePixels to convey that it is
+          doing more than copying.
+        - Add PixelBufferConversionView/ConstPixelBufferConversionView structs
+          to hold parameters for the conversions, including a ColorSpace member
+          that is not yet used but will be shortly.
+        - Uses constexpr conditionals in unaccelerated cases to hoist branch
+          checking for pixel format conversion requirements outside the main
+          loop.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * platform/graphics/PixelBufferConversion.cpp: Added.
+        (WebCore::makeVImageBuffer):
+        (WebCore::convertImagePixelsAccelerated):
+        (WebCore::convertSinglePixelPremultipliedToPremultiplied):
+        (WebCore::convertSinglePixelPremultipliedToUnpremultiplied):
+        (WebCore::convertSinglePixelUnpremultipliedToPremultiplied):
+        (WebCore::convertSinglePixelUnpremultipliedToUnpremultiplied):
+        (WebCore::convertFunctor):
+        (WebCore::convertImagePixels):
+        * platform/graphics/PixelBufferConversion.h: Added.
+        Move existing copyImagePixels implementations here.
+
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::toBGRAData const):
+        (WebCore::ImageBufferBackend::getPixelBuffer const):
+        (WebCore::ImageBufferBackend::putPixelBuffer):
+        (WebCore::copyPremultipliedToPremultiplied): Deleted.
+        (WebCore::copyPremultipliedToUnpremultiplied): Deleted.
+        (WebCore::copyUnpremultipliedToPremultiplied): Deleted.
+        (WebCore::copyUnpremultipliedToUnpremultiplied): Deleted.
+        (WebCore::copyFunctor): Deleted.
+        (WebCore::ImageBufferBackend::copyImagePixels const): Deleted.
+        * platform/graphics/ImageBufferBackend.h:
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::makeVImageBuffer): Deleted.
+        (WebCore::copyImagePixelsAccelerated): Deleted.
+        (WebCore::ImageBufferCGBackend::copyImagePixels const): Deleted.
+        * platform/graphics/cg/ImageBufferCGBackend.h:
+        Remove existing copyImagePixels() implementation and call new
+        convertImagePixels() instead.
+        
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::copyUnmultipliedResult):
+        (WebCore::FilterEffect::copyPremultipliedResult):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        Fix pixel format for the PixelBuffers to match existing behaviors.
+        These are not being used at the moment but will in the future
+        and new assert in putPixelBuffer caught these being incorrect.
+
 2021-05-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277320 and r277329.
