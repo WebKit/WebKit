@@ -77,7 +77,7 @@ RemoteAudioMediaStreamTrackRenderer::~RemoteAudioMediaStreamTrackRenderer()
 
 void RemoteAudioMediaStreamTrackRenderer::start()
 {
-    m_renderer->start();
+    m_renderer->start([] { });
 }
 
 void RemoteAudioMediaStreamTrackRenderer::stop()

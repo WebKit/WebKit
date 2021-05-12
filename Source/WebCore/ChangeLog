@@ -1,5 +1,58 @@
 2021-05-12  Youenn Fablet  <youenn@apple.com>
 
+        Introduce an internal unit to render audio MediaStreamTrack(s)
+        https://bugs.webkit.org/show_bug.cgi?id=225601
+
+        Reviewed by Eric Carlson.
+
+        Move files from platform/mediastream/mac to platform/mediastream/cocoa since they are used in both iOS and macOS.
+        Move Audio Unit functionality out of AudioMediaStreamTrackRendererUnit.
+        AudioMediaStreamTrackRendererUnit is responsible to manage sources and do the mixing.
+        To actually render audio, it will use an InternalUnit, which is currently done in process.
+
+        A future work will add support for a remote InternalUnit, that would run on GPUProcess.
+        To prepare for that, a callback allows customizing the Internal Unit creation.
+        We also change renderer start to be asynchronous, since it requires fetching the audio description from GPUProcess.
+
+        No change of behavior, covered by existing tests.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/cocoa/AudioSampleBufferList.h:
+        * platform/mediastream/AudioMediaStreamTrackRenderer.h:
+        * platform/mediastream/AudioTrackPrivateMediaStream.cpp:
+        (WebCore::AudioTrackPrivateMediaStream::startRenderer):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp: Renamed from Source/WebCore/platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp.
+        (WebCore::AudioMediaStreamTrackRendererCocoa::start):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.h: Copied from Source/WebCore/platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h.
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp: Renamed from Source/WebCore/platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.cpp.
+        (WebCore::AudioMediaStreamTrackRendererInternalUnit::createLocalInternalUnit):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::LocalAudioMediaStreamTrackRendererInternalUnit):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::retrieveFormatDescription):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::setAudioOutputDevice):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::start):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::stop):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded):
+        (WebCore::LocalAudioMediaStreamTrackRendererInternalUnit::renderingCallback):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.h: Renamed from Source/WebCore/platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.h.
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp: Added.
+        (WebCore::getCreateInternalUnitFunction):
+        (WebCore::AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction):
+        (WebCore::createInternalUnit):
+        (WebCore::AudioMediaStreamTrackRendererUnit::singleton):
+        (WebCore::AudioMediaStreamTrackRendererUnit::AudioMediaStreamTrackRendererUnit):
+        (WebCore::AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit):
+        (WebCore::AudioMediaStreamTrackRendererUnit::setAudioOutputDevice):
+        (WebCore::AudioMediaStreamTrackRendererUnit::addSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::removeSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::start):
+        (WebCore::AudioMediaStreamTrackRendererUnit::stop):
+        (WebCore::AudioMediaStreamTrackRendererUnit::retrieveFormatDescription):
+        (WebCore::AudioMediaStreamTrackRendererUnit::render):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.h: Renamed from Source/WebCore/platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.h.
+
+2021-05-12  Youenn Fablet  <youenn@apple.com>
+
         Enumerate AVCaptureDevice list in a background thread
         https://bugs.webkit.org/show_bug.cgi?id=225643
         <rdar://problem/77820002>

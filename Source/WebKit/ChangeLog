@@ -1,3 +1,18 @@
+2021-05-12  Youenn Fablet  <youenn@apple.com>
+
+        Introduce an internal unit to render audio MediaStreamTrack(s)
+        https://bugs.webkit.org/show_bug.cgi?id=225601
+
+        Reviewed by Eric Carlson.
+
+        Update according new WebCore API.
+
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::start):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        (WebKit::AudioMediaStreamTrackRenderer::start):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.h:
+
 2021-05-12  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION(r277083): Proximity scroll snap is broken on iOS

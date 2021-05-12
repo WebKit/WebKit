@@ -54,7 +54,7 @@ private:
     void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 
     // WebCore::AudioMediaStreamTrackRenderer
-    void start() final;
+    void start(CompletionHandler<void()>&&) final;
     void stop() final;
     void clear() final;
     void setVolume(float) final;

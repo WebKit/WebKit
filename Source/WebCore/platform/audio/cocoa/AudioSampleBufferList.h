@@ -72,7 +72,7 @@ public:
 
     void reset();
 
-    static void zeroABL(AudioBufferList&, size_t);
+    WEBCORE_EXPORT static void zeroABL(AudioBufferList&, size_t);
     void zero();
 
 protected:

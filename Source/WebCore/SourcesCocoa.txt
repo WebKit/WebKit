@@ -527,14 +527,15 @@ platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm
 platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm
+platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp
+platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp
+platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/ios/AVAudioSessionCaptureDevice.mm
 platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @no-unify
 platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @no-unify
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 platform/mediastream/mac/AVCaptureDeviceManager.mm @no-unify
 platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
-platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp
-platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/mac/BaseAudioSharedUnit.cpp
 platform/mediastream/mac/CoreAudioCaptureDevice.cpp
 platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp
