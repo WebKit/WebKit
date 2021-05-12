@@ -34,6 +34,8 @@ class HeapCell;
 class JITStubRoutineSet;
 
 class ConservativeRoots {
+    static constexpr size_t inlineCapacity = 1024;
+    
 public:
     ConservativeRoots(Heap&);
     ~ConservativeRoots();
@@ -41,36 +43,17 @@ public:
     void add(void* begin, void* end);
     void add(void* begin, void* end, JITStubRoutineSet&, CodeBlockSet&);
     
-    size_t size() const;
-    HeapCell** roots() const;
+    const Vector<HeapCell*, inlineCapacity>& roots() const { return m_roots; };
 
 private:
-    static constexpr size_t inlineCapacity = 128;
-    static constexpr size_t nonInlineCapacity = 8192 / sizeof(HeapCell*);
-    
     template<typename MarkHook>
     void genericAddPointer(void*, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter, MarkHook&);
 
     template<typename MarkHook>
     void genericAddSpan(void*, void* end, MarkHook&);
     
-    void grow();
-
-    HeapCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
     Heap& m_heap;
-    HeapCell* m_inlineRoots[inlineCapacity];
+    Vector<HeapCell*, inlineCapacity> m_roots;
 };
-
-inline size_t ConservativeRoots::size() const
-{
-    return m_size;
-}
-
-inline HeapCell** ConservativeRoots::roots() const
-{
-    return m_roots;
-}
 
 } // namespace JSC

@@ -1,3 +1,29 @@
+2021-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        ConservativeRoots triggers page demand on Speedometer
+        https://bugs.webkit.org/show_bug.cgi?id=225676
+
+        Reviewed by Saam Barati.
+
+        Use a Vector instead of OSAllocator to avoid mmap() and page fault --
+        and, like, come on.
+
+        Bump default inlineCapacity up to 1024 because we seem to overflow
+        frequently.
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::~ConservativeRoots):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::grow): Deleted.
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::roots const):
+        (JSC::ConservativeRoots::size const): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::append):
+        * heap/VerifierSlotVisitor.cpp:
+        (JSC::VerifierSlotVisitor::append):
+
 2021-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         Tune number of threads for AS
