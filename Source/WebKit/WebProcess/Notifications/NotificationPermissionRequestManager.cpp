@@ -134,9 +134,8 @@ void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecis
 
     auto callbacks = m_requestsPerOrigin.take(origin);
     for (auto& callback : callbacks) {
-        if (!callback)
-            return;
-        callback->handleEvent(allowed ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied);
+        if (callback)
+            callback->handleEvent(allowed ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied);
     }
 #else
     UNUSED_PARAM(requestID);
