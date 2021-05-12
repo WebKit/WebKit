@@ -741,7 +741,16 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForChild(const RenderBox& chi
 
 LayoutUnit RenderFlexibleBox::crossAxisMarginExtentForChild(const RenderBox& child) const
 {
-    return isHorizontalFlow() ? child.verticalMarginExtent() : child.horizontalMarginExtent();
+    if (!child.needsLayout())
+        return isHorizontalFlow() ? child.verticalMarginExtent() : child.horizontalMarginExtent();
+
+    LayoutUnit marginStart;
+    LayoutUnit marginEnd;
+    if (isHorizontalFlow())
+        child.computeBlockDirectionMargins(*this, marginStart, marginEnd);
+    else
+        child.computeInlineDirectionMargins(*this, child.containingBlockLogicalWidthForContentInFragment(nullptr), child.logicalWidth(), marginStart, marginEnd);
+    return marginStart + marginEnd;
 }
 
 LayoutUnit RenderFlexibleBox::crossAxisScrollbarExtent() const
@@ -818,7 +827,7 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
         auto containerCrossSizeLength = isHorizontalFlow() ? style().height() : style().width();
         // Keep this sync'ed with childCrossSizeShouldUseContainerCrossSize().
         ASSERT(containerCrossSizeLength.isFixed());
-        crossSize = valueForLength(containerCrossSizeLength, -1_lu);
+        crossSize = std::max(0_lu, valueForLength(containerCrossSizeLength, -1_lu) - crossAxisMarginExtentForChild(child));
     } else {
         ASSERT(crossSizeLength.isPercentOrCalculated());
         crossSize = mainAxisIsChildInlineAxis(child) ? child.computePercentageLogicalHeight(crossSizeLength) : adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(crossSizeLength, contentWidth()), crossSizeLength.type());

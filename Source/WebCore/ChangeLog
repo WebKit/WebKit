@@ -1,3 +1,25 @@
+2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Do not use margins when computing aspect ratio cross sizes
+        https://bugs.webkit.org/show_bug.cgi?id=221210
+
+        Reviewed by Javier Fernandez.
+
+        In r270578 we implemented section 9.8.1 of the flexbox specs which allowed us to compute child's
+        indefinite cross sizes as definite when the flexbox container had a definite cross size and a couple
+        of other conditions. However we did not take into account that the child might have some margins in
+        in the cross direction. Aspect ratio computations must use the content box and thus, we need to
+        substract the margin extent before trying to compute a cross size based on an aspect ratio.
+
+        Note that when computeMainSizeFromAspectRatioUsing() is called the child might not have been ever
+        laid out. This means that the margins wouldn't have been computed and thus marginXXX() would always
+        return 0. That's why crossAxisMarginExtentForChild() was also modified so that it actually computes
+        the margins in case the child needs to be laid out.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::crossAxisMarginExtentForChild const):
+        (WebCore::RenderFlexibleBox::computeMainSizeFromAspectRatioUsing const):
+
 2021-05-12  Sam Weinig  <weinig@apple.com>
 
         Factor copyImagePixels pixel conversion code into its own file
