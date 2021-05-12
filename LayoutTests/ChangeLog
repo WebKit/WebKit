@@ -1,5 +1,16 @@
 2021-05-12  Robert Jenner  <jenner@apple.com>
 
+        [ Catalina+ wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225667
+
+        Unreviewed test gardening.
+
+        Updating expectation to Slow to see if test conditions improve.
+
+        * platform/mac/TestExpectations:
+
+2021-05-12  Robert Jenner  <jenner@apple.com>
+
         [ BigSur ] webaudio/AudioContext/audiocontext-close-basic.html (layout-test) is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=225670
 

@@ -2274,3 +2274,5 @@ webkit.org/b/225528 [ arm64 ] http/wpt/fetch/fetch-response-body-stop-in-worker.
 webkit.org/b/225258 [ arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
 
 webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
+
+webkit.org/b/225667 http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Slow ]
