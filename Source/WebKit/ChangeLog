@@ -1,3 +1,20 @@
+2021-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash in DisplayLink::incrementFullSpeedRequestClientCount()
+        https://bugs.webkit.org/show_bug.cgi?id=225683
+        <rdar://77716330>
+
+        Reviewed by Tim Horton.
+
+        Crash data suggest that in WebPageProxy::updateWheelEventActivityAfterProcessSwap()
+        the connection might be null. Protect against that an an unset DisplayID, as we do
+        in wheelEventHysteresisUpdated().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateWheelEventActivityAfterProcessSwap):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::incrementFullSpeedRequestClientCount): Remove an extra semicolon.
+
 2021-05-11  Tim Horton  <timothy_horton@apple.com>
 
         Fix the CGDisplayListImageBufferBackend build

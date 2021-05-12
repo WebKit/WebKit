@@ -2782,6 +2782,9 @@ void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 {
 #if HAVE(CVDISPLAYLINK)
     if (m_wheelEventActivityHysteresis.state() == PAL::HysteresisState::Started) {
+        if (!m_process->hasConnection() || !m_displayID)
+            return;
+
         bool wantsFullSpeedUpdates = true;
         process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
     }

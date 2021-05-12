@@ -160,7 +160,7 @@ void DisplayLink::incrementFullSpeedRequestClientCount(IPC::Connection& connecti
 
     auto& connectionInfo = m_observers.ensure(&connection, [] {
         return ConnectionClientInfo { };
-    }).iterator->value;;
+    }).iterator->value;
 
     ++connectionInfo.fullSpeedUpdatesClientCount;
 }
