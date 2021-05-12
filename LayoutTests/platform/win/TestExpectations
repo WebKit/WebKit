@@ -4407,7 +4407,8 @@ webkit.org/b/207499 webanimations/transform-accelerated-animation-finishes-befor
 
 webkit.org/b/209426 http/wpt/css/css-animations/start-animation-001.html  [ Pass Failure ]
 
-webkit.org/b/209455 http/tests/misc/last-modified-parsing.html [ Failure ]
+webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure ]
+webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure ]
 
 webkit.org/b/209583 webanimations/no-scheduling-while-filling-accelerated.html [ Skip ]
 
