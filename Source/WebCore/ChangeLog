@@ -1,3 +1,19 @@
+2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: m_clients.contains(&client) in CSSFontFace::removeClient via CSSSegmentedFontFace::~CSSSegmentedFontFace()
+        https://bugs.webkit.org/show_bug.cgi?id=223790
+
+        Reviewed by Ryosuke Niwa.
+
+        CSSFontFace does not support adding the same client twice as it uses a HashSet to track them. This means that
+        it's a mistake to call removeClient() more than once. This could happen when specifying the same font
+        family more than once in a <font-face> element inside a svg container.
+
+        Test: fast/css/svg-font-face-duplicate-crash.html
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::fontFace): Skip duplicate CSSFontFace's when before calling appendFontFace().
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Queue notification permission requests for the same origin on WebKit side
