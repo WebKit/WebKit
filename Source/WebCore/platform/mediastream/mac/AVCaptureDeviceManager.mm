@@ -59,25 +59,23 @@ using namespace WebCore;
 
 namespace WebCore {
 
-
-Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevicesInternal()
+void AVCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
-    if (!isAvailable())
-        return m_devices;
-
-    static bool firstTime = true;
-    if (firstTime) {
-        firstTime = false;
-        refreshCaptureDevices();
-        m_notifyWhenDeviceListChanges = true;
+    if (!m_isInitialized) {
+        refreshCaptureDevices([this, callback = WTFMove(callback)]() mutable {
+            m_isInitialized = true;
+            callback();
+        });
+        return;
     }
-
-    return m_devices;
+    callback();
 }
 
 const Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevices()
 {
-    return captureDevicesInternal();
+    ASSERT(m_isInitialized);
+    RELEASE_LOG_ERROR_IF(!m_isInitialized, WebRTC, "Retrieving AVCaptureDeviceManager list before initialization");
+    return m_devices;
 }
 
 inline static bool deviceIsAvailable(AVCaptureDevice *device)
@@ -95,6 +93,7 @@ inline static bool deviceIsAvailable(AVCaptureDevice *device)
 
 void AVCaptureDeviceManager::updateCachedAVCaptureDevices()
 {
+    ASSERT(!isMainThread());
     auto* currentDevices = [PAL::getAVCaptureDeviceClass() devices];
     auto changedDevices = adoptNS([[NSMutableArray alloc] init]);
     for (AVCaptureDevice *cachedDevice in m_avCaptureDevices.get()) {
@@ -129,29 +128,17 @@ static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device)
     return captureDevice;
 }
 
-bool AVCaptureDeviceManager::isMatchingExistingCaptureDevice(AVCaptureDevice *device)
-{
-    auto existingCaptureDevice = captureDeviceFromPersistentID(device.uniqueID);
-    if (!existingCaptureDevice)
-        return false;
-
-    return deviceIsAvailable(device) == existingCaptureDevice.enabled();
-}
-
-static inline bool isDefaultVideoCaptureDeviceFirst(const Vector<CaptureDevice>& devices, const String& defaultDeviceID)
-{
-    if (devices.isEmpty())
-        return false;
-    return devices[0].persistentId() == defaultDeviceID;
-}
-
 static inline bool isVideoDevice(AVCaptureDevice *device)
 {
     return [device hasMediaType:AVMediaTypeVideo] || [device hasMediaType:AVMediaTypeMuxed];
 }
 
-void AVCaptureDeviceManager::refreshCaptureDevices()
+Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 {
+    ASSERT(!isMainThread());
+    if (!isAvailable())
+        return { };
+
     if (!m_avCaptureDevices) {
         m_avCaptureDevices = adoptNS([[NSMutableArray alloc] init]);
         registerForDeviceNotifications();
@@ -178,31 +165,40 @@ void AVCaptureDeviceManager::refreshCaptureDevices()
     }
 #endif
 
-    bool deviceHasChanged = false;
     if (defaultVideoDevice) {
-        deviceList.append(toCaptureDevice(defaultVideoDevice));
-        deviceHasChanged = !isDefaultVideoCaptureDeviceFirst(captureDevices(), defaultVideoDevice.uniqueID);
+        auto device = toCaptureDevice(defaultVideoDevice);
+        device.setIsDefault(true);
+        deviceList.append(WTFMove(device));
     }
     for (AVCaptureDevice *platformDevice in currentDevices) {
-        if (!isVideoDevice(platformDevice))
-            continue;
-
-        if (!deviceHasChanged && !isMatchingExistingCaptureDevice(platformDevice))
-            deviceHasChanged = true;
-
-        if (platformDevice.uniqueID == defaultVideoDevice.uniqueID)
-            continue;
-
-        deviceList.append(toCaptureDevice(platformDevice));
+        if (isVideoDevice(platformDevice) && platformDevice.uniqueID != defaultVideoDevice.uniqueID)
+            deviceList.append(toCaptureDevice(platformDevice));
     }
+    return deviceList;
+}
 
-    if (deviceHasChanged || m_devices.size() != deviceList.size()) {
-        deviceHasChanged = true;
-        m_devices = WTFMove(deviceList);
-    }
+void AVCaptureDeviceManager::refreshCaptureDevices(CompletionHandler<void()>&& callback)
+{
+    m_dispatchQueue->dispatch([this, callback = WTFMove(callback)]() mutable {
+        RunLoop::main().dispatch([this, callback = WTFMove(callback), deviceList = retrieveCaptureDevices().isolatedCopy()]() mutable {            
+            bool deviceHasChanged = m_devices.size() != deviceList.size();
+            if (!deviceHasChanged) {
+                for (size_t cptr = 0; cptr < deviceList.size(); ++cptr) {
+                    if (m_devices[cptr].persistentId() != deviceList[cptr].persistentId() || m_devices[cptr].enabled() != deviceList[cptr].enabled()) {
+                        deviceHasChanged = true;
+                        break;
+                    }
+                }
+            }
 
-    if (m_notifyWhenDeviceListChanges && deviceHasChanged)
-        deviceChanged();
+            if (deviceHasChanged) {
+                m_devices = WTFMove(deviceList);
+                if (m_isInitialized)
+                    deviceChanged();
+            }
+            callback();
+        });
+    });
 }
 
 bool AVCaptureDeviceManager::isAvailable()
@@ -218,6 +214,7 @@ AVCaptureDeviceManager& AVCaptureDeviceManager::singleton()
 
 AVCaptureDeviceManager::AVCaptureDeviceManager()
     : m_objcObserver(adoptNS([[WebCoreAVCaptureDeviceManagerObserver alloc] initWithCallback: this]))
+    , m_dispatchQueue(WorkQueue::create("com.apple.WebKit.AVCaptureDeviceManager"))
 {
 }
 

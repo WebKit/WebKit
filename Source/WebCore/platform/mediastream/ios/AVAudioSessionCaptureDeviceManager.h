@@ -47,7 +47,7 @@ public:
     static AVAudioSessionCaptureDeviceManager& singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
-    void getCaptureDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&&) final;
+    void computeCaptureDevices(CompletionHandler<void()>&&) final;
     const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
     Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 

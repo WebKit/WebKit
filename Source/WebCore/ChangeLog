@@ -1,3 +1,47 @@
+2021-05-12  Youenn Fablet  <youenn@apple.com>
+
+        Enumerate AVCaptureDevice list in a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=225643
+        <rdar://problem/77820002>
+
+        Reviewed by Eric Carlson.
+
+        Enumerate AVCaptureDevice in a background queue asynchronously.
+        Delay getUserMedia and enumerateDevices until this is completed.
+
+        Update RealtimeMediaSourceCenter accordingly and introduce RealtimeMediaSourceCenter::enumerateDevices for that purpose.
+        Replace getCaptureDevices by computeCaptureDevices to do the async computation.
+        Continue using captureDevices() getters.
+
+        Manually tested.
+
+        * platform/mediastream/CaptureDevice.h:
+        (WebCore::CaptureDevice::CaptureDevice):
+        (WebCore::CaptureDevice::isolatedCopy):
+        * platform/mediastream/CaptureDeviceManager.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::getMediaStreamDevices):
+        (WebCore::RealtimeMediaSourceCenter::enumerateDevices):
+        (WebCore::RealtimeMediaSourceCenter::validateRequestConstraints):
+        (WebCore::RealtimeMediaSourceCenter::validateRequestConstraintsAfterEnumeration):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        (WebCore::AudioCaptureFactory::computeSpeakerDevices const):
+        * platform/mediastream/ios/AVAudioSessionCaptureDevice.mm:
+        (WebCore::AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice):
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        (WebCore::AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices):
+        (WebCore::AVAudioSessionCaptureDeviceManager::computeCaptureDevices):
+        * platform/mediastream/mac/AVCaptureDeviceManager.h:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::computeCaptureDevices):
+        (WebCore::AVCaptureDeviceManager::captureDevices):
+        (WebCore::AVCaptureDeviceManager::updateCachedAVCaptureDevices):
+        (WebCore::AVCaptureDeviceManager::retrieveCaptureDevices):
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDevices):
+        (WebCore::AVCaptureDeviceManager::AVCaptureDeviceManager):
+
 2021-05-11  Cameron McCormack  <heycam@apple.com>
 
         Include reasons for compositing in showLayerTree output

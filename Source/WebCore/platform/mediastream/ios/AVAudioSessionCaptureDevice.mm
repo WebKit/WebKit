@@ -45,11 +45,8 @@ AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescr
 }
 
 AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId, bool isEnabled, bool isDefault, bool isMock)
-    : CaptureDevice(persistentId, type, label, groupId)
+    : CaptureDevice(persistentId, type, label, groupId, isEnabled, isDefault, isMock)
 {
-    setEnabled(isEnabled);
-    setIsDefault(isDefault);
-    setIsMockDevice(isMock);
 }
 
 AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::isolatedCopy() &&
