@@ -1,3 +1,29 @@
+2021-05-11  Cameron McCormack  <heycam@apple.com>
+
+        Include reasons for compositing in showLayerTree output
+        https://bugs.webkit.org/show_bug.cgi?id=225640
+
+        Reviewed by Simon Fraser.
+
+        Since it seems useful to know why a layer is composited.
+
+        The logging code was only including one reason, rather than the
+        whole set of reasons, and that's unchanged (except for the function
+        name to make that clearer), although we could also just make that
+        include all of the reasons too.
+
+        There were two reason strings missing, which are also added --
+        OverflowScrollPositioning and WillChange -- which the use of a
+        switch should help catch in the future.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        (WebCore::compositingReasonToString):
+        (WebCore::RenderLayerCompositor::logReasonsForCompositing):
+        (WebCore::operator<<):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderTreeAsText.cpp:
+
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
         Port WTF::FileSystem::listDirectory to std::filesystem

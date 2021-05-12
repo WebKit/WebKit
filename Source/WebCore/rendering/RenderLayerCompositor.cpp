@@ -1537,7 +1537,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
     if (!layer.renderer().style().hasAutoUsedZIndex())
         logString.append(" z-index: ", layer.renderer().style().usedZIndex());
 
-    logString.append(" (", logReasonsForCompositing(layer), ") ");
+    logString.append(" (", logOneReasonForCompositing(layer), ") ");
 
     if (backing->graphicsLayer()->contentsOpaque() || backing->paintsIntoCompositedAncestor() || backing->foregroundLayer() || backing->backgroundLayer()) {
         logString.append('[');
@@ -2770,91 +2770,46 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
     return reasons;
 }
 
-#if !LOG_DISABLED
-const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer& layer)
+static const char* compositingReasonToString(CompositingReason reason)
 {
-    OptionSet<CompositingReason> reasons = reasonsForCompositing(layer);
+    switch (reason) {
+    case CompositingReason::Transform3D: return "3D transform";
+    case CompositingReason::Video: return "video";
+    case CompositingReason::Canvas: return "canvas";
+    case CompositingReason::Plugin: return "plugin";
+    case CompositingReason::IFrame: return "iframe";
+    case CompositingReason::BackfaceVisibilityHidden: return "backface-visibility: hidden";
+    case CompositingReason::ClipsCompositingDescendants: return "clips compositing descendants";
+    case CompositingReason::Animation: return "animation";
+    case CompositingReason::Filters: return "filters";
+    case CompositingReason::PositionFixed: return "position: fixed";
+    case CompositingReason::PositionSticky: return "position: sticky";
+    case CompositingReason::OverflowScrolling: return "async overflow scrolling";
+    case CompositingReason::Stacking: return "stacking";
+    case CompositingReason::Overlap: return "overlap";
+    case CompositingReason::OverflowScrollPositioning: return "overflow scroll positioning";
+    case CompositingReason::NegativeZIndexChildren: return "negative z-index children";
+    case CompositingReason::TransformWithCompositedDescendants: return "transform with composited descendants";
+    case CompositingReason::OpacityWithCompositedDescendants: return "opacity with composited descendants";
+    case CompositingReason::MaskWithCompositedDescendants: return "mask with composited descendants";
+    case CompositingReason::ReflectionWithCompositedDescendants: return "reflection with composited descendants";
+    case CompositingReason::FilterWithCompositedDescendants: return "filter with composited descendants";
+    case CompositingReason::BlendingWithCompositedDescendants: return "blending with composited descendants";
+    case CompositingReason::IsolatesCompositedBlendingDescendants: return "isolates composited blending descendants";
+    case CompositingReason::Perspective: return "perspective";
+    case CompositingReason::Preserve3D: return "preserve-3d";
+    case CompositingReason::WillChange: return "will-change";
+    case CompositingReason::Root: return "root";
+    case CompositingReason::Model: return "model";
+    }
+    return "";
+}
 
-    if (reasons & CompositingReason::Transform3D)
-        return "3D transform";
-
-    if (reasons & CompositingReason::Video)
-        return "video";
-
-    if (reasons & CompositingReason::Canvas)
-        return "canvas";
-
-    if (reasons & CompositingReason::Plugin)
-        return "plugin";
-
-    if (reasons & CompositingReason::IFrame)
-        return "iframe";
-
-    if (reasons & CompositingReason::BackfaceVisibilityHidden)
-        return "backface-visibility: hidden";
-
-    if (reasons & CompositingReason::ClipsCompositingDescendants)
-        return "clips compositing descendants";
-
-    if (reasons & CompositingReason::Animation)
-        return "animation";
-
-    if (reasons & CompositingReason::Filters)
-        return "filters";
-
-    if (reasons & CompositingReason::PositionFixed)
-        return "position: fixed";
-
-    if (reasons & CompositingReason::PositionSticky)
-        return "position: sticky";
-
-    if (reasons & CompositingReason::OverflowScrolling)
-        return "async overflow scrolling";
-
-    if (reasons & CompositingReason::Stacking)
-        return "stacking";
-
-    if (reasons & CompositingReason::Overlap)
-        return "overlap";
-
-    if (reasons & CompositingReason::NegativeZIndexChildren)
-        return "negative z-index children";
-
-    if (reasons & CompositingReason::TransformWithCompositedDescendants)
-        return "transform with composited descendants";
-
-    if (reasons & CompositingReason::OpacityWithCompositedDescendants)
-        return "opacity with composited descendants";
-
-    if (reasons & CompositingReason::MaskWithCompositedDescendants)
-        return "mask with composited descendants";
-
-    if (reasons & CompositingReason::ReflectionWithCompositedDescendants)
-        return "reflection with composited descendants";
-
-    if (reasons & CompositingReason::FilterWithCompositedDescendants)
-        return "filter with composited descendants";
-
-#if ENABLE(CSS_COMPOSITING)
-    if (reasons & CompositingReason::BlendingWithCompositedDescendants)
-        return "blending with composited descendants";
-
-    if (reasons & CompositingReason::IsolatesCompositedBlendingDescendants)
-        return "isolates composited blending descendants";
-#endif
-
-    if (reasons & CompositingReason::Perspective)
-        return "perspective";
-
-    if (reasons & CompositingReason::Preserve3D)
-        return "preserve-3d";
-
-    if (reasons & CompositingReason::Root)
-        return "root";
-
-    if (reasons & CompositingReason::Model)
-        return "model";
-
+#if !LOG_DISABLED
+const char* RenderLayerCompositor::logOneReasonForCompositing(const RenderLayer& layer)
+{
+    for (auto reason : reasonsForCompositing(layer))
+        return compositingReasonToString(reason);
     return "";
 }
 #endif
@@ -5053,6 +5008,11 @@ TextStream& operator<<(TextStream& ts, CompositingPolicy compositingPolicy)
     case CompositingPolicy::Conservative: ts << "conservative"; break;
     }
     return ts;
+}
+
+TextStream& operator<<(TextStream& ts, CompositingReason compositingReason)
+{
+    return ts << compositingReasonToString(compositingReason);
 }
 
 #if PLATFORM(IOS_FAMILY)

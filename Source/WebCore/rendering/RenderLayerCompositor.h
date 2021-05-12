@@ -569,7 +569,7 @@ private:
     bool shouldCompositeOverflowControls() const;
 
 #if !LOG_DISABLED
-    const char* logReasonsForCompositing(const RenderLayer&);
+    const char* logOneReasonForCompositing(const RenderLayer&);
     void logLayerInfo(const RenderLayer&, const char*, int depth);
 #endif
 
@@ -654,6 +654,7 @@ void paintScrollbar(Scrollbar*, GraphicsContext&, const IntRect& clip);
 
 WTF::TextStream& operator<<(WTF::TextStream&, CompositingUpdateType);
 WTF::TextStream& operator<<(WTF::TextStream&, CompositingPolicy);
+WTF::TextStream& operator<<(WTF::TextStream&, CompositingReason);
 
 } // namespace WebCore
 

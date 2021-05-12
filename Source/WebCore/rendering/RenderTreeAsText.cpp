@@ -689,7 +689,9 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
 
     if (behavior.contains(RenderAsTextFlag::ShowCompositedLayers)) {
         if (layer.isComposited()) {
-            ts << " (composited, bounds=" << layer.backing()->compositedBounds() << ", drawsContent=" << layer.backing()->graphicsLayer()->drawsContent()
+            ts << " (composited " << layer.compositor().reasonsForCompositing(layer)
+                << ", bounds=" << layer.backing()->compositedBounds()
+                << ", drawsContent=" << layer.backing()->graphicsLayer()->drawsContent()
                 << ", paints into ancestor=" << layer.backing()->paintsIntoCompositedAncestor() << ")";
         } else if (layer.paintsIntoProvidedBacking())
             ts << " (shared backing of " << layer.backingProviderLayer() << ")";
