@@ -1,3 +1,14 @@
+2021-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [MotionMark] Update plan file after r277406
+        https://bugs.webkit.org/show_bug.cgi?id=225721
+
+        Rubber-stamped by Geoffrey Garen.
+
+        Just update the plan.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
+
 2021-05-12  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Bots should automatically recover from svn checkout is already locked issue
