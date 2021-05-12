@@ -1,3 +1,21 @@
+2021-05-12  Sihui Liu  <sihui_liu@apple.com>
+
+        [ BigSur Release ] TestWebKitAPI.IndexedDB.KillWebProcessWithOpenConnection is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=225372
+        <rdar://problem/77532291>
+
+        Reviewed by Chris Dumez.
+
+        Ensure IDB data is cleared before test and make error logging more detailed.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/KillWebProcessWithOpenConnection-1.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/KillWebProcessWithOpenConnection-2.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm: Listen to version change event because it 
+        indicates that server starts handling second open request in KillWebProcessWithOpenConnection-2.html.
+        (-[IndexedDBWebProcessKillMessageHandler userContentController:didReceiveScriptMessage:]):
+        (getNextMessage):
+        (TEST):
+
 2021-05-12  Jonathan Bedard  <jbedard@apple.com>
 
         [TestWebKitAPI] Explicitly exit after completing tests

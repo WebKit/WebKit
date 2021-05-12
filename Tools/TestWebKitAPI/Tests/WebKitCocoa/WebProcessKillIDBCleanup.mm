@@ -39,7 +39,7 @@
 #import <wtf/RetainPtr.h>
 
 static bool receivedScriptMessage;
-static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
+static Deque<RetainPtr<NSString>> scriptMessages;
 
 @interface IndexedDBWebProcessKillMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -49,19 +49,19 @@ static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     receivedScriptMessage = true;
-    scriptMessages.append(message);
+    scriptMessages.append([message body]);
 }
 
 @end
 
-static WKScriptMessage *getNextMessage()
+static RetainPtr<NSString> getNextMessage()
 {
     if (scriptMessages.isEmpty()) {
         receivedScriptMessage = false;
         TestWebKitAPI::Util::run(&receivedScriptMessage);
     }
 
-    return scriptMessages.takeFirst().autorelease();
+    return scriptMessages.takeFirst();
 }
 
 TEST(IndexedDB, WebProcessKillIDBCleanup)
@@ -75,10 +75,10 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebProcessKillIDBCleanup-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
-    RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
-    RetainPtr<NSString> string2 = (NSString *)[getNextMessage() body];
-    RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
-    RetainPtr<NSString> string4 = (NSString *)[getNextMessage() body];
+    auto string1 = getNextMessage();
+    auto string2 = getNextMessage();
+    auto string3 = getNextMessage();
+    auto string4 = getNextMessage();
 
     // Make a new web view with a new web process to finish the test
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -86,12 +86,12 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebProcessKillIDBCleanup-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView2 loadRequest:request];
 
-    RetainPtr<NSString> string5 = (NSString *)[getNextMessage() body];
+    auto string5 = getNextMessage();
 
     // Kill the first web process to unblock the second web processes transaction from starting.
     [webView _killWebContentProcessAndResetState];
 
-    RetainPtr<NSString> string6 = (NSString *)[getNextMessage() body];
+    auto string6 = getNextMessage();
 
     EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
     EXPECT_WK_STREQ(@"Transaction complete", string2.get());
@@ -107,24 +107,29 @@ TEST(IndexedDB, KillWebProcessWithOpenConnection)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
+    __block bool readyToContinue = false;
+    [configuration.get().websiteDataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
     auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSURLRequest *request1 = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"KillWebProcessWithOpenConnection-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView1 loadRequest:request1];
-    RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
+    auto string1 = getNextMessage();
     EXPECT_WK_STREQ(@"Open Succeeded", string1.get());
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSURLRequest *request2 = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"KillWebProcessWithOpenConnection-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView2 loadRequest:request2];
-    RetainPtr<NSString> string2 = (NSString *)[getNextMessage() body];
-    EXPECT_WK_STREQ(@"First Open Succeeded", string2.get());
+    auto string2 = getNextMessage();
+    EXPECT_WK_STREQ(@"Version Change", string2.get());
 
+    // Second database request in webView2 should not be processed.
     [webView2 _killWebContentProcessAndResetState];
     [webView1 _killWebContentProcessAndResetState];
 
-    TestWebKitAPI::Util::spinRunLoop(10);
-
     [webView1 reload];
-    RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
+    auto string3 = getNextMessage();
     EXPECT_WK_STREQ(@"Open Succeeded", string3.get());
 }

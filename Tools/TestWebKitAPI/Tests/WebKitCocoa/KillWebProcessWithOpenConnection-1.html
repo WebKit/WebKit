@@ -3,8 +3,12 @@
 var request = window.indexedDB.open("TestIndexedDB");
 request.onsuccess = () => {
     window.webkit.messageHandlers.testHandler.postMessage("Open Succeeded");
+    var db = event.target.result;
+    db.onversionchange = () => {
+        window.webkit.messageHandlers.testHandler.postMessage("Version Change");
+    }
 }
 request.onerror = () => {
-    window.webkit.messageHandlers.testHandler.postMessage("Open Failed");
+    window.webkit.messageHandlers.testHandler.postMessage("Open Failed: " + request.error);
 }
 </script>
