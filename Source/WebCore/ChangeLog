@@ -1,3 +1,14 @@
+2021-05-12  Jean-Yves Avenard  <jya@apple.com>
+
+        Adopt CoreMedia SPI to identify audio-only playback for MSE clients
+        https://bugs.webkit.org/show_bug.cgi?id=225647
+        rdar://76138365
+
+        Reviewed by Youenn Fablet.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+          tells whether the AVSBAR is attached to an <audio> or <video> element.
+
 2021-05-12  Youenn Fablet  <youenn@apple.com>
 
         Introduce an internal unit to render audio MediaStreamTrack(s)
