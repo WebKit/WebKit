@@ -137,6 +137,7 @@ void JITCompiler::compileBody()
 
 void JITCompiler::compileExceptionHandlers()
 {
+#if !ENABLE(EXTRA_CTI_THUNKS)
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
@@ -165,6 +166,7 @@ void JITCompiler::compileExceptionHandlers()
 
         jumpToExceptionHandler(vm());
     }
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 }
 
 void JITCompiler::link(LinkBuffer& linkBuffer)
@@ -281,7 +283,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
             linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.call));
     }
-    
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+    if (!m_exceptionChecks.empty())
+        linkBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    if (!m_exceptionChecksWithCallFrameRollback.empty())
+        linkBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
+#endif // ENABLE(EXTRA_CTI_THUNKS)
+
     MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitGenerationThunkGenerator);
     auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
     for (unsigned i = 0; i < m_osrExit.size(); ++i) {

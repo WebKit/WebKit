@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "CallData.h"
 #include "Intrinsic.h"
 #include "MacroAssemblerCodeRef.h"
+#include "SlowPathFunction.h"
 #include "ThunkGenerator.h"
 #include "Weak.h"
 #include "WeakHandleOwner.h"
@@ -52,6 +53,10 @@ public:
     JITThunks();
     ~JITThunks() final;
 
+#if ENABLE(EXTRA_CTI_THUNKS)
+    void preinitializeExtraCTIThunks(VM&);
+#endif
+
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
@@ -61,6 +66,10 @@ public:
 
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> existingCTIStub(ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> existingCTIStub(ThunkGenerator, NoLockingNecessaryTag);
+#if ENABLE(EXTRA_CTI_THUNKS)
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
+#endif
 
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, const String& name);
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);

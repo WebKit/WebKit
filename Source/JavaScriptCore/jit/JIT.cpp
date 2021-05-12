@@ -897,6 +897,12 @@ CompilationResult JIT::link()
         handler.nativeCode = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_labels[handler.target]);
     }
 
+#if ENABLE(EXTRA_CTI_THUNKS)
+    if (!m_exceptionChecks.empty())
+        patchBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    if (!m_exceptionChecksWithCallFrameRollback.empty())
+        patchBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
+#endif
 
     for (auto& record : m_nearCalls) {
         if (record.callee)
@@ -906,7 +912,7 @@ CompilationResult JIT::link()
         if (record.callee)
             patchBuffer.link(record.from, record.callee);
     }
-    
+
     finalizeInlineCaches(m_getByIds, patchBuffer);
     finalizeInlineCaches(m_getByVals, patchBuffer);
     finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
@@ -918,7 +924,11 @@ CompilationResult JIT::link()
     finalizeInlineCaches(m_privateBrandAccesses, patchBuffer);
 
     if (m_byValCompilationInfo.size()) {
+#if ENABLE(EXTRA_CTI_THUNKS)
+        CodeLocationLabel exceptionHandler(vm().getCTIStub(handleExceptionGenerator).retaggedCode<ExceptionHandlerPtrTag>());
+#else
         CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_exceptionHandler);
+#endif
 
         for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
             PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
@@ -1009,6 +1019,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 
 void JIT::privateCompileExceptionHandlers()
 {
+#if !ENABLE(EXTRA_CTI_THUNKS)
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
@@ -1033,6 +1044,7 @@ void JIT::privateCompileExceptionHandlers()
         m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
         jumpToExceptionHandler(vm());
     }
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 }
 
 void JIT::doMainThreadPreparationBeforeCompile()

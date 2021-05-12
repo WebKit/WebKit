@@ -33,12 +33,70 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/InlineASM.h>
+#include <wtf/StdIntExtras.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringImpl.h>
 
 #if ENABLE(JIT)
 
 namespace JSC {
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+
+MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+
+    jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
+    jit.prepareCallOperation(vm);
+
+    CCallHelpers::Call operation = jit.call(OperationPtrTag);
+
+    jit.jumpToExceptionHandler(vm);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleException");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+
+    jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
+    jit.prepareCallOperation(vm);
+    CCallHelpers::Call operation = jit.call(OperationPtrTag);
+    jit.jumpToExceptionHandler(vm);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+#if CPU(X86_64)
+    jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(CPURegister)), X86Registers::esp);
+#elif CPU(ARM64)
+    jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#endif
+
+    CCallHelpers::Jump continuation = jit.jump();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    auto handler = vm.jitStubs->existingCTIStub(handleExceptionGenerator, NoLockingNecessary);
+    RELEASE_ASSERT(handler);
+    patchBuffer.link(continuation, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
+}
+
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 template<typename TagType>
 inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType tag)

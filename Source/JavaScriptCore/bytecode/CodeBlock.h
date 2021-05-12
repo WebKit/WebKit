@@ -915,6 +915,8 @@ public:
     MetadataTable* metadataTable() { return m_metadata.get(); }
     const void* instructionsRawPointer() { return m_instructionsRawPointer; }
 
+    static ptrdiff_t offsetOfInstructionsRawPointer() { return OBJECT_OFFSETOF(CodeBlock, m_instructionsRawPointer); }
+
     bool loopHintsAreEligibleForFuzzingEarlyReturn()
     {
         // Some builtins are required to always complete the loops they run.

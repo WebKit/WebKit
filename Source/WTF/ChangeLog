@@ -1,3 +1,19 @@
+2021-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Implement some common Baseline JIT slow paths using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225682
+
+        Reviewed by Filip Pizlo.
+
+        Introduce ENABLE(EXTRA_CTI_THUNKS) flag to guard the use of these new thunks.
+        Currently, the thunks are 64-bit only, and only supported for ARM64 and non-Windows
+        X86_64.  The reason it is not supported for Windows as well is because Windows
+        only has 4 argument registers.  In this patch, the thunks do not use that many
+        registers yet, but there will be more thunks coming that will require the use
+        of up to 6 argument registers.
+
+        * wtf/PlatformEnable.h:
+
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
         Port WTF::FileSystem::listDirectory to std::filesystem

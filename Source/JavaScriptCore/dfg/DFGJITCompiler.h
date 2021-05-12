@@ -323,7 +323,7 @@ private:
     Vector<CallLinkRecord> m_calls;
     JumpList m_exceptionChecks;
     JumpList m_exceptionChecksWithCallFrameRollback;
-    
+
     Vector<Label> m_blockHeads;
 
 

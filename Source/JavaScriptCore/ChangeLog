@@ -1,3 +1,113 @@
+2021-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Implement some common Baseline JIT slow paths using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225682
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements the following changes:
+
+        1. Implement exception handling thunks:
+           a. handleExceptionGenerator, which calls operationLookupExceptionHandler().
+           b. handleExceptionWithCallFrameRollbackGenerator, which calls
+              operationLookupExceptionHandlerFromCallerFrame().
+
+           All the JIT tiers were emitting their own copy of these routines to call these
+           operation, one per CodeBlock.  We now emit 2 thunks for these and have all the
+           tiers just jump to them.
+
+           PolymorphicAccess also now uses the handleExceptionGenerator thunk.
+
+           DFG::JITCompiler::compileExceptionHandlers() has one small behavior difference
+           before it calls operationLookupExceptionHandlerFromCallerFrame(): it first
+           re-sets the top of stack for the function where we are about to throw a
+           StackOverflowError from.  This re-setting of top of stack is useless because
+           we're imminently unwinding out of at least this frame for the StackOverflowError.
+           Hence, it is ok to use the handleExceptionWithCallFrameRollbackGenerator thunk
+           here as well.  Note that no other tiers does this re-setting of top of stack.
+
+           FTLLowerDFGToB3 has one case using operationLookupExceptionHandlerFromCallerFrame()
+           which cannot be refactored to use these thunks because it does additional
+           work to throw a StackOverflowError.  A different thunk will be needed.  I left
+           it alone for now.
+
+        2. Introduce JITThunks::existingCTIStub(ThunkGenerator, NoLockingNecessaryTag) so
+           that a thunk can get a pointer to another thunk without locking the JITThunks
+           lock.  Otherwise, deadlock ensues.
+
+        3. Change SlowPathCall to emit and use thunks instead of emitting a blob of code
+           to call a slow path function for every bytecode in a CodeBlock.
+
+        4. Introduce JITThunks::ctiSlowPathFunctionStub() to manage these SlowPathFunction
+           thunks.
+
+        5. Introduce JITThunks::preinitializeAggressiveCTIThunks() to initialize these
+           thunks at VM initialization time.  Pre-initializing them has multiple benefits:
+           a. the thunks are not scattered through out JIT memory, thereby reducing
+              fragmentation.
+           b. we don't spend time at runtime compiling them when the user is interacting
+              with the VM.  Conceptually, these thunks can be VM independent and can be
+              shared by VMs process-wide.  However, it will require some additional work.
+              For now, the thunks remain bound to a specific VM instance.
+
+        These changes are only enabled when ENABLE(EXTRA_CTI_THUNKS), which is currently
+        only available for ARM64 and non-Windows x86_64.
+
+        This patch has passed JSC tests on AS Mac.
+
+        With this patch, --dumpLinkBufferStats shows the following changes in emitted
+        JIT code size (using a single run of the CLI version of JetStream2 on AS Mac):
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  84624776 (80.704475 MB)  0.95x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36415264 (34.728302 MB)  0.93x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  23130336 (22.058807 MB)  1.00x
+           InlineCache: 22027416 (21.006981 MB)  21969728 (20.951965 MB)  1.00x
+                   FTL: 6575772 (6.271145 MB)    6097336 (5.814873 MB)    0.93x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2301956 (2.195316 MB)    1.00x
+               YarrJIT: 1538956 (1.467663 MB)    1522488 (1.451958 MB)    0.99x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfInstructionsRawPointer):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::existingCTIStub):
+        (JSC::JITThunks::ctiSlowPathFunctionStub):
+        (JSC::JITThunks::preinitializeExtraCTIThunks):
+        * jit/JITThunks.h:
+        * jit/SlowPathCall.cpp: Added.
+        (JSC::JITSlowPathCall::call):
+        (JSC::JITSlowPathCall::generateThunk):
+        * jit/SlowPathCall.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::handleExceptionGenerator):
+        (JSC::handleExceptionWithCallFrameRollbackGenerator):
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/CommonSlowPaths.h:
+        * runtime/SlowPathFunction.h: Added.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2021-05-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277346.

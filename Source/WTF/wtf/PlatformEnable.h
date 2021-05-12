@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -830,6 +830,14 @@
 
 #if OS(DARWIN) && CPU(ADDRESS64) && ENABLE(JIT) && (ENABLE(JIT_CAGE) || ASSERT_ENABLED)
 #define ENABLE_JIT_OPERATION_VALIDATION 1
+#endif
+
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+/* The implementation of these thunks can use up to 6 argument registers, and
+   make use of ARM64 like features. For now, we'll only support them on platforms
+   that have 6 or more argument registers to use.
+*/
+#define ENABLE_EXTRA_CTI_THUNKS 1
 #endif
 
 #if !defined(ENABLE_BINDING_INTEGRITY) && !OS(WINDOWS)
