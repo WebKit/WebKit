@@ -1,3 +1,20 @@
+2021-05-12  Jer Noble  <jer.noble@apple.com>
+
+        TapStorage::lock freed while locked in AudioSourceProviderAVFObjC::destroyMixIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=225706
+        <rdar://77719381>
+
+        Reviewed by Ryosuke Niwa.
+
+        In r275933, an update was made to protect access to TapStorage during destruction by
+        locking its lock inside destroyMixIfNeeded(), but if TapStorage has a refCount==1
+        during that teardown, the lock itself is destroyed while it is still held. Add an
+        explicit scoping to the lock holder, and only deref the TapStorage outside that
+        locking scope.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::destroyMixIfNeeded):
+
 2021-05-12  Said Abou-Hallawa  <said@apple.com>
 
         Removing the transform CSS property from the SVG element does not cause invalidation
