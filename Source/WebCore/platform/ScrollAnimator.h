@@ -34,6 +34,7 @@
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
+#include "Timer.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
@@ -146,6 +147,11 @@ public:
 
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
+
+    void startAnimationCallback(ScrollController&) final;
+    void stopAnimationCallback(ScrollController&) final;
+
+    void scrollControllerAnimationTimerFired();
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -180,6 +186,7 @@ protected:
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     ScrollController m_scrollController;
+    Timer m_scrollControllerAnimationTimer;
 #endif
     FloatPoint m_currentPosition;
 

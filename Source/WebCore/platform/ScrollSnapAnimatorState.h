@@ -75,7 +75,7 @@ public:
             m_activeSnapIndexY = index;
     }
 
-    FloatPoint currentAnimatedScrollOffset(bool& isAnimationComplete) const;
+    FloatPoint currentAnimatedScrollOffset(MonotonicTime, bool& isAnimationComplete) const;
 
     // State transition helpers.
     void transitionToSnapAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset);

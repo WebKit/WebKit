@@ -1,3 +1,64 @@
+2021-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Display-frequency animations in ScrollController should be externally driven
+        https://bugs.webkit.org/show_bug.cgi?id=225663
+
+        Reviewed by Tim Horton.
+
+        Display-frequency animations (i.e. those driven by 1/60_s timers) should ultimately
+        be driven by Page::updateRendering(), since their output should be synchronized with
+        rendering updates.
+
+        As the first step, remove m_snapRubberbandTimer and m_scrollSnapTimer from
+        ScrollController and have it expose functions that tell its client to start and stop
+        the animation, and a per-frame callback. Give ScrollAnimator a 1/60_s timer
+        to drive this, temporarily.
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::startAnimationCallback):
+        (WebCore::ScrollAnimator::stopAnimationCallback):
+        (WebCore::ScrollAnimator::scrollControllerAnimationTimerFired):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::animationCallback):
+        (WebCore::ScrollController::startOrStopAnimationCallbacks):
+        (WebCore::ScrollController::setIsAnimatingRubberBand):
+        (WebCore::ScrollController::setIsAnimatingScrollSnap):
+        (WebCore::ScrollController::updateScrollSnapAnimatingState):
+        (WebCore::ScrollController::updateRubberBandAnimatingState):
+        * platform/ScrollController.h:
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::currentAnimatedScrollOffset const):
+        * platform/ScrollSnapAnimatorState.h:
+        * platform/mac/ScrollController.mm:
+        (WebCore::ScrollController::stopAllTimers):
+        (WebCore::ScrollController::handleWheelEvent):
+        (WebCore::ScrollController::updateRubberBandAnimatingState):
+        (WebCore::ScrollController::isScrollSnapInProgress const):
+        (WebCore::ScrollController::stopRubberbanding):
+        (WebCore::ScrollController::startRubberbandAnimation):
+        (WebCore::ScrollController::stopSnapRubberbandAnimation):
+        (WebCore::ScrollController::snapRubberBand):
+        (WebCore::ScrollController::isRubberBandInProgressInternal const):
+        (WebCore::ScrollController::scheduleStatelessScrollSnap):
+        (WebCore::ScrollController::statelessSnapTransitionTimerFired):
+        (WebCore::ScrollController::processWheelEventForScrollSnap):
+        (WebCore::ScrollController::startScrollSnapAnimation):
+        (WebCore::ScrollController::stopScrollSnapAnimation):
+        (WebCore::ScrollController::updateScrollSnapAnimatingState):
+        (WebCore::ScrollController::snapRubberBandTimerFired): Deleted.
+        (WebCore::ScrollController::startSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollController::stopSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollController::startScrollSnapTimer): Deleted.
+        (WebCore::ScrollController::stopScrollSnapTimer): Deleted.
+        (WebCore::ScrollController::scrollSnapTimerFired): Deleted.
+
 2021-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Function.prototype.toString triggers page demand on Speedometer

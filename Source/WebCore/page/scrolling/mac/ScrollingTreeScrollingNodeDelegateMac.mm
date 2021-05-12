@@ -225,6 +225,28 @@ std::unique_ptr<ScrollControllerTimer> ScrollingTreeScrollingNodeDelegateMac::cr
     });
 }
 
+void ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback(ScrollController&)
+{
+    if (!m_scrollControllerAnimationTimer)
+        m_scrollControllerAnimationTimer = WTF::makeUnique<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>>(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired);
+
+    if (m_scrollControllerAnimationTimer->isActive())
+        return;
+
+    m_scrollControllerAnimationTimer->startRepeating(1_s / 60.);
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback(ScrollController&)
+{
+    if (m_scrollControllerAnimationTimer)
+        m_scrollControllerAnimationTimer->stop();
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired()
+{
+    m_scrollController.animationCallback(MonotonicTime::now());
+}
+
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const
 {
     switch (horizontalScrollElasticity()) {
