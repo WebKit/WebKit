@@ -778,6 +778,7 @@
     (iokit-property "filevault-image") ;; Needed by LaunchServices
     (iokit-property "graphic-options")
     (iokit-property "hda-gfx")
+    (iokit-property "housing-color")
     (iokit-property-regex #"^id(Product|Vendor)")
     (iokit-property "iofb_version")
     (iokit-property "image-encrypted")

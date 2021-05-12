@@ -799,6 +799,7 @@
         "hw.activecpu"
         "hw.availcpu"
         "hw.cachelinesize"
+        "hw.cputhreadtype"
         "hw.cputype"
         "hw.l2cachesize"
         "hw.logicalcpu"

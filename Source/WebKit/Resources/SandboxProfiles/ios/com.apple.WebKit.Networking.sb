@@ -431,6 +431,7 @@
     (sysctl-name "hw.cpufrequency_compat")
     (sysctl-name "hw.cpufrequency_max")
     (sysctl-name "hw.cpusubtype")
+    (sysctl-name "hw.cputhreadtype")
     (sysctl-name "hw.cputype")
     (sysctl-name "hw.l1dcachesize")
     (sysctl-name "hw.l1dcachesize_compat")

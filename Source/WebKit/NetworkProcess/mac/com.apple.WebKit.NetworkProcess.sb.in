@@ -165,6 +165,7 @@
 
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
+(allow process-info-dirtycontrol (target self))
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
 
@@ -172,6 +173,7 @@
 (allow sysctl-read
     (sysctl-name
         "hw.availcpu"
+        "hw.cputhreadtype"
         "hw.ncpu"
         "hw.memsize"
         "hw.model" ;; Needed for bundle loading
@@ -181,6 +183,7 @@
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.tcsm_available" ;; Needed for IndexedDB support.
+        "kern.tcsm_enable"
         "kern.ostype"
         "kern.version"
         "sysctl.name2oid"
@@ -189,15 +192,24 @@
     (sysctl-name-regex #"^net.routetable")
 )
 
+(allow sysctl-write
+    (sysctl-name
+        "kern.tcsm_enable"))
+
 (deny iokit-get-properties)
 (allow iokit-get-properties
     (iokit-property
         "Ejectable"
         "IOClassNameOverride"
         "IOMediaIcon"
+        "IOServiceDEXTEntitlements"
+        "No-idle-support"
         "Product Identification"
         "Protocol Characteristics"
         "Removable"
+        "acpi-pmcap-offset"
+        "driver-child-bundle"
+        "iommu-selection"
     )
 )
 

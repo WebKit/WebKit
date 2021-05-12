@@ -152,6 +152,7 @@
 
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
+(allow process-info-dirtycontrol (target self))
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
 (allow process-codesigning-status*)
@@ -161,6 +162,7 @@
     (sysctl-name
         "hw.byteorder"
         "hw.busfrequency_max"
+        "hw.cputhreadtype"
         "hw.cputype"
         "hw.machine"
         "hw.memsize"
@@ -372,6 +374,7 @@
     (iokit-property "filevault-image") ;; Needed by LaunchServices
     (iokit-property "graphic-options")
     (iokit-property "hda-gfx")
+    (iokit-property "housing-color")
     (iokit-property-regex #"^id(Product|Vendor)")
     (iokit-property "iofb_version")
     (iokit-property "image-encrypted")
