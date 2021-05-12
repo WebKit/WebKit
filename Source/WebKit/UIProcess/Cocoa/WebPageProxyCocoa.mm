@@ -614,7 +614,7 @@ void WebPageProxy::handleContextMenuRevealImage()
     if (!result.imageBitmap)
         return;
 
-    revealExtractedImageInPreviewPanel(*result.imageBitmap, result.toolTipText);
+    revealExtractedImageInPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL });
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)

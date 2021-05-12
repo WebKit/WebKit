@@ -1,3 +1,33 @@
+2021-05-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Plumb some more metadata to QuickLook when revealing images
+        https://bugs.webkit.org/show_bug.cgi?id=225709
+        rdar://77864866
+
+        Reviewed by Devin Rousso.
+
+        Add plumbing to supply QuickLook with some additional information about the image URL and current page URL when
+        revealing images.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::handleContextMenuRevealImage):
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant handleElementActionWithType:element:needsInteraction:]):
+        * UIProcess/mac/WKImageExtractionPreviewController.h:
+        * UIProcess/mac/WKImageExtractionPreviewController.mm:
+        (-[WKImageExtractionPreviewItem initWithFileURL:title:imageURL:pageURL:]):
+        (-[WKImageExtractionPreviewItem dealloc]):
+        (-[WKImageExtractionPreviewItem previewItemURL]):
+        (-[WKImageExtractionPreviewItem previewOptions]):
+        (-[WKImageExtractionPreviewController initWithPage:fileURL:title:imageURL:]):
+
+        Rename the `URL` argument to `fileURL`, to avoid confusion with the new `imageURL` that's passed in. Note that
+        this is temporary, since we'll adopt new QuickLook SPI on macOS once the fix for rdar://74299451 is available.
+
+        (-[WKImageExtractionPreviewItem initWithURL:title:]): Deleted.
+        (-[WKImageExtractionPreviewController initWithPage:url:title:]): Deleted.
+
 2021-05-12  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r275297): Unexpected autofocus when switching tabs

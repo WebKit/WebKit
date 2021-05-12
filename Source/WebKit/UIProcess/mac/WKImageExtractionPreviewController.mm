@@ -34,24 +34,28 @@
 #import <wtf/WeakPtr.h>
 
 @implementation WKImageExtractionPreviewItem {
-    RetainPtr<NSURL> _url;
+    RetainPtr<NSURL> _fileURL;
     RetainPtr<NSString> _title;
+    RetainPtr<NSURL> _imageURL;
+    RetainPtr<NSURL> _pageURL;
 }
 
-- (instancetype)initWithURL:(NSURL *)url title:(NSString *)title
+- (instancetype)initWithFileURL:(NSURL *)fileURL title:(NSString *)title imageURL:(NSURL *)imageURL pageURL:(NSURL *)pageURL
 {
     if (!(self = [super init]))
         return nil;
 
-    _url = url;
+    _fileURL = fileURL;
     _title = adoptNS([title copy]);
+    _imageURL = imageURL;
+    _pageURL = pageURL;
 
     return self;
 }
 
 - (void)dealloc
 {
-    FileSystem::deleteFile([_url path]);
+    FileSystem::deleteFile([_fileURL path]);
 
     [super dealloc];
 }
@@ -60,12 +64,25 @@
 
 - (NSURL *)previewItemURL
 {
-    return _url.get();
+    return _fileURL.get();
 }
 
 - (NSString *)previewItemTitle
 {
     return _title.get();
+}
+
+- (NSDictionary *)previewOptions
+{
+    if (!_imageURL && !_pageURL)
+        return nil;
+
+    auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
+    if (_imageURL)
+        [previewOptions setObject:_imageURL.get() forKey:@"imageURL"];
+    if (_pageURL)
+        [previewOptions setObject:_pageURL.get() forKey:@"pageURL"];
+    return previewOptions.autorelease();
 }
 
 @end
@@ -75,13 +92,15 @@
     RetainPtr<WKImageExtractionPreviewItem> _previewItem;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page url:(NSURL *)url title:(NSString *)title
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page fileURL:(NSURL *)fileURL title:(NSString *)title imageURL:(NSURL *)imageURL
 {
     if (!(self = [super init]))
         return nil;
 
     _page = makeWeakPtr(page);
-    _previewItem = adoptNS([[WKImageExtractionPreviewItem alloc] initWithURL:url title:title]);
+
+    // FIXME: We should turn `_previewItem` into a QLItem once the fix for rdar://74299451 is available.
+    _previewItem = adoptNS([[WKImageExtractionPreviewItem alloc] initWithFileURL:fileURL title:title imageURL:imageURL pageURL:URL { URL { }, page.currentURL() }]);
 
     return self;
 }

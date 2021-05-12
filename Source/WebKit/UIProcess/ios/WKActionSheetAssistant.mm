@@ -1016,12 +1016,12 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
         break;
     case _WKElementActionTypeImageExtraction:
 #if ENABLE(IMAGE_EXTRACTION)
-        [delegate actionSheetAssistant:self handleImageExtraction:element.image title:element.title];
+        [delegate actionSheetAssistant:self handleImageExtraction:element.image imageURL:element.imageURL title:element.title];
 #endif
         break;
     case _WKElementActionTypeRevealImage:
 #if ENABLE(IMAGE_EXTRACTION)
-        [delegate actionSheetAssistant:self handleRevealImage:element.image title:element.title];
+        [delegate actionSheetAssistant:self handleRevealImage:element.image imageURL:element.imageURL title:element.title];
 #endif
         break;
     default:
