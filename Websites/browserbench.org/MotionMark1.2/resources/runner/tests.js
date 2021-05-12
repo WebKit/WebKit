@@ -52,10 +52,6 @@ Suites.push(new Suite("MotionMark",
             name: "Canvas Lines"
         },
         {
-            url: "master/focus.html",
-            name: "Focus"
-        },
-        {
             url: "master/image-data.html",
             name: "Images"
         },
