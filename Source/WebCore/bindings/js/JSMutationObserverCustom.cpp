@@ -49,12 +49,10 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMutationObserver);
 
 bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char**reason)
 {
-    for (auto* node : jsCast<JSMutationObserver*>(handle.slot()->asCell())->wrapped().observedNodes()) {
-        if (visitor.containsOpaqueRoot(root(node))) {
-            if (UNLIKELY(reason))
-                *reason = "Reachable from observed nodes";
-            return true;
-        }
+    if (jsCast<JSMutationObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
+        if (UNLIKELY(reason))
+            *reason = "Reachable from observed nodes";
+        return true;
     }
     return false;
 }

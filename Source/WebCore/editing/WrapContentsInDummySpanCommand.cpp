@@ -79,7 +79,7 @@ void WrapContentsInDummySpanCommand::doReapply()
 }
 
 #ifndef NDEBUG
-void WrapContentsInDummySpanCommand::getNodesInCommand(HashSet<Node*>& nodes)
+void WrapContentsInDummySpanCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
     addNodeAndDescendants(m_element.ptr(), nodes);
     addNodeAndDescendants(m_dummySpan.get(), nodes);

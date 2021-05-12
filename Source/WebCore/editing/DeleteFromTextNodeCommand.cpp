@@ -64,7 +64,7 @@ void DeleteFromTextNodeCommand::doUnapply()
 }
 
 #ifndef NDEBUG
-void DeleteFromTextNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+void DeleteFromTextNodeCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
     addNodeAndDescendants(m_node.ptr(), nodes);
 }

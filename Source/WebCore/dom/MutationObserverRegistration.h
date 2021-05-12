@@ -36,6 +36,10 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
+namespace JSC {
+class AbstractSlotVisitor;
+}
+
 namespace WebCore {
 
 class QualifiedName;
@@ -59,7 +63,7 @@ public:
     MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (MutationObserver::AttributeOldValue | MutationObserver::CharacterDataOldValue); }
     MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
-    void addRegistrationNodesToSet(HashSet<Node*>&) const;
+    bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
 private:
     Ref<MutationObserver> m_observer;

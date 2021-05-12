@@ -1,3 +1,97 @@
+2021-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Use HashSet<RefPtr<Node>> instead of HashSet<Node*>
+        https://bugs.webkit.org/show_bug.cgi?id=220464
+
+        Reviewed by Chris Dumez and Ryosuke Niwa.
+
+        This makes us more resistent to lifetime bugs.
+
+        liveNodeSet() and ignoreSet() need to be WeakHashSet, and they are only used in debug builds so that's fine.
+
+        MutationObserver::observedNodes() is not called on the main thread, but it's called during garbage collection.
+        I replaced it with MutationObserver::isReachableFromOpaqueRoots which eliminates the HashSet allocation and hashing,
+        and it can return true early if it finds a contained opaque root, resulting in less work in several ways.
+        This should only increase our performance slightly while getting the same behavior.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::conditionallyAddNodeToFilterList):
+        (WebCore::filterVectorPairForRemoval):
+        (WebCore::filterMapForRemoval):
+        (WebCore::filterListForRemoval):
+        (WebCore::AXObjectCache::prepareForDocumentDestruction):
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverOwner::isReachableFromOpaqueRoots):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::isReachableFromOpaqueRoots const):
+        (WebCore:: const): Deleted.
+        * dom/MutationObserver.h:
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::isReachableFromOpaqueRoots const):
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet const): Deleted.
+        * dom/MutationObserverRegistration.h:
+        * dom/Node.cpp:
+        (WebCore::liveNodeSet):
+        (WebCore::stringForRareDataUseType):
+        (WebCore::Node::dumpStatistics):
+        (WebCore::ignoreSet):
+        (WebCore::Node::trackForDebugging):
+        (WebCore::Node::~Node):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::getNodesInCommand):
+        * editing/AppendNodeCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::getNodesInCommand):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::getNodesInCommand):
+        * editing/DeleteFromTextNodeCommand.h:
+        * editing/EditCommand.cpp:
+        (WebCore::SimpleEditCommand::addNodeAndDescendants):
+        * editing/EditCommand.h:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::getNodesInCommand):
+        * editing/InsertIntoTextNodeCommand.h:
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::getNodesInCommand):
+        * editing/InsertNodeBeforeCommand.h:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::getNodesInCommand):
+        * editing/MergeIdenticalElementsCommand.h:
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::getNodesInCommand):
+        * editing/RemoveNodeCommand.h:
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::ReplaceNodeWithSpanCommand::getNodesInCommand):
+        * editing/ReplaceNodeWithSpanCommand.h:
+        * editing/SetNodeAttributeCommand.cpp:
+        (WebCore::SetNodeAttributeCommand::getNodesInCommand):
+        * editing/SetNodeAttributeCommand.h:
+        * editing/SetSelectionCommand.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::getNodesInCommand):
+        * editing/SplitElementCommand.h:
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::getNodesInCommand):
+        * editing/SplitTextNodeCommand.h:
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::getNodesInCommand):
+        * editing/WrapContentsInDummySpanCommand.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::cacheAncestorsOfStartToBeConverted):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightSelector):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunId::evaluate const):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::sortBlock):
+        (WebCore::XPath::NodeSet::traversalSort const):
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::LocationPath::evaluate const):
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::Union::evaluate const):
+
 2021-05-12  Jer Noble  <jer.noble@apple.com>
 
         HTMLMediaElement::mediaLoadingFailedFatally() does direct dispatch of events; should enqueue

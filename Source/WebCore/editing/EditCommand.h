@@ -94,14 +94,14 @@ public:
     virtual void doReapply(); // calls doApply()
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) = 0;
+    virtual void getNodesInCommand(HashSet<Ref<Node>>&) = 0;
 #endif
 
 protected:
     explicit SimpleEditCommand(Document&, EditAction = EditAction::Unspecified);
 
 #ifndef NDEBUG
-    void addNodeAndDescendants(Node*, HashSet<Node*>&);
+    void addNodeAndDescendants(Node*, HashSet<Ref<Node>>&);
 #endif
 
 private:

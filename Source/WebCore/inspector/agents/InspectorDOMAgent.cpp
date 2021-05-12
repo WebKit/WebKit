@@ -1336,7 +1336,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(Ref<JSON::Obj
     SelectorChecker selectorChecker(*document);
 
     Vector<Ref<Node>> nodeList;
-    HashSet<Node*> seenNodes;
+    HashSet<Ref<Node>> seenNodes;
 
     for (auto& descendant : composedTreeDescendants(*document)) {
         if (!is<Element>(descendant))
@@ -1356,7 +1356,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(Ref<JSON::Obj
             context.pseudoId = pseudoId;
 
             if (selectorChecker.match(*selector, descendantElement, context)) {
-                if (seenNodes.add(&descendantElement))
+                if (seenNodes.add(descendantElement))
                     nodeList.append(descendantElement);
             }
 
@@ -1366,7 +1366,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(Ref<JSON::Obj
                 if (pseudoIDs.has(PseudoId::Before)) {
                     pseudoIDs.remove(PseudoId::Before);
                     if (auto* beforePseudoElement = descendantElement.beforePseudoElement()) {
-                        if (seenNodes.add(beforePseudoElement))
+                        if (seenNodes.add(*beforePseudoElement))
                             nodeList.append(*beforePseudoElement);
                     }
                 }
@@ -1374,13 +1374,13 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(Ref<JSON::Obj
                 if (pseudoIDs.has(PseudoId::After)) {
                     pseudoIDs.remove(PseudoId::After);
                     if (auto* afterPseudoElement = descendantElement.afterPseudoElement()) {
-                        if (seenNodes.add(afterPseudoElement))
+                        if (seenNodes.add(*afterPseudoElement))
                             nodeList.append(*afterPseudoElement);
                     }
                 }
 
                 if (pseudoIDs) {
-                    if (seenNodes.add(&descendantElement))
+                    if (seenNodes.add(descendantElement))
                         nodeList.append(descendantElement);
                 }
             }

@@ -169,12 +169,13 @@ void MutationObserver::setHasTransientRegistration(Document& document)
     eventLoop->queueMutationObserverCompoundMicrotask();
 }
 
-HashSet<Node*> MutationObserver::observedNodes() const
+bool MutationObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
-    HashSet<Node*> observedNodes;
-    for (auto* registration : m_registrations)
-        registration->addRegistrationNodesToSet(observedNodes);
-    return observedNodes;
+    for (auto* registration : m_registrations) {
+        if (registration->isReachableFromOpaqueRoots(visitor))
+            return true;
+    }
+    return false;
 }
 
 bool MutationObserver::canDeliver()
