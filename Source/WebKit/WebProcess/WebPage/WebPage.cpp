@@ -152,6 +152,7 @@
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/BackForwardController.h>
+#include <WebCore/CachedPage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/ContactsRequestData.h>
@@ -3594,6 +3595,37 @@ void WebPage::suspendActiveDOMObjectsAndAnimations()
 void WebPage::resumeActiveDOMObjectsAndAnimations()
 {
     m_page->resumeActiveDOMObjectsAndAnimations();
+}
+
+void WebPage::suspend(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "suspend: m_page=%p", m_page.get());
+    if (!m_page)
+        return completionHandler(false);
+
+    freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+
+    m_cachedPage = BackForwardCache::singleton().suspendPage(*m_page);
+    ASSERT(m_cachedPage);
+    if (auto mainFrame = m_mainFrame->coreFrame())
+        mainFrame->loader().detachFromAllOpenedFrames();
+    completionHandler(true);
+}
+
+void WebPage::resume(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "resume: m_page=%p", m_page.get());
+    if (!m_page)
+        return completionHandler(false);
+
+    auto cachedPage = std::exchange(m_cachedPage, nullptr);
+    ASSERT(cachedPage);
+    if (!cachedPage)
+        return completionHandler(false);
+
+    cachedPage->restore(*m_page);
+    unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+    completionHandler(true);
 }
 
 IntPoint WebPage::screenToRootView(const IntPoint& point)
