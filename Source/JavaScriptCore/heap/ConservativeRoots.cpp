@@ -38,12 +38,28 @@
 namespace JSC {
 
 ConservativeRoots::ConservativeRoots(Heap& heap)
-    : m_heap(heap)
+    : m_roots(m_inlineRoots)
+    , m_size(0)
+    , m_capacity(inlineCapacity)
+    , m_heap(heap)
 {
 }
 
 ConservativeRoots::~ConservativeRoots()
 {
+    if (m_roots != m_inlineRoots)
+        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(HeapCell*));
+}
+
+void ConservativeRoots::grow()
+{
+    size_t newCapacity = m_capacity == inlineCapacity ? nonInlineCapacity : m_capacity * 2;
+    HeapCell** newRoots = static_cast<HeapCell**>(OSAllocator::reserveAndCommit(newCapacity * sizeof(HeapCell*)));
+    memcpy(newRoots, m_roots, m_size * sizeof(HeapCell*));
+    if (m_roots != m_inlineRoots)
+        OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(HeapCell*));
+    m_capacity = newCapacity;
+    m_roots = newRoots;
 }
 
 template<typename MarkHook>
@@ -58,7 +74,10 @@ inline void ConservativeRoots::genericAddPointer(void* p, HeapVersion markingVer
             if (isJSCellKind(cellKind))
                 markHook.markKnownJSCell(static_cast<JSCell*>(p));
             
-            m_roots.append(bitwise_cast<HeapCell*>(p));
+            if (m_size == m_capacity)
+                grow();
+            
+            m_roots[m_size++] = bitwise_cast<HeapCell*>(p);
         });
 }
 

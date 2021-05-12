@@ -148,8 +148,10 @@ void VerifierSlotVisitor::append(const ConservativeRoots& conservativeRoots)
         }
     };
 
-    for (auto root : conservativeRoots.roots())
-        appendJSCellOrAuxiliary(root);
+    HeapCell** roots = conservativeRoots.roots();
+    size_t size = conservativeRoots.size();
+    for (size_t i = 0; i < size; ++i)
+        appendJSCellOrAuxiliary(roots[i]);
 }
 
 void VerifierSlotVisitor::appendToMarkStack(JSCell* cell)
