@@ -1155,9 +1155,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 [ arm64 ] fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not.html [ ImageOnlyFailure ]
 
-# rdar://66807554
-webkit.org/b/216155 [ Mojave+ Debug ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
-
 webkit.org/b/215581 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html [ Pass Failure ]
 
 webkit.org/b/215606 webgpu/whlsl/do-while-loop-break.html [ Pass ImageOnlyFailure ]
@@ -1405,3 +1402,5 @@ webkit.org/b/225666 [ arm64 ] http/tests/cache/disk-cache/redirect-chain-limits.
 webkit.org/b/225665 [ Release arm64 ] http/tests/appcache/fail-on-update-2.html [ Pass Timeout ]
 
 webkit.org/b/225664 [ BigSur arm64 ] editing/selection/move-by-character-brute-force.html [ Pass Timeout ]
+
+webkit.org/b/225669 imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
