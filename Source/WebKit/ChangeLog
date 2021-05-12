@@ -1,3 +1,50 @@
+2021-05-11  Devin Rousso  <drousso@apple.com>
+
+        [macCatalyst] should have CSS `hover: hover` and `pointer: fine`
+        https://bugs.webkit.org/show_bug.cgi?id=225672
+
+        Reviewed by Tim Horton.
+
+        Test: iOSMouseSupport.MouseAlwaysConnected
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isMousePrimaryPointingDevice): Added.
+        (WebKit::hasAccessoryMousePointingDevice): Added.
+        (WebKit::hasAccessoryStylusPointingDevice): Added.
+        (WebKit::WebPage::hoverSupportedByPrimaryPointingDevice const):
+        (WebKit::WebPage::hoverSupportedByAnyAvailablePointingDevice const):
+        (WebKit::WebPage::pointerCharacteristicsOfPrimaryPointingDevice const):
+        (WebKit::WebPage::pointerCharacteristicsOfAllAvailablePointingDevices const):
+        (WebKit::hasMouseDevice): Deleted.
+        macCatalyst should consider the mouse as the primary pointing device, just like macOS:
+         - `hover` and `any-hover` should always be `hover`
+         - `pointer` and `any-pointer` should always be `fine` (instead of only if an accessory mouse/stylus is connected)
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::notifyHasMouseDeviceChanged): Added.
+        (WebKit::WebProcessProxy::notifyHasStylusDeviceChanged):
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::platformInitialize):
+        (WebKit::WebProcessProxy::platformDestroy):
+        (WebKit::WebProcessProxy::notifyHasMouseDeviceChanged): Deleted.
+        * UIProcess/ios/WKMouseDeviceObserver.h:
+        * UIProcess/ios/WKMouseDeviceObserver.mm:
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Clean up macro usage to avoid unnecessary work on macCatalyst.
+        Drive-by: Move non-platform code to non-platform files.
+
 2021-05-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277341.

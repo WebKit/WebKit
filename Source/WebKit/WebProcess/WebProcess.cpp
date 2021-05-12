@@ -457,7 +457,13 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     m_fullKeyboardAccessEnabled = parameters.fullKeyboardAccessEnabled;
 
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    m_hasMouseDevice = parameters.hasMouseDevice;
+#endif
+
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     m_hasStylusDevice = parameters.hasStylusDevice;
+#endif
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsEmptyDocument)
         registerURLSchemeAsEmptyDocument(scheme);
@@ -982,7 +988,7 @@ void WebProcess::messagesAvailableForPort(const MessagePortIdentifier& identifie
     MessagePort::notifyMessageAvailable(identifier);
 }
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
 
 void WebProcess::setHasMouseDevice(bool hasMouseDevice)
 {
@@ -994,7 +1000,9 @@ void WebProcess::setHasMouseDevice(bool hasMouseDevice)
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#endif // HAVE(MOUSE_DEVICE_OBSERVATION)
+
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
 
 void WebProcess::setHasStylusDevice(bool hasStylusDevice)
 {
@@ -1005,6 +1013,8 @@ void WebProcess::setHasStylusDevice(bool hasStylusDevice)
 
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
+
+#endif // HAVE(STYLUS_DEVICE_OBSERVATION)
 
 #if ENABLE(GAMEPAD)
 

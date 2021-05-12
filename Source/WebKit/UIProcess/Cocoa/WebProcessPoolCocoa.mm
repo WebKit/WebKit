@@ -436,11 +436,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.overrideUserInterfaceIdiomAndScale = { _UIApplicationCatalystUserInterfaceIdiom(), _UIApplicationCatalystScaleFactor() };
 #endif
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     parameters.hasMouseDevice = [[WKMouseDeviceObserver sharedInstance] hasMouseDevice];
 #endif
 
-#if HAVE(PENCILKIT_TEXT_INPUT)
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     parameters.hasStylusDevice = [[WKStylusDeviceObserver sharedInstance] hasStylusDevice];
 #endif
 

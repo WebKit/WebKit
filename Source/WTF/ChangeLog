@@ -1,3 +1,17 @@
+2021-05-11  Devin Rousso  <drousso@apple.com>
+
+        [macCatalyst] should have CSS `hover: hover` and `pointer: fine`
+        https://bugs.webkit.org/show_bug.cgi?id=225672
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+        Add `HAVE_MOUSE_DEVICE_OBSERVATION` and `HAVE_STYLUS_DEVICE_OBSERVATION` to make callsites
+        clearer instead of having a somewhat unrelated connection to `HAVE_UIKIT_WITH_MOUSE_SUPPORT`
+        and `HAVE_PENCILKIT_TEXT_INPUT` (not to mention both of them are `PLATFORM(MACCATALYST)`
+        which isn't desirable since macCatalyst should consider the mouse as the primary pointing
+        device, just like macOS).
+
 2021-05-11  Alex Christensen  <achristensen@webkit.org>
 
         Remove xpc_connection_kill

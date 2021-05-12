@@ -34,7 +34,7 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
 
-#if HAVE(PENCILKIT_TEXT_INPUT)
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
 
 @interface WKStylusDeviceObserver
 + (WKStylusDeviceObserver *)sharedInstance;
@@ -172,6 +172,6 @@ TEST(iOSStylusSupport, StylusDisconnectedTimeoutCancel)
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: fine"]);
 }
 
-#endif // HAVE(PENCILKIT_TEXT_INPUT)
+#endif // HAVE(STYLUS_DEVICE_OBSERVATION)
 
 #endif // PLATFORM(IOS)

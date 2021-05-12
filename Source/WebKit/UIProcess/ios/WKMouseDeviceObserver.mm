@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKMouseDeviceObserver.h"
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
 
 #import "WebProcessProxy.h"
 #import <wtf/BlockPtr.h>
@@ -125,4 +125,4 @@
 
 @end
 
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#endif // HAVE(MOUSE_DEVICE_OBSERVATION)

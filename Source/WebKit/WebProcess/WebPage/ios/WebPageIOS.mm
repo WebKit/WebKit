@@ -4179,36 +4179,59 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-static bool hasMouseDevice()
+static bool isMousePrimaryPointingDevice()
 {
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
-    return WebProcess::singleton().hasMouseDevice();
-#elif HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(MACCATALYST)
+#if PLATFORM(MACCATALYST)
     return true;
 #else
     return false;
 #endif
 }
 
+static bool hasAccessoryMousePointingDevice()
+{
+    if (isMousePrimaryPointingDevice())
+        return true;
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    if (WebProcess::singleton().hasMouseDevice())
+        return true;
+#endif
+
+    return false;
+}
+
+static bool hasAccessoryStylusPointingDevice()
+{
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+    if (WebProcess::singleton().hasStylusDevice())
+        return true;
+#endif
+
+    return false;
+}
+
 bool WebPage::hoverSupportedByPrimaryPointingDevice() const
 {
-    return false;
+    return isMousePrimaryPointingDevice();
 }
 
 bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 {
-    return hasMouseDevice();
+    return hasAccessoryMousePointingDevice();
 }
 
 Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
 {
-    return PointerCharacteristics::Coarse;
+    return isMousePrimaryPointingDevice() ? PointerCharacteristics::Fine : PointerCharacteristics::Coarse;
 }
 
 OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
 {
-    OptionSet<PointerCharacteristics> result(PointerCharacteristics::Coarse);
-    if (hasMouseDevice() || WebProcess::singleton().hasStylusDevice())
+    OptionSet<PointerCharacteristics> result;
+    if (auto pointerCharacteristicsOfPrimaryPointingDevice = this->pointerCharacteristicsOfPrimaryPointingDevice())
+        result.add(*pointerCharacteristicsOfPrimaryPointingDevice);
+    if (hasAccessoryMousePointingDevice() || hasAccessoryStylusPointingDevice())
         result.add(PointerCharacteristics::Fine);
     return result;
 }

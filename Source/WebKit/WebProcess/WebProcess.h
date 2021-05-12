@@ -201,13 +201,15 @@ public:
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool hasMouseDevice() const { return m_hasMouseDevice; }
     void setHasMouseDevice(bool);
 #endif
 
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     bool hasStylusDevice() const { return m_hasStylusDevice; }
     void setHasStylusDevice(bool);
+#endif
 
     WebFrame* webFrame(WebCore::FrameIdentifier) const;
     Vector<WebFrame*> webFrames() const;
@@ -614,11 +616,13 @@ private:
 
     bool m_fullKeyboardAccessEnabled { false };
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool m_hasMouseDevice { false };
 #endif
 
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     bool m_hasStylusDevice { false };
+#endif
 
     HashMap<WebCore::FrameIdentifier, WebFrame*> m_frameMap;
 

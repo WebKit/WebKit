@@ -1198,11 +1198,27 @@ void WebProcessProxy::windowServerConnectionStateChanged()
         page->activityStateDidChange(ActivityState::IsVisuallyIdle);
 }
 
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+
+void WebProcessProxy::notifyHasMouseDeviceChanged(bool hasMouseDevice)
+{
+    ASSERT(isMainRunLoop());
+    for (auto* webProcessProxy : WebProcessProxy::allProcesses().values())
+        webProcessProxy->send(Messages::WebProcess::SetHasMouseDevice(hasMouseDevice), 0);
+}
+
+#endif // HAVE(MOUSE_DEVICE_OBSERVATION)
+
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+
 void WebProcessProxy::notifyHasStylusDeviceChanged(bool hasStylusDevice)
 {
+    ASSERT(isMainRunLoop());
     for (auto* webProcessProxy : WebProcessProxy::allProcesses().values())
         webProcessProxy->send(Messages::WebProcess::SetHasStylusDevice(hasStylusDevice), 0);
 }
+
+#endif // HAVE(STYLUS_DEVICE_OBSERVATION)
 
 void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void(WebsiteData)>&& completionHandler)
 {

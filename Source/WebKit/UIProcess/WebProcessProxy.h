@@ -216,11 +216,13 @@ public:
 
     static bool fullKeyboardAccessEnabled();
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     static void notifyHasMouseDeviceChanged(bool hasMouseDevice);
 #endif
 
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     static void notifyHasStylusDeviceChanged(bool hasStylusDevice);
+#endif
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
