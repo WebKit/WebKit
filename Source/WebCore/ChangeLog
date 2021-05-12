@@ -1,3 +1,18 @@
+2021-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Function.prototype.toString triggers page demand on Speedometer
+        https://bugs.webkit.org/show_bug.cgi?id=225678
+
+        Reviewed by Mark Lam.
+
+        Some JS libraries -- e.g. jQuery, Ember-Debug, Angular -- like to
+        toString() JS functions in order to enforce return type, argument type,
+        or deprecation invariants. This triggers pathological page demand if
+        we keep throwing away the underlying script string.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::deadDecodedDataDeletionIntervalForResourceType): Let's try 5s.
+
 2021-05-11  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
 
         [MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize.

@@ -78,7 +78,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
 static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
 {
     if (type == CachedResource::Type::Script)
-        return 0_s;
+        return 5_s;
 
     return MemoryCache::singleton().deadDecodedDataDeletionInterval();
 }
