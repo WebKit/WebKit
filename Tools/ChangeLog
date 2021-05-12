@@ -1,3 +1,19 @@
+2021-05-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Bots should automatically recover from svn checkout is already locked issue
+        https://bugs.webkit.org/show_bug.cgi?id=225717
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (CheckOutSource): Set haltOnFailure to False so that cleanup step can run. Also set the step name while we are at it.
+        (CheckOutSource.__init__): Also set logEnviron to False.
+        (CheckOutSource.getResultSummary): Run SVNCleanup step in case of failure.
+        (SVNCleanup):
+        (SVNCleanup.__init__):
+        (SVNCleanup.evaluateCommand):
+        * CISupport/build-webkit-org/steps_unittest.py: Added unit-tests for the new step.
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed follow-up to r277376.

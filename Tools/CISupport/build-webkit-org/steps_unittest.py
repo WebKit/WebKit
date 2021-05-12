@@ -991,3 +991,39 @@ class TestSetPermissions(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='failed (1) (failure)')
         return self.runStep()
+
+
+class TestSVNCleanup(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(SVNCleanup())
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['svn', 'cleanup'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Run svn cleanup')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(SVNCleanup())
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['svn', 'cleanup'],
+            ) + 2
+            + ExpectShell.log('stdio', stdout='Unexpected error.'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Run svn cleanup (failure)')
+        return self.runStep()

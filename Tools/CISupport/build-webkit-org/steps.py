@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from buildbot.process import buildstep, factory, logobserver, properties
-from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
+from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source.svn import SVN
 
@@ -130,10 +130,36 @@ class ConfigureBuild(buildstep.BuildStep):
 
 
 class CheckOutSource(SVN, object):
+    name = 'clean-and-update-working-directory'
+    haltOnFailure = False
+
     def __init__(self, **kwargs):
         kwargs['repourl'] = 'https://svn.webkit.org/repository/webkit/trunk'
         kwargs['mode'] = 'incremental'
+        kwargs['logEnviron'] = False
         super(CheckOutSource, self).__init__(**kwargs)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            self.build.addStepsAfterCurrentStep([SVNCleanup()])
+
+        if self.results != SUCCESS:
+            return {'step': 'Failed to updated working directory'}
+        else:
+            return {'step': 'Cleaned and updated working directory'}
+
+
+class SVNCleanup(shell.ShellCommand):
+    name = 'svn-cleanup'
+    command = ['svn', 'cleanup']
+    descriptionDone = ['Run svn cleanup']
+
+    def __init__(self, **kwargs):
+        super(SVNCleanup, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)
+
+    def evaluateCommand(self, cmd):
+        self.build.buildFinished(['svn issue, retrying build'], RETRY)
+        return super(SVNCleanup, self).evaluateCommand(cmd)
 
 
 class InstallWin32Dependencies(shell.Compile):
