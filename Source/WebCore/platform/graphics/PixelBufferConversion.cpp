@@ -39,7 +39,7 @@ namespace WebCore {
 
 #if USE(ACCELERATE)
 
-template<typename View> static inline vImage_Buffer makeVImageBuffer(const View& view, const IntSize& size)
+template<typename View> static vImage_Buffer makeVImageBuffer(const View& view, const IntSize& size)
 {
     vImage_Buffer vImageBuffer;
 
@@ -51,7 +51,7 @@ template<typename View> static inline vImage_Buffer makeVImageBuffer(const View&
     return vImageBuffer;
 }
 
-static inline void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
+static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
     auto sourceVImageBuffer = makeVImageBuffer(source, destinationSize);
     auto destinationVImageBuffer = makeVImageBuffer(destination, destinationSize);
@@ -78,12 +78,13 @@ static inline void convertImagePixelsAccelerated(const ConstPixelBufferConversio
         vImagePermuteChannels_ARGB8888(&sourceVImageBuffer, &destinationVImageBuffer, map, kvImageNoFlags);
     }
 }
+
 #endif
 
 enum class PixelFormatConversion { None, Permute };
 
 template<PixelFormatConversion pixelFormatConversion>
-static inline void convertSinglePixelPremultipliedToPremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
+static void convertSinglePixelPremultipliedToPremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
 {
     uint8_t alpha = sourcePixel[3];
     if (!alpha) {
@@ -103,7 +104,7 @@ static inline void convertSinglePixelPremultipliedToPremultiplied(const uint8_t*
 }
 
 template<PixelFormatConversion pixelFormatConversion>
-static inline void convertSinglePixelPremultipliedToUnpremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
+static void convertSinglePixelPremultipliedToUnpremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
 {
     uint8_t alpha = sourcePixel[3];
     if (!alpha || alpha == 255) {
@@ -126,7 +127,7 @@ static inline void convertSinglePixelPremultipliedToUnpremultiplied(const uint8_
 }
 
 template<PixelFormatConversion pixelFormatConversion>
-static inline void convertSinglePixelUnpremultipliedToPremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
+static void convertSinglePixelUnpremultipliedToPremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
 {
     uint8_t alpha = sourcePixel[3];
     if (!alpha || alpha == 255) {
@@ -149,7 +150,7 @@ static inline void convertSinglePixelUnpremultipliedToPremultiplied(const uint8_
 }
 
 template<PixelFormatConversion pixelFormatConversion>
-static inline void convertSinglePixelUnpremultipliedToUnpremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
+static void convertSinglePixelUnpremultipliedToUnpremultiplied(const uint8_t* sourcePixel, uint8_t* destinationPixel)
 {
     if constexpr (pixelFormatConversion == PixelFormatConversion::None)
         reinterpret_cast<uint32_t*>(destinationPixel)[0] = reinterpret_cast<const uint32_t*>(sourcePixel)[0];
@@ -163,7 +164,7 @@ static inline void convertSinglePixelUnpremultipliedToUnpremultiplied(const uint
 }
 
 template<void (*convertFunctor)(const uint8_t*, uint8_t*)>
-static inline void convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
+static void convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
     const uint8_t* sourceRows = source.rows;
     uint8_t* destinationRows = destination.rows;

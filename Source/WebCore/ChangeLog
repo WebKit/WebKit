@@ -1,3 +1,24 @@
+2021-05-12  Sam Weinig  <weinig@apple.com>
+
+        Remove inline annoatations for static functions in PixelBufferConversion
+        https://bugs.webkit.org/show_bug.cgi?id=225708
+
+        Reviewed by Darin Adler.
+
+        Remove inline annoatations for static functions in PixelBufferConversion
+        as suggested by Darin. The theory here is that outside of a header, the
+        use of 'inline' serves no purpose as the compiler is perfectly allowed 
+        and capable of inlining these functions.
+
+        * platform/graphics/PixelBufferConversion.cpp:
+        (WebCore::makeVImageBuffer):
+        (WebCore::convertImagePixelsAccelerated):
+        (WebCore::convertSinglePixelPremultipliedToPremultiplied):
+        (WebCore::convertSinglePixelPremultipliedToUnpremultiplied):
+        (WebCore::convertSinglePixelUnpremultipliedToPremultiplied):
+        (WebCore::convertSinglePixelUnpremultipliedToUnpremultiplied):
+        (WebCore::convertFunctor):
+
 2021-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Use HashSet<RefPtr<Node>> instead of HashSet<Node*>
