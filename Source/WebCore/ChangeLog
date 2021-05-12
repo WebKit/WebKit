@@ -1,3 +1,23 @@
+2021-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Release assert in SlotAssignment::assignedNodesForSlot via ComposedTreeIterator::traverseNextInShadowTree
+        in Element::insertedIntoAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=225684
+
+        Reviewed by Darin Adler.
+
+        The release assertion failure was caused by RenderTreeUpdater::tearDownRenderers end up traversing the parts of the DOM
+        for which Element::insertedIntoAncestor had not been called yet. Since HTMLSlotElement::insertedIntoAncestor is where
+        SlotAssignment::Slot is updated for a newly inserted slot, SlotAssignment::Slot may not contain this slot element.
+
+        Fixed the bug by returning early in SlotAssignment::assignedNodesForSlot when this condition holds, which is when
+        the shadow root is connected to a document but HTMLSlotElement isn't since its connected flag has not been updated yet.
+
+        Test: fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash.html
+
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::assignedNodesForSlot):
+
 2021-05-12  Peng Liu  <peng.liu6@apple.com>
 
         Implement TextTrackPrivateRemote::inBandMetadataTrackDispatchType()

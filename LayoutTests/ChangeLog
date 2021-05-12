@@ -1,3 +1,15 @@
+2021-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Release assert in SlotAssignment::assignedNodesForSlot via ComposedTreeIterator::traverseNextInShadowTree in Element::insertedIntoAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=225684
+
+        Reviewed by Darin Adler.
+
+        Added a regression test.
+
+        * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash-expected.txt: Added.
+        * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash.html: Added.
+
 2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Do not use margins when computing aspect ratio cross sizes
