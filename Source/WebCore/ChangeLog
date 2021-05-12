@@ -1,3 +1,15 @@
+2021-05-12  Peng Liu  <peng.liu6@apple.com>
+
+        Implement TextTrackPrivateRemote::inBandMetadataTrackDispatchType()
+        https://bugs.webkit.org/show_bug.cgi?id=225674
+
+        Reviewed by Eric Carlson.
+
+        Remove an unused function in `InbandTextTrackPrivate`.
+
+        * platform/graphics/InbandTextTrackPrivate.h:
+        (WebCore::InbandTextTrackPrivate::textTrackIndex const): Deleted.
+
 2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Do not use margins when computing aspect ratio cross sizes

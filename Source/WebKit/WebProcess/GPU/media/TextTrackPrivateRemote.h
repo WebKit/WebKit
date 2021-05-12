@@ -78,6 +78,7 @@ public:
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
+    AtomString inBandMetadataTrackDispatchType() const final { return m_inBandMetadataTrackDispatchType; }
 
     using TextTrackCueFormat = WebCore::InbandTextTrackPrivate::CueFormat;
     TextTrackCueFormat cueFormat() const final { return m_format; }
@@ -104,6 +105,7 @@ private:
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };
+    AtomString m_inBandMetadataTrackDispatchType;
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
     TrackPrivateRemoteIdentifier m_identifier;

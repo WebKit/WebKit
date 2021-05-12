@@ -81,6 +81,7 @@ void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfigura
     }
 
     m_trackIndex = configuration.trackIndex;
+    m_inBandMetadataTrackDispatchType = configuration.inBandMetadataTrackDispatchType;
     m_startTimeVariance = configuration.startTimeVariance;
 
     m_format = configuration.cueFormat;

@@ -65,6 +65,7 @@ TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()
     configuration->label = m_trackPrivate->label();
     configuration->language = m_trackPrivate->language();
     configuration->trackIndex = m_trackPrivate->trackIndex();
+    configuration->inBandMetadataTrackDispatchType = m_trackPrivate->inBandMetadataTrackDispatchType();
     configuration->startTimeVariance = m_trackPrivate->startTimeVariance();
 
     configuration->cueFormat = m_trackPrivate->cueFormat();

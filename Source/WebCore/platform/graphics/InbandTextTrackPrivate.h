@@ -74,8 +74,6 @@ public:
     AtomString id() const override { return emptyAtom(); }
     virtual AtomString inBandMetadataTrackDispatchType() const { return emptyAtom(); }
 
-    virtual int textTrackIndex() const { return 0; }
-
     virtual CueFormat cueFormat() const { return m_format; }
 
 #if !RELEASE_LOG_DISABLED

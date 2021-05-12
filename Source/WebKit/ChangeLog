@@ -1,3 +1,19 @@
+2021-05-12  Peng Liu  <peng.liu6@apple.com>
+
+        Implement TextTrackPrivateRemote::inBandMetadataTrackDispatchType()
+        https://bugs.webkit.org/show_bug.cgi?id=225674
+
+        Reviewed by Eric Carlson.
+
+        This patch ensures that `InbandTextTrack::inBandMetadataTrackDispatchType()`
+        behaviors the same no matter "Media in GPU Process" is enabled or not.
+
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::configuration):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+
 2021-05-12  Youenn Fablet  <youenn@apple.com>
 
         Introduce an internal unit to render audio MediaStreamTrack(s)
