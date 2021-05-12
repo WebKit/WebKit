@@ -975,7 +975,13 @@ webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 webkit.org/b/224590 fast/text/line-break-between-text-nodes-latin1.html [ ImageOnlyFailure ]
 webkit.org/b/224590 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html [ ImageOnlyFailure ]
 
-webkit.org/b/224967 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Failure ]
+webkit.org/b/224967 webkit.org/b/225659 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Crash Failure ]
+
+webkit.org/b/225644 compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
+webkit.org/b/225644 fast/repaint/fixed-table-cell.html [ ImageOnlyFailure ]
+webkit.org/b/225644 fast/repaint/fixed-table-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/225644 fast/repaint/fixed-table-overflow-zindex.html [ ImageOnlyFailure ]
+webkit.org/b/225644 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1010,6 +1016,8 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-terminate.https.html [ Crash ]
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
+
+webkit.org/b/225637 imported/w3c/web-platform-tests/fetch/content-length/content-length.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
