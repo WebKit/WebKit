@@ -821,9 +821,8 @@ public:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return static_cast<BlendMode>(m_rareNonInheritedData->effectiveBlendMode); }
-    void setBlendMode(BlendMode);
+    void setBlendMode(BlendMode mode) { SET_VAR(m_rareNonInheritedData, effectiveBlendMode, static_cast<unsigned>(mode)); }
     bool hasBlendMode() const { return static_cast<BlendMode>(m_rareNonInheritedData->effectiveBlendMode) != BlendMode::Normal; }
-    bool isInSubtreeWithBlendMode() const { return m_rareInheritedData->isInSubtreeWithBlendMode; }
 
     Isolation isolation() const { return static_cast<Isolation>(m_rareNonInheritedData->isolation); }
     void setIsolation(Isolation isolation) { SET_VAR(m_rareNonInheritedData, isolation, static_cast<unsigned>(isolation)); }
@@ -2205,14 +2204,6 @@ inline ImageOrientation RenderStyle::imageOrientation() const
 {
     return static_cast<ImageOrientation::Orientation>(m_rareInheritedData->imageOrientation);
 }
-
-#if ENABLE(CSS_COMPOSITING)
-inline void RenderStyle::setBlendMode(BlendMode mode)
-{
-    SET_VAR(m_rareNonInheritedData, effectiveBlendMode, static_cast<unsigned>(mode));
-    SET_VAR(m_rareInheritedData, isInSubtreeWithBlendMode, mode != BlendMode::Normal);
-}
-#endif
 
 inline void RenderStyle::setLogicalWidth(Length&& logicalWidth)
 {

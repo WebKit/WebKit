@@ -2114,11 +2114,6 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
     if (insideLink() != InsideLink::InsideVisited)
         return unvisitedColor;
 
-#if ENABLE(CSS_COMPOSITING)
-    if (isInSubtreeWithBlendMode())
-        return unvisitedColor;
-#endif
-    
     Color visitedColor = colorResolvingCurrentColor(colorProperty, true);
 
     // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
