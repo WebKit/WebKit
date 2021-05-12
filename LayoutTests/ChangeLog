@@ -1,5 +1,16 @@
 2021-05-12  Robert Jenner  <jenner@apple.com>
 
+        [ BigSur ] webaudio/AudioContext/audiocontext-close-basic.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225670
+
+        Unreviewed test gardening.
+
+        Updating expectations to slow to see if test will pass. 
+
+        * platform/mac/TestExpectations:
+
+2021-05-12  Robert Jenner  <jenner@apple.com>
+
         [ BigSur wk2 arm64 ] editing/selection/move-by-character-brute-force.html (layout-test) is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=225664
 
