@@ -1,3 +1,13 @@
+2021-05-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove xpc_connection_kill
+        https://bugs.webkit.org/show_bug.cgi?id=225602
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::terminateWithReason):
+
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
         Add SPI to suspend / resume a WKWebView
