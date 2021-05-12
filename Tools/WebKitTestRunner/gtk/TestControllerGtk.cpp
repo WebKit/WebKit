@@ -155,9 +155,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 
 TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCommand&) const
 {
-    TestFeatures features;
-    features.boolWebPreferenceFeatures.insert({ "AsyncOverflowScrollingEnabled", true });
-    return features;
+    return { };
 }
 
 } // namespace WTR
