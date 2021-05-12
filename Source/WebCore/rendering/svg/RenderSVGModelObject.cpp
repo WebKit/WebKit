@@ -101,7 +101,7 @@ void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyl
 {
     if (diff == StyleDifference::Layout) {
         setNeedsBoundariesUpdate();
-        if (style().hasTransform())
+        if (style().hasTransform() || (oldStyle && oldStyle->hasTransform()))
             setNeedsTransformUpdate();
     }
     RenderElement::styleDidChange(diff, oldStyle);

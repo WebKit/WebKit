@@ -1,3 +1,18 @@
+2021-05-12  Said Abou-Hallawa  <said@apple.com>
+
+        Removing the transform CSS property from the SVG element does not cause invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=225366
+
+        Reviewed by Simon Fraser.
+
+        If the new or the old RenderStyle includes a transform, the renderer of
+        the SVG element needs to be repainted.
+
+        Test: svg/css/svg-css-transform-dynamic-remove.html
+
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::styleDidChange):
+
 2021-05-12  Sam Weinig  <weinig@apple.com>
 
         Remove inline annoatations for static functions in PixelBufferConversion
