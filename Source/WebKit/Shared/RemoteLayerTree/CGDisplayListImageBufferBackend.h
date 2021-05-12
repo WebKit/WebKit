@@ -50,7 +50,7 @@ public:
     // NOTE: These all ASSERT_NOT_REACHED().
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const override;
     Vector<uint8_t> toBGRAData() const override;
-    RefPtr<WebCore::PixelBuffer> getPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
+    Optional<WebCore::PixelBuffer> getPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
     void putPixelBuffer(WebCore::AlphaPremultiplication inputFormat, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;

@@ -108,7 +108,7 @@ Vector<uint8_t> CGDisplayListImageBufferBackend::toBGRAData() const
 Optional<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(WebCore::AlphaPremultiplication, const WebCore::IntRect&) const
 {
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 
 void CGDisplayListImageBufferBackend::putPixelBuffer(WebCore::AlphaPremultiplication, const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication)
