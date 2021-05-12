@@ -1,3 +1,52 @@
+2021-05-12  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r277373. rdar://problem/77916543
+
+    Source/WebCore:
+    REGRESSION: Release assert in SlotAssignment::assignedNodesForSlot via ComposedTreeIterator::traverseNextInShadowTree
+    in Element::insertedIntoAncestor
+    https://bugs.webkit.org/show_bug.cgi?id=225684
+    
+    Reviewed by Darin Adler.
+    
+    The release assertion failure was caused by RenderTreeUpdater::tearDownRenderers end up traversing the parts of the DOM
+    for which Element::insertedIntoAncestor had not been called yet. Since HTMLSlotElement::insertedIntoAncestor is where
+    SlotAssignment::Slot is updated for a newly inserted slot, SlotAssignment::Slot may not contain this slot element.
+    
+    Fixed the bug by returning early in SlotAssignment::assignedNodesForSlot when this condition holds, which is when
+    the shadow root is connected to a document but HTMLSlotElement isn't since its connected flag has not been updated yet.
+    
+    Test: fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash.html
+    
+    * dom/SlotAssignment.cpp:
+    (WebCore::SlotAssignment::assignedNodesForSlot):
+    
+    LayoutTests:
+    REGRESSION: Release assert in SlotAssignment::assignedNodesForSlot via ComposedTreeIterator::traverseNextInShadowTree in Element::insertedIntoAncestor
+    https://bugs.webkit.org/show_bug.cgi?id=225684
+    
+    Reviewed by Darin Adler.
+    
+    Added a regression test.
+    
+    * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash-expected.txt: Added.
+    * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277373 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION: Release assert in SlotAssignment::assignedNodesForSlot via ComposedTreeIterator::traverseNextInShadowTree in Element::insertedIntoAncestor
+            https://bugs.webkit.org/show_bug.cgi?id=225684
+
+            Reviewed by Darin Adler.
+
+            Added a regression test.
+
+            * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash-expected.txt: Added.
+            * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash.html: Added.
+
 2021-05-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276739. rdar://problem/77581103
