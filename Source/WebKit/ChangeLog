@@ -1,3 +1,37 @@
+2021-05-12  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r275297): Unexpected autofocus when switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=225710
+        <rdar://problem/77542939>
+
+        Reviewed by Wenson Hsieh.
+
+        r275297 introduced logic to handle a focus environment change by
+        advancing to the next or previous focusable element, depending on the
+        focus context's heading direction. This logic enables a tab or a
+        shift+tab to change the focus from browser chrome directly to an
+        element on a web page.
+
+        However, the focus environment can change through mechanisms other than
+        tab / shift+tab. One example of this is when a user switches tabs. In
+        these cases, the UIFocusHeading supplied by the focus context is
+        UIFocusHeadingNone. Nevertheless, we unconditionally call
+        `-[WKContentView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]`
+        when the focus context changes. Consequently, an element on the web page
+        is always focused when the WKContentView gains focus.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateFocusInContext:withAnimationCoordinator:]):
+
+        To fix, ensure we only focus an element on the page if the focus heading
+        is UIFocusHeadingNext or UIFocusHeadingPrevious. UIFocusHeadingNext will
+        focus the first focusable element, while UIFocusHeadingPrevious will focus
+        the last focusable element.
+
+        Note that a call to `-[WKContentView becomeFirstResponder]` is not made
+        if the focus heading is UIFocusHeadingNone. From my testing, I observed
+        that the view already was the first responder in that case.
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed follow-up to r277376.
