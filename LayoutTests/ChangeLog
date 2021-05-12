@@ -1,5 +1,15 @@
 2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update baselines for GTK.
+
+        Remove stale GTK baseline after r277321.
+        Emit new GTK baseline after WPT update in r277160.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries-expected.txt: Added.
+
+2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Gardened several test failures from GTK post-commit bot.
 
         * platform/gtk/TestExpectations:
