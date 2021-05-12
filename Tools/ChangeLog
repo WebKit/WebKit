@@ -1,3 +1,12 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed follow-up to r277376.
+
+        Enable the API tests only if ENABLE(NOTIFICATIONS). It is important since
+        notifications are enabled on macOS but not iOS currently.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NotificationAPI.mm:
+
 2021-05-12  Sihui Liu  <sihui_liu@apple.com>
 
         [ BigSur Release ] TestWebKitAPI.IndexedDB.KillWebProcessWithOpenConnection is a constant failure
