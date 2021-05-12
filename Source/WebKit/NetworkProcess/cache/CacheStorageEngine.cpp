@@ -208,13 +208,12 @@ static uint64_t getDirectorySize(const String& directoryPath)
     while (!paths.isEmpty()) {
         auto path = paths.takeFirst();
         if (FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::No)) {
-            auto newPaths = FileSystem::listDirectory(path, "*"_s);
-            for (auto& newPath : newPaths) {
+            auto fileNames = FileSystem::listDirectory(path);
+            for (auto& fileName : fileNames) {
                 // Files in /Blobs directory are hard link.
-                auto fileName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(newPath);
                 if (fileName == "Blobs")
                     continue;
-                paths.append(newPath);
+                paths.append(FileSystem::pathByAppendingComponent(path, fileName));
             }
             continue;
         }
@@ -615,9 +614,10 @@ void Engine::getDirectories(CompletionHandler<void(const Vector<String>&)>&& com
 {
     m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<String> folderPaths;
-        for (auto& filename : FileSystem::listDirectory(path, "*")) {
-            if (FileSystem::fileIsDirectory(filename, FileSystem::ShouldFollowSymbolicLinks::No))
-                folderPaths.append(filename.isolatedCopy());
+        for (auto& fileName : FileSystem::listDirectory(path)) {
+            auto filePath = FileSystem::pathByAppendingComponent(path, fileName);
+            if (FileSystem::fileIsDirectory(filePath, FileSystem::ShouldFollowSymbolicLinks::No))
+                folderPaths.append(filePath.isolatedCopy());
         }
 
         RunLoop::main().dispatch([folderPaths = WTFMove(folderPaths), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -702,9 +702,10 @@ void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandle
 
     m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         LockHolder locker(globalSizeFileLock);
-        for (auto& filename : FileSystem::listDirectory(path, "*")) {
-            if (FileSystem::fileIsDirectory(filename, FileSystem::ShouldFollowSymbolicLinks::No))
-                FileSystem::deleteNonEmptyDirectory(filename);
+        for (auto& fileName : FileSystem::listDirectory(path)) {
+            auto filePath = FileSystem::pathByAppendingComponent(path, fileName);
+            if (FileSystem::fileIsDirectory(filePath, FileSystem::ShouldFollowSymbolicLinks::No))
+                FileSystem::deleteNonEmptyDirectory(filePath);
         }
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });

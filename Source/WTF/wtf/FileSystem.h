@@ -137,7 +137,7 @@ WTF_EXPORT_PRIVATE void setMetadataURL(const String& path, const String& urlStri
 bool canExcludeFromBackup(); // Returns true if any file can ever be excluded from backup.
 bool excludeFromBackup(const String&); // Returns true if successful.
 
-WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path, const String& filter);
+WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path); // Returns file names, not full paths.
 
 WTF_EXPORT_PRIVATE CString fileSystemRepresentation(const String&);
 WTF_EXPORT_PRIVATE String stringFromFileSystemRepresentation(const char*);

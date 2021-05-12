@@ -1,5 +1,41 @@
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Update FileSystem::listDirectory() call sites to deal with the fact that:
+        - The function now returns file names instead of full file paths
+        - The callers now have to do filtering by themselves if they need it
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::listDirectoryWithMetadata):
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBServer::collectOriginsForVersion):
+        (WebCore::IDBServer::removeAllDatabasesForFullOriginPath):
+        (WebCore::IDBServer::removeAllDatabasesForOriginPath):
+        (WebCore::IDBServer::IDBServer::removeDatabasesModifiedSinceForVersion):
+        (WebCore::IDBServer::IDBServer::removeDatabasesWithOriginsForVersion):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForDirectory):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::usage):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::appendDirectoryFiles):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::purgeOldDownloadFiles):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::extractLocaleFromDictionaryFileName):
+        (WebCore::scanDirectoryForDictionaries):
+
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
         Add SPI to suspend / resume a WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=225333
         <rdar://77462543>

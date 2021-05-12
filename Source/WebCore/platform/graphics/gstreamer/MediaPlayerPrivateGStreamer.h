@@ -437,7 +437,7 @@ private:
     bool didPassCORSAccessCheck() const override;
     bool canSaveMediaData() const override;
 
-    void purgeOldDownloadFiles(const char*);
+    void purgeOldDownloadFiles(const String& downloadFilePrefixPath);
     static void uriDecodeBinElementAddedCallback(GstBin*, GstElement*, MediaPlayerPrivateGStreamer*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 

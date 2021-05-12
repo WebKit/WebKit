@@ -89,11 +89,6 @@ static const WTF::String& constructedPathPrefix(bool legacyFilename)
     return prefix;
 }
 
-static const WTF::String constructedPathFilter(bool legacyFilename)
-{
-    return makeString(constructedPathPrefix(legacyFilename), '*');
-}
-
 static WTF::String constructedPath(const WTF::String& base, const WTF::String& identifier, bool legacyFilename)
 {
     return pathByAppendingComponent(base, makeString(constructedPathPrefix(legacyFilename), encodeForFileName(identifier)));
@@ -500,17 +495,18 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
 {
     ASSERT(RunLoop::isMain());
     m_readQueue->dispatch([protectedThis = makeRef(*this), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto prefix = constructedPathPrefix(false /*legacy*/);
+        auto prefixLength = prefix.length();
+        auto legacyPrefix = constructedPathPrefix(true /*legacy*/);
+        auto legacyPrefixLength = legacyPrefix.length();
 
-        Vector<WTF::String> fullPaths = listDirectory(storePath, constructedPathFilter(false));
-        Vector<WTF::String> legacyFullPaths = listDirectory(storePath, constructedPathFilter(true));
         Vector<WTF::String> identifiers;
-        identifiers.reserveInitialCapacity(fullPaths.size() + legacyFullPaths.size());
-        const auto prefixLength = constructedPathPrefix(false).length();
-        const auto legacyPrefixLength = constructedPathPrefix(true).length();
-        for (const auto& path : fullPaths)
-            identifiers.uncheckedAppend(decodeFromFilename(path.substring(path.reverseFind('/') + 1 + prefixLength)));
-        for (const auto& path : legacyFullPaths)
-            identifiers.uncheckedAppend(decodeFromFilename(path.substring(path.reverseFind('/') + 1 + legacyPrefixLength)));
+        for (auto& fileName : listDirectory(storePath)) {
+            if (fileName.startsWith(prefix))
+                identifiers.append(decodeFromFilename(fileName.substring(prefixLength)));
+            else if (fileName.startsWith(legacyPrefix))
+                identifiers.append(decodeFromFilename(fileName.substring(legacyPrefixLength)));
+        }
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), identifiers = WTFMove(identifiers)]() mutable {
             completionHandler(WTFMove(identifiers));
@@ -568,8 +564,8 @@ void ContentRuleListStore::removeContentRuleList(const WTF::String& identifier, 
 
 void ContentRuleListStore::synchronousRemoveAllContentRuleLists()
 {
-    for (const auto& path : listDirectory(m_storePath, "*"))
-        deleteFile(path);
+    for (const auto& fileName : listDirectory(m_storePath))
+        deleteFile(FileSystem::pathByAppendingComponent(m_storePath, fileName));
 }
 
 void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& identifier)

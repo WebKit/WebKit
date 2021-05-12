@@ -399,19 +399,13 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 {
     // FIXME: This should be a case insensitive set.
-    HashSet<String> uniqueFilenames;
-
-    String fileNameFilter("");
-
-    auto dirsEnd = m_pluginDirectories.end();
-    for (auto dIt = m_pluginDirectories.begin(); dIt != dirsEnd; ++dIt) {
-        Vector<String> pluginPaths = FileSystem::listDirectory(*dIt, fileNameFilter);
-        auto pluginsEnd = pluginPaths.end();
-        for (auto pIt = pluginPaths.begin(); pIt != pluginsEnd; ++pIt) {
-            if (!fileExistsAndIsNotDisabled(*pIt))
+    for (auto& pluginDirectory : m_pluginDirectories) {
+        for (auto& pluginName : FileSystem::listDirectory(pluginDirectory)) {
+            auto pluginPath = FileSystem::pathByAppendingComponent(pluginDirectory, pluginName);
+            if (!fileExistsAndIsNotDisabled(pluginPath))
                 continue;
 
-            paths.add(*pIt);
+            paths.add(pluginPath);
         }
     }
 }

@@ -1,3 +1,22 @@
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Port WTF::FileSystem::listDirectory to std::filesystem with the following 2 changes:
+        - The function no longer takes a (blob-style) filter parameter
+        - The function now returns file names instead of file paths, allowing the call sites
+          to more easily filter based on prefixes.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::listDirectory):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
 2021-05-11  Darin Adler  <darin@apple.com>
 
         Remove the String::toInt family of functions

@@ -41,10 +41,14 @@ WebKitExtensionManager::WebKitExtensionManager()
 
 void WebKitExtensionManager::scanModules(const String& webExtensionsDirectory, Vector<String>& modules)
 {
-    Vector<String> modulePaths = FileSystem::listDirectory(webExtensionsDirectory, String("*.so"));
-    for (size_t i = 0; i < modulePaths.size(); ++i) {
-        if (FileSystem::fileExists(modulePaths[i]))
-            modules.append(modulePaths[i]);
+    auto moduleNames = FileSystem::listDirectory(webExtensionsDirectory);
+    for (auto& moduleName : moduleNames) {
+        if (!moduleName.endsWith(".so"))
+            continue;
+
+        auto modulePath = FileSystem::pathByAppendingComponent(webExtensionsDirectory, moduleName);
+        if (FileSystem::fileExists(modulePath))
+            modules.append(modulePath);
     }
 }
 

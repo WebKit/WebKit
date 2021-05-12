@@ -54,14 +54,14 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
     if (!FileSystem::fileIsDirectory(fullPath, FileSystem::ShouldFollowSymbolicLinks::No))
         return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
 
-    auto childPaths = FileSystem::listDirectory(fullPath, "*");
+    auto childNames = FileSystem::listDirectory(fullPath);
     Vector<ListedChild> listedChildren;
-    listedChildren.reserveInitialCapacity(childPaths.size());
-    for (auto& childPath : childPaths) {
-        auto metadata = FileSystem::fileMetadata(childPath);
+    listedChildren.reserveInitialCapacity(childNames.size());
+    for (auto& childName : childNames) {
+        auto metadata = FileSystem::fileMetadata(FileSystem::pathByAppendingComponent(fullPath, childName));
         if (!metadata || metadata.value().isHidden)
             continue;
-        listedChildren.uncheckedAppend(ListedChild { FileSystem::pathGetFileName(childPath), metadata.value().type });
+        listedChildren.uncheckedAppend(ListedChild { childName, metadata.value().type });
     }
     return listedChildren;
 }

@@ -141,30 +141,6 @@ String homeDirectoryPath()
     return stringFromFileSystemRepresentation(g_get_home_dir());
 }
 
-Vector<String> listDirectory(const String& path, const String& filter)
-{
-    Vector<String> entries;
-
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return entries;
-
-    GUniquePtr<GDir> dir(g_dir_open(filename.data(), 0, nullptr));
-    if (!dir)
-        return entries;
-
-    GUniquePtr<GPatternSpec> pspec(g_pattern_spec_new((filter.utf8()).data()));
-    while (const char* name = g_dir_read_name(dir.get())) {
-        if (!g_pattern_match_string(pspec.get(), name))
-            continue;
-
-        GUniquePtr<gchar> entry(g_build_filename(filename.data(), name, nullptr));
-        entries.append(stringFromFileSystemRepresentation(entry.get()));
-    }
-
-    return entries;
-}
-
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const String& suffix)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.

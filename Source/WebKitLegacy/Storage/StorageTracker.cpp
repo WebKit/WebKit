@@ -236,10 +236,10 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
 
     ASSERT(m_isActive);
 
-    Vector<String> paths;
+    Vector<String> fileNames;
     {
         LockHolder locker(m_databaseMutex);
-        paths = FileSystem::listDirectory(m_storageDirectoryPath, "*.localstorage");
+        fileNames = FileSystem::listDirectory(m_storageDirectoryPath);
     }
 
     // Use a copy of m_originSet to find expired entries and to schedule their
@@ -255,17 +255,16 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
     OriginSet foundOrigins;
     String fileExtension = ".localstorage"_s;
 
-    for (Vector<String>::const_iterator it = paths.begin(), end = paths.end(); it != end; ++it) {
-        const String& path = *it;
+    for (auto& fileName : fileNames) {
+        if (fileName.length() <= fileExtension.length() || !fileName.endsWith(fileExtension))
+            continue;
 
-        if (path.length() > fileExtension.length() && path.endsWith(fileExtension)) {
-            String file = FileSystem::pathGetFileName(path);
-            String originIdentifier = file.substring(0, file.length() - fileExtension.length());
-            if (!originSetCopy.contains(originIdentifier))
-                syncSetOriginDetails(originIdentifier, path);
+        auto filePath = FileSystem::pathByAppendingComponent(m_storageDirectoryPath, fileName);
+        String originIdentifier = fileName.substring(0, fileName.length() - fileExtension.length());
+        if (!originSetCopy.contains(originIdentifier))
+            syncSetOriginDetails(originIdentifier, filePath);
 
-            foundOrigins.add(originIdentifier);
-        }
+        foundOrigins.add(originIdentifier);
     }
 
     // Delete stale StorageTracker records.

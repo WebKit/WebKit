@@ -1182,7 +1182,6 @@ String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
     String oldDatabaseDirectory = FileSystem::pathByAppendingComponent(oldOriginDirectory, filenameForDatabaseName());
     String newOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v1");
     String fileNameHash = SQLiteFileSystem::computeHashForFileName(m_identifier.databaseName());
-    Vector<String> directoriesWithSameHash = FileSystem::listDirectory(newOriginDirectory, fileNameHash + "*");
     String newDatabaseDirectory = FileSystem::pathByAppendingComponent(newOriginDirectory, fileNameHash);
     FileSystem::makeAllDirectories(newDatabaseDirectory);
 
@@ -1281,10 +1280,11 @@ uint64_t SQLiteIDBBackingStore::databaseVersion()
 uint64_t SQLiteIDBBackingStore::databasesSizeForDirectory(const String& directory)
 {
     uint64_t diskUsage = 0;
-    for (auto& dbDirectory : FileSystem::listDirectory(directory, "*")) {
-        for (auto& file : FileSystem::listDirectory(dbDirectory, "*.sqlite3"_s)) {
-            auto fileSize = SQLiteFileSystem::getDatabaseFileSize(file);
-            diskUsage += fileSize;
+    for (auto& dbDirectoryName : FileSystem::listDirectory(directory)) {
+        auto dbDirectoryPath = FileSystem::pathByAppendingComponent(directory, dbDirectoryName);
+        for (auto& fileName : FileSystem::listDirectory(dbDirectoryPath)) {
+            if (fileName.endsWith(".sqlite3"))
+                diskUsage += SQLiteFileSystem::getDatabaseFileSize(FileSystem::pathByAppendingComponent(dbDirectoryPath, fileName));
         }
     }
     return diskUsage;

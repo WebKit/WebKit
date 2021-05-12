@@ -1,5 +1,40 @@
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Update FileSystem::listDirectory() call sites to deal with the fact that:
+        - The function now returns file names instead of full file paths
+        - The callers now have to do filtering by themselves if they need it
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::origins const):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::getDirectorySize):
+        (WebKit::CacheStorage::Engine::getDirectories):
+        (WebKit::CacheStorage::Engine::clearAllCachesFromDisk):
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::traverseDirectory):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::getAvailableContentRuleListIdentifiers):
+        (API::ContentRuleListStore::synchronousRemoveAllContentRuleLists):
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::loadStorageFromDisk):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::mediaKeyOrigins):
+        (WebKit::WebsiteDataStore::removeMediaKeys):
+        * WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp:
+        (WebKit::WebKitExtensionManager::scanModules):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::WebMediaKeyStorageManager::getMediaKeyOrigins):
+        (WebKit::removeAllMediaKeyStorageForOriginPath):
+        (WebKit::WebMediaKeyStorageManager::deleteMediaKeyEntriesModifiedBetweenDates):
+        (WebKit::WebMediaKeyStorageManager::deleteAllMediaKeyEntries):
+
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
         Add SPI to suspend / resume a WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=225333
         <rdar://77462543>

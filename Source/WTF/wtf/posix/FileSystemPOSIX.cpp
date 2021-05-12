@@ -186,36 +186,6 @@ Optional<WallTime> getFileCreationTime(const String& path)
 #endif
 }
 
-Vector<String> listDirectory(const String& path, const String& filter)
-{
-    Vector<String> entries;
-    CString cpath = fileSystemRepresentation(path);
-    CString cfilter = fileSystemRepresentation(filter);
-    DIR* dir = opendir(cpath.data());
-    if (dir) {
-        struct dirent* dp;
-        while ((dp = readdir(dir))) {
-            const char* name = dp->d_name;
-            if (!strcmp(name, ".") || !strcmp(name, ".."))
-                continue;
-            if (fnmatch(cfilter.data(), name, 0))
-                continue;
-            char filePath[PATH_MAX];
-            if (static_cast<int>(sizeof(filePath) - 1) < snprintf(filePath, sizeof(filePath), "%s/%s", cpath.data(), name))
-                continue; // buffer overflow
-
-            auto string = stringFromFileSystemRepresentation(filePath);
-
-            // Some file system representations cannot be represented as a UTF-16 string,
-            // so this string might be null.
-            if (!string.isNull())
-                entries.append(WTFMove(string));
-        }
-        closedir(dir);
-    }
-    return entries;
-}
-
 #if !USE(CF)
 String stringFromFileSystemRepresentation(const char* path)
 {

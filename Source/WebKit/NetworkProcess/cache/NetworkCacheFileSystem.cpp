@@ -55,10 +55,11 @@ namespace NetworkCache {
 
 void traverseDirectory(const String& path, const Function<void (const String&, DirectoryEntryType)>& function)
 {
-    auto entries = FileSystem::listDirectory(path, "*"_s);
+    auto entries = FileSystem::listDirectory(path);
     for (auto& entry : entries) {
-        auto type = FileSystem::fileIsDirectory(entry, FileSystem::ShouldFollowSymbolicLinks::No) ? DirectoryEntryType::Directory : DirectoryEntryType::File;
-        function(FileSystem::pathGetFileName(entry), type);
+        auto entryPath = FileSystem::pathByAppendingComponent(path, entry);
+        auto type = FileSystem::fileIsDirectory(entryPath, FileSystem::ShouldFollowSymbolicLinks::No) ? DirectoryEntryType::Directory : DirectoryEntryType::File;
+        function(entry, type);
     }
 }
 

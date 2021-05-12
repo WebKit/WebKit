@@ -104,9 +104,7 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::databasesModifiedSince(W
 Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
 {
     Vector<SecurityOriginData> databaseOrigins;
-    auto paths = FileSystem::listDirectory(localStorageDirectory(), "*.localstorage");
-    
-    for (const auto& path : paths) {
+    for (auto& path : FileSystem::listDirectory(localStorageDirectory())) {
         auto filename = FileSystem::pathGetFileName(path);
         auto originIdentifier = filename.substring(0, filename.length() - strlen(".localstorage"));
         auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);

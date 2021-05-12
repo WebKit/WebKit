@@ -37,6 +37,14 @@ namespace TestWebKitAPI {
 
 const char* FileSystemTestData = "This is a test";
 
+static void createTestFile(const String& path)
+{
+    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
+    EXPECT_TRUE(FileSystem::isHandleValid(fileHandle));
+    FileSystem::writeToFile(fileHandle, FileSystemTestData, strlen(FileSystemTestData));
+    FileSystem::closeFile(fileHandle);
+};
+
 // FIXME: Refactor FileSystemTest and SharedBufferTest as a single class.
 class FileSystemTest : public testing::Test {
 public:
@@ -249,23 +257,16 @@ TEST_F(FileSystemTest, openExistingFileAndFailIfFileExists)
 
 TEST_F(FileSystemTest, deleteNonEmptyDirectory)
 {
-    auto createTestTile = [](const String& path) {
-        auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
-        EXPECT_TRUE(FileSystem::isHandleValid(fileHandle));
-        FileSystem::writeToFile(fileHandle, FileSystemTestData, strlen(FileSystemTestData));
-        FileSystem::closeFile(fileHandle);
-    };
-
     FileSystem::PlatformFileHandle temporaryFile;
     auto temporaryTestFolder = FileSystem::openTemporaryFile("deleteNonEmptyDirectoryTest", temporaryFile);
     FileSystem::closeFile(temporaryFile);
 
     EXPECT_TRUE(FileSystem::deleteFile(temporaryTestFolder));
     EXPECT_TRUE(FileSystem::makeAllDirectories(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder" })));
-    createTestTile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file1.txt"));
-    createTestTile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file2.txt"));
-    createTestTile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file3.txt" }));
-    createTestTile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file4.txt" }));
+    createTestFile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file1.txt"));
+    createTestFile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file2.txt"));
+    createTestFile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file3.txt" }));
+    createTestFile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file4.txt" }));
     EXPECT_FALSE(FileSystem::deleteEmptyDirectory(temporaryTestFolder));
     EXPECT_TRUE(FileSystem::fileExists(temporaryTestFolder));
     EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(temporaryTestFolder));
@@ -778,6 +779,40 @@ TEST_F(FileSystemTest, pathByAppendingComponents)
     EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar", { "File.txt" }).utf8().data());
     EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar\\", { "File.txt" }).utf8().data());
 #endif
+}
+
+TEST_F(FileSystemTest, listDirectory)
+{
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "a.txt"));
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "b.txt"));
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "bar.png"));
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "foo.png"));
+    FileSystem::makeAllDirectories(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"));
+    createTestFile(FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "c.txt" }));
+    createTestFile(FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "d.txt" }));
+
+    auto matches = FileSystem::listDirectory(tempEmptyFolderPath());
+    ASSERT_EQ(matches.size(), 5U);
+    std::sort(matches.begin(), matches.end(), WTF::codePointCompareLessThan);
+    EXPECT_STREQ(matches[0].utf8().data(), "a.txt");
+    EXPECT_STREQ(matches[1].utf8().data(), "b.txt");
+    EXPECT_STREQ(matches[2].utf8().data(), "bar.png");
+    EXPECT_STREQ(matches[3].utf8().data(), "foo.png");
+    EXPECT_STREQ(matches[4].utf8().data(), "subfolder");
+
+    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"));
+    ASSERT_EQ(matches.size(), 2U);
+    std::sort(matches.begin(), matches.end(), WTF::codePointCompareLessThan);
+    EXPECT_STREQ(matches[0].utf8().data(), "c.txt");
+    EXPECT_STREQ(matches[1].utf8().data(), "d.txt");
+
+    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"));
+    ASSERT_EQ(matches.size(), 0U);
+
+    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "a.txt"));
+    ASSERT_EQ(matches.size(), 0U);
+
+    EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
 }
 
 } // namespace TestWebKitAPI

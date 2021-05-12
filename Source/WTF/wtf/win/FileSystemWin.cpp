@@ -364,25 +364,6 @@ String roamingUserSpecificStorageDirectory()
     return cachedStorageDirectory(CSIDL_APPDATA);
 }
 
-Vector<String> listDirectory(const String& directory, const String& filter)
-{
-    Vector<String> entries;
-
-    PathWalker walker(directory, filter);
-    if (!walker.isValid())
-        return entries;
-
-    do {
-        if (walker.data().dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY
-            && (!wcscmp(walker.data().cFileName, L".") || !wcscmp(walker.data().cFileName, L"..")))
-            continue;
-
-        entries.append(directory + "\\" + reinterpret_cast<const UChar*>(walker.data().cFileName));
-    } while (walker.step());
-
-    return entries;
-}
-
 Optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     auto handle = openFile(fsFile.data(), FileOpenMode::Read);

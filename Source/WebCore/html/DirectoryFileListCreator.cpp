@@ -54,7 +54,8 @@ struct FileInformation {
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)
 {
     ASSERT(!isMainThread());
-    for (auto& childPath : FileSystem::listDirectory(directory, "*")) {
+    for (auto& childName : FileSystem::listDirectory(directory)) {
+        auto childPath = FileSystem::pathByAppendingComponent(directory, childName);
         auto metadata = FileSystem::fileMetadata(childPath);
         if (!metadata)
             continue;
@@ -62,7 +63,7 @@ static void appendDirectoryFiles(const String& directory, const String& relative
         if (metadata.value().isHidden)
             continue;
 
-        String childRelativePath = relativePath + "/" + FileSystem::pathGetFileName(childPath);
+        String childRelativePath = relativePath + "/" + childName;
         if (metadata.value().type == FileMetadata::Type::Directory)
             appendDirectoryFiles(childPath, childRelativePath, files);
         else if (metadata.value().type == FileMetadata::Type::File)

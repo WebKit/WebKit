@@ -1,3 +1,17 @@
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Update FileSystem::listDirectory() call sites to deal with the fact that:
+        - The function now returns file names instead of full file paths
+        - The callers now have to do filtering by themselves if they need it
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::getPluginPathsInDirectories const):
+
 2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make WebCore::HitTestRequest::RequestType an enum class

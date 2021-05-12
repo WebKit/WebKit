@@ -562,8 +562,9 @@ bool deleteEmptyDirectory(const String& path)
 
 #if PLATFORM(MAC)
     bool containsSingleDSStoreFile = false;
-    for (auto& entry : std::filesystem::directory_iterator(fsPath, ec)) {
-        if (entry.path().filename() == ".DS_Store")
+    auto entries = std::filesystem::directory_iterator(fsPath, ec);
+    for (auto it = std::filesystem::begin(entries), end = std::filesystem::end(entries); !ec && it != end; it.increment(ec)) {
+        if (it->path().filename() == ".DS_Store")
             containsSingleDSStoreFile = true;
         else {
             containsSingleDSStoreFile = false;
@@ -750,6 +751,19 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
     for (auto& component : components)
         fsPath /= toStdFileSystemPath(component);
     return fromStdFileSystemPath(fsPath);
+}
+
+Vector<String> listDirectory(const String& path)
+{
+    Vector<String> fileNames;
+    std::error_code ec;
+    auto entries = std::filesystem::directory_iterator(toStdFileSystemPath(path), ec);
+    for (auto it = std::filesystem::begin(entries), end = std::filesystem::end(entries); !ec && it != end; it.increment(ec)) {
+        auto fileName = fromStdFileSystemPath(it->path().filename());
+        if (!fileName.isNull())
+            fileNames.append(WTFMove(fileName));
+    }
+    return fileNames;
 }
 
 } // namespace FileSystemImpl

@@ -1,5 +1,20 @@
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::createTestFile):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+        (TestWebKitAPI::removeDirectoryAndAllContents):
+
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
         Add SPI to suspend / resume a WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=225333
         <rdar://77462543>

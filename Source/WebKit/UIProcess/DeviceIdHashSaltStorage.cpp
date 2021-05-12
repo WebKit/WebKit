@@ -115,7 +115,8 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
         FileSystem::makeAllDirectories(m_deviceIdHashSaltStorageDirectory);
 
         HashMap<String, std::unique_ptr<HashSaltForOrigin>> deviceIdHashSaltForOrigins;
-        for (auto& originPath : FileSystem::listDirectory(m_deviceIdHashSaltStorageDirectory, "*")) {
+        for (auto& origin : FileSystem::listDirectory(m_deviceIdHashSaltStorageDirectory)) {
+            auto originPath = FileSystem::pathByAppendingComponent(m_deviceIdHashSaltStorageDirectory, origin);
             auto deviceIdHashSalt = URL::fileURLWithFileSystemPath(originPath).lastPathComponent().toString();
 
             if (hashSaltSize != deviceIdHashSalt.length()) {

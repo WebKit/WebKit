@@ -655,8 +655,10 @@ unsigned long long DatabaseTracker::usage(const SecurityOriginData& origin)
 {
     String originPath = this->originPath(origin);
     unsigned long long diskUsage = 0;
-    for (auto& fileName : FileSystem::listDirectory(originPath, "*.db"_s))
-        diskUsage += SQLiteFileSystem::getDatabaseFileSize(fileName);
+    for (auto& fileName : FileSystem::listDirectory(originPath)) {
+        if (fileName.endsWith(".db"))
+            diskUsage += SQLiteFileSystem::getDatabaseFileSize(FileSystem::pathByAppendingComponent(originPath, fileName));
+    }
     return diskUsage;
 }
 
@@ -855,8 +857,9 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
 #if PLATFORM(COCOA)
         RELEASE_LOG_ERROR(DatabaseTracker, "Unable to retrieve list of database names for origin");
 #endif
-        for (const auto& file : FileSystem::listDirectory(originPath(origin), "*")) {
-            if (!FileSystem::deleteFile(file))
+        auto originPath = this->originPath(origin);
+        for (const auto& fileName : FileSystem::listDirectory(originPath)) {
+            if (!FileSystem::deleteFile(FileSystem::pathByAppendingComponent(originPath, fileName)))
                 failedToDeleteAnyDatabaseFile = true;
         }
     }

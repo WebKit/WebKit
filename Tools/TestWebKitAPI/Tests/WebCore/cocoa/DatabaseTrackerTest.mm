@@ -78,8 +78,8 @@ static void addToDatabasesTable(const String& databasePath, const SecurityOrigin
 
 static void removeDirectoryAndAllContents(const String& directoryPath)
 {
-    for (const auto& file : FileSystem::listDirectory(directoryPath, "*"))
-        EXPECT_TRUE(FileSystem::deleteFile(file));
+    for (auto& fileName : FileSystem::listDirectory(directoryPath))
+        EXPECT_TRUE(FileSystem::deleteFile(FileSystem::pathByAppendingComponent(directoryPath, fileName)));
 
     if (FileSystem::fileExists(directoryPath))
         EXPECT_TRUE(FileSystem::deleteEmptyDirectory(directoryPath));
