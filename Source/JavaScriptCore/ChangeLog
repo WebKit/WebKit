@@ -1,3 +1,21 @@
+2021-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        ConservativeRoots triggers page demand on Speedometer
+        https://bugs.webkit.org/show_bug.cgi?id=225676
+
+        Reviewed by Filip Pizlo.
+
+        Use a 2048 item / 16kB inline buffer. That's about 10% bigger than the
+        max capacity observed on Speedometer, and small enough to reasonably fit
+        on the stack.
+
+        Removed the separate out of line capacity because it was smaller than
+        the new inline capacity.
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::grow):
+        * heap/ConservativeRoots.h:
+
 2021-05-12  Mark Lam  <mark.lam@apple.com>
 
         Implement some common Baseline JIT slow paths using JIT thunks.

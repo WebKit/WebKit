@@ -53,7 +53,7 @@ ConservativeRoots::~ConservativeRoots()
 
 void ConservativeRoots::grow()
 {
-    size_t newCapacity = m_capacity == inlineCapacity ? nonInlineCapacity : m_capacity * 2;
+    size_t newCapacity = m_capacity * 2;
     HeapCell** newRoots = static_cast<HeapCell**>(OSAllocator::reserveAndCommit(newCapacity * sizeof(HeapCell*)));
     memcpy(newRoots, m_roots, m_size * sizeof(HeapCell*));
     if (m_roots != m_inlineRoots)
