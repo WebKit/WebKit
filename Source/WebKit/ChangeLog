@@ -1,3 +1,18 @@
+2021-05-12  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION(r277083): Proximity scroll snap is broken on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=225649
+
+        Reviewed by Simon Fraser.
+
+        No new tests. iOS does not have great support for the event sending test
+        infrastructure used to test scroll snap.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<FloatScrollSnapOffsetsInfo>::encode): Include the snap type when encoding ScrollSnapOffsetsInfo.
+        (ArgumentCoder<FloatScrollSnapOffsetsInfo>::decode): Include the snap type when decoding ScrollSnapOffsetsInfo.
+        * Shared/WebCoreArgumentCoders.h: Added EnumTraits for ScrollSnapStrictness.
+
 2021-05-11  Chris Dumez  <cdumez@apple.com>
 
         Port WTF::FileSystem::listDirectory to std::filesystem

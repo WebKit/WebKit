@@ -1012,4 +1012,13 @@ template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesti
 };
 #endif
 
+template<> struct EnumTraits<WebCore::ScrollSnapStrictness> {
+    using values = EnumValues<
+        WebCore::ScrollSnapStrictness,
+        WebCore::ScrollSnapStrictness::None,
+        WebCore::ScrollSnapStrictness::Proximity,
+        WebCore::ScrollSnapStrictness::Mandatory
+    >;
+};
+
 } // namespace WTF
