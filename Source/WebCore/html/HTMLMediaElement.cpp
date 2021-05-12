@@ -2143,7 +2143,7 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
     setShouldDelayLoadEvent(false);
 
     // 5 - Fire an event named error at the media element.
-    dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    scheduleEvent(eventNames().errorEvent);
 
     // 6 - Abort the overall resource selection algorithm.
     m_currentSourceNode = nullptr;

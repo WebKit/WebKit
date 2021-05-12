@@ -1,3 +1,20 @@
+2021-05-12  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement::mediaLoadingFailedFatally() does direct dispatch of events; should enqueue
+        https://bugs.webkit.org/show_bug.cgi?id=225700
+        <rdar://75576322>
+
+        Reviewed by Eric Carlson.
+
+        In r274559, an update was made to mediaLoadingFailedFatally to adopt recent spec changes, and as
+        part of that change, an "error" event was changed from being enqueued to being directly dispatched.
+        However, directly dispatching events exposes the element to JS and has the potential to cause the
+        element to be garbage collected, deleting the object and potentially other objects in the backtrace.
+        Events should always be enqueued, rather than directy dispatched, for this reason.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaLoadingFailedFatally):
+
 2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
 
         ASSERTION FAILED: m_clients.contains(&client) in CSSFontFace::removeClient via CSSSegmentedFontFace::~CSSSegmentedFontFace()
