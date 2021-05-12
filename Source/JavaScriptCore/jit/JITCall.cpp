@@ -138,8 +138,6 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
 
     addSlowCase(branchIfEmpty(regT0));
 
-    sampleCodeBlock(m_codeBlock);
-    
     emitPutCallResult(bytecode);
 
     return true;
@@ -162,8 +160,6 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
-    sampleCodeBlock(m_codeBlock);
-    
     emitPutCallResult(bytecode);
 }
 
@@ -258,8 +254,6 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
-    sampleCodeBlock(m_codeBlock);
-    
     emitPutCallResult(bytecode);
 }
 
@@ -288,8 +282,6 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
-    sampleCodeBlock(m_codeBlock);
-    
     auto bytecode = instruction->as<Op>();
     emitPutCallResult(bytecode);
 }

@@ -937,16 +937,6 @@ namespace JSC {
         void emitCount(AbstractSamplingCounter&, int32_t = 1);
 #endif
 
-#if ENABLE(OPCODE_SAMPLING)
-        void sampleInstruction(const Instruction*, bool = false);
-#endif
-
-#if ENABLE(CODEBLOCK_SAMPLING)
-        void sampleCodeBlock(CodeBlock*);
-#else
-        void sampleCodeBlock(CodeBlock*) {}
-#endif
-
 #if ENABLE(DFG_JIT)
         bool canBeOptimized() { return m_canBeOptimized; }
         bool canBeOptimizedOrInlined() { return m_canBeOptimizedOrInlined; }

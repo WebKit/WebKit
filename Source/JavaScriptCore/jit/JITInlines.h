@@ -271,36 +271,6 @@ ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, int32_t coun
 }
 #endif
 
-#if ENABLE(OPCODE_SAMPLING)
-#if CPU(X86_64)
-ALWAYS_INLINE void JIT::sampleInstruction(const Instruction* instruction, bool inHostFunction)
-{
-    move(TrustedImmPtr(m_interpreter->sampler()->sampleSlot()), X86Registers::ecx);
-    storePtr(TrustedImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), X86Registers::ecx);
-}
-#else
-ALWAYS_INLINE void JIT::sampleInstruction(const Instruction* instruction, bool inHostFunction)
-{
-    storePtr(TrustedImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), m_interpreter->sampler()->sampleSlot());
-}
-#endif
-#endif
-
-#if ENABLE(CODEBLOCK_SAMPLING)
-#if CPU(X86_64)
-ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
-{
-    move(TrustedImmPtr(m_interpreter->sampler()->codeBlockSlot()), X86Registers::ecx);
-    storePtr(TrustedImmPtr(codeBlock), X86Registers::ecx);
-}
-#else
-ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
-{
-    storePtr(TrustedImmPtr(codeBlock), m_interpreter->sampler()->codeBlockSlot());
-}
-#endif
-#endif
-
 ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
 {
     return src.isConstant() && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;

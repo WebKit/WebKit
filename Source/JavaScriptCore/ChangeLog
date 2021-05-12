@@ -1,3 +1,37 @@
+2021-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Remove dead code around ENABLE(OPCODE_SAMPLING) and ENABLE(CODEBLOCK_SAMPLING).
+        https://bugs.webkit.org/show_bug.cgi?id=225699
+
+        Reviewed by Tadeu Zagallo.
+
+        This code revolves around an Interpreter::sampler() method which returns a
+        SamplingTool*.  Neither the Interpreter method nor the SamplingTool class exists
+        anymore.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlines.h:
+        (JSC::JIT::sampleInstruction): Deleted.
+        (JSC::JIT::sampleCodeBlock): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::finishCreation): Deleted.
+
 2021-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         ConservativeRoots triggers page demand on Speedometer

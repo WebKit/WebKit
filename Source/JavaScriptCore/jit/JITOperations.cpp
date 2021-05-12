@@ -92,12 +92,6 @@ extern "C" void * _ReturnAddress(void);
 #define OUR_RETURN_ADDRESS removeCodePtrTag(__builtin_return_address(0))
 #endif
 
-#if ENABLE(OPCODE_SAMPLING)
-#define CTI_SAMPLER vm.interpreter->sampler()
-#else
-#define CTI_SAMPLER 0
-#endif
-
 
 JSC_DEFINE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock* codeBlock))
 {

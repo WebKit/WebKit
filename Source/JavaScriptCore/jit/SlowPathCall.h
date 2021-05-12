@@ -44,10 +44,6 @@ public:
 
     JIT::Call call()
     {
-#if ENABLE(OPCODE_SAMPLING)
-        if (m_jit->m_bytecodeOffset != std::numeric_limits<unsigned>::max())
-            m_jit->sampleInstruction(&m_jit->m_codeBlock->instructions()[m_jit->m_bytecodeOffset], true);
-#endif
         m_jit->updateTopCallFrame();
 #if CPU(X86_64) && OS(WINDOWS)
         m_jit->addPtr(MacroAssembler::TrustedImm32(-16), MacroAssembler::stackPointerRegister);
@@ -65,11 +61,6 @@ public:
         m_jit->pop(JIT::regT1); // callFrame register
         static_assert(JIT::regT0 == GPRInfo::returnValueGPR);
         static_assert(JIT::regT1 == GPRInfo::returnValueGPR2);
-#endif
-
-#if ENABLE(OPCODE_SAMPLING)
-        if (m_jit->m_bytecodeOffset != std::numeric_limits<unsigned>::max())
-            m_jit->sampleInstruction(&m_jit->m_codeBlock->instructions()[m_jit->m_bytecodeOffset], false);
 #endif
         
         m_jit->exceptionCheck();

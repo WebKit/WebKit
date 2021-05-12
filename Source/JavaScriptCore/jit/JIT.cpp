@@ -252,11 +252,6 @@ void JIT::privateCompileMainPass()
 
         m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(m_bytecodeIndex));
 
-#if ENABLE(OPCODE_SAMPLING)
-        if (m_bytecodeIndex > 0) // Avoid the overhead of sampling op_enter twice.
-            sampleInstruction(currentInstruction);
-#endif
-
         m_labels[m_bytecodeIndex.offset()] = label();
 
         if (JITInternal::verbose)
@@ -746,11 +741,6 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
     Label beginLabel(this);
-
-    sampleCodeBlock(m_codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-    sampleInstruction(m_codeBlock->instructions().begin());
-#endif
 
     int frameTopOffset = stackPointerOffsetFor(m_codeBlock) * sizeof(Register);
     unsigned maxFrameSize = -frameTopOffset;
