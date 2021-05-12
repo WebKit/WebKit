@@ -30,6 +30,7 @@
 #include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
 #include <wtf/URL.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -50,7 +51,7 @@ public:
             return;
 
         URL requestURL = URL({ }, page.pageLoadState().url());
-        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), tokens[0].toUInt64(), tokens[1].toUInt64(), tokens[2]);
+        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[0]).valueOr(0), parseIntegerAllowingTrailingJunk<uint64_t>(tokens[1]).valueOr(0), tokens[2]);
     }
 
     bool supportsAsyncReply() override

@@ -50,6 +50,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/StringHash.h>
+#import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
 
 static bool done;
@@ -1601,8 +1602,8 @@ TEST(URLSchemeHandler, Ranges)
 
         auto rangeBeginString = requestRangeString.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length());
         auto rangeEndString = requestRangeString.substring(dash + 1, end - dash - 1);
-        auto rangeBegin = rangeBeginString.toUInt64Strict();
-        auto rangeEnd = rangeEndString == "*" ? [videoData length] : rangeEndString.toUInt64Strict();
+        auto rangeBegin = parseInteger<uint64_t>(rangeBeginString).valueOr(0);
+        auto rangeEnd = rangeEndString == "*" ? [videoData length] : parseInteger<uint64_t>(rangeEndString).valueOr(0);
 
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:206 HTTPVersion:@"HTTP/1.1" headerFields:@{
             @"Content-Range" : [NSString stringWithFormat:@"bytes %llu-%llu/%lu", rangeBegin, rangeEnd, (unsigned long)[videoData length]],

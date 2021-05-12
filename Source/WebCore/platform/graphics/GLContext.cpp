@@ -19,8 +19,11 @@
 #include "config.h"
 
 #if USE(OPENGL) || USE(OPENGL_ES)
+
 #include "GLContext.h"
+
 #include <wtf/ThreadSpecific.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(EGL)
 #include "GLContextEGL.h"
@@ -183,7 +186,8 @@ unsigned GLContext::version()
             versionDigits = versionStringComponents[0].split('.');
         }
 
-        m_version = versionDigits[0].toUInt() * 100 + versionDigits[1].toUInt() * 10;
+        m_version = parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[0]).valueOr(0) * 100
+            + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).valueOr(0) * 10;
     }
     return m_version;
 }

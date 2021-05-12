@@ -287,58 +287,6 @@ TEST(WTF, StringIsolatedCopy)
     EXPECT_FALSE(original.impl() == copy.impl());
 }
 
-TEST(WTF, StringToInt)
-{
-    bool ok = false;
-
-    EXPECT_EQ(0, String().toInt());
-    EXPECT_EQ(0, String().toInt(&ok));
-    EXPECT_FALSE(ok);
-
-    EXPECT_EQ(0, emptyString().toInt());
-    EXPECT_EQ(0, emptyString().toInt(&ok));
-    EXPECT_FALSE(ok);
-
-    EXPECT_EQ(0, String("0").toInt());
-    EXPECT_EQ(0, String("0").toInt(&ok));
-    EXPECT_TRUE(ok);
-
-    EXPECT_EQ(1, String("1").toInt());
-    EXPECT_EQ(1, String("1").toInt(&ok));
-    EXPECT_TRUE(ok);
-
-    EXPECT_EQ(2147483647, String("2147483647").toInt());
-    EXPECT_EQ(2147483647, String("2147483647").toInt(&ok));
-    EXPECT_TRUE(ok);
-
-    EXPECT_EQ(0, String("2147483648").toInt());
-    EXPECT_EQ(0, String("2147483648").toInt(&ok));
-    EXPECT_FALSE(ok);
-
-    EXPECT_EQ(-2147483648, String("-2147483648").toInt());
-    EXPECT_EQ(-2147483648, String("-2147483648").toInt(&ok));
-    EXPECT_TRUE(ok);
-
-    EXPECT_EQ(0, String("-2147483649").toInt());
-    EXPECT_EQ(0, String("-2147483649").toInt(&ok));
-    EXPECT_FALSE(ok);
-
-    // fail if we see leading junk
-    EXPECT_EQ(0, String("x1").toInt());
-    EXPECT_EQ(0, String("x1").toInt(&ok));
-    EXPECT_FALSE(ok);
-
-    // succeed if we see leading spaces
-    EXPECT_EQ(1, String(" 1").toInt());
-    EXPECT_EQ(1, String(" 1").toInt(&ok));
-    EXPECT_TRUE(ok);
-
-    // silently ignore trailing junk
-    EXPECT_EQ(1, String("1x").toInt());
-    EXPECT_EQ(1, String("1x").toInt(&ok));
-    EXPECT_TRUE(ok);
-}
-
 TEST(WTF, StringToDouble)
 {
     bool ok = false;

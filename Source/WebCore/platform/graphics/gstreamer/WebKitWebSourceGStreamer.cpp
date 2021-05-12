@@ -1025,10 +1025,8 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     // Pack response headers in the http-headers structure.
     headers.reset(gst_structure_new_empty("response-headers"));
     for (const auto& header : response.httpHeaderFields()) {
-        bool ok = false;
-        uint64_t convertedValue = header.value.toUInt64(&ok);
-        if (ok)
-            gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_UINT64, convertedValue, nullptr);
+        if (auto convertedValue = parseIntegerAllowingTrailingJunk<uint64_t>(header.value))
+            gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_UINT64, *convertedValue, nullptr);
         else
             gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_STRING, header.value.utf8().data(), nullptr);
     }

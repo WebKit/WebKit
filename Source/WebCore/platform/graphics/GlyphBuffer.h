@@ -78,7 +78,7 @@ public:
     Optional<GlyphBufferStringOffset> checkedStringOffsetAt(unsigned index, unsigned stringLength) const
     {
         auto result = uncheckedStringOffsetAt(index);
-        if (result < 0 || static_cast<unsigned>(result) >= stringLength)
+        if (static_cast<std::make_unsigned_t<GlyphBufferStringOffset>>(result) >= stringLength)
             return WTF::nullopt;
         return result;
     }

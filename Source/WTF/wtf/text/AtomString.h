@@ -137,7 +137,6 @@ public:
     WTF_EXPORT_PRIVATE AtomString convertToASCIILowercase() const;
     WTF_EXPORT_PRIVATE AtomString convertToASCIIUppercase() const;
 
-    int toInt(bool* ok = nullptr) const { return m_string.toInt(ok); }
     double toDouble(bool* ok = nullptr) const { return m_string.toDouble(ok); }
     float toFloat(bool* ok = nullptr) const { return m_string.toFloat(ok); }
 

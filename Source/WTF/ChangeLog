@@ -1,3 +1,60 @@
+2021-05-11  Darin Adler  <darin@apple.com>
+
+        Remove the String::toInt family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=225599
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/text/AtomString.h: Deleted AtomString::toInt.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::toIntStrict): Deleted.
+        (WTF::StringImpl::toUIntStrict): Deleted.
+        (WTF::StringImpl::toInt64Strict): Deleted.
+        (WTF::StringImpl::toUInt64Strict): Deleted.
+        (WTF::StringImpl::toIntPtrStrict): Deleted.
+        (WTF::StringImpl::toInt): Deleted.
+        (WTF::StringImpl::toUInt): Deleted.
+        (WTF::StringImpl::toInt64): Deleted.
+        (WTF::StringImpl::toUInt64): Deleted.
+        (WTF::StringImpl::toIntPtr): Deleted.
+        * wtf/text/StringImpl.h: Deleted the above functions.
+
+        * wtf/text/StringToIntegerConversion.h: Removed toIntegralType.
+
+        * wtf/text/StringView.cpp:
+        (WTF::parseUInt16): Deleted.
+
+        * wtf/text/StringView.h: Deleted StringView::toInt,
+        StringView::toIntStrict, StringView::toUInt64Strict,
+        StringView::toInt64Strict, and parseUInt16. Changed the constructor
+        that takes a const char* to work when passed nullptr. StringView has
+        a null value, and converting a null const char* should produce that.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::toIntStrict const): Deleted.
+        (WTF::String::toUIntStrict const): Deleted.
+        (WTF::String::toInt64Strict const): Deleted.
+        (WTF::String::toUInt64Strict const): Deleted.
+        (WTF::String::toIntPtrStrict const): Deleted.
+        (WTF::String::toInt const): Deleted.
+        (WTF::String::toUInt const): Deleted.
+        (WTF::String::toInt64 const): Deleted.
+        (WTF::String::toUInt64 const): Deleted.
+        (WTF::String::toIntPtr const): Deleted.
+        (WTF::lengthOfCharactersAsInteger): Deleted.
+        (WTF::charactersToIntStrict): Deleted.
+        (WTF::charactersToUIntStrict): Deleted.
+        (WTF::charactersToInt64Strict): Deleted.
+        (WTF::charactersToUInt64Strict): Deleted.
+        (WTF::charactersToIntPtrStrict): Deleted.
+        (WTF::charactersToInt): Deleted.
+        (WTF::charactersToUInt): Deleted.
+        (WTF::charactersToInt64): Deleted.
+        (WTF::charactersToUInt64): Deleted.
+        (WTF::charactersToIntPtr): Deleted.
+        * wtf/text/WTFString.h: Deleted the above functions.
+
 2021-05-11  Devin Rousso  <drousso@apple.com>
 
         [macCatalyst] should have CSS `hover: hover` and `pointer: fine`

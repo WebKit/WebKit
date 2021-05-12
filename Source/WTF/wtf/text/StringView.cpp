@@ -311,17 +311,6 @@ String normalizedNFC(const String& string)
     return result.underlyingString;
 }
 
-// FIXME: Should this be named parseNumber<uint16_t> instead?
-// FIXME: Should we replace the toInt family of functions with this style?
-Optional<uint16_t> parseUInt16(StringView string)
-{
-    bool ok = false;
-    auto number = toIntegralType<uint16_t>(string, &ok);
-    if (!ok)
-        return WTF::nullopt;
-    return number;
-}
-
 bool equalRespectingNullity(StringView a, StringView b)
 {
     if (a.m_characters == b.m_characters) {

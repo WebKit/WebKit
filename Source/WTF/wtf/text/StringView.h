@@ -168,11 +168,6 @@ public:
     WTF_EXPORT_PRIVATE bool endsWith(const StringView&) const;
     WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringView&) const;
 
-    int toInt() const;
-    int toInt(bool& isValid) const;
-    int toIntStrict(bool& isValid) const;
-    Optional<uint64_t> toUInt64Strict() const;
-    Optional<int64_t> toInt64Strict() const;
     float toFloat(bool& isValid) const;
 
     static void invalidate(const StringImpl&);
@@ -245,8 +240,6 @@ struct StringViewWithUnderlyingString;
 WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
 
 WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
-
-WTF_EXPORT_PRIVATE Optional<uint16_t> parseUInt16(StringView);
 
 }
 
@@ -352,7 +345,7 @@ inline StringView::StringView(const UChar* characters, unsigned length)
 
 inline StringView::StringView(const char* characters)
 {
-    initialize(reinterpret_cast<const LChar*>(characters), strlen(characters));
+    initialize(reinterpret_cast<const LChar*>(characters), characters ? strlen(characters) : 0);
 }
 
 inline StringView::StringView(const char* characters, unsigned length)
@@ -586,40 +579,6 @@ inline float StringView::toFloat(bool& isValid) const
     if (is8Bit())
         return charactersToFloat(characters8(), m_length, &isValid);
     return charactersToFloat(characters16(), m_length, &isValid);
-}
-
-inline int StringView::toInt() const
-{
-    bool isValid;
-    return toInt(isValid);
-}
-
-inline int StringView::toInt(bool& isValid) const
-{
-    if (is8Bit())
-        return charactersToInt(characters8(), m_length, &isValid);
-    return charactersToInt(characters16(), m_length, &isValid);
-}
-
-inline int StringView::toIntStrict(bool& isValid) const
-{
-    if (is8Bit())
-        return charactersToIntStrict(characters8(), m_length, &isValid);
-    return charactersToIntStrict(characters16(), m_length, &isValid);
-}
-
-inline Optional<uint64_t> StringView::toUInt64Strict() const
-{
-    bool isValid;
-    uint64_t result = is8Bit() ? charactersToUInt64Strict(characters8(), m_length, &isValid) : charactersToUInt64Strict(characters16(), m_length, &isValid);
-    return isValid ? makeOptional(result) : WTF::nullopt;
-}
-
-inline Optional<int64_t> StringView::toInt64Strict() const
-{
-    bool isValid;
-    int64_t result = is8Bit() ? charactersToInt64Strict(characters8(), m_length, &isValid) : charactersToInt64Strict(characters16(), m_length, &isValid);
-    return isValid ? makeOptional(result) : WTF::nullopt;
 }
 
 inline String StringView::toStringWithoutCopying() const

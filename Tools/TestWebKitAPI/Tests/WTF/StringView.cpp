@@ -990,37 +990,4 @@ TEST(WTF, StringViewIsAllASCII)
     EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"))).isAllASCII());
 }
 
-TEST(WTF, StringViewParseUInt16)
-{
-    EXPECT_EQ(0U, *WTF::parseUInt16("0"));
-    EXPECT_EQ(3U, *WTF::parseUInt16("3"));
-    EXPECT_EQ(12345U, *WTF::parseUInt16("12345"));
-    EXPECT_EQ(65535U, *WTF::parseUInt16("65535"));
-    EXPECT_TRUE(!WTF::parseUInt16("-1"));
-    EXPECT_TRUE(!WTF::parseUInt16("-3"));
-    EXPECT_TRUE(!WTF::parseUInt16("65536"));
-}
-
-TEST(WTF, StringViewToIntStrict)
-{
-    auto test = [](ASCIILiteral string) {
-        bool isValid = false;
-        int result = StringView(string).toIntStrict(isValid);
-        return isValid ? makeOptional(result) : WTF::nullopt;
-    };
-    EXPECT_EQ(0, *test("0"_s));
-    EXPECT_EQ(3, *test("3"_s));
-    EXPECT_EQ(-3, *test("-3"_s));
-    EXPECT_EQ(12345, *test("12345"_s));
-    EXPECT_EQ(-12345, *test("-12345"_s));
-    if (std::numeric_limits<int>::max() == 2147483647) {
-        EXPECT_EQ(2147483647, *test("2147483647"_s));
-        EXPECT_TRUE(!test("2147483648"_s));
-    }
-    if (std::numeric_limits<int>::min() == -2147483648) {
-        EXPECT_EQ(-2147483648, *test("-2147483648"_s));
-        EXPECT_TRUE(!test("-2147483649"_s));
-    }
-}
-
 } // namespace TestWebKitAPI
