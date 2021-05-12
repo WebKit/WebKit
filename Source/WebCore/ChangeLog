@@ -1,3 +1,18 @@
+2021-05-12  Ziran Sun  <zsun@igalia.com>
+
+        Wrong position for orthogonal positioned element with writing-mode: vertical-rl
+        https://bugs.webkit.org/show_bug.cgi?id=180633
+
+        Reviewed by Javier Fernandez.
+
+        When calculating offset position for orthogonal positioned element with writing mode vertical-rl,
+        we also need to take into account of borders and paddings. This change corrects computations
+        for both topOffset and leftOffset.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing const):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing const):
+
 2021-05-12  Jer Noble  <jer.noble@apple.com>
 
         TapStorage::lock freed while locked in AudioSourceProviderAVFObjC::destroyMixIfNeeded()

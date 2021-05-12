@@ -1,3 +1,19 @@
+2021-05-12  Ziran Sun  <zsun@igalia.com>
+
+        Wrong position for orthogonal positioned element with writing-mode: vertical-rl
+        https://bugs.webkit.org/show_bug.cgi?id=180633
+
+        Reviewed by Javier Fernandez.
+
+        Re-sync the following 3 tests with WPT. grid-self-alignment-non-static-positioned-items-009.html and
+        grid-self-alignment-non-static-positioned-items-010.html are now passing.
+        grid-self-alignment-non-static-positioned-items-011.html is now producing the same test results as those
+        in Chromium.
+
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-009.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-010.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-011.html:
+
 2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Do not use margins when computing aspect ratio cross sizes
