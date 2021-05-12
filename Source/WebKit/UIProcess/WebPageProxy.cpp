@@ -3146,7 +3146,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     // If the page is suspended, which should be the case during panning, pinching
     // and animation on the page itself (kinetic scrolling, tap to zoom) etc, then
     // we do not send any of the events to the page even if is has listeners.
-    if (!m_areActiveDOMObjectsAndAnimationsSuspended) {
+    if (!m_isPageSuspended) {
         m_touchEventQueue.append(event);
         m_process->startResponsivenessTimer();
         send(Messages::WebPage::TouchEvent(event));
@@ -3594,43 +3594,22 @@ void WebPageProxy::setCustomUserAgent(const String& customUserAgent)
 
 void WebPageProxy::resumeActiveDOMObjectsAndAnimations()
 {
-    if (!hasRunningProcess() || !m_areActiveDOMObjectsAndAnimationsSuspended)
+    if (!hasRunningProcess() || !m_isPageSuspended)
         return;
 
-    m_areActiveDOMObjectsAndAnimationsSuspended = false;
+    m_isPageSuspended = false;
 
     send(Messages::WebPage::ResumeActiveDOMObjectsAndAnimations());
 }
 
 void WebPageProxy::suspendActiveDOMObjectsAndAnimations()
 {
-    if (!hasRunningProcess() || m_areActiveDOMObjectsAndAnimationsSuspended)
+    if (!hasRunningProcess() || m_isPageSuspended)
         return;
 
-    m_areActiveDOMObjectsAndAnimationsSuspended = true;
+    m_isPageSuspended = true;
 
     send(Messages::WebPage::SuspendActiveDOMObjectsAndAnimations());
-}
-
-void WebPageProxy::suspend(CompletionHandler<void(bool)>&& completionHandler)
-{
-    RELEASE_LOG_IF_ALLOWED(Loading, "suspend:");
-    if (!hasRunningProcess() || m_isSuspended)
-        return completionHandler(false);
-
-    m_isSuspended = true;
-    sendWithAsyncReply(Messages::WebPage::Suspend(), WTFMove(completionHandler));
-}
-
-void WebPageProxy::resume(CompletionHandler<void(bool)>&& completionHandler)
-{
-    RELEASE_LOG_IF_ALLOWED(Loading, "resume:");
-
-    if (!hasRunningProcess() || !m_isSuspended)
-        return completionHandler(false);
-
-    m_isSuspended = false;
-    sendWithAsyncReply(Messages::WebPage::Resume(), WTFMove(completionHandler));
 }
 
 bool WebPageProxy::supportsTextEncoding() const
@@ -6102,7 +6081,7 @@ void WebPageProxy::stopMediaCapture(MediaProducer::MediaCaptureKind kind, Comple
 #endif
 }
 
-void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(MediaPlaybackState)>&& completionHandler)
+void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
@@ -7743,7 +7722,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_visiblePageToken = nullptr;
 
     m_hasRunningProcess = false;
-    m_areActiveDOMObjectsAndAnimationsSuspended = false;
+    m_isPageSuspended = false;
 
     m_userScriptsNotified = false;
 

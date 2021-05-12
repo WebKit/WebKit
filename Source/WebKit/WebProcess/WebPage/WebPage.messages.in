@@ -250,9 +250,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SuspendActiveDOMObjectsAndAnimations()
     ResumeActiveDOMObjectsAndAnimations()
 
-    Suspend() -> (bool success) Async
-    Resume() -> (bool success) Async
-
     Close()
     TryClose() -> (bool shouldClose) Async
 

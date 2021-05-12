@@ -505,10 +505,6 @@ public:
     void didEnterFullscreen();
     void didExitFullscreen();
 
-    void suspend(CompletionHandler<void(bool)>&&);
-    void resume(CompletionHandler<void(bool)>&&);
-    bool isSuspended() const { return m_isSuspended; }
-
     WebInspectorUIProxy* inspector() const;
     GeolocationPermissionRequestManagerProxy& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
 
@@ -1018,7 +1014,7 @@ public:
     void setCustomTextEncodingName(const String&);
     String customTextEncodingName() const { return m_customTextEncodingName; }
 
-    bool areActiveDOMObjectsAndAnimationsSuspended() const { return m_areActiveDOMObjectsAndAnimationsSuspended; }
+    bool areActiveDOMObjectsAndAnimationsSuspended() const { return m_isPageSuspended; }
     void resumeActiveDOMObjectsAndAnimations();
     void suspendActiveDOMObjectsAndAnimations();
 
@@ -2757,7 +2753,7 @@ private:
     RefPtr<WebCore::ValidationBubble> m_validationBubble;
 #endif
 
-    bool m_areActiveDOMObjectsAndAnimationsSuspended { false };
+    bool m_isPageSuspended { false };
     bool m_addsVisitedLinks { true };
 
     bool m_controlledByAutomation { false };
@@ -3019,7 +3015,6 @@ private:
 
     bool m_lastNavigationWasAppBound { false };
     bool m_isRunningModalJavaScriptDialog { false };
-    bool m_isSuspended { false };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
 
