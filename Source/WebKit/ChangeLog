@@ -1,3 +1,42 @@
+2021-05-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Mail compose web view doesn't scroll to reveal the selection in certain configurations
+        https://bugs.webkit.org/show_bug.cgi?id=225675
+        rdar://77095886
+
+        Reviewed by Tim Horton.
+
+        Currently when computing input view bounds upon receiving `UIKeyboardDidChangeFrameNotification`, we attempt to
+        map the on-screen bounds of the keyboard to the window's coordinate space, and save the result in an ivar in
+        `WKWebView`, `_inputViewBounds`. The keyboard frame (which corresponds to `UIKeyboardFrameEndUserInfoKey` in the
+        notification's userInfo dictionary) is given to us in screen coordinates, and we currently pass this through
+        `-convertRect:fromWindow:`, with a nil `UIWindow`.
+
+        However, this results in mapping the rect from the coordinate space of the window's `UIWindowScene` rather than
+        the window screen. In shipping Mail on iOS, this doesn't matter because the window containing the compose web
+        view shares the same coordinate space as the screen. In some other configurations of MobileMail, however, the
+        compose web view appears inside its own `UIWindow`. This causes the above coordinate conversion logic to fail,
+        since we attempt to map a rect given to us in screen coordinates from the compose web view's window scene's
+        coordinate space, instead of the screen's coordinate space.
+
+        We fix this by using `-convertRect:fromCoordinateSpace:` instead, and explicitly pass in
+        `self.window.screen.coordinateSpace`.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _updateScrollViewForTransaction:]):
+        (-[WKWebView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+        (-[WKWebView _contentRectForUserInteraction]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+
+        Rename `_inputViewBounds` to `_inputViewBoundsInWindow` for clarity.
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _inputViewBoundsInWindow]):
+        (-[WKWebView _inputViewBounds]): Deleted.
+
 2021-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         Crash in DisplayLink::incrementFullSpeedRequestClientCount()

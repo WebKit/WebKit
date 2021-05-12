@@ -157,7 +157,7 @@ class ViewGestureController;
     Optional<WebCore::FloatSize> _lastSentViewLayoutSize;
     Optional<CGSize> _maximumUnobscuredSizeOverride;
     Optional<WebCore::FloatSize> _lastSentMaximumUnobscuredSize;
-    CGRect _inputViewBounds;
+    CGRect _inputViewBoundsInWindow;
 
     CGFloat _viewportMetaTagWidth;
     BOOL _viewportMetaTagWidthWasExplicit;

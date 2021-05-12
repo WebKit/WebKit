@@ -39,7 +39,7 @@
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
 @property (nonatomic, readonly) NSArray<NSValue *> *_uiTextSelectionRects;
-@property (nonatomic, readonly) CGRect _inputViewBounds;
+@property (nonatomic, readonly) CGRect _inputViewBoundsInWindow;
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText;
 @property (nonatomic, readonly) NSNumber *_stableStateOverride;
 @property (nonatomic, readonly) CGRect _dragCaretRect;
