@@ -1,3 +1,12 @@
+2021-05-13  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur] media/video-played-ranges-1.html is flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=223645
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-05-13  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r276945): [iOS] Focus rings are too large
