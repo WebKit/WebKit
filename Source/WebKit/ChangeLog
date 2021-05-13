@@ -1,3 +1,50 @@
+2021-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Add textIndicator bounce for AppHighlights on scroll.
+        https://bugs.webkit.org/show_bug.cgi?id=225727
+
+        Reviewed by Tim Horton.
+
+        Use factored out textIndicator code to add a bounce to an appHighlight
+        when it is scrolled to.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKWindowVisibilityObserver _dictionaryLookupPopoverWillClose:]):
+        (WebKit::WebViewImpl::setTextIndicator):
+        (WebKit::WebViewImpl::clearTextIndicatorWithAnimation):
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsWithAnimationFromViewOnly):
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setTextIndicator):
+        (WebKit::WebPageProxy::clearTextIndicator):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setTextIndicator):
+        (WebKit::PageClientImpl::clearTextIndicator):
+        (WebKit::PageClientImpl::setTextIndicatorAnimationProgress):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpTextIndicator:]):
+        (-[WKContentView clearTextIndicator:]):
+        (-[WKContentView setTextIndicatorAnimationProgress:]):
+        (-[WKContentView teardownTextIndicatorLayer]):
+        (-[WKContentView startFadeOut]):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::setTextIndicator):
+        (WebKit::PageClientImpl::clearTextIndicator):
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _animationControllerForText]):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setTextIndicator const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+
 2021-05-13  Sam Weinig  <weinig@apple.com>
 
         Split pixel buffer format data out into a new PixelBufferFormat struct

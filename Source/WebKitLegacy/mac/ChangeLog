@@ -1,3 +1,32 @@
+2021-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Add textIndicator bounce for AppHighlights on scroll.
+        https://bugs.webkit.org/show_bug.cgi?id=225727
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setTextIndicator const):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView quickLookWithEvent:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController webView:didHandleScrollWheel:]):
+        (-[WebImmediateActionController _cancelImmediateAction]):
+        (-[WebImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+        (-[WebImmediateActionController _defaultAnimationController]):
+        (-[WebImmediateActionController menuItemDidClose:]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        * WebView/WebView.mm:
+        (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+        (-[WebView _setTextIndicator:]):
+        (-[WebView _setTextIndicator:withLifetime:]):
+        (-[WebView _clearTextIndicatorWithAnimation:]):
+        (-[WebView _showDictionaryLookupPopup:]):
+        (-[WebView _dictionaryLookupPopoverWillClose:]):
+        * WebView/WebViewInternal.h:
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Notification.requestPermission() should return a Promise

@@ -1,3 +1,28 @@
+2021-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Add textIndicator bounce for AppHighlights on scroll.
+        https://bugs.webkit.org/show_bug.cgi?id=225727
+
+        Reviewed by Tim Horton.
+
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::AppHighlightStorage::attemptToRestoreHighlightAndScroll):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::setTextIndicator const):
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/TextIndicator.h:
+        * page/cocoa/WebTextIndicatorLayer.h:
+        * page/cocoa/WebTextIndicatorLayer.mm:
+        (-[WebTextIndicatorLayer initWithFrame:textIndicator:margin:offset:]):
+        (createBounceAnimation):
+        (-[WebTextIndicatorLayer _animationDuration]):
+        * page/mac/TextIndicatorWindow.h:
+        * page/mac/TextIndicatorWindow.mm:
+        (WebCore::TextIndicatorWindow::~TextIndicatorWindow):
+        (WebCore::TextIndicatorWindow::clearTextIndicator):
+        (WebCore::TextIndicatorWindow::setTextIndicator):
+
 2021-05-13  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r276945): [iOS] Focus rings are too large

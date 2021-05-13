@@ -169,6 +169,8 @@ public:
 
     void wheelEventHandlersChanged(bool) final { }
 
+    void setTextIndicator(const WebCore::TextIndicatorData&) const final { }
+
     WebView* webView() { return m_webView; }
 
     void AXStartFrameLoad() final;

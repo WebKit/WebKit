@@ -36,19 +36,6 @@ OBJC_CLASS WebTextIndicatorLayer;
 
 namespace WebCore {
 
-enum class TextIndicatorWindowLifetime : uint8_t {
-    // The TextIndicator should indicate the text until dismissed.
-    Permanent,
-
-    // The TextIndicator should briefly indicate the text and then automatically dismiss.
-    Temporary
-};
-
-enum class TextIndicatorWindowDismissalAnimation : uint8_t {
-    None,
-    FadeOut
-};
-
 #if PLATFORM(MAC)
 
 class TextIndicatorWindow {
@@ -59,8 +46,8 @@ public:
     WEBCORE_EXPORT explicit TextIndicatorWindow(NSView *);
     WEBCORE_EXPORT ~TextIndicatorWindow();
 
-    WEBCORE_EXPORT void setTextIndicator(Ref<TextIndicator>, CGRect contentRect, TextIndicatorWindowLifetime);
-    WEBCORE_EXPORT void clearTextIndicator(TextIndicatorWindowDismissalAnimation);
+    WEBCORE_EXPORT void setTextIndicator(Ref<TextIndicator>, CGRect contentRect, TextIndicatorLifetime);
+    WEBCORE_EXPORT void clearTextIndicator(TextIndicatorDismissalAnimation);
 
     WEBCORE_EXPORT void setAnimationProgress(float);
 
@@ -81,3 +68,5 @@ private:
 #endif // PLATFORM(MAC)
 
 } // namespace WebCore
+
+

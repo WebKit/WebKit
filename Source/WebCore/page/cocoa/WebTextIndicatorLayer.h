@@ -31,7 +31,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 
-@interface WebTextIndicatorLayer : CALayer {
+WEBCORE_EXPORT @interface WebTextIndicatorLayer : CALayer {
     RefPtr<WebCore::TextIndicator> _textIndicator;
     RetainPtr<NSArray> _bounceLayers;
     CGSize _margin;
@@ -53,3 +53,4 @@
 @property (nonatomic, getter=isFadingOut) BOOL fadingOut;
 
 @end
+

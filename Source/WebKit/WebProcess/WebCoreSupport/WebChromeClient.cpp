@@ -88,6 +88,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
+#include <WebCore/TextIndicator.h>
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
@@ -1270,6 +1271,11 @@ void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&& highlight) const
     m_page.send(Messages::WebPageProxy::StoreAppHighlight(highlight));
 }
 #endif
+
+void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
+{
+    m_page.send(Messages::WebPageProxy::SetTextIndicator(indicatorData, static_cast<uint64_t>(WebCore::TextIndicatorLifetime::Temporary)));
+}
 
 String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const
 {
