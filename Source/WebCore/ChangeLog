@@ -1,3 +1,37 @@
+2021-05-13  Zalan Bujtas  <zalan@apple.com>
+
+        [css-flexbox] Flex item construction may affect sibling flex item height computation
+        https://bugs.webkit.org/show_bug.cgi?id=225489
+
+        Reviewed by Sergio Villar Senin.
+
+        Flex item construction triggers layout both on the flex item and on its descendants (see constructFlexItem).
+        During this layout a percent height descendant may indirectly set an incorrect value on the flex container's 
+        m_hasDefiniteHeight (this is due to the odd way we choose to resolve percent height values on the ancestor chain, 
+        see setOverridingContainingBlockContentLogicalHeight(WTF::nullopt)).
+        Now this incorrect m_hasDefiniteHeight value (Indefinite) causes the next sibling's (also) percent height
+        resolve fail as it tells the flex item that the flex container can't help with resolving the percent height value.
+        As the result we end up with an incorrect, 0px height value for this sibling.
+        e.g.
+        <div style="height: 100px; display: flex; flex-direction: column;">
+          <div id=flexItemA style="height: 50px;"><div style="height: 100%;"></div></div>
+          <div id=flexItemB style="height: 50%;"></div>
+        </div>
+        By the time we get to the construction of flexItemB, the RenderFlexibleBox's (flex container) m_hasDefiniteHeight
+        is already (and incorrectly) set to Indefinite as the result of us trying to resolve flexItemA's descendant height percentage.
+        This Indefinite value makes the flexItemB's height resolution fail as we believe that the flex container has indefinite height
+        e.g "height: auto", while it is clearly resolvable (50% of 100px).
+        Now if we flip the order and flexItemB comes first, the test case passes fine.
+        It is very unfortunate that some descendant height resolving process can trigger a state change on the ancestor RenderFlexibleBox, but
+        fixing it would certainly require some substantial architectural change.
+        In this patch, we just reset the m_hasDefiniteHeight flag inside the loop to ensure that each flex item
+        starts with a fresh height percent resolve state. 
+
+        Test: fast/flexbox/flex-column-with-percent-height-descendants.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+
 2021-05-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebCore::Document::updateLayout

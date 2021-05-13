@@ -993,10 +993,9 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
             continue;
         }
         allItems.append(constructFlexItem(*child, relayoutChildren));
+        // constructFlexItem() might set the override containing block height so any value cached for definiteness might be incorrect.
+        m_hasDefiniteHeight = SizeDefiniteness::Unknown;
     }
-
-    // constructFlexItem() might set the override containing block height so any value cached for definiteness might be incorrect.
-    m_hasDefiniteHeight = SizeDefiniteness::Unknown;
     
     const LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
     LayoutUnit gapBetweenItems = computeGap(GapType::BetweenItems);
