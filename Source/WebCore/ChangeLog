@@ -1,3 +1,13 @@
+2021-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Some webgl/2.0.0/conformance/textures/image_bitmap_from_image_data tests are failing after r277369 if !USE(ACCELERATE)
+        https://bugs.webkit.org/show_bug.cgi?id=225725
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/PixelBufferConversion.cpp:
+        (WebCore::convertImagePixels): Fixed the wrong condition of destination.alphaFormat.
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: actualVTablePointer == expectedVTablePointer in toJSNewlyCreated(JSC::JSGlobalObject *, WebCore::JSDOMGlobalObject *, Ref<WebCore::AudioNode> &&)

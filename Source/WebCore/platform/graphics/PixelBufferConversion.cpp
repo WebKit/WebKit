@@ -204,7 +204,7 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
             else
                 convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
         } else {
-            if (destination.alphaFormat == AlphaPremultiplication::Unpremultiplied)
+            if (destination.alphaFormat == AlphaPremultiplication::Premultiplied)
                 convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::Permute>>(source, destination, destinationSize);
             else
                 convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::Permute>>(source, destination, destinationSize);
