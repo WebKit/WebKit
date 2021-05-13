@@ -23,34 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "AlphaPremultiplication.h"
 
-#include <wtf/EnumTraits.h>
-#include <wtf/Forward.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-enum class PixelFormat : uint8_t {
-    RGBA8,
-    BGRA8,
-    RGB10,
-    RGB10A8,
-};
-
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PixelFormat);
-
+TextStream& operator<<(TextStream& ts, AlphaPremultiplication premultiplication)
+{
+    switch (premultiplication) {
+    case AlphaPremultiplication::Premultiplied:
+        ts << "premultiplied";
+        break;
+    case AlphaPremultiplication::Unpremultiplied:
+        ts << "unpremultiplied";
+        break;
+    }
+    return ts;
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PixelFormat> {
-    using values = EnumValues<
-        WebCore::PixelFormat,
-        WebCore::PixelFormat::RGBA8,
-        WebCore::PixelFormat::BGRA8,
-        WebCore::PixelFormat::RGB10,
-        WebCore::PixelFormat::RGB10A8
-    >;
-};
 
 }

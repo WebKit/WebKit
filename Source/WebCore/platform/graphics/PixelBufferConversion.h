@@ -25,26 +25,20 @@
 
 #pragma once
 
+#include "PixelBufferFormat.h"
+
 namespace WebCore {
 
 class IntSize;
 
-enum class AlphaPremultiplication : uint8_t;
-enum class DestinationColorSpace : uint8_t;
-enum class PixelFormat : uint8_t;
-
 struct PixelBufferConversionView {
-    AlphaPremultiplication alphaFormat;
-    DestinationColorSpace colorSpace;
-    PixelFormat pixelFormat;
+    PixelBufferFormat format;
     unsigned bytesPerRow;
     uint8_t* rows;
 };
 
 struct ConstPixelBufferConversionView {
-    AlphaPremultiplication alphaFormat;
-    DestinationColorSpace colorSpace;
-    PixelFormat pixelFormat;
+    PixelBufferFormat format;
     unsigned bytesPerRow;
     const uint8_t* rows;
 };

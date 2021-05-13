@@ -25,32 +25,44 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
+#include "AlphaPremultiplication.h"
+#include "ColorSpace.h"
+#include "PixelFormat.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-enum class PixelFormat : uint8_t {
-    RGBA8,
-    BGRA8,
-    RGB10,
-    RGB10A8,
+struct PixelBufferFormat {
+    AlphaPremultiplication alphaFormat;
+    PixelFormat pixelFormat;
+    DestinationColorSpace colorSpace;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<PixelBufferFormat> decode(Decoder&);
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PixelFormat);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PixelBufferFormat&);
 
+template<class Encoder> void PixelBufferFormat::encode(Encoder& encoder) const
+{
+    encoder << alphaFormat << pixelFormat << colorSpace;
 }
 
-namespace WTF {
+template<class Decoder> Optional<PixelBufferFormat> PixelBufferFormat::decode(Decoder& decoder)
+{
+    AlphaPremultiplication alphaFormat;
+    if (!decoder.decode(alphaFormat))
+        return WTF::nullopt;
 
-template<> struct EnumTraits<WebCore::PixelFormat> {
-    using values = EnumValues<
-        WebCore::PixelFormat,
-        WebCore::PixelFormat::RGBA8,
-        WebCore::PixelFormat::BGRA8,
-        WebCore::PixelFormat::RGB10,
-        WebCore::PixelFormat::RGB10A8
-    >;
-};
+    PixelFormat pixelFormat;
+    if (!decoder.decode(pixelFormat))
+        return WTF::nullopt;
+
+    DestinationColorSpace colorSpace;
+    if (!decoder.decode(colorSpace))
+        return WTF::nullopt;
+
+    return { { alphaFormat, pixelFormat, colorSpace } };
+}
 
 }

@@ -532,7 +532,7 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
     }));
 
     auto imageSize = pixelBuffer.size();
-    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer.colorSpace()), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
+    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer.format().colorSpace), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 
     // CSS styling may cause the canvas's content to be resized on
     // the page. Go back to the Canvas to figure out the correct

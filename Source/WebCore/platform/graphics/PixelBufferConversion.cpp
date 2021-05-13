@@ -56,14 +56,14 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
     auto sourceVImageBuffer = makeVImageBuffer(source, destinationSize);
     auto destinationVImageBuffer = makeVImageBuffer(destination, destinationSize);
 
-    if (source.alphaFormat != destination.alphaFormat) {
-        if (destination.alphaFormat == AlphaPremultiplication::Unpremultiplied) {
-            if (source.pixelFormat == PixelFormat::RGBA8)
+    if (source.format.alphaFormat != destination.format.alphaFormat) {
+        if (destination.format.alphaFormat == AlphaPremultiplication::Unpremultiplied) {
+            if (source.format.pixelFormat == PixelFormat::RGBA8)
                 vImageUnpremultiplyData_RGBA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
             else
                 vImageUnpremultiplyData_BGRA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
         } else {
-            if (source.pixelFormat == PixelFormat::RGBA8)
+            if (source.format.pixelFormat == PixelFormat::RGBA8)
                 vImagePremultiplyData_RGBA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
             else
                 vImagePremultiplyData_BGRA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
@@ -72,7 +72,7 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
         sourceVImageBuffer = destinationVImageBuffer;
     }
 
-    if (source.pixelFormat != destination.pixelFormat) {
+    if (source.format.pixelFormat != destination.format.pixelFormat) {
         // Swap pixel channels BGRA <-> RGBA.
         const uint8_t map[4] = { 2, 1, 0, 3 };
         vImagePermuteChannels_ARGB8888(&sourceVImageBuffer, &destinationVImageBuffer, map, kvImageNoFlags);
@@ -181,45 +181,45 @@ static void convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView
 void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
     // We don't currently support converting pixel data with non-8-bit buffers.
-    ASSERT(source.pixelFormat == PixelFormat::RGBA8 || source.pixelFormat == PixelFormat::BGRA8);
-    ASSERT(destination.pixelFormat == PixelFormat::RGBA8 || destination.pixelFormat == PixelFormat::BGRA8);
+    ASSERT(source.format.pixelFormat == PixelFormat::RGBA8 || source.format.pixelFormat == PixelFormat::BGRA8);
+    ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8 || destination.format.pixelFormat == PixelFormat::BGRA8);
 
     // We don't currently support converting pixel data between different color spaces.
-    ASSERT(source.colorSpace == destination.colorSpace);
+    ASSERT(source.format.colorSpace == destination.format.colorSpace);
 
 #if USE(ACCELERATE)
-    if (source.alphaFormat == destination.alphaFormat && source.pixelFormat == destination.pixelFormat) {
+    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat) {
         // FIXME: Can thes both just use per-row memcpy?
-        if (source.alphaFormat == AlphaPremultiplication::Premultiplied)
+        if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
             convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
         else
             convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
     } else
         convertImagePixelsAccelerated(source, destination, destinationSize);
 #else
-    if (source.alphaFormat == destination.alphaFormat) {
-        if (source.pixelFormat == destination.pixelFormat) {
-            if (source.alphaFormat == AlphaPremultiplication::Premultiplied)
+    if (source.format.alphaFormat == destination.format.alphaFormat) {
+        if (source.format.pixelFormat == destination.format.pixelFormat) {
+            if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
                 convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
             else
                 convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
         } else {
-            if (destination.alphaFormat == AlphaPremultiplication::Premultiplied)
+            if (destination.format.alphaFormat == AlphaPremultiplication::Premultiplied)
                 convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::Permute>>(source, destination, destinationSize);
             else
                 convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::Permute>>(source, destination, destinationSize);
         }
     } else {
-        if (source.pixelFormat == destination.pixelFormat) {
-            if (source.alphaFormat == AlphaPremultiplication::Premultiplied)
+        if (source.format.pixelFormat == destination.format.pixelFormat) {
+            if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
                 convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToUnpremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
             else
                 convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToPremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
         } else {
-            if (destination.alphaFormat == AlphaPremultiplication::Unpremultiplied)
-                convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToUnpremultiplied<PixelFormatConversion::Permute>>(source, destination, destinationSize);
-            else
+            if (destination.format.alphaFormat == AlphaPremultiplication::Premultiplied)
                 convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToPremultiplied<PixelFormatConversion::Permute>>(source, destination, destinationSize);
+            else
+                convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToUnpremultiplied<PixelFormatConversion::Permute>>(source, destination, destinationSize);
         }
     }
 #endif

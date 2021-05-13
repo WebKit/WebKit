@@ -199,7 +199,8 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return WTF::nullopt;
 
-        auto pixelBuffer = WebCore::PixelBuffer::tryCreate(WebCore::DestinationColorSpace::SRGB, WebCore::PixelFormat::RGBA8, srcRect.size());
+        WebCore::PixelBufferFormat destinationFormat { outputFormat, WebCore::PixelFormat::RGBA8, WebCore::DestinationColorSpace::SRGB };
+        auto pixelBuffer = WebCore::PixelBuffer::tryCreate(destinationFormat, srcRect.size());
         if (!pixelBuffer)
             return WTF::nullopt;
         size_t dataSize = pixelBuffer->data().byteLength();

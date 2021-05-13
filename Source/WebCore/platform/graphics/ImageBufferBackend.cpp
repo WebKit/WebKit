@@ -95,17 +95,16 @@ Vector<uint8_t> ImageBufferBackend::toBGRAData(void* data) const
 {
     Vector<uint8_t> result(4 * logicalSize().area().unsafeGet());
 
+    PixelBufferFormat sourceFormat { AlphaPremultiplication::Premultiplied, pixelFormat(), DestinationColorSpace::SRGB };
+    PixelBufferFormat destinationFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB };
+
     ConstPixelBufferConversionView source;
-    source.alphaFormat = AlphaPremultiplication::Premultiplied;
-    source.colorSpace = DestinationColorSpace::SRGB;
-    source.pixelFormat = pixelFormat();
+    source.format = sourceFormat;
     source.bytesPerRow = bytesPerRow();
     source.rows = reinterpret_cast<const uint8_t*>(data);
     
     PixelBufferConversionView destination;
-    destination.alphaFormat = AlphaPremultiplication::Unpremultiplied;
-    destination.colorSpace = DestinationColorSpace::SRGB;
-    destination.pixelFormat = PixelFormat::BGRA8;
+    destination.format = destinationFormat;
     destination.bytesPerRow = logicalSize().width() * 4;
     destination.rows = result.data();
 
@@ -118,9 +117,9 @@ Optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(AlphaPremultiplication 
 {
     auto sourceRectScaled = toBackendCoordinates(sourceRect);
 
-    auto destinationPixelFormat = PixelFormat::RGBA8;
+    PixelBufferFormat destinationFormat { destinationAlphaFormat, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
 
-    auto pixelBuffer = PixelBuffer::tryCreate(DestinationColorSpace::SRGB, destinationPixelFormat, sourceRectScaled.size());
+    auto pixelBuffer = PixelBuffer::tryCreate(destinationFormat, sourceRectScaled.size());
     if (!pixelBuffer)
         return WTF::nullopt;
 
@@ -142,17 +141,15 @@ Optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(AlphaPremultiplication 
     unsigned destinationBytesPerRow = 4 * sourceRectScaled.width();
     uint8_t* destinationRows = pixelBuffer->data().data() + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4;
 
+    PixelBufferFormat sourceFormat { AlphaPremultiplication::Premultiplied, pixelFormat(), DestinationColorSpace::SRGB };
+
     ConstPixelBufferConversionView source;
-    source.alphaFormat = AlphaPremultiplication::Premultiplied;
-    source.colorSpace = DestinationColorSpace::SRGB;
-    source.pixelFormat = pixelFormat();
+    source.format = sourceFormat;
     source.bytesPerRow = sourceBytesPerRow;
     source.rows = sourceRows;
     
     PixelBufferConversionView destination;
-    destination.alphaFormat = destinationAlphaFormat;
-    destination.colorSpace = DestinationColorSpace::SRGB;
-    destination.pixelFormat = destinationPixelFormat;
+    destination.format = destinationFormat;
     destination.bytesPerRow = destinationBytesPerRow;
     destination.rows = destinationRows;
 
@@ -164,7 +161,7 @@ Optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(AlphaPremultiplication 
 void ImageBufferBackend::putPixelBuffer(AlphaPremultiplication sourceAlphaFormat, const PixelBuffer& pixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, void* data)
 {
     // FIXME: Add support for non-RGBA8 pixel formats.
-    ASSERT(pixelBuffer.format() == PixelFormat::RGBA8);
+    ASSERT(pixelBuffer.format().pixelFormat == PixelFormat::RGBA8);
 
     auto sourceRectScaled = toBackendCoordinates(sourceRect);
     auto destinationPointScaled = toBackendCoordinates(destinationPoint);
@@ -188,17 +185,16 @@ void ImageBufferBackend::putPixelBuffer(AlphaPremultiplication sourceAlphaFormat
     unsigned destinationBytesPerRow = bytesPerRow();
     uint8_t* destinationRows = reinterpret_cast<uint8_t*>(data) + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4;
 
+    PixelBufferFormat sourceFormat { sourceAlphaFormat, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    PixelBufferFormat destinationFormat { destinationAlphaFormat, pixelFormat(), DestinationColorSpace::SRGB };
+
     ConstPixelBufferConversionView source;
-    source.alphaFormat = sourceAlphaFormat;
-    source.colorSpace = DestinationColorSpace::SRGB;
-    source.pixelFormat = PixelFormat::RGBA8;
+    source.format = sourceFormat;
     source.bytesPerRow = sourceBytesPerRow;
     source.rows = sourceRows;
     
     PixelBufferConversionView destination;
-    destination.alphaFormat = destinationAlphaFormat;
-    destination.colorSpace = DestinationColorSpace::SRGB;
-    destination.pixelFormat = pixelFormat();
+    destination.format = destinationFormat;
     destination.bytesPerRow = destinationBytesPerRow;
     destination.rows = destinationRows;
 

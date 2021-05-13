@@ -51,9 +51,6 @@ public:
 
     Ref<ImageData> deepClone() const;
 
-    DestinationColorSpace colorSpace() const { return m_pixelBuffer.colorSpace(); }
-    PixelFormat format() const { return m_pixelBuffer.format(); }
-
     const PixelBuffer& pixelBuffer() const { return m_pixelBuffer; }
 
 private:

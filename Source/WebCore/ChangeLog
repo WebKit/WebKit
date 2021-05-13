@@ -1,3 +1,77 @@
+2021-05-13  Sam Weinig  <weinig@apple.com>
+
+        Split pixel buffer format data out into a new PixelBufferFormat struct
+        https://bugs.webkit.org/show_bug.cgi?id=225707
+
+        Reviewed by Darin Adler.
+
+        Splits out PixelBufferFormat into a new struct and adopts it by PixelBufferConversionView,
+        ConstPixelBufferConversionView and PixelBuffer. This also means that PixelBuffer now
+        tracks the alpha format of the underlying buffer which will come in handy.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * platform/graphics/AlphaPremultiplication.cpp: Added.
+        (WebCore::operator<<):
+        Add AlphaPremultiplication.cpp and move TextStream support
+        here from GraphicsTypes.cpp.
+
+        * platform/graphics/GraphicsTypes.cpp:
+        Move AlphaPremultiplication TextStream to the more appropriate
+        AlphaPremultiplication.cpp.
+
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create):
+        * html/ImageData.h:
+        (WebCore::ImageData::colorSpace const): Deleted.
+        (WebCore::ImageData::format const): Deleted.
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::toBGRAData const):
+        (WebCore::ImageBufferBackend::getPixelBuffer const):
+        (WebCore::ImageBufferBackend::putPixelBuffer):
+        * platform/graphics/ImageBufferBackend.h:
+        * platform/graphics/PixelBuffer.cpp:
+        (WebCore::PixelBuffer::computeBufferSize):
+        (WebCore::PixelBuffer::tryCreateForDecoding):
+        (WebCore::PixelBuffer::tryCreate):
+        (WebCore::PixelBuffer::PixelBuffer):
+        (WebCore::PixelBuffer::deepClone const):
+        (WebCore::operator<<):
+        * platform/graphics/PixelBuffer.h:
+        (WebCore::PixelBuffer::format const):
+        (WebCore::PixelBuffer::encode const):
+        (WebCore::PixelBuffer::decode):
+        (WebCore::PixelBuffer::colorSpace const): Deleted.
+        * platform/graphics/PixelBufferConversion.cpp:
+        (WebCore::convertImagePixelsAccelerated):
+        (WebCore::convertImagePixels):
+        * platform/graphics/PixelBufferConversion.h:
+        * platform/graphics/PixelBufferFormat.cpp: Added.
+        (WebCore::operator<<):
+        * platform/graphics/PixelBufferFormat.h: Added.
+        (WebCore::PixelBufferFormat::encode const):
+        (WebCore::PixelBufferFormat::decode):
+        * platform/graphics/PixelFormat.cpp: Added.
+        (WebCore::operator<<):
+        * platform/graphics/PixelFormat.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::readPixelsForPaintResults):
+        * platform/graphics/cg/GraphicsContextGLCG.cpp:
+        (WebCore::GraphicsContextGLOpenGL::paintToCanvas):
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::toCFData const):
+        * platform/graphics/cg/ImageBufferUtilitiesCG.cpp:
+        (WebCore::cfData):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::copyUnmultipliedResult):
+        (WebCore::FilterEffect::copyPremultipliedResult):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        Adopt PixelBufferFormat.
+
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::directoryName() to FileSystem::parentPath()

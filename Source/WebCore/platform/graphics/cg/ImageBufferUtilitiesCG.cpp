@@ -163,7 +163,7 @@ static RetainPtr<CFDataRef> cfData(const PixelBuffer& source, const String& mime
         return nullptr;
 
     auto imageSize = source.size();
-    auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(source.colorSpace()), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(source.format().colorSpace), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
     auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
     if (!encodeImage(image.get(), uti.get(), quality, cfData.get()))

@@ -1,3 +1,13 @@
+2021-05-13  Sam Weinig  <weinig@apple.com>
+
+        Split pixel buffer format data out into a new PixelBufferFormat struct
+        https://bugs.webkit.org/show_bug.cgi?id=225707
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        Adopt PixelBufferFormat.
+
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::directoryName() to FileSystem::parentPath()

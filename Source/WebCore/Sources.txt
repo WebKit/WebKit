@@ -1938,6 +1938,7 @@ platform/encryptedmedia/clearkey/CDMClearKey.cpp
 platform/gamepad/EmptyGamepadProvider.cpp
 platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp
+platform/graphics/AlphaPremultiplication.cpp
 platform/graphics/AnimationFrameRate.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
@@ -2015,6 +2016,8 @@ platform/graphics/PathUtilities.cpp
 platform/graphics/Pattern.cpp
 platform/graphics/PixelBuffer.cpp
 platform/graphics/PixelBufferConversion.cpp
+platform/graphics/PixelBufferFormat.cpp
+platform/graphics/PixelFormat.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/Region.cpp
 platform/graphics/RemoteGraphicsContextGLProxyBase.cpp

@@ -201,7 +201,7 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
             return nullptr;
 
         auto imageSize = pixelBuffer->size();
-        image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer->colorSpace()), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+        image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer->format().colorSpace), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     } else if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
         auto nativeImage = copyNativeImage(CopyBackingStore);
         if (!nativeImage)

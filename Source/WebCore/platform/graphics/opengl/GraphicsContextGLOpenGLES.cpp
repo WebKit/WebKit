@@ -66,7 +66,8 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
 
 Optional<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 {
-    auto pixelBuffer = PixelBuffer::tryCreate(DestinationColorSpace::SRGB, PixelFormat::RGBA8, getInternalFramebufferSize());
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    auto pixelBuffer = PixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
         return WTF::nullopt;
 

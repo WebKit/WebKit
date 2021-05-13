@@ -63,7 +63,8 @@ RefPtr<ImageData> ImageData::create(const IntSize& size)
     auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
     if (!byteArray)
         return nullptr;
-    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, byteArray.releaseNonNull() }));
+    
+    return adoptRef(*new ImageData({ { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB }, size, byteArray.releaseNonNull() }));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray)
@@ -72,7 +73,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&
     if (dataSize.hasOverflowed() || dataSize.unsafeGet() > byteArray->length())
         return nullptr;
 
-    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, WTFMove(byteArray) }));
+    return adoptRef(*new ImageData({ { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB }, size, WTFMove(byteArray) }));
 }
 
 ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
@@ -89,7 +90,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
         return Exception { RangeError, "Out of memory"_s };
     }
     byteArray->zeroFill();
-    return adoptRef(*new ImageData({ DestinationColorSpace::SRGB, PixelFormat::RGBA8, size, byteArray.releaseNonNull() }));
+    return adoptRef(*new ImageData({ { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB }, size, byteArray.releaseNonNull() }));
 }
 
 ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh)
