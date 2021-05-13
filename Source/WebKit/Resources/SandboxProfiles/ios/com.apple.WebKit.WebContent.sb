@@ -925,6 +925,7 @@
         "hw.cachelinesize"
         "hw.cachelinesize_compat"
         "hw.cpufamily" ;; <rdar://problem/58416475>
+        "hw.cpusubfamily"
         "hw.cputhreadtype"
         "hw.cputype"
         "hw.l2cachesize"
@@ -935,12 +936,14 @@
         "hw.memsize"
         "hw.model"
         "hw.pagesize_compat"
+        "hw.perflevel1.cpusperl2"
         "hw.physicalcpu"
         "hw.physicalcpu_max"
         "hw.product"
         "hw.vectorunit"
         "kern.bootargs"
         "kern.hostname"
+        "kern.hv_vmm_present"
         "kern.maxfilesperproc" ;; <rdar://problem/65900517>
         "kern.memorystatus_level"
         "kern.osproductversion"

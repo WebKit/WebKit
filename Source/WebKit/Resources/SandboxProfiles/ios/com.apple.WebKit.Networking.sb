@@ -533,13 +533,16 @@
         "hw.activecpu" ;; Needed by JSC engine.
         "hw.availcpu"
         "hw.cpu64bit_capable"
+        "hw.cpusubfamily"
         "hw.ncpu"
         "hw.machine" ;; Needed by CFNetwork (CFURLProtocols)
         "hw.memsize"
         "hw.model" ;; Needed for bundle loading
         "hw.pagesize_compat" ;; Needed by bmalloc
+        "hw.perflevel1.cpusperl2"
         "kern.bootargs"  ;; Needed for bundle loading
         "kern.hostname"
+        "kern.hv_vmm_present"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)

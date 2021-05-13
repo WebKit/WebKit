@@ -173,11 +173,14 @@
 (allow sysctl-read
     (sysctl-name
         "hw.availcpu"
+        "hw.cpusubfamily"
         "hw.cputhreadtype"
         "hw.ncpu"
         "hw.memsize"
         "hw.model" ;; Needed for bundle loading
+        "hw.perflevel1.cpusperl2"
         "kern.hostname"
+        "kern.hv_vmm_present"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)

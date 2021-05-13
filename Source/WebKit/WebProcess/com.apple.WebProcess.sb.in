@@ -562,6 +562,7 @@
         "hw.byteorder"
         "hw.busfrequency_max"
         "hw.cpufamily" ;; <rdar://problem/58416475>
+        "hw.cpusubfamily"
         "hw.cputype"
         "hw.cputhreadtype"
         "hw.logicalcpu"
@@ -569,10 +570,12 @@
         "hw.memsize"
         "hw.model"
         "hw.ncpu"
+        "hw.perflevel1.cpusperl2"
         "hw.physicalcpu" ;; <rdar://problem/58416475>
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
         "kern.hostname"
+        "kern.hv_vmm_present"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; <rdar://problem/51756739>

@@ -112,15 +112,18 @@
     (sysctl-name
         "hw.byteorder"
         "hw.busfrequency_max"
+        "hw.cpusubfamily"
         "hw.cputhreadtype"
         "hw.cputype"
         "hw.machine"
         "hw.memsize"
         "hw.model"
         "hw.ncpu"
+        "hw.perflevel1.cpusperl2"
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
         "kern.hostname"
+        "kern.hv_vmm_present"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; <rdar://problem/51756739>
