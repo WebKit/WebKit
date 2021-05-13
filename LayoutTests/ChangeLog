@@ -1,3 +1,19 @@
+2021-05-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r276945): [iOS] Focus rings are too large
+        https://bugs.webkit.org/show_bug.cgi?id=225778
+        <rdar://problem/77858341>
+
+        Reviewed by Tim Horton.
+
+        Added a regression test to verify the size of the focus ring on iOS.
+        The test works by drawing an overlay on top of an input element, that
+        is just large enough to obscure the focus ring. If the focus ring is
+        too large, the ring will not obscured, leading to a mismatch failure.
+
+        * fast/forms/ios/focus-ring-size-expected.html: Added.
+        * fast/forms/ios/focus-ring-size.html: Added.
+
 2021-05-13  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS Wk1] media/video-playback-quality.html is a flaky failure

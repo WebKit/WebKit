@@ -168,7 +168,7 @@ typedef enum {
 @end
 
 @interface UIFocusRingStyle : NSObject
-+ (CGFloat)cornerRadius;
++ (CGFloat)borderThickness;
 + (CGFloat)maxAlpha;
 + (CGFloat)alphaThreshold;
 @end

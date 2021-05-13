@@ -1,3 +1,13 @@
+2021-05-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r276945): [iOS] Focus rings are too large
+        https://bugs.webkit.org/show_bug.cgi?id=225778
+        <rdar://problem/77858341>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2021-05-12  Jean-Yves Avenard  <jya@apple.com>
 
         Adopt CoreMedia SPI to identify audio-only playback for MSE clients
