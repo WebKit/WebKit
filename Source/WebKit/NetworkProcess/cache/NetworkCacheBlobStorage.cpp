@@ -65,14 +65,15 @@ void BlobStorage::synchronize()
         if (type != DirectoryEntryType::File)
             return;
         auto path = FileSystem::pathByAppendingComponent(blobDirectory, name);
-        auto filePath = FileSystem::fileSystemRepresentation(path);
-        struct stat stat;
-        ::stat(filePath.data(), &stat);
+        auto linkCount = FileSystem::hardLinkCount(path);
         // No clients left for this blob.
-        if (stat.st_nlink == 1)
-            unlink(filePath.data());
-        else
-            m_approximateSize += stat.st_size;
+        if (linkCount && *linkCount == 1)
+            FileSystem::deleteFile(path);
+        else {
+            long long fileSize = 0;
+            FileSystem::getFileSize(path, fileSize);
+            m_approximateSize += fileSize;
+        }
     });
 
     LOG(NetworkCacheStorage, "(NetworkProcess) blob synchronization completed approximateSize=%zu", approximateSize());
@@ -141,12 +142,11 @@ unsigned BlobStorage::shareCount(const String& path)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto linkPath = FileSystem::fileSystemRepresentation(path);
-    struct stat stat;
-    if (::stat(linkPath.data(), &stat) < 0)
+    auto linkCount = FileSystem::hardLinkCount(path);
+    if (!linkCount)
         return 0;
     // Link count is 2 in the single client case (the blob file and a link).
-    return stat.st_nlink - 1;
+    return *linkCount - 1;
 }
 
 }

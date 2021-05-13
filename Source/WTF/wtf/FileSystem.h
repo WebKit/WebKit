@@ -169,6 +169,7 @@ WTF_EXPORT_PRIVATE bool appendFileContentsToFileHandle(const String& path, Platf
 WTF_EXPORT_PRIVATE bool hardLink(const String& targetPath, const String& linkPath);
 // Hard links a file if possible, copies it if not.
 WTF_EXPORT_PRIVATE bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath);
+WTF_EXPORT_PRIVATE Optional<uint64_t> hardLinkCount(const String& path);
 
 #if USE(FILE_LOCK)
 WTF_EXPORT_PRIVATE bool lockFile(PlatformFileHandle, OptionSet<FileLockMode>);

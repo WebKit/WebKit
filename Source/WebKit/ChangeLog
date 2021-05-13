@@ -1,3 +1,16 @@
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Introduce FileSystem::hardLinkCount()
+        https://bugs.webkit.org/show_bug.cgi?id=225767
+
+        Reviewed by Darin Adler.
+
+        Leverage the FileSystem API instead of having platform-specific code.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::synchronize):
+        (WebKit::NetworkCache::BlobStorage::shareCount):
+
 2021-05-13  Sam Weinig  <weinig@apple.com>
 
         CGDisplayList debug configuration fails to build

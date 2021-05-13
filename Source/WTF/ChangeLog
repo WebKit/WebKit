@@ -1,3 +1,17 @@
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Introduce FileSystem::hardLinkCount()
+        https://bugs.webkit.org/show_bug.cgi?id=225767
+
+        Reviewed by Darin Adler.
+
+        Introduce FileSystem::hardLinkCount() to replace our platform-specific implementation
+        in NetworkCacheBlobStorage.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::hardLinkCount):
+        * wtf/FileSystem.h:
+
 2021-05-13  Alicia Boya García  <aboya@igalia.com>
 
         [WTF] Add holdLock() overload for WTF::DataMutex

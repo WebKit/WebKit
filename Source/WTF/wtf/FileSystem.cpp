@@ -663,6 +663,13 @@ bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath)
     return !ec;
 }
 
+Optional<uint64_t> hardLinkCount(const String& path)
+{
+    std::error_code ec;
+    uint64_t linkCount = std::filesystem::hard_link_count(toStdFileSystemPath(path), ec);
+    return ec ? WTF::nullopt : makeOptional(linkCount);
+}
+
 bool deleteNonEmptyDirectory(const String& path)
 {
     std::error_code ec;

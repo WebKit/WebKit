@@ -659,6 +659,39 @@ TEST_F(FileSystemTest, createHardLinkOrCopyFile)
     EXPECT_EQ(linkFileSize, fileSize);
 }
 
+TEST_F(FileSystemTest, hardLinkCount)
+{
+    auto linkCount = FileSystem::hardLinkCount(tempFilePath());
+    ASSERT_TRUE(!!linkCount);
+    EXPECT_EQ(*linkCount, 1U);
+
+    auto hardlink1Path = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink1");
+    EXPECT_TRUE(FileSystem::hardLink(tempFilePath(), hardlink1Path));
+    linkCount = FileSystem::hardLinkCount(tempFilePath());
+    ASSERT_TRUE(!!linkCount);
+    EXPECT_EQ(*linkCount, 2U);
+
+    auto hardlink2Path = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink2");
+    EXPECT_TRUE(FileSystem::hardLink(tempFilePath(), hardlink2Path));
+    linkCount = FileSystem::hardLinkCount(tempFilePath());
+    ASSERT_TRUE(!!linkCount);
+    EXPECT_EQ(*linkCount, 3U);
+
+    EXPECT_TRUE(FileSystem::deleteFile(hardlink1Path));
+    linkCount = FileSystem::hardLinkCount(tempFilePath());
+    ASSERT_TRUE(!!linkCount);
+    EXPECT_EQ(*linkCount, 2U);
+
+    EXPECT_TRUE(FileSystem::deleteFile(hardlink2Path));
+    linkCount = FileSystem::hardLinkCount(tempFilePath());
+    ASSERT_TRUE(!!linkCount);
+    EXPECT_EQ(*linkCount, 1U);
+
+    EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
+    linkCount = FileSystem::hardLinkCount(tempFilePath());
+    EXPECT_TRUE(!linkCount);
+}
+
 static void runGetFileModificationTimeTest(const String& path, Function<Optional<WallTime>(const String&)>&& getFileModificationTime)
 {
     auto modificationTime = getFileModificationTime(path);
