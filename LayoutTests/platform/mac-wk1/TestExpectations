@@ -1273,3 +1273,5 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ Pass ImageOnlyFailure ]
 
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
