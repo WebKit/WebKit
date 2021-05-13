@@ -644,7 +644,7 @@ class RunAPITests(TestWithFailureCount):
     jsonFileName = "api_test_results.json"
     logfiles = {"json": jsonFileName}
     command = [
-        "python",
+        "python3",
         "./Tools/Scripts/run-api-tests",
         "--no-build",
         "--json-output={0}".format(jsonFileName),
