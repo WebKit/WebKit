@@ -1,3 +1,16 @@
+2021-05-12  Kyle Piddington  <kpiddington@apple.com>
+
+        [Angle METAL] Remove thread qualifiers and pass-by-reference qualifiers for cast functions
+        https://bugs.webkit.org/show_bug.cgi?id=225702
+        <rdar://76799461>
+
+        Cast functions fail to compile when casting from user uniforms. Update cast functions to remove pass-by-reference
+        qualifiers. 
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+
 2021-05-08  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WinCairo] Remove linker warning on ANGLE
