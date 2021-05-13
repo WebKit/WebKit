@@ -849,6 +849,11 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-b
 
 webkit.org/b/224626 http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.py [ Failure Pass ]
 
+# Sometimes there's an extra error message:
+# - [Report Only] Refused to connect to http://localhost:8000/security/contentSecurityPolicy/resources/echo-report.py
+# because it does not appear in the connect-src directive of the Content Security Policy.
+http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSConsoleLogInStdErr ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Security-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

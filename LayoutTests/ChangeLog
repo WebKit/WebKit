@@ -1,3 +1,14 @@
+2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] http/tests/security/contentSecurityPolicy/report-only-from-header.py is a flaky text failure
+
+        Unreviewed test gardening.
+
+        Sometimes there's an extra console log error message. Dump all JS console output and emit new baseline.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt: Added.
+
 2021-05-12  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur Wk1 Release] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html is a flaky image failure
