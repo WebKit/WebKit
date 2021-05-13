@@ -1,3 +1,36 @@
+2021-05-12  Peng Liu  <peng.liu6@apple.com>
+
+        [iPad] SourceBufferPrivateAVFObjC should not report an error to the web page when the video playback is interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=225620
+
+        Reviewed by Jer Noble.
+
+        If `SourceBufferPrivateAVFObjC` reports an error to a web page when
+        `AVSampleBufferDisplayLayer` reports `AVErrorOperationInterrupted` (the playback
+        was interrupted), the web page will likely destroy the video player (and teardown
+        the video element). That behavior will lead to an empty picture-in-picture window
+        if the video was playing in picture-in-picture.
+
+        With this patch, `SourceBufferPrivateAVFObjC` will not report an error to the
+        web page in case of playback interruption. Instead, it takes a note that
+        the playback was interrupted, so that when we try to resume the playback later,
+        it will flush the `AVSampleBufferDisplayLayer` to recover the playback state.
+
+        In addition, we need to enqueue an IDR frame first before we enqueue more
+        samples after flushing the `AVSampleBufferDisplayLayer`. That is guaranteed
+        by `SourceBufferPrivate::reenqueSamples()`.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::flushActiveSourceBuffersIfNeeded):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::flushIfNeeded):
+        (WebCore::SourceBufferPrivateAVFObjC::layerDidReceiveError):
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples):
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Notification.requestPermission() should return a Promise

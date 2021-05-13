@@ -109,6 +109,9 @@ public:
     bool waitingForKey() const { return m_waitingForKey; }
 
     void flush();
+#if PLATFORM(IOS_FAMILY)
+    void flushIfNeeded();
+#endif
 
     void registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
     void unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
@@ -197,6 +200,9 @@ private:
     HashMap<uint64_t, RetainPtr<AVSampleBufferAudioRenderer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_audioRenderers;
     ALLOW_NEW_API_WITHOUT_GUARDS_END
     RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
+#if PLATFORM(IOS_FAMILY)
+    bool m_displayLayerWasInterrupted { false };
+#endif
     RetainPtr<NSError> m_hdcpError;
     Box<BinarySemaphore> m_hasSessionSemaphore;
     Box<Semaphore> m_abortSemaphore;

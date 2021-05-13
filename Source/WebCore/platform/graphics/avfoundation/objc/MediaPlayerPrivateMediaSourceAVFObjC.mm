@@ -322,6 +322,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
     }
 
     ALWAYS_LOG(LOGIDENTIFIER);
+#if PLATFORM(IOS_FAMILY)
+    m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
+#endif
     m_playing = true;
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];

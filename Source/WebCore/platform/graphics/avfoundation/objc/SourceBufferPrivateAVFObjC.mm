@@ -928,6 +928,27 @@ void SourceBufferPrivateAVFObjC::flush()
         flushAudio(renderer.get());
 }
 
+#if PLATFORM(IOS_FAMILY)
+void SourceBufferPrivateAVFObjC::flushIfNeeded()
+{
+    if (!m_displayLayerWasInterrupted)
+        return;
+
+    m_displayLayerWasInterrupted = false;
+    if (m_videoTracks.size())
+        flushVideo();
+
+    // We initiatively enqueue samples instead of waiting for the
+    // media data requests from m_decompressionSession and m_displayLayer.
+    // In addition, we need to enqueue a sync sample (IDR video frame) first.
+    if (m_decompressionSession)
+        m_decompressionSession->stopRequestingMediaData();
+    [m_displayLayer stopRequestingMediaData];
+
+    reenqueSamples(AtomString::number(m_enabledVideoTrackID));
+}
+#endif
+
 void SourceBufferPrivateAVFObjC::registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient* client)
 {
     ASSERT(!m_errorClients.contains(client));
@@ -943,6 +964,13 @@ void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPri
 void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *layer, NSError *error)
 {
     ERROR_LOG(LOGIDENTIFIER, [[error description] UTF8String]);
+
+#if PLATFORM(IOS_FAMILY)
+    if ([layer status] == AVQueuedSampleBufferRenderingStatusFailed && [[error domain] isEqualToString:@"AVFoundationErrorDomain"] && [error code] == AVErrorOperationInterrupted) {
+        m_displayLayerWasInterrupted = true;
+        return;
+    }
+#endif
 
     // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
     bool anyIgnored = false;
@@ -1174,6 +1202,11 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackID
 {
     auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
     if (trackID == m_enabledVideoTrackID) {
+#if PLATFORM(IOS_FAMILY)
+        if (m_displayLayerWasInterrupted)
+            return false;
+#endif
+
         if (m_decompressionSession)
             return m_decompressionSession->isReadyForMoreMediaData();
 
