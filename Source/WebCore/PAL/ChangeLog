@@ -1,3 +1,11 @@
+2021-05-13  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/77990505
+
+    2021-05-13  Alan Coon  <alancoon@apple.com>
+
+            Apply workaround buildfix for WebKit and WebCore.
+
 2021-04-29  Jean-Yves Avenard  <jya@apple.com>
 
         Adopt AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification
