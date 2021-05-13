@@ -1,3 +1,15 @@
+2021-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        Work around WebCore failing to build due to NDEBUG getting undefined in release
+        https://bugs.webkit.org/show_bug.cgi?id=225782
+        <rdar://problem/77982432>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Apply a temporary workaround to preserve NDEBUG through these includes.
+        There are a few ways to get to CoreGraphicsPrivate.h, so we fix all of them.
+
 2021-05-13  Megan Gardner  <megan_gardner@apple.com>
 
         Add textIndicator bounce for AppHighlights on scroll.
