@@ -1,3 +1,14 @@
+2021-05-13  Cameron McCormack  <heycam@apple.com>
+
+        Ensure scrollable transformed elements that are themselves within scrollable elements don't ignore border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=216978
+        <rdar://69660229>
+
+        Reviewed by Darin Adler.
+
+        * fast/layers/overflow-scroll-transform-border-radius-expected.html: Added.
+        * fast/layers/overflow-scroll-transform-border-radius.html: Added.
+
 2021-05-13  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur] media/video-played-ranges-1.html is flaky failure

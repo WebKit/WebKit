@@ -1,3 +1,34 @@
+2021-05-13  Cameron McCormack  <heycam@apple.com>
+
+        Ensure scrollable transformed elements that are themselves within scrollable elements don't ignore border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=216978
+        <rdar://69660229>
+
+        Reviewed by Darin Adler.
+
+        We use ShouldRespectOverflowClip to prevent clips from ancestors
+        from being used when we paint a scrollable layer (when
+        PaintLayerFlag::PaintingOverflowContents is set). We only look
+        at the ShouldRespectOverflowClip value when we're painting a layer
+        we're considering to be a clip rect root layer, and we unconditionally
+        apply ancestor clips for layers that aren't clip rect roots.
+
+        A non-root layer with a transform is handled by applying the transform
+        and painting the layer as a root layer (since we don't want to handle
+        computing the effect of ancestor clip rects past the transform). When
+        the transformed layer also has a border-radius, we incorrectly skip
+        marking its clip rect as being affected by radius, since we currently
+        do this at the same time as applying ancestor clip rects.
+
+        This patch splits out the setAffectedByRadius call so that it happens
+        even for transformed non-root layers.
+
+        Test: fast/layers/overflow-scroll-transform-border-radius.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::ClipRects::setOverflowClipRectAffectedByRadius):
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2021-05-13  Devin Rousso  <drousso@apple.com>
 
         [macOS] experimental "Use theme color for scroll area background" isn't working
