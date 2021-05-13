@@ -1,3 +1,20 @@
+2021-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        ResizeReversePaginatedWebView fails on some OS versions on some hardware
+        https://bugs.webkit.org/show_bug.cgi?id=224699
+        <rdar://76782199>
+
+        Reviewed by Megan Gardner.
+
+        * TestWebKitAPI/Tests/WebKit/ResizeReversePaginatedWebView.cpp:
+        (TestWebKitAPI::didLayout):
+        This test does *not* care about the specific number of pages that are
+        generated; the key to the test is the scroll position check.
+
+        Since the page-count check in this test has caused lots of trouble
+        in the past (see the history) just remove it and replace it with a
+        check that we ended up paginated at all.
+
 2021-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Update the MotionMark 1.1 plan file
