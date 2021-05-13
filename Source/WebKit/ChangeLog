@@ -1,3 +1,22 @@
+2021-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Failed to open WebInspector UI since r277231
+        https://bugs.webkit.org/show_bug.cgi?id=225715
+
+        Reviewed by Don Olmstead.
+
+        Windows WebKit2 failed to open WebInspector UI after r277231
+        changed Filesystem::pathByAppendingComponent.
+        "inspector-resource:///Main.html" was wrongly mapped to
+        "C:\\Main.html".
+
+        requestURL.fileSystemPath() returns "\Main.html". The preceding
+        "\" should be removed before concatenating it with the bundle path
+        by using FileSystem::pathByAppendingComponent.
+
+        * UIProcess/Inspector/win/InspectorResourceURLSchemeHandler.cpp:
+        (WebKit::InspectorResourceURLSchemeHandler::platformStartTask): Removed the preceding "\".
+
 2021-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Permit sysctl-read operations needed by Metal and other system frameworks
