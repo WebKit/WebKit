@@ -357,7 +357,7 @@ FormDataForUpload FormData::prepareForUpload()
         auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data);
         if (!fileData)
             continue;
-        if (!FileSystem::fileIsDirectory(fileData->filename, FileSystem::ShouldFollowSymbolicLinks::Yes))
+        if (!FileSystem::isDirectoryFollowingSymlinks(fileData->filename))
             continue;
         if (fileData->fileStart || fileData->fileLength != BlobDataItem::toEndOfFile)
             continue;

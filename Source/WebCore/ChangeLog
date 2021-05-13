@@ -1,3 +1,27 @@
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
+        https://bugs.webkit.org/show_bug.cgi?id=225772
+
+        Reviewed by Darin Adler.
+
+        Update code base due to API naming change.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::listDirectoryWithMetadata):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attachmentForFilePath):
+        * fileapi/File.cpp:
+        (WebCore::File::isDirectory const):
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::gatherFileInformation):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::ensureAssetCacheExistsForPath):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::prepareForUpload):
+
 2021-05-13  Jer Noble  <jer.noble@apple.com>
 
         [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing

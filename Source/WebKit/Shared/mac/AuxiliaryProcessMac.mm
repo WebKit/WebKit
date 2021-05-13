@@ -331,9 +331,9 @@ static String sandboxFilePath(const String& directoryPath, const CString& header
 
 static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
 {
-    if (!FileSystem::fileIsDirectory(info.parentDirectoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+    if (!FileSystem::isDirectoryFollowingSymlinks(info.parentDirectoryPath)) {
         FileSystem::makeAllDirectories(info.parentDirectoryPath);
-        if (!FileSystem::fileIsDirectory(info.parentDirectoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+        if (!FileSystem::isDirectoryFollowingSymlinks(info.parentDirectoryPath)) {
             WTFLogAlways("%s: Could not create sandbox directory\n", getprogname());
             return false;
         }
@@ -363,7 +363,7 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
         if (!rootless_check_datavault_flag(directoryPath.data(), storageClass))
             return true;
 
-        bool isDirectory = FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::No);
+        bool isDirectory = FileSystem::isDirectory(info.directoryPath);
         if (isDirectory) {
             if (!FileSystem::deleteNonEmptyDirectory(info.directoryPath))
                 return false;
@@ -379,14 +379,14 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
         return false;
     }
 #else
-    bool hasSandboxDirectory = FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes);
+    bool hasSandboxDirectory = FileSystem::isDirectoryFollowingSymlinks(info.directoryPath);
     if (!hasSandboxDirectory) {
         if (FileSystem::makeAllDirectories(info.directoryPath)) {
-            ASSERT(FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes));
+            ASSERT(FileSystem::isDirectoryFollowingSymlinks(info.directoryPath));
             hasSandboxDirectory = true;
         } else {
             // We may have raced with someone else making it. That's ok.
-            hasSandboxDirectory = FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes);
+            hasSandboxDirectory = FileSystem::isDirectoryFollowingSymlinks(info.directoryPath);
         }
     }
 

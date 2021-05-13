@@ -90,7 +90,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return false;
     }
 
-    if (!FileSystem::fileIsDirectory(directory, FileSystem::ShouldFollowSymbolicLinks::No)) {
+    if (!FileSystem::isDirectory(directory)) {
         createError([NSString stringWithFormat:@"Cache directory `%@` is not a directory or does not exist", static_cast<NSString *>(directory)], error);
         return false;
     }

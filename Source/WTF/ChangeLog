@@ -1,5 +1,25 @@
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
+        Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
+        https://bugs.webkit.org/show_bug.cgi?id=225772
+
+        Reviewed by Darin Adler.
+
+        I don't think the "file" prefix is useful here so I am renaming the function to
+        isDirectory(). Also, instead of using an enum parameter to decide whether or
+        not to follow symlink, I am adding a separate function called
+        isDirectoryFollowingSymlinks(). This is consistent with the
+        fileMetadata() / fileMetadataFollowingSymlinks() pattern, which Darin said he
+        preferred.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::isDirectory):
+        (WTF::FileSystemImpl::isDirectoryFollowingSymlinks):
+        (WTF::FileSystemImpl::fileIsDirectory): Deleted.
+        * wtf/FileSystem.h:
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
         Introduce FileSystem::hardLinkCount()
         https://bugs.webkit.org/show_bug.cgi?id=225767
 

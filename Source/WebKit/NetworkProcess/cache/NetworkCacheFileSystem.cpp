@@ -58,7 +58,7 @@ void traverseDirectory(const String& path, const Function<void (const String&, D
     auto entries = FileSystem::listDirectory(path);
     for (auto& entry : entries) {
         auto entryPath = FileSystem::pathByAppendingComponent(path, entry);
-        auto type = FileSystem::fileIsDirectory(entryPath, FileSystem::ShouldFollowSymbolicLinks::No) ? DirectoryEntryType::Directory : DirectoryEntryType::File;
+        auto type = FileSystem::isDirectory(entryPath) ? DirectoryEntryType::Directory : DirectoryEntryType::File;
         function(entry, type);
     }
 }

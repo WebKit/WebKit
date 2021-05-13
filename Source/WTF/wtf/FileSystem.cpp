@@ -607,15 +607,16 @@ bool getFileSize(const String& path, long long& result)
     return true;
 }
 
-bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+bool isDirectory(const String& path)
 {
     std::error_code ec;
-    std::filesystem::file_status fileStatus;
-    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes)
-        fileStatus = std::filesystem::status(toStdFileSystemPath(path), ec);
-    else
-        fileStatus = std::filesystem::symlink_status(toStdFileSystemPath(path), ec);
-    return fileStatus.type() == std::filesystem::file_type::directory;
+    return std::filesystem::symlink_status(toStdFileSystemPath(path), ec).type() == std::filesystem::file_type::directory;
+}
+
+bool isDirectoryFollowingSymlinks(const String& path)
+{
+    std::error_code ec;
+    return std::filesystem::status(toStdFileSystemPath(path), ec).type() == std::filesystem::file_type::directory;
 }
 
 bool makeAllDirectories(const String& path)
@@ -686,6 +687,7 @@ Optional<WallTime> getFileModificationTime(const String& path)
     return toWallTime(modificationTime);
 }
 
+enum class ShouldFollowSymbolicLinks { No, Yes };
 static Optional<FileMetadata> fileMetadataPotentiallyFollowingSymlinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     if (path.isEmpty())

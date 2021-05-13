@@ -401,7 +401,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
     if (!FileSystem::fileExists(storageDirectory)) {
         if (!FileSystem::makeAllDirectories(storageDirectory))
             return;
-    } else if (!FileSystem::fileIsDirectory(storageDirectory, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+    } else if (!FileSystem::isDirectoryFollowingSymlinks(storageDirectory)) {
         auto tempDirectory = FileSystem::createTemporaryDirectory(@"MediaKeys");
         if (!tempDirectory)
             return;

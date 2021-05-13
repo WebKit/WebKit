@@ -76,7 +76,7 @@ static Vector<FileInformation> gatherFileInformation(const Vector<FileChooserFil
     ASSERT(!isMainThread());
     Vector<FileInformation> files;
     for (auto& info : paths) {
-        if (FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
+        if (FileSystem::isDirectory(info.path))
             appendDirectoryFiles(info.path, FileSystem::pathGetFileName(info.path), files);
         else
             files.append(FileInformation { info.path, { }, info.displayName });

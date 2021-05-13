@@ -338,7 +338,7 @@ static AVAssetCache *ensureAssetCacheExistsForPath(const String& path)
 
     auto fileExistsAtPath = FileSystem::fileExists(path);
 
-    if (fileExistsAtPath && !FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+    if (fileExistsAtPath && !FileSystem::isDirectoryFollowingSymlinks(path)) {
         // Non-directory file already exists at the path location; bail.
         ASSERT_NOT_REACHED();
         return nil;

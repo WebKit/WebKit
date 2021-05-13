@@ -217,7 +217,7 @@ static bool isInternalInstall()
 #if PLATFORM(IOS_FAMILY)
     static bool isInternal = MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
 #else
-    static bool isInternal = FileSystem::fileIsDirectory("/AppleInternal", FileSystem::ShouldFollowSymbolicLinks::No);
+    static bool isInternal = FileSystem::isDirectory("/AppleInternal");
 #endif
     return isInternal;
 }

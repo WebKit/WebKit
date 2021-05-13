@@ -1,5 +1,17 @@
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
+        Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
+        https://bugs.webkit.org/show_bug.cgi?id=225772
+
+        Reviewed by Darin Adler.
+
+        Update code base due to API naming change.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
         Introduce FileSystem::hardLinkCount()
         https://bugs.webkit.org/show_bug.cgi?id=225767
 

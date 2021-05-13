@@ -148,7 +148,7 @@ String File::contentTypeForFile(const String& path)
 bool File::isDirectory() const
 {
     if (!m_isDirectory)
-        m_isDirectory = FileSystem::fileIsDirectory(m_path, FileSystem::ShouldFollowSymbolicLinks::Yes);
+        m_isDirectory = FileSystem::isDirectoryFollowingSymlinks(m_path);
     return *m_isDirectory;
 }
 

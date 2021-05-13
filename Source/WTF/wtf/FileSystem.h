@@ -107,8 +107,6 @@ enum class MappedFileMode {
     Private,
 };
 
-enum class ShouldFollowSymbolicLinks { No, Yes };
-
 WTF_EXPORT_PRIVATE bool fileExists(const String&);
 WTF_EXPORT_PRIVATE bool deleteFile(const String&);
 WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
@@ -119,7 +117,8 @@ WTF_EXPORT_PRIVATE Optional<WallTime> getFileModificationTime(const String&);
 WTF_EXPORT_PRIVATE Optional<WallTime> getFileCreationTime(const String&); // Not all platforms store file creation time.
 WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadata(const String& path);
 WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
-WTF_EXPORT_PRIVATE bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
+WTF_EXPORT_PRIVATE bool isDirectory(const String&);
+WTF_EXPORT_PRIVATE bool isDirectoryFollowingSymlinks(const String&);
 WTF_EXPORT_PRIVATE String pathByAppendingComponent(const String& path, const String& component);
 WTF_EXPORT_PRIVATE String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
 WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String& path);

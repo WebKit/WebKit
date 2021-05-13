@@ -51,7 +51,7 @@ struct ListedChild {
 static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& fullPath)
 {
     ASSERT(!isMainThread());
-    if (!FileSystem::fileIsDirectory(fullPath, FileSystem::ShouldFollowSymbolicLinks::No))
+    if (!FileSystem::isDirectory(fullPath))
         return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
 
     auto childNames = FileSystem::listDirectory(fullPath);
