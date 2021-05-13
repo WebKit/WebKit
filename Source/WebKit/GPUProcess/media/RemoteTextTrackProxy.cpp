@@ -69,7 +69,6 @@ TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()
     configuration->startTimeVariance = m_trackPrivate->startTimeVariance();
 
     configuration->cueFormat = m_trackPrivate->cueFormat();
-    configuration->mode = m_trackPrivate->mode();
     configuration->isClosedCaptions = m_trackPrivate->isClosedCaptions();
     configuration->isSDH = m_trackPrivate->isSDH();
     configuration->containsOnlyForcedSubtitles = m_trackPrivate->containsOnlyForcedSubtitles();

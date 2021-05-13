@@ -42,7 +42,6 @@ struct TextTrackPrivateRemoteConfiguration {
     int trackIndex;
 
     WebCore::InbandTextTrackPrivate::CueFormat cueFormat { WebCore::InbandTextTrackPrivate::CueFormat::Generic };
-    WebCore::InbandTextTrackPrivate::Mode mode { WebCore::InbandTextTrackPrivate::Mode::Disabled };
     WebCore::InbandTextTrackPrivate::Kind kind { WebCore::InbandTextTrackPrivate::Kind::None };
 
     bool isClosedCaptions { false };
@@ -62,7 +61,6 @@ struct TextTrackPrivateRemoteConfiguration {
         encoder << startTimeVariance;
         encoder << trackIndex;
         encoder << cueFormat;
-        encoder << mode;
         encoder << kind;
         encoder << isClosedCaptions;
         encoder << isSDH;
@@ -110,11 +108,6 @@ struct TextTrackPrivateRemoteConfiguration {
         if (!cueFormat)
             return WTF::nullopt;
 
-        Optional<WebCore::InbandTextTrackPrivate::Mode> mode;
-        decoder >> mode;
-        if (!mode)
-            return WTF::nullopt;
-
         Optional<WebCore::InbandTextTrackPrivate::Kind> kind;
         decoder >> kind;
         if (!kind)
@@ -158,7 +151,6 @@ struct TextTrackPrivateRemoteConfiguration {
             WTFMove(*startTimeVariance),
             *trackIndex,
             *cueFormat,
-            *mode,
             *kind,
             *isClosedCaptions,
             *isSDH,

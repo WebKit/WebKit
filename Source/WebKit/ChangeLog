@@ -1,3 +1,38 @@
+2021-05-13  Peng Liu  <peng.liu6@apple.com>
+
+        Subtitles in Safari fail to appear after switching language
+        https://bugs.webkit.org/show_bug.cgi?id=225738
+
+        Reviewed by Jer Noble.
+
+        `TextTrackPrivateRemote::setMode()` calls `InbandTextTrackPrivate::setMode()`, but
+        it does not set the value of `TextTrackPrivateRemote::mode` properly. Therefore,
+        `TextTrackPrivateRemote::mode` will always be `Disabled`. When we switch text track
+        in the WebContent process side, we will only send the IPC message `TextTrackSetMode`
+        to `RemoteMediaPlayerProxy` in the GPU process to change the mode from `Disabled`
+        to `Showing`, but cannot change its value back to `Disabled`. When a user keeps
+        switching text track, all text tracks in the GPU process will become `Showing`,
+        and `MediaPlayerPrivateAVFoundation` cannot deal with that. As a result,
+        the WebContent process won't get the correct subtitles from the GPU process.
+        `cueFormat()` has the similar issue, it does not impact the functionality though.
+
+        Actually, `TextTrackPrivateRemote` can simply use the implementations of its
+        base class `InbandTextTrackPrivate` regarding mode and cue format.
+
+        In addition, `TextTrackPrivateRemote` does not need to get the "mode" value from
+        `RemoteTextTrackProxy` in the GPU process. So this patch removes the `mode` attribute
+        of `TextTrackPrivateRemoteConfiguration`.
+
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::configuration):
+        * GPUProcess/media/TextTrackPrivateRemoteConfiguration.h:
+        (WebKit::TextTrackPrivateRemoteConfiguration::encode const):
+        (WebKit::TextTrackPrivateRemoteConfiguration::decode):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::setMode):
+        (WebKit::TextTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h:
+
 2021-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r277262): test imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html is crashing
