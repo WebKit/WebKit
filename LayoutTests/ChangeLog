@@ -1,3 +1,13 @@
+2021-05-13  Jer Noble  <jer.noble@apple.com>
+
+        [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=222277
+        <rdar://problem/74600790>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-05-13  Robert Jenner  <jenner@apple.com>
 
         [ Catalina+ wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html (layout-test) is a flaky timeout

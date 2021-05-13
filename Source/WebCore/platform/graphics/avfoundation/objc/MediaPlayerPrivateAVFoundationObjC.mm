@@ -813,7 +813,7 @@ static bool willUseWebMFormatReaderForType(const String& type)
 #endif
 }
 
-static bool hasBrokenFragmentSupport()
+static URL conformFragmentIdentifierForURL(const URL& url)
 {
 #if PLATFORM(MAC)
     // On some versions of macOS, Photos.framework has overriden utility methods from AVFoundation that cause
@@ -822,30 +822,6 @@ static bool hasBrokenFragmentSupport()
     // Work around this broken implementation by pre-parsing the fragment and ensuring that it meets their
     // criteria. Problematic strings from the TC0051.html test include "t=3&", and this problem generally is
     // with subtrings between the '&' character not including an equal sign.
-    static bool hasBrokenFragmentSupport = false;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        @try {
-            auto selector = NSSelectorFromString(@"isURLForAssetInCollection:");
-            auto theClass = PAL::getAVAssetCollectionClass();
-            if (![theClass respondsToSelector:selector])
-                return;
-            [theClass performSelector:selector withObject:[NSURL URLWithString:@"file:///invalid-file.mp4#t=3&"]];
-        } @catch (NSException *exception) {
-            hasBrokenFragmentSupport = true;
-        }
-    });
-    return hasBrokenFragmentSupport;
-#else
-    return false;
-#endif
-}
-
-static URL conformFragmentIdentifierForURL(const URL& url)
-{
-#if PLATFORM(MAC)
-    ASSERT(hasBrokenFragmentSupport());
-
     auto hasInvalidNumberOfEqualCharacters = [](const StringView& fragmentParameter) {
         auto results = fragmentParameter.splitAllowingEmptyEntries('=');
         auto iterator = results.begin();
@@ -975,13 +951,23 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     if (willUseWebMFormatReader)
         registerFormatReaderIfNecessary();
 
-    NSURL *cocoaURL = nil;
-    if (hasBrokenFragmentSupport() && url.hasFragmentIdentifier())
-        cocoaURL = canonicalURL(conformFragmentIdentifierForURL(url));
-    else
-        cocoaURL = canonicalURL(url);
+    NSURL *cocoaURL = canonicalURL(url);
 
-    m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
+    @try {
+        m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
+    } @catch(NSException *exception) {
+        ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw an exception: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        cocoaURL = canonicalURL(conformFragmentIdentifierForURL(url));
+
+        @try {
+            m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:cocoaURL options:options.get()]);
+        } @catch(NSException *exception) {
+            ASSERT_NOT_REACHED();
+            ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:cocoaURL options:] threw a second exception, bailing: ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+            setNetworkState(MediaPlayer::NetworkState::FormatError);
+            return;
+        }
+    }
 
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];

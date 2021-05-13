@@ -1,3 +1,26 @@
+2021-05-13  Jer Noble  <jer.noble@apple.com>
+
+        [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=222277
+        <rdar://problem/74600790>
+
+        Reviewed by Eric Carlson.
+
+        In r274734, a workaround was added to detect a bug in the Photos.framework that would cause
+        an exception to be thrown if the URL provided to AVURLAsset had a malformed fragment identifier.
+        However, in an effort to reduce the runtime cost of this check, it was only done once, the first
+        time an AVURLAsset is created. This failed to account for the Photos.framework being dynamically
+        loaded and changing the behavior of AVURLAsset after the check had been performed.
+
+        Instead, fall back to a much simpler check: wrap the creation of the AVURLAsset in a @try/@catch
+        block, and if an exception was thrown, re-attempt to create the AVURLAsset with a manually
+        conformed URL.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::conformFragmentIdentifierForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::hasBrokenFragmentSupport): Deleted.
+
 2021-05-13  Alicia Boya García  <aboya@igalia.com>
 
         [WTF] Add holdLock() overload for WTF::DataMutex
