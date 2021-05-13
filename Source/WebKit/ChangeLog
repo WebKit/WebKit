@@ -1,3 +1,17 @@
+2021-05-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277258.
+        https://bugs.webkit.org/show_bug.cgi?id=225740
+
+        Caused layout test failures
+
+        Reverted changeset:
+
+        "[GTK] Use always async scrolling in accelerated compositing
+        mode"
+        https://bugs.webkit.org/show_bug.cgi?id=225512
+        https://trac.webkit.org/changeset/277258
+
 2021-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add ArgumentCoder for GTlsCertificate
