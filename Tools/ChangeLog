@@ -1,3 +1,17 @@
+2021-05-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add unit test using WKHTTPCookieStoreObserver and cookies received from HTTP
+        https://bugs.webkit.org/show_bug.cgi?id=225773
+
+        Reviewed by Chris Dumez.
+
+        We only had tests that added cookies through the API, not through the network.
+        I thought it was broken but it isn't.  Still worth adding the test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (deleteAllCookies):
+        (TEST):
+
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::directoryName() to FileSystem::parentPath()
