@@ -45,7 +45,7 @@ void UserMessage::encode(IPC::Encoder& encoder) const
         return;
     }
 
-    IPC::encode(encoder, parameters.get());
+    encoder << parameters;
 
     Vector<IPC::Attachment> attachments;
     if (fileDescriptors) {
@@ -78,7 +78,8 @@ Optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
         return result;
     }
 
-    Optional<GRefPtr<GVariant>> parameters = IPC::decode(decoder);
+    Optional<GRefPtr<GVariant>> parameters;
+    decoder >> parameters;
     if (!parameters)
         return WTF::nullopt;
     result.parameters = WTFMove(*parameters);

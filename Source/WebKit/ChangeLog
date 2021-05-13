@@ -1,3 +1,27 @@
+2021-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add ArgumentCoder for GTlsCertificate
+        https://bugs.webkit.org/show_bug.cgi?id=225509
+
+        Reviewed by Adrian Perez de Castro.
+
+        Move the GTlsCertificate serialization from CertificateInfo ArgumentCoder to its own.
+
+        * Shared/glib/ArgumentCodersGLib.cpp:
+        (IPC::ArgumentCoder<GRefPtr<GVariant>>::encode):
+        (IPC::ArgumentCoder<GRefPtr<GVariant>>::decode):
+        (IPC::ArgumentCoder<GRefPtr<GTlsCertificate>>::encode):
+        (IPC::ArgumentCoder<GRefPtr<GTlsCertificate>>::decode):
+        (IPC::encode): Deleted.
+        (IPC::decode): Deleted.
+        * Shared/glib/ArgumentCodersGLib.h:
+        * Shared/glib/UserMessage.cpp:
+        (WebKit::UserMessage::encode const):
+        (WebKit::UserMessage::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Notification.requestPermission() should return a Promise
