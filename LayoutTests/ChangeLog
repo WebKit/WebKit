@@ -1,3 +1,15 @@
+2021-05-13  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur iOS14 ] http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225668
+
+        Unreviewed test gardening.
+
+        Marking as slow to see if timeouts stop occurring.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-05-13  Jer Noble  <jer.noble@apple.com>
 
         [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing
