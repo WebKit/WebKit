@@ -1,3 +1,29 @@
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        Test append with a number instead of appendNumber.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        Use append instead of appendNumber.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpResponseDescriptionSuitableForTestResult): Use append instead
+        of appendNumber.
+        (WTR::dumpFrameScrollPosition): Ditto.
+        (WTR::InjectedBundlePage::didFinishDocumentLoadForFrame): Use makeString
+        instead of StringBuilder.
+        (WTR::InjectedBundlePage::shouldCacheResponse): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::attributesOfElement): Use append instead of appendNumber.
+        (WTR::AccessibilityUIElement::attributedStringForRange): Ditto.
+        (WTR::stringAtOffset): Ditto.
+
 2021-05-13  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         Add dbezhetskov as a commiter

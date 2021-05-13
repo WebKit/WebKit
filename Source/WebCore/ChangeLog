@@ -1,3 +1,97 @@
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::loggingString const):
+        Use append instead of appendNumber.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::hostName): Use makeString instead of StringBuilder.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::prefixTreeVertexToString):
+        Use append instead of appendNumber.
+        * contentextensions/Term.h:
+        (WebCore::ContentExtensions::Term::toString const): Ditto.
+        * css/CSSFontFeatureValue.cpp:
+        (WebCore::CSSFontFeatureValue::customCSSText const): Ditto.
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSStepsTimingFunctionValue::customCSSText const): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::downgradeReferrerToRegistrableDomain): Use
+        makeString instead of StringBuilder.
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::generateUniquePrefix): Ditto.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::dataDetectorStringForPath): Use append instead of appendNumber.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::appendServerMapMousePosition): Ditto.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createContext2d): Use makeString
+        instead of StringBuilder.
+        (WebCore::HTMLCanvasElement::createImageBuffer const): Ditto.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::toString const): Use append instead
+        of appendNumber.
+
+        * loader/SubresourceIntegrity.cpp:
+        (WebCore::integrityMismatchDescription): Use makeString instead of
+        StringBuilder.
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::rootMargin const): Use append instead
+        of appendNumber.
+
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::databaseIdentifier const): Use makeString
+        instead of StringBuilder.
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::toString const): Use append instead of appendNumber.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::animationNameForTransition): Use makeString
+        instead of StringBuilder.
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::createTileLayer): Ditto.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (printTransform): Use single append instead of a run of them.
+        (printLayer): Ditto, and use append instead of apppendNumber.
+        (PlatformCALayerWin::layerTreeAsString const): Ditto.
+
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::generateMockCounterString):
+        Use append instead of appendNumber.
+        * platform/network/ProxyServer.cpp:
+        (WebCore::appendProxyServerString): Ditto.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::nodePosition): Ditto.
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::buildStringFromPath): Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData): Use makeString instead of
+        StringBuilder.
+        (WebCore::appendOffsets): Use append instead of appendNumber.
+
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::drawRect): Use makeString instead
+        of StringBuilder.
+        (WebCore::MockPageOverlayClient::mouseEvent): Ditto.
+
+        * xml/XMLErrors.cpp:
+        (WebCore::XMLErrors::appendErrorMessage): Use append instead of
+        appendNumber.
+
 2021-05-13  Zalan Bujtas  <zalan@apple.com>
 
         [css-flexbox] Flex item construction may affect sibling flex item height computation

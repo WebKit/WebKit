@@ -45,15 +45,9 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Objec
     long sequenceID = ++lastSequenceID;
     m_commandRequests.add(sequenceID, WTFMove(responseHandler));
     StringBuilder messageBuilder;
-    messageBuilder.appendLiteral("{\"id\":");
-    messageBuilder.appendNumber(sequenceID);
-    messageBuilder.appendLiteral(",\"method\":\"Automation.");
-    messageBuilder.append(command);
-    messageBuilder.append('"');
-    if (parameters) {
-        messageBuilder.appendLiteral(",\"params\":");
-        messageBuilder.append(parameters->toJSONString());
-    }
+    messageBuilder.append("{\"id\":", sequenceID, ",\"method\":\"Automation.", command, '"');
+    if (parameters)
+        messageBuilder.append(",\"params\":", parameters->toJSONString());
     messageBuilder.append('}');
     sendMessageToBackend(messageBuilder.toString());
 

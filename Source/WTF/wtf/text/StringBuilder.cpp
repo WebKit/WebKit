@@ -393,48 +393,6 @@ void StringBuilder::append(CFStringRef string)
 
 #endif
 
-void StringBuilder::appendNumber(int number)
-{
-    numberToStringSigned<StringBuilder>(number, this);
-}
-
-void StringBuilder::appendNumber(unsigned number)
-{
-    numberToStringUnsigned<StringBuilder>(number, this);
-}
-
-void StringBuilder::appendNumber(long number)
-{
-    numberToStringSigned<StringBuilder>(number, this);
-}
-
-void StringBuilder::appendNumber(unsigned long number)
-{
-    numberToStringUnsigned<StringBuilder>(number, this);
-}
-
-void StringBuilder::appendNumber(long long number)
-{
-    numberToStringSigned<StringBuilder>(number, this);
-}
-
-void StringBuilder::appendNumber(unsigned long long number)
-{
-    numberToStringUnsigned<StringBuilder>(number, this);
-}
-
-void StringBuilder::appendNumber(float number)
-{
-    NumberToStringBuffer buffer;
-    append(numberToString(number, buffer));
-}
-
-void StringBuilder::appendNumber(double number)
-{
-    NumberToStringBuffer buffer;
-    append(numberToString(number, buffer));
-}
-
 bool StringBuilder::canShrink() const
 {
     if (hasOverflowed())

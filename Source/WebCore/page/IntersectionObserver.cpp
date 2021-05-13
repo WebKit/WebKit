@@ -152,13 +152,7 @@ String IntersectionObserver::rootMargin() const
     StringBuilder stringBuilder;
     for (auto side : allBoxSides) {
         auto& length = m_rootMargin.at(side);
-        stringBuilder.appendNumber(length.intValue());
-        if (length.isPercent())
-            stringBuilder.append('%');
-        else
-            stringBuilder.appendLiteral("px");
-        if (side != BoxSide::Left)
-            stringBuilder.append(' ');
+        stringBuilder.append(length.intValue(), length.isPercent() ? "%" : "px", side != BoxSide::Left ? " " : "");
     }
     return stringBuilder.toString();
 }

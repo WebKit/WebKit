@@ -400,13 +400,8 @@ const IDBKeyData& IndexValueStore::Iterator::primaryKey()
 String IndexValueStore::loggingString() const
 {
     StringBuilder builder;
-    for (auto& key : m_orderedKeys) {
-        builder.appendLiteral("Key: ");
-        builder.append(key.loggingString());
-        builder.appendLiteral("  Entry has ");
-        builder.appendNumber(m_records.get(key)->getCount());
-        builder.appendLiteral(" entries");
-    }
+    for (auto& key : m_orderedKeys)
+        builder.append("Key: ", key.loggingString(), "  Entry has ", m_records.get(key)->getCount(), " entries");
     return builder.toString();
 }
 #endif

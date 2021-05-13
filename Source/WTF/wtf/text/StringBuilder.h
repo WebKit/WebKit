@@ -219,15 +219,6 @@ public:
     template<unsigned characterCount>
     ALWAYS_INLINE void appendLiteral(const char (&characters)[characterCount]) { appendCharacters(characters, characterCount - 1); }
 
-    WTF_EXPORT_PRIVATE void appendNumber(int);
-    WTF_EXPORT_PRIVATE void appendNumber(unsigned);
-    WTF_EXPORT_PRIVATE void appendNumber(long);
-    WTF_EXPORT_PRIVATE void appendNumber(unsigned long);
-    WTF_EXPORT_PRIVATE void appendNumber(long long);
-    WTF_EXPORT_PRIVATE void appendNumber(unsigned long long);
-    WTF_EXPORT_PRIVATE void appendNumber(float);
-    WTF_EXPORT_PRIVATE void appendNumber(double);
-
     template<typename... StringTypes> void append(StringTypes...);
 
     String toString()

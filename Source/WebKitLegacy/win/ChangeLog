@@ -1,3 +1,14 @@
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        * WebKitStatistics.cpp:
+        (WebKitStatistics::comClassNameCounts): Use append instead of
+        appendNumber.
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Notification.requestPermission() should return a Promise

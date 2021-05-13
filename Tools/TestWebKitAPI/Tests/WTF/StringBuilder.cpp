@@ -123,7 +123,7 @@ TEST(StringBuilderTest, AppendIntMin)
 {
     constexpr int intMin = std::numeric_limits<int>::min();
     StringBuilder builder;
-    builder.appendNumber(intMin);
+    builder.append(intMin);
 
     std::stringstream stringStream;
     stringStream << intMin;

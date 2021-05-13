@@ -507,8 +507,7 @@ String ResourceLoadStatistics::toString() const
     builder.append('\n');
     appendBoolean(builder, "isVeryPrevalentResource", isVeryPrevalentResource);
     builder.append('\n');
-    builder.appendLiteral("    dataRecordsRemoved: ");
-    builder.appendNumber(dataRecordsRemoved);
+    builder.append("    dataRecordsRemoved: ", dataRecordsRemoved);
     builder.append('\n');
 
 #if ENABLE(WEB_API_STATISTICS)

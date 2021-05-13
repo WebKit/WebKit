@@ -331,7 +331,7 @@ static String dataDetectorStringForPath(NSIndexPath *path)
         return makeString([path indexAtPosition:0], '/', [path indexAtPosition:1]);
     default:
         StringBuilder builder;
-        builder.appendNumber([path indexAtPosition:0]);
+        builder.append([path indexAtPosition:0]);
         for (NSUInteger i = 1; i < length; i++)
             builder.append('/', [path indexAtPosition:i]);
         return builder.toString();

@@ -29,7 +29,7 @@
 #include "CodeBlock.h"
 #include "DebuggerPrimitives.h"
 #include "JSCellInlines.h"
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 
@@ -120,26 +120,16 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
 
 String StackFrame::toString(VM& vm) const
 {
-    StringBuilder traceBuild;
     String functionName = this->functionName(vm);
     String sourceURL = this->sourceURL();
-    traceBuild.append(functionName);
-    traceBuild.append('@');
-    if (!sourceURL.isEmpty()) {
-        traceBuild.append(sourceURL);
-        if (hasLineAndColumnInfo()) {
-            unsigned line;
-            unsigned column;
-            computeLineAndColumn(line, column);
 
-            traceBuild.append(':');
-            traceBuild.appendNumber(line);
-            traceBuild.append(':');
-            traceBuild.appendNumber(column);
-        }
-    }
-    return traceBuild.toString().impl();
+    if (sourceURL.isEmpty() || !hasLineAndColumnInfo())
+        return makeString(functionName, '@', sourceURL);
+
+    unsigned line;
+    unsigned column;
+    computeLineAndColumn(line, column);
+    return makeString(functionName, '@', sourceURL, ':', line, ':', column);
 }
 
 } // namespace JSC
-

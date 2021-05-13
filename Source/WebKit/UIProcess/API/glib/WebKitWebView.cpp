@@ -3779,14 +3779,10 @@ static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSer
         StringBuilder builder;
         if (!exceptionDetails.sourceURL.isEmpty()) {
             builder.append(exceptionDetails.sourceURL);
-            if (exceptionDetails.lineNumber > 0) {
-                builder.append(':');
-                builder.appendNumber(exceptionDetails.lineNumber);
-            }
-            if (exceptionDetails.columnNumber > 0) {
-                builder.append(':');
-                builder.appendNumber(exceptionDetails.columnNumber);
-            }
+            if (exceptionDetails.lineNumber > 0)
+                builder.append(':', exceptionDetails.lineNumber);
+            if (exceptionDetails.columnNumber > 0)
+                builder.append(':', exceptionDetails.columnNumber);
             builder.appendLiteral(": ");
         }
         builder.append(exceptionDetails.message);

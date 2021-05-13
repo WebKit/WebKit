@@ -363,13 +363,13 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     if (value.isNumber()) {
         if (value.isInt32())
-            builder.appendNumber(value.asInt32());
+            builder.append(value.asInt32());
         else {
             double number = value.asNumber();
             if (!std::isfinite(number))
                 builder.appendLiteral("null");
             else
-                builder.appendNumber(number);
+                builder.append(number);
         }
         return StringifySucceeded;
     }

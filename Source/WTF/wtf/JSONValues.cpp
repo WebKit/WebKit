@@ -614,7 +614,7 @@ void Value::writeJSON(StringBuilder& output) const
         if (!std::isfinite(m_value.number))
             output.appendLiteral("null");
         else
-            output.appendNumber(m_value.number);
+            output.append(m_value.number);
         break;
     }
     default:

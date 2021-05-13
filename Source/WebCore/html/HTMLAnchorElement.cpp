@@ -173,10 +173,7 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
 
     // FIXME: This should probably pass UseTransforms in the MapCoordinatesFlags.
     auto absolutePosition = downcast<RenderImage>(*renderer).absoluteToLocal(FloatPoint(mouseEvent.pageX(), mouseEvent.pageY()));
-    url.append('?');
-    url.appendNumber(std::lround(absolutePosition.x()));
-    url.append(',');
-    url.appendNumber(std::lround(absolutePosition.y()));
+    url.append('?', std::lround(absolutePosition.x()), ',', std::lround(absolutePosition.y()));
 }
 
 void HTMLAnchorElement::defaultEventHandler(Event& event)

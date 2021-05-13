@@ -450,16 +450,9 @@ static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef
         stringBuilder.appendLiteral("(null)");
         return;
     }
-    stringBuilder.appendLiteral("<NSURLResponse ");
-    stringBuilder.append(pathSuitableForTestResult(url.get()));
-    stringBuilder.appendLiteral(", http status code ");
-    stringBuilder.appendNumber(WKURLResponseHTTPStatusCode(response));
-
-    if (shouldDumpResponseHeaders) {
-        stringBuilder.appendLiteral(", ");
-        stringBuilder.appendNumber(InjectedBundlePage::responseHeaderCount(response));
-        stringBuilder.appendLiteral(" headers");
-    }
+    stringBuilder.append("<NSURLResponse ", pathSuitableForTestResult(url.get()), ", http status code ", WKURLResponseHTTPStatusCode(response));
+    if (shouldDumpResponseHeaders)
+        stringBuilder.append(", ", InjectedBundlePage::responseHeaderCount(response), " headers");
     stringBuilder.append('>');
 }
 
@@ -706,18 +699,9 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, StringBuilder& strin
     double y = numericWindowProperty(frame, "pageYOffset");
     if (fabs(x) <= 0.00000001 && fabs(y) <= 0.00000001)
         return;
-
-    if (shouldIncludeFrameName) {
-        auto name = adoptWK(WKBundleFrameCopyName(frame));
-        stringBuilder.appendLiteral("frame '");
-        stringBuilder.append(toWTFString(name));
-        stringBuilder.appendLiteral("' ");
-    }
-    stringBuilder.appendLiteral("scrolled to ");
-    stringBuilder.appendNumber(x);
-    stringBuilder.append(',');
-    stringBuilder.appendNumber(y);
-    stringBuilder.append('\n');
+    if (shouldIncludeFrameName)
+        stringBuilder.append("frame '", toWTFString(adoptWK(WKBundleFrameCopyName(frame))), "' ");
+    stringBuilder.append("scrolled to ", x, ',', y, '\n');
 }
 
 static void dumpDescendantFrameScrollPositions(WKBundleFrameRef frame, StringBuilder& stringBuilder)
@@ -997,15 +981,8 @@ void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundleFrameRef frame)
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
         dumpLoadEvent(frame, "didFinishDocumentLoadForFrame");
 
-    unsigned pendingFrameUnloadEvents = WKBundleFrameGetPendingUnloadCount(frame);
-    if (pendingFrameUnloadEvents) {
-        StringBuilder stringBuilder;
-        stringBuilder.append(frameToStr(frame));
-        stringBuilder.appendLiteral(" - has ");
-        stringBuilder.appendNumber(pendingFrameUnloadEvents);
-        stringBuilder.appendLiteral(" onunload handler(s)\n");
-        injectedBundle.outputText(stringBuilder.toString());
-    }
+    if (unsigned pendingFrameUnloadEvents = WKBundleFrameGetPendingUnloadCount(frame))
+        injectedBundle.outputText(makeString(frameToStr(frame), " - has ", pendingFrameUnloadEvents, " onunload handler(s)\n"));
 }
 
 void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundleFrameRef frame)
@@ -1216,10 +1193,7 @@ bool InjectedBundlePage::shouldCacheResponse(WKBundlePageRef, WKBundleFrameRef, 
     if (!injectedBundle.testRunner()->shouldDumpWillCacheResponse())
         return true;
 
-    StringBuilder stringBuilder;
-    stringBuilder.appendNumber(identifier);
-    stringBuilder.appendLiteral(" - willCacheResponse: called\n");
-    injectedBundle.outputText(stringBuilder.toString());
+    injectedBundle.outputText(makeString(identifier, " - willCacheResponse: called\n"));
 
     // The default behavior is the cache the response.
     return true;

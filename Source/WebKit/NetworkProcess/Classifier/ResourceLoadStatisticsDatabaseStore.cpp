@@ -1331,7 +1331,7 @@ static String buildList(const WTF::IteratorRange<IteratorType>& values)
     for (auto domainID : values) {
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
-        builder.appendNumber(domainID);
+        builder.append(domainID);
     }
     return builder.toString();
 }
@@ -1381,7 +1381,7 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     for (auto value : results.keys()) {
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
-        builder.appendNumber(value);
+        builder.append(value);
     }
 
     auto domainIDsOfInterest = builder.toString();
@@ -2895,8 +2895,7 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     builder.append('\n');
     appendBoolean(builder, "isVeryPrevalentResource", m_getResourceDataByDomainNameStatement->getColumnInt(IsVeryPrevalentIndex));
     builder.append('\n');
-    builder.appendLiteral("    dataRecordsRemoved: ");
-    builder.appendNumber(m_getResourceDataByDomainNameStatement->getColumnInt(DataRecordsRemovedIndex));
+    builder.append("    dataRecordsRemoved: ", m_getResourceDataByDomainNameStatement->getColumnInt(DataRecordsRemovedIndex));
     builder.append('\n');
 }
 
@@ -3410,12 +3409,7 @@ String ResourceLoadStatisticsDatabaseStore::attributionToString(WebCore::SQLiteS
     auto sourceID = statement->getColumnInt(2);
 
     StringBuilder builder;
-    builder.appendLiteral("Source site: ");
-    builder.append(sourceSiteDomain);
-    builder.appendLiteral("\nAttribute on site: ");
-    builder.append(destinationSiteDomain);
-    builder.appendLiteral("\nSource ID: ");
-    builder.appendNumber(sourceID);
+    builder.append("Source site: ", sourceSiteDomain, "\nAttribute on site: ", destinationSiteDomain, "\nSource ID: ", sourceID);
 
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
         auto attributionTriggerData = statement->getColumnInt(3);
@@ -3423,11 +3417,7 @@ String ResourceLoadStatisticsDatabaseStore::attributionToString(WebCore::SQLiteS
         auto earliestTimeToSend = statement->getColumnInt(6);
 
         if (attributionTriggerData != -1) {
-            builder.appendLiteral("\nAttribution trigger data: ");
-            builder.appendNumber(attributionTriggerData);
-            builder.appendLiteral("\nAttribution priority: ");
-            builder.appendNumber(priority);
-            builder.appendLiteral("\nAttribution earliest time to send: ");
+            builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
             if (earliestTimeToSend == -1)
                 builder.appendLiteral("Not set");
             else {
@@ -3466,13 +3456,9 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
     StringBuilder builder;
     while (unattributedScopedStatement->step() == SQLITE_ROW) {
         if (!unattributedNumber)
-            builder.appendLiteral("Unattributed Private Click Measurements:\n");
-        else
-            builder.append('\n');
-        builder.appendLiteral("WebCore::PrivateClickMeasurement ");
-        builder.appendNumber(++unattributedNumber);
-        builder.append('\n');
-        builder.append(attributionToString(unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed));
+            builder.appendLiteral("Unattributed Private Click Measurements:");
+        builder.append("\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
+            attributionToString(unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed));
     }
 
     auto attributedScopedStatement = this->scopedStatement(m_allAttributedPrivateClickMeasurementStatement, allAttributedPrivateClickMeasurementQuery, "privateClickMeasurementToString"_s);
@@ -3484,16 +3470,14 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
 
     unsigned attributedNumber = 0;
     while (attributedScopedStatement->step() == SQLITE_ROW) {
-        if (unattributedNumber)
-            builder.append('\n');
-        if (!attributedNumber)
+        if (!attributedNumber) {
+            if (unattributedNumber)
+                builder.append('\n');
             builder.appendLiteral("Attributed Private Click Measurements:\n");
-        else
+        } else
             builder.append('\n');
-        builder.appendLiteral("WebCore::PrivateClickMeasurement ");
-        builder.appendNumber(++attributedNumber + unattributedNumber);
-        builder.append('\n');
-        builder.append(attributionToString(attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
+        builder.append("WebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
+            attributionToString(attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
     }
     return builder.toString();
 }

@@ -290,18 +290,12 @@ public:
             StringBuilder& builder = m_builder;
             if (!builder.isEmpty())
                 builder.append('\n');
-            builder.append('#');
-            builder.appendNumber(visitor->index());
-            builder.append(' ');
-            builder.append(visitor->functionName());
-            builder.appendLiteral("() at ");
-            builder.append(visitor->sourceURL());
+            builder.append('#', visitor->index(), ' ', visitor->functionName(), "() at ", visitor->sourceURL());
             if (visitor->hasLineAndColumnInfo()) {
-                builder.append(':');
                 unsigned lineNumber;
                 unsigned unusedColumn;
                 visitor->computeLineAndColumn(lineNumber, unusedColumn);
-                builder.appendNumber(lineNumber);
+                builder.append(':', lineNumber);
             }
 
             if (!visitor->callee().rawPtr())

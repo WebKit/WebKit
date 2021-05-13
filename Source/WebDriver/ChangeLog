@@ -1,3 +1,16 @@
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        * SessionHost.cpp:
+        (WebDriver::SessionHost::sendCommandToBackend): Use append instead
+        of appendNumber.
+        * socket/HTTPServerSocket.cpp:
+        (WebDriver::HTTPRequestHandler::packHTTPMessage const): Ditto.
+
 2021-05-09  Darin Adler  <darin@apple.com>
 
         Remove all remaining uses of the String::toInt family of functions

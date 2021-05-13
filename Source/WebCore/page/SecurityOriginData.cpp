@@ -31,7 +31,6 @@
 #include "SecurityOrigin.h"
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -71,22 +70,15 @@ static const char separatorCharacter = '_';
 
 String SecurityOriginData::databaseIdentifier() const
 {
-    // Historically, we've used the following (somewhat non-sensical) string
+    // Historically, we've used the following (somewhat nonsensical) string
     // for the databaseIdentifier of local files. We used to compute this
     // string because of a bug in how we handled the scheme for file URLs.
-    // Now that we've fixed that bug, we still need to produce this string
-    // to avoid breaking existing persistent state.
+    // Now that we've fixed that bug, we produce this string for compatibility
+    // with existing persistent state.
     if (equalIgnoringASCIICase(protocol, "file"))
         return "file__0"_s;
-    
-    StringBuilder stringBuilder;
-    stringBuilder.append(protocol);
-    stringBuilder.append(separatorCharacter);
-    stringBuilder.append(FileSystem::encodeForFileName(host));
-    stringBuilder.append(separatorCharacter);
-    stringBuilder.appendNumber(port.valueOr(0));
-    
-    return stringBuilder.toString();
+
+    return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host), separatorCharacter, port.valueOr(0));
 }
 
 Optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)

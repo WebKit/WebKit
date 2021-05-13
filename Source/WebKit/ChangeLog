@@ -1,3 +1,30 @@
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::buildList): Use append instead of appendNumber.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::resourceToString const): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributionToString): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString): Ditto.
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::appendCurrentMemoryUsageToFile): Ditto.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptCallback): Ditto.
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::loggingString): Ditto.
+
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (PageResourceLoadClient::didReceiveResponseForResource): Use makeString instead
+        of StringBuilder.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::buildHTTPHeaders): Use append instead of appendNumber.
+
 2021-05-13  Peng Liu  <peng.liu6@apple.com>
 
         Subtitles in Safari fail to appear after switching language

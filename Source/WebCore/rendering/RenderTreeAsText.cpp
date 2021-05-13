@@ -831,17 +831,10 @@ static String nodePosition(Node* node)
                 result.appendLiteral("body");
                 break;
             }
-            if (n->isShadowRoot()) {
-                result.append('{');
-                result.append(getTagName(n));
-                result.append('}');
-            } else {
-                result.appendLiteral("child ");
-                result.appendNumber(n->computeNodeIndex());
-                result.appendLiteral(" {");
-                result.append(getTagName(n));
-                result.append('}');
-            }
+            if (n->isShadowRoot())
+                result.append('{', getTagName(n), '}');
+            else
+                result.append("child ", n->computeNodeIndex(), " {", getTagName(n), '}');
         } else
             result.appendLiteral("document");
     }

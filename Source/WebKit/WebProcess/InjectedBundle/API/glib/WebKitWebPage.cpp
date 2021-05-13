@@ -274,13 +274,8 @@ private:
 
         // Post on the console as well to be consistent with the inspector.
         if (response.httpStatusCode() >= 400) {
-            StringBuilder errorMessage;
-            errorMessage.appendLiteral("Failed to load resource: the server responded with a status of ");
-            errorMessage.appendNumber(response.httpStatusCode());
-            errorMessage.appendLiteral(" (");
-            errorMessage.append(response.httpStatusText());
-            errorMessage.append(')');
-            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, response.url().string());
+            String errorMessage = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", response.httpStatusText(), ')');
+            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, response.url().string());
         }
     }
 

@@ -34,7 +34,7 @@
 #include "WasmCallee.h"
 #include "WasmIndexOrName.h"
 #include "WebAssemblyFunction.h"
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 
@@ -338,25 +338,17 @@ String StackVisitor::Frame::sourceURL() const
 
 String StackVisitor::Frame::toString() const
 {
-    StringBuilder traceBuild;
     String functionName = this->functionName();
     String sourceURL = this->sourceURL();
-    traceBuild.append(functionName);
-    if (!sourceURL.isEmpty()) {
-        if (!functionName.isEmpty())
-            traceBuild.append('@');
-        traceBuild.append(sourceURL);
-        if (hasLineAndColumnInfo()) {
-            unsigned line = 0;
-            unsigned column = 0;
-            computeLineAndColumn(line, column);
-            traceBuild.append(':');
-            traceBuild.appendNumber(line);
-            traceBuild.append(':');
-            traceBuild.appendNumber(column);
-        }
-    }
-    return traceBuild.toString().impl();
+    const char* separator = !sourceURL.isEmpty() && !functionName.isEmpty() ? "@" : "";
+
+    if (sourceURL.isEmpty() || !hasLineAndColumnInfo())
+        return makeString(functionName, separator, sourceURL);
+
+    unsigned line = 0;
+    unsigned column = 0;
+    computeLineAndColumn(line, column);
+    return makeString(functionName, separator, sourceURL, ':', line, ':', column);
 }
 
 intptr_t StackVisitor::Frame::sourceID()

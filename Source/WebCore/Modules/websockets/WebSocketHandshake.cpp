@@ -78,13 +78,10 @@ static String resourceName(const URL& url)
 static String hostName(const URL& url, bool secure)
 {
     ASSERT(url.protocolIs("wss") == secure);
-    StringBuilder builder;
-    builder.append(url.host().convertToASCIILowercase());
-    if (url.port() && ((!secure && url.port().value() != 80) || (secure && url.port().value() != 443))) {
-        builder.append(':');
-        builder.appendNumber(url.port().value());
-    }
-    return builder.toString();
+    String host = url.host().convertToASCIILowercase();
+    if (url.port() && ((!secure && url.port().value() != 80) || (secure && url.port().value() != 443)))
+        return makeString(host, ':', url.port().value());
+    return host;
 }
 
 static const size_t maxInputSampleSize = 128;

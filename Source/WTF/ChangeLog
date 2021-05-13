@@ -1,3 +1,25 @@
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        We originally added StringBuilder::appendNumber to resolve the ambiguity
+        between UChar and uint16_t, but that problem was solved long ago and it
+        is safe to use StringBuilder::append, including the variadic form, on all
+        types of numbers and we'll get the same results we did with appendNumber.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::writeJSON const): Use append instead of appendNumber.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendNumber): Deleted.
+        * wtf/text/StringBuilder.h: Removed appendNumber.
+
+        * wtf/text/TextStream.cpp:
+        (WTF::TextStream::operator<<): Use append instead of appendNumber.
+
 2021-05-12  Mark Lam  <mark.lam@apple.com>
 
         Implement some common Baseline JIT slow paths using JIT thunks.

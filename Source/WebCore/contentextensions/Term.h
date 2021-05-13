@@ -237,11 +237,8 @@ inline String Term::toString() const
             if (m_atomData.characterSet.get(c)) {
                 if (isASCIIPrintable(c) && !isASCIISpace(c))
                     builder.append(c);
-                else {
-                    builder.append('\\');
-                    builder.append('u');
-                    builder.appendNumber(c);
-                }
+                else
+                    builder.append("\\u", c);
             }
         }
         builder.append(']');
