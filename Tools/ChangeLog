@@ -1,3 +1,15 @@
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Tweak ServiceWorkers.SuspendServiceWorkerProcessBasedOnClientProcesses to find out source of timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225770
+
+        Reviewed by Alexey Proskuryakov.
+
+        Wait for conditions with our own timeout so that the test fails with useful errors instead
+        of just a generic timeout. This just help us find out where in the test things go wrong.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2021-05-13  Alex Christensen  <achristensen@webkit.org>
 
         Add unit test using WKHTTPCookieStoreObserver and cookies received from HTTP

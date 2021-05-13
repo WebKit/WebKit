@@ -1441,13 +1441,15 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     done = false;
 }
 
-void waitUntilServiceWorkerProcessCount(WKProcessPool *processPool, unsigned processCount)
+static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
 {
+    unsigned timeout = 0;
     do {
-        if (processPool._serviceWorkerProcessCount == processCount)
-            return;
-        TestWebKitAPI::Util::spinRunLoop(1);
-    } while (true);
+        if (f())
+            return true;
+        TestWebKitAPI::Util::sleep(0.1);
+    } while (++timeout < 100);
+    return false;
 }
 
 TEST(ServiceWorkers, ProcessPerSite)
@@ -1523,7 +1525,7 @@ TEST(ServiceWorkers, ProcessPerSite)
     NSURLRequest *aboutBlankRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
     [webView4 loadRequest:aboutBlankRequest];
 
-    waitUntilServiceWorkerProcessCount(processPool, 1);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
     EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
     [webView2 loadRequest:aboutBlankRequest];
@@ -1532,7 +1534,7 @@ TEST(ServiceWorkers, ProcessPerSite)
 
     [webView1 loadRequest:aboutBlankRequest];
     [webView3 loadRequest:aboutBlankRequest];
-    waitUntilServiceWorkerProcessCount(processPool, 0);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![processPool _serviceWorkerProcessCount]; }));
     EXPECT_EQ(0U, processPool._serviceWorkerProcessCount);
 }
 
@@ -1570,7 +1572,7 @@ TEST(ServiceWorkers, ParallelProcessLaunch)
     [webView1 loadRequest:server1.request()];
     [webView2 loadRequest:server2.requestWithLocalhost()];
 
-    waitUntilServiceWorkerProcessCount(processPool, 2);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 2; }));
 }
 
 static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, bool loadAboutBlankBeforePage)
@@ -1613,7 +1615,7 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, b
 
     [webView loadRequest:server.request()];
 
-    waitUntilServiceWorkerProcessCount(processPool, 1);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
     return webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed;
 }
 
@@ -1649,24 +1651,6 @@ TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughInProcessServiceWorker
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, firstLoadAboutBlank));
 }
 
-void waitUntilServiceWorkerProcessForegroundActivityState(WKWebView *page, bool shouldHaveActivity)
-{
-    do {
-        if (page._hasServiceWorkerForegroundActivityForTesting == shouldHaveActivity)
-            return;
-        TestWebKitAPI::Util::spinRunLoop(1);
-    } while (true);
-}
-
-void waitUntilServiceWorkerProcessBackgroundActivityState(WKWebView *page, bool shouldHaveActivity)
-{
-    do {
-        if (page._hasServiceWorkerBackgroundActivityForTesting == shouldHaveActivity)
-            return;
-        TestWebKitAPI::Util::spinRunLoop(1);
-    } while (true);
-}
-
 enum class UseSeparateServiceWorkerProcess : bool { No, Yes };
 void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess useSeparateServiceWorkerProcess)
 {
@@ -1696,43 +1680,43 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
 
     [webView loadRequest:server.request()];
 
-    waitUntilServiceWorkerProcessCount(processPool, 1);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 loadRequest:server.request()];
 
     auto webViewToUpdate = useSeparateServiceWorkerProcess == UseSeparateServiceWorkerProcess::Yes ? webView : webView2;
     [webViewToUpdate _setAssertionTypeForTesting: 1];
-    waitUntilServiceWorkerProcessForegroundActivityState(webViewToUpdate.get(), false);
-    waitUntilServiceWorkerProcessBackgroundActivityState(webViewToUpdate.get(), true);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     [webViewToUpdate _setAssertionTypeForTesting: 3];
-    waitUntilServiceWorkerProcessForegroundActivityState(webViewToUpdate.get(), true);
-    waitUntilServiceWorkerProcessBackgroundActivityState(webViewToUpdate.get(), false);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     [webViewToUpdate _setAssertionTypeForTesting: 0];
-    waitUntilServiceWorkerProcessBackgroundActivityState(webViewToUpdate.get(), false);
-    waitUntilServiceWorkerProcessForegroundActivityState(webViewToUpdate.get(), false);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerForegroundActivityForTesting]; }));
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![webViewToUpdate _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     [webView _close];
     webView = nullptr;
 
     // The service worker process should take activity based on webView2 process.
     [webView2 _setAssertionTypeForTesting: 1];
-    while (webView2.get()._hasServiceWorkerForegroundActivityForTesting || !webView2.get()._hasServiceWorkerBackgroundActivityForTesting) {
-        [webView2 _setAssertionTypeForTesting: 1];
-        TestWebKitAPI::Util::spinRunLoop(1);
-    }
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        [webView2 _setAssertionTypeForTesting:1];
+        return ![webView2 _hasServiceWorkerForegroundActivityForTesting] && [webView2 _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
-    while (!webView2.get()._hasServiceWorkerForegroundActivityForTesting || webView2.get()._hasServiceWorkerBackgroundActivityForTesting) {
-        [webView2 _setAssertionTypeForTesting: 3];
-        TestWebKitAPI::Util::spinRunLoop(1);
-    }
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        [webView2 _setAssertionTypeForTesting:3];
+        return [webView2 _hasServiceWorkerForegroundActivityForTesting] && ![webView2 _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 
-    while (webView2.get()._hasServiceWorkerForegroundActivityForTesting || webView2.get()._hasServiceWorkerBackgroundActivityForTesting) {
-        [webView2 _setAssertionTypeForTesting: 0];
-        TestWebKitAPI::Util::spinRunLoop(1);
-    }
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        [webView2 _setAssertionTypeForTesting:0];
+        return ![webView2 _hasServiceWorkerForegroundActivityForTesting] && ![webView2 _hasServiceWorkerBackgroundActivityForTesting];
+    }));
 }
 
 TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithSeparateServiceWorkerProcess)
