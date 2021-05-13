@@ -37,7 +37,7 @@ using namespace WebCore;
 
 WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(IsHoldingLockedFilesHandler&& isHoldingLockedFilesHandler)
     : m_isHoldingLockedFilesHandler(WTFMove(isHoldingLockedFilesHandler))
-    , m_hysteresis([this](PAL::HysteresisState state) { setIsHoldingLockedFiles(state == PAL::HysteresisState::Started); })
+    , m_hysteresis([this](PAL::HysteresisState state) { setIsHoldingLockedFiles(state == PAL::HysteresisState::Started); }, 1_s)
 {
     ASSERT(RunLoop::isMain());
     SQLiteDatabaseTracker::setClient(this);

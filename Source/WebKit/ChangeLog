@@ -1,5 +1,19 @@
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
+        Process suspension may be delayed by up to 5 seconds after there is no longer any database activity
+        https://bugs.webkit.org/show_bug.cgi?id=225774
+
+        Reviewed by Geoffrey Garen.
+
+        Use a 1 second HysteresisActivity in WebSQLiteDatabaseTracker instead of a 5 seconds one.
+        I frequently see our processes' suspension getting delayed by 5 seconds when homing out of
+        MobileSafari due to database activity. This change should help with that.
+
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
         Introduce FileSystem::hardLinkCount()
         https://bugs.webkit.org/show_bug.cgi?id=225767
 
