@@ -61,10 +61,13 @@ static void webkitTextSinkHandleSample(WebKitTextSink* self, GRefPtr<GstSample>&
     }
 
     if (priv->streamId) {
-        // As the mediaPlayerPrivate WeakPtr is constructed from the main thread, we have to use it
-        // from the main thread as well.
-        callOnMainThread([priv, sample = WTFMove(sample)] {
-            priv->mediaPlayerPrivate->handleTextSample(sample.get(), priv->streamId);
+        // Player private methods that interact with WebCore must run from the main thread. Things can be destroyed before that
+        // code runs, including the text sink and priv, so pass everything in a safe way.
+        callOnMainThread([mediaPlayerPrivate = WeakPtr<MediaPlayerPrivateGStreamer>(priv->mediaPlayerPrivate),
+            streamId = priv->streamId, sample = WTFMove(sample)] {
+            if (!mediaPlayerPrivate)
+                return;
+            mediaPlayerPrivate->handleTextSample(sample.get(), streamId);
         });
         return;
     }

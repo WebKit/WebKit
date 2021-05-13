@@ -1,3 +1,20 @@
+2021-05-13  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] media/track/in-band/track-in-band-srt-mkv-kind.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=225697
+
+        This is a tentative fix for the flaky crash (I can't reproduce it locally after 10000
+        repetitions). It makes sure that mediaPlayerPrivate and any parameter passed to
+        handleTextSample() can either survive or detected to be invalid when the lambda is ran in
+        the main thread.
+
+        Reviewed by Alicia Boya Garcia.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/TextSinkGStreamer.cpp:
+        (webkitTextSinkHandleSample): Protect mediaPlayerPrivate and streadId and check if the mediaPlayerPrivate WeakRef is still alive.
+
 2021-05-12  Frederic Wang  <fwang@igalia.com>
 
         RELEASE_ASSERT(m_selection->isNone()) fails in Document::removedLastRef
