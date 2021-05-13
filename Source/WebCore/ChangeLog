@@ -1,3 +1,24 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: actualVTablePointer == expectedVTablePointer in toJSNewlyCreated(JSC::JSGlobalObject *, WebCore::JSDOMGlobalObject *, Ref<WebCore::AudioNode> &&)
+        https://bugs.webkit.org/show_bug.cgi?id=225719
+        <rdar://77828031>
+
+        Reviewed by Geoffrey Garen.
+
+        AudioNode has (a lot of) subclasses that are exposed to JS (for which we call toJS() for).
+        As a result, AudioNode needs a custom toJS() implementation which returns the correct subclass
+        wrapper, instead of a generic JSAudioNode.
+
+        Test: webaudio/event-relatedTarget-audionode.html
+
+        * Modules/webaudio/AudioNode.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioNodeCustom.cpp: Added.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+
 2021-05-12  Ziran Sun  <zsun@igalia.com>
 
         Wrong position for orthogonal positioned element with writing-mode: vertical-rl
