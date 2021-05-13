@@ -363,7 +363,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
             return false;
         }
 
-        if (!m_document || !m_document->frame()) {
+        if (!m_document) {
             m_selection = newSelection;
             updateAssociatedLiveRange();
             return false;
@@ -371,7 +371,8 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
         bool selectionEndpointsBelongToMultipleDocuments = newSelection.base().document() && !newSelection.document();
         bool selectionIsInAnotherDocument = newSelection.document() && newSelection.document() != m_document.get();
-        if (selectionEndpointsBelongToMultipleDocuments || selectionIsInAnotherDocument) {
+        bool selectionIsInDetachedDocument = newSelection.document() && !newSelection.document()->frame();
+        if (selectionEndpointsBelongToMultipleDocuments || selectionIsInAnotherDocument || selectionIsInDetachedDocument) {
             clear();
             return false;
         }

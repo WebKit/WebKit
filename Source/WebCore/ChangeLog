@@ -1,3 +1,22 @@
+2021-05-12  Frederic Wang  <fwang@igalia.com>
+
+        RELEASE_ASSERT(m_selection->isNone()) fails in Document::removedLastRef
+        https://bugs.webkit.org/show_bug.cgi?id=225434
+
+        Reviewed by Ryosuke Niwa.
+
+        Document::removedLastRef asserts that the document's selection is not set. However, setting
+        that selection is possible in FrameSelection::setSelectionWithoutUpdatingAppearance when the
+        document has not been destroyed yet but is already detached from its frame. This patch
+        instead clears the selection in that case.
+
+        No new tests.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance): Clears the selection when
+        newSelection is in a detached document. Given the other conditions, this is actually
+        checking equivalent to !m_document->frame().
+
 2021-05-12  Peng Liu  <peng.liu6@apple.com>
 
         [iPad] SourceBufferPrivateAVFObjC should not report an error to the web page when the video playback is interrupted
