@@ -799,6 +799,10 @@ static const char* nameForBackingStoreType(RemoteLayerBackingStore::Type type)
         return "IOSurface";
     case RemoteLayerBackingStore::Type::Bitmap:
         return "Bitmap";
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    case RemoteLayerBackingStore::Type::CGDisplayList:
+        return "CGDisplayList";
+#endif
     }
     return nullptr;
 }

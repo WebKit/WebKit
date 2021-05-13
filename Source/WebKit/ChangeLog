@@ -1,3 +1,14 @@
+2021-05-13  Sam Weinig  <weinig@apple.com>
+
+        CGDisplayList debug configuration fails to build
+        https://bugs.webkit.org/show_bug.cgi?id=225729
+
+        Reviewed by Darin Adler.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::nameForBackingStoreType):
+        Add missing case for RemoteLayerBackingStore::Type::CGDisplayList.
+
 2021-05-13  Darin Adler  <darin@apple.com>
 
         Remove StringBuilder::appendNumber
