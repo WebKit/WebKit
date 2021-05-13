@@ -1,3 +1,43 @@
+2021-05-13  Martin Robinson  <mrobinson@webkit.org>
+
+        Import new and updated css-scroll-snap WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=225653
+
+        Reviewed by Sergio Villar Senin.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-scroll-snap/input/keyboard-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/input/keyboard.html:
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps.html:
+        * web-platform-tests/css/css-scroll-snap/scroll-margin-visibility-check-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-margin-visibility-check.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-padding-and-margin-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-padding-and-margin.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-001-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-001.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-002-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-003-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-003.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/w3c-import.log:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-horizontal-tb.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-rl.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-to-focused-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-to-focused.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/w3c-import.log:
+        * web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end.html: Added.
+        * web-platform-tests/css/css-scroll-snap/support/common.js:
+        (async keyPress):
+        * web-platform-tests/css/css-scroll-snap/w3c-import.log:
+
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
         Notification.requestPermission() should return a Promise
