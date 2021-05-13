@@ -822,7 +822,6 @@
 		31A2EC49148997C200810D71 /* WebNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC42148997BE00810D71 /* WebNotification.h */; };
 		31A2EC4B148997C200810D71 /* WebNotificationManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC44148997BF00810D71 /* WebNotificationManagerProxy.h */; };
 		31A2EC4E148997C200810D71 /* WebNotificationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC47148997C100810D71 /* WebNotificationProvider.h */; };
-		31A2EC521489981900810D71 /* NotificationPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC511489981500810D71 /* NotificationPermissionRequestManagerProxy.h */; };
 		31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC531489982500810D71 /* NotificationPermissionRequest.h */; };
 		31A2EC74148D59CA00810D71 /* WKNotificationPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A2EC72148D59BB00810D71 /* WKNotificationPermissionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31A505FA1680025500A930EB /* WebContextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A505F81680025500A930EB /* WebContextClient.h */; };
@@ -3576,8 +3575,6 @@
 		31A2EC44148997BF00810D71 /* WebNotificationManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationManagerProxy.h; sourceTree = "<group>"; };
 		31A2EC46148997C000810D71 /* WebNotificationProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationProvider.cpp; sourceTree = "<group>"; };
 		31A2EC47148997C100810D71 /* WebNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNotificationProvider.h; sourceTree = "<group>"; };
-		31A2EC4F1489980500810D71 /* NotificationPermissionRequestManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationPermissionRequestManagerProxy.cpp; sourceTree = "<group>"; };
-		31A2EC511489981500810D71 /* NotificationPermissionRequestManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationPermissionRequestManagerProxy.h; sourceTree = "<group>"; };
 		31A2EC531489982500810D71 /* NotificationPermissionRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationPermissionRequest.h; sourceTree = "<group>"; };
 		31A2EC72148D59BB00810D71 /* WKNotificationPermissionRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNotificationPermissionRequest.h; sourceTree = "<group>"; };
 		31A2EC75148D65BB00810D71 /* WKNotificationPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNotificationPermissionRequest.cpp; sourceTree = "<group>"; };
@@ -7837,8 +7834,6 @@
 			isa = PBXGroup;
 			children = (
 				31A2EC531489982500810D71 /* NotificationPermissionRequest.h */,
-				31A2EC4F1489980500810D71 /* NotificationPermissionRequestManagerProxy.cpp */,
-				31A2EC511489981500810D71 /* NotificationPermissionRequestManagerProxy.h */,
 				31A2EC41148997BE00810D71 /* WebNotification.cpp */,
 				31A2EC42148997BE00810D71 /* WebNotification.h */,
 				31A2EC43148997BE00810D71 /* WebNotificationManagerProxy.cpp */,
@@ -12110,7 +12105,6 @@
 				570DAAAE23026F5C00E8FC04 /* NfcService.h in Headers */,
 				31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */,
 				3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */,
-				31A2EC521489981900810D71 /* NotificationPermissionRequestManagerProxy.h in Headers */,
 				1A2D848B127F6A49001EB962 /* NPIdentifierData.h in Headers */,
 				1AE4976811FF658E0048B464 /* NPJSObject.h in Headers */,
 				1A2D82A5127F4EAB001EB962 /* NPObjectMessageReceiver.h in Headers */,

@@ -42,7 +42,6 @@
 #include "MediaKeySystemPermissionRequestManagerProxy.h"
 #include "MediaPlaybackState.h"
 #include "MessageSender.h"
-#include "NotificationPermissionRequestManagerProxy.h"
 #include "PDFPluginIdentifier.h"
 #include "PageLoadState.h"
 #include "PasteboardAccessIntent.h"
@@ -2129,7 +2128,7 @@ private:
 
     RefPtr<API::Navigation> launchProcessForReload();
 
-    void requestNotificationPermission(uint64_t notificationID, const String& originString);
+    void requestNotificationPermission(const String& originString, CompletionHandler<void(bool allowed)>&&);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
     void cancelNotification(uint64_t notificationID);
     void clearNotifications(const Vector<uint64_t>& notificationIDs);
@@ -2600,7 +2599,6 @@ private:
 
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
     GeolocationPermissionRequestManagerProxy m_geolocationPermissionRequestManager;
-    NotificationPermissionRequestManagerProxy m_notificationPermissionRequestManager;
 
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;

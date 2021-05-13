@@ -43,14 +43,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if ENABLE(NOTIFICATIONS)
-static uint64_t generateRequestID()
-{
-    static uint64_t uniqueRequestID = 1;
-    return uniqueRequestID++;
-}
-#endif
-
 Ref<NotificationPermissionRequestManager> NotificationPermissionRequestManager::create(WebPage* page)
 {
     return adoptRef(*new NotificationPermissionRequestManager(page));
@@ -82,11 +74,15 @@ void NotificationPermissionRequestManager::startRequest(const SecurityOriginData
     if (!addResult.isNewEntry)
         return;
 
-    uint64_t requestID = generateRequestID();
-    m_idToOriginMap.set(requestID, securityOrigin);
+    m_page->sendWithAsyncReply(Messages::WebPageProxy::RequestNotificationPermission(securityOrigin.toString()), [this, protectedThis = makeRef(*this), callback = WTFMove(callback), securityOrigin](bool allowed) mutable {
+        WebProcess::singleton().supplement<WebNotificationManager>()->didUpdateNotificationDecision(securityOrigin.toString(), allowed);
 
-    // FIXME: This should use sendWithAsyncReply().
-    m_page->send(Messages::WebPageProxy::RequestNotificationPermission(requestID, securityOrigin.toString()));
+        auto callbacks = m_requestsPerOrigin.take(securityOrigin);
+        for (auto& callback : callbacks) {
+            if (callback)
+                callback->handleEvent(allowed ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied);
+        }
+    });
 }
 #endif
 
@@ -118,29 +114,6 @@ void NotificationPermissionRequestManager::removeAllPermissionsForTesting()
 #if ENABLE(NOTIFICATIONS)
     WebProcess::singleton().supplement<WebNotificationManager>()->removeAllPermissionsForTesting();
 #endif
-}
-
-void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision(uint64_t requestID, bool allowed)
-{
-#if ENABLE(NOTIFICATIONS)
-    if (!isRequestIDValid(requestID))
-        return;
-
-    auto origin = m_idToOriginMap.take(requestID);
-    if (origin.isEmpty())
-        return;
-
-    WebProcess::singleton().supplement<WebNotificationManager>()->didUpdateNotificationDecision(origin.toString(), allowed);
-
-    auto callbacks = m_requestsPerOrigin.take(origin);
-    for (auto& callback : callbacks) {
-        if (callback)
-            callback->handleEvent(allowed ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied);
-    }
-#else
-    UNUSED_PARAM(requestID);
-    UNUSED_PARAM(allowed);
-#endif    
 }
 
 } // namespace WebKit

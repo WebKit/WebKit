@@ -26,37 +26,35 @@
 #pragma once
 
 #include "APIObject.h"
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
-class NotificationPermissionRequestManagerProxy;
-
 class NotificationPermissionRequest : public API::ObjectImpl<API::Object::Type::NotificationPermissionRequest> {
 public:
-    static Ref<NotificationPermissionRequest> create(Function<void(bool)>&& completionHandler)
+    static Ref<NotificationPermissionRequest> create(CompletionHandler<void(bool)>&& completionHandler)
     {
         return adoptRef(*new NotificationPermissionRequest(WTFMove(completionHandler)));
     }
-    
-    void allow()
-    {
-        if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
-            completionHandler(true);
-    }
 
-    void deny()
+    ~NotificationPermissionRequest()
     {
-        if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
-            completionHandler(false);
+        didReceiveDecision(false);
+    }
+    
+    void didReceiveDecision(bool allowed)
+    {
+        if (m_completionHandler)
+            m_completionHandler(allowed);
     }
 
 private:
-    NotificationPermissionRequest(Function<void(bool)>&& completionHandler)
+    explicit NotificationPermissionRequest(CompletionHandler<void(bool)>&& completionHandler)
         : m_completionHandler(WTFMove(completionHandler))
-    { }
+    {
+    }
     
-    Function<void(bool)> m_completionHandler;
+    CompletionHandler<void(bool)> m_completionHandler;
 };
 
 } // namespace WebKit

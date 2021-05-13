@@ -38,10 +38,10 @@ WKTypeID WKNotificationPermissionRequestGetTypeID()
 
 void WKNotificationPermissionRequestAllow(WKNotificationPermissionRequestRef notificationPermissionRequest)
 {
-    return toImpl(notificationPermissionRequest)->allow();
+    return toImpl(notificationPermissionRequest)->didReceiveDecision(true);
 }
 
 void WKNotificationPermissionRequestDeny(WKNotificationPermissionRequestRef notificationPermissionRequest)
 {
-    return toImpl(notificationPermissionRequest)->deny();
+    return toImpl(notificationPermissionRequest)->didReceiveDecision(false);
 }

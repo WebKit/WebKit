@@ -57,14 +57,11 @@ public:
     void setPermissionLevelForTesting(const String& originString, bool allowed);
     void removeAllPermissionsForTesting();
     
-    void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
-    
 private:
     NotificationPermissionRequestManager(WebPage*);
 
 #if ENABLE(NOTIFICATIONS)
     HashMap<WebCore::SecurityOriginData, Vector<RefPtr<WebCore::NotificationPermissionCallback>>> m_requestsPerOrigin;
-    HashMap<uint64_t, WebCore::SecurityOriginData> m_idToOriginMap;
     WebPage* m_page;
 #endif
 };

@@ -1,3 +1,52 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Simplify / Modernize Notification permission implementation
+        https://bugs.webkit.org/show_bug.cgi?id=225711
+
+        Reviewed by Alex Christensen.
+
+        Simplify / Modernize Notification permission implementation. The main change was
+        adopting sendWithAsyncReply() for the IPC instead of using 2 separate IPC messages
+        for the request and the decision. As a result, we don't have to deal with request
+        identifiers.
+
+        No new tests, no behavior change and covered by existing API tests.
+
+        * Sources.txt:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::decidePolicyForNotificationPermissionRequest):
+        * UIProcess/API/C/WKNotificationPermissionRequest.cpp:
+        (WKNotificationPermissionRequestAllow):
+        (WKNotificationPermissionRequestDeny):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/glib/WebKitNotificationPermissionRequest.cpp:
+        (webkitNotificationPermissionRequestAllow):
+        (webkitNotificationPermissionRequestDeny):
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest):
+        * UIProcess/Notifications/NotificationPermissionRequest.h:
+        (WebKit::NotificationPermissionRequest::create):
+        (WebKit::NotificationPermissionRequest::~NotificationPermissionRequest):
+        (WebKit::NotificationPermissionRequest::didReceiveDecision):
+        (WebKit::NotificationPermissionRequest::NotificationPermissionRequest):
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp: Removed.
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::requestNotificationPermission):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-05-12  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] Implement XRDeviceProxy::submitFrame
