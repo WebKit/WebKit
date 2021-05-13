@@ -1,3 +1,23 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        Notification.requestPermission() should return a Promise as per the specification:
+        - https://notifications.spec.whatwg.org/#notification
+
+        Both Firefox and Chrome already support this.
+
+        Test: http/tests/notifications/request-with-promise.html
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::requestPermission):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationClient.h:
+
 2021-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Some webgl/2.0.0/conformance/textures/image_bitmap_from_image_data tests are failing after r277369 if !USE(ACCELERATE)

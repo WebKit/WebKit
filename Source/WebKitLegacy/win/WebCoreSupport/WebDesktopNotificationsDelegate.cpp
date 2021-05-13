@@ -177,8 +177,9 @@ void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin* origin, 
         notificationDelegate()->requestNotificationPermission(org);
 }
 
-void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin*, RefPtr<NotificationPermissionCallback>&&)
+void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin&, PermissionHandler&& permissionHandler)
 {
+    permissionHandler(Permission::Denied);
 }
 
 NotificationClient::Permission WebDesktopNotificationsDelegate::checkPermission(const URL& url)

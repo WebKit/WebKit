@@ -31,7 +31,6 @@
 #include <WebCore/NotificationClient.h>
 
 namespace WebCore {
-class NotificationPermissionCallback;
 class ScriptExecutionContext;
 } // namespace WebCore
 
@@ -51,7 +50,7 @@ private:
     void clearNotifications(WebCore::ScriptExecutionContext*) override;
     void notificationObjectDestroyed(WebCore::Notification*) override;
     void notificationControllerDestroyed() override;
-    void requestPermission(WebCore::ScriptExecutionContext*, RefPtr<WebCore::NotificationPermissionCallback>&&) override;
+    void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) override;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
     
     WebPage* m_page;

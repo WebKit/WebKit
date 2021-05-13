@@ -46,12 +46,16 @@ class WebPage;
 class NotificationPermissionRequestManager : public RefCounted<NotificationPermissionRequestManager> {
 public:
     static Ref<NotificationPermissionRequestManager> create(WebPage*);
+    ~NotificationPermissionRequestManager();
+
+    using Permission = WebCore::NotificationClient::Permission;
+    using PermissionHandler = WebCore::NotificationClient::PermissionHandler;
 
 #if ENABLE(NOTIFICATIONS)
-    void startRequest(const WebCore::SecurityOriginData&, RefPtr<WebCore::NotificationPermissionCallback>&&);
+    void startRequest(const WebCore::SecurityOriginData&, PermissionHandler&&);
 #endif
     
-    WebCore::NotificationClient::Permission permissionLevel(const WebCore::SecurityOriginData&);
+    Permission permissionLevel(const WebCore::SecurityOriginData&);
 
     // For testing purposes only.
     void setPermissionLevelForTesting(const String& originString, bool allowed);
@@ -61,7 +65,10 @@ private:
     NotificationPermissionRequestManager(WebPage*);
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<WebCore::SecurityOriginData, Vector<RefPtr<WebCore::NotificationPermissionCallback>>> m_requestsPerOrigin;
+    using PermissionHandlers = Vector<PermissionHandler>;
+    static void callPermissionHandlersWith(PermissionHandlers&, Permission);
+
+    HashMap<WebCore::SecurityOriginData, PermissionHandlers> m_requestsPerOrigin;
     WebPage* m_page;
 #endif
 };

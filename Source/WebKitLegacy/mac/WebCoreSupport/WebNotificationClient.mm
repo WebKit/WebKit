@@ -33,18 +33,18 @@
 #import "WebSecurityOriginInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/NotificationPermissionCallback.h>
 #import <WebCore/ScriptExecutionContext.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
 
 @interface WebNotificationPolicyListener : NSObject <WebAllowDenyPolicyListener>
 {
-    RefPtr<NotificationPermissionCallback> _callback;
+    NotificationClient::PermissionHandler _permissionHandler;
 }
-- (id)initWithCallback:(RefPtr<NotificationPermissionCallback>&&)callback;
+- (id)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler;
 @end
 
 static uint64_t generateNotificationID()
@@ -122,7 +122,7 @@ void WebNotificationClient::notificationControllerDestroyed()
     delete this;
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, WebNotificationPolicyListener *listener)
+void WebNotificationClient::requestPermission(ScriptExecutionContext& context, WebNotificationPolicyListener *listener)
 {
     SEL selector = @selector(webView:decidePolicyForNotificationRequestFromOrigin:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector])
@@ -130,15 +130,15 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, W
 
     m_everRequestedPermission = true;
 
-    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()]);
+    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context.securityOrigin()]);
     
     CallUIDelegate(m_webView, selector, webOrigin.get(), listener);
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
+void WebNotificationClient::requestPermission(ScriptExecutionContext& context, PermissionHandler&& permissionHandler)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    auto listener = adoptNS([[WebNotificationPolicyListener alloc] initWithCallback:WTFMove(callback)]);
+    auto listener = adoptNS([[WebNotificationPolicyListener alloc] initWithPermissionHandler:WTFMove(permissionHandler)]);
     requestPermission(context, listener.get());
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -170,25 +170,25 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
 
 @implementation WebNotificationPolicyListener
 
-- (id)initWithCallback:(RefPtr<NotificationPermissionCallback>&&)callback
+- (id)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler
 {
     if (!(self = [super init]))
         return nil;
 
-    _callback = WTFMove(callback);
+    _permissionHandler = WTFMove(permissionHandler);
     return self;
 }
 
 - (void)allow
 {
-    if (_callback)
-        _callback->handleEvent(NotificationClient::Permission::Granted);
+    if (_permissionHandler)
+        _permissionHandler(NotificationClient::Permission::Granted);
 }
 
 - (void)deny
 {
-    if (_callback)
-        _callback->handleEvent(NotificationClient::Permission::Denied);
+    if (_permissionHandler)
+        _permissionHandler(NotificationClient::Permission::Denied);
 }
 
 #if PLATFORM(IOS_FAMILY)

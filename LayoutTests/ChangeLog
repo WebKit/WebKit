@@ -1,3 +1,18 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        * http/tests/notifications/notification-in-non-secure-context-expected.txt:
+        Rebaseline test now that we log an error message in the JS console when trying to call
+        Notification.requestPermission() in a non-secure context.
+
+        * http/tests/notifications/request-with-promise-expected.txt: Added.
+        * http/tests/notifications/request-with-promise.html: Added.
+        Add layout test coverage.
+
 2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] http/tests/security/contentSecurityPolicy/report-only-from-header.py is a flaky text failure

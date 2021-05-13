@@ -1,5 +1,19 @@
 2021-05-12  Chris Dumez  <cdumez@apple.com>
 
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        Update code now that WebCore passes a CompletionHandler instead of a
+        NotificationPermissionCallback.
+
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        (WebDesktopNotificationsDelegate::requestPermission):
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
         Queue notification permission requests for the same origin on WebKit side
         https://bugs.webkit.org/show_bug.cgi?id=225701
         <rdar://76804977>

@@ -71,15 +71,12 @@ void WebNotificationClient::notificationControllerDestroyed()
     delete this;
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
+void WebNotificationClient::requestPermission(ScriptExecutionContext& context, PermissionHandler&& permissionHandler)
 {
-    auto* securityOrigin = context->securityOrigin();
-    if (!securityOrigin) {
-        if (callback)
-            callback->handleEvent(NotificationClient::Permission::Denied);
-        return;
-    }
-    m_page->notificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(callback));
+    auto* securityOrigin = context.securityOrigin();
+    if (!securityOrigin)
+        return permissionHandler(NotificationClient::Permission::Denied);
+    m_page->notificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(permissionHandler));
 }
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)

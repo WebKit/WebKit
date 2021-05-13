@@ -1,3 +1,16 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        Drop manual test that should not have been imported from WPT. The test happened to be using Notification.requestPermission()
+        internally.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https.html: Removed.
+
 2021-05-12  Ziran Sun  <zsun@igalia.com>
 
         Wrong position for orthogonal positioned element with writing-mode: vertical-rl

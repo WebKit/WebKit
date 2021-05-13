@@ -38,11 +38,13 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "NotificationClient.h"
 #include "NotificationController.h"
 #include "NotificationPermissionCallback.h"
 #include "WindowEventLoop.h"
 #include "WindowFocusAllowedIndicator.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -184,22 +186,26 @@ auto Notification::permission(Document& document) -> Permission
     return NotificationController::from(document.page())->client().checkPermission(&document);
 }
 
-void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback)
+void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback, Ref<DeferredPromise>&& promise)
 {
+    auto resolvePromiseAndCallback = [document = makeRef(document), callback = WTFMove(callback), promise = WTFMove(promise)](Permission permission) mutable {
+        document->eventLoop().queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback), promise = WTFMove(promise), permission]() mutable {
+            if (callback)
+                callback->handleEvent(permission);
+            promise->resolve<IDLEnumeration<NotificationPermission>>(permission);
+        });
+    };
+
     auto* page = document.page();
     if (!page)
-        return;
+        return resolvePromiseAndCallback(Permission::Denied);
 
     if (!document.isSecureContext()) {
-        if (callback) {
-            document.eventLoop().queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback)]() mutable {
-                callback->handleEvent(Permission::Denied);
-            });
-        }
-        return;
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a secure context."_s);
+        return resolvePromiseAndCallback(Permission::Denied);
     }
 
-    NotificationController::from(page)->client().requestPermission(&document, WTFMove(callback));
+    NotificationController::from(page)->client().requestPermission(document, WTFMove(resolvePromiseAndCallback));
 }
 
 void Notification::eventListenersDidChange()

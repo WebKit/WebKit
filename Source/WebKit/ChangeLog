@@ -1,3 +1,21 @@
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        Update code now that WebCore passes a CompletionHandler instead of a
+        NotificationPermissionCallback.
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::~NotificationPermissionRequestManager):
+        (WebKit::NotificationPermissionRequestManager::startRequest):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::requestPermission):
+        * WebProcess/WebCoreSupport/WebNotificationClient.h:
+
 2021-05-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Failed to open WebInspector UI since r277231

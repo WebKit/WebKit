@@ -44,6 +44,7 @@ class ScriptExecutionContext;
 class NotificationClient {
 public:
     using Permission = NotificationPermission;
+    using PermissionHandler = CompletionHandler<void(Permission)>;
 
     // Requests that a notification be shown.
     virtual bool show(Notification*) = 0;
@@ -66,7 +67,7 @@ public:
     // Requests user permission to show desktop notifications from a particular
     // script context. The callback parameter should be run when the user has
     // made a decision.
-    virtual void requestPermission(ScriptExecutionContext*, RefPtr<NotificationPermissionCallback>&&) = 0;
+    virtual void requestPermission(ScriptExecutionContext&, PermissionHandler&&) = 0;
 
     // Checks the current level of permission.
     virtual Permission checkPermission(ScriptExecutionContext*) = 0;
