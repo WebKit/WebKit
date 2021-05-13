@@ -56,6 +56,7 @@ private:
     void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
     void requestFrame(CompletionHandler<void(PlatformXR::Device::FrameData&&)>&&);
+    void submitFrame();
 
     WebPageProxy& m_page;
 };

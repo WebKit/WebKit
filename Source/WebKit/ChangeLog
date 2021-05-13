@@ -1,3 +1,23 @@
+2021-05-12  Ada Chan  <ada.chan@apple.com>
+
+        [WebXR] Implement XRDeviceProxy::submitFrame
+        https://bugs.webkit.org/show_bug.cgi?id=225718
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Cocoa/XRDeviceProxy.h:
+        * Shared/Cocoa/XRDeviceProxy.mm:
+        (WebKit::XRDeviceProxy::submitFrame):
+        * UIProcess/Cocoa/PlatformXRCoordinator.h:
+        (WebKit::PlatformXRCoordinator::submitFrame):
+        * UIProcess/Cocoa/PlatformXRSystem.h:
+        * UIProcess/Cocoa/PlatformXRSystem.messages.in:
+        * UIProcess/Cocoa/PlatformXRSystem.mm:
+        (WebKit::PlatformXRSystem::submitFrame):
+        * WebProcess/cocoa/PlatformXRSystemProxy.h:
+        * WebProcess/cocoa/PlatformXRSystemProxy.mm:
+        (WebKit::PlatformXRSystemProxy::submitFrame):
+
 2021-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Silence uninteresting sandbox reports

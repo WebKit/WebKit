@@ -54,6 +54,7 @@ public:
 
     // Session display loop.
     virtual void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) = 0;
+    virtual void submitFrame(WebPageProxy&) { }
 };
 
 } // namespace WebKit

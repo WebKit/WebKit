@@ -93,6 +93,12 @@ Optional<PlatformXR::LayerHandle> XRDeviceProxy::createLayerProjection(uint32_t 
     return m_xrSystem ? m_xrSystem->createLayerProjection(width, height, alpha) : WTF::nullopt;
 }
 
+void XRDeviceProxy::submitFrame(Vector<PlatformXR::Device::Layer>&&)
+{
+    if (m_xrSystem)
+        m_xrSystem->submitFrame();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEBXR)

@@ -89,6 +89,11 @@ Optional<PlatformXR::LayerHandle> PlatformXRSystemProxy::createLayerProjection(u
     return PlatformXRCoordinator::defaultLayerHandle();
 }
 
+void PlatformXRSystemProxy::submitFrame()
+{
+    m_page.send(Messages::PlatformXRSystem::SubmitFrame());
+}
+
 void PlatformXRSystemProxy::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
 {
     if (auto device = deviceByIdentifier(deviceIdentifier))
