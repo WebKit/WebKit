@@ -1,3 +1,26 @@
+2021-05-13  Devin Rousso  <drousso@apple.com>
+
+        [iOS] REGRESSION(r271216) pointerevents/ios/pointer-events-no-mousedown-when-prevent-default-called-on-pointerdown.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=225734
+        <rdar://problem/77070765>
+
+        Reviewed by Tim Horton.
+
+        r271216 made it so that `touchWithIdentifierWasRemoved` is eagerly called when dispatching
+        `"pointerup"` for a touch event. This is problematic because (compatibility) mouse events
+        are dispatched after both pointer and touch events, meaning that if the `CapturingData` for
+        the touch event is removed, there's no way of knowing if the pointer event `preventDefault`.
+
+        Instead of fully removing the `CapturingData` entirely, change its state such that it's
+        marked as `CapturingData::State::Finished` and check for that instead.
+
+        * page/PointerCaptureController.h:
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::hasCancelledPointerEventForIdentifier const):
+        (WebCore::PointerCaptureController::dispatchEventForTouchAtIndex):
+        (WebCore::PointerCaptureController::pointerEventForMouseEvent):
+        (WebCore::PointerCaptureController::cancelPointer):
+
 2021-05-13  Cameron McCormack  <heycam@apple.com>
 
         Ensure scrollable transformed elements that are themselves within scrollable elements don't ignore border-radius
