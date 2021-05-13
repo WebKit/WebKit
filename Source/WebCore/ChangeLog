@@ -1,3 +1,47 @@
+2021-05-13  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] Add holdLock() overload for WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=225652
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        All instantiations of DataMutex::LockedWrapper have been replaced by
+        holdLock(), for equivalent but more concise code.
+
+        This patch introduces no behavior changes.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcConstructed):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcSetContext):
+        (webKitWebSrcCreate):
+        (webKitWebSrcMakeRequest):
+        (webKitWebSrcStop):
+        (webKitWebSrcGetSize):
+        (webKitWebSrcIsSeekable):
+        (webKitWebSrcDoSeek):
+        (webKitWebSrcQuery):
+        (webKitWebSrcUnLock):
+        (webKitWebSrcUnLockStop):
+        (webKitWebSrcSetMediaPlayer):
+        (webKitSrcPassedCORSAccessCheck):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed):
+        (CachedResourceStreamingClient::loadFailed):
+        (CachedResourceStreamingClient::loadFinished):
+        (webKitSrcWouldTaintOrigin):
+        * platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp:
+        (WebCore::MediaSourceTrackGStreamer::isReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::notifyWhenReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::enqueueObject):
+        (WebCore::MediaSourceTrackGStreamer::clearQueue):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcActivateMode):
+        (webKitMediaSrcPadLinked):
+        (webKitMediaSrcLoop):
+        (webKitMediaSrcStreamFlush):
+
 2021-05-13  Darin Adler  <darin@apple.com>
 
         Remove StringBuilder::appendNumber

@@ -1,3 +1,17 @@
+2021-05-13  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] Add holdLock() overload for WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=225652
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch adds a holdLock() overload for WTF::DataMutex as syntactic
+        sugar to simplify usage in a similar way to what holdLock() already
+        does for WTF::Locker.
+
+        * wtf/DataMutex.h:
+        (WTF::holdLock):
+
 2021-05-13  Darin Adler  <darin@apple.com>
 
         Remove StringBuilder::appendNumber
