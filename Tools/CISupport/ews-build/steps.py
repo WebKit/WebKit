@@ -111,13 +111,13 @@ class CheckOutSource(git.Git):
 
     def __init__(self, repourl='https://github.com/WebKit/WebKit.git', **kwargs):
         super(CheckOutSource, self).__init__(repourl=repourl,
-                                                retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
-                                                timeout=2 * 60 * 60,
-                                                alwaysUseLatest=True,
-                                                logEnviron=False,
-                                                method='clean',
-                                                progress=True,
-                                                **kwargs)
+                                             retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
+                                             timeout=2 * 60 * 60,
+                                             alwaysUseLatest=True,
+                                             logEnviron=False,
+                                             method='clean',
+                                             progress=True,
+                                             **kwargs)
 
     def getResultSummary(self):
         if self.results == FAILURE:
@@ -253,6 +253,7 @@ class ShowIdentifier(shell.ShellCommand):
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
+
 
 class CleanWorkingDirectory(shell.ShellCommand):
     name = 'clean-working-directory'
@@ -715,7 +716,7 @@ class BugzillaMixin(object):
         try:
             passwords = json.load(open('passwords.json'))
             return passwords.get('BUGZILLA_API_KEY', '')
-        except:
+        except Exception as e:
             print('Error in reading Bugzilla api key')
             return ''
 
@@ -1836,15 +1837,15 @@ class RunJavaScriptCoreTests(shell.Test):
             self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
             return
 
-        if jsc_results.get('allMasmTestsPassed') == False:
+        if jsc_results.get('allMasmTestsPassed') is False:
             self.binaryFailures.append('testmasm')
-        if jsc_results.get('allAirTestsPassed') == False:
+        if jsc_results.get('allAirTestsPassed') is False:
             self.binaryFailures.append('testair')
-        if jsc_results.get('allB3TestsPassed') == False:
+        if jsc_results.get('allB3TestsPassed') is False:
             self.binaryFailures.append('testb3')
-        if jsc_results.get('allDFGTestsPassed') == False:
+        if jsc_results.get('allDFGTestsPassed') is False:
             self.binaryFailures.append('testdfg')
-        if jsc_results.get('allApiTestsPassed') == False:
+        if jsc_results.get('allApiTestsPassed') is False:
             self.binaryFailures.append('testapi')
 
         self.stressTestFailures = jsc_results.get('stressTestFailures')
@@ -2023,7 +2024,6 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
-
 
 
 class CleanBuild(shell.Compile):
@@ -2543,7 +2543,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             print('Error in sending email for new layout test failures: {}'.format(e))
 
     def _report_flaky_tests(self, flaky_tests):
-        #TODO: implement this
+        # TODO: implement this
         pass
 
     def start(self):
@@ -2700,8 +2700,8 @@ class TransferToS3(master.MasterShellCommand):
 
 class DownloadBuiltProduct(shell.ShellCommand):
     command = ['python', 'Tools/CISupport/download-built-product',
-        WithProperties('--%(configuration)s'),
-        WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
+               WithProperties('--%(configuration)s'),
+               WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['Downloaded built product']
@@ -2874,8 +2874,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
                 return set([])
             # TODO: Analyze Time-out, Crash and Failure independently
             return set([failure.get('name') for failure in result.get('Timedout', [])] +
-                [failure.get('name') for failure in result.get('Crashed', [])] +
-                [failure.get('name') for failure in result.get('Failed', [])])
+                       [failure.get('name') for failure in result.get('Crashed', [])] +
+                       [failure.get('name') for failure in result.get('Failed', [])])
 
         first_run_failures = getAPITestFailures(first_run_results)
         second_run_failures = getAPITestFailures(second_run_results)
@@ -2987,6 +2987,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
+
 
 class ArchiveTestResults(shell.ShellCommand):
     command = ['python', 'Tools/CISupport/test-result-archive',
