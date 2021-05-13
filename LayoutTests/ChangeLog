@@ -1,3 +1,13 @@
+2021-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::Document::updateLayout
+        https://bugs.webkit.org/show_bug.cgi?id=225677
+
+        Reviewed by Alan Bujtas.
+
+        * accessibility/mac/menu-selection-notification-crash-expected.txt: Added.
+        * accessibility/mac/menu-selection-notification-crash.html: Added.
+
 2021-05-13  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] media/track/in-band/track-in-band-srt-mkv-kind.html is a flaky crash

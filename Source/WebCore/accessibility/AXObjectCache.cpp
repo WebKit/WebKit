@@ -1230,6 +1230,13 @@ void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* new
         handleFocusedUIElementChanged(oldNode, newNode);
 }
 
+void AXObjectCache::deferMenuListValueChange(Element* element)
+{
+    m_deferredMenuListChange.add(element);
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
 void AXObjectCache::deferModalChange(Element* element)
 {
     m_deferredModalChangedList.add(element);
@@ -3196,6 +3203,10 @@ void AXObjectCache::performDeferredCacheUpdate()
         handleModalChange(deferredModalChangedElement);
     m_deferredModalChangedList.clear();
 
+    for (auto& deferredMenuListChangeElement : m_deferredMenuListChange)
+        postNotification(&deferredMenuListChangeElement, AXObjectCache::AXMenuListValueChanged);
+    m_deferredMenuListChange.clear();
+    
     platformPerformDeferredCacheUpdate();
 }
     

@@ -1,3 +1,25 @@
+2021-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::Document::updateLayout
+        https://bugs.webkit.org/show_bug.cgi?id=225677
+
+        Reviewed by Alan Bujtas.
+
+        Handling notifications while during layout is risky because we can call back into an update method.
+        We have handled many other cases like this by deferring the notification, as we do here.
+        Special note: this test can't be made to crash because actual crash requires the accessibility
+        runtime to be initialized and posting real notifications to the system. But, we can verify that the
+        notification is still sent correctly under conditions that could lead to a crash.
+
+        Test: accessibility/mac/menu-selection-notification-crash.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::deferMenuListValueChange):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+
 2021-05-13  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] media/track/in-band/track-in-band-srt-mkv-kind.html is a flaky crash
