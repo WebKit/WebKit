@@ -278,7 +278,7 @@ class Svn(mocks.Requests):
                         '<S:date>{}</S:date>\n'
                         '{}{}</S:log-item>\n'.format(
                             commit.revision,
-                            datetime.fromtimestamp(commit.timestamp).strftime('%Y-%m-%dT%H:%M:%S.103754Z'),
+                            datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%S.103754Z'),
                             '' if data['S:log-report'].get('S:revpro') else '<D:comment>{}</D:comment>\n'
                             '<D:creator-displayname>{}</D:creator-displayname>\n'.format(
                                 commit.message,
