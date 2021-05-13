@@ -59,7 +59,7 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
         if (allowDatabaseWrite == AllowDatabaseWrite::No && !FileSystem::fileExists(path))
             return;
 
-        auto databaseDirectory = FileSystem::directoryName(path);
+        auto databaseDirectory = FileSystem::parentPath(path);
         FileSystem::makeAllDirectories(databaseDirectory);
         if (!m_db.open(path)) {
             LOG_ERROR("Unable to open favicon database at path %s - %s", path.utf8().data(), m_db.lastErrorMsg());

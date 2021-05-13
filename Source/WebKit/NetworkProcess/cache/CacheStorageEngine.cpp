@@ -463,7 +463,7 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
     m_pendingWriteCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
 
-        String directoryPath = FileSystem::directoryName(filename);
+        String directoryPath = FileSystem::parentPath(filename);
         if (!FileSystem::fileExists(directoryPath))
             FileSystem::makeAllDirectories(directoryPath);
 

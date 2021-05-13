@@ -1,5 +1,18 @@
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * API/JSScript.mm:
+        (validateBytecodeCachePath):
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
         Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
         https://bugs.webkit.org/show_bug.cgi?id=225772
 

@@ -84,7 +84,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     ASSERT(!isMainThread());
 
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
-    FileSystem::makeAllDirectories(FileSystem::directoryName(scriptPath));
+    FileSystem::makeAllDirectories(FileSystem::parentPath(scriptPath));
 
     auto iterateOverBufferAndWriteData = [&](const Function<bool(const uint8_t*, size_t)>& writeData) {
         for (auto it = script.buffer()->begin(); it != script.buffer()->end(); ++it)

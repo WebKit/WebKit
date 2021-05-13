@@ -1,5 +1,33 @@
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::DOMFileSystem):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::writeDataToUniqueFileInDirectory):
+        (WebCore::ApplicationCacheStorage::checkForDeletedResources):
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::contentKeySession):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::purgeOldDownloadFiles):
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::openDatabase):
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::ensureDatabaseFileExists):
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::openDatabase):
+        * workers/service/server/SWScriptStorage.cpp:
+        (WebCore::SWScriptStorage::store):
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
         Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
         https://bugs.webkit.org/show_bug.cgi?id=225772
 

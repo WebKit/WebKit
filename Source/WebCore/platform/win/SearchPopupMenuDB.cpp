@@ -188,7 +188,7 @@ bool SearchPopupMenuDB::openDatabase()
     }
 
     if (!existsDatabaseFile) {
-        if (!FileSystem::makeAllDirectories(FileSystem::directoryName(m_databaseFilename)))
+        if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_databaseFilename)))
             LOG_ERROR("Failed to create the search autosave database path %s", m_databaseFilename.utf8().data());
 
         m_database.open(m_databaseFilename);

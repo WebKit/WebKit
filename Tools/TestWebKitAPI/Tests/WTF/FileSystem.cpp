@@ -244,7 +244,7 @@ TEST_F(FileSystemTest, GetFileMetadataHiddenFile)
 TEST_F(FileSystemTest, UnicodeDirectoryName)
 {
     String path = String::fromUTF8("/test/a\u0308lo/test.txt");
-    String directoryName = FileSystem::directoryName(path);
+    String directoryName = FileSystem::parentPath(path);
     String expectedDirectoryName = String::fromUTF8("/test/a\u0308lo");
     EXPECT_TRUE(expectedDirectoryName == directoryName);
 }
@@ -762,19 +762,19 @@ TEST_F(FileSystemTest, pathGetFileName)
 #endif
 }
 
-TEST_F(FileSystemTest, directoryName)
+TEST_F(FileSystemTest, parentPath)
 {
     auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "filename.txt" });
-    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder").utf8().data(), FileSystem::directoryName(testPath).utf8().data());
+    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder").utf8().data(), FileSystem::parentPath(testPath).utf8().data());
 #if OS(UNIX)
-    EXPECT_STREQ("/var/tmp", FileSystem::directoryName("/var/tmp/example.txt").utf8().data());
-    EXPECT_STREQ("/var/tmp", FileSystem::directoryName("/var/tmp/").utf8().data());
-    EXPECT_STREQ("/var/tmp", FileSystem::directoryName("/var/tmp/.").utf8().data());
-    EXPECT_STREQ("/", FileSystem::directoryName("/").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/example.txt").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/.").utf8().data());
+    EXPECT_STREQ("/", FileSystem::parentPath("/").utf8().data());
 #endif
 #if OS(WINDOWS)
-    EXPECT_STREQ("C:\\foo", FileSystem::directoryName("C:\\foo\\example.txt").utf8().data());
-    EXPECT_STREQ("C:\\", FileSystem::directoryName("C:\\").utf8().data());
+    EXPECT_STREQ("C:\\foo", FileSystem::parentPath("C:\\foo\\example.txt").utf8().data());
+    EXPECT_STREQ("C:\\", FileSystem::parentPath("C:\\").utf8().data());
 #endif
 }
 

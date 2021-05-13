@@ -84,7 +84,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         }
     }
 
-    String directory = FileSystem::directoryName(systemPath);
+    String directory = FileSystem::parentPath(systemPath);
     if (directory.isNull()) {
         createError([NSString stringWithFormat:@"Cache path `%@` does not contain in a valid directory", static_cast<NSString *>(systemPath)], error);
         return false;

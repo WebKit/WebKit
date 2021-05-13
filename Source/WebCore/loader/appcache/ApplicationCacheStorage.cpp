@@ -1291,7 +1291,7 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& dat
             return false;
         
         fullPath = FileSystem::pathByAppendingComponent(directory, path);
-    } while (FileSystem::directoryName(fullPath) != directory || FileSystem::fileExists(fullPath));
+    } while (FileSystem::parentPath(fullPath) != directory || FileSystem::fileExists(fullPath));
     
     FileSystem::PlatformFileHandle handle = FileSystem::openFile(fullPath, FileSystem::FileOpenMode::Write);
     if (!handle)
@@ -1431,7 +1431,7 @@ void ApplicationCacheStorage::checkForDeletedResources()
         
         // Don't exit the flatFileDirectory! This should only happen if the "path" entry contains a directory 
         // component, but protect against it regardless.
-        if (FileSystem::directoryName(fullPath) != flatFileDirectory)
+        if (FileSystem::parentPath(fullPath) != flatFileDirectory)
             continue;
         
         FileSystem::deleteFile(fullPath);

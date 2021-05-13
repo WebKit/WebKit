@@ -113,7 +113,7 @@ String StorageTracker::trackerDatabasePath()
 static bool ensureDatabaseFileExists(const String& fileName, bool createIfDoesNotExist)
 {
     if (createIfDoesNotExist)
-        return FileSystem::makeAllDirectories(FileSystem::directoryName(fileName));
+        return FileSystem::makeAllDirectories(FileSystem::parentPath(fileName));
 
     return FileSystem::fileExists(fileName);
 }

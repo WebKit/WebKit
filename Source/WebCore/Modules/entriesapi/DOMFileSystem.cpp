@@ -146,7 +146,7 @@ static bool isValidVirtualPath(StringView virtualPath)
 DOMFileSystem::DOMFileSystem(Ref<File>&& file)
     : m_name(createCanonicalUUIDString())
     , m_file(WTFMove(file))
-    , m_rootPath(FileSystem::directoryName(m_file->path()))
+    , m_rootPath(FileSystem::parentPath(m_file->path()))
     , m_workQueue(WorkQueue::create("DOMFileSystem work queue"))
 {
     ASSERT(!m_rootPath.endsWith('/'));

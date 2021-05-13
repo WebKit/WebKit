@@ -2208,7 +2208,7 @@ void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const String& downloadFi
     if (downloadFilePrefixPath.isEmpty())
         return;
 
-    auto templateDirectory = FileSystem::directoryName(downloadFilePrefixPath);
+    auto templateDirectory = FileSystem::parentPath(downloadFilePrefixPath);
     auto templatePrefix = FileSystem::pathGetFileName(downloadFilePrefixPath);
     for (auto& fileName : FileSystem::listDirectory(templateDirectory)) {
         if (!fileName.startsWith(templatePrefix))

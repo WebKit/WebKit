@@ -1,5 +1,22 @@
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (findFontFallback):
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::moduleDirectory):
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
         Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
         https://bugs.webkit.org/show_bug.cgi?id=225772
 

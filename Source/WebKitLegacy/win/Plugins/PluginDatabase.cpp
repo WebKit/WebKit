@@ -515,7 +515,7 @@ void PluginDatabase::loadPersistentMetadataCache()
 
         // Skip metadata that points to plugins from directories that
         // are not part of plugin directory list anymore.
-        String pluginDirectoryName = FileSystem::directoryName(path);
+        String pluginDirectoryName = FileSystem::parentPath(path);
         if (m_pluginDirectories.find(pluginDirectoryName) == WTF::notFound)
             continue;
 

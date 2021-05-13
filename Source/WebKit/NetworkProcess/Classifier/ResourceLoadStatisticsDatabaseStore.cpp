@@ -369,7 +369,7 @@ void ResourceLoadStatisticsDatabaseStore::close()
 void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
 {
     if (!FileSystem::fileExists(m_storageDirectoryPath)) {
-        if (!FileSystem::makeAllDirectories(FileSystem::directoryName(m_storageDirectoryPath))) {
+        if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_storageDirectoryPath))) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: Failed to create directory database path: %" PUBLIC_LOG_STRING, this, m_storageDirectoryPath.utf8().data());
             return;
         }

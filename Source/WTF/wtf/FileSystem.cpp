@@ -518,7 +518,7 @@ Optional<Salt> readOrMakeSalt(const String& path)
     }
 
     Salt salt = makeSalt();
-    FileSystem::makeAllDirectories(FileSystem::directoryName(path));
+    FileSystem::makeAllDirectories(FileSystem::parentPath(path));
     auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Write, FileSystem::FileAccessPermission::User);
     if (!FileSystem::isHandleValid(file))
         return { };
@@ -744,7 +744,7 @@ String pathGetFileName(const String& path)
     return fromStdFileSystemPath(toStdFileSystemPath(path).filename());
 }
 
-String directoryName(const String& path)
+String parentPath(const String& path)
 {
     return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());
 }

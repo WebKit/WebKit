@@ -1,3 +1,16 @@
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::loadPersistentMetadataCache):
+
 2021-05-13  Darin Adler  <darin@apple.com>
 
         Remove StringBuilder::appendNumber

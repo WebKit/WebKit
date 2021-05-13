@@ -65,7 +65,7 @@ bool SQLiteFileSystem::ensureDatabaseFileExists(const String& fileName, bool che
         return false;
 
     if (checkPathOnly) {
-        String dir = FileSystem::directoryName(fileName);
+        String dir = FileSystem::parentPath(fileName);
         return ensureDatabaseDirectoryExists(dir);
     }
 

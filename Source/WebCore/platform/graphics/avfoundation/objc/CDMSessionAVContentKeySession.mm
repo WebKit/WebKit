@@ -379,7 +379,7 @@ AVContentKeySession* CDMSessionAVContentKeySession::contentKeySession()
 
         m_contentKeySession = [PAL::getAVContentKeySessionClass() contentKeySessionWithKeySystem:AVContentKeySystemFairPlayStreaming];
     } else {
-        String storageDirectory = FileSystem::directoryName(storagePath);
+        String storageDirectory = FileSystem::parentPath(storagePath);
 
         if (!FileSystem::fileExists(storageDirectory)) {
             if (!FileSystem::makeAllDirectories(storageDirectory))
