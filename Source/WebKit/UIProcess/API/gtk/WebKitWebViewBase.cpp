@@ -2723,11 +2723,13 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
             priv->contextMenuEvent = WTFMove(event);
         }
 #endif
-        gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+        if (!gtk_widget_has_focus(GTK_WIDGET(webViewBase)) && gtk_widget_is_focus(GTK_WIDGET(webViewBase)))
+            gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
         break;
     case MouseEventType::Release:
         webEventType = WebEvent::MouseUp;
-        gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+        if (!gtk_widget_has_focus(GTK_WIDGET(webViewBase)) && gtk_widget_is_focus(GTK_WIDGET(webViewBase)))
+            gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
         break;
     case MouseEventType::Motion:
         webEventType = WebEvent::MouseMove;
