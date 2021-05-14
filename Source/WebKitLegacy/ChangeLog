@@ -1,3 +1,16 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::getFileSize() to FileSystem::fileSize()
+        https://bugs.webkit.org/show_bug.cgi?id=225798
+
+        Reviewed by Alex Christensen.
+
+        Update code path to due to the API change.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::diskUsageForOrigin):
+        * Storage/StorageTracker.h:
+
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::directoryName() to FileSystem::parentPath()

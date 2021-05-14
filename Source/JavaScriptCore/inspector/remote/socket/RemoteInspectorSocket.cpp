@@ -268,10 +268,9 @@ String RemoteInspector::backendCommands() const
         return { };
 
     String result;
-    long long size;
-    if (FileSystem::getFileSize(handle, size)) {
-        Vector<LChar> buffer(size);
-        if (FileSystem::readFromFile(handle, reinterpret_cast<char*>(buffer.data()), size) == size)
+    if (auto size = FileSystem::fileSize(handle)) {
+        Vector<LChar> buffer(*size);
+        if (FileSystem::readFromFile(handle, reinterpret_cast<char*>(buffer.data()), *size) == *size)
             result = String::adopt(WTFMove(buffer));
     }
     FileSystem::closeFile(handle);

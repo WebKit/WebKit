@@ -369,11 +369,11 @@ bool ApplicationCacheStorage::isMaximumSizeReached() const
 int64_t ApplicationCacheStorage::spaceNeeded(int64_t cacheToSave)
 {
     int64_t spaceNeeded = 0;
-    long long fileSize = 0;
-    if (!FileSystem::getFileSize(m_cacheFile, fileSize))
+    auto fileSize = FileSystem::fileSize(m_cacheFile);
+    if (!fileSize)
         return 0;
 
-    int64_t currentSize = fileSize + flatFileAreaSize();
+    int64_t currentSize = *fileSize + flatFileAreaSize();
 
     // Determine the amount of free space we have available.
     int64_t totalAvailableSize = 0;
@@ -1126,7 +1126,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
             size = data->size();
         else {
             path = FileSystem::pathByAppendingComponent(flatFileDirectory, path);
-            FileSystem::getFileSize(path, size);
+            size = FileSystem::fileSize(path).valueOr(0);
         }
         
         String mimeType = cacheStatement.getColumnText(3);
@@ -1456,12 +1456,8 @@ long long ApplicationCacheStorage::flatFileAreaSize()
     long long totalSize = 0;
     String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
     while (selectPaths.step() == SQLITE_ROW) {
-        String path = selectPaths.getColumnText(0);
-        String fullPath = FileSystem::pathByAppendingComponent(flatFileDirectory, path);
-        long long pathSize = 0;
-        if (!FileSystem::getFileSize(fullPath, pathSize))
-            continue;
-        totalSize += pathSize;
+        auto fullPath = FileSystem::pathByAppendingComponent(flatFileDirectory, selectPaths.getColumnText(0));
+        totalSize += FileSystem::fileSize(fullPath).valueOr(0);
     }
     
     return totalSize;

@@ -58,13 +58,13 @@ IOChannel::~IOChannel()
 void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void(Data&, int error)>&& completionHandler)
 {
     queue.dispatch([this, protectedThis = makeRef(*this), offset, size, completionHandler = WTFMove(completionHandler)] {
-        long long fileSize;
-        if (!FileSystem::getFileSize(m_fileDescriptor, fileSize) || fileSize > std::numeric_limits<size_t>::max()) {
+        auto fileSize = FileSystem::fileSize(m_fileDescriptor);
+        if (!fileSize || *fileSize > std::numeric_limits<size_t>::max()) {
             Data data;
             completionHandler(data, -1);
             return;
         }
-        size_t readSize = fileSize;
+        size_t readSize = *fileSize;
         readSize = std::min(size, readSize);
         Vector<uint8_t> buffer(readSize);
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);

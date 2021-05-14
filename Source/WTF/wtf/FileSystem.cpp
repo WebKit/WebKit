@@ -597,14 +597,13 @@ bool moveFile(const String& oldPath, const String& newPath)
     return std::filesystem::remove_all(fsOldPath, ec);
 }
 
-bool getFileSize(const String& path, long long& result)
+Optional<uint64_t> fileSize(const String& path)
 {
     std::error_code ec;
     auto size = std::filesystem::file_size(toStdFileSystemPath(path), ec);
     if (ec)
-        return false;
-    result = size;
-    return true;
+        return WTF::nullopt;
+    return size;
 }
 
 bool isDirectory(const String& path)

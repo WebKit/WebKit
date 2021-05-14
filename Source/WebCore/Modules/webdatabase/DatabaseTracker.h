@@ -67,17 +67,17 @@ public:
     // m_databaseGuard and m_openDatabaseMapGuard currently don't overlap.
     // notificationMutex() is currently independent of the other locks.
 
-    ExceptionOr<void> canEstablishDatabase(DatabaseContext&, const String& name, unsigned long long estimatedSize);
-    ExceptionOr<void> retryCanEstablishDatabase(DatabaseContext&, const String& name, unsigned long long estimatedSize);
+    ExceptionOr<void> canEstablishDatabase(DatabaseContext&, const String& name, uint64_t estimatedSize);
+    ExceptionOr<void> retryCanEstablishDatabase(DatabaseContext&, const String& name, uint64_t estimatedSize);
 
-    void setDatabaseDetails(const SecurityOriginData&, const String& name, const String& displayName, unsigned long long estimatedSize);
+    void setDatabaseDetails(const SecurityOriginData&, const String& name, const String& displayName, uint64_t estimatedSize);
     WEBCORE_EXPORT String fullPathForDatabase(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
 
     Vector<Ref<Database>> openDatabases();
     void addOpenDatabase(Database&);
     void removeOpenDatabase(Database&);
 
-    unsigned long long maximumSize(Database&);
+    uint64_t maximumSize(Database&);
 
     WEBCORE_EXPORT void closeAllDatabases(CurrentQueryBehavior = CurrentQueryBehavior::RunToCompletion);
 
@@ -86,9 +86,9 @@ public:
 
     DatabaseDetails detailsForNameAndOrigin(const String&, const SecurityOriginData&);
 
-    WEBCORE_EXPORT unsigned long long usage(const SecurityOriginData&);
-    WEBCORE_EXPORT unsigned long long quota(const SecurityOriginData&);
-    WEBCORE_EXPORT void setQuota(const SecurityOriginData&, unsigned long long);
+    WEBCORE_EXPORT uint64_t usage(const SecurityOriginData&);
+    WEBCORE_EXPORT uint64_t quota(const SecurityOriginData&);
+    WEBCORE_EXPORT void setQuota(const SecurityOriginData&, uint64_t);
     RefPtr<OriginLock> originLockFor(const SecurityOriginData&);
 
     WEBCORE_EXPORT void deleteAllDatabasesImmediately();
@@ -119,12 +119,12 @@ public:
 private:
     explicit DatabaseTracker(const String& databasePath);
 
-    ExceptionOr<void> hasAdequateQuotaForOrigin(const SecurityOriginData&, unsigned long long estimatedSize);
+    ExceptionOr<void> hasAdequateQuotaForOrigin(const SecurityOriginData&, uint64_t estimatedSize);
 
     bool hasEntryForOriginNoLock(const SecurityOriginData&);
     String fullPathForDatabaseNoLock(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
     Vector<String> databaseNamesNoLock(const SecurityOriginData&);
-    unsigned long long quotaNoLock(const SecurityOriginData&);
+    uint64_t quotaNoLock(const SecurityOriginData&);
 
     String trackerDatabasePath() const;
 

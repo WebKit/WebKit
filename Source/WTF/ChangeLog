@@ -1,5 +1,31 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Rename FileSystem::getFileSize() to FileSystem::fileSize()
+        https://bugs.webkit.org/show_bug.cgi?id=225798
+
+        Reviewed by Alex Christensen.
+
+        Rename FileSystem::getFileSize() to FileSystem::fileSize() as we usually avoid the "get"
+        prefix in WebKit. It is also more consistent with the std::filesystem::file_size() the
+        implementation relies on.
+
+        Also have it return an Optional<uint64_t> instead of taking a long long out-parameter, as
+        this is more modern.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::fileSize):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::fileSize):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::fileSize):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::getFileSizeFromByHandleFileInformationStructure):
+        (WTF::FileSystemImpl::fileSize):
+        (WTF::FileSystemImpl::MappedFileData::mapFileHandle):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
         https://bugs.webkit.org/show_bug.cgi?id=225806
 

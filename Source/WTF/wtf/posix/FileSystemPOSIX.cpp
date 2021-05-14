@@ -156,14 +156,13 @@ bool unlockFile(PlatformFileHandle handle)
 }
 #endif
 
-bool getFileSize(PlatformFileHandle handle, long long& result)
+Optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
     struct stat fileInfo;
     if (fstat(handle, &fileInfo))
-        return false;
+        return WTF::nullopt;
 
-    result = fileInfo.st_size;
-    return true;
+    return fileInfo.st_size;
 }
 
 Optional<WallTime> getFileCreationTime(const String& path)

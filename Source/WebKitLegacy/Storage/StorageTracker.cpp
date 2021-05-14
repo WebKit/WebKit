@@ -627,7 +627,7 @@ String StorageTracker::databasePathForOrigin(const String& originIdentifier)
     return pathStatement.getColumnText(0);
 }
     
-long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
+uint64_t StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
 {
     if (!m_isActive)
         return 0;
@@ -638,8 +638,7 @@ long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
     if (path.isEmpty())
         return 0;
 
-    long long size;
-    return FileSystem::getFileSize(path, size) ? size : 0;
+    return FileSystem::fileSize(path).valueOr(0);
 }
 
 } // namespace WebCore

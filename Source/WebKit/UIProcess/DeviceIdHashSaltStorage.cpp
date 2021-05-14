@@ -124,8 +124,7 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
                 continue;
             }
 
-            long long fileSize = 0;
-            if (!FileSystem::getFileSize(originPath, fileSize)) {
+            if (!FileSystem::fileSize(originPath)) {
                 RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: Impossible to get the file size of: '%s'", originPath.utf8().data());
                 continue;
             }

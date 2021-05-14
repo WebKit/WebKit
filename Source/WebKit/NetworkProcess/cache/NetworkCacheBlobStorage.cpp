@@ -69,11 +69,8 @@ void BlobStorage::synchronize()
         // No clients left for this blob.
         if (linkCount && *linkCount == 1)
             FileSystem::deleteFile(path);
-        else {
-            long long fileSize = 0;
-            FileSystem::getFileSize(path, fileSize);
-            m_approximateSize += fileSize;
-        }
+        else
+            m_approximateSize += FileSystem::fileSize(path).valueOr(0);
     });
 
     LOG(NetworkCacheStorage, "(NetworkProcess) blob synchronization completed approximateSize=%zu", approximateSize());

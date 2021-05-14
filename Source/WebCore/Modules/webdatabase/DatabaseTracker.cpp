@@ -141,13 +141,13 @@ void DatabaseTracker::openTrackerDatabase(TrackerCreationAction createAction)
     }
 }
 
-ExceptionOr<void> DatabaseTracker::hasAdequateQuotaForOrigin(const SecurityOriginData& origin, unsigned long long estimatedSize)
+ExceptionOr<void> DatabaseTracker::hasAdequateQuotaForOrigin(const SecurityOriginData& origin, uint64_t estimatedSize)
 {
     ASSERT(!m_databaseGuard.tryLock());
     auto usage = this->usage(origin);
 
     // If the database will fit, allow its creation.
-    auto requirement = usage + std::max<unsigned long long>(1, estimatedSize);
+    auto requirement = usage + std::max<uint64_t>(1u, estimatedSize);
     if (requirement < usage) {
         // The estimated size is so big it causes an overflow; don't allow creation.
         return Exception { SecurityError };
@@ -157,7 +157,7 @@ ExceptionOr<void> DatabaseTracker::hasAdequateQuotaForOrigin(const SecurityOrigi
     return { };
 }
 
-ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context, const String& name, unsigned long long estimatedSize)
+ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context, const String& name, uint64_t estimatedSize)
 {
     LockHolder lockDatabase(m_databaseGuard);
 
@@ -205,7 +205,7 @@ ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context
 // hasAdequateQuotaForOrigin() simple and correct (i.e. bug free), and just
 // re-use it. Also note that the path for opening a database involves IO, and
 // hence should not be a performance critical path anyway. 
-ExceptionOr<void> DatabaseTracker::retryCanEstablishDatabase(DatabaseContext& context, const String& name, unsigned long long estimatedSize)
+ExceptionOr<void> DatabaseTracker::retryCanEstablishDatabase(DatabaseContext& context, const String& name, uint64_t estimatedSize)
 {
     LockHolder lockDatabase(m_databaseGuard);
 
@@ -267,16 +267,16 @@ bool DatabaseTracker::hasEntryForDatabase(const SecurityOriginData& origin, cons
     return statement.step() == SQLITE_ROW;
 }
 
-unsigned long long DatabaseTracker::maximumSize(Database& database)
+uint64_t DatabaseTracker::maximumSize(Database& database)
 {
     // The maximum size for a database is the full quota for its origin, minus the current usage within the origin,
     // plus the current usage of the given database
     LockHolder lockDatabase(m_databaseGuard);
     auto origin = database.securityOrigin();
 
-    unsigned long long quota = quotaNoLock(origin);
-    unsigned long long diskUsage = usage(origin);
-    unsigned long long databaseFileSize = SQLiteFileSystem::getDatabaseFileSize(database.fileNameIsolatedCopy());
+    auto quota = quotaNoLock(origin);
+    auto diskUsage = usage(origin);
+    auto databaseFileSize = SQLiteFileSystem::databaseFileSize(database.fileNameIsolatedCopy());
     ASSERT(databaseFileSize <= diskUsage);
 
     if (diskUsage > quota)
@@ -286,7 +286,7 @@ unsigned long long DatabaseTracker::maximumSize(Database& database)
     // have allowed this database to exceed our cached estimate of the origin
     // disk usage. Don't multiply that error through integer underflow, or the
     // effective quota will permanently become 2^64.
-    unsigned long long maxSize = quota - diskUsage + databaseFileSize;
+    uint64_t maxSize = quota - diskUsage + databaseFileSize;
     if (maxSize > quota)
         maxSize = databaseFileSize;
     return maxSize;
@@ -461,10 +461,10 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
     String path = fullPathForDatabase(origin, name, false);
     if (path.isEmpty())
         return DatabaseDetails(name, displayName, expectedUsage, 0, WTF::nullopt, WTF::nullopt);
-    return DatabaseDetails(name, displayName, expectedUsage, SQLiteFileSystem::getDatabaseFileSize(path), SQLiteFileSystem::databaseCreationTime(path), SQLiteFileSystem::databaseModificationTime(path));
+    return DatabaseDetails(name, displayName, expectedUsage, SQLiteFileSystem::databaseFileSize(path), SQLiteFileSystem::databaseCreationTime(path), SQLiteFileSystem::databaseModificationTime(path));
 }
 
-void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const String& name, const String& displayName, unsigned long long estimatedSize)
+void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const String& name, const String& displayName, uint64_t estimatedSize)
 {
     String originIdentifier = origin.databaseIdentifier();
     int64_t guid = 0;
@@ -651,21 +651,21 @@ void DatabaseTracker::deleteOriginLockFor(const SecurityOriginData& origin)
     OriginLock::deleteLockFile(originPath(origin));
 }
 
-unsigned long long DatabaseTracker::usage(const SecurityOriginData& origin)
+uint64_t DatabaseTracker::usage(const SecurityOriginData& origin)
 {
     String originPath = this->originPath(origin);
-    unsigned long long diskUsage = 0;
+    uint64_t diskUsage = 0;
     for (auto& fileName : FileSystem::listDirectory(originPath)) {
         if (fileName.endsWith(".db"))
-            diskUsage += SQLiteFileSystem::getDatabaseFileSize(FileSystem::pathByAppendingComponent(originPath, fileName));
+            diskUsage += SQLiteFileSystem::databaseFileSize(FileSystem::pathByAppendingComponent(originPath, fileName));
     }
     return diskUsage;
 }
 
-unsigned long long DatabaseTracker::quotaNoLock(const SecurityOriginData& origin)
+uint64_t DatabaseTracker::quotaNoLock(const SecurityOriginData& origin)
 {
     ASSERT(!m_databaseGuard.tryLock());
-    unsigned long long quota = 0;
+    uint64_t quota = 0;
 
     openTrackerDatabase(DontCreateIfDoesNotExist);
     if (!m_database.isOpen())
@@ -684,13 +684,13 @@ unsigned long long DatabaseTracker::quotaNoLock(const SecurityOriginData& origin
     return quota;
 }
 
-unsigned long long DatabaseTracker::quota(const SecurityOriginData& origin)
+uint64_t DatabaseTracker::quota(const SecurityOriginData& origin)
 {
     LockHolder lockDatabase(m_databaseGuard);
     return quotaNoLock(origin);
 }
 
-void DatabaseTracker::setQuota(const SecurityOriginData& origin, unsigned long long quota)
+void DatabaseTracker::setQuota(const SecurityOriginData& origin, uint64_t quota)
 {
     LockHolder lockDatabase(m_databaseGuard);
 
@@ -1243,8 +1243,8 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
     
 static bool isZeroByteFile(const String& path)
 {
-    long long size = 0;
-    return FileSystem::getFileSize(path, size) && !size;
+    auto size = FileSystem::fileSize(path);
+    return size && !*size;
 }
     
 bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)

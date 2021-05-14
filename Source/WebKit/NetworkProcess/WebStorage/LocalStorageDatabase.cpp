@@ -224,8 +224,8 @@ void LocalStorageDatabase::setItem(const String& key, const String& value, Strin
 
     if (m_quotaInBytes != WebCore::StorageMap::noQuota) {
         if (!m_databaseSize)
-            m_databaseSize = SQLiteFileSystem::getDatabaseFileSize(m_databasePath);
-        CheckedUint32 newDatabaseSize = *m_databaseSize;
+            m_databaseSize = SQLiteFileSystem::databaseFileSize(m_databasePath);
+        CheckedUint64 newDatabaseSize = *m_databaseSize;
         newDatabaseSize -= oldValue.sizeInBytes();
         newDatabaseSize += value.sizeInBytes();
         if (oldValue.isNull())

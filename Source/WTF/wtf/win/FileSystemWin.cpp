@@ -71,17 +71,16 @@ static bool getFileSizeFromFindData(const WIN32_FIND_DATAW& findData, long long&
     return true;
 }
 
-static bool getFileSizeFromByHandleFileInformationStructure(const BY_HANDLE_FILE_INFORMATION& fileInformation, long long& size)
+static Optional<uint64_t> getFileSizeFromByHandleFileInformationStructure(const BY_HANDLE_FILE_INFORMATION& fileInformation)
 {
     ULARGE_INTEGER fileSize;
     fileSize.HighPart = fileInformation.nFileSizeHigh;
     fileSize.LowPart = fileInformation.nFileSizeLow;
 
     if (fileSize.QuadPart > static_cast<ULONGLONG>(std::numeric_limits<long long>::max()))
-        return false;
+        return WTF::nullopt;
 
-    size = fileSize.QuadPart;
-    return true;
+    return fileSize.QuadPart;
 }
 
 static void getFileCreationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
@@ -105,13 +104,13 @@ static void getFileModificationTimeFromFindData(const WIN32_FIND_DATAW& findData
     time = fileTime.QuadPart / 10000000 - kSecondsFromFileTimeToTimet;
 }
 
-bool getFileSize(PlatformFileHandle fileHandle, long long& size)
+Optional<uint64_t> fileSize(PlatformFileHandle fileHandle)
 {
     BY_HANDLE_FILE_INFORMATION fileInformation;
     if (!::GetFileInformationByHandle(fileHandle, &fileInformation))
-        return false;
+        return WTF::nullopt;
 
-    return getFileSizeFromByHandleFileInformationStructure(fileInformation, size);
+    return getFileSizeFromByHandleFileInformationStructure(fileInformation);
 }
 
 Optional<WallTime> getFileCreationTime(const String& path)
@@ -403,12 +402,12 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
     if (!isHandleValid(handle))
         return false;
 
-    long long size;
-    if (!getFileSize(handle, size) || size > std::numeric_limits<size_t>::max() || size > std::numeric_limits<decltype(m_fileSize)>::max()) {
+    auto size = fileSize(handle);
+    if (!size || *size > std::numeric_limits<size_t>::max() || *size > std::numeric_limits<decltype(m_fileSize)>::max()) {
         return false;
     }
 
-    if (!size) {
+    if (!*size) {
         return true;
     }
 
@@ -433,11 +432,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
     if (!mapping)
         return false;
 
-    m_fileData = MapViewOfFile(mapping, desiredAccess, 0, 0, size);
+    m_fileData = MapViewOfFile(mapping, desiredAccess, 0, 0, *size);
     CloseHandle(mapping);
     if (!m_fileData)
         return false;
-    m_fileSize = size;
+    m_fileSize = *size;
     return true;
 }
 

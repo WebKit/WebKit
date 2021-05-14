@@ -131,10 +131,7 @@ uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& bl
         }, [] (const FormDataElement::EncodedFileData& fileData) {
             if (fileData.fileLength != BlobDataItem::toEndOfFile)
                 return static_cast<uint64_t>(fileData.fileLength);
-            long long fileSize;
-            if (FileSystem::getFileSize(fileData.filename, fileSize))
-                return static_cast<uint64_t>(fileSize);
-            return static_cast<uint64_t>(0);
+            return FileSystem::fileSize(fileData.filename).valueOr(0);
         }, [&blobSize] (const FormDataElement::EncodedBlobData& blobData) {
             return blobSize(blobData.url);
         }

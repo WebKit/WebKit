@@ -120,14 +120,13 @@ String filenameForDisplay(const String& string)
 #endif
 }
 
-bool getFileSize(PlatformFileHandle handle, long long& resultSize)
+Optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
     GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
     if (!info)
-        return false;
+        return WTF::nullopt;
 
-    resultSize = g_file_info_get_size(info.get());
-    return true;
+    return g_file_info_get_size(info.get());
 }
 
 Optional<WallTime> getFileCreationTime(const String&)

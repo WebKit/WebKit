@@ -109,8 +109,8 @@ void CurlCacheManager::loadIndex()
         return;
     }
 
-    long long filesize = -1;
-    if (!FileSystem::getFileSize(indexFilePath, filesize)) {
+    auto filesize = FileSystem::fileSize(indexFilePath);
+    if (!filesize) {
         LOG(Network, "Cache Error: Could not get file size of %s\n", indexFilePath.latin1().data());
         FileSystem::closeFile(indexFile);
         return;
@@ -118,12 +118,12 @@ void CurlCacheManager::loadIndex()
 
     // Load the file content into buffer
     Vector<char> buffer;
-    buffer.resize(filesize);
+    buffer.resize(*filesize);
     int bufferPosition = 0;
     int bufferReadSize = IO_BUFFERSIZE;
-    while (filesize > bufferPosition) {
-        if (filesize - bufferPosition < bufferReadSize)
-            bufferReadSize = filesize - bufferPosition;
+    while (*filesize > bufferPosition) {
+        if (*filesize - bufferPosition < bufferReadSize)
+            bufferReadSize = *filesize - bufferPosition;
 
         FileSystem::readFromFile(indexFile, buffer.data() + bufferPosition, bufferReadSize);
         bufferPosition += bufferReadSize;

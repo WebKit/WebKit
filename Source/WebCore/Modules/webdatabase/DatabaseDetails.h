@@ -66,7 +66,7 @@ public:
         return *this;
     }
 
-    DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage, Optional<WallTime> creationTime, Optional<WallTime> modificationTime)
+    DatabaseDetails(const String& databaseName, const String& displayName, uint64_t expectedUsage, uint64_t currentUsage, Optional<WallTime> creationTime, Optional<WallTime> modificationTime)
         : m_name(databaseName)
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)

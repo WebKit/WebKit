@@ -217,10 +217,7 @@ static uint64_t getDirectorySize(const String& directoryPath)
             }
             continue;
         }
-
-        long long fileSize = 0;
-        FileSystem::getFileSize(path, fileSize);
-        directorySize += fileSize;
+        directorySize += FileSystem::fileSize(path).valueOr(0);
     }
     return directorySize;
 }
@@ -566,8 +563,8 @@ Optional<uint64_t> Engine::readSizeFile(const String& path)
     if (!FileSystem::isHandleValid(fileHandle))
         return WTF::nullopt;
 
-    long long fileSize = 0;
-    if (!FileSystem::getFileSize(path, fileSize) || !fileSize)
+    auto fileSize = FileSystem::fileSize(path).valueOr(0);
+    if (!fileSize)
         return WTF::nullopt;
 
     unsigned bytesToRead;

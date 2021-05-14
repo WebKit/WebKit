@@ -443,20 +443,21 @@ TEST_F(FileSystemTest, moveFileOverwritesDestination)
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFilePath()));
 
-    long long fileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(tempFilePath(), fileSize));
-    EXPECT_GT(fileSize, 0);
+    auto fileSize = FileSystem::fileSize(tempFilePath());
+    ASSERT_TRUE(fileSize);
+    EXPECT_GT(*fileSize, 0U);
 
-    EXPECT_TRUE(FileSystem::getFileSize(tempEmptyFilePath(), fileSize));
-    EXPECT_TRUE(!fileSize);
+    fileSize = FileSystem::fileSize(tempEmptyFilePath());
+    ASSERT_TRUE(fileSize);
+    EXPECT_EQ(*fileSize, 0U);
 
     EXPECT_TRUE(FileSystem::moveFile(tempFilePath(), tempEmptyFilePath()));
     EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFilePath()));
 
-    fileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(tempEmptyFilePath(), fileSize));
-    EXPECT_GT(fileSize, 0);
+    fileSize = FileSystem::fileSize(tempEmptyFilePath());
+    ASSERT_TRUE(fileSize);
+    EXPECT_GT(*fileSize, 0U);
 }
 
 TEST_F(FileSystemTest, moveDirectory)
@@ -485,21 +486,21 @@ TEST_F(FileSystemTest, moveDirectory)
     EXPECT_TRUE(FileSystem::fileExists(destinationPath));
 }
 
-TEST_F(FileSystemTest, getFileSize)
+TEST_F(FileSystemTest, fileSize)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFilePath()));
 
-    long long fileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(tempFilePath(), fileSize));
-    EXPECT_GT(fileSize, 0);
+    auto fileSize = FileSystem::fileSize(tempFilePath());
+    ASSERT_TRUE(fileSize);
+    EXPECT_GT(*fileSize, 0U);
 
-    EXPECT_TRUE(FileSystem::getFileSize(tempEmptyFilePath(), fileSize));
-    EXPECT_TRUE(!fileSize);
+    fileSize = FileSystem::fileSize(tempEmptyFilePath());
+    ASSERT_TRUE(fileSize);
+    EXPECT_EQ(*fileSize, 0U);
 
-    fileSize = 0;
     String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
-    EXPECT_FALSE(FileSystem::getFileSize(fileThatDoesNotExist, fileSize));
+    fileSize = FileSystem::fileSize(fileThatDoesNotExist);
     EXPECT_TRUE(!fileSize);
 }
 
@@ -604,29 +605,29 @@ TEST_F(FileSystemTest, createHardLink)
     auto hardlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink");
     EXPECT_FALSE(FileSystem::fileExists(hardlinkPath));
 
-    long long fileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(tempFilePath(), fileSize));
-    EXPECT_GT(fileSize, 0);
+    auto fileSize = FileSystem::fileSize(tempFilePath());
+    ASSERT_TRUE(fileSize);
+    EXPECT_GT(*fileSize, 0U);
 
     EXPECT_TRUE(FileSystem::hardLink(tempFilePath(), hardlinkPath));
 
     EXPECT_TRUE(FileSystem::fileExists(hardlinkPath));
 
-    long long linkFileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(hardlinkPath, linkFileSize));
-    EXPECT_EQ(linkFileSize, fileSize);
+    auto linkFileSize = FileSystem::fileSize(hardlinkPath);
+    ASSERT_TRUE(linkFileSize);
+    EXPECT_EQ(*linkFileSize, *fileSize);
 
     auto hardlinkMetadata = FileSystem::fileMetadata(hardlinkPath);
-    EXPECT_TRUE(!!hardlinkMetadata);
+    ASSERT_TRUE(!!hardlinkMetadata);
     EXPECT_EQ(hardlinkMetadata->type, FileMetadata::Type::File);
 
     EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
     EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
     EXPECT_TRUE(FileSystem::fileExists(hardlinkPath));
 
-    linkFileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(hardlinkPath, linkFileSize));
-    EXPECT_EQ(linkFileSize, fileSize);
+    linkFileSize = FileSystem::fileSize(hardlinkPath);
+    ASSERT_TRUE(linkFileSize);
+    EXPECT_EQ(*linkFileSize, *fileSize);
 }
 
 TEST_F(FileSystemTest, createHardLinkOrCopyFile)
@@ -634,17 +635,17 @@ TEST_F(FileSystemTest, createHardLinkOrCopyFile)
     auto hardlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink");
     EXPECT_FALSE(FileSystem::fileExists(hardlinkPath));
 
-    long long fileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(tempFilePath(), fileSize));
-    EXPECT_GT(fileSize, 0);
+    auto fileSize = FileSystem::fileSize(tempFilePath());
+    ASSERT_TRUE(fileSize);
+    EXPECT_GT(*fileSize, 0U);
 
     EXPECT_TRUE(FileSystem::hardLinkOrCopyFile(tempFilePath(), hardlinkPath));
 
     EXPECT_TRUE(FileSystem::fileExists(hardlinkPath));
 
-    long long linkFileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(hardlinkPath, linkFileSize));
-    EXPECT_EQ(linkFileSize, fileSize);
+    auto linkFileSize = FileSystem::fileSize(hardlinkPath);
+    ASSERT_TRUE(linkFileSize);
+    EXPECT_EQ(*linkFileSize, *fileSize);
 
     auto hardlinkMetadata = FileSystem::fileMetadata(hardlinkPath);
     EXPECT_TRUE(!!hardlinkMetadata);
@@ -654,9 +655,9 @@ TEST_F(FileSystemTest, createHardLinkOrCopyFile)
     EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
     EXPECT_TRUE(FileSystem::fileExists(hardlinkPath));
 
-    linkFileSize = 0;
-    EXPECT_TRUE(FileSystem::getFileSize(hardlinkPath, linkFileSize));
-    EXPECT_EQ(linkFileSize, fileSize);
+    linkFileSize = FileSystem::fileSize(hardlinkPath);
+    ASSERT_TRUE(linkFileSize);
+    EXPECT_EQ(*linkFileSize, *fileSize);
 }
 
 TEST_F(FileSystemTest, hardLinkCount)

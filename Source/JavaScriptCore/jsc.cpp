@@ -1049,12 +1049,12 @@ public:
             FileSystem::unlockAndCloseFile(fd);
         });
 
-        long long fileSize;
-        if (!FileSystem::getFileSize(fd, fileSize))
+        auto fileSize = FileSystem::fileSize(fd);
+        if (!fileSize)
             return;
 
         size_t cacheFileSize;
-        if (!WTF::convertSafely(fileSize, cacheFileSize) || cacheFileSize != m_cachedBytecode->size()) {
+        if (!WTF::convertSafely(*fileSize, cacheFileSize) || cacheFileSize != m_cachedBytecode->size()) {
             // The bytecode cache has already been updated
             return;
         }

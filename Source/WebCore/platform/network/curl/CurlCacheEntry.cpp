@@ -232,21 +232,21 @@ bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<char>& buff
         return false;
     }
 
-    long long filesize = -1;
-    if (!FileSystem::getFileSize(filepath, filesize)) {
+    auto filesize = FileSystem::fileSize(filepath);
+    if (!filesize) {
         LOG(Network, "Cache Error: Could not get file size of %s\n", filepath.latin1().data());
         FileSystem::closeFile(inputFile);
         return false;
     }
 
     // Load the file content into buffer
-    buffer.resize(filesize);
+    buffer.resize(*filesize);
     int bufferPosition = 0;
     int bufferReadSize = 4096;
     int bytesRead = 0;
-    while (filesize > bufferPosition) {
-        if (filesize - bufferPosition < bufferReadSize)
-            bufferReadSize = filesize - bufferPosition;
+    while (*filesize > bufferPosition) {
+        if (*filesize - bufferPosition < bufferReadSize)
+            bufferReadSize = *filesize - bufferPosition;
 
         bytesRead = FileSystem::readFromFile(inputFile, buffer.data() + bufferPosition, bufferReadSize);
         if (bytesRead != bufferReadSize) {
@@ -330,19 +330,18 @@ void CurlCacheEntry::setIsLoading(bool isLoading)
 size_t CurlCacheEntry::entrySize()
 {
     if (!m_entrySize) {
-        long long headerFileSize;
-        long long contentFileSize;
-
-        if (!FileSystem::getFileSize(m_headerFilename, headerFileSize)) {
+        auto headerFileSize = FileSystem::fileSize(m_headerFilename);
+        if (!headerFileSize) {
             LOG(Network, "Cache Error: Could not get file size of %s\n", m_headerFilename.latin1().data());
             return m_entrySize;
         }
-        if (!FileSystem::getFileSize(m_contentFilename, contentFileSize)) {
+        auto contentFileSize = FileSystem::fileSize(m_contentFilename);
+        if (!contentFileSize) {
             LOG(Network, "Cache Error: Could not get file size of %s\n", m_contentFilename.latin1().data());
             return m_entrySize;
         }
 
-        m_entrySize = headerFileSize + contentFileSize;
+        m_entrySize = *headerFileSize + *contentFileSize;
     }
 
     return m_entrySize;

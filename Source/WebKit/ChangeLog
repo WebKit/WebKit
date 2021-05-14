@@ -1,5 +1,31 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Rename FileSystem::getFileSize() to FileSystem::fileSize()
+        https://bugs.webkit.org/show_bug.cgi?id=225798
+
+        Reviewed by Alex Christensen.
+
+        Update code path to due to the API change.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::setItem):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::getDirectorySize):
+        (WebKit::CacheStorage::Engine::readSizeFile):
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::synchronize):
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::mapFile):
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp:
+        (WebKit::NetworkCache::IOChannel::read):
+        * Shared/PersistencyUtils.cpp:
+        (WebKit::createForFile):
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::loadStorageFromDisk):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
         https://bugs.webkit.org/show_bug.cgi?id=225806
 

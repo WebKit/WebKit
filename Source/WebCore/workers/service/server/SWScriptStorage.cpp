@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static bool shouldUseFileMapping(size_t fileSize)
+static bool shouldUseFileMapping(uint64_t fileSize)
 {
     return fileSize >= pageSize();
 }
@@ -120,14 +120,14 @@ ScriptBuffer SWScriptStorage::retrieve(const ServiceWorkerRegistrationKey& regis
     ASSERT(!isMainThread());
 
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
-    long long fileSize = 0;
-    if (!FileSystem::getFileSize(scriptPath, fileSize)) {
-        RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::retrieve: Failure to retrieve %s, FileSystem::getFileSize() failed", scriptPath.utf8().data());
+    auto fileSize = FileSystem::fileSize(scriptPath);
+    if (!fileSize) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::retrieve: Failure to retrieve %s, FileSystem::fileSize() failed", scriptPath.utf8().data());
         return { };
     }
 
     // FIXME: Do we need to disable file mapping in more cases to avoid having too many file descriptors open?
-    return SharedBuffer::createWithContentsOfFile(scriptPath, FileSystem::MappedFileMode::Private, shouldUseFileMapping(fileSize) ? SharedBuffer::MayUseFileMapping::Yes : SharedBuffer::MayUseFileMapping::No);
+    return SharedBuffer::createWithContentsOfFile(scriptPath, FileSystem::MappedFileMode::Private, shouldUseFileMapping(*fileSize) ? SharedBuffer::MayUseFileMapping::Yes : SharedBuffer::MayUseFileMapping::No);
 }
 
 void SWScriptStorage::clear(const ServiceWorkerRegistrationKey& registrationKey)

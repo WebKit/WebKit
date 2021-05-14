@@ -727,11 +727,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     Optional<uint64_t> fileSizeForDisplay;
-    if (!isDirectory) {
-        long long fileSize;
-        FileSystem::getFileSize(path, fileSize);
-        fileSizeForDisplay = fileSize;
-    }
+    if (!isDirectory)
+        fileSizeForDisplay = FileSystem::fileSize(path).valueOr(0);
 
     frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
 
