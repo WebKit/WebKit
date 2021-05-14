@@ -632,7 +632,7 @@ static void removeAllDatabasesForFullOriginPath(const String& originPath, WallTi
         auto databasePath = FileSystem::pathByAppendingComponent(originPath, databaseName);
         String databaseFile = FileSystem::pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
         if (modifiedSince > -WallTime::infinity() && FileSystem::fileExists(databaseFile)) {
-            auto modificationTime = FileSystem::getFileModificationTime(databaseFile);
+            auto modificationTime = FileSystem::fileModificationTime(databaseFile);
             if (!modificationTime)
                 continue;
 

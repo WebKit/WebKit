@@ -122,7 +122,7 @@ bool PluginDatabase::refresh()
 
     auto pathsEnd = paths.end();
     for (auto it = paths.begin(); it != pathsEnd; ++it) {
-        auto lastModifiedTime = FileSystem::getFileModificationTime(*it);
+        auto lastModifiedTime = FileSystem::fileModificationTime(*it);
         if (!lastModifiedTime)
             continue;
         time_t lastModified = lastModifiedTime->secondsSinceEpoch().secondsAs<time_t>();

@@ -50,7 +50,7 @@ FileStream::~FileStream()
 long long FileStream::getSize(const String& path, Optional<WallTime> expectedModificationTime)
 {
     // Check the modification time for the possible file change.
-    auto modificationTime = FileSystem::getFileModificationTime(path);
+    auto modificationTime = FileSystem::fileModificationTime(path);
     if (!modificationTime)
         return -1;
     if (expectedModificationTime) {

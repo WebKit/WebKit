@@ -165,7 +165,7 @@ Optional<uint64_t> fileSize(PlatformFileHandle handle)
     return fileInfo.st_size;
 }
 
-Optional<WallTime> getFileCreationTime(const String& path)
+Optional<WallTime> fileCreationTime(const String& path)
 {
 #if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     CString fsRep = fileSystemRepresentation(path);

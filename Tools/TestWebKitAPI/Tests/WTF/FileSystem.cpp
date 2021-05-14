@@ -693,9 +693,9 @@ TEST_F(FileSystemTest, hardLinkCount)
     EXPECT_TRUE(!linkCount);
 }
 
-static void runGetFileModificationTimeTest(const String& path, Function<Optional<WallTime>(const String&)>&& getFileModificationTime)
+static void runGetFileModificationTimeTest(const String& path, Function<Optional<WallTime>(const String&)>&& fileModificationTime)
 {
-    auto modificationTime = getFileModificationTime(path);
+    auto modificationTime = fileModificationTime(path);
     EXPECT_TRUE(!!modificationTime);
     if (!modificationTime)
         return;
@@ -715,7 +715,7 @@ static void runGetFileModificationTimeTest(const String& path, Function<Optional
     FileSystem::writeToFile(fileHandle, "foo", strlen("foo"));
     FileSystem::closeFile(fileHandle);
 
-    auto newModificationTime = getFileModificationTime(path);
+    auto newModificationTime = fileModificationTime(path);
     EXPECT_TRUE(!!newModificationTime);
     if (!newModificationTime)
         return;
@@ -724,14 +724,14 @@ static void runGetFileModificationTimeTest(const String& path, Function<Optional
     EXPECT_GT(newModificationTime->secondsSinceEpoch().value(), timeBeforeModification.secondsSinceEpoch().value());
 }
 
-TEST_F(FileSystemTest, getFileModificationTime)
+TEST_F(FileSystemTest, fileModificationTime)
 {
     runGetFileModificationTimeTest(tempFilePath(), [](const String& path) {
-        return FileSystem::getFileModificationTime(path);
+        return FileSystem::fileModificationTime(path);
     });
 }
 
-TEST_F(FileSystemTest, getFileModificationTimeViaFileMetadata)
+TEST_F(FileSystemTest, fileModificationTimeViaFileMetadata)
 {
     runGetFileModificationTimeTest(tempFilePath(), [](const String& path) -> Optional<WallTime> {
         auto metadata = FileSystem::fileMetadata(path);
@@ -743,7 +743,7 @@ TEST_F(FileSystemTest, getFileModificationTimeViaFileMetadata)
 
 TEST_F(FileSystemTest, updateFileModificationTime)
 {
-    auto modificationTime = FileSystem::getFileModificationTime(tempFilePath());
+    auto modificationTime = FileSystem::fileModificationTime(tempFilePath());
     ASSERT_TRUE(!!modificationTime);
 
     unsigned timeout = 0;
@@ -754,7 +754,7 @@ TEST_F(FileSystemTest, updateFileModificationTime)
     TestWebKitAPI::Util::sleep(1);
 
     EXPECT_TRUE(FileSystem::updateFileModificationTime(tempFilePath()));
-    auto newModificationTime = FileSystem::getFileModificationTime(tempFilePath());
+    auto newModificationTime = FileSystem::fileModificationTime(tempFilePath());
     ASSERT_TRUE(!!newModificationTime);
     EXPECT_GT(newModificationTime->secondsSinceEpoch().value(), modificationTime->secondsSinceEpoch().value());
 

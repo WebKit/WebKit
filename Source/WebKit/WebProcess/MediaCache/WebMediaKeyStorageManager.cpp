@@ -79,7 +79,7 @@ static void removeAllMediaKeyStorageForOriginPath(const String& originPath, Wall
         if (!FileSystem::fileExists(mediaKeyFile))
             continue;
 
-        auto modificationTime = FileSystem::getFileModificationTime(mediaKeyFile);
+        auto modificationTime = FileSystem::fileModificationTime(mediaKeyFile);
         if (!modificationTime)
             continue;
         if (modificationTime.value() < startDate || modificationTime.value() > endDate)

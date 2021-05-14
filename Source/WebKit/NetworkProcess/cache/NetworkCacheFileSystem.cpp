@@ -82,8 +82,8 @@ FileTimes fileTimes(const String& path)
     return { WallTime::fromRawSeconds(g_ascii_strtoull(birthtimeString, nullptr, 10)),
         WallTime::fromRawSeconds(g_file_info_get_attribute_uint64(fileInfo.get(), "time::modified")) };
 #elif OS(WINDOWS)
-    auto createTime = FileSystem::getFileCreationTime(path);
-    auto modifyTime = FileSystem::getFileModificationTime(path);
+    auto createTime = FileSystem::fileCreationTime(path);
+    auto modifyTime = FileSystem::fileModificationTime(path);
     return { createTime.valueOr(WallTime()), modifyTime.valueOr(WallTime()) };
 #endif
 }

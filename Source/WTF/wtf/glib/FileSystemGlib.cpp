@@ -129,7 +129,7 @@ Optional<uint64_t> fileSize(PlatformFileHandle handle)
     return g_file_info_get_size(info.get());
 }
 
-Optional<WallTime> getFileCreationTime(const String&)
+Optional<WallTime> fileCreationTime(const String&)
 {
     // FIXME: Is there a way to retrieve file creation time with Gtk on platforms that support it?
     return WTF::nullopt;

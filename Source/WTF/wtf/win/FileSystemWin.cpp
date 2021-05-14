@@ -83,7 +83,7 @@ static Optional<uint64_t> getFileSizeFromByHandleFileInformationStructure(const 
     return fileSize.QuadPart;
 }
 
-static void getFileCreationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
+static void fileCreationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
 {
     ULARGE_INTEGER fileTime;
     fileTime.HighPart = findData.ftCreationTime.dwHighDateTime;
@@ -94,7 +94,7 @@ static void getFileCreationTimeFromFindData(const WIN32_FIND_DATAW& findData, ti
 }
 
 
-static void getFileModificationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
+static void fileModificationTimeFromFindData(const WIN32_FIND_DATAW& findData, time_t& time)
 {
     ULARGE_INTEGER fileTime;
     fileTime.HighPart = findData.ftLastWriteTime.dwHighDateTime;
@@ -113,14 +113,14 @@ Optional<uint64_t> fileSize(PlatformFileHandle fileHandle)
     return getFileSizeFromByHandleFileInformationStructure(fileInformation);
 }
 
-Optional<WallTime> getFileCreationTime(const String& path)
+Optional<WallTime> fileCreationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
         return WTF::nullopt;
 
     time_t time = 0;
-    getFileCreationTimeFromFindData(findData, time);
+    fileCreationTimeFromFindData(findData, time);
     return WallTime::fromRawSeconds(time);
 }
 

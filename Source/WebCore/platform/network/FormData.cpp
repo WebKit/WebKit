@@ -419,7 +419,7 @@ bool FormDataElement::EncodedFileData::fileModificationTimeMatchesExpectation() 
     if (!expectedFileModificationTime)
         return true;
 
-    auto fileModificationTime = FileSystem::getFileModificationTime(filename);
+    auto fileModificationTime = FileSystem::fileModificationTime(filename);
     if (!fileModificationTime)
         return false;
 

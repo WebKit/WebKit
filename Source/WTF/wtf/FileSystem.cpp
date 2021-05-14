@@ -676,7 +676,7 @@ bool deleteNonEmptyDirectory(const String& path)
     return !ec;
 }
 
-Optional<WallTime> getFileModificationTime(const String& path)
+Optional<WallTime> fileModificationTime(const String& path)
 {
     std::error_code ec;
     auto modificationTime = std::filesystem::last_write_time(toStdFileSystemPath(path), ec);

@@ -791,7 +791,7 @@ void DatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
             // from the tracker database. We want to delete all of the information associated with this
             // database from the tracker database, so still add its name to databaseNamesToDelete.
             if (FileSystem::fileExists(fullPath)) {
-                auto modificationTime = FileSystem::getFileModificationTime(fullPath);
+                auto modificationTime = FileSystem::fileModificationTime(fullPath);
                 if (!modificationTime)
                     continue;
 

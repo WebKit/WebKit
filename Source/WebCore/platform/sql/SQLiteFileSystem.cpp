@@ -116,12 +116,12 @@ uint64_t SQLiteFileSystem::databaseFileSize(const String& fileName)
 
 Optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
 {
-    return FileSystem::getFileCreationTime(fileName);
+    return FileSystem::fileCreationTime(fileName);
 }
 
 Optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
 {
-    return FileSystem::getFileModificationTime(fileName);
+    return FileSystem::fileModificationTime(fileName);
 }
     
 String SQLiteFileSystem::computeHashForFileName(const String& fileName)

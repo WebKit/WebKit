@@ -1693,7 +1693,7 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
         auto mediaKeyDirectory = FileSystem::pathByAppendingComponent(mediaKeysStorageDirectory, directoryName);
         auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
 
-        auto modificationTime = FileSystem::getFileModificationTime(mediaKeyFile);
+        auto modificationTime = FileSystem::fileModificationTime(mediaKeyFile);
         if (!modificationTime)
             continue;
 

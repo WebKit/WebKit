@@ -113,9 +113,9 @@ WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
 WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
 WTF_EXPORT_PRIVATE Optional<uint64_t> fileSize(const String&);
 WTF_EXPORT_PRIVATE Optional<uint64_t> fileSize(PlatformFileHandle);
-WTF_EXPORT_PRIVATE Optional<WallTime> getFileModificationTime(const String&);
+WTF_EXPORT_PRIVATE Optional<WallTime> fileModificationTime(const String&);
 WTF_EXPORT_PRIVATE bool updateFileModificationTime(const String& path); // Sets modification time to now.
-WTF_EXPORT_PRIVATE Optional<WallTime> getFileCreationTime(const String&); // Not all platforms store file creation time.
+WTF_EXPORT_PRIVATE Optional<WallTime> fileCreationTime(const String&); // Not all platforms store file creation time.
 WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadata(const String& path);
 WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
 WTF_EXPORT_PRIVATE bool isDirectory(const String&);
