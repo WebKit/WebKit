@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "PlatformLayer.h"
 #include "PlatformTimeRanges.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include <CoreMedia/CoreMedia.h>
 #include <JavaScriptCore/DataView.h>
@@ -476,6 +477,8 @@ void MediaPlayerPrivateAVFoundation::updateStates()
 {
     if (m_ignoreLoadStateChanges)
         return;
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     MediaPlayer::NetworkState newNetworkState = m_networkState;
     MediaPlayer::ReadyState newReadyState = m_readyState;

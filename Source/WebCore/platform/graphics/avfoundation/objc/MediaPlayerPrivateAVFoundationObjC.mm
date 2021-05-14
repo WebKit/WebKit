@@ -53,6 +53,7 @@
 #import "PixelBufferConformerCV.h"
 #import "PlatformTimeRanges.h"
 #import "RuntimeApplicationChecks.h"
+#import "ScriptDisallowedScope.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
@@ -3604,6 +3605,9 @@ NSArray* playerKVOProperties()
         m_taskQueue.enqueueTask([player = m_player, keyPath = WTFMove(keyPath), change = WTFMove(change), object = WTFMove(object), context] {
             if (!player)
                 return;
+
+            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
             id newValue = [change valueForKey:NSKeyValueChangeNewKey];
             bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
             bool shouldLogValue = !willChange;
@@ -3700,6 +3704,9 @@ NSArray* playerKVOProperties()
         m_taskQueue.enqueueTask([player = m_player, strings = WTFMove(strings), nativeSamples = WTFMove(nativeSamples), itemTime] {
             if (!player)
                 return;
+
+            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
             MediaTime time = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
             player->processCue(strings.get(), nativeSamples.get(), time);
         });
@@ -3730,6 +3737,8 @@ NSArray* playerKVOProperties()
     m_taskQueue.enqueueTask([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
         if (!player)
             return;
+
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         for (AVTimedMetadataGroup *group in metadataGroups.get())
             player->metadataDidArrive(retainPtr(group.items), currentTime);
@@ -3800,6 +3809,9 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(resourceLoader);
     ensureOnMainThread([self, strongSelf = retainPtr(self), loadingRequest = retainPtr(loadingRequest)]() mutable {
         m_taskQueue.enqueueTask([player = m_player, loadingRequest = WTFMove(loadingRequest)] {
+
+            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
             if (player)
                 player->didCancelLoadingRequest(loadingRequest.get());
         });
