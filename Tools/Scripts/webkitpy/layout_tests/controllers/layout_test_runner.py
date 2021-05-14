@@ -28,7 +28,6 @@
 
 import atexit
 import logging
-import math
 import threading
 import time
 

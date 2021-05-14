@@ -28,21 +28,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-import errno
 import logging
 import math
 import re
-import os
-import signal
-import socket
-import subprocess
-import sys
-import time
 
-from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.port.driver import DriverInput
-from webkitpy.port.driver import DriverOutput
 
 DEFAULT_TEST_RUNNER_COUNT = 4
 

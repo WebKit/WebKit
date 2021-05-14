@@ -26,11 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
 import logging
 import os.path
 
-from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
+from webkitpy.common.net.layouttestresults import path_for_layout_test
 from webkitpy.common.config import urls
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.grammar import plural, pluralize, join_with_separators

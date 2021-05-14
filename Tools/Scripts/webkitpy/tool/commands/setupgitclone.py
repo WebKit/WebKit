@@ -28,7 +28,6 @@
 
 from webkitpy.common.checkout.scm.git import Git
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.multicommandtool import Command
 
 

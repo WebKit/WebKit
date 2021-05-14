@@ -1,5 +1,66 @@
 2021-05-14  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Remove unused imports
+        https://bugs.webkit.org/show_bug.cgi?id=225776
+        <rdar://problem/77982408>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_json_merge.py:
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        * Scripts/webkitpy/browserperfdash/browserperfdash_runner.py:
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+        * Scripts/webkitpy/common/system/zipfileset_unittest.py:
+        * Scripts/webkitpy/common/test_expectations_unittest.py:
+        * Scripts/webkitpy/inspector/main.py:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        * Scripts/webkitpy/minibrowser/run_webkit_app.py:
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        * Scripts/webkitpy/port/base.py:
+        * Scripts/webkitpy/port/builders.py:
+        * Scripts/webkitpy/port/config_unittest.py:
+        * Scripts/webkitpy/results/upload_unittest.py:
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        * Scripts/webkitpy/style/checkers/text_unittest.py:
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        * Scripts/webkitpy/style/optparser.py:
+        * Scripts/webkitpy/test/printer.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/bot/retrylogic_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/wptchangeexport.py:
+        * Scripts/webkitpy/w3c/wpt_runner.py:
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py:
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_result.py:
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+
+2021-05-14  Jonathan Bedard  <jbedard@apple.com>
+
         test-lldb-webkit failing with import of lldb
         https://bugs.webkit.org/show_bug.cgi?id=225792
         <rdar://problem/77993980>

@@ -30,7 +30,6 @@
 import logging
 import unittest
 
-from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler

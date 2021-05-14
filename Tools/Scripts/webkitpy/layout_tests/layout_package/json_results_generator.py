@@ -28,21 +28,8 @@
 
 import json
 import logging
-import subprocess
-import sys
-import time
-import xml.dom.minidom
 
-from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.iteration_compatibility import iteritems, iterkeys
-from webkitpy.common.net.file_uploader import FileUploader
-
-if sys.version_info > (3, 0):
-    from urllib.error import HTTPError, URLError
-    from urllib.parse import quote
-    from urllib.request import urlopen
-else:
-    from urllib2 import HTTPError, quote, URLError, urlopen
 
 # A JSON results generator for generic tests.
 # FIXME: move this code out of the layout_package directory.

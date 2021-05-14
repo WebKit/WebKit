@@ -29,7 +29,6 @@
 import cgi
 import codecs
 import datetime
-import fnmatch
 import json
 import mimetypes
 import os.path

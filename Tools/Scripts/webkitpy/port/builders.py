@@ -29,8 +29,6 @@
 
 import re
 
-from webkitpy.common.memoized import memoized
-
 
 # In this dictionary, each item stores:
 # * port_name -- a fully qualified port name

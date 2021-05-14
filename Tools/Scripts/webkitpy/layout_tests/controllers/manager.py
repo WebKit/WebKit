@@ -42,8 +42,6 @@ import sys
 import time
 from collections import defaultdict, OrderedDict
 
-from webkitpy.common.checkout.scm.detection import SCMDetector
-from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner

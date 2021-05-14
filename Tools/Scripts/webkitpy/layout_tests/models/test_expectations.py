@@ -32,7 +32,6 @@ for layout tests.
 
 import logging
 import re
-import sys
 
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.models.test_configuration import (

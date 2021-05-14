@@ -27,13 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
-import json
-import sys
 import unittest
 
-from webkitpy.layout_tests.models.test_configuration import *
-from webkitpy.port import builders
-from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost

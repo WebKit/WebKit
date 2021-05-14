@@ -26,7 +26,6 @@
 import os
 import os.path
 import shutil
-import sys
 import tempfile
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.system.executive import ScriptError

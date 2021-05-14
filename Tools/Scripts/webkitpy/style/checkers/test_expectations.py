@@ -30,9 +30,6 @@
 
 import logging
 import optparse
-import os
-import re
-import sys
 
 from webkitpy.common.host import Host
 from webkitpy.common.iteration_compatibility import iteritems

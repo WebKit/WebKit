@@ -22,12 +22,8 @@
 
 import unittest
 
-import json
-import os
-
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.test_expectations import TestExpectations
-from webkitpy.common.webkit_finder import WebKitFinder
 
 
 class MockTestExpectations(TestExpectations):

@@ -39,7 +39,6 @@ from webkitpy.tool import steps
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.system.user import User
-from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.comments import bug_comment_from_svn_revision

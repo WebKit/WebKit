@@ -23,8 +23,6 @@
 
 import logging
 
-from webkitcorepy import StringIO
-
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.tool.grammar import pluralize

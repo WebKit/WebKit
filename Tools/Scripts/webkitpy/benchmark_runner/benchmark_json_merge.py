@@ -24,9 +24,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
-from webkitpy.common.iteration_compatibility import iteritems
-
 
 def deepAppend(value1, value2, currentKey=None):
     if type(value1) != type(value2):

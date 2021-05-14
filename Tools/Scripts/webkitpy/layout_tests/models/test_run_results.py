@@ -30,7 +30,6 @@
 import datetime
 import logging
 import signal
-import sys
 
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.models import test_expectations

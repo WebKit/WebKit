@@ -24,7 +24,6 @@
 
 import logging
 from optparse import OptionParser
-import os.path
 import sys
 
 from webkitpy.style.filter import validate_filter_rules

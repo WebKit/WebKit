@@ -32,7 +32,6 @@ test infrastructure (the Port and Driver classes)."""
 
 import argparse
 import difflib
-import json
 import logging
 import os
 import optparse
@@ -40,13 +39,10 @@ import re
 import sys
 
 from collections import OrderedDict
-from functools import partial
 from webkitcorepy import string_utils, decorators
 from webkitscmpy import local
 
-from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
-from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.memoized import memoized
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path, pemfile

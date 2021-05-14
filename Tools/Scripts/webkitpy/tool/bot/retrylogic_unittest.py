@@ -23,8 +23,6 @@
 import logging
 import unittest
 
-from webkitpy.common.net.jsctestresults import JSCTestResults
-from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.patchanalysistask import *
 from webkitpy.tool.commands.earlywarningsystem import AbstractEarlyWarningSystem
 from webkitpy.tool.mocktool import MockTool

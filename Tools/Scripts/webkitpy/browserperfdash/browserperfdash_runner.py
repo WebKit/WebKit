@@ -28,15 +28,11 @@ import ConfigParser
 import json
 import logging
 import os
-import platform
-import sys
 import tempfile
-import time
 import urllib
 
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
-from webkitpy.benchmark_runner.webdriver_benchmark_runner import WebDriverBenchmarkRunner
 from webkitpy.benchmark_runner.webserver_benchmark_runner import WebServerBenchmarkRunner
 from webkitpy.benchmark_runner.run_benchmark import default_browser, default_platform, benchmark_runner_subclasses
 
