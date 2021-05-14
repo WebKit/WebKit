@@ -1,5 +1,16 @@
 2021-05-13  Aakash Jain  <aakash_jain@apple.com>
 
+        report-non-inclusive-language should skip symlinks
+        https://bugs.webkit.org/show_bug.cgi?id=225789
+
+        Reviewed by Darin Adler.
+
+        * Scripts/report-non-inclusive-language: Skip symlinks since most likely the linked file would be checked 
+        directly by the script while iterating the directory structure and would result in it being counted twice.
+        Also the script fails with an error if there is a symlink pointing to a non-existing file.
+
+2021-05-13  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Style fixes in steps.py
         https://bugs.webkit.org/show_bug.cgi?id=225784
 

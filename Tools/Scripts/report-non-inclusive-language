@@ -67,6 +67,8 @@ for subroot, directories, files in os.walk(root):
             continue
         if file in IGNORE_FILE_NAMES:
             continue
+        if os.path.islink(os.path.join(subroot, file)):
+            continue
         handle = open(os.path.join(subroot, file), "r")
         for line in handle.readlines():
             for term in nonInclusiveTerms:
