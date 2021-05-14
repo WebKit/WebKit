@@ -64,6 +64,7 @@
 #include "ProfilerJettisonReason.h"
 #include "ProgramExecutable.h"
 #include "PutPropertySlot.h"
+#include "RegisterAtOffsetList.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include "Watchpoint.h"
@@ -283,7 +284,8 @@ public:
         FixedVector<SimpleJumpTable> m_switchJumpTables;
         FixedVector<StringJumpTable> m_stringSwitchJumpTables;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
-        std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
+        bool m_hasCalleeSaveRegisters { false };
+        RegisterAtOffsetList m_calleeSaveRegisters;
         JITCodeMap m_jitCodeMap;
     };
 
@@ -343,7 +345,7 @@ public:
     Optional<CodeOrigin> findPC(void* pc);
 
     void setCalleeSaveRegisters(RegisterSet);
-    void setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList>);
+    void setCalleeSaveRegisters(RegisterAtOffsetList&&);
 
     void setRareCaseProfiles(FixedVector<RareCaseProfile>&&);
     RareCaseProfile* rareCaseProfileForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);

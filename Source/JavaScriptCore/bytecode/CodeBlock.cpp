@@ -1790,16 +1790,24 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeIndex(const ConcurrentJSLocke
     return 0;
 }
 
-void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
+void CodeBlock::setCalleeSaveRegisters(RegisterSet registerSet)
 {
+    auto calleeSaveRegisters = RegisterAtOffsetList(registerSet);
+
     ConcurrentJSLocker locker(m_lock);
-    ensureJITData(locker).m_calleeSaveRegisters = makeUnique<RegisterAtOffsetList>(calleeSaveRegisters);
+    auto& jitData = ensureJITData(locker);
+    jitData.m_calleeSaveRegisters = WTFMove(calleeSaveRegisters);
+    WTF::storeStoreFence();
+    jitData.m_hasCalleeSaveRegisters = true;
 }
 
-void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> registerAtOffsetList)
+void CodeBlock::setCalleeSaveRegisters(RegisterAtOffsetList&& registerAtOffsetList)
 {
     ConcurrentJSLocker locker(m_lock);
-    ensureJITData(locker).m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
+    auto& jitData = ensureJITData(locker);
+    jitData.m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
+    WTF::storeStoreFence();
+    jitData.m_hasCalleeSaveRegisters = true;
 }
 
 void CodeBlock::resetJITData()
@@ -2492,8 +2500,8 @@ const RegisterAtOffsetList* CodeBlock::calleeSaveRegisters() const
 {
 #if ENABLE(JIT)
     if (auto* jitData = m_jitData.get()) {
-        if (const RegisterAtOffsetList* registers = jitData->m_calleeSaveRegisters.get())
-            return registers;
+        if (jitData->m_hasCalleeSaveRegisters)
+            return &jitData->m_calleeSaveRegisters;
     }
 #endif
     return &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();

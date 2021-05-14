@@ -71,10 +71,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (state.allocationFailed)
         return;
     
-    std::unique_ptr<RegisterAtOffsetList> registerOffsets =
-        makeUnique<RegisterAtOffsetList>(state.proc->calleeSaveRegisterAtOffsetList());
+    RegisterAtOffsetList registerOffsets = state.proc->calleeSaveRegisterAtOffsetList();
     if (shouldDumpDisassembly())
-        dataLog(tierName, "Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", *registerOffsets, "\n");
+        dataLog(tierName, "Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", registerOffsets, "\n");
     codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));
     ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
     state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);

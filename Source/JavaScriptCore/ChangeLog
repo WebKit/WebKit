@@ -1,3 +1,31 @@
+2021-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        m_calleeSaveRegisters should not be a pointer to a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=225787
+
+        Reviewed by Keith Miller.
+
+        Ben found this through memory stress testing.
+
+        RegisterAtOffsetList is effectively just a pointer. unique_ptr<RegisterAtOffsetList>
+        is a pointer to a pointer. RegisterAtOffsetList is long-lived, so it
+        creates heap page fragmentation.
+
+        Worth 3MB on Ben's test.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setCalleeSaveRegisters):
+        (JSC::CodeBlock::calleeSaveRegisters const): Use a fence before setting
+        m_hasCalleeSaveRegisters to ensure that all writes have completed before
+        the struct becomes visible.
+
+        * bytecode/CodeBlock.h: Use RegisterAtOffsetList directly instead of 
+        unique_ptr<RegisterAtOffsetList> to avoid a long-lived lonely 8 byte
+        allocation.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile): Updated for type change.
+
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::directoryName() to FileSystem::parentPath()
