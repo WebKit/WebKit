@@ -737,7 +737,7 @@ class RunLLDBWebKitTests(RunPythonTests):
     description = ["lldb-webkit-tests running"]
     descriptionDone = ["lldb-webkit-tests"]
     command = [
-        "python",
+        "python3",
         "./Tools/Scripts/test-lldb-webkit",
         "--verbose",
         "--no-build",
