@@ -1,3 +1,15 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::getVolumeFreeSpace() to FileSystem::volumeFreeSpace()
+        https://bugs.webkit.org/show_bug.cgi?id=225811
+
+        Reviewed by Darin Adler.
+
+        Update code base due to API change.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-05-14  Jean-Yves Avenard  <jya@apple.com>
 
         TestWebKitAPI.Fullscreen.WKViewDelegate is timing out

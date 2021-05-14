@@ -126,7 +126,7 @@ WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String&
 WTF_EXPORT_PRIVATE bool makeAllDirectories(const String& path);
 WTF_EXPORT_PRIVATE String pathFileName(const String&);
 WTF_EXPORT_PRIVATE String parentPath(const String&);
-WTF_EXPORT_PRIVATE bool getVolumeFreeSpace(const String&, uint64_t&);
+WTF_EXPORT_PRIVATE Optional<uint64_t> volumeFreeSpace(const String&);
 WTF_EXPORT_PRIVATE Optional<int32_t> getFileDeviceId(const CString&);
 WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);

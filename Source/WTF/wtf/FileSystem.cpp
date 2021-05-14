@@ -625,14 +625,13 @@ bool makeAllDirectories(const String& path)
     return !ec;
 }
 
-bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
+Optional<uint64_t> volumeFreeSpace(const String& path)
 {
     std::error_code ec;
     auto spaceInfo = std::filesystem::space(toStdFileSystemPath(path), ec);
     if (ec)
-        return false;
-    freeSpace = spaceInfo.available;
-    return true;
+        return WTF::nullopt;
+    return spaceInfo.available;
 }
 
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)

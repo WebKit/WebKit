@@ -543,14 +543,14 @@ TEST_F(FileSystemTest, makeAllDirectories)
     EXPECT_FALSE(FileSystem::fileExists(subFolderPath));
 }
 
-TEST_F(FileSystemTest, getVolumeFreeSpace)
+TEST_F(FileSystemTest, volumeFreeSpace)
 {
-    uint64_t freeSpace = 0;
-    EXPECT_TRUE(FileSystem::getVolumeFreeSpace(tempFilePath(), freeSpace));
-    EXPECT_GT(freeSpace, 0U);
+    auto freeSpace = FileSystem::volumeFreeSpace(tempFilePath());
+    ASSERT_TRUE(freeSpace);
+    EXPECT_GT(*freeSpace, 0U);
 
     String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
-    EXPECT_FALSE(FileSystem::getVolumeFreeSpace(fileThatDoesNotExist, freeSpace));
+    EXPECT_FALSE(FileSystem::volumeFreeSpace(fileThatDoesNotExist));
 }
 
 TEST_F(FileSystemTest, createSymbolicLink)
