@@ -406,7 +406,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
         if (!tempDirectory)
             return;
 
-        auto tempStoragePath = FileSystem::pathByAppendingComponent(tempDirectory, FileSystem::pathGetFileName(storagePath));
+        auto tempStoragePath = FileSystem::pathByAppendingComponent(tempDirectory, FileSystem::pathFileName(storagePath));
         if (!FileSystem::moveFile(storageDirectory, tempStoragePath))
             return;
 

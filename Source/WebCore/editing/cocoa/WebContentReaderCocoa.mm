@@ -746,7 +746,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return image;
     }
 
-    attachment->updateAttributes(WTFMove(fileSizeForDisplay), contentType, FileSystem::pathGetFileName(path));
+    attachment->updateAttributes(WTFMove(fileSizeForDisplay), contentType, FileSystem::pathFileName(path));
     return attachment;
 }
 

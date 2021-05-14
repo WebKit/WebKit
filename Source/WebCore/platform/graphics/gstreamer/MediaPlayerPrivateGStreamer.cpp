@@ -2209,7 +2209,7 @@ void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const String& downloadFi
         return;
 
     auto templateDirectory = FileSystem::parentPath(downloadFilePrefixPath);
-    auto templatePrefix = FileSystem::pathGetFileName(downloadFilePrefixPath);
+    auto templatePrefix = FileSystem::pathFileName(downloadFilePrefixPath);
     for (auto& fileName : FileSystem::listDirectory(templateDirectory)) {
         if (!fileName.startsWith(templatePrefix))
             continue;

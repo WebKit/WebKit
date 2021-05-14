@@ -44,7 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemEntry);
 FileSystemEntry::FileSystemEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
     : ActiveDOMObject(&context)
     , m_filesystem(filesystem)
-    , m_name(FileSystem::pathGetFileName(virtualPath))
+    , m_name(FileSystem::pathFileName(virtualPath))
     , m_virtualPath(virtualPath)
 {
     suspendIfNeeded();

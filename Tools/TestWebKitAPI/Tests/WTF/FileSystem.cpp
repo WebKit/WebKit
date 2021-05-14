@@ -740,25 +740,25 @@ TEST_F(FileSystemTest, getFileModificationTimeViaFileMetadata)
     });
 }
 
-TEST_F(FileSystemTest, pathGetFileName)
+TEST_F(FileSystemTest, pathFileName)
 {
     auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "filename.txt" });
-    EXPECT_STREQ("filename.txt", FileSystem::pathGetFileName(testPath).utf8().data());
+    EXPECT_STREQ("filename.txt", FileSystem::pathFileName(testPath).utf8().data());
 
 #if OS(UNIX)
-    EXPECT_STREQ(".", FileSystem::pathGetFileName(".").utf8().data());
-    EXPECT_STREQ("..", FileSystem::pathGetFileName("..").utf8().data());
-    EXPECT_STREQ("", FileSystem::pathGetFileName("/").utf8().data());
-    EXPECT_STREQ(".", FileSystem::pathGetFileName("/foo/.").utf8().data());
-    EXPECT_STREQ("..", FileSystem::pathGetFileName("/foo/..").utf8().data());
-    EXPECT_STREQ("", FileSystem::pathGetFileName("/foo/").utf8().data());
-    EXPECT_STREQ("host", FileSystem::pathGetFileName("//host").utf8().data());
+    EXPECT_STREQ(".", FileSystem::pathFileName(".").utf8().data());
+    EXPECT_STREQ("..", FileSystem::pathFileName("..").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("/").utf8().data());
+    EXPECT_STREQ(".", FileSystem::pathFileName("/foo/.").utf8().data());
+    EXPECT_STREQ("..", FileSystem::pathFileName("/foo/..").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("/foo/").utf8().data());
+    EXPECT_STREQ("host", FileSystem::pathFileName("//host").utf8().data());
 #endif
 #if OS(WINDOWS)
-    EXPECT_STREQ("", FileSystem::pathGetFileName("C:\\").utf8().data());
-    EXPECT_STREQ("foo", FileSystem::pathGetFileName("C:\\foo").utf8().data());
-    EXPECT_STREQ("", FileSystem::pathGetFileName("C:\\foo\\").utf8().data());
-    EXPECT_STREQ("bar.txt", FileSystem::pathGetFileName("C:\\foo\\bar.txt").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("C:\\").utf8().data());
+    EXPECT_STREQ("foo", FileSystem::pathFileName("C:\\foo").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("C:\\foo\\").utf8().data());
+    EXPECT_STREQ("bar.txt", FileSystem::pathFileName("C:\\foo\\bar.txt").utf8().data());
 #endif
 }
 

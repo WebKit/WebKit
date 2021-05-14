@@ -1213,7 +1213,7 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
                             continue;
                         
                         // If this database has been deleted or if its database file no longer matches the current version, this database is no longer valid and it should be marked as deleted.
-                        if (databaseFileName.isNull() || databaseFileName != FileSystem::pathGetFileName(db->fileNameIsolatedCopy())) {
+                        if (databaseFileName.isNull() || databaseFileName != FileSystem::pathFileName(db->fileNameIsolatedCopy())) {
                             deletedDatabases.append(db);
                             foundDeletedDatabase = true;
                         }

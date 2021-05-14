@@ -788,7 +788,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
 
     String fullPath;
     if (!resource->path().isEmpty())
-        dataStatement.bindText(2, FileSystem::pathGetFileName(resource->path()));
+        dataStatement.bindText(2, FileSystem::pathFileName(resource->path()));
     else if (shouldStoreResourceAsFlatFile(resource)) {
         // First, check to see if creating the flat file would violate the maximum total quota. We don't need
         // to check the per-origin quota here, as it was already checked in storeNewestCache().

@@ -1,3 +1,31 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
+        https://bugs.webkit.org/show_bug.cgi?id=225806
+
+        Reviewed by Alex Christensen.
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName(), as we avoid "get" prefixes in WebKit.
+
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        (WebCore::FileSystemEntry::FileSystemEntry):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attachmentForFilePath):
+        * fileapi/File.cpp:
+        (WebCore::File::computeNameAndContentType):
+        * fileapi/FileCocoa.mm:
+        (WebCore::File::computeNameAndContentTypeForReplacedFile):
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::gatherFileInformation):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::purgeOldDownloadFiles):
+
 2021-05-13  Rob Buis  <rbuis@igalia.com>
 
         Check for null element in paintSearchFieldResultsButton

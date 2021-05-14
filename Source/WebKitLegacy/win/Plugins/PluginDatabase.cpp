@@ -309,7 +309,7 @@ void PluginDatabase::setPreferredPluginForMIMEType(const String& mimeType, Plugi
 bool PluginDatabase::fileExistsAndIsNotDisabled(const String& filePath) const
 {
     // Skip plugin files that are disabled by filename.
-    if (m_disabledPluginFiles.contains(FileSystem::pathGetFileName(filePath)))
+    if (m_disabledPluginFiles.contains(FileSystem::pathFileName(filePath)))
         return false;
 
     return FileSystem::fileExists(filePath);

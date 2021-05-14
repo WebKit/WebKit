@@ -1,3 +1,19 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
+        https://bugs.webkit.org/show_bug.cgi?id=225806
+
+        Reviewed by Alex Christensen.
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName(), as we avoid "get" prefixes in WebKit.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::fileExistsAndIsNotDisabled const):
+        * Plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::PluginPackage):
+        * WebDownloadCurl.cpp:
+        (WebDownload::didReceiveResponse):
+
 2021-05-13  Megan Gardner  <megan_gardner@apple.com>
 
         Add textIndicator bounce for AppHighlights on scroll.

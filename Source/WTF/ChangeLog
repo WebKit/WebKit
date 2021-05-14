@@ -1,3 +1,17 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
+        https://bugs.webkit.org/show_bug.cgi?id=225806
+
+        Reviewed by Alex Christensen.
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName(), as we avoid "get" prefixes in WebKit.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::pathFileName):
+        (WTF::FileSystemImpl::pathGetFileName): Deleted.
+        * wtf/FileSystem.h:
+
 2021-05-13  Dean Jackson  <dino@apple.com>
 
         [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)

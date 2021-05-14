@@ -739,7 +739,7 @@ Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
     return fileMetadataPotentiallyFollowingSymlinks(path, ShouldFollowSymbolicLinks::Yes);
 }
 
-String pathGetFileName(const String& path)
+String pathFileName(const String& path)
 {
     return fromStdFileSystemPath(toStdFileSystemPath(path).filename());
 }
