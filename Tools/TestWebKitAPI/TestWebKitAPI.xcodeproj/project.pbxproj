@@ -874,7 +874,7 @@
 		93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FCDB33263631560046DD7D /* SortedArrayMap.cpp */; };
 		95095F20262FFFA50000D920 /* SampledPageTopColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */; };
 		950E4CC1252E75240071659F /* iOSStylusSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 950E4CC0252E75230071659F /* iOSStylusSupport.mm */; };
-		953ABB3525C0D682004C8B73 /* PageExtendedBackgroundColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 953ABB3425C0D681004C8B73 /* PageExtendedBackgroundColor.mm */; };
+		953ABB3525C0D682004C8B73 /* WKWebViewUnderPageBackgroundColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */; };
 		95A524952581A10D00461FE9 /* WKWebViewThemeColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */; };
 		95B6B3B7251EBF2F00FC4382 /* MediaDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */; };
 		9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */; };
@@ -2576,7 +2576,7 @@
 		93FCDB33263631560046DD7D /* SortedArrayMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SortedArrayMap.cpp; sourceTree = "<group>"; };
 		95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SampledPageTopColor.mm; sourceTree = "<group>"; };
 		950E4CC0252E75230071659F /* iOSStylusSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSStylusSupport.mm; sourceTree = "<group>"; };
-		953ABB3425C0D681004C8B73 /* PageExtendedBackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageExtendedBackgroundColor.mm; sourceTree = "<group>"; };
+		953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewUnderPageBackgroundColor.mm; sourceTree = "<group>"; };
 		95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewThemeColor.mm; sourceTree = "<group>"; };
 		95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaDocument.mm; sourceTree = "<group>"; };
 		9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTextInput.mm; sourceTree = "<group>"; };
@@ -3483,8 +3483,8 @@
 				6351992722275C6A00890AD3 /* NavigationAction.mm */,
 				5C8BC798218CF3E900813886 /* NetworkProcess.mm */,
 				5CAE4637201937CD0051610F /* NetworkProcessCrashNonPersistentDataStore.mm */,
-				46A80F25264C29D400EEF20D /* NotificationAPI.mm */,
 				CDCFFEC022E268D500DF4223 /* NoPauseWhenSwitchingTabs.mm */,
+				46A80F25264C29D400EEF20D /* NotificationAPI.mm */,
 				CD2D0D19213465560018C784 /* NowPlaying.mm */,
 				2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */,
 				A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */,
@@ -3493,7 +3493,6 @@
 				37A22AA51DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				2DA2586E225C67DC00B45C1C /* OverrideViewportArguments.mm */,
-				953ABB3425C0D681004C8B73 /* PageExtendedBackgroundColor.mm */,
 				2D3CA3A4221DF2390088E803 /* PageOverlayPlugin.mm */,
 				51242CDA237B791E00EED9C1 /* PageZoom.mm */,
 				F44C79FB20F9E50C0014478C /* ParserYieldTokenPlugIn.mm */,
@@ -3637,6 +3636,7 @@
 				CD7F89DB22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm */,
 				9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */,
 				95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */,
+				953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */,
 			);
 			name = "WebKit Cocoa";
 			path = WebKitCocoa;
@@ -5452,7 +5452,6 @@
 				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
 				CDE77D2525A6591C00D4115E /* FullscreenPointerLeave.mm in Sources */,
 				CDDC7C6925FFF6D000224278 /* FullscreenRemoveNodeBeforeEnter.mm in Sources */,
-				46A80F26264C29D400EEF20D /* NotificationAPI.mm in Sources */,
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
 				83DB79691EF63B3C00BFA5E5 /* Function.cpp in Sources */,
 				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
@@ -5583,6 +5582,7 @@
 				7CCE7F051A411AE600447C4C /* NewFirstVisuallyNonEmptyLayoutFrames.cpp in Sources */,
 				0F5651F71FCE4DDC00310FBC /* NoHistoryItemScrollToFragment.mm in Sources */,
 				83F22C6420B355F80034277E /* NoPolicyDelegateResponse.mm in Sources */,
+				46A80F26264C29D400EEF20D /* NotificationAPI.mm in Sources */,
 				CD2D0D1A213465560018C784 /* NowPlaying.mm in Sources */,
 				2ECFF5551D9B12F800B55394 /* NowPlayingControlsTests.mm in Sources */,
 				5159F267260D43E300B2DA3C /* NowPlayingInfoTests.cpp in Sources */,
@@ -5596,7 +5596,6 @@
 				0F34077623037FDC0060A1A0 /* OverflowScrollViewTests.mm in Sources */,
 				C104BC1F2547237100C078C9 /* OverrideAppleLanguagesPreference.mm in Sources */,
 				2DA2586F225C67DC00B45C1C /* OverrideViewportArguments.mm in Sources */,
-				953ABB3525C0D682004C8B73 /* PageExtendedBackgroundColor.mm in Sources */,
 				7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */,
 				7CCE7F071A411AE600447C4C /* PageLoadBasic.cpp in Sources */,
 				7CCE7F081A411AE600447C4C /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,
@@ -5878,6 +5877,7 @@
 				CD7F89DC22A86CDA00D683AE /* WKWebViewSuspendAllMediaPlayback.mm in Sources */,
 				9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */,
 				95A524952581A10D00461FE9 /* WKWebViewThemeColor.mm in Sources */,
+				953ABB3525C0D682004C8B73 /* WKWebViewUnderPageBackgroundColor.mm in Sources */,
 				7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */,
 				C14D304624B4C3BA00480387 /* XPCEndpoint.mm in Sources */,
 				9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */,

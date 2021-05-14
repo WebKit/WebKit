@@ -493,7 +493,7 @@ static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
     if (!webView->_page)
         return { };
 
-    return webView->_page->scrollAreaBackgroundColor();
+    return webView->_page->underPageBackgroundColor();
 }
 
 static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)

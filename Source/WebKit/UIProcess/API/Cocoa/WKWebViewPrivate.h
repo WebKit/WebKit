@@ -380,10 +380,11 @@ for this property.
 @property (nonatomic, readonly) NSColor *_themeColor WK_API_DEPRECATED_WITH_REPLACEMENT("themeColor", macos(WK_MAC_TBA, WK_MAC_TBA));
 #endif
 
+// FIXME: Remove old `-[WKWebView _pageExtendedBackgroundColor]` SPI <rdar://77789732>
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly) UIColor *_pageExtendedBackgroundColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly) UIColor *_pageExtendedBackgroundColor WK_API_DEPRECATED_WITH_REPLACEMENT("underPageBackgroundColor", ios(WK_IOS_TBA, WK_IOS_TBA));
 #else
-@property (nonatomic, readonly) NSColor *_pageExtendedBackgroundColor;
+@property (nonatomic, readonly) NSColor *_pageExtendedBackgroundColor WK_API_DEPRECATED_WITH_REPLACEMENT("underPageBackgroundColor", macos(10.10, WK_MAC_TBA));
 #endif
 
 // Only set if `-[WKWebViewConfiguration _sampledPageTopColorMaxDifference]` is a positive number.

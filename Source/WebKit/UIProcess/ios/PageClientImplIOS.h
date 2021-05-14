@@ -293,6 +293,8 @@ private:
     void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) final;
 #endif
 
+    WebCore::Color contentViewBackgroundColor() final;
+
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };
