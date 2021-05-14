@@ -1,3 +1,14 @@
+2021-05-14  Jean-Yves Avenard  <jya@apple.com>
+
+        Bad media session artwork URL results in blue "broken image" icon being shown in Now Playing
+        https://bugs.webkit.org/show_bug.cgi?id=225799
+        rdar://77990886
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediasession/metadata/artworkdownload-expected.txt:
+        * fast/mediasession/metadata/artworkdownload.html: Add test case.
+
 2021-05-14  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Bot exiting early with crashes in new window layout tests inside wl_proxy_marshal_constructor

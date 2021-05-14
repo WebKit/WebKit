@@ -9,15 +9,26 @@ const IMAGE_SRC = '../../images/resources/test-load.jpg';
 
 promise_test((test) => {
     if (!window.internals)
-        var promise = Promise.resolve();
-    else {
-        var promise = internals.loadArtworkImage(IMAGE_SRC).then((data) => {
-            assert_equals(data.width, 16);
-            assert_equals(data.height, 16);
-        });;
-    }
-    return promise;
+        return Promise.rejects("Test needs internals");
+    return internals.loadArtworkImage(IMAGE_SRC).then((data) => {
+        assert_equals(data.width, 16);
+        assert_equals(data.height, 16);
+    });
 }, "ensure loading artwork image method operates properly");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.rejects("Test needs internals");
+
+    return promise_rejects(test, 'InvalidAccessError', internals.loadArtworkImage("bad_image.jpg"));
+}, "ensure loading invalid artwork causes a failure");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.rejects("Test needs internals");
+
+    return promise_rejects(test, 'InvalidAccessError', internals.loadArtworkImage(""));
+}, "ensure loading a non-image causes a failure");
 
         </script>
     </body>

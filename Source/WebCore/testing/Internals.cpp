@@ -6217,7 +6217,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
             else
                 m_artworkImagePromise->reject(imageData.exception().code());
         } else
-            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieve."  });
+            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieved."  });
         m_artworkImagePromise = nullptr;
     });
     m_artworkLoader->requestImageResource();
