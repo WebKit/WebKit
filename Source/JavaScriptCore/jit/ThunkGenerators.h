@@ -78,5 +78,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM&);
-}
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM&);
+#endif
+
+} // namespace JSC
 #endif // ENABLE(JIT)

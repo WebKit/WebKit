@@ -233,8 +233,7 @@ void AssemblyHelpers::jitReleaseAssertNoException(VM& vm)
 
 void AssemblyHelpers::callExceptionFuzz(VM& vm)
 {
-    if (!Options::useExceptionFuzz())
-        return;
+    RELEASE_ASSERT(Options::useExceptionFuzz());
 
     EncodedJSValue* buffer = vm.exceptionFuzzingBuffer(sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters));
 
@@ -276,7 +275,8 @@ AssemblyHelpers::Jump AssemblyHelpers::emitJumpIfException(VM& vm)
 
 AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(VM& vm, ExceptionCheckKind kind, ExceptionJumpWidth width)
 {
-    callExceptionFuzz(vm);
+    if (UNLIKELY(Options::useExceptionFuzz()))
+        callExceptionFuzz(vm);
 
     if (width == FarJumpWidth)
         kind = (kind == NormalExceptionCheck ? InvertedExceptionCheck : NormalExceptionCheck);
@@ -299,7 +299,8 @@ AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(VM& vm, ExceptionCheck
 
 AssemblyHelpers::Jump AssemblyHelpers::emitNonPatchableExceptionCheck(VM& vm)
 {
-    callExceptionFuzz(vm);
+    if (UNLIKELY(Options::useExceptionFuzz()))
+        callExceptionFuzz(vm);
 
     Jump result;
 #if USE(JSVALUE64)

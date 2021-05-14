@@ -40,7 +40,7 @@ void JITSlowPathCall::call()
 {
     VM& vm = m_jit->vm();
     uint32_t bytecodeOffset = m_jit->m_bytecodeIndex.offset();
-    ASSERT((bytecodeOffset << BytecodeIndex::checkpointShift) == m_jit->m_bytecodeIndex.asBits());
+    ASSERT(BytecodeIndex(bytecodeOffset) == m_jit->m_bytecodeIndex);
 
     UNUSED_VARIABLE(m_pc);
     constexpr GPRReg bytecodeOffsetReg = GPRInfo::argumentGPR1;

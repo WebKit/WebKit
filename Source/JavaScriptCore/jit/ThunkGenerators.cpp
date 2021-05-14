@@ -96,6 +96,46 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
+{
+    CCallHelpers jit;
+
+    jit.tagReturnAddress();
+
+    if (UNLIKELY(Options::useExceptionFuzz())) {
+        // Exception fuzzing can call a runtime function. So, we need to preserve the return address here.
+#if CPU(X86_64)
+        jit.push(X86Registers::ebp);
+#elif CPU(ARM64)
+        jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#endif
+    }
+
+    CCallHelpers::Jump handleException = jit.emitNonPatchableExceptionCheck(vm);
+
+    if (UNLIKELY(Options::useExceptionFuzz())) {
+#if CPU(X86_64)
+        jit.pop(X86Registers::ebp);
+#elif CPU(ARM64)
+        jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
+#endif
+    }
+    jit.ret();
+
+    auto handlerGenerator = Options::useExceptionFuzz() ? popThunkStackPreservesAndHandleExceptionGenerator : handleExceptionGenerator;
+#if CPU(X86_64)
+    if (!Options::useExceptionFuzz()) {
+        handleException.link(&jit);
+        jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CPURegister)), X86Registers::esp); // pop return address.
+        handleException = jit.jump();
+    }
+#endif
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    patchBuffer.link(handleException, CodeLocationLabel(vm.jitStubs->existingCTIStub(handlerGenerator, NoLockingNecessary).retaggedCode<NoPtrTag>()));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "CheckException");
+}
+
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
 template<typename TagType>

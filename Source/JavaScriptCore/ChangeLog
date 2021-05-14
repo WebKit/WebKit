@@ -1,3 +1,100 @@
+2021-05-14  Mark Lam  <mark.lam@apple.com>
+
+        Implement Baseline JIT property access slow paths using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225771
+
+        Reviewed by Yusuke Suzuki and Saam Barati.
+
+        This patch applies the following strategy to Baseline JIT property access slow paths:
+
+        1. If the slow path operation call is not patchable, emit a near call to a JIT
+           thunk to do the entire operation call.
+
+        2. If the slow path operation call is patachable, emit a near call to a prepare
+           call JIT thunk before the patchable operation call, and a near call to an exception
+           check JIT thunk after.
+
+        This strategy reduces the amount of instructions emitted for all the slow paths.
+        Performance is expected to be neutral or slightly improved due to the reduced
+        compile times and better cache locality.
+
+        With this patch, --dumpLinkBufferStats shows the following changes in emitted
+        JIT code size (using a single run of the CLI version of JetStream2 on AS Mac)
+        comparing to current tip of tree:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 84624776 (80.704475 MB)  77429400 (73.842430 MB)  0.91x (reduction)
+                   DFG: 36415264 (34.728302 MB)  36160880 (34.485703 MB)  0.99x
+                 Thunk: 23130336 (22.058807 MB)  23159024 (22.086166 MB)  1.00x
+           InlineCache: 21969728 (20.951965 MB)  22068348 (21.046017 MB)  1.00x
+                   FTL: 6097336 (5.814873 MB)    6004736 (5.726562 MB)    0.98x
+                  Wasm: 2301956 (2.195316 MB)    2429204 (2.316669 MB)    1.06x (probably noise)
+               YarrJIT: 1522488 (1.451958 MB)    1522488 (1.451958 MB)    1.00x
+                CSSJIT: 0
+         Uncategorized: 0
+
+        Comparing to tip of tree at the start of this effort to move put slow paths in
+        JIT thunks:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  77429400 (73.842430 MB)  0.87x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36160880 (34.485703 MB)  0.92x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  23159024 (22.086166 MB)  1.00x
+           InlineCache: 22027416 (21.006981 MB)  22068348 (21.046017 MB)  1.00x
+                   FTL: 6575772 (6.271145 MB)    6004736 (5.726562 MB)    0.91x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2429204 (2.316669 MB)    1.05x (probably noise)
+               YarrJIT: 1538956 (1.467663 MB)    1522488 (1.451958 MB)    0.99x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        This patch has passed the JSC tests on AS Mac, and also a subset of the JSC tests
+        (as a smoke test) on x86_64.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfGlobalObject):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+        (JSC::AssemblyHelpers::emitNonPatchableExceptionCheck):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::slow_op_get_by_val_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::slow_op_get_private_name_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::slow_op_del_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::slow_op_del_by_val_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::slow_op_get_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::slow_op_get_by_id_with_this_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::slow_op_put_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeExtraCTIThunks):
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+        (JSC::checkExceptionGenerator):
+        * jit/ThunkGenerators.h:
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::getFileSize() to FileSystem::fileSize()

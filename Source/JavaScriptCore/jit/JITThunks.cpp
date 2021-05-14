@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CommonSlowPaths.h"
+#include "JIT.h"
 #include "JITCode.h"
 #include "JSCJSValueInlines.h"
 #include "SlowPathCall.h"
@@ -264,11 +265,12 @@ void JITThunks::preinitializeExtraCTIThunks(VM& vm)
     if (!Options::useJIT())
         return;
 
-    // These 3 should always be initialized first in the following order because
+    // These 4 should always be initialized first in the following order because
     // the other thunk generators rely on these already being initialized.
     ctiStub(vm, handleExceptionGenerator);
     ctiStub(vm, handleExceptionWithCallFrameRollbackGenerator);
     ctiStub(vm, popThunkStackPreservesAndHandleExceptionGenerator);
+    ctiStub(vm, checkExceptionGenerator);
 
 #define INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(name) ctiSlowPathFunctionStub(vm, slow_path_##name)
 
@@ -346,7 +348,22 @@ void JITThunks::preinitializeExtraCTIThunks(VM& vm)
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(resolve_scope);
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(check_tdz);
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(to_property_key);
+
+    INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(throw_strict_mode_readonly_property_write_error);
 #undef INIT_BASELINE_ROUTINE
+
+    // From the BaselineJIT DEFINE_SLOWCASE_OP list:
+    ctiStub(vm, JIT::slow_op_del_by_id_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_del_by_val_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_get_by_id_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_get_by_id_with_this_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_get_by_val_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_get_from_scopeGenerator);
+    ctiStub(vm, JIT::slow_op_get_private_name_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_put_by_id_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_put_by_val_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_put_private_name_prepareCallGenerator);
+    ctiStub(vm, JIT::slow_op_put_to_scopeGenerator);
 }
 
 #endif // ENABLE(EXTRA_CTI_THUNKS)

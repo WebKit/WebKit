@@ -604,6 +604,8 @@ public:
     Heap* heap() const { return &m_vm->heap; }
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
+    static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(CodeBlock, m_globalObject); }
+
     JSGlobalObject* globalObjectFor(CodeOrigin);
 
     BytecodeLivenessAnalysis& livenessAnalysis()
