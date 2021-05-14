@@ -1,3 +1,13 @@
+2021-05-13  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Skip WebXR tests after r277468
+
+        Unreviewed test gardening.
+
+        WebXR is not yet enabled in GTK.
+
+        * platform/gtk/TestExpectations:
+
 2021-05-13  Dean Jackson  <dino@apple.com>
 
         [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)

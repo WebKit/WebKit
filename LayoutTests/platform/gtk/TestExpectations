@@ -229,6 +229,10 @@ webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-r
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Crash Failure Timeout Pass ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
 
+# WebXR is not yet supported in GTK
+webkit.org/b/208988 http/wpt/webxr [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below
