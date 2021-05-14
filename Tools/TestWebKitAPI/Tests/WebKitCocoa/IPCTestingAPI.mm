@@ -222,7 +222,7 @@ TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
         "const semaphore = IPC.createSemaphore();"
         "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,"
         "    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);"
-        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_SemaphoreForGetImageData.name, 100, []);"
+        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_SemaphoreForGetPixelBuffer.name, 100, []);"
         "semaphore.signal();"
         "alert(result.arguments.length + ':' + result.arguments[0].type + ':' + result.arguments[0].value.waitFor(100));"
         "</script>"];
@@ -242,7 +242,7 @@ TEST(IPCTestingAPI, CanReceiveSharedMemory)
 <script>
 IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
     [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore: IPC.createSemaphore(), 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);
-const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetImageData.name, 100, [{type: 'uint32_t', value: 8}]);
+const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetPixelBuffer.name, 100, [{type: 'uint32_t', value: 8}]);
 alert(result.arguments.length);
 </script>)HTML";
 
