@@ -653,9 +653,4 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& c
     clearAuthentication();
 }
 
-Box<NetworkLoadMetrics> ResourceHandle::getConnectionTimingData(NSURLConnection *connection)
-{
-    return copyTimingData([connection _timingData]);
-}
-
 } // namespace WebCore

@@ -46,7 +46,9 @@
 #endif
 
 #if PLATFORM(COCOA)
-OBJC_CLASS NSDictionary;
+OBJC_CLASS NSURLConnection;
+OBJC_CLASS NSURLResponse;
+OBJC_CLASS NSURLSessionTaskTransactionMetrics;
 #endif
 
 namespace WebCore {
@@ -59,6 +61,8 @@ enum class NetworkLoadPriority : uint8_t {
 };
 
 NETWORK_LOAD_METRICS_ADDITIONS_1;
+
+constexpr Seconds reusedTLSConnectionSentinel { -2 };
 
 class NetworkLoadMetricsWithoutNonTimingData {
     WTF_MAKE_FAST_ALLOCATED(NetworkLoadMetricsWithoutNonTimingData);
@@ -196,7 +200,8 @@ public:
 };
 
 #if PLATFORM(COCOA)
-WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSDictionary *timingData);
+Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *, NSURLResponse *);
+WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskTransactionMetrics *incompleteMetrics);
 #endif
 
 template<class Encoder>

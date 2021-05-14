@@ -176,6 +176,9 @@ double PerformanceResourceTiming::secureConnectionStart() const
     if (!m_shouldReportDetails)
         return 0.0;
 
+    if (m_networkLoadMetrics.secureConnectionStart == reusedTLSConnectionSentinel)
+        return fetchStart();
+
     if (m_networkLoadMetrics.secureConnectionStart <= 0_ms)
         return 0.0;
 

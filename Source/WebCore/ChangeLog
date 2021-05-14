@@ -1,3 +1,29 @@
+2021-05-14  Alex Christensen  <achristensen@webkit.org>
+
+        Resource Timing: secureConnectionStart == 0 when a connection is re-used
+        https://bugs.webkit.org/show_bug.cgi?id=225733
+
+        Reviewed by Chris Dumez.
+
+        Covered by a newly-passing web platform test, which was already passed by Chrome and Firefox.
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::secureConnectionStart const):
+        * platform/network/NetworkLoadMetrics.h:
+        I use a sentinel value to distinguish no secure connection from a reused secure connection.
+        * platform/network/ResourceHandle.h:
+        * platform/network/cocoa/NetworkLoadMetrics.mm:
+        (WebCore::packageTimingData):
+        (WebCore::copyTimingData):
+        Introduce a way to get timing data from CFNetwork using a more modern API.
+        (WebCore::timingValue): Deleted.
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionDataTask _timingData]):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::getConnectionTimingData): Deleted.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::getFileSize() to FileSystem::fileSize()

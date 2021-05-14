@@ -1,3 +1,12 @@
+2021-05-14  Alex Christensen  <achristensen@webkit.org>
+
+        Resource Timing: secureConnectionStart == 0 when a connection is re-used
+        https://bugs.webkit.org/show_bug.cgi?id=225733
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/resource-timing/resource_connection_reuse_mixed_content-expected.txt:
+
 2021-05-13  Dean Jackson  <dino@apple.com>
 
         [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)

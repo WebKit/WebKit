@@ -128,14 +128,6 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-#if USE(CFURLCONNECTION)
-    static Box<NetworkLoadMetrics> getConnectionTimingData(CFURLConnectionRef);
-#else
-    static Box<NetworkLoadMetrics> getConnectionTimingData(NSURLConnection *);
-#endif
-#endif
-
-#if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
     void unschedule(WTF::SchedulePair&);
 #endif

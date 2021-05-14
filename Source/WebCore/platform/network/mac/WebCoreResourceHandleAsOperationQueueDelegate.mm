@@ -252,7 +252,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         ResourceResponse resourceResponse(r.get());
         resourceResponse.setSource(ResourceResponse::Source::Network);
-        resourceResponse.setDeprecatedNetworkLoadMetrics(ResourceHandle::getConnectionTimingData(connection.get()));
+        resourceResponse.setDeprecatedNetworkLoadMetrics(copyTimingData(connection.get(), r.get()));
 
         m_handle->didReceiveResponse(WTFMove(resourceResponse), [self, protectedSelf = WTFMove(protectedSelf)] {
             m_semaphore.signal();

@@ -802,7 +802,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (NSDictionary *)_timingData
 {
-    // FIXME: return a dictionary sourced from ResourceHandle::getConnectionTimingData().
+    // FIXME: Make sure nobody is using this and remove this. It is replaced by WebCoreNSURLSessionTaskTransactionMetrics.
     return @{ };
 }
 
