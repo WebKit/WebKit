@@ -1,3 +1,12 @@
+2021-05-14  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS] imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=225804
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-05-13  Rob Buis  <rbuis@igalia.com>
 
         Check for null element in paintSearchFieldResultsButton

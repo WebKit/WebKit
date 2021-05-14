@@ -2275,3 +2275,5 @@ webkit.org/b/225258 [ arm64 ] js/dom/Promise-reject-large-string.html [ Pass Fai
 webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
 
 webkit.org/b/223645 [ BigSur ] media/video-played-ranges-1.html [ Pass Failure ]
+
+webkit.org/b/225804 imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html [ Pass Failure ]
