@@ -349,6 +349,8 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     if (self.window)
         [self setUpInteraction];
+    else
+        [self cleanUpInteractionPreviewContainers];
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

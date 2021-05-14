@@ -41,6 +41,7 @@ static bool willCommitCalled;
 static bool previewingViewControllerCalled;
 static bool previewActionItemsCalled;
 static bool didEndCalled;
+static bool didAskForHintPreviewContainer;
 static bool alternateURLRequested;
 static RetainPtr<NSURL> linkURL;
 
@@ -350,6 +351,37 @@ TEST(ContextMenu, DISABLED_SuggestedActions)
     TestWebKitAPI::Util::run(&willPresentCalled);
     EXPECT_TRUE(contextMenuRequested);
     EXPECT_TRUE(willPresentCalled);
+}
+
+@interface TestContextMenuHintPreviewContainerUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation TestContextMenuHintPreviewContainerUIDelegate
+
+- (void)webView:(WKWebView *)webView contextMenuWillPresentForElement:(WKContextMenuElementInfo *)elementInfo
+{
+    willPresentCalled = true;
+}
+
+- (UIView *)_contextMenuHintPreviewContainerViewForWebView:(WKWebView *)webView
+{
+    didAskForHintPreviewContainer = true;
+    return nil;
+}
+
+@end
+
+// FIXME: Re-enable this test once rdar://59610140 is resolved
+TEST(ContextMenu, DISABLED_HintPreviewContainer)
+{
+    auto driver = contextMenuWebViewDriver([TestContextMenuHintPreviewContainerUIDelegate class]);
+    [driver begin:^(BOOL result) {
+        EXPECT_TRUE(result);
+        [driver clickDown];
+        [driver clickUp];
+    }];
+    TestWebKitAPI::Util::run(&willPresentCalled);
+    EXPECT_TRUE(didAskForHintPreviewContainer);
 }
 
 #endif // USE(UICONTEXTMENU)

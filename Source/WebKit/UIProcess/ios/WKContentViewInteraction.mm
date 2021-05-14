@@ -1058,6 +1058,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _layerTreeTransactionIdAtLastInteractionStart = { };
 
+#if USE(UICONTEXTMENU)
+    [self _removeContextMenuViewIfPossible];
+#endif // USE(UICONTEXTMENU)
+
 #if ENABLE(DRAG_SUPPORT)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
     [self teardownDragAndDropInteractions];
@@ -1112,6 +1116,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _tearDownImageExtraction];
 #endif
 
+    [self _removeContainerForContextMenuHintPreviews];
+    [self _removeContainerForDragPreviews];
+    [self _removeContainerForDropPreviews];
+
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
 
@@ -1120,6 +1128,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _cancelPendingKeyEventHandler];
 
     _cachedSelectedTextRange = nil;
+}
+
+- (void)cleanUpInteractionPreviewContainers
+{
+    [self _removeContainerForContextMenuHintPreviews];
 }
 
 - (void)_cancelPendingKeyEventHandler
@@ -4562,7 +4575,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 #endif
     [self _elementDidBlur];
     [self _cancelLongPressGestureRecognizer];
-    [self _hideTargetedPreviewContainerViews];
+    [self _removeContainerForContextMenuHintPreviews];
+    [self _removeContainerForDragPreviews];
+    [self _removeContainerForDropPreviews];
     [_webView _didCommitLoadForMainFrame];
 
     _textInteractionDidChangeFocusedElement = NO;
@@ -7633,45 +7648,75 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     auto container = adoptNS([[UIView alloc] init]);
     [container layer].anchorPoint = CGPointZero;
     [container layer].name = layerName;
-    [_interactionViewsContainerView addSubview:container.get()];
     return container;
 }
 
 - (UIView *)containerForDropPreviews
 {
-    if (!_dropPreviewContainerView)
+    if (!_dropPreviewContainerView) {
         _dropPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drop Preview Container"];
+        [_interactionViewsContainerView addSubview:_dropPreviewContainerView.get()];
+    }
 
     ASSERT([_dropPreviewContainerView superview]);
-    [_dropPreviewContainerView setHidden:NO];
     return _dropPreviewContainerView.get();
+}
+
+- (void)_removeContainerForDropPreviews
+{
+    if (!_dropPreviewContainerView)
+        return;
+
+    [std::exchange(_dropPreviewContainerView, nil) removeFromSuperview];
 }
 
 - (UIView *)containerForDragPreviews
 {
-    if (!_dragPreviewContainerView)
+    if (!_dragPreviewContainerView) {
         _dragPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drag Preview Container"];
+        [_interactionViewsContainerView addSubview:_dragPreviewContainerView.get()];
+    }
 
     ASSERT([_dragPreviewContainerView superview]);
-    [_dragPreviewContainerView setHidden:NO];
     return _dragPreviewContainerView.get();
+}
+
+- (void)_removeContainerForDragPreviews
+{
+    if (!_dragPreviewContainerView)
+        return;
+
+    [std::exchange(_dragPreviewContainerView, nil) removeFromSuperview];
 }
 
 - (UIView *)containerForContextMenuHintPreviews
 {
-    if (!_contextMenuHintContainerView)
+    if (!_contextMenuHintContainerView) {
         _contextMenuHintContainerView = [self _createPreviewContainerWithLayerName:@"Context Menu Hint Preview Container"];
 
+        RetainPtr<UIView> containerView;
+
+        if (auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(self.webView.UIDelegate)) {
+            if ([uiDelegate respondsToSelector:@selector(_contextMenuHintPreviewContainerViewForWebView:)])
+                containerView = [uiDelegate _contextMenuHintPreviewContainerViewForWebView:self.webView];
+        }
+
+        if (!containerView)
+            containerView = _interactionViewsContainerView;
+
+        [containerView addSubview:_contextMenuHintContainerView.get()];
+    }
+
     ASSERT([_contextMenuHintContainerView superview]);
-    [_contextMenuHintContainerView setHidden:NO];
     return _contextMenuHintContainerView.get();
 }
 
-- (void)_hideTargetedPreviewContainerViews
+- (void)_removeContainerForContextMenuHintPreviews
 {
-    [_dropPreviewContainerView setHidden:YES];
-    [_dragPreviewContainerView setHidden:YES];
-    [_contextMenuHintContainerView setHidden:YES];
+    if (!_contextMenuHintContainerView)
+        return;
+
+    [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
 }
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
@@ -7992,7 +8037,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
     [[WebItemProviderPasteboard sharedInstance] clearRegistrationLists];
     [self _restoreCalloutBarIfNeeded];
 
-    [std::exchange(_dragPreviewContainerView, nil) removeFromSuperview];
+    [self _removeContainerForDragPreviews];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [_editDropCaretView remove];
     _editDropCaretView = nil;
@@ -8431,7 +8476,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if ([self selectControl])
         return;
     
-    [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
+    [self _removeContainerForContextMenuHintPreviews];
 }
 
 #endif // USE(UICONTEXTMENU)
@@ -8928,7 +8973,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id <UIDropSession>)session
 {
-    [std::exchange(_dropPreviewContainerView, nil) removeFromSuperview];
+    [self _removeContainerForDropPreviews];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
     _dragDropInteractionState.clearAllDelayedItemPreviewProviders();

@@ -531,6 +531,7 @@ enum class ProceedWithImageExtraction : bool {
 
 - (void)setUpInteraction;
 - (void)cleanUpInteraction;
+- (void)cleanUpInteractionPreviewContainers;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
 
@@ -579,7 +580,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject;
 - (void)_updateInputContextAfterBlurringAndRefocusingElement;
 - (void)_elementDidBlur;
-- (void)_hideTargetedPreviewContainerViews;
 - (void)_didUpdateInputMode:(WebCore::InputMode)mode;
 - (void)_didUpdateEditorState;
 - (void)_hardwareKeyboardAvailabilityChanged;

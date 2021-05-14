@@ -1,3 +1,16 @@
+2021-05-14  Devin Rousso  <drousso@apple.com>
+
+        [iOS] contextmenu hints can be clipped by the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=224204
+        <rdar://problem/77089174>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContextMenus.mm:
+        (-[TestContextMenuHintPreviewContainerUIDelegate webView:contextMenuWillPresentForElement:]): Added.
+        (-[TestContextMenuHintPreviewContainerUIDelegate _contextMenuHintPreviewContainerViewForWebView:]): Added.
+        (TEST.ContextMenu.HintPreviewContainer): Added.
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Introduce FileSystem::updateFileModificationTime()
