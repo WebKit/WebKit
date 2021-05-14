@@ -1,3 +1,12 @@
+2021-05-14  Ziran Sun  <zsun@igalia.com>
+
+        Wrong static position for out-of-flow positioned element with different writing-mode than its containing block
+        https://bugs.webkit.org/show_bug.cgi?id=189513
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations: updating 22 css-writing-modes tests that are passing.
+
 2021-05-14  Alex Christensen  <achristensen@webkit.org>
 
         Resource Timing: secureConnectionStart == 0 when a connection is re-used

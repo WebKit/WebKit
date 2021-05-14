@@ -1,3 +1,21 @@
+2021-05-14  Ziran Sun  <zsun@igalia.com>
+
+        Wrong static position for out-of-flow positioned element with different writing-mode than its containing block
+        https://bugs.webkit.org/show_bug.cgi?id=189513
+
+        Reviewed by Sergio Villar Senin.
+
+        The static distance computations (computeBlockStaticDistance & computeInlineStaticDistance) in RenderBox have
+        not been patched for mixed writing modes. This CL adds support for the case that child is orthogonal to its
+        container block when container block's text direction is LTR. It aims at fixing failures in 
+        orthogonal-positioned-grid-descendants*.html tests. It is noted that this CL only covers specific case when child's
+        writing mode is vlr and parent is horizontal tb rather than all cases of mixed writing modes in the static distance
+        computations.
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::computeBlockStaticDistance):
+
 2021-05-14  Alex Christensen  <achristensen@webkit.org>
 
         Resource Timing: secureConnectionStart == 0 when a connection is re-used

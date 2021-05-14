@@ -1,3 +1,20 @@
+2021-05-14  Ziran Sun  <zsun@igalia.com>
+
+        Wrong static position for out-of-flow positioned element with different writing-mode than its containing block
+        https://bugs.webkit.org/show_bug.cgi?id=189513
+
+        Reviewed by Sergio Villar Senin.
+
+        Updated the following WPT tests that are now passing.
+
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010-expected.txt:
+
 2021-05-14  Alex Christensen  <achristensen@webkit.org>
 
         Resource Timing: secureConnectionStart == 0 when a connection is re-used
