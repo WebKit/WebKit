@@ -1,3 +1,14 @@
+2021-05-14  Robert Jenner  <jenner@apple.com>
+
+        [ iOS14-Simulator ] wk2imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html is a flaky ImageOnlyFailure
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=225830
+
+        Unreviewed test gardening.
+
+        Setting expectation to Pass ImageOnlyFailure due to causing an EWS slowdown.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2021-05-14  Jean-Yves Avenard  <jya@apple.com>
 
         Bad media session artwork URL results in blue "broken image" icon being shown in Now Playing
