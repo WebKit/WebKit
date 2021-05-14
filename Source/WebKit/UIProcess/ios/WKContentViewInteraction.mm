@@ -9613,7 +9613,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_doAfterPendingImageExtraction:(void(^)(WebKit::ProceedWithImageExtraction proceedWithImageExtraction))block
 {
-    if (_hasPendingImageExtraction)
+    if (self.hasPendingImageExtractionRequest)
         _actionsToPerformAfterPendingImageExtraction.append(makeBlockPtr(block));
     else
         block(WebKit::ProceedWithImageExtraction::No);
@@ -9621,7 +9621,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_invokeAllActionsToPerformAfterPendingImageExtraction:(WebKit::ProceedWithImageExtraction)proceedWithImageExtraction
 {
-    _hasPendingImageExtraction = NO;
+    _pendingImageExtractionRequestIdentifier = WTF::nullopt;
     _elementPendingImageExtraction = WTF::nullopt;
     for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
         block(proceedWithImageExtraction);

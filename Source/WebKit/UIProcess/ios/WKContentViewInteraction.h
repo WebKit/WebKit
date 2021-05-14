@@ -63,6 +63,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/Function.h>
+#import <wtf/ObjectIdentifier.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -227,6 +228,9 @@ enum class ProceedWithImageExtraction : bool {
     No,
     Yes
 };
+
+enum ImageExtractionRequestIdentifierType { };
+using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequestIdentifierType>;
 
 }
 
@@ -476,7 +480,7 @@ enum class ProceedWithImageExtraction : bool {
 #if ENABLE(IMAGE_EXTRACTION)
     RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _imageExtractionTimeoutGestureRecognizer;
-    BOOL _hasPendingImageExtraction;
+    Optional<WebKit::ImageExtractionRequestIdentifier> _pendingImageExtractionRequestIdentifier;
     Optional<WebCore::ElementContext> _elementPendingImageExtraction;
     Vector<BlockPtr<void(WebKit::ProceedWithImageExtraction)>> _actionsToPerformAfterPendingImageExtraction;
 #if USE(UICONTEXTMENU)
