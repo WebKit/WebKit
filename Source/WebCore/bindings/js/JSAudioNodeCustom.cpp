@@ -131,6 +131,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<A
     case AudioNode::NodeTypeWorklet:
         return createWrapper<AudioWorkletNode>(globalObject, WTFMove(node));
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, AudioNode& node)

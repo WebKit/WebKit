@@ -1451,7 +1451,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
                 m_weight = 7;
                 break;
             }
-            if (auto value = parseIntegerAllowingTrailingJunk<uint16_t>(segment); value && *value >= 0 && *value < 1000) {
+            if (auto value = parseIntegerAllowingTrailingJunk<uint16_t>(segment); value && *value < 1000) {
                 m_weight = (*value + 50) / 100;
                 break;
             }

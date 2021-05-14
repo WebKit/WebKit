@@ -35,7 +35,6 @@ static bool parseVersion(const String& version, uint64_t& major, uint64_t& minor
     major = minor = micro = 0;
 
     Vector<String> tokens = version.split('.');
-    bool ok;
     switch (tokens.size()) {
     case 3: {
         auto parsedMicro = parseIntegerAllowingTrailingJunk<uint64_t>(tokens[2]);

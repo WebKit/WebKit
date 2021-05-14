@@ -1,3 +1,15 @@
+2021-05-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Misc GCC warning cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=225777
+
+        Reviewed by Carlos Garcia Campos.
+
+        * bindings/js/JSAudioNodeCustom.cpp:
+        (WebCore::toJSNewlyCreated): Add missing RELEASE_ASSERT_NOT_REACHED().
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter): Remove redundant condition.
+
 2021-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Wrong smooth animation sometimes with non-async scrolling
