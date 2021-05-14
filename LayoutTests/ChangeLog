@@ -1,3 +1,15 @@
+2021-05-13  Rob Buis  <rbuis@igalia.com>
+
+        Check for null element in paintSearchFieldResultsButton
+        https://bugs.webkit.org/show_bug.cgi?id=225232
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for this.
+
+        * fast/css/searchfield-results-button-crash-expected.txt: Added.
+        * fast/css/searchfield-results-button-crash.html: Added.
+
 2021-05-13  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Skip WebXR tests after r277468
