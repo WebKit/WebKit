@@ -1,3 +1,17 @@
+2021-05-14  Jean-Yves Avenard  <jya@apple.com>
+
+        TestWebKitAPI.Fullscreen.WKViewDelegate is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223282
+        rdar://75495585
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+        (TestWebKitAPI::TEST): Use WkView/NSWindow directly instead of using a
+        PlatformWebView. A PlatformWebView uses an OffscreenWindow which is a
+        NSWindow placed with a -10000 offset. This configuration appears to fail
+        to go into full screen in automation.
+
 2021-05-14  Sam Weinig  <weinig@apple.com>
 
         REGRESSION(r277313): [ Debug ] 2 TestWebKitAPI.IPCTestingAPI (API-Tests) are constant timeouts
