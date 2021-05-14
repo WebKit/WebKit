@@ -116,11 +116,13 @@
 #import <WebCore/ShareData.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TouchAction.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebEvent.h>
+#import <WebCore/WebTextIndicatorLayer.h>
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -9567,6 +9569,67 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
+
+- (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator
+{
+    if (_textIndicator == textIndicator.ptr())
+        return;
+    
+    [self teardownTextIndicatorLayer];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(startFadeOut) object:nil];
+    
+    _textIndicator = textIndicator.ptr();
+
+    CGRect frame = _textIndicator->textBoundingRectInRootViewCoordinates();
+    _textIndicatorLayer = adoptNS([[WebTextIndicatorLayer alloc] initWithFrame:frame
+        textIndicator:textIndicator margin:CGSizeZero offset:CGPointZero]);
+    
+    [[self layer] addSublayer:_textIndicatorLayer.get()];
+
+    if (_textIndicator->presentationTransition() != WebCore::TextIndicatorPresentationTransition::None)
+        [_textIndicatorLayer present];
+    
+    [self performSelector:@selector(startFadeOut) withObject:self afterDelay:WebCore::timeBeforeFadeStarts.value()];
+}
+
+- (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation
+{
+    RefPtr<WebCore::TextIndicator> textIndicator = WTFMove(_textIndicator);
+    
+    if ([_textIndicatorLayer isFadingOut])
+        return;
+
+    if (textIndicator && [_textIndicatorLayer indicatorWantsManualAnimation:*textIndicator] && [_textIndicatorLayer hasCompletedAnimation] && animation == WebCore::TextIndicatorDismissalAnimation::FadeOut) {
+        [self startFadeOut];
+        return;
+    }
+
+    [self teardownTextIndicatorLayer];
+}
+
+- (void)setTextIndicatorAnimationProgress:(float)animationProgress
+{
+    if (!_textIndicator)
+        return;
+
+    [_textIndicatorLayer setAnimationProgress:animationProgress];
+}
+
+- (void)teardownTextIndicatorLayer
+{
+    [_textIndicatorLayer removeFromSuperlayer];
+    _textIndicatorLayer = nil;
+}
+
+- (void)startFadeOut
+{
+    [_textIndicatorLayer setFadingOut:YES];
+        
+    [_textIndicatorLayer hideWithCompletionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self)] {
+        auto strongSelf = weakSelf.get();
+        [strongSelf teardownTextIndicatorLayer];
+    }];
+}
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>

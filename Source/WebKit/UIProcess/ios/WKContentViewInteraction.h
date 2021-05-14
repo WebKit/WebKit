@@ -92,6 +92,7 @@ struct ShareDataWithParsedURL;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
+enum class TextIndicatorDismissalAnimation : uint8_t;
 
 #if ENABLE(DRAG_SUPPORT)
 struct DragItem;
@@ -107,6 +108,7 @@ class WebPageProxy;
 }
 
 @class WebEvent;
+@class WebTextIndicatorLayer;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
 @class WKDataListSuggestionsControl;
@@ -333,6 +335,9 @@ enum class ProceedWithImageExtraction : bool {
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
+
+    RefPtr<WebCore::TextIndicator> _textIndicator;
+    RetainPtr<WebTextIndicatorLayer> _textIndicatorLayer;
 
 #if USE(UICONTEXTMENU)
     RetainPtr<UITargetedPreview> _contextMenuInteractionTargetedPreview;
@@ -670,6 +675,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (void)_didStartProvisionalLoadForMainFrame;
 - (void)_didCommitLoadForMainFrame;
+
+- (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator;
+- (void)setTextIndicatorAnimationProgress:(float)NSAnimationProgress;
+- (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 
 @property (nonatomic, readonly) BOOL _shouldUseContextMenus;
 @property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange;

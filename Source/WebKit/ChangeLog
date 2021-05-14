@@ -1,5 +1,124 @@
 2021-05-13  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r277453. rdar://problem/77996171
+
+    Add textIndicator bounce for AppHighlights on scroll.
+    https://bugs.webkit.org/show_bug.cgi?id=225727
+    
+    Reviewed by Tim Horton.
+    
+    * Modules/highlight/AppHighlightStorage.cpp:
+    (WebCore::AppHighlightStorage::attemptToRestoreHighlightAndScroll):
+    * loader/EmptyClients.cpp:
+    (WebCore::EmptyChromeClient::setTextIndicator const):
+    * loader/EmptyClients.h:
+    * page/ChromeClient.h:
+    * page/TextIndicator.h:
+    * page/cocoa/WebTextIndicatorLayer.h:
+    * page/cocoa/WebTextIndicatorLayer.mm:
+    (-[WebTextIndicatorLayer initWithFrame:textIndicator:margin:offset:]):
+    (createBounceAnimation):
+    (-[WebTextIndicatorLayer _animationDuration]):
+    * page/mac/TextIndicatorWindow.h:
+    * page/mac/TextIndicatorWindow.mm:
+    (WebCore::TextIndicatorWindow::~TextIndicatorWindow):
+    (WebCore::TextIndicatorWindow::clearTextIndicator):
+    (WebCore::TextIndicatorWindow::setTextIndicator):
+    
+    Use factored out textIndicator code to add a bounce to an appHighlight
+    when it is scrolled to.
+    
+    * UIProcess/Cocoa/WebViewImpl.h:
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (-[WKWindowVisibilityObserver _dictionaryLookupPopoverWillClose:]):
+    (WebKit::WebViewImpl::setTextIndicator):
+    (WebKit::WebViewImpl::clearTextIndicatorWithAnimation):
+    (WebKit::WebViewImpl::dismissContentRelativeChildWindowsWithAnimationFromViewOnly):
+    (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::setTextIndicator):
+    (WebKit::WebPageProxy::clearTextIndicator):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/PageClientImplIOS.h:
+    * UIProcess/ios/PageClientImplIOS.mm:
+    (WebKit::PageClientImpl::setTextIndicator):
+    (WebKit::PageClientImpl::clearTextIndicator):
+    (WebKit::PageClientImpl::setTextIndicatorAnimationProgress):
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView setUpTextIndicator:]):
+    (-[WKContentView clearTextIndicator:]):
+    (-[WKContentView setTextIndicatorAnimationProgress:]):
+    (-[WKContentView teardownTextIndicatorLayer]):
+    (-[WKContentView startFadeOut]):
+    * UIProcess/mac/PageClientImplMac.h:
+    * UIProcess/mac/PageClientImplMac.mm:
+    (WebKit::PageClientImpl::setTextIndicator):
+    (WebKit::PageClientImpl::clearTextIndicator):
+    (WebKit::PageClientImpl::didPerformDictionaryLookup):
+    * UIProcess/mac/WKImmediateActionController.mm:
+    (-[WKImmediateActionController _animationControllerForText]):
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::setTextIndicator const):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    * WebProcess/WebPage/FindController.cpp:
+    (WebKit::FindController::updateFindIndicator):
+    
+    * WebCoreSupport/WebChromeClient.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277453 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+            Add textIndicator bounce for AppHighlights on scroll.
+            https://bugs.webkit.org/show_bug.cgi?id=225727
+
+            Reviewed by Tim Horton.
+
+            Use factored out textIndicator code to add a bounce to an appHighlight
+            when it is scrolled to.
+
+            * UIProcess/Cocoa/WebViewImpl.h:
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (-[WKWindowVisibilityObserver _dictionaryLookupPopoverWillClose:]):
+            (WebKit::WebViewImpl::setTextIndicator):
+            (WebKit::WebViewImpl::clearTextIndicatorWithAnimation):
+            (WebKit::WebViewImpl::dismissContentRelativeChildWindowsWithAnimationFromViewOnly):
+            (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setTextIndicator):
+            (WebKit::WebPageProxy::clearTextIndicator):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::setTextIndicator):
+            (WebKit::PageClientImpl::clearTextIndicator):
+            (WebKit::PageClientImpl::setTextIndicatorAnimationProgress):
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setUpTextIndicator:]):
+            (-[WKContentView clearTextIndicator:]):
+            (-[WKContentView setTextIndicatorAnimationProgress:]):
+            (-[WKContentView teardownTextIndicatorLayer]):
+            (-[WKContentView startFadeOut]):
+            * UIProcess/mac/PageClientImplMac.h:
+            * UIProcess/mac/PageClientImplMac.mm:
+            (WebKit::PageClientImpl::setTextIndicator):
+            (WebKit::PageClientImpl::clearTextIndicator):
+            (WebKit::PageClientImpl::didPerformDictionaryLookup):
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController _animationControllerForText]):
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::setTextIndicator const):
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            * WebProcess/WebPage/FindController.cpp:
+            (WebKit::FindController::updateFindIndicator):
+
+2021-05-13  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r277464. rdar://problem/77993046
 
     Work around WebCore failing to build due to NDEBUG getting undefined in release

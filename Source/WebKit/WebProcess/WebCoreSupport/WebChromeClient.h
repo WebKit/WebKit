@@ -353,6 +353,8 @@ private:
     void storeAppHighlight(WebCore::AppHighlight&&) const final;
 #endif
 
+    void setTextIndicator(const WebCore::TextIndicatorData&) const final;
+
 #if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;

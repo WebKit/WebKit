@@ -125,6 +125,7 @@ struct DateTimeChooserParameters;
 struct GraphicsDeviceAdapter;
 struct MockWebAuthenticationConfiguration;
 struct ShareDataWithParsedURL;
+struct TextIndicatorData;
 struct ViewportArguments;
 struct WindowFeatures;
 
@@ -314,6 +315,8 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual void storeAppHighlight(WebCore::AppHighlight&&) const = 0;
 #endif
+
+    virtual void setTextIndicator(const TextIndicatorData&) const = 0;
 
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback) { callback(false); }

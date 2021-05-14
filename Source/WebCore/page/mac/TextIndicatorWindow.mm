@@ -38,12 +38,6 @@
 #import <pal/spi/cocoa/NSColorSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-const CFTimeInterval bounceAnimationDuration = 0.12;
-const CFTimeInterval timeBeforeFadeStarts = bounceAnimationDuration + 0.2;
-
-const CGFloat midBounceScale = 1.25;
-const CGFloat dropShadowBlurRadius = 2;
-
 using namespace WebCore;
 
 namespace WebCore {
@@ -56,7 +50,7 @@ TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
 
 TextIndicatorWindow::~TextIndicatorWindow()
 {
-    clearTextIndicator(TextIndicatorWindowDismissalAnimation::FadeOut);
+    clearTextIndicator(WebCore::TextIndicatorDismissalAnimation::FadeOut);
 }
 
 void TextIndicatorWindow::setAnimationProgress(float progress)
@@ -67,14 +61,14 @@ void TextIndicatorWindow::setAnimationProgress(float progress)
     [m_textIndicatorLayer setAnimationProgress:progress];
 }
 
-void TextIndicatorWindow::clearTextIndicator(TextIndicatorWindowDismissalAnimation animation)
+void TextIndicatorWindow::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation animation)
 {
     RefPtr<TextIndicator> textIndicator = WTFMove(m_textIndicator);
 
     if ([m_textIndicatorLayer isFadingOut])
         return;
 
-    if (textIndicator && [m_textIndicatorLayer indicatorWantsManualAnimation:*textIndicator] && [m_textIndicatorLayer hasCompletedAnimation] && animation == TextIndicatorWindowDismissalAnimation::FadeOut) {
+    if (textIndicator && [m_textIndicatorLayer indicatorWantsManualAnimation:*textIndicator] && [m_textIndicatorLayer hasCompletedAnimation] && animation == WebCore::TextIndicatorDismissalAnimation::FadeOut) {
         startFadeOut();
         return;
     }
@@ -82,7 +76,7 @@ void TextIndicatorWindow::clearTextIndicator(TextIndicatorWindowDismissalAnimati
     closeWindow();
 }
 
-void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGRect textBoundingRectInScreenCoordinates, TextIndicatorWindowLifetime lifetime)
+void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGRect textBoundingRectInScreenCoordinates, TextIndicatorLifetime lifetime)
 {
     if (m_textIndicator == textIndicator.ptr())
         return;
@@ -95,8 +89,8 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     CGFloat verticalMargin = dropShadowBlurRadius * 2 + TextIndicator::defaultVerticalMargin;
     
     if ([m_textIndicatorLayer indicatorWantsBounce:*m_textIndicator]) {
-        horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (midBounceScale - 1) + horizontalMargin);
-        verticalMargin = std::max(verticalMargin, textBoundingRectInScreenCoordinates.size.height * (midBounceScale - 1) + verticalMargin);
+        horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (WebCore::midBounceScale - 1) + horizontalMargin);
+        verticalMargin = std::max(verticalMargin, textBoundingRectInScreenCoordinates.size.height * (WebCore::midBounceScale - 1) + verticalMargin);
     }
 
     horizontalMargin = CGCeiling(horizontalMargin);
@@ -125,8 +119,8 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None)
         [m_textIndicatorLayer present];
 
-    if (lifetime == TextIndicatorWindowLifetime::Temporary)
-        m_temporaryTextIndicatorTimer.startOneShot(1_s * timeBeforeFadeStarts);
+    if (lifetime == TextIndicatorLifetime::Temporary)
+        m_temporaryTextIndicatorTimer.startOneShot(WebCore::timeBeforeFadeStarts);
 }
 
 void TextIndicatorWindow::closeWindow()

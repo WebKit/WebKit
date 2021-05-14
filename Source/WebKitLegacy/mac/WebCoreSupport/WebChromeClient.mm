@@ -720,6 +720,10 @@ void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&&) const
 }
 #endif
 
+void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
+{
+}
+
 #if ENABLE(POINTER_LOCK)
 bool WebChromeClient::requestPointerLock()
 {
