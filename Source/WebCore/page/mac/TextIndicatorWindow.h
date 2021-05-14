@@ -32,7 +32,7 @@
 #import <wtf/RunLoop.h>
 
 OBJC_CLASS NSView;
-OBJC_CLASS WebTextIndicatorView;
+OBJC_CLASS WebTextIndicatorLayer;
 
 namespace WebCore {
 
@@ -72,7 +72,8 @@ private:
     NSView *m_targetView;
     RefPtr<TextIndicator> m_textIndicator;
     RetainPtr<NSWindow> m_textIndicatorWindow;
-    RetainPtr<WebTextIndicatorView> m_textIndicatorView;
+    RetainPtr<NSView> m_textIndicatorView;
+    RetainPtr<WebTextIndicatorLayer> m_textIndicatorLayer;
 
     RunLoop::Timer<TextIndicatorWindow> m_temporaryTextIndicatorTimer;
 };

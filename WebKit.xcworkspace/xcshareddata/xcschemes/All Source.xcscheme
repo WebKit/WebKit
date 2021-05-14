@@ -127,8 +127,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1A50DB38110A3C13000D3FE5"
-               BuildableName = "All"
-               BlueprintName = "All"
+               BuildableName = "Framework &amp; XPC Services"
+               BlueprintName = "Framework &amp; XPC Services"
                ReferencedContainer = "container:Source/WebKit/WebKit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
