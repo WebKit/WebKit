@@ -1,5 +1,23 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop unused FileSystem::homeDirectoryPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225808
+
+        Reviewed by Anders Carlsson.
+
+        Only Windows-specific code was calling FileSystem::homeDirectoryPath() but the Windows implementation
+        for this was always returning the empty string.
+
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::homeDirectoryPath): Deleted.
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::homeDirectoryPath): Deleted.
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::homeDirectoryPath): Deleted.
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Rename FileSystem::getFileSize() to FileSystem::fileSize()
         https://bugs.webkit.org/show_bug.cgi?id=225798
 

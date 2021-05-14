@@ -379,18 +379,15 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
 {
     Vector<String> paths;
 
-    String userPluginPath = FileSystem::homeDirectoryPath();
-    userPluginPath.append(String("\\Application Data\\Mozilla\\plugins"));
-    paths.append(userPluginPath);
+    // Default plugin directory is: %AppData%\Mozilla\plugins.
+    paths.append(FileSystem::pathByAppendingComponents(FileSystem::roamingUserSpecificStorageDirectory(), { "Mozilla", "plugins" }));
 
     return paths;
 }
 
 bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 {
-    String preferredPath = FileSystem::homeDirectoryPath();
-
-    preferredPath.append(String("\\Application Data\\Mozilla\\plugins"));
+    String preferredPath = FileSystem::pathByAppendingComponents(FileSystem::roamingUserSpecificStorageDirectory(), { "Mozilla", "plugins" });
 
     // TODO: We should normalize the path before doing a comparison.
     return path == preferredPath;

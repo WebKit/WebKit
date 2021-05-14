@@ -159,11 +159,6 @@ CString fileSystemRepresentation(const String& path)
 
 #endif // !USE(CF)
 
-String homeDirectoryPath()
-{
-    return "";
-}
-
 static String bundleName()
 {
     static const NeverDestroyed<String> name = [] {

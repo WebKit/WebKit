@@ -1,5 +1,21 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop unused FileSystem::homeDirectoryPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225808
+
+        Reviewed by Anders Carlsson.
+
+        Fix Window-specific code that was calling FileSystem::homeDirectoryPath(),
+        which would always return the empty string on Windows. Call
+        FileSystem::roamingUserSpecificStorageDirectory() since it returns the
+        %AppData% folder and this is what the code actually wants.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
         https://bugs.webkit.org/show_bug.cgi?id=225806
 

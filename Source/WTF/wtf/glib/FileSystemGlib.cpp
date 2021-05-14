@@ -135,11 +135,6 @@ Optional<WallTime> getFileCreationTime(const String&)
     return WTF::nullopt;
 }
 
-String homeDirectoryPath()
-{
-    return stringFromFileSystemRepresentation(g_get_home_dir());
-}
-
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const String& suffix)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.

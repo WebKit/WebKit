@@ -88,11 +88,6 @@ String createTemporaryZipArchive(const String& path)
     return temporaryFile;
 }
 
-String homeDirectoryPath()
-{
-    return NSHomeDirectory();
-}
-
 String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileHandle, const String& suffix)
 {
     platformFileHandle = invalidPlatformFileHandle;

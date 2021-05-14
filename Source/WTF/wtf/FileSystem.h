@@ -123,7 +123,6 @@ WTF_EXPORT_PRIVATE String pathByAppendingComponent(const String& path, const Str
 WTF_EXPORT_PRIVATE String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
 WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String& path);
 WTF_EXPORT_PRIVATE bool makeAllDirectories(const String& path);
-WTF_EXPORT_PRIVATE String homeDirectoryPath();
 WTF_EXPORT_PRIVATE String pathFileName(const String&);
 WTF_EXPORT_PRIVATE String parentPath(const String&);
 WTF_EXPORT_PRIVATE bool getVolumeFreeSpace(const String&, uint64_t&);
