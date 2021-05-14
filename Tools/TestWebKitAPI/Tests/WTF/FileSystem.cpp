@@ -741,6 +741,27 @@ TEST_F(FileSystemTest, getFileModificationTimeViaFileMetadata)
     });
 }
 
+TEST_F(FileSystemTest, updateFileModificationTime)
+{
+    auto modificationTime = FileSystem::getFileModificationTime(tempFilePath());
+    ASSERT_TRUE(!!modificationTime);
+
+    unsigned timeout = 0;
+    while (*modificationTime >= WallTime::now() && ++timeout < 20)
+        TestWebKitAPI::Util::sleep(0.1);
+    EXPECT_LT(modificationTime->secondsSinceEpoch().value(), WallTime::now().secondsSinceEpoch().value());
+
+    TestWebKitAPI::Util::sleep(1);
+
+    EXPECT_TRUE(FileSystem::updateFileModificationTime(tempFilePath()));
+    auto newModificationTime = FileSystem::getFileModificationTime(tempFilePath());
+    ASSERT_TRUE(!!newModificationTime);
+    EXPECT_GT(newModificationTime->secondsSinceEpoch().value(), modificationTime->secondsSinceEpoch().value());
+
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    EXPECT_FALSE(FileSystem::updateFileModificationTime(doesNotExistPath));
+}
+
 TEST_F(FileSystemTest, pathFileName)
 {
     auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "filename.txt" });

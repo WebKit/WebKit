@@ -686,6 +686,13 @@ Optional<WallTime> getFileModificationTime(const String& path)
     return toWallTime(modificationTime);
 }
 
+bool updateFileModificationTime(const String& path)
+{
+    std::error_code ec;
+    std::filesystem::last_write_time(toStdFileSystemPath(path), std::filesystem::file_time_type::clock::now(), ec);
+    return !ec;
+}
+
 enum class ShouldFollowSymbolicLinks { No, Yes };
 static Optional<FileMetadata> fileMetadataPotentiallyFollowingSymlinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {

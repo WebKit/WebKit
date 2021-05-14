@@ -96,18 +96,7 @@ void updateFileModificationTimeIfNeeded(const String& path)
         if (WallTime::now() - times.modification < 1_h)
             return;
     }
-#if !OS(WINDOWS)
-    // This really updates both the access time and the modification time.
-    utimes(FileSystem::fileSystemRepresentation(path).data(), nullptr);
-#else
-    FILETIME time;
-    GetSystemTimeAsFileTime(&time);
-    auto file = CreateFile(path.wideCharacters().data(), GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (file == INVALID_HANDLE_VALUE)
-        return;
-    SetFileTime(file, &time, &time, &time);
-    CloseHandle(file);
-#endif
+    FileSystem::updateFileModificationTime(path);
 }
 
 }

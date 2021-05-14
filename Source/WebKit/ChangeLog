@@ -1,3 +1,17 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Introduce FileSystem::updateFileModificationTime()
+        https://bugs.webkit.org/show_bug.cgi?id=225810
+
+        Reviewed by Darin Adler.
+
+        Call the new FileSystem::updateFileModificationTime() API to modify the
+        file modification time instead of having low-level platform-specific
+        file system code at the WebKit2 layer.
+
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::updateFileModificationTimeIfNeeded):
+
 2021-05-14  Alex Christensen  <achristensen@webkit.org>
 
         Resource Timing: secureConnectionStart == 0 when a connection is re-used

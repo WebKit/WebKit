@@ -1,5 +1,20 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Introduce FileSystem::updateFileModificationTime()
+        https://bugs.webkit.org/show_bug.cgi?id=225810
+
+        Reviewed by Darin Adler.
+
+        Introduce FileSystem::updateFileModificationTime() to update the modification time of a
+        file. The implementation is cross-platform and relies on std::filesystem. It allows us
+        to replace platform-specific code that we had at the WebKit2 layer.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::updateFileModificationTime):
+        * wtf/FileSystem.h:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Drop unused FileSystem::homeDirectoryPath()
         https://bugs.webkit.org/show_bug.cgi?id=225808
 
