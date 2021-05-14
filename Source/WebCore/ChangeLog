@@ -1,3 +1,41 @@
+2021-05-13  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] REGRESSION(r268308) AirPlay briefly disappears and then reappears when hovering over controls
+        https://bugs.webkit.org/show_bug.cgi?id=225780
+        <rdar://problem/77984683>
+
+        Reviewed by Eric Carlson.
+
+        r268308 adjusted `AVRoutePickerViewTargetPicker::isAvailable`, which is used to control
+        whether `AVRoutePickerViewTargetPicker` (which uses the `AVRouteDetectorMultipleRoutesDetectedDidChange`
+        notification and actually stops listening for it in `stopMonitoringPlaybackTargets`) or
+        `AVOutputDeviceMenuControllerTargetPicker` (which uses ObjC KVO and doesn't actually do
+        anything in `stopMonitoringPlaybackTargets` when the last JS `"webkitplaybacktargetavailabilitychanged"`
+        event listener is removed, meaning that WebKit never senda a new value to the WebProcess) is
+        used. When using `AVRoutePickerViewTargetPicker`, WebKit calls `-[AVRouteDetector setRouteDetectionEnabled:]`
+        whenever the first JS `"webkitplaybacktargetavailabilitychanged"` event listener is added
+        (with the argument `YES`) and the last JS `"webkitplaybacktargetavailabilitychanged"` event
+        listener is removed (with the argument `NO`). In the latter scenario (which is the case with
+        builtin media controls), `-[AVRouteDetector setRouteDetectionEnabled:]` will dispatch a
+        `AVRouteDetectorMultipleRoutesDetectedDidChange` notification and mark itself as not having
+        multiple routes (`-[AVRouteDetector multipleRoutesDetected]`). This work is done in the
+        UIProcess and the result is sent to the WebProcess, meaning that even though there are no
+        more JS event listeners WebKit still updates the cached state of whether multiple routes
+        exist. This means that the next time a JS event listener is added, WebKit will ask the
+        UIProcess to update (which will re-enable route detection, which will dispatch a `AVRouteDetectorMultipleRoutesDetectedDidChange`
+        notification) but then immediately dispatch a JS `"webkitplaybacktargetavailabilitychanged"`
+        event using the cached state. Once the request from the UIProcess comes back, WebKit will
+        then dispatch *another* JS "webkitplaybacktargetavailabilitychanged" event with the new
+        non-cached value.
+
+        * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.h:
+        * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm:
+        (WebCore::AVRoutePickerViewTargetPicker::startingMonitoringPlaybackTargets):
+        (WebCore::AVRoutePickerViewTargetPicker::stopMonitoringPlaybackTargets):
+        (WebCore::AVRoutePickerViewTargetPicker::availableDevicesDidChange):
+        Add a flag that ignores the next `AVRouteDetectorMultipleRoutesDetectedDidChange`
+        notification since it's guaranteed to be `false` after `setRouteDetectionEnabled:NO`.
+
 2021-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Plumb data detector results through some platform objects

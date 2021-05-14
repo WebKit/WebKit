@@ -66,6 +66,7 @@ private:
     RetainPtr<AVOutputContext> m_outputContext;
     RetainPtr<WebAVRoutePickerViewHelper> m_routePickerViewDelegate;
     bool m_hadActiveRoute { false };
+    bool m_ignoreNextMultipleRoutesDetectedDidChangeNotification { false };
 };
 
 } // namespace WebCore

@@ -137,13 +137,24 @@ void AVRoutePickerViewTargetPicker::showPlaybackTargetPicker(NSView *view, const
 
 void AVRoutePickerViewTargetPicker::startingMonitoringPlaybackTargets()
 {
+    m_ignoreNextMultipleRoutesDetectedDidChangeNotification = false;
+
     routeDetector().routeDetectionEnabled = YES;
 }
 
 void AVRoutePickerViewTargetPicker::stopMonitoringPlaybackTargets()
 {
-    if (m_routeDetector)
-        [m_routeDetector setRouteDetectionEnabled:NO];
+    if (!m_routeDetector)
+        return;
+
+    // `-[AVRouteDetector multipleRoutesDetected]` will always return `NO` if route detection is
+    // disabled and `-[AVRouteDetector setRouteDetectionEnabled:]` will always dispatch a
+    // `AVRouteDetectorMultipleRoutesDetectedDidChange` notification, so ignore the next one in
+    // order to prevent the cached value in the WebProcess from always being `false` when the last
+    // JS `"webkitplaybacktargetavailabilitychanged"` event listener is removed.
+    m_ignoreNextMultipleRoutesDetectedDidChangeNotification = true;
+
+    [m_routeDetector setRouteDetectionEnabled:NO];
 }
 
 bool AVRoutePickerViewTargetPicker::externalOutputDeviceAvailable()
@@ -177,6 +188,11 @@ void AVRoutePickerViewTargetPicker::invalidatePlaybackTargets()
 }
 void AVRoutePickerViewTargetPicker::availableDevicesDidChange()
 {
+    if (m_ignoreNextMultipleRoutesDetectedDidChangeNotification) {
+        m_ignoreNextMultipleRoutesDetectedDidChangeNotification = false;
+        return;
+    }
+
     if (client())
         client()->availableDevicesChanged();
 }
