@@ -145,7 +145,10 @@ void RemoteConnectionToTarget::dispatchAsyncOnTarget(Function<void ()>&& callbac
 
 #if USE(WEB_THREAD)
     if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
-        WebCoreWebThreadRun(^ { callback(); });
+        __block auto blockCallback(WTFMove(callback));
+        WebCoreWebThreadRun(^{
+            blockCallback();
+        });
         return;
     }
 #endif
