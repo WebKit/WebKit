@@ -111,7 +111,7 @@ private:
     void pageMutedStateDidChange() override;
 
     // PlatformMediaSessionClient
-    PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::MediaType::WebAudio; }
+    PlatformMediaSession::MediaType mediaType() const override { return isSuspended() ? PlatformMediaSession::MediaType::None : PlatformMediaSession::MediaType::WebAudio; }
     PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::MediaType::WebAudio; }
     void mayResumePlayback(bool shouldResume) override;
     void suspendPlayback() override;

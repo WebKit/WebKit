@@ -1,3 +1,22 @@
+2021-05-14  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION: [ Mac WK2 ] fast/mediastream/audio-track-enabled.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=221985
+
+        Reviewed by Eric Carlson.
+
+        When `MediaSessionManagerCocoa::updateSessionState()` goes through all sessions, it
+        counts all WebAudio sessions regardless their states, and it may set the shared audio
+        session's category to be `AudioSession::AmbientSound` if the count of WebAudio sessions
+        is not zero.
+
+        However, when we close a page with WebAudio, we should not count the WebAudio session
+        here because the corresponding AudioContext is suspended and will be destroyed soon.
+        Without this patch, the shared audio session's category might be `AudioSession::AmbientSound`
+        after we close the WebAudio page.
+
+        * Modules/webaudio/AudioContext.h:
+
 2021-05-14  Alan Bujtas  <zalan@apple.com>
 
         [showRenderTree] Do not integral floor the overflow values
