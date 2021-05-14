@@ -1,3 +1,10 @@
+2021-05-14  Alex Christensen  <achristensen@webkit.org>
+
+        Fix a build after r277493
+
+        * editing/cocoa/AttributedString.h:
+        I removed an unneeded NSDictionary declaration that was being used here.
+
 2021-05-14  Ziran Sun  <zsun@igalia.com>
 
         Wrong static position for out-of-flow positioned element with different writing-mode than its containing block

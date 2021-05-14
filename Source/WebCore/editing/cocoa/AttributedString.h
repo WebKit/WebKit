@@ -28,6 +28,7 @@
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS NSAttributedString;
+OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
