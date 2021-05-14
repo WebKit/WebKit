@@ -1,3 +1,13 @@
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Follow-up fix for: Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+        rdar://78000283
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json): Removed a stray single quote mark that
+        meant we produced a JSON file that could not be parsed.
+
 2021-05-13  Patrick Angle  <pangle@apple.com>
 
         [REGRESSION: r271876] Web Inspector: [Cocoa] Remote inspection crashes when using WEB_THREAD

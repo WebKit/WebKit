@@ -538,7 +538,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     json.append(']');
 
     // edge types
-    json.appendLiteral(",\"edgeTypes\":['");
+    json.appendLiteral(",\"edgeTypes\":[");
     json.appendQuotedJSONString(edgeTypeToString(EdgeType::Internal));
     json.append(',');
     json.appendQuotedJSONString(edgeTypeToString(EdgeType::Property));
