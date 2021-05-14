@@ -1,3 +1,13 @@
+2021-05-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-api-tests] Use Python 3 (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=225427
+        <rdar://problem/77584713>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/run-api-tests: Change she-bang to Python 3.
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::getFileSize() to FileSystem::fileSize()
