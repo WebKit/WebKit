@@ -40,6 +40,8 @@ typedef struct __DDResult *DDResultRef;
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
+#import <Foundation/Foundation.h>
+
 typedef enum {
     DDScannerTypeStandard = 0,
     DDScannerType1 = 1,

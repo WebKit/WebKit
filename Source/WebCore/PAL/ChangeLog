@@ -1,3 +1,25 @@
+2021-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Plumb data detector results through some platform objects
+        https://bugs.webkit.org/show_bug.cgi?id=225775
+        Work towards rdar://75504956
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Move `DataDetectorsCoreSoftLink.{h|mm}` into PAL, so that it can be used in WebKit as well.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+
+        Add the header and source file to the CMake build.
+
+        * pal/cocoa/DataDetectorsCoreSoftLink.h: Added.
+        * pal/cocoa/DataDetectorsCoreSoftLink.mm: Added.
+        * pal/spi/cocoa/DataDetectorsCoreSPI.h:
+
+        Explicitly import Foundation headers here, so that the forward declarations don't cause compilation failures in
+        non-internal SDKs.
+
 2021-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Work around WebCore failing to build due to NDEBUG getting undefined in release

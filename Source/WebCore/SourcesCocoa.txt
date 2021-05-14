@@ -237,7 +237,6 @@ platform/cf/RunLoopObserver.cpp
 platform/cf/SharedBufferCF.cpp
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
 platform/cocoa/CoreVideoSoftLink.cpp
-platform/cocoa/DataDetectorsCoreSoftLink.mm @no-unify
 platform/cocoa/DragDataCocoa.mm
 platform/cocoa/DragImageCocoa.mm
 platform/cocoa/FileMonitorCocoa.mm

@@ -1,3 +1,21 @@
+2021-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Plumb data detector results through some platform objects
+        https://bugs.webkit.org/show_bug.cgi?id=225775
+        Work towards rdar://75504956
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Add IPC encoding and decoding support for the new struct.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<ImageExtractionDataDetectorInfo>::encodePlatformData):
+        (IPC::ArgumentCoder<ImageExtractionDataDetectorInfo>::decodePlatformData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ImageExtractionDataDetectorInfo>::encode):
+        (IPC::ArgumentCoder<ImageExtractionDataDetectorInfo>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2021-05-13  Dean Jackson  <dino@apple.com>
 
         [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)

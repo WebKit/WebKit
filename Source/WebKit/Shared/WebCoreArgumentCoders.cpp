@@ -53,6 +53,7 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
+#include <WebCore/FloatQuad.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/GraphicsContext.h>
@@ -102,7 +103,6 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include <WebCore/FloatQuad.h>
 #include <WebCore/SelectionGeometry.h>
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS_FAMILY)
@@ -114,6 +114,10 @@
 #if ENABLE(MEDIA_STREAM)
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/MediaConstraints.h>
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+#include <WebCore/ImageExtractionResult.h>
 #endif
 
 // FIXME: Seems like we could use std::tuple to cut down the code below a lot!
@@ -3197,5 +3201,30 @@ Optional<WebCore::GraphicsContextGL::ActiveInfo> ArgumentCoder<WebCore::Graphics
 }
 
 #endif
+
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+
+void ArgumentCoder<ImageExtractionDataDetectorInfo>::encode(Encoder& encoder, const ImageExtractionDataDetectorInfo& info)
+{
+    encodePlatformData(encoder, info);
+    encoder << info.normalizedQuads;
+}
+
+Optional<ImageExtractionDataDetectorInfo> ArgumentCoder<ImageExtractionDataDetectorInfo>::decode(Decoder& decoder)
+{
+    ImageExtractionDataDetectorInfo result;
+    if (!decodePlatformData(decoder, result))
+        return WTF::nullopt;
+
+    Optional<Vector<FloatQuad>> normalizedQuads;
+    decoder >> normalizedQuads;
+    if (!normalizedQuads)
+        return WTF::nullopt;
+
+    result.normalizedQuads = WTFMove(*normalizedQuads);
+    return WTFMove(result);
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
 
 } // namespace IPC

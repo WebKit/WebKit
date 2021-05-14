@@ -50,6 +50,10 @@
 #include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+#import <WebCore/ImageExtractionResult.h>
+#endif
+
 #if ENABLE(APPLE_PAY)
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
@@ -58,6 +62,10 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <pal/cocoa/AVFoundationSoftLink.h>
+#endif
+
+#if ENABLE(DATA_DETECTION)
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #endif
 
 namespace IPC {
@@ -650,5 +658,24 @@ bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Deco
     return false;
 }
 #endif
+
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+
+void ArgumentCoder<ImageExtractionDataDetectorInfo>::encodePlatformData(Encoder& encoder, const ImageExtractionDataDetectorInfo& info)
+{
+    encoder << info.result.get();
+}
+
+bool ArgumentCoder<ImageExtractionDataDetectorInfo>::decodePlatformData(Decoder& decoder, ImageExtractionDataDetectorInfo& result)
+{
+    auto scannerResult = IPC::decode<DDScannerResult>(decoder, @[ PAL::getDDScannerResultClass() ]);
+    if (!scannerResult)
+        return false;
+
+    result.result = WTFMove(*scannerResult);
+    return true;
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
 
 } // namespace IPC
