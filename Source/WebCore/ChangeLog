@@ -1,3 +1,15 @@
+2021-05-14  Alan Bujtas  <zalan@apple.com>
+
+        [showRenderTree] Do not integral floor the overflow values
+        https://bugs.webkit.org/show_bug.cgi?id=225825
+
+        Reviewed by Simon Fraser.
+
+        Integral flooring may hide fractional values caused by rounding bugs.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::outputRenderObject const):
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Drop "get" prefix from WTF::FileSystem's getFileModificationTime() / getFileCreationTime()

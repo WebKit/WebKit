@@ -1225,11 +1225,11 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         const auto& box = downcast<RenderBox>(*this);
         if (box.hasRenderOverflow()) {
             auto layoutOverflow = box.layoutOverflowRect();
-            stream << " (layout overflow " << layoutOverflow.x().toInt() << "," << layoutOverflow.y().toInt() << " " << layoutOverflow.width().toInt() << "x" << layoutOverflow.height().toInt() << ")";
+            stream << " (layout overflow " << layoutOverflow.x() << "," << layoutOverflow.y() << " " << layoutOverflow.width() << "x" << layoutOverflow.height() << ")";
             
             if (box.hasVisualOverflow()) {
                 auto visualOverflow = box.visualOverflowRect();
-                stream << " (visual overflow " << visualOverflow.x().toInt() << "," << visualOverflow.y().toInt() << " " << visualOverflow.width().toInt() << "x" << visualOverflow.height().toInt() << ")";
+                stream << " (visual overflow " << visualOverflow.x() << "," << visualOverflow.y() << " " << visualOverflow.width() << "x" << visualOverflow.height() << ")";
             }
         }
     }
