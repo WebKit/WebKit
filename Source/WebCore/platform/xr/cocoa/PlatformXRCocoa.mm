@@ -26,8 +26,42 @@
 #import "config.h"
 #import "PlatformXRCocoa.h"
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && USE(EMPTYXR)
 
-#import <WebKitAdditions/PlatformXRAdditions.mm>
+#import <wtf/NeverDestroyed.h>
+
+using namespace WebCore;
+
+namespace PlatformXR {
+
+struct Instance::Impl {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    Impl() = default;
+    ~Impl() = default;
+};
+
+Instance& Instance::singleton()
+{
+    static LazyNeverDestroyed<Instance> s_instance;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag,
+        [&] {
+            s_instance.construct();
+        });
+    return s_instance.get();
+}
+
+Instance::Instance()
+    : m_impl(makeUniqueRef<Impl>())
+{
+}
+
+void Instance::enumerateImmersiveXRDevices(CompletionHandler<void(const DeviceList& devices)>&& callback)
+{
+    callback({ });
+}
+
+}
 
 #endif

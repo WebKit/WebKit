@@ -1,0 +1,3 @@
+
+FAIL inlineVerticalFieldOfView is set appropriately on inline sessions promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+

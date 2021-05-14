@@ -267,8 +267,6 @@ bool defaultWebXREnabled()
 {
 #if HAVE(WEBXR_INTERNALS)
     return true;
-#elif HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("WebXR");
 #else
     return false;
 #endif

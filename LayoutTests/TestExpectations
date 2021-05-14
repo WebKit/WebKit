@@ -3582,10 +3582,6 @@ webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/
 
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 
-# WebXR is being implemented
-webkit.org/b/208988 http/wpt/webxr [ Skip ]
-webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
-
 webkit.org/b/210963 imported/w3c/web-platform-tests/css/css-animations/animation-important-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-003.xht [ ImageOnlyFailure Pass ]
@@ -4913,3 +4909,47 @@ webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.htm
 imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]
 # This webstorage test has timed out since it was imported.
 imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]
+
+# WebXR - Missing modules.
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/anchors [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/ar-module [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/dom-overlay [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/gamepads-module [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/hit-test [ Skip ]
+
+# WebXR - These currently timeout due to missing features.
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_inline.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_disconnect_ends.https.html [ Skip ]
+webkit.org/b/208988 http/wpt/webxr/xrSession_ended_by_system.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_input_source_recreation.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_input_sources_change.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_session_select.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/events_session_squeeze.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrView_match.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_visibilityState.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrView_sameObject.https.html [ Skip ]
+
+# WebXR - expected to fail.
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrPose_transform_sameObject.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_sameObject.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/getInputPose_handedness.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrInputSource_add_remove.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrInputSource_emulatedPosition.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrView_eyes.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrView_oneframeupdate.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html [ Skip ]

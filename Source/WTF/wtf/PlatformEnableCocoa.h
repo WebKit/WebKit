@@ -599,7 +599,7 @@
 #define ENABLE_WEBPROCESS_NSRUNLOOP 1
 #endif
 
-#if !defined(ENABLE_WEBXR) && HAVE(WEBXR_INTERNALS)
+#if !defined(ENABLE_WEBXR)
 #define ENABLE_WEBXR 1
 #endif
 

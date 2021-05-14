@@ -2192,7 +2192,6 @@ webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/
 
 webkit.org/b/223759 [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Pass Timeout ]
 
-webkit.org/b/222239 fast/canvas/webgl/context-creation-attributes.html [ Pass Failure ]
 webkit.org/b/222239 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Pass Failure ]
 webkit.org/b/222239 webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass Failure ]
 webkit.org/b/222239 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Pass Failure ]

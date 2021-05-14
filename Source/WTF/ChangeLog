@@ -1,3 +1,14 @@
+2021-05-13  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)
+        https://bugs.webkit.org/show_bug.cgi?id=225578
+
+        Reviewed by Sam Weinig.
+
+        Compile-time enabled on all Cocoa platforms.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-05-13  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::directoryName() to FileSystem::parentPath()

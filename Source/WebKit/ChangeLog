@@ -1,3 +1,15 @@
+2021-05-13  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)
+        https://bugs.webkit.org/show_bug.cgi?id=225578
+
+        Reviewed by Sam Weinig.
+
+        Remove checking for a WebXR feature flag.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebXREnabled):
+
 2021-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Work around WebCore failing to build due to NDEBUG getting undefined in release

@@ -1,3 +1,26 @@
+2021-05-13  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)
+        https://bugs.webkit.org/show_bug.cgi?id=225578
+
+        Reviewed by Sam Weinig.
+
+        New expected results.
+
+        * web-platform-tests/webxr/exclusive_requestFrame_nolayer.https-expected.txt: Added.
+        * web-platform-tests/webxr/render_state_vertical_fov_inline.https-expected.txt: Added.
+        * web-platform-tests/webxr/webxr-supported-by-feature-policy-expected.txt: Added.
+        * web-platform-tests/webxr/webxr_availability.http.sub-expected.txt: Added.
+        * web-platform-tests/webxr/webxr_feature_policy.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrFrame_lifetime.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_input_events_end.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_visibilityState.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https-expected.txt: Added.
+
 2021-05-13  Martin Robinson  <mrobinson@webkit.org>
 
         Import new and updated css-scroll-snap WPT tests
