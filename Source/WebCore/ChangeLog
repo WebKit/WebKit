@@ -1,3 +1,22 @@
+2021-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Wrong smooth animation sometimes with non-async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=225764
+
+        Reviewed by Adrian Perez de Castro.
+
+        This is happening because sometimes when the scrollbars are added to the scroll view, the contents size hasn't
+        been updated yet, so that values saved by ScrollAnimationSmooth::updateVisibleLengths() are 0x0. After that the
+        updateVisibleLengths() is not called again when the contents size is updated, so scroll happens with the wrong
+        visible lengths. This doesn't happen with async scrolling because updateVisibleLengths()  is called every time
+        layers are repositioned. For non-async scrolling it should be enough to update visible lengths when he contents
+        size changes.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::contentsResized const):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::ScrollAnimator::contentsResized const):
+
 2021-05-13  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] REGRESSION(r268308) AirPlay briefly disappears and then reappears when hovering over controls

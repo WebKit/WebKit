@@ -379,6 +379,11 @@ void ScrollAnimator::cancelAnimations()
 #endif
 }
 
+void ScrollAnimator::contentsResized() const
+{
+    m_scrollAnimation->updateVisibleLengths();
+}
+
 void ScrollAnimator::willEndLiveResize()
 {
     m_scrollAnimation->updateVisibleLengths();

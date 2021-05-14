@@ -111,7 +111,7 @@ public:
     virtual void mouseExitedScrollbar(Scrollbar*) const { }
     virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
     virtual void willStartLiveResize() { }
-    virtual void contentsResized() const { }
+    virtual void contentsResized() const;
     virtual void willEndLiveResize();
     virtual void contentAreaDidShow() { }
     virtual void contentAreaDidHide() { }
