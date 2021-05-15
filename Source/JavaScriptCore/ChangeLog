@@ -1,3 +1,41 @@
+2021-05-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Turn callGetter() / callSetter() into instance methods
+        https://bugs.webkit.org/show_bug.cgi?id=225831
+
+        Reviewed by Ross Kirsling.
+
+        1. Turn callGetter() / callSetter() into instance methods to simplify their signatures.
+        2. Rename `base` parameter to `thisValue`, avoiding similarity with slotBase().
+        3. Accept `bool shouldThrow` in callSetter() since ECMAMode is cumbersome to construct.
+        4. Replace isSetterNull(), which does LIKELY(inherits), with direct JSType check.
+        5. Introduce getCallData(VM&, JSCell*) overload to avoid extra checks / casts.
+        6. Move isValidCallee() to JSCell and handle primitives gracefully.
+
+        No behavior change. Advances provided callSetter() microbenchmark by 2%.
+
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::callGetter):
+        (JSC::GetterSetter::callSetter):
+        (JSC::callGetter): Deleted.
+        (JSC::callSetter): Deleted.
+        * runtime/GetterSetter.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::isValidCallee): Deleted.
+        * runtime/JSCJSValue.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isValidCallee const):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/JSObjectInlines.h:
+        (JSC::getCallData):
+        (JSC::getConstructData):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter const):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::put):
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks()

@@ -98,6 +98,11 @@ CallData JSCell::getConstructData(JSCell*)
     return { };
 }
 
+bool JSCell::isValidCallee() const
+{
+    return isObject() && asObject(this)->globalObject();
+}
+
 bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, JSValue value, PutPropertySlot& slot)
 {
     if (cell->isString() || cell->isSymbol() || cell->isHeapBigInt())

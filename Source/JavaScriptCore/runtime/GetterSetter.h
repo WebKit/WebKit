@@ -105,6 +105,9 @@ public:
         return result;
     }
 
+    JSValue callGetter(JSGlobalObject*, JSValue thisValue);
+    bool callSetter(JSGlobalObject*, JSValue thisValue, JSValue, bool shouldThrow);
+
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, StructureFlags), info());
@@ -133,8 +136,5 @@ private:
     WriteBarrier<JSObject> m_getter;
     WriteBarrier<JSObject> m_setter;  
 };
-
-JSValue callGetter(JSGlobalObject*, JSValue base, JSValue getterSetter);
-JS_EXPORT_PRIVATE bool callSetter(JSGlobalObject*, JSValue base, JSValue getterSetter, JSValue, ECMAMode);
 
 } // namespace JSC

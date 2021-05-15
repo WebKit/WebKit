@@ -384,11 +384,6 @@ void JSValue::dumpForBacktrace(PrintStream& out) const
         out.print("INVALID");
 }
 
-bool JSValue::isValidCallee()
-{
-    return asObject(asCell())->globalObject();
-}
-
 JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmptyStringOnError) const
 {
     VM& vm = globalObject->vm();

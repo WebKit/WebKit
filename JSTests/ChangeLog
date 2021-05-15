@@ -1,3 +1,12 @@
+2021-05-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Turn callGetter() / callSetter() into instance methods
+        https://bugs.webkit.org/show_bug.cgi?id=225831
+
+        Reviewed by Ross Kirsling.
+
+        * microbenchmarks/put-slow-no-cache-setter.js: Added.
+
 2021-05-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Error#cause must recognize explicit undefined

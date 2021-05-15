@@ -811,8 +811,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
                 if (!this->structure(vm)->isUncacheableDictionary())
                     slot.setCacheableSetter(obj, offset);
-                JSValue gs = obj->getDirect(offset);
-                RELEASE_AND_RETURN(scope, callSetter(globalObject, slot.thisValue(), gs, value, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy()));
+                RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(obj->getDirect(offset))->callSetter(globalObject, slot.thisValue(), value, slot.isStrictMode()));
             }
             if (attributes & PropertyAttribute::CustomAccessor) {
                 // FIXME: Remove this after WebIDL generator is fixed to set ReadOnly for [RuntimeConditionallyReadWrite] attributes.

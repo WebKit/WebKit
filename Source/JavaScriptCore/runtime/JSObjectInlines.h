@@ -539,16 +539,20 @@ inline bool JSObject::putOwnDataPropertyMayBeIndex(JSGlobalObject* globalObject,
     return putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot);
 }
 
-inline CallData getCallData(VM& vm, JSValue value)
+ALWAYS_INLINE CallData getCallData(VM& vm, JSCell* cell)
 {
-    if (!value.isCell())
-        return { };
-    JSCell* cell = value.asCell();
     if (cell->type() == JSFunctionType)
         return JSFunction::getCallData(cell);
     CallData result = cell->methodTable(vm)->getCallData(cell);
-    ASSERT(result.type == CallData::Type::None || value.isValidCallee());
+    ASSERT(result.type == CallData::Type::None || cell->isValidCallee());
     return result;
+}
+
+inline CallData getCallData(VM& vm, JSValue value)
+{
+    if (!value.isCell()) 
+        return { };
+    return getCallData(vm, value.asCell());
 }
 
 inline CallData getConstructData(VM& vm, JSValue value)
@@ -559,7 +563,7 @@ inline CallData getConstructData(VM& vm, JSValue value)
     if (cell->type() == JSFunctionType)
         return JSFunction::getConstructData(cell);
     CallData result = cell->methodTable(vm)->getConstructData(cell);
-    ASSERT(result.type == CallData::Type::None || value.isValidCallee());
+    ASSERT(result.type == CallData::Type::None || cell->isValidCallee());
     return result;
 }
 

@@ -30,7 +30,7 @@ namespace JSC {
 JSValue PropertySlot::functionGetter(JSGlobalObject* globalObject) const
 {
     ASSERT(m_thisValue);
-    return callGetter(globalObject, m_thisValue, m_data.getter.getterSetter);
+    return m_data.getter.getterSetter->callGetter(globalObject, m_thisValue);
 }
 
 JSValue PropertySlot::customGetter(JSGlobalObject* globalObject, PropertyName propertyName) const

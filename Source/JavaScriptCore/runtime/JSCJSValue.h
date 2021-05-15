@@ -343,7 +343,6 @@ public:
 
     bool isCell() const;
     JSCell* asCell() const;
-    JS_EXPORT_PRIVATE bool isValidCallee();
 
     Structure* structureOrNull(VM&) const;
 
