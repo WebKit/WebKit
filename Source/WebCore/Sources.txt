@@ -1535,7 +1535,7 @@ layout/floats/FloatingState.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp
 layout/formattingContexts/inline/InlineFormattingContextGeometry.cpp
-layout/formattingContexts/inline/InlineFormattingContextQuirks.cpp
+layout/formattingContexts/inline/InlineFormattingQuirks.cpp
 layout/formattingContexts/inline/InlineFormattingState.cpp
 layout/formattingContexts/inline/InlineItem.cpp
 layout/formattingContexts/inline/InlineLine.cpp

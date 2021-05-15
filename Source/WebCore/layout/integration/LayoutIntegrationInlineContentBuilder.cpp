@@ -30,6 +30,7 @@
 
 #include "BidiResolver.h"
 #include "InlineFormattingContext.h"
+#include "InlineFormattingQuirks.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"

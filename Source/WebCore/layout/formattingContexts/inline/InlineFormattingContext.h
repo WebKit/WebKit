@@ -35,6 +35,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineFormattingState;
+class InlineFormattingQuirks;
 class InvalidationState;
 class LineBox;
 
@@ -47,20 +48,7 @@ public:
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
-    class Quirks : public FormattingContext::Quirks {
-    public:
-        InlineLayoutUnit initialLineHeight() const;
-        bool hasSoftWrapOpportunityAtImage() const;
-        bool inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox&, const LineBox&) const;
-
-    private:
-        friend class InlineFormattingContext;
-        Quirks(const InlineFormattingContext&);
-
-        const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Quirks::formattingContext()); }
-
-    };
-    InlineFormattingContext::Quirks quirks() const { return Quirks(*this); }
+    InlineFormattingQuirks quirks() const;
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
@@ -103,11 +91,6 @@ private:
 
 inline InlineFormattingContext::Geometry::Geometry(const InlineFormattingContext& inlineFormattingContext)
     : FormattingContext::Geometry(inlineFormattingContext)
-{
-}
-
-inline InlineFormattingContext::Quirks::Quirks(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingContext::Quirks(inlineFormattingContext)
 {
 }
 
