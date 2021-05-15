@@ -1,5 +1,17 @@
 2021-05-14  Jonathan Bedard  <jbedard@apple.com>
 
+        [run-webkit-tests] Handle missing simulator state plist
+        https://bugs.webkit.org/show_bug.cgi?id=225833
+        <rdar://problem/78036930>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.state): If no device plist is found, assume the device is shut down.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+
+2021-05-14  Jonathan Bedard  <jbedard@apple.com>
+
         Fix iOS 14.5 embedded build
         https://bugs.webkit.org/show_bug.cgi?id=225835
         <rdar://problem/78039315>

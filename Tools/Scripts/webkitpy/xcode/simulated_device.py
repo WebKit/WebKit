@@ -561,7 +561,11 @@ class SimulatedDevice(object):
             return self._state
 
         device_plist = self.filesystem.expanduser(self.filesystem.join(SimulatedDeviceManager.simulator_device_path, self.udid, 'device.plist'))
-        self._state = int(readPlist(self.filesystem.open_binary_file_for_reading(device_plist))['state'])
+        try:
+            self._state = int(readPlist(self.filesystem.open_binary_file_for_reading(device_plist))['state'])
+        except IOError:
+            self._state = SimulatedDevice.DeviceState.SHUTTING_DOWN
+
         self._last_updated_state = time.time()
         return self._state
 
