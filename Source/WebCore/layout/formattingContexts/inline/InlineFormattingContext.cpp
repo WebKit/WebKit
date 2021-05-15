@@ -30,6 +30,7 @@
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
+#include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
@@ -604,6 +605,11 @@ void InlineFormattingContext::invalidateFormattingState(const InvalidationState&
     // For now let's just clear the runs.
     formattingState().clearLineAndRuns();
     // FIXME: This is also where we would delete inline items if their content changed.
+}
+
+InlineFormattingGeometry InlineFormattingContext::geometry() const
+{
+    return InlineFormattingGeometry(*this);
 }
 
 InlineFormattingQuirks InlineFormattingContext::quirks() const

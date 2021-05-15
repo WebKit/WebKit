@@ -34,6 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineFormattingGeometry;
 class InlineFormattingState;
 class InlineFormattingQuirks;
 class InvalidationState;
@@ -58,22 +59,7 @@ public:
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
-    class Geometry : public FormattingContext::Geometry {
-    public:
-        LineBox lineBoxForLineContent(const LineBuilder::LineContent&);
-        InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
-
-        ContentHeightAndMargin inlineBlockContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
-        ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
-
-    private:
-        friend class InlineFormattingContext;
-        Geometry(const InlineFormattingContext&);
-
-        const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Geometry::formattingContext()); }
-
-    };
-    InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
+    InlineFormattingGeometry geometry() const;
 
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
 
@@ -88,11 +74,6 @@ private:
     InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
 };
-
-inline InlineFormattingContext::Geometry::Geometry(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingContext::Geometry(inlineFormattingContext)
-{
-}
 
 }
 }
