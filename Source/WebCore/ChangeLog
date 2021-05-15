@@ -1,3 +1,18 @@
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Move table wrapper quirks to its own class
+        https://bugs.webkit.org/show_bug.cgi?id=225760
+
+        Reviewed by Antti Koivisto.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::quirks const):
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.h:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::Quirks::Quirks): Deleted.
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp: Removed.
+
 2021-05-15  Sam Weinig  <weinig@apple.com>
 
         Move CanvasRenderingContext2DSettings down to CanvasRenderingContext2DBase so it can be used there (and to support OffscreenCanvas)

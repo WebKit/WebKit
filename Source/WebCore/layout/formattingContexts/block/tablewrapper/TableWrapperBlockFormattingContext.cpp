@@ -36,6 +36,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"
+#include "TableWrapperBlockFormattingQuirks.h"
 
 namespace WebCore {
 namespace Layout {
@@ -230,6 +231,11 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
     updateMarginAfterForPreviousSibling(tableBox);
+}
+
+TableWrapperQuirks TableWrapperBlockFormattingContext::quirks() const
+{
+    return TableWrapperQuirks(*this);
 }
 
 }

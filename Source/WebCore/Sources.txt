@@ -1525,7 +1525,7 @@ layout/formattingContexts/block/BlockFormattingState.cpp
 layout/formattingContexts/block/BlockMarginCollapse.cpp
 layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp
 layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp
-layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp
+layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp
 layout/formattingContexts/flex/FlexFormattingContextGeometry.cpp
 layout/formattingContexts/flex/FlexFormattingState.cpp
