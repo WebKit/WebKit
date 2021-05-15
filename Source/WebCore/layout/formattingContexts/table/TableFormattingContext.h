@@ -37,6 +37,8 @@ namespace WebCore {
 namespace Layout {
 
 class InvalidationState;
+class TableFormattingQuirks;
+
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
 class TableFormattingContext final : public FormattingContext {
@@ -47,22 +49,6 @@ public:
     LayoutUnit usedContentHeight() const override;
 
     static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
-
-private:
-    class TableLayout {
-    public:
-        TableLayout(const TableFormattingContext&, const TableGrid&);
-
-        using DistributedSpaces = Vector<LayoutUnit>;
-        DistributedSpaces distributedHorizontalSpace(LayoutUnit availableHorizontalSpace);
-        DistributedSpaces distributedVerticalSpace(Optional<LayoutUnit> availableVerticalSpace);
-
-    private:
-        const TableFormattingContext& formattingContext() const { return m_formattingContext; }
-
-        const TableFormattingContext& m_formattingContext;
-        const TableGrid& m_grid;
-    };
 
     class Geometry : public FormattingContext::Geometry {
     public:
@@ -81,16 +67,23 @@ private:
     };
     TableFormattingContext::Geometry geometry() const { return Geometry(*this, formattingState().tableGrid()); }
 
-    class Quirks : public FormattingContext::Quirks {
+private:
+    class TableLayout {
     public:
-        Quirks(const TableFormattingContext&);
+        TableLayout(const TableFormattingContext&, const TableGrid&);
 
-        bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&) const;
+        using DistributedSpaces = Vector<LayoutUnit>;
+        DistributedSpaces distributedHorizontalSpace(LayoutUnit availableHorizontalSpace);
+        DistributedSpaces distributedVerticalSpace(Optional<LayoutUnit> availableVerticalSpace);
 
-        const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Quirks::formattingContext()); }
-        TableFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }
+    private:
+        const TableFormattingContext& formattingContext() const { return m_formattingContext; }
+
+        const TableFormattingContext& m_formattingContext;
+        const TableGrid& m_grid;
     };
-    TableFormattingContext::Quirks quirks() const { return Quirks(*this); }
+
+    TableFormattingQuirks quirks() const;
 
     TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
@@ -110,11 +103,6 @@ private:
 inline TableFormattingContext::Geometry::Geometry(const TableFormattingContext& tableFormattingContext, const TableGrid& grid)
     : FormattingContext::Geometry(tableFormattingContext)
     , m_grid(grid)
-{
-}
-
-inline TableFormattingContext::Quirks::Quirks(const TableFormattingContext& tableFormattingContext)
-    : FormattingContext::Quirks(tableFormattingContext)
 {
 }
 
