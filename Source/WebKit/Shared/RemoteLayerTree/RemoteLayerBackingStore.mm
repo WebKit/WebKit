@@ -202,8 +202,10 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
 
     std::swap(m_frontBuffer, m_backBuffer);
 
-    if (m_frontBuffer.imageBuffer)
+    if (m_frontBuffer.imageBuffer) {
+        setBufferVolatility(BufferType::Front, false);
         return;
+    }
 
     bool shouldUseRemoteRendering = WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM);
 

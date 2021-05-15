@@ -1,3 +1,17 @@
+2021-05-14  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r269824): Random tile corruption when scrolling/zooming in macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=225837
+        <rdar://problem/75053997>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        Mark the newly front buffer non-volatile before painting into it.
+        This was lost in r269824. Oddly, this caused less trouble than
+        one might expect, except on some particular hardware.
+
 2021-05-14  Jonathan Bedard  <jbedard@apple.com>
 
         Fix iOS 14.5 embedded build
