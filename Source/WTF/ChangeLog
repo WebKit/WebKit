@@ -1,5 +1,20 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Port WTF::FileSystem::realPath() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225828
+
+        Reviewed by Darin Adler.
+
+        Port WTF::FileSystem::realPath() to std::filesystem (in particular std::filesystem::canonical())
+        so that we no longer need platform-specific code.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::realPath):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Drop "get" prefix from WTF::FileSystem's getFileModificationTime() / getFileCreationTime()
         https://bugs.webkit.org/show_bug.cgi?id=225812
 

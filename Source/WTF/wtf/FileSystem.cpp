@@ -754,6 +754,13 @@ String parentPath(const String& path)
     return fromStdFileSystemPath(toStdFileSystemPath(path).parent_path());
 }
 
+String realPath(const String& path)
+{
+    std::error_code ec;
+    auto canonicalPath = std::filesystem::canonical(toStdFileSystemPath(path), ec);
+    return ec ? path : fromStdFileSystemPath(canonicalPath);
+}
+
 String pathByAppendingComponent(const String& path, const String& component)
 {
     return fromStdFileSystemPath(toStdFileSystemPath(path) / toStdFileSystemPath(component));

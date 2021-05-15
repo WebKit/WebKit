@@ -870,4 +870,30 @@ TEST_F(FileSystemTest, listDirectory)
     EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
 }
 
+TEST_F(FileSystemTest, realPath)
+{
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    EXPECT_STREQ(FileSystem::realPath(doesNotExistPath).utf8().data(), doesNotExistPath.utf8().data());
+
+    auto resolvedTempFilePath = FileSystem::realPath(tempFilePath());
+    EXPECT_STREQ(FileSystem::realPath(resolvedTempFilePath).utf8().data(), resolvedTempFilePath.utf8().data());
+    EXPECT_STREQ(FileSystem::realPath(tempFileSymlinkPath()).utf8().data(), resolvedTempFilePath.utf8().data()); // Should resolve file symlink.
+
+    auto resolvedTempEmptyFolderPath = FileSystem::realPath(tempEmptyFolderPath());
+    EXPECT_STREQ(FileSystem::realPath(resolvedTempEmptyFolderPath).utf8().data(), resolvedTempEmptyFolderPath.utf8().data());
+    EXPECT_STREQ(FileSystem::realPath(tempEmptyFolderSymlinkPath()).utf8().data(), resolvedTempEmptyFolderPath.utf8().data()); // Should resolve directory symlink.
+
+    // Symlink to symlink case.
+    auto symlinkToSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
+    EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToSymlinkPath));
+    EXPECT_STREQ(FileSystem::realPath(symlinkToSymlinkPath).utf8().data(), resolvedTempFilePath.utf8().data()); // Should resolve all symlinks.
+
+    auto subFolderPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder");
+    FileSystem::makeAllDirectories(subFolderPath);
+    auto resolvedSubFolderPath = FileSystem::realPath(subFolderPath);
+    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponent(subFolderPath, "..")).utf8().data(), resolvedTempEmptyFolderPath.utf8().data()); // Should resolve "..".
+    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { "..", "subfolder" })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve "..".
+    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { "..", ".", ".", "subfolder" })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve ".." and "."
+}
+
 } // namespace TestWebKitAPI

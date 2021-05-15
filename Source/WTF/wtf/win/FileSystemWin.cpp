@@ -124,24 +124,6 @@ Optional<WallTime> fileCreationTime(const String& path)
     return WallTime::fromRawSeconds(time);
 }
 
-static String getFinalPathName(const String& path)
-{
-    auto handle = openFile(path, FileOpenMode::Read);
-    if (!isHandleValid(handle))
-        return String();
-
-    // VOLUME_NAME_DOS can return a \\?\ prefixed path, so it can be longer than MAX_PATH
-    Vector<UChar> buffer(32768);
-    if (::GetFinalPathNameByHandleW(handle, wcharFrom(buffer.data()), buffer.size(), VOLUME_NAME_DOS) >= 32768) {
-        closeFile(handle);
-        return String();
-    }
-    closeFile(handle);
-
-    buffer.shrink(wcslen(wcharFrom(buffer.data())));
-    return String::adopt(WTFMove(buffer));
-}
-
 #if !USE(CF)
 
 CString fileSystemRepresentation(const String& path)
@@ -373,11 +355,6 @@ Optional<int32_t> getFileDeviceId(const CString& fsFile)
     closeFile(handle);
 
     return fileInformation.dwVolumeSerialNumber;
-}
-
-String realPath(const String& filePath)
-{
-    return getFinalPathName(filePath);
 }
 
 String createTemporaryDirectory()
