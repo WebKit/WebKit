@@ -1,5 +1,22 @@
 2021-05-14  Jonathan Bedard  <jbedard@apple.com>
 
+        [WebKitTestRunner] Forward WebContent termination reason
+        https://bugs.webkit.org/show_bug.cgi?id=225818
+        <rdar://problem/78027164>
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage): Use didTerminate callback instead of didCrash callback.
+        (WTR::TestController::createWebViewWithOptions): Ditto.
+        (WTR::TestController::webProcessDidTerminate):
+        (WTR::TestController::processDidCrash): Renamed webProcessDidTerminate.
+        * WebKitTestRunner/TestController.h: Replace processDidCrash with webProcessDidTerminate.
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformRunUntil):
+
+2021-05-14  Jonathan Bedard  <jbedard@apple.com>
+
         [run-webkit-tests] Handle missing simulator state plist
         https://bugs.webkit.org/show_bug.cgi?id=225833
         <rdar://problem/78036930>
