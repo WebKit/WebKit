@@ -1,3 +1,15 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks()
+        https://bugs.webkit.org/show_bug.cgi?id=225820
+
+        Reviewed by Darin Adler.
+
+        Update our code base because of the FileSystem API changes.
+
+        * API/JSScript.mm:
+        (validateBytecodeCachePath):
+
 2021-05-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION (r277221): 2 test262 tests failing

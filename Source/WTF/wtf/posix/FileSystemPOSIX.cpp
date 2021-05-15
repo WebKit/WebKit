@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/EnumTraits.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

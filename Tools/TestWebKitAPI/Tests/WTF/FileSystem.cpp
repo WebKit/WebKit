@@ -28,7 +28,6 @@
 
 #include "Test.h"
 #include "Utilities.h"
-#include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringExtras.h>
@@ -153,91 +152,77 @@ TEST_F(FileSystemTest, FilesHaveSameVolume)
     EXPECT_TRUE(FileSystem::filesHaveSameVolume(bangContainingFilePath(), quoteContainingFilePath()));
 }
 
-TEST_F(FileSystemTest, GetFileMetadataFileSymlink)
-{
-    auto symlinkMetadata = FileSystem::fileMetadata(tempFileSymlinkPath());
-    ASSERT_TRUE(symlinkMetadata.hasValue());
-    EXPECT_TRUE(symlinkMetadata->type == FileMetadata::Type::SymbolicLink);
-    EXPECT_FALSE(symlinkMetadata->isHidden);
-    EXPECT_TRUE(static_cast<size_t>(symlinkMetadata->length) == strlen(FileSystemTestData));
-
-    auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(tempFileSymlinkPath());
-    ASSERT_TRUE(targetMetadata.hasValue());
-    EXPECT_TRUE(targetMetadata->type == FileMetadata::Type::File);
-    EXPECT_FALSE(targetMetadata->isHidden);
-    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata->length));
-
-    auto actualTargetMetadata = FileSystem::fileMetadata(tempFilePath());
-    ASSERT_TRUE(actualTargetMetadata.hasValue());
-    EXPECT_TRUE(actualTargetMetadata->type == FileMetadata::Type::File);
-    EXPECT_EQ(targetMetadata->modificationTime, actualTargetMetadata->modificationTime);
-    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata->length));
-    EXPECT_FALSE(actualTargetMetadata->isHidden);
-}
-
-TEST_F(FileSystemTest, GetFileMetadataSymlinkToFileSymlink)
-{
-    // Create a symbolic link pointing the tempFileSymlinkPath().
-    auto symlinkToSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
-    EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToSymlinkPath));
-
-    auto symlinkMetadata = FileSystem::fileMetadata(symlinkToSymlinkPath);
-    ASSERT_TRUE(symlinkMetadata.hasValue());
-    EXPECT_TRUE(symlinkMetadata->type == FileMetadata::Type::SymbolicLink);
-    EXPECT_FALSE(symlinkMetadata->isHidden);
-
-    auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(symlinkToSymlinkPath);
-    ASSERT_TRUE(targetMetadata.hasValue());
-    EXPECT_TRUE(targetMetadata->type == FileMetadata::Type::File);
-    EXPECT_FALSE(targetMetadata->isHidden);
-    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata->length));
-
-    EXPECT_TRUE(FileSystem::deleteFile(symlinkToSymlinkPath));
-}
-
-TEST_F(FileSystemTest, GetFileMetadataDirectorySymlink)
-{
-    auto symlinkMetadata = FileSystem::fileMetadata(tempEmptyFolderSymlinkPath());
-    ASSERT_TRUE(symlinkMetadata.hasValue());
-    EXPECT_TRUE(symlinkMetadata->type == FileMetadata::Type::SymbolicLink);
-    EXPECT_FALSE(symlinkMetadata->isHidden);
-
-    auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(tempEmptyFolderSymlinkPath());
-    ASSERT_TRUE(targetMetadata.hasValue());
-    EXPECT_TRUE(targetMetadata->type == FileMetadata::Type::Directory);
-    EXPECT_FALSE(targetMetadata->isHidden);
-
-    auto actualTargetMetadata = FileSystem::fileMetadata(tempEmptyFolderPath());
-    ASSERT_TRUE(actualTargetMetadata.hasValue());
-    EXPECT_TRUE(actualTargetMetadata->type == FileMetadata::Type::Directory);
-    EXPECT_EQ(targetMetadata->modificationTime, actualTargetMetadata->modificationTime);
-    EXPECT_EQ(targetMetadata->length, actualTargetMetadata->length);
-    EXPECT_FALSE(actualTargetMetadata->isHidden);
-}
-
-TEST_F(FileSystemTest, GetFileMetadataFileDoesNotExist)
+TEST_F(FileSystemTest, fileType)
 {
     auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
-    auto metadata = FileSystem::fileMetadata(doesNotExistPath);
-    EXPECT_TRUE(!metadata);
+    EXPECT_FALSE(FileSystem::fileType(doesNotExistPath));
+
+    EXPECT_EQ(FileSystem::fileType(tempFilePath()), FileSystem::FileType::Regular);
+    EXPECT_EQ(FileSystem::fileType(tempFileSymlinkPath()), FileSystem::FileType::SymbolicLink);
+    EXPECT_EQ(FileSystem::fileType(tempEmptyFolderSymlinkPath()), FileSystem::FileType::SymbolicLink);
+    EXPECT_EQ(FileSystem::fileType(tempEmptyFolderPath()), FileSystem::FileType::Directory);
+
+    // Symlink to file symlink case.
+    auto symlinkToFileSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
+    EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToFileSymlinkPath));
+    EXPECT_EQ(FileSystem::fileType(symlinkToFileSymlinkPath), FileSystem::FileType::SymbolicLink);
+
+    // Symlink to directory symlink case.
+    FileSystem::PlatformFileHandle handle;
+    auto symlinkToDirectorySymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink", handle);
+    FileSystem::closeFile(handle);
+    FileSystem::deleteFile(symlinkToDirectorySymlinkPath);
+    EXPECT_TRUE(FileSystem::createSymbolicLink(tempEmptyFolderSymlinkPath(), symlinkToDirectorySymlinkPath));
+    EXPECT_EQ(FileSystem::fileType(symlinkToDirectorySymlinkPath), FileSystem::FileType::SymbolicLink);
+
+    // Broken file symlink case.
+    EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
+    EXPECT_EQ(FileSystem::fileType(tempFileSymlinkPath()), FileSystem::FileType::SymbolicLink);
+
+    // Broken directory symlink case.
+    EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
+    EXPECT_EQ(FileSystem::fileType(tempEmptyFolderSymlinkPath()), FileSystem::FileType::SymbolicLink);
+}
+
+TEST_F(FileSystemTest, fileTypeFollowingSymlinks)
+{
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    EXPECT_FALSE(FileSystem::fileTypeFollowingSymlinks(doesNotExistPath));
+
+    EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(tempFilePath()), FileSystem::FileType::Regular);
+    EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(tempFileSymlinkPath()), FileSystem::FileType::Regular);
+    EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(tempEmptyFolderSymlinkPath()), FileSystem::FileType::Directory);
+    EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(tempEmptyFolderPath()), FileSystem::FileType::Directory);
+
+    // Symlink to file symlink case.
+    auto symlinkToFileSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
+    EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToFileSymlinkPath));
+    EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(symlinkToFileSymlinkPath), FileSystem::FileType::Regular);
+
+    // Symlink to directory symlink case.
+    FileSystem::PlatformFileHandle handle;
+    auto symlinkToDirectorySymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink", handle);
+    FileSystem::closeFile(handle);
+    FileSystem::deleteFile(symlinkToDirectorySymlinkPath);
+    EXPECT_TRUE(FileSystem::createSymbolicLink(tempEmptyFolderSymlinkPath(), symlinkToDirectorySymlinkPath));
+    EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(symlinkToDirectorySymlinkPath), FileSystem::FileType::Directory);
+
+    // Broken file symlink case.
+    EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
+    EXPECT_FALSE(FileSystem::fileTypeFollowingSymlinks(tempFileSymlinkPath()));
+
+    // Broken directory symlink case.
+    EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
+    EXPECT_FALSE(FileSystem::fileTypeFollowingSymlinks(tempEmptyFolderSymlinkPath()));
 }
 
 #if OS(UNIX)
-TEST_F(FileSystemTest, GetFileMetadataHiddenFile)
+TEST_F(FileSystemTest, isHiddenFile)
 {
     auto hiddenFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".hiddenFile");
-    auto fileHandle = FileSystem::openFile(hiddenFilePath, FileSystem::FileOpenMode::Write);
-    EXPECT_TRUE(FileSystem::isHandleValid(fileHandle));
-    FileSystem::writeToFile(fileHandle, FileSystemTestData, strlen(FileSystemTestData));
-    FileSystem::closeFile(fileHandle);
+    EXPECT_TRUE(FileSystem::isHiddenFile(hiddenFilePath));
 
-    auto metadata = FileSystem::fileMetadata(hiddenFilePath);
-    ASSERT_TRUE(metadata.hasValue());
-    EXPECT_TRUE(metadata->type == FileMetadata::Type::File);
-    EXPECT_TRUE(metadata->isHidden);
-    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(metadata->length));
-
-    EXPECT_TRUE(FileSystem::deleteFile(hiddenFilePath));
+    EXPECT_FALSE(FileSystem::isHiddenFile(tempFilePath()));
 }
 #endif
 
@@ -289,9 +274,7 @@ TEST_F(FileSystemTest, fileExistsBrokenSymlink)
     EXPECT_TRUE(FileSystem::createSymbolicLink(doesNotExistPath, symlinkPath));
     EXPECT_FALSE(FileSystem::fileExists(doesNotExistPath));
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath)); // fileExists() follows symlinks.
-    auto symlinkMetadata = FileSystem::fileMetadata(symlinkPath);
-    ASSERT_TRUE(!!symlinkMetadata);
-    EXPECT_EQ(symlinkMetadata->type, FileMetadata::Type::SymbolicLink);
+    EXPECT_EQ(FileSystem::fileType(symlinkPath), FileSystem::FileType::SymbolicLink);
     EXPECT_TRUE(FileSystem::deleteFile(symlinkPath));
 }
 
@@ -301,14 +284,8 @@ TEST_F(FileSystemTest, fileExistsSymlinkToSymlink)
     auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlink"_s);
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkPath));
     EXPECT_TRUE(FileSystem::fileExists(symlinkPath));
-
-    auto metadata = FileSystem::fileMetadata(symlinkPath);
-    ASSERT_TRUE(!!metadata);
-    EXPECT_EQ(metadata->type, FileMetadata::Type::SymbolicLink);
-
-    auto targetMetadata = FileSystem::fileMetadataFollowingSymlinks(symlinkPath);
-    ASSERT_TRUE(!!targetMetadata);
-    EXPECT_EQ(targetMetadata->type, FileMetadata::Type::File);
+    EXPECT_EQ(FileSystem::fileType(symlinkPath), FileSystem::FileType::SymbolicLink);
+    EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(symlinkPath), FileSystem::FileType::Regular);
 
     // Break the symlink by deleting the target.
     EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
@@ -317,19 +294,11 @@ TEST_F(FileSystemTest, fileExistsSymlinkToSymlink)
     EXPECT_FALSE(FileSystem::fileExists(tempFileSymlinkPath())); // fileExists() follows symlinks.
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath)); // fileExists() follows symlinks.
 
-    metadata = FileSystem::fileMetadata(symlinkPath);
-    ASSERT_TRUE(!!metadata);
-    EXPECT_EQ(metadata->type, FileMetadata::Type::SymbolicLink);
+    EXPECT_EQ(FileSystem::fileType(symlinkPath), FileSystem::FileType::SymbolicLink);
+    EXPECT_EQ(FileSystem::fileType(tempFileSymlinkPath()), FileSystem::FileType::SymbolicLink);
 
-    metadata = FileSystem::fileMetadata(tempFileSymlinkPath());
-    ASSERT_TRUE(!!metadata);
-    EXPECT_EQ(metadata->type, FileMetadata::Type::SymbolicLink);
-
-    targetMetadata = FileSystem::fileMetadataFollowingSymlinks(tempFileSymlinkPath());
-    EXPECT_TRUE(!targetMetadata);
-
-    targetMetadata = FileSystem::fileMetadataFollowingSymlinks(symlinkPath);
-    EXPECT_TRUE(!targetMetadata);
+    EXPECT_FALSE(FileSystem::fileTypeFollowingSymlinks(tempFileSymlinkPath()));
+    EXPECT_FALSE(FileSystem::fileTypeFollowingSymlinks(symlinkPath));
 
     EXPECT_TRUE(FileSystem::deleteFile(symlinkPath));
 }
@@ -504,41 +473,16 @@ TEST_F(FileSystemTest, fileSize)
     EXPECT_TRUE(!fileSize);
 }
 
-TEST_F(FileSystemTest, isDirectory)
-{
-    EXPECT_TRUE(FileSystem::isDirectory(tempEmptyFolderPath()));
-    EXPECT_TRUE(FileSystem::isDirectoryFollowingSymlinks(tempEmptyFolderPath()));
-
-    auto folderSymlinkMetadata = FileSystem::fileMetadata(tempEmptyFolderSymlinkPath());
-    EXPECT_TRUE(!!folderSymlinkMetadata);
-    EXPECT_EQ(folderSymlinkMetadata->type, FileMetadata::Type::SymbolicLink);
-    EXPECT_FALSE(FileSystem::isDirectory(tempEmptyFolderSymlinkPath()));
-    EXPECT_TRUE(FileSystem::isDirectoryFollowingSymlinks(tempEmptyFolderSymlinkPath()));
-
-    EXPECT_FALSE(FileSystem::isDirectory(tempFilePath()));
-    EXPECT_FALSE(FileSystem::isDirectoryFollowingSymlinks(tempFilePath()));
-
-    auto fileSymlinkMetadata = FileSystem::fileMetadata(tempFileSymlinkPath());
-    EXPECT_TRUE(!!fileSymlinkMetadata);
-    EXPECT_EQ(fileSymlinkMetadata->type, FileMetadata::Type::SymbolicLink);
-    EXPECT_FALSE(FileSystem::isDirectory(tempFileSymlinkPath()));
-    EXPECT_FALSE(FileSystem::isDirectoryFollowingSymlinks(tempFileSymlinkPath()));
-
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
-    EXPECT_FALSE(FileSystem::isDirectory(fileThatDoesNotExist));
-    EXPECT_FALSE(FileSystem::isDirectoryFollowingSymlinks(fileThatDoesNotExist));
-}
-
 TEST_F(FileSystemTest, makeAllDirectories)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
-    EXPECT_TRUE(FileSystem::isDirectory(tempEmptyFolderPath()));
+    EXPECT_EQ(FileSystem::fileType(tempEmptyFolderPath()), FileSystem::FileType::Directory);
     EXPECT_TRUE(FileSystem::makeAllDirectories(tempEmptyFolderPath()));
     String subFolderPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subFolder1", "subFolder2", "subFolder3" });
     EXPECT_FALSE(FileSystem::fileExists(subFolderPath));
     EXPECT_TRUE(FileSystem::makeAllDirectories(subFolderPath));
     EXPECT_TRUE(FileSystem::fileExists(subFolderPath));
-    EXPECT_TRUE(FileSystem::isDirectory(subFolderPath));
+    EXPECT_EQ(FileSystem::fileType(subFolderPath), FileSystem::FileType::Directory);
     EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
     EXPECT_FALSE(FileSystem::fileExists(subFolderPath));
 }
@@ -560,9 +504,7 @@ TEST_F(FileSystemTest, createSymbolicLink)
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFilePath(), symlinkPath));
     EXPECT_TRUE(FileSystem::fileExists(symlinkPath));
 
-    auto symlinkMetadata = FileSystem::fileMetadata(symlinkPath);
-    EXPECT_TRUE(!!symlinkMetadata);
-    EXPECT_EQ(symlinkMetadata->type, FileMetadata::Type::SymbolicLink);
+    EXPECT_EQ(FileSystem::fileType(symlinkPath), FileSystem::FileType::SymbolicLink);
 
     EXPECT_TRUE(FileSystem::deleteFile(symlinkPath));
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath));
@@ -577,12 +519,7 @@ TEST_F(FileSystemTest, createSymbolicLinkFolder)
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempEmptyFolderPath(), symlinkPath));
     EXPECT_TRUE(FileSystem::fileExists(symlinkPath));
 
-    auto symlinkMetadata = FileSystem::fileMetadata(symlinkPath);
-    EXPECT_TRUE(!!symlinkMetadata);
-    EXPECT_EQ(symlinkMetadata->type, FileMetadata::Type::SymbolicLink);
-
-    EXPECT_FALSE(FileSystem::isDirectory(symlinkPath));
-    EXPECT_TRUE(FileSystem::isDirectoryFollowingSymlinks(symlinkPath));
+    EXPECT_EQ(FileSystem::fileType(symlinkPath), FileSystem::FileType::SymbolicLink);
 
     EXPECT_TRUE(FileSystem::deleteFile(symlinkPath));
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath));
@@ -617,9 +554,7 @@ TEST_F(FileSystemTest, createHardLink)
     ASSERT_TRUE(linkFileSize);
     EXPECT_EQ(*linkFileSize, *fileSize);
 
-    auto hardlinkMetadata = FileSystem::fileMetadata(hardlinkPath);
-    ASSERT_TRUE(!!hardlinkMetadata);
-    EXPECT_EQ(hardlinkMetadata->type, FileMetadata::Type::File);
+    EXPECT_EQ(FileSystem::fileType(hardlinkPath), FileSystem::FileType::Regular);
 
     EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
     EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
@@ -647,9 +582,7 @@ TEST_F(FileSystemTest, createHardLinkOrCopyFile)
     ASSERT_TRUE(linkFileSize);
     EXPECT_EQ(*linkFileSize, *fileSize);
 
-    auto hardlinkMetadata = FileSystem::fileMetadata(hardlinkPath);
-    EXPECT_TRUE(!!hardlinkMetadata);
-    EXPECT_EQ(hardlinkMetadata->type, FileMetadata::Type::File);
+    EXPECT_EQ(FileSystem::fileType(hardlinkPath), FileSystem::FileType::Regular);
 
     EXPECT_TRUE(FileSystem::deleteFile(tempFilePath()));
     EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
@@ -728,16 +661,6 @@ TEST_F(FileSystemTest, fileModificationTime)
 {
     runGetFileModificationTimeTest(tempFilePath(), [](const String& path) {
         return FileSystem::fileModificationTime(path);
-    });
-}
-
-TEST_F(FileSystemTest, fileModificationTimeViaFileMetadata)
-{
-    runGetFileModificationTimeTest(tempFilePath(), [](const String& path) -> Optional<WallTime> {
-        auto metadata = FileSystem::fileMetadata(path);
-        if (!metadata)
-            return WTF::nullopt;
-        return metadata->modificationTime;
     });
 }
 

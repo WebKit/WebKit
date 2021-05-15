@@ -58,8 +58,6 @@ typedef struct _GFileIOStream GFileIOStream;
 
 namespace WTF {
 
-struct FileMetadata;
-
 namespace FileSystemImpl {
 
 // PlatformFileHandle
@@ -111,15 +109,12 @@ WTF_EXPORT_PRIVATE bool fileExists(const String&);
 WTF_EXPORT_PRIVATE bool deleteFile(const String&);
 WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
 WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
-WTF_EXPORT_PRIVATE Optional<uint64_t> fileSize(const String&);
+WTF_EXPORT_PRIVATE Optional<uint64_t> fileSize(const String&); // Follows symlinks.
 WTF_EXPORT_PRIVATE Optional<uint64_t> fileSize(PlatformFileHandle);
 WTF_EXPORT_PRIVATE Optional<WallTime> fileModificationTime(const String&);
 WTF_EXPORT_PRIVATE bool updateFileModificationTime(const String& path); // Sets modification time to now.
 WTF_EXPORT_PRIVATE Optional<WallTime> fileCreationTime(const String&); // Not all platforms store file creation time.
-WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadata(const String& path);
-WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
-WTF_EXPORT_PRIVATE bool isDirectory(const String&);
-WTF_EXPORT_PRIVATE bool isDirectoryFollowingSymlinks(const String&);
+WTF_EXPORT_PRIVATE bool isHiddenFile(const String&);
 WTF_EXPORT_PRIVATE String pathByAppendingComponent(const String& path, const String& component);
 WTF_EXPORT_PRIVATE String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
 WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String& path);
@@ -130,6 +125,10 @@ WTF_EXPORT_PRIVATE Optional<uint64_t> volumeFreeSpace(const String&);
 WTF_EXPORT_PRIVATE Optional<int32_t> getFileDeviceId(const CString&);
 WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);
+
+enum class FileType { Regular, Directory, SymbolicLink };
+WTF_EXPORT_PRIVATE Optional<FileType> fileType(const String&);
+WTF_EXPORT_PRIVATE Optional<FileType> fileTypeFollowingSymlinks(const String&);
 
 WTF_EXPORT_PRIVATE void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });
 

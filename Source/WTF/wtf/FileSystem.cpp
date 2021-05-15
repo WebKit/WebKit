@@ -28,7 +28,6 @@
 #include <wtf/FileSystem.h>
 
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
 #include <wtf/StdFilesystem.h>
@@ -137,20 +136,6 @@ static WallTime toWallTime(std::filesystem::file_time_type fileTime)
 {
     // FIXME: Use std::chrono::file_clock::to_sys() once we can use C++20.
     return WallTime::fromRawSeconds(toTimeT(fileTime));
-}
-
-static std::filesystem::path resolveSymlinks(std::filesystem::path path, std::error_code& ec)
-{
-#ifdef MAXSYMLINKS
-    static constexpr unsigned maxSymlinkDepth = MAXSYMLINKS;
-#else
-    static constexpr unsigned maxSymlinkDepth = 40;
-#endif
-
-    unsigned currentDepth = 0;
-    while (++currentDepth <= maxSymlinkDepth && !ec && std::filesystem::is_symlink(path, ec))
-        path = std::filesystem::read_symlink(path, ec);
-    return path;
 }
 
 String encodeForFileName(const String& inputString)
@@ -606,18 +591,6 @@ Optional<uint64_t> fileSize(const String& path)
     return size;
 }
 
-bool isDirectory(const String& path)
-{
-    std::error_code ec;
-    return std::filesystem::symlink_status(toStdFileSystemPath(path), ec).type() == std::filesystem::file_type::directory;
-}
-
-bool isDirectoryFollowingSymlinks(const String& path)
-{
-    std::error_code ec;
-    return std::filesystem::status(toStdFileSystemPath(path), ec).type() == std::filesystem::file_type::directory;
-}
-
 bool makeAllDirectories(const String& path)
 {
     std::error_code ec;
@@ -692,56 +665,44 @@ bool updateFileModificationTime(const String& path)
     return !ec;
 }
 
-enum class ShouldFollowSymbolicLinks { No, Yes };
-static Optional<FileMetadata> fileMetadataPotentiallyFollowingSymlinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+bool isHiddenFile(const String& path)
 {
-    if (path.isEmpty())
-        return WTF::nullopt;
-
-    auto fsPath = toStdFileSystemPath(path);
-
-    std::error_code ec;
-    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes && std::filesystem::is_symlink(fsPath, ec)) {
-        fsPath = resolveSymlinks(fsPath, ec);
-        if (ec)
-            return WTF::nullopt;
-    }
-
-    ec = { };
-    std::filesystem::directory_entry entry(fsPath, ec);
-    if (ec)
-        return WTF::nullopt;
-
-    auto modificationTime = toWallTime(entry.last_write_time(ec));
-
-    // Note that the result of attempting to determine the size of a directory is implementation-defined.
-    auto fileSize = entry.file_size(ec);
-    if (ec)
-        fileSize = 0;
-
 #if OS(UNIX)
+    auto fsPath = toStdFileSystemPath(path);
     std::filesystem::path::string_type filename = fsPath.filename();
-    bool isHidden = !filename.empty() && filename[0] == '.';
+    return !filename.empty() && filename[0] == '.';
 #else
-    bool isHidden = false;
+    UNUSED_PARAM(path);
+    return false;
 #endif
-    FileMetadata::Type type = FileMetadata::Type::File;
-    if (entry.is_symlink(ec))
-        type = FileMetadata::Type::SymbolicLink;
-    else if (entry.is_directory(ec))
-        type = FileMetadata::Type::Directory;
-
-    return FileMetadata { modificationTime, static_cast<long long>(fileSize), isHidden, type };
 }
 
-Optional<FileMetadata> fileMetadata(const String& path)
+enum class ShouldFollowSymbolicLinks { No, Yes };
+static Optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
-    return fileMetadataPotentiallyFollowingSymlinks(path, ShouldFollowSymbolicLinks::No);
+    std::error_code ec;
+    auto status = shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? std::filesystem::status(toStdFileSystemPath(path), ec) : std::filesystem::symlink_status(toStdFileSystemPath(path), ec);
+    if (ec)
+        return WTF::nullopt;
+    switch (status.type()) {
+    case std::filesystem::file_type::directory:
+        return FileType::Directory;
+    case std::filesystem::file_type::symlink:
+        return FileType::SymbolicLink;
+    default:
+        break;
+    }
+    return FileType::Regular;
 }
 
-Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
+Optional<FileType> fileType(const String& path)
 {
-    return fileMetadataPotentiallyFollowingSymlinks(path, ShouldFollowSymbolicLinks::Yes);
+    return fileTypePotentiallyFollowingSymLinks(path, ShouldFollowSymbolicLinks::No);
+}
+
+Optional<FileType> fileTypeFollowingSymlinks(const String& path)
+{
+    return fileTypePotentiallyFollowingSymLinks(path, ShouldFollowSymbolicLinks::Yes);
 }
 
 String pathFileName(const String& path)

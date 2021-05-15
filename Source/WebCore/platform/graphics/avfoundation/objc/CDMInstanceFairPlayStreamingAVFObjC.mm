@@ -398,10 +398,11 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
 
     auto storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
 
-    if (!FileSystem::fileExists(storageDirectory)) {
+    auto fileType = FileSystem::fileTypeFollowingSymlinks(storageDirectory);
+    if (!fileType) {
         if (!FileSystem::makeAllDirectories(storageDirectory))
             return;
-    } else if (!FileSystem::isDirectoryFollowingSymlinks(storageDirectory)) {
+    } else if (*fileType != FileSystem::FileType::Directory) {
         auto tempDirectory = FileSystem::createTemporaryDirectory(@"MediaKeys");
         if (!tempDirectory)
             return;

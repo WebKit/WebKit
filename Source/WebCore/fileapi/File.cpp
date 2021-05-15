@@ -30,7 +30,6 @@
 #include "MIMETypeRegistry.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/DateMath.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/WTFString.h>
@@ -148,7 +147,7 @@ String File::contentTypeForFile(const String& path)
 bool File::isDirectory() const
 {
     if (!m_isDirectory)
-        m_isDirectory = FileSystem::isDirectoryFollowingSymlinks(m_path);
+        m_isDirectory = FileSystem::fileTypeFollowingSymlinks(m_path) == FileSystem::FileType::Directory;
     return *m_isDirectory;
 }
 

@@ -1,5 +1,34 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks()
+        https://bugs.webkit.org/show_bug.cgi?id=225820
+
+        Reviewed by Darin Adler.
+
+        Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks(). Those don't match very closely the
+        std::filesystem API we use internally and they are not very efficient because we gather several attributes
+        of a file but the callers are usually only interested in one thing (e.g. file type or file size).
+
+        Callers interested in the file size, can call the pre-existing FileSystem::fileSize(). For call sites
+        wanting to check if it is a hidden file, I introduced a new FileSystem::isHiddenFile() API. For call sites
+        interested in the file type, I replaced FileSystem::isDirectory() / FileSystem::isDirectoryFollowingSymlinks()
+        with more generic FileSystem::fileType() / FileSystem::fileTypeFollowingSymlinks().
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FileMetadata.h: Removed.
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::isHiddenFile):
+        (WTF::FileSystemImpl::fileTypePotentiallyFollowingSymLinks):
+        (WTF::FileSystemImpl::fileType):
+        (WTF::FileSystemImpl::fileTypeFollowingSymlinks):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Drop legacy / prefixed WebAudio implementation
         https://bugs.webkit.org/show_bug.cgi?id=225832
 

@@ -1,3 +1,39 @@
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks()
+        https://bugs.webkit.org/show_bug.cgi?id=225820
+
+        Reviewed by Darin Adler.
+
+        Update our code base because of the FileSystem API changes.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::listDirectoryWithMetadata):
+        (WebCore::toFileSystemEntries):
+        (WebCore::fileTypeIgnoringHiddenFiles):
+        (WebCore::validatePathIsExpectedType):
+        (WebCore::DOMFileSystem::getParent):
+        (WebCore::DOMFileSystem::getEntry):
+        (WebCore::DOMFileSystem::getFile):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attachmentForFilePath):
+        * fileapi/File.cpp:
+        (WebCore::File::isDirectory const):
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::appendDirectoryFiles):
+        (WebCore::gatherFileInformation):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::ensureAssetCacheExistsForPath):
+        * platform/network/BlobDataFileReference.cpp:
+        (WebCore::BlobDataFileReference::startTrackingModifications):
+        * platform/network/BlobRegistryImpl.cpp:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::prepareForUpload):
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        (WebCore::BlobDataFileReference::generateReplacementFile):
+
 2021-05-14  John Wilander  <wilander@apple.com>
 
         Javascript can't access a SameSite=Strict cookie after page is loaded after a redirect from a third party site

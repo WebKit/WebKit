@@ -207,7 +207,7 @@ static uint64_t getDirectorySize(const String& directoryPath)
     paths.append(directoryPath);
     while (!paths.isEmpty()) {
         auto path = paths.takeFirst();
-        if (FileSystem::isDirectory(path)) {
+        if (FileSystem::fileType(path) == FileSystem::FileType::Directory) {
             auto fileNames = FileSystem::listDirectory(path);
             for (auto& fileName : fileNames) {
                 // Files in /Blobs directory are hard link.
@@ -613,7 +613,7 @@ void Engine::getDirectories(CompletionHandler<void(const Vector<String>&)>&& com
         Vector<String> folderPaths;
         for (auto& fileName : FileSystem::listDirectory(path)) {
             auto filePath = FileSystem::pathByAppendingComponent(path, fileName);
-            if (FileSystem::isDirectory(filePath))
+            if (FileSystem::fileType(filePath) == FileSystem::FileType::Directory)
                 folderPaths.append(filePath.isolatedCopy());
         }
 
@@ -701,7 +701,7 @@ void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandle
         LockHolder locker(globalSizeFileLock);
         for (auto& fileName : FileSystem::listDirectory(path)) {
             auto filePath = FileSystem::pathByAppendingComponent(path, fileName);
-            if (FileSystem::isDirectory(filePath))
+            if (FileSystem::fileType(filePath) == FileSystem::FileType::Directory)
                 FileSystem::deleteNonEmptyDirectory(filePath);
         }
         RunLoop::main().dispatch(WTFMove(completionHandler));

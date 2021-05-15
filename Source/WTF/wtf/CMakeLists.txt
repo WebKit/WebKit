@@ -68,7 +68,6 @@ set(WTF_PUBLIC_HEADERS
     FastBitVector.h
     FastMalloc.h
     FastTLS.h
-    FileMetadata.h
     FilePrintStream.h
     FileSystem.h
     FixedVector.h

@@ -28,7 +28,6 @@
 
 #if ENABLE(FILE_REPLACEMENT)
 
-#import <wtf/FileMetadata.h>
 #import <wtf/FileSystem.h>
 #import <wtf/text/CString.h>
 
@@ -47,8 +46,8 @@ void BlobDataFileReference::generateReplacementFile()
 
     m_replacementShouldBeGenerated = false;
     if (!m_replacementPath.isNull()) {
-        if (auto metadata = FileSystem::fileMetadataFollowingSymlinks(m_replacementPath))
-            m_size = metadata.value().length;
+        if (auto fileSize = FileSystem::fileSize(m_replacementPath))
+            m_size = *fileSize;
     }
 
     revokeFileAccess();

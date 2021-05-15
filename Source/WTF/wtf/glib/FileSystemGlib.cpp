@@ -29,7 +29,6 @@
 #include <glib/gstdio.h>
 #include <sys/file.h>
 #include <wtf/EnumTraits.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>

@@ -337,15 +337,14 @@ static AVAssetCache *ensureAssetCacheExistsForPath(const String& path)
     if (path.isEmpty())
         return nil;
 
-    auto fileExistsAtPath = FileSystem::fileExists(path);
-
-    if (fileExistsAtPath && !FileSystem::isDirectoryFollowingSymlinks(path)) {
+    auto fileType = FileSystem::fileTypeFollowingSymlinks(path);
+    if (fileType && *fileType != FileSystem::FileType::Directory) {
         // Non-directory file already exists at the path location; bail.
         ASSERT_NOT_REACHED();
         return nil;
     }
 
-    if (!fileExistsAtPath && !FileSystem::makeAllDirectories(path)) {
+    if (!fileType && !FileSystem::makeAllDirectories(path)) {
         // Could not create a directory at the specified location; bail.
         ASSERT_NOT_REACHED();
         return nil;

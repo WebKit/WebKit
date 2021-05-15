@@ -712,7 +712,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
         return attachment;
     }
 
-    bool isDirectory = FileSystem::isDirectoryFollowingSymlinks(path);
+    bool isDirectory = FileSystem::fileTypeFollowingSymlinks(path) == FileSystem::FileType::Directory;
     String contentType = typeForAttachmentElement(explicitContentType);
     if (contentType.isEmpty()) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

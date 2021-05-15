@@ -36,7 +36,6 @@
 #include <sys/stat.h>
 #include <windows.h>
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
