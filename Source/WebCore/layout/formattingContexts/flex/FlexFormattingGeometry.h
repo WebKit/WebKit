@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,32 +34,18 @@
 namespace WebCore {
 namespace Layout {
 
-class FlexFormattingGeometry;
-class InvalidationState;
-// This class implements the layout logic for flex formatting contexts.
-// https://www.w3.org/TR/css-flexbox-1/
-class FlexFormattingContext final : public FormattingContext {
-    WTF_MAKE_ISO_ALLOCATED(FlexFormattingContext);
+// This class implements positioning and sizing for flex items.
+class FlexFormattingGeometry : public FormattingContext::Geometry {
 public:
-    FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState&);
-    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
-    LayoutUnit usedContentHeight() const override;
+    FlexFormattingGeometry(const FlexFormattingContext&);
 
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
+    FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&);
 
 private:
-    FlexFormattingGeometry geometry() const;
-
-    void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);
-    void computeIntrinsicWidthConstraintsForFlexItems();
-
-    const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
-    FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
+    const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingContext::Geometry::formattingContext()); }
 };
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONTEXT(FlexFormattingContext, isFlexFormattingContext())
 
 #endif

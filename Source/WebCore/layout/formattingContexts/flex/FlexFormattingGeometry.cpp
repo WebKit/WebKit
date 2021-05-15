@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FlexFormattingContext.h"
+#include "FlexFormattingGeometry.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -35,7 +35,12 @@
 namespace WebCore {
 namespace Layout {
 
-FormattingContext::IntrinsicWidthConstraints FlexFormattingContext::Geometry::intrinsicWidthConstraints(const ContainerBox& flexItem)
+FlexFormattingGeometry::FlexFormattingGeometry(const FlexFormattingContext& flexFormattingContext)
+    : FormattingContext::Geometry(flexFormattingContext)
+{
+}
+
+FormattingContext::IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(const ContainerBox& flexItem)
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
@@ -47,7 +52,7 @@ FormattingContext::IntrinsicWidthConstraints FlexFormattingContext::Geometry::in
             + fixedValue(style.marginEnd()).valueOr(0);
     };
 
-    auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
+    auto computedIntrinsicWidthConstraints = [&]() -> FormattingContext::IntrinsicWidthConstraints {
         auto logicalWidth = flexItem.style().logicalWidth();
         // Minimum/maximum width can't be depending on the containing block's width.
         auto needsResolvedContainingBlockWidth = logicalWidth.isCalculated() || logicalWidth.isPercent() || logicalWidth.isRelative();

@@ -1,5 +1,20 @@
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Move flex formatting geometry to its own class
+        https://bugs.webkit.org/show_bug.cgi?id=225755
+
+        Reviewed by Antti Koivisto.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::geometry const):
+        * layout/formattingContexts/flex/FlexFormattingContext.h:
+        (WebCore::Layout::FlexFormattingContext::Geometry::Geometry): Deleted.
+        * layout/formattingContexts/flex/FlexFormattingContextGeometry.cpp: Removed.
+
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
         [LFC] Move block formatting geometry to its own class
         https://bugs.webkit.org/show_bug.cgi?id=225756
 
