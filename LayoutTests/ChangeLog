@@ -1,3 +1,17 @@
+2021-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] a media element with a data url and "crossorigin='anonymous'" doesn't load
+        https://bugs.webkit.org/show_bug.cgi?id=225786
+        <rdar://77625185>
+
+        Reviewed by Jer Noble.
+
+        * media/data-url-cross-origin-expected.txt: Added.
+        * media/data-url-cross-origin.html: Added.
+        * media/media-file.js:
+        (findDataURL):
+        * media/sources-fallback-codecs.html:
+
 2021-05-14  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION: [ Mac WK2 ] fast/mediastream/audio-track-enabled.html is flaky failing

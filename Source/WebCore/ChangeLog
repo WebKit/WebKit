@@ -1,3 +1,17 @@
+2021-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] a media element with a data url and "crossorigin='anonymous'" doesn't load
+        https://bugs.webkit.org/show_bug.cgi?id=225786
+        <rdar://77625185>
+
+        Reviewed by Jer Noble.
+
+        Test: media/data-url-cross-origin.html
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource): Set loader options `sameOriginDataURLFlag`
+        to `SameOriginDataURLFlag::Set` so data: urls are treated as same origin.
+
 2021-05-14  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION: [ Mac WK2 ] fast/mediastream/audio-track-enabled.html is flaky failing
