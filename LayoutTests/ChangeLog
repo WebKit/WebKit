@@ -1,3 +1,19 @@
+2021-05-14  Darin Adler  <darin@apple.com>
+
+        output element doesn't react properly to node tree mutations
+        https://bugs.webkit.org/show_bug.cgi?id=196532
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: Removed an expectation for a directory that no longer exists.
+        * platform/mac-wk2/TestExpectations: Removed an expectation for a test that no longer exists.
+        * platform/mac/TestExpectations: Removed an expectation for a directory that no longer exists.
+
+        * platform/gtk/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        Updated since HTMLOptionElement now has a constructor. Still not passing, but closer to correct.
+
 2021-05-14  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] a media element with a data url and "crossorigin='anonymous'" doesn't load

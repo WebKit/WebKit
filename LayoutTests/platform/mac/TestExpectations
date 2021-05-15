@@ -14,7 +14,6 @@ editing/mac [ Pass ]
 editing/pasteboard/mac [ Pass ]
 fast/dom/Range/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
-media/mac [ Pass ]
 model-element [ Pass ]
 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]

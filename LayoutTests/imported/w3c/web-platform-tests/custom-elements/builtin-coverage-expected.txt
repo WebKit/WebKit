@@ -544,7 +544,9 @@ FAIL option: innerHTML should instantiate a customized built-in element assert_e
     [native code]
 }"
 PASS output: Define a customized built-in element
-FAIL output: Operator 'new' should instantiate a customized built-in element Illegal constructor
+FAIL output: Operator 'new' should instantiate a customized built-in element assert_equals: Cloning a customized built-in element should succeed. expected function "class extends HTMLOutputElement {}" but got function "function HTMLOutputElement() {
+    [native code]
+}"
 FAIL output: document.createElement() should instantiate a customized built-in element assert_equals: expected function "class extends HTMLOutputElement {}" but got function "function HTMLOutputElement() {
     [native code]
 }"

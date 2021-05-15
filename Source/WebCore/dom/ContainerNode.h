@@ -57,8 +57,8 @@ public:
     ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
     WEBCORE_EXPORT ExceptionOr<void> removeChild(Node& child);
     WEBCORE_EXPORT ExceptionOr<void> appendChild(Node& newChild);
-    void replaceAllChildrenWithNewText(const String&);
-    void replaceAllChildren(std::nullptr_t);
+    void stringReplaceAll(const String&);
+    void replaceAll(Node*);
 
     // These methods are only used during parsing.
     // They don't send DOM mutation events or handle reparenting.

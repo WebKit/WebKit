@@ -663,25 +663,18 @@ void ContainerNode::parserRemoveChild(Node& oldChild)
 }
 
 // https://dom.spec.whatwg.org/#concept-node-replace-all
-void ContainerNode::replaceAllChildren(std::nullptr_t)
+void ContainerNode::replaceAll(Node* node)
 {
-    ChildListMutationScope mutation(*this);
-    removeChildren();
-}
-
-// https://dom.spec.whatwg.org/#concept-node-replace-all
-void ContainerNode::replaceAllChildrenWithNewText(const String& text)
-{
-    if (text.isEmpty()) {
-        replaceAllChildren(nullptr);
+    if (!node) {
+        ChildListMutationScope mutation(*this);
+        removeChildren();
         return;
     }
 
-    auto node = document().createTextNode(text);
+    // FIXME: The code below is roughly correct for a new text node with no parent, but needs enhancement to work properly for more complex cases.
+
     if (!hasChildNodes()) {
-        // appendChildWithoutPreInsertionValidityCheck() can only throw when node has a parent and we already asserted it doesn't.
-        auto result = appendChildWithoutPreInsertionValidityCheck(node);
-        ASSERT_UNUSED(result, !result.hasException());
+        appendChildWithoutPreInsertionValidityCheck(*node);
         return;
     }
 
@@ -689,15 +682,20 @@ void ContainerNode::replaceAllChildrenWithNewText(const String& text)
     ChildListMutationScope mutation(*this);
     removeAllChildrenWithScriptAssertion(ChildChange::Source::API, DeferChildrenChanged::Yes);
 
-    executeNodeInsertionWithScriptAssertion(*this, node.get(), ChildChange::Source::API, ReplacedAllChildren::Yes, [&] {
-        ASSERT(!ensurePreInsertionValidity(node, nullptr).hasException());
+    executeNodeInsertionWithScriptAssertion(*this, *node, ChildChange::Source::API, ReplacedAllChildren::Yes, [&] {
         InspectorInstrumentation::willInsertDOMNode(document(), *this);
         node->setTreeScopeRecursively(treeScope());
-        appendChildCommon(node);
+        appendChildCommon(*node);
     });
 
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
+}
+
+// https://dom.spec.whatwg.org/#string-replace-all
+void ContainerNode::stringReplaceAll(const String& string)
+{
+    replaceAll(string.isEmpty() ? nullptr : document().createTextNode(string).ptr());
 }
 
 inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()

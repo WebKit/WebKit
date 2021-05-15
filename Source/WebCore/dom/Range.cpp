@@ -824,7 +824,7 @@ ExceptionOr<void> Range::surroundContents(Node& newParent)
 
     // Step 4: If newParent has children, replace all with null within newParent.
     if (newParent.hasChildNodes())
-        downcast<ContainerNode>(newParent).replaceAllChildren(nullptr);
+        downcast<ContainerNode>(newParent).replaceAll(nullptr);
 
     // Step 5: Insert newParent into context object.
     auto insertResult = insertNode(newParent);

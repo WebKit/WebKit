@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +26,15 @@
 [
     Exposed=Window
 ] interface HTMLOutputElement : HTMLElement {
-    [PutForwards=value] readonly attribute DOMTokenList htmlFor;
+    [CallWith=Document, HTMLConstructor] constructor();
 
-    readonly attribute HTMLFormElement form;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList htmlFor;
+    readonly attribute HTMLFormElement? form;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
 
     readonly attribute DOMString type;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString defaultValue;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString value;
+    [CEReactions] attribute DOMString defaultValue;
+    [CEReactions] attribute DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

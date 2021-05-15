@@ -1,3 +1,23 @@
+2021-05-14  Darin Adler  <darin@apple.com>
+
+        output element doesn't react properly to node tree mutations
+        https://bugs.webkit.org/show_bug.cgi?id=196532
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        Updated since HTMLOptionElement now has a constructor. Still not passing, but closer to correct.
+
+        * web-platform-tests/custom-elements/form-associated/form-reset-callback-expected.txt:
+        Updated due to changes in HTMLOptionElement, but still not passing.
+
+        * web-platform-tests/html/semantics/forms/the-output-element/mutations.window-expected.txt:
+        Updated to reflect passing test.
+
+        * web-platform-tests/html/semantics/forms/the-output-element/mutations.window.js:
+        Updated to a newer version of the upstream version of this. Decided to just update this one file
+        rather than importing the latest version across more tests at this time.
+
 2021-05-14  Ziran Sun  <zsun@igalia.com>
 
         Wrong static position for out-of-flow positioned element with different writing-mode than its containing block

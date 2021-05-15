@@ -1589,7 +1589,7 @@ ExceptionOr<void> Node::setTextContent(const String& text)
         return setNodeValue(text);
     case ELEMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE:
-        downcast<ContainerNode>(*this).replaceAllChildrenWithNewText(text);
+        downcast<ContainerNode>(*this).stringReplaceAll(text);
         return { };
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:

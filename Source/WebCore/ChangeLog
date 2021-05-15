@@ -1,3 +1,69 @@
+2021-05-14  Darin Adler  <darin@apple.com>
+
+        output element doesn't react properly to node tree mutations
+        https://bugs.webkit.org/show_bug.cgi?id=196532
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceAll): Refactored most of the functions
+        replaceAllChildren and replaceAllChildrenWithNewText into this new one,
+        and named it based on the name of the operation in the HTML specification.
+        The function is incomplete, but preserves existing behavior.
+        (WebCore::ContainerNode::stringReplaceAll): Refactored the rest of the
+        replaceAllChildrenWithNewText function and renamed to the name from the
+        HTML specification.
+        * dom/ContainerNode.h: Updated for the above changes.
+
+        * dom/Node.cpp:
+        (WebCore::Node::setTextContent): Updated for name change above.
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents): Ditto.
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAsChildOfElement): Ditto.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText): Ditto.
+
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::HTMLOutputElement): Moved data member
+        initialization into the class definition.
+        (WebCore::HTMLOutputElement::create): Added an overload that takes just
+        a document, for use when invoked from as a constructor.
+        (WebCore::HTMLOutputElement::parseAttribute): Tightened the logic for the
+        for attribute. I decided it's better to call through to the base class, even
+        though we often don't do that for attributes that don't expect the base
+        class to pay attention to.
+        (WebCore::HTMLOutputElement::childrenChanged): Deleted. No need for this in
+        the improved HTML specification version of this element's algorithms.
+        (WebCore::HTMLOutputElement::reset): Updated based on the HTML specification,
+        using the default value algorithm rather than the default value mode flag we
+        were using before.
+        (WebCore::HTMLOutputElement::setValue): Updated based on the HTML specification,
+        always setting the default value override based on the current default value,
+        and using stringReplaceAll. There's no need for the old setTextContentInternal,
+        since that was all due to the need to avoid infinite recursion in childrenChanged.
+        (WebCore::HTMLOutputElement::defaultValue const): Updated based on the HTML
+        specification, deriving the default value from the default value override and
+        the descendant text content.
+        (WebCore::HTMLOutputElement::setDefaultValue): Updated based on the HTML
+        specification, doing a string replace all with the value if the default
+        value override is null, and updating the default value override otherwise.
+        (WebCore::HTMLOutputElement::htmlFor): Updated to rename m_tokens to m_forTokens.
+        (WebCore::HTMLOutputElement::setTextContentInternal): Deleted.
+
+        * html/HTMLOutputElement.h: Moved DOMTokenList to be a forward declaration
+        instead of an include. Adde a constructor that takes only a document to be used
+        from JavaScript. Made the canContainRangeEndPoint override be private like the
+        other overrides. Removed the childrenChange override and the
+        setTextContentInternal function. Removed m_isDefaultValueMode,
+        m_isSetTextContentInProgress, and m_defaultValue. Added m_defaultValueOverride.
+        Renamed m_tokens to m_forTokens.
+
+        * html/HTMLOutputElement.idl: Updated to match the HTML specification. This
+        involved adding a constructor, adding SameObject for the htmlFor attribute,
+        making the form attribute nullable, and removing [LegacyNullToEmptyString]
+        from the defaultValue and value attributes.
+
 2021-05-14  Sam Weinig  <weinig@apple.com>
 
         Use PixelBufferFormat to specify ImageBuffer::getPixelData destination format allowing for more control over data conversion
