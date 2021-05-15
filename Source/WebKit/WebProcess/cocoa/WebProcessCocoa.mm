@@ -80,6 +80,7 @@
 #import <WebCore/VersionChecks.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
+#import <mach/mach.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>

@@ -1,3 +1,15 @@
+2021-05-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix iOS 14.5 embedded build
+        https://bugs.webkit.org/show_bug.cgi?id=225835
+        <rdar://problem/78039315>
+
+        Reviewed by Dewei Zhu.
+
+        No new tests, build fix.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm: Import mach.h.
+
 2021-05-14  Sam Weinig  <weinig@apple.com>
 
         Use PixelBufferFormat to specify ImageBuffer::getPixelBuffer destination format allowing for more control over data conversion

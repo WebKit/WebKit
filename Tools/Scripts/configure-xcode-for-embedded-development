@@ -40,9 +40,12 @@ os.environ['SYSTEM_VERSION_COMPAT'] = '0'
 
 MISSING_HEADERS = [
     "usr/include/libxslt",
+    "usr/include/mach/mach.h",
+    "usr/include/mach/mach_error.h",
     "usr/include/mach/mach_types.defs",
     "usr/include/mach/machine/machine_types.defs",
     "usr/include/mach/std_types.defs",
+    "usr/include/mach/task.h",
     "usr/include/objc/Protocol.h",
     "usr/include/objc/objc-class.h",
     "usr/include/objc/objc-runtime.h",
