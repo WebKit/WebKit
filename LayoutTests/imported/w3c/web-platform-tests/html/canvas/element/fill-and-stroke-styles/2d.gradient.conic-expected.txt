@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-FAIL Conic gradient function exists ctx.createConicGradient is not a function. (In 'ctx.createConicGradient(0, 0, 25)', 'ctx.createConicGradient' is undefined)
+PASS Conic gradient function exists
 

@@ -18,6 +18,8 @@ let linearGradient = null;
 
 let radialGradient = null;
 
+let conicGradient = null;
+
 let pattern = null;
 
 let path2D = new Path2D("M 1 2");
@@ -34,6 +36,9 @@ async function load() {
 
     radialGradient = context.createRadialGradient(1, 2, 3, 4, 5, 6);
     linearGradient.addColorStop(1, "blue");
+
+    conicGradient = context.createConicGradient(1, 2, 3);
+    conicGradient.addColorStop(1, "green");
 
     pattern = context.createPattern(image, "no-repeat");
 
@@ -74,6 +79,7 @@ function performActions() {
             context.fillStyle = "test";
             context.fillStyle = linearGradient;
             context.fillStyle = radialGradient;
+            context.fillStyle = conicGradient;
             context.fillStyle = pattern;
         },
         () => {

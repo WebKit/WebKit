@@ -45,6 +45,12 @@ CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint&
 {
 }
 
+CanvasGradient::CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasBase& canvasBase)
+    : m_gradient(Gradient::create(Gradient::ConicData { centerPoint, angleInRadians }))
+    , m_canvas(canvasBase)
+{
+}
+
 Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, const FloatPoint& p1, CanvasBase& canvasBase)
 {
     return adoptRef(*new CanvasGradient(p0, p1, canvasBase));
@@ -53,6 +59,11 @@ Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, const FloatPoin
 Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasBase& canvasBase)
 {
     return adoptRef(*new CanvasGradient(p0, r0, p1, r1, canvasBase));
+}
+
+Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& centerPoint, float angleInRadians, CanvasBase& canvasBase)
+{
+    return adoptRef(*new CanvasGradient(centerPoint, angleInRadians, canvasBase));
 }
 
 CanvasGradient::~CanvasGradient() = default;

@@ -1,3 +1,30 @@
+2021-05-15  Said Abou-Hallawa  <said@apple.com>
+
+        Implement CanvasRenderingContext2D.createConicGradient
+        https://bugs.webkit.org/show_bug.cgi?id=225539
+
+        Reviewed by Sam Weinig.
+
+        Proposal document:
+            https://github.com/fserb/canvas2D/blob/master/spec/conic-gradient.md
+
+        MDN documentation:
+            https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createConicGradient
+
+        Tests: fast/canvas/canvas-conic-gradient-angle.html
+               fast/canvas/canvas-conic-gradient-center.html
+               fast/canvas/conicGradient-infinite-values.html
+
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        (WebCore::m_canvas):
+        (WebCore::CanvasGradient::create):
+        * html/canvas/CanvasGradient.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::createConicGradient):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Move table formatting quirks to its own class

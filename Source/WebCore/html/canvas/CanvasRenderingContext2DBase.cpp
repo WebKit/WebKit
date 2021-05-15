@@ -1951,6 +1951,14 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradi
     return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1, canvasBase());
 }
 
+ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createConicGradient(float angleInRadians, float x, float y)
+{
+    if (!std::isfinite(angleInRadians) || !std::isfinite(x) || !std::isfinite(y))
+        return Exception { NotSupportedError };
+
+    return CanvasGradient::create(FloatPoint(x, y), angleInRadians, canvasBase());
+}
+
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasImageSource&& image, const String& repetition)
 {
     bool repeatX, repeatY;

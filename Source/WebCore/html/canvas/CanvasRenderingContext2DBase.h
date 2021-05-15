@@ -189,6 +189,7 @@ public:
 
     ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
     ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    ExceptionOr<Ref<CanvasGradient>> createConicGradient(float angleInRadians, float x, float y);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasImageSource&&, const String& repetition);
 
     RefPtr<ImageData> createImageData(ImageData&) const;

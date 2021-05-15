@@ -287,6 +287,8 @@ fast/gradients/conic-gradient-alpha.html [ Skip ]
 fast/gradients/conic-gradient-extended-stops.html [ Skip ]
 fast/gradients/conic-gradient.html [ Skip ]
 fast/gradients/conic-two-hints.html [ Skip ]
+fast/canvas/canvas-conic-gradient-angle.html [ Skip ]
+fast/canvas/canvas-conic-gradient-center.html [ Skip ]
 
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
