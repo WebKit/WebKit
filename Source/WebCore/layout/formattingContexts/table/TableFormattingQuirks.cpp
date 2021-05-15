@@ -36,7 +36,7 @@ namespace WebCore {
 namespace Layout {
 
 TableFormattingQuirks::TableFormattingQuirks(const TableFormattingContext& tableFormattingContext)
-    : FormattingContext::Quirks(tableFormattingContext)
+    : FormattingQuirks(tableFormattingContext)
 {
 }
 

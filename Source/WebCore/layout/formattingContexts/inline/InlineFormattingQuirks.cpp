@@ -34,7 +34,7 @@ namespace WebCore {
 namespace Layout {
 
 InlineFormattingQuirks::InlineFormattingQuirks(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingContext::Quirks(inlineFormattingContext)
+    : FormattingQuirks(inlineFormattingContext)
 {
 }
 

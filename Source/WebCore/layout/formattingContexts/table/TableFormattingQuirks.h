@@ -27,19 +27,19 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FormattingContext.h"
+#include "FormattingQuirks.h"
 
 namespace WebCore {
 namespace Layout {
 
-class TableFormattingQuirks : public FormattingContext::Quirks {
+class TableFormattingQuirks : public FormattingQuirks {
 public:
     TableFormattingQuirks(const TableFormattingContext&);
 
     bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&) const;
 
 private:
-    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Quirks::formattingContext()); }
+    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingQuirks::formattingContext()); }
     TableFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }
 };
 

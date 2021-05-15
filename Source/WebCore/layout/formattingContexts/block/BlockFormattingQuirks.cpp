@@ -44,7 +44,7 @@ static bool isQuirkContainer(const Box& layoutBox)
 }
 
 BlockFormattingQuirks::BlockFormattingQuirks(const BlockFormattingContext& blockFormattingContext)
-    : FormattingContext::Quirks(blockFormattingContext)
+    : FormattingQuirks(blockFormattingContext)
 {
 }
 

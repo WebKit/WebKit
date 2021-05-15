@@ -1,3 +1,35 @@
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Move base formatting quirks to its own class
+        https://bugs.webkit.org/show_bug.cgi?id=225757
+
+        Reviewed by Antti Koivisto.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::quirks const):
+        * layout/formattingContexts/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::formattingState):
+        (WebCore::Layout::FormattingContext::Quirks::layoutState const): Deleted.
+        (WebCore::Layout::FormattingContext::Quirks::layoutState): Deleted.
+        (WebCore::Layout::FormattingContext::Quirks::formattingContext const): Deleted.
+        (WebCore::Layout::FormattingContext::quirks const): Deleted.
+        (WebCore::Layout::FormattingContext::Quirks::Quirks): Deleted.
+        * layout/formattingContexts/FormattingContextQuirks.cpp: Removed.
+        * layout/formattingContexts/block/BlockFormattingQuirks.cpp:
+        (WebCore::Layout::BlockFormattingQuirks::BlockFormattingQuirks):
+        * layout/formattingContexts/block/BlockFormattingQuirks.h:
+        (WebCore::Layout::BlockFormattingQuirks::formattingContext const):
+        * layout/formattingContexts/inline/InlineFormattingQuirks.cpp:
+        (WebCore::Layout::InlineFormattingQuirks::InlineFormattingQuirks):
+        * layout/formattingContexts/inline/InlineFormattingQuirks.h:
+        (WebCore::Layout::InlineFormattingQuirks::formattingContext const):
+        * layout/formattingContexts/table/TableFormattingQuirks.cpp:
+        (WebCore::Layout::TableFormattingQuirks::TableFormattingQuirks):
+        * layout/formattingContexts/table/TableFormattingQuirks.h:
+        (WebCore::Layout::TableFormattingQuirks::formattingContext const):
+
 2021-05-15  Said Abou-Hallawa  <said@apple.com>
 
         Implement CanvasRenderingContext2D.createConicGradient

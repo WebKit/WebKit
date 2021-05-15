@@ -49,6 +49,7 @@ struct ContentHeightAndMargin;
 struct ContentWidthAndMargin;
 struct Edges;
 class FormattingState;
+class FormattingQuirks;
 struct HorizontalGeometry;
 class InvalidationState;
 class LayoutState;
@@ -110,31 +111,7 @@ public:
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
 
-    class Quirks {
-    public:
-        Quirks(const FormattingContext&);
-
-        LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&);
-
-    protected:
-        const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
-        LayoutState& layoutState() { return m_formattingContext.layoutState(); }
-        const FormattingContext& formattingContext() const { return m_formattingContext; }
-
-        const FormattingContext& m_formattingContext;
-    };
-    FormattingContext::Quirks quirks() const { return Quirks(*this); }
-
-protected:
-    using LayoutQueue = Vector<const Box*>;
-
-    FormattingState& formattingState() { return m_formattingState; }
-
-    void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
-
-#ifndef NDEBUG
-    virtual void validateGeometryConstraintsAfterLayout() const;
-#endif
+    FormattingQuirks quirks() const;
 
     // This class implements generic positioning and sizing.
     class Geometry {
@@ -211,6 +188,17 @@ protected:
     };
     FormattingContext::Geometry geometry() const { return Geometry(*this); }
 
+protected:
+    using LayoutQueue = Vector<const Box*>;
+
+    FormattingState& formattingState() { return m_formattingState; }
+
+    void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
+
+#ifndef NDEBUG
+    virtual void validateGeometryConstraintsAfterLayout() const;
+#endif
+
 private:
     void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
@@ -221,11 +209,6 @@ private:
 };
 
 inline FormattingContext::Geometry::Geometry(const FormattingContext& formattingContext)
-    : m_formattingContext(formattingContext)
-{
-}
-
-inline FormattingContext::Quirks::Quirks(const FormattingContext& formattingContext)
     : m_formattingContext(formattingContext)
 {
 }

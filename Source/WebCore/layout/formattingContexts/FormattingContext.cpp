@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingQuirks.h"
 #include "FormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBox.h"
@@ -268,6 +269,11 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
             continue;
         formattingState().addOutOfFlowBox(descendant);
     }
+}
+
+FormattingQuirks FormattingContext::quirks() const
+{
+    return FormattingQuirks(*this);
 }
 
 #ifndef NDEBUG

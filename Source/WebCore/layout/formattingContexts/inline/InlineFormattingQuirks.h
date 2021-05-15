@@ -27,12 +27,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FormattingContext.h"
+#include "FormattingQuirks.h"
 
 namespace WebCore {
 namespace Layout {
 
-class InlineFormattingQuirks : public FormattingContext::Quirks {
+class InlineFormattingQuirks : public FormattingQuirks {
 public:
     InlineLayoutUnit initialLineHeight() const;
     bool hasSoftWrapOpportunityAtImage() const;
@@ -42,7 +42,7 @@ private:
     friend class InlineFormattingContext;
     InlineFormattingQuirks(const InlineFormattingContext&);
 
-    const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Quirks::formattingContext()); }
+    const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingQuirks::formattingContext()); }
 
 };
 

@@ -27,12 +27,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "BlockFormattingContext.h"
+#include "FormattingQuirks.h"
 
 namespace WebCore {
 namespace Layout {
 
-class BlockFormattingQuirks : public FormattingContext::Quirks {
+class BlockFormattingQuirks : public FormattingQuirks {
 public:
     BlockFormattingQuirks(const BlockFormattingContext&);
 
@@ -44,7 +44,7 @@ public:
     bool shouldCollapseMarginAfterWithParentMarginAfter(const Box&) const;
 
 protected:
-    const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Quirks::formattingContext()); }
+    const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingQuirks::formattingContext()); }
     BlockFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }
 
 };
