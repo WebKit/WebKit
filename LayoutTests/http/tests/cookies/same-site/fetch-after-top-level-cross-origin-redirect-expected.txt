@@ -10,7 +10,7 @@ PASS Has cookie "strict-because-invalid-SameSite-value" with value 19.
 PASS Has cookie "lax" with value 19.
 
 Cookies visible in DOM:
-PASS Do not have DOM cookie "strict".
+PASS Has DOM cookie "strict" with value 19.
 PASS Has DOM cookie "implicit-strict" with value 19.
 PASS Has DOM cookie "strict-because-invalid-SameSite-value" with value 19.
 PASS Has DOM cookie "lax" with value 19.

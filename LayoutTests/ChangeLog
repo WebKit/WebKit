@@ -1,3 +1,33 @@
+2021-05-14  John Wilander  <wilander@apple.com>
+
+        Javascript can't access a SameSite=Strict cookie after page is loaded after a redirect from a third party site
+        https://bugs.webkit.org/show_bug.cgi?id=208049
+        <rdar://problem/59701889>
+
+        Reviewed by Chris Dumez.
+
+        The HTTP WG has decided that SameSite=strict cookies should be returned in document.cookie
+        even in cases where they are not sent in the HTTP request for the page. Chromium and Gecko
+        now work according to those rules and the spec is being updated.
+
+        See:
+        - https://github.com/httpwg/http-extensions/issues/769
+        - https://github.com/httpwg/http-extensions/pull/1428/files.
+
+        Tests changed and rebased accordingly.
+
+        * http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt:
+        * http/tests/cookies/same-site/popup-cross-site-post.html:
+        * http/tests/cookies/same-site/popup-cross-site.html:
+        * http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.py:
+        * http/tests/cookies/same-site/user-load-cross-site-redirect-expected.txt:
+        * http/tests/cookies/same-site/user-load-cross-site-redirect.py:
+
 2021-05-14  Darin Adler  <darin@apple.com>
 
         output element doesn't react properly to node tree mutations

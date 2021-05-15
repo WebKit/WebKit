@@ -27,6 +27,7 @@
 
 #include "FrameIdentifier.h"
 #include "PageIdentifier.h"
+#include "SameSiteInfo.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
@@ -67,7 +68,7 @@ public:
 
     virtual ~CookieJar();
 protected:
-    static SameSiteInfo sameSiteInfo(const Document&);
+    static SameSiteInfo sameSiteInfo(const Document&, IsForDOMCookieAccess = IsForDOMCookieAccess::No);
     static IncludeSecureCookies shouldIncludeSecureCookies(const Document&, const URL&);
     CookieJar(Ref<StorageSessionProvider>&&);
 

@@ -1,3 +1,36 @@
+2021-05-14  John Wilander  <wilander@apple.com>
+
+        Javascript can't access a SameSite=Strict cookie after page is loaded after a redirect from a third party site
+        https://bugs.webkit.org/show_bug.cgi?id=208049
+        <rdar://problem/59701889>
+
+        Reviewed by Chris Dumez.
+
+        The HTTP WG has decided that SameSite=strict cookies should be returned in document.cookie
+        even in cases where they are not sent in the HTTP request for the page. Chromium and Gecko
+        now work according to those rules and the spec is being updated.
+
+        See:
+        - https://github.com/httpwg/http-extensions/issues/769
+        - https://github.com/httpwg/http-extensions/pull/1428/files.
+
+        Here's an excerpt from the spec change:
+            'If a user agent does return cookies for a given call to a "non-HTTP" API with
+            an associated Document, then the user agent MUST compute the cookie-string
+            following the algorithm defined in {{retrieval-algorithm}}, indicating that the
+            retrieval is from a "non-HTTP" API. The retrieval-uri is the associated
+            Document's cookie URL {{COOKIE-URL}}, and the retrieval is same-site if the
+            Document's "site for cookies" is same-site with the top-level origin as defined
+            in {{document-requests}}.'
+
+        Existing layout tests changed and rebased.
+
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::WebCookieJar::cookies const):
+            Now sends WebCore::IsCookieAccessForDOM::Yes to WebCore::CookieJar::sameSiteInfo().
+        (WebKit::WebCookieJar::setCookies):
+            Now sends WebCore::IsCookieAccessForDOM::Yes to WebCore::CookieJar::sameSiteInfo().
+
 2021-05-14  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r269824): Random tile corruption when scrolling/zooming in macCatalyst

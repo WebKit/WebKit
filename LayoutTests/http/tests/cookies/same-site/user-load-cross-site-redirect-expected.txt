@@ -8,7 +8,7 @@ PASS Has cookie "lax" with value 27.
 PASS Has cookie "normal" with value 27.
 
 Cookies visible in DOM:
-PASS Do not have DOM cookie "strict".
+PASS Has DOM cookie "strict" with value 27.
 PASS Has DOM cookie "lax" with value 27.
 PASS Has DOM cookie "normal" with value 27.
 PASS successfullyParsed is true

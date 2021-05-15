@@ -135,7 +135,7 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
         return { };
 #endif
 
-    auto sameSiteInfo = CookieJar::sameSiteInfo(document);
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     auto includeSecureCookies = CookieJar::shouldIncludeSecureCookies(document, url);
     auto frameID = webFrame->frameID();
     auto pageID = webFrame->page()->identifier();
@@ -163,7 +163,7 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
         return;
 #endif
 
-    auto sameSiteInfo = CookieJar::sameSiteInfo(document);
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     auto frameID = webFrame->frameID();
     auto pageID = webFrame->page()->identifier();
 

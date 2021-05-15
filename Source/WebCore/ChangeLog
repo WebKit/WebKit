@@ -1,3 +1,45 @@
+2021-05-14  John Wilander  <wilander@apple.com>
+
+        Javascript can't access a SameSite=Strict cookie after page is loaded after a redirect from a third party site
+        https://bugs.webkit.org/show_bug.cgi?id=208049
+        <rdar://problem/59701889>
+
+        Reviewed by Chris Dumez.
+
+        The HTTP WG has decided that SameSite=strict cookies should be returned in document.cookie
+        even in cases where they are not sent in the HTTP request for the page. Chromium and Gecko
+        now work according to those rules and the spec is being updated.
+
+        See:
+        - https://github.com/httpwg/http-extensions/issues/769
+        - https://github.com/httpwg/http-extensions/pull/1428/files.
+
+        Here's an excerpt from the spec change:
+            'If a user agent does return cookies for a given call to a "non-HTTP" API with
+            an associated Document, then the user agent MUST compute the cookie-string
+            following the algorithm defined in {{retrieval-algorithm}}, indicating that the
+            retrieval is from a "non-HTTP" API. The retrieval-uri is the associated
+            Document's cookie URL {{COOKIE-URL}}, and the retrieval is same-site if the
+            Document's "site for cookies" is same-site with the top-level origin as defined
+            in {{document-requests}}.'
+
+        Existing layout tests changed and rebased.
+
+        * loader/CookieJar.cpp:
+        (WebCore::CookieJar::sameSiteInfo):
+            Now takes a IsCookieAccessForDOM parameter and forwards it to SameSiteInfo::create().
+        (WebCore::CookieJar::cookies const):
+            Now sends IsCookieAccessForDOM::Yes to CookieJar::sameSiteInfo().
+        (WebCore::CookieJar::setCookies):
+            Now sends IsCookieAccessForDOM::Yes to CookieJar::sameSiteInfo().
+        * loader/CookieJar.h:
+        * platform/network/SameSiteInfo.cpp:
+        (WebCore::SameSiteInfo::create):
+            Now takes a IsForDOMCookieAccess parameter and if it's IsForDOMCookieAccess::Yes and
+            the site is top site, sets isSameSite.
+        * platform/network/SameSiteInfo.h:
+            Now has an enum IsForDOMCookieAccess.
+
 2021-05-14  Rob Buis  <rbuis@igalia.com>
 
         Provide custom SetInlineFillGradient copy ctor

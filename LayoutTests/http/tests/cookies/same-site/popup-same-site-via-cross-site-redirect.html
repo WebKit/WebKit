@@ -17,7 +17,7 @@ async_test(t => {
         assert_equals(e.data.http[STRICT_BECAUSE_INVALID_SAMESITE_VALUE], "1", "strict-because-invalid-SameSite-value");
         assert_equals(e.data.http[LAX_DOM], "1", "lax");
         assert_equals(e.data.http[NORMAL_DOM], "1", "normal");
-        assert_equals(normalizeCookie(e.data.document), normalizeCookie(IMPLICIT_STRICT_DOM + "=1; " + LAX_DOM + "=1; " + NORMAL_DOM + "=1; " + STRICT_BECAUSE_INVALID_SAMESITE_VALUE + "=1"));
+        assert_equals(normalizeCookie(e.data.document), normalizeCookie(IMPLICIT_STRICT_DOM + "=1; " + LAX_DOM + "=1; " + NORMAL_DOM + "=1; " + STRICT_BECAUSE_INVALID_SAMESITE_VALUE + "=1; " + STRICT_DOM + "=1"));
     }));
 
     var i = window.open("http://localhost:8000/resources/redirect.py?url=http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.py");
