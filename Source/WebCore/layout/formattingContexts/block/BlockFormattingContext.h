@@ -39,6 +39,7 @@ class LayoutUnit;
 namespace Layout {
 
 class Box;
+class BlockFormattingGeometry;
 class BlockFormattingQuirks;
 class BlockMarginCollapse;
 class FloatingContext;
@@ -55,33 +56,9 @@ public:
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
+    BlockFormattingGeometry geometry() const;
     BlockFormattingQuirks quirks() const;
     BlockMarginCollapse marginCollapse() const;
-
-    // This class implements positioning and sizing for boxes participating in a block formatting context.
-    class Geometry : public FormattingContext::Geometry {
-    public:
-        Geometry(const BlockFormattingContext&);
-
-        ContentHeightAndMargin inFlowContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
-        ContentWidthAndMargin inFlowContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
-
-        Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
-        LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
-        LayoutUnit staticHorizontalPosition(const Box&, const HorizontalConstraints&) const;
-
-        IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
-
-        ContentWidthAndMargin computedContentWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider);
-
-    private:
-        ContentHeightAndMargin inFlowNonReplacedContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&);
-        ContentWidthAndMargin inFlowNonReplacedContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
-        ContentWidthAndMargin inFlowReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
-
-        const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }
-    };
-    BlockFormattingContext::Geometry geometry() const { return Geometry(*this); }
 
 protected:
     struct ConstraintsPair {
@@ -117,11 +94,6 @@ protected:
 private:
     HashMap<const Box*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
 };
-
-inline BlockFormattingContext::Geometry::Geometry(const BlockFormattingContext& blockFormattingContext)
-    : FormattingContext::Geometry(blockFormattingContext)
-{
-}
 
 }
 }

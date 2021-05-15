@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingGeometry.h"
 #include "LayoutState.h"
 
 namespace WebCore {
@@ -42,9 +43,9 @@ Optional<LayoutUnit> TableWrapperQuirks::overriddenTableHeight(const ContainerBo
 {
     if (layoutState().inQuirksMode()) {
         // In quirks mode always use the content height. Note that the tables with content take computed values into account.
-        return geometry().contentHeightForFormattingContextRoot(tableBox);
+        return formattingContext().geometry().contentHeightForFormattingContextRoot(tableBox);
     }
-    return tableBox.hasInFlowOrFloatingChild() ? geometry().contentHeightForFormattingContextRoot(tableBox) : Optional<LayoutUnit> { };
+    return tableBox.hasInFlowOrFloatingChild() ? formattingContext().geometry().contentHeightForFormattingContextRoot(tableBox) : Optional<LayoutUnit> { };
 }
 
 }

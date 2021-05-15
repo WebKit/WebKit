@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingGeometry.h"
 #include "BlockFormattingState.h"
 #include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"

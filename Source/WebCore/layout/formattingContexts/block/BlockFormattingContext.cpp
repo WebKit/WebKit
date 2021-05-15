@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingGeometry.h"
 #include "BlockFormattingQuirks.h"
 #include "BlockFormattingState.h"
 #include "BlockMarginCollapse.h"
@@ -599,6 +600,11 @@ void BlockFormattingContext::updateMarginAfterForPreviousSibling(const Box& layo
 
         currentBox = &previousSibling;
     }
+}
+
+BlockFormattingGeometry BlockFormattingContext::geometry() const
+{
+    return BlockFormattingGeometry(*this);
 }
 
 BlockMarginCollapse BlockFormattingContext::marginCollapse() const

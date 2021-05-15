@@ -1519,7 +1519,7 @@ layout/LayoutState.cpp
 layout/LayoutUnits.cpp
 layout/Verification.cpp
 layout/formattingContexts/block/BlockFormattingContext.cpp
-layout/formattingContexts/block/BlockFormattingContextGeometry.cpp
+layout/formattingContexts/block/BlockFormattingGeometry.cpp
 layout/formattingContexts/block/BlockFormattingQuirks.cpp
 layout/formattingContexts/block/BlockFormattingState.cpp
 layout/formattingContexts/block/BlockMarginCollapse.cpp

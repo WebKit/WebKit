@@ -45,8 +45,6 @@ public:
 
 protected:
     const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingQuirks::formattingContext()); }
-    BlockFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }
-
 };
 
 }
