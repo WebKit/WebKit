@@ -100,14 +100,14 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
     if (contextOptions.sampleRate.hasValue() && !isSupportedSampleRate(contextOptions.sampleRate.value()))
         return Exception { SyntaxError, "sampleRate is not in range"_s };
     
-    auto audioContext = adoptRef(*new AudioContext(document, IsLegacyWebKitAudioContext::No, contextOptions));
+    auto audioContext = adoptRef(*new AudioContext(document, contextOptions));
     audioContext->suspendIfNeeded();
     return audioContext;
 }
 
 // Constructor for rendering to the audio hardware.
-AudioContext::AudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, const AudioContextOptions& contextOptions)
-    : BaseAudioContext(document, isLegacyWebKitAudioContext, contextOptions)
+AudioContext::AudioContext(Document& document, const AudioContextOptions& contextOptions)
+    : BaseAudioContext(document, contextOptions)
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
     constructCommon();
@@ -117,14 +117,6 @@ AudioContext::AudioContext(Document& document, IsLegacyWebKitAudioContext isLega
 
     document.addAudioProducer(*this);
     document.registerForVisibilityStateChangedCallbacks(*this);
-}
-
-// Only needed for WebKitOfflineAudioContext.
-AudioContext::AudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
-    : BaseAudioContext(document, isLegacyWebKitAudioContext, numberOfChannels, sampleRate, WTFMove(renderTarget))
-    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
-{
-    constructCommon();
 }
 
 void AudioContext::constructCommon()

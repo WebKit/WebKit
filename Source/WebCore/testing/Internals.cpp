@@ -295,8 +295,7 @@
 #endif
 
 #if ENABLE(WEB_AUDIO)
-#include "BaseAudioContext.h"
-#include "WebKitAudioContext.h"
+#include "AudioContext.h"
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -4384,17 +4383,10 @@ bool Internals::elementIsBlockingDisplaySleep(HTMLMediaElement& element) const
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)
-void Internals::setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
+void Internals::setAudioContextRestrictions(AudioContext& context, StringView restrictionsString)
 {
-    RefPtr<AudioContext> context;
-    switchOn(contextVariant, [&](RefPtr<AudioContext> entry) {
-        context = entry;
-    }, [&](RefPtr<WebKitAudioContext> entry) {
-        context = entry;
-    });
-
-    auto restrictions = context->behaviorRestrictions();
-    context->removeBehaviorRestriction(restrictions);
+    auto restrictions = context.behaviorRestrictions();
+    context.removeBehaviorRestriction(restrictions);
 
     restrictions = AudioContext::NoRestrictions;
 
@@ -4406,7 +4398,7 @@ void Internals::setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, 
         if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsentforaudiostart"))
             restrictions |= AudioContext::RequirePageConsentForAudioStartRestriction;
     }
-    context->addBehaviorRestriction(restrictions);
+    context.addBehaviorRestriction(restrictions);
 }
 
 void Internals::useMockAudioDestinationCocoa()

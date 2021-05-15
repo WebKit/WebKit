@@ -1,5 +1,18 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop legacy / prefixed WebAudio implementation
+        https://bugs.webkit.org/show_bug.cgi?id=225832
+
+        Reviewed by Darin Adler.
+
+        Stop explicitly disabled with prefixed WebAudio implementation given that
+        it no longer exists.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Drop "get" prefix from WTF::FileSystem's getFileModificationTime() / getFileCreationTime()
         https://bugs.webkit.org/show_bug.cgi?id=225812
 

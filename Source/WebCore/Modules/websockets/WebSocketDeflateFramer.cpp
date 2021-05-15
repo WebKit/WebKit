@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebSocketDeflateFramer.h"
 
+#include "WebSocketExtensionProcessor.h"
+#include "WebSocketFrame.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringToIntegerConversion.h>

@@ -429,13 +429,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webaudio/StereoPannerOptions.idl \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperOptions.idl \
-    $(WebCore)/Modules/webaudio/WebKitAudioBufferSourceNode.idl \
-    $(WebCore)/Modules/webaudio/WebKitAudioContext.idl \
-    $(WebCore)/Modules/webaudio/WebKitAudioListener.idl \
-    $(WebCore)/Modules/webaudio/WebKitAudioPannerNode.idl \
-    $(WebCore)/Modules/webaudio/WebKitDynamicsCompressorNode.idl \
-    $(WebCore)/Modules/webaudio/WebKitOfflineAudioContext.idl \
-    $(WebCore)/Modules/webaudio/WebKitOscillatorNode.idl \
     $(WebCore)/Modules/webauthn/AttestationConveyancePreference.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl \

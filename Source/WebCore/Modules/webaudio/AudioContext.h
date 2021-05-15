@@ -39,7 +39,7 @@ class DOMWindow;
 
 struct AudioTimestamp;
 
-class AudioContext
+class AudioContext final
     : public BaseAudioContext
     , public MediaProducer
     , public MediaCanStartListener
@@ -89,8 +89,7 @@ public:
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
 protected:
-    explicit AudioContext(Document&, IsLegacyWebKitAudioContext, const AudioContextOptions& = { });
-    AudioContext(Document&, IsLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    explicit AudioContext(Document&, const AudioContextOptions& = { });
 
     bool willBeginPlayback();
 
@@ -107,24 +106,24 @@ private:
     bool willPausePlayback();
 
     // MediaProducer
-    MediaProducer::MediaStateFlags mediaState() const override;
-    void pageMutedStateDidChange() override;
+    MediaProducer::MediaStateFlags mediaState() const final;
+    void pageMutedStateDidChange() final;
 
     // PlatformMediaSessionClient
-    PlatformMediaSession::MediaType mediaType() const override { return isSuspended() ? PlatformMediaSession::MediaType::None : PlatformMediaSession::MediaType::WebAudio; }
-    PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::MediaType::WebAudio; }
-    void mayResumePlayback(bool shouldResume) override;
-    void suspendPlayback() override;
-    bool canReceiveRemoteControlCommands() const override { return false; }
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) override { }
-    bool supportsSeeking() const override { return false; }
-    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
+    PlatformMediaSession::MediaType mediaType() const final { return isSuspended() ? PlatformMediaSession::MediaType::None : PlatformMediaSession::MediaType::WebAudio; }
+    PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::WebAudio; }
+    void mayResumePlayback(bool shouldResume) final;
+    void suspendPlayback() final;
+    bool canReceiveRemoteControlCommands() const final { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final { }
+    bool supportsSeeking() const final { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
     // MediaCanStartListener.
-    void mediaCanStart(Document&) override;
+    void mediaCanStart(Document&) final;
 
     // VisibilityChangeClient
     void visibilityStateChanged() final;

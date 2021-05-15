@@ -80,7 +80,6 @@
 #include "StereoPannerNode.h"
 #include "StereoPannerOptions.h"
 #include "WaveShaperNode.h"
-#include "WebKitAudioListener.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/Scope.h>
 
@@ -132,7 +131,7 @@ static HashSet<uint64_t>& liveAudioContexts()
 }
 
 // Constructor for rendering to the audio hardware.
-BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, const AudioContextOptions& contextOptions)
+BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions& contextOptions)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -141,7 +140,7 @@ BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContex
     , m_contextID(generateAudioContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
-    , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
+    , m_listener(AudioListener::create(*this))
 {
     liveAudioContexts().add(m_contextID);
 
@@ -163,7 +162,7 @@ BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContex
 }
 
 // Constructor for offline (non-realtime) rendering.
-BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
@@ -174,7 +173,7 @@ BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContex
     , m_isOfflineContext(true)
     , m_renderTarget(WTFMove(renderTarget))
     , m_destinationNode(makeUniqueRef<OfflineAudioDestinationNode>(*this, numberOfChannels, sampleRate, m_renderTarget.copyRef()))
-    , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
+    , m_listener(AudioListener::create(*this))
 {
     liveAudioContexts().add(m_contextID);
     FFTFrame::initialize();

@@ -1,5 +1,16 @@
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
+        Drop legacy / prefixed WebAudio implementation
+        https://bugs.webkit.org/show_bug.cgi?id=225832
+
+        Reviewed by Darin Adler.
+
+        Drop preference for prefixed WebAudio, which was disabled everywhere.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
         Port WTF::FileSystem::realPath() to std::filesystem
         https://bugs.webkit.org/show_bug.cgi?id=225828
 

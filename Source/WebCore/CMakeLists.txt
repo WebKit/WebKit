@@ -571,13 +571,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/WaveShaperNode.idl
     Modules/webaudio/WaveShaperOptions.idl
-    Modules/webaudio/WebKitAudioBufferSourceNode.idl
-    Modules/webaudio/WebKitAudioContext.idl
-    Modules/webaudio/WebKitAudioListener.idl
-    Modules/webaudio/WebKitAudioPannerNode.idl
-    Modules/webaudio/WebKitDynamicsCompressorNode.idl
-    Modules/webaudio/WebKitOfflineAudioContext.idl
-    Modules/webaudio/WebKitOscillatorNode.idl
 
     Modules/webauthn/AttestationConveyancePreference.idl
     Modules/webauthn/AuthenticationExtensionsClientInputs.idl

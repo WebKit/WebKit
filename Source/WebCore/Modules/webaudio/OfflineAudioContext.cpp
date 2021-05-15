@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
 inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, unsigned length, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
-    : BaseAudioContext(document, IsLegacyWebKitAudioContext::No, numberOfChannels, sampleRate, WTFMove(renderTarget))
+    : BaseAudioContext(document, numberOfChannels, sampleRate, WTFMove(renderTarget))
     , m_length(length)
 {
 }

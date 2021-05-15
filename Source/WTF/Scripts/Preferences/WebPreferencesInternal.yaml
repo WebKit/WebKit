@@ -583,19 +583,6 @@ PreferPageRenderingUpdatesNear60FPSEnabled:
     WebCore:
       default: true
 
-PrefixedWebAudioEnabled:
-  type: bool
-  humanReadableName: "Prefixed WebAudio API"
-  humanReadableDescription: "Prefixed WebAudio API"
-  condition: ENABLE(WEB_AUDIO)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 ResourceLoadSchedulingEnabled:
   type: bool
   humanReadableName: "Resource Load Scheduling"

@@ -110,7 +110,6 @@ class UnsuspendableActiveDOMObject;
 class VoidCallback;
 class WebAnimation;
 class WebGLRenderingContext;
-class WebKitAudioContext;
 class WindowProxy;
 class XMLHttpRequest;
 
@@ -714,7 +713,7 @@ public:
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    void setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>&, StringView restrictionsString);
+    void setAudioContextRestrictions(AudioContext&, StringView restrictionsString);
     void useMockAudioDestinationCocoa();
 #endif
 

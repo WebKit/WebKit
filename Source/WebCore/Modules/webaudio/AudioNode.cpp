@@ -34,7 +34,6 @@
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
 #include "Logging.h"
-#include "WebKitAudioContext.h"
 #include <wtf/Atomics.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
@@ -671,14 +670,6 @@ void AudioNode::deref()
     // because AudioNodes keep a reference to the context.
     if (context().isAudioThreadFinished())
         context().deleteMarkedNodes();
-}
-
-Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> AudioNode::contextForBindings()
-{
-    auto& context = this->context();
-    if (context.isWebKitAudioContext())
-        return makeRefPtr(static_cast<WebKitAudioContext&>(context));
-    return makeRefPtr(context);
 }
 
 void AudioNode::derefWithLock()

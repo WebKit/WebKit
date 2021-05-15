@@ -34,18 +34,18 @@ namespace WebCore {
 
 class DynamicsCompressor;
 
-class DynamicsCompressorNode : public AudioNode {
+class DynamicsCompressorNode final : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(DynamicsCompressorNode);
 public:
     static ExceptionOr<Ref<DynamicsCompressorNode>> create(BaseAudioContext&, const DynamicsCompressorOptions& = { });
 
-    virtual ~DynamicsCompressorNode();
+    ~DynamicsCompressorNode();
 
     // AudioNode
-    void process(size_t framesToProcess) override;
+    void process(size_t framesToProcess) final;
     void processOnlyAudioParams(size_t framesToProcess) final;
-    void initialize() override;
-    void uninitialize() override;
+    void initialize() final;
+    void uninitialize() final;
 
     // Static compression curve parameters.
     AudioParam& threshold() { return m_threshold.get(); }
@@ -65,8 +65,8 @@ protected:
     virtual void setReduction(float reduction) { m_reduction = reduction; }
 
 private:
-    double tailTime() const override;
-    double latencyTime() const override;
+    double tailTime() const final;
+    double latencyTime() const final;
     bool requiresTailProcessing() const final;
 
     std::unique_ptr<DynamicsCompressor> m_dynamicsCompressor;

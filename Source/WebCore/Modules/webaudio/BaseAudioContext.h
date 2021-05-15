@@ -115,7 +115,6 @@ public:
     bool isInitialized() const;
     
     bool isOfflineContext() const { return m_isOfflineContext; }
-    virtual bool isWebKitAudioContext() const { return false; }
 
     AudioDestinationNode& destination() { return m_destinationNode.get(); }
     const AudioDestinationNode& destination() const { return m_destinationNode.get(); }
@@ -297,9 +296,8 @@ public:
     const HashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
 
 protected:
-    enum class IsLegacyWebKitAudioContext : bool { No, Yes };
-    explicit BaseAudioContext(Document&, IsLegacyWebKitAudioContext, const AudioContextOptions& = { });
-    BaseAudioContext(Document&, IsLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
+    BaseAudioContext(Document&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
     
     void clearPendingActivity();
     void setPendingActivity();
