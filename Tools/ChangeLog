@@ -1,3 +1,14 @@
+2021-05-14  Devin Rousso  <drousso@apple.com>
+
+        Sampled Page Top Color: move logic out of `Document`
+        https://bugs.webkit.org/show_bug.cgi?id=225480
+        <rdar://problem/77984539>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm:
+        (TEST.SampledPageTopColor.MainDocumentChange): Added.
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Port WTF::FileSystem::realPath() to std::filesystem

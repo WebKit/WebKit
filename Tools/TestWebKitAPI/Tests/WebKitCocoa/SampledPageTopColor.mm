@@ -350,3 +350,44 @@ TEST(SampledPageTopColor, DISABLED_DisplayP3)
     EXPECT_IN_RANGE(components[2], 1.00, 1.01);
     EXPECT_EQ(components[3], 1);
 }
+
+TEST(SampledPageTopColor, MainDocumentChange)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    size_t notificationCount = 0;
+    auto sampledPageTopColorObserver = adoptNS([[TestKVOWrapper alloc] initWithObservable:webView.get() keyPath:@"_sampledPageTopColor" callback:[&] {
+        ++notificationCount;
+    }]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>Test"];
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
+    EXPECT_EQ(notificationCount, 1UL);
+
+    notificationCount = 0;
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>Test"];
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
+    // Depending on timing, a notification can be sent for when the main document changes and then
+    // when the new main document renders or both can be coalesced if rendering is fast enough.
+    EXPECT_TRUE(notificationCount == 0 || notificationCount == 2);
+
+    notificationCount = 0;
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>"];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+    EXPECT_EQ(notificationCount, 1UL);
+
+    notificationCount = 0;
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>"];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+    EXPECT_EQ(notificationCount, 0UL);
+
+    notificationCount = 0;
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body>Test"];
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::white);
+    EXPECT_EQ(notificationCount, 1UL);
+}

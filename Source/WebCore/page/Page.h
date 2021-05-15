@@ -22,6 +22,7 @@
 
 #include "ActivityState.h"
 #include "AnimationFrameRate.h"
+#include "Color.h"
 #include "DisabledAdaptations.h"
 #include "Document.h"
 #include "FindOptions.h"
@@ -94,7 +95,6 @@ class AuthenticatorCoordinator;
 class BackForwardController;
 class CacheStorageProvider;
 class Chrome;
-class Color;
 class ContextMenuController;
 class CookieJar;
 class DOMRectList;
@@ -1156,6 +1156,7 @@ private:
     MonotonicTime m_lastRenderingUpdateTimestamp;
 
     Color m_underPageBackgroundColorOverride;
+    Optional<Color> m_sampledPageTopColor;
 
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;

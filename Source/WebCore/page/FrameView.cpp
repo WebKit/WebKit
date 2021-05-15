@@ -4617,7 +4617,7 @@ void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         frame().loader().didReachVisuallyNonEmptyState();
 }
 
-bool FrameView::hasContenfulDescendants() const
+bool FrameView::hasContentfulDescendants() const
 {
     return m_visuallyNonEmptyCharacterCount || m_visuallyNonEmptyPixelCount;
 }

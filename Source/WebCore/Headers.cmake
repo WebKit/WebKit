@@ -906,6 +906,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/NavigatorIsLoggedIn.h
     page/PDFImageCachingPolicy.h
     page/Page.h
+    page/PageColorSampler.h
     page/PageConfiguration.h
     page/PageConsoleClient.h
     page/PageGroup.h

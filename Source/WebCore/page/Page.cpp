@@ -87,6 +87,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaRecorderProvider.h"
 #include "Navigator.h"
+#include "PageColorSampler.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"
 #include "PageDebuggable.h"
@@ -1672,6 +1673,12 @@ void Page::doAfterUpdateRendering()
         ASSERT(!frameView || !frameView->needsLayout());
     }
 #endif
+
+    if (!m_sampledPageTopColor) {
+        m_sampledPageTopColor = PageColorSampler::sampleTop(*this);
+        if (m_sampledPageTopColor)
+            chrome().client().sampledPageTopColorChanged();
+    }
 }
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
@@ -2556,11 +2563,7 @@ Color Page::pageExtendedBackgroundColor() const
 
 Color Page::sampledPageTopColor() const
 {
-    auto* document = mainFrame().document();
-    if (!document)
-        return { };
-
-    return document->sampledPageTopColor();
+    return m_sampledPageTopColor.valueOr(Color());
 }
 
 void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorOverride)
@@ -3285,6 +3288,11 @@ void Page::didChangeMainDocument()
     m_rtcController.reset(m_shouldEnableICECandidateFilteringByDefault);
 #endif
     m_pointerCaptureController->reset();
+
+    if (m_sampledPageTopColor) {
+        m_sampledPageTopColor = WTF::nullopt;
+        chrome().client().sampledPageTopColorChanged();
+    }
 }
 
 RenderingUpdateScheduler& Page::renderingUpdateScheduler()

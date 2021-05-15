@@ -413,7 +413,7 @@ public:
     void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
     bool isVisuallyNonEmpty() const { return m_contentQualifiesAsVisuallyNonEmpty; }
-    bool hasContenfulDescendants() const;
+    bool hasContentfulDescendants() const;
     void checkAndDispatchDidReachVisuallyNonEmptyState();
 
     WEBCORE_EXPORT void enableFixedWidthAutoSizeMode(bool enable, const IntSize& minSize);
