@@ -1,3 +1,16 @@
+2021-05-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION (r277221): 2 test262 tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=225819
+
+        Reviewed by Alexey Shvayka.
+
+        Undo the other part of r277221's code consolidation --
+        I'd forgotten that this exists to enforce a evaluation order on AggregateError's arguments.
+
+        * runtime/AggregateError.cpp:
+        (JSC::createAggregateError):
+
 2021-05-14  Mark Lam  <mark.lam@apple.com>
 
         Implement Baseline JIT property access slow paths using JIT thunks.

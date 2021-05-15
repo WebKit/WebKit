@@ -37,6 +37,16 @@ ErrorInstance* createAggregateError(JSGlobalObject* globalObject, VM& vm, Struct
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    JSValue cause;
+    if (options.isObject()) {
+        // Since `throw undefined;` is valid, we need to distinguish the case where `cause` is an explicit undefined.
+        cause = asObject(options)->getIfPropertyExists(globalObject, vm.propertyNames->cause);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+
     MarkedArgumentBuffer errorsList;
     forEachInIterable(globalObject, errors, [&] (VM&, JSGlobalObject*, JSValue nextValue) {
         errorsList.append(nextValue);
@@ -48,8 +58,7 @@ ErrorInstance* createAggregateError(JSGlobalObject* globalObject, VM& vm, Struct
     auto* array = constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), errorsList);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto* error = ErrorInstance::create(globalObject, structure, message, options, appender, type, ErrorType::AggregateError, useCurrentFrame);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    auto* error = ErrorInstance::create(globalObject, vm, structure, messageString, cause, appender, type, ErrorType::AggregateError, useCurrentFrame);
     error->putDirect(vm, vm.propertyNames->errors, array, static_cast<unsigned>(PropertyAttribute::DontEnum));
     return error;
 }
