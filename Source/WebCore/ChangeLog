@@ -1,3 +1,22 @@
+2021-05-14  Sam Weinig  <weinig@apple.com>
+
+        CustomPaintImage being in platform/graphics is a layering violation
+        https://bugs.webkit.org/show_bug.cgi?id=225356
+
+        Reviewed by Darin Adler.
+
+        It is layering violation for a file in platform/ to reference classes
+        like RenderElement or PaintWorkletGlobalScope. This fixes this by moving
+        CustomPaintImage out of platform/graphics to html/, next to the existing
+        CustomPaintCanvas class.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CustomPaintImage.cpp: Copied from Source/WebCore/platform/graphics/CustomPaintImage.cpp.
+        * html/CustomPaintImage.h: Copied from Source/WebCore/platform/graphics/CustomPaintImage.h.
+        * platform/graphics/CustomPaintImage.cpp: Removed.
+        * platform/graphics/CustomPaintImage.h: Removed.
+
 2021-05-14  Darin Adler  <darin@apple.com>
 
         output element doesn't react properly to node tree mutations
