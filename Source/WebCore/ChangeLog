@@ -1,3 +1,18 @@
+2021-05-14  Rob Buis  <rbuis@igalia.com>
+
+        Provide custom SetInlineFillGradient copy ctor
+        https://bugs.webkit.org/show_bug.cgi?id=225688
+
+        Reviewed by Wenson Hsieh.
+
+        Provide custom SetInlineFillGradient copy ctor
+        to deal with invalid SetInlineFillGradient source.
+
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::SetInlineFillGradient::SetInlineFillGradient):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::SetInlineFillGradient::isValid const):
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy / prefixed WebAudio implementation
