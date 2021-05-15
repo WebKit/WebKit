@@ -51,8 +51,8 @@ public:
 
     Vector<uint8_t> toBGRAData() const override;
 
-    Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect&) const override;
-    void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
+    Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
+    void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
     static constexpr bool isOriginAtUpperLeftCorner = true;
 

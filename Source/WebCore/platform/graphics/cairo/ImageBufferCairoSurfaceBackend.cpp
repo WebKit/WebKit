@@ -120,14 +120,14 @@ Vector<uint8_t> ImageBufferCairoSurfaceBackend::toBGRAData() const
     return imageData;
 }
 
-Optional<PixelBuffer> ImageBufferCairoSurfaceBackend::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+Optional<PixelBuffer> ImageBufferCairoSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, cairo_image_surface_get_data(m_surface.get()));
 }
 
-void ImageBufferCairoSurfaceBackend::putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+void ImageBufferCairoSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat, cairo_image_surface_get_data(m_surface.get()));
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, cairo_image_surface_get_data(m_surface.get()));
 
     IntRect srcRectScaled = toBackendCoordinates(srcRect);
     IntPoint destPointScaled = toBackendCoordinates(destPoint);

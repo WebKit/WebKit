@@ -85,7 +85,7 @@ private:
 
         if (item.is<WebCore::DisplayList::PutPixelBuffer>()) {
             auto& putPixelBufferItem = item.get<WebCore::DisplayList::PutPixelBuffer>();
-            putPixelBuffer(putPixelBufferItem.inputFormat(), putPixelBufferItem.pixelBuffer(), putPixelBufferItem.srcRect(), putPixelBufferItem.destPoint(), putPixelBufferItem.destFormat());
+            putPixelBuffer(putPixelBufferItem.pixelBuffer(), putPixelBufferItem.srcRect(), putPixelBufferItem.destPoint(), putPixelBufferItem.destFormat());
             return true;
         }
 

@@ -807,7 +807,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // resulting ImageBuffer directly.
     auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
     if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.imageOrientation == ImageBitmapOptions::Orientation::None) {
-        bitmapData->putPixelBuffer(AlphaPremultiplication::Unpremultiplied, imageData->pixelBuffer(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
+        bitmapData->putPixelBuffer(imageData->pixelBuffer(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
         
         auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData)));
         // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
@@ -822,7 +822,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         resolveWithBlankImageBuffer(scriptExecutionContext, true, WTFMove(promise));
         return;
     }
-    tempBitmapData->putPixelBuffer(AlphaPremultiplication::Unpremultiplied, imageData->pixelBuffer(), IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
+    tempBitmapData->putPixelBuffer(imageData->pixelBuffer(), IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), imageOrientationForOrientation(options.imageOrientation) });
 

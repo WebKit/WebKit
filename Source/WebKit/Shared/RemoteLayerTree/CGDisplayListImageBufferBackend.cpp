@@ -105,13 +105,13 @@ Vector<uint8_t> CGDisplayListImageBufferBackend::toBGRAData() const
     return { };
 }
 
-Optional<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(WebCore::AlphaPremultiplication, const WebCore::IntRect&) const
+Optional<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntRect&) const
 {
     ASSERT_NOT_REACHED();
     return { };
 }
 
-void CGDisplayListImageBufferBackend::putPixelBuffer(WebCore::AlphaPremultiplication, const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication)
+void CGDisplayListImageBufferBackend::putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication)
 {
     ASSERT_NOT_REACHED();
 }

@@ -1075,8 +1075,9 @@ private:
             return;
         }
 
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
         const IntSize& logicalSize = buffer->logicalSize();
-        auto pixelBuffer = buffer->getPixelBuffer(AlphaPremultiplication::Premultiplied, { IntPoint::zero(), logicalSize });
+        auto pixelBuffer = buffer->getPixelBuffer(format, { IntPoint::zero(), logicalSize });
         if (!pixelBuffer) {
             code = SerializationReturnCode::ValidationError;
             return;
@@ -3163,7 +3164,7 @@ private:
             return JSValue();
         }
 
-        buffer->putPixelBuffer(AlphaPremultiplication::Premultiplied, imageData->pixelBuffer(), { IntPoint::zero(), logicalSize });
+        buffer->putPixelBuffer(imageData->pixelBuffer(), { IntPoint::zero(), logicalSize });
 
         auto bitmap = ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer), OptionSet<SerializationState>::fromRaw(serializationState)));
         return getJSValue(bitmap);

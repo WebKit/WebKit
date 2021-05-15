@@ -159,14 +159,14 @@ Vector<uint8_t> ImageBufferCGBitmapBackend::toBGRAData() const
     return ImageBufferBackend::toBGRAData(m_data);
 }
 
-Optional<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+Optional<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data);
 }
 
-void ImageBufferCGBitmapBackend::putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+void ImageBufferCGBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat, m_data);
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_data);
 }
 
 } // namespace WebCore

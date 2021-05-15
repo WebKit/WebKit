@@ -126,8 +126,8 @@ public:
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const = 0;
     virtual Vector<uint8_t> toBGRAData() const = 0;
 
-    virtual Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const = 0;
-    virtual void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) = 0;
+    virtual Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const = 0;
+    virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) = 0;
 
     // FIXME: current implementations of this method have the restriction that they only work
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.

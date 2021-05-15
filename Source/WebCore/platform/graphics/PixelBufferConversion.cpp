@@ -31,30 +31,87 @@
 #include "IntSize.h"
 #include "PixelFormat.h"
 
-#if USE(ACCELERATE)
+#if USE(ACCELERATE) && USE(CG)
+#include "ColorSpaceCG.h"
 #include <Accelerate/Accelerate.h>
 #endif
 
 namespace WebCore {
 
-#if USE(ACCELERATE)
+#if USE(ACCELERATE) && USE(CG)
+
+static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferFormat& format)
+{
+    auto [bitsPerComponent, bitsPerPixel, bitmapInfo] = [] (const PixelBufferFormat& format) -> std::tuple<unsigned, unsigned, CGBitmapInfo> {
+        switch (format.pixelFormat) {
+        case PixelFormat::RGBA8:
+            if (format.alphaFormat == AlphaPremultiplication::Premultiplied)
+                return std::make_tuple(8u, 32u, kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast);
+            else
+                return std::make_tuple(8u, 32u, kCGBitmapByteOrder32Big | kCGImageAlphaLast);
+
+        case PixelFormat::BGRA8:
+            if (format.alphaFormat == AlphaPremultiplication::Premultiplied)
+                return std::make_tuple(8u, 32u, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+            else
+                return std::make_tuple(8u, 32u, kCGBitmapByteOrder32Little | kCGImageAlphaFirst);
+
+        case PixelFormat::RGB10:
+        case PixelFormat::RGB10A8:
+            break;
+        }
+
+        // We currently only support 8 bit pixel formats for these conversions.
+
+        ASSERT_NOT_REACHED();
+        return std::make_tuple(8u, 32u, kCGBitmapByteOrder32Little | kCGImageAlphaFirst);
+    }(format);
+
+    vImage_CGImageFormat result;
+
+    result.bitsPerComponent = bitsPerComponent;
+    result.bitsPerPixel = bitsPerPixel;
+    result.colorSpace = cachedCGColorSpace(format.colorSpace);
+    result.bitmapInfo = bitmapInfo;
+    result.version = 0;
+    result.decode = nullptr;
+    result.renderingIntent = kCGRenderingIntentDefault;
+
+    return result;
+}
 
 template<typename View> static vImage_Buffer makeVImageBuffer(const View& view, const IntSize& size)
 {
-    vImage_Buffer vImageBuffer;
+    vImage_Buffer result;
 
-    vImageBuffer.height = static_cast<vImagePixelCount>(size.height());
-    vImageBuffer.width = static_cast<vImagePixelCount>(size.width());
-    vImageBuffer.rowBytes = view.bytesPerRow;
-    vImageBuffer.data = const_cast<uint8_t*>(view.rows);
+    result.height = static_cast<vImagePixelCount>(size.height());
+    result.width = static_cast<vImagePixelCount>(size.width());
+    result.rowBytes = view.bytesPerRow;
+    result.data = const_cast<uint8_t*>(view.rows);
 
-    return vImageBuffer;
+    return result;
 }
 
 static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
     auto sourceVImageBuffer = makeVImageBuffer(source, destinationSize);
     auto destinationVImageBuffer = makeVImageBuffer(destination, destinationSize);
+
+    if (source.format.colorSpace != destination.format.colorSpace) {
+        // FIXME: Consider using vImageConvert_AnyToAny for all conversions, not just ones that need a color space conversion,
+        // after judiciously performance testing them against each other.
+
+        auto sourceCGImageFormat = makeVImageCGImageFormat(source.format);
+        auto destinationCGImageFormat = makeVImageCGImageFormat(destination.format);
+
+        vImage_Error converterCreateError = kvImageNoError;
+        auto converter = adoptCF(vImageConverter_CreateWithCGImageFormat(&sourceCGImageFormat, &destinationCGImageFormat, nullptr, kvImageNoFlags, &converterCreateError));
+        ASSERT_WITH_MESSAGE_UNUSED(converterCreateError, converterCreateError != kvImageNoError, "vImageConverter creation failed with error: %zd", converterCreateError);
+
+        vImage_Error converterConvertError = vImageConvert_AnyToAny(converter.get(), &sourceVImageBuffer, &destinationVImageBuffer, nullptr, kvImageNoFlags);
+        ASSERT_WITH_MESSAGE_UNUSED(converterConvertError, converterConvertError == kvImageNoError, "vImageConvert_AnyToAny failed conversion with error: %zd", converterConvertError);
+        return;
+    }
 
     if (source.format.alphaFormat != destination.format.alphaFormat) {
         if (destination.format.alphaFormat == AlphaPremultiplication::Unpremultiplied) {
@@ -184,10 +241,7 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
     ASSERT(source.format.pixelFormat == PixelFormat::RGBA8 || source.format.pixelFormat == PixelFormat::BGRA8);
     ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8 || destination.format.pixelFormat == PixelFormat::BGRA8);
 
-    // We don't currently support converting pixel data between different color spaces.
-    ASSERT(source.format.colorSpace == destination.format.colorSpace);
-
-#if USE(ACCELERATE)
+#if USE(ACCELERATE) && USE(CG)
     if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat) {
         // FIXME: Can thes both just use per-row memcpy?
         if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
@@ -197,6 +251,10 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
     } else
         convertImagePixelsAccelerated(source, destination, destinationSize);
 #else
+    // FIXME: We don't currently support converting pixel data between different color spaces in the non-accelerated path.
+    // This could be added using conversion functions from ColorConversion.h.
+    ASSERT(source.format.colorSpace == destination.format.colorSpace);
+
     if (source.format.alphaFormat == destination.format.alphaFormat) {
         if (source.format.pixelFormat == destination.format.pixelFormat) {
             if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)

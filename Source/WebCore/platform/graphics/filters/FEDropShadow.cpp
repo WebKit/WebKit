@@ -99,15 +99,16 @@ void FEDropShadow::platformApplySoftware()
 
     ShadowBlur contextShadow(blurRadius, offset, m_shadowColor);
 
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
     IntRect shadowArea(IntPoint(), resultImage->logicalSize());
-    auto pixelBuffer = resultImage->getPixelBuffer(AlphaPremultiplication::Premultiplied, shadowArea);
+    auto pixelBuffer = resultImage->getPixelBuffer(format, shadowArea);
     if (!pixelBuffer)
         return;
 
     auto& sourcePixelArray = pixelBuffer->data();
     contextShadow.blurLayerImage(sourcePixelArray.data(), pixelBuffer->size(), 4 * pixelBuffer->size().width());
     
-    resultImage->putPixelBuffer(AlphaPremultiplication::Premultiplied, *pixelBuffer, shadowArea);
+    resultImage->putPixelBuffer(*pixelBuffer, shadowArea);
 
     resultContext.setCompositeOperation(CompositeOperator::SourceIn);
     resultContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), m_shadowColor);

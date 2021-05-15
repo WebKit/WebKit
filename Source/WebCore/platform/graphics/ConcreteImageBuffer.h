@@ -230,7 +230,7 @@ protected:
         return { };
     }
 
-    Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const override
+    Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const override
     {
         if (auto* backend = ensureBackendCreated()) {
             const_cast<ConcreteImageBuffer&>(*this).flushContext();
@@ -239,11 +239,11 @@ protected:
         return WTF::nullopt;
     }
 
-    void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override
+    void putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override
     {
         if (auto* backend = ensureBackendCreated()) {
             flushContext();
-            backend->putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat);
+            backend->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
         }
     }
 

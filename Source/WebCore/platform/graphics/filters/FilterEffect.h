@@ -204,10 +204,10 @@ private:
 
     void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
     void copyConvertedImageBufferToDestination(Uint8ClampedArray&, DestinationColorSpace, AlphaPremultiplication, const IntRect&);
-    void copyConvertedPixelBufferToDestination(Uint8ClampedArray&, PixelBuffer&, DestinationColorSpace, AlphaPremultiplication, const IntRect&);
+    void copyConvertedPixelBufferToDestination(Uint8ClampedArray&, PixelBuffer&, DestinationColorSpace, const IntRect&);
     bool requiresPixelBufferColorSpaceConversion(Optional<DestinationColorSpace>);
-    Optional<PixelBuffer> convertPixelBufferToColorSpace(DestinationColorSpace, PixelBuffer&, AlphaPremultiplication);
     Optional<PixelBuffer> convertImageBufferToColorSpace(DestinationColorSpace, ImageBuffer&, const IntRect&, AlphaPremultiplication);
+    Optional<PixelBuffer> convertPixelBufferToColorSpace(DestinationColorSpace, PixelBuffer&);
     
 
     Filter& m_filter;

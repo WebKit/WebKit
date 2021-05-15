@@ -58,8 +58,8 @@ public:
     WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction = DrawGlyphsRecorder::DrawGlyphsDeconstruction::Deconstruct);
     WEBCORE_EXPORT virtual ~Recorder();
 
-    WEBCORE_EXPORT void getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& sourceRect);
-    WEBCORE_EXPORT void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT void getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect);
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
 

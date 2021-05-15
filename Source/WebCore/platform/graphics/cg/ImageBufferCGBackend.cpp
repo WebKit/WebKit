@@ -183,7 +183,8 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        auto pixelBuffer = getPixelBuffer(AlphaPremultiplication::Premultiplied, logicalRect());
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+        auto pixelBuffer = getPixelBuffer(format, logicalRect());
         if (!pixelBuffer)
             return nullptr;
 

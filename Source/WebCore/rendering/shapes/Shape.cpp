@@ -197,7 +197,8 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     if (image)
         graphicsContext.drawImage(*image, IntRect(IntPoint(), imageRect.size()));
 
-    auto pixelBuffer = imageBuffer->getPixelBuffer(AlphaPremultiplication::Unpremultiplied, { IntPoint(), imageRect.size() });
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    auto pixelBuffer = imageBuffer->getPixelBuffer(format, { IntPoint(), imageRect.size() });
     
     // We could get to a value where PixelBuffer could be nullopt. A case where ImageRect.size() is huge, PixelBuffer::tryCreate
     // can return a nullopt because data size has overflowed. Refer rdar://problem/61793884

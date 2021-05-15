@@ -194,12 +194,11 @@ protected:
         return bitmap->createImage();
     }
 
-    Optional<WebCore::PixelBuffer> getPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
+    Optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return WTF::nullopt;
 
-        WebCore::PixelBufferFormat destinationFormat { outputFormat, WebCore::PixelFormat::RGBA8, WebCore::DestinationColorSpace::SRGB };
         auto pixelBuffer = WebCore::PixelBuffer::tryCreate(destinationFormat, srcRect.size());
         if (!pixelBuffer)
             return WTF::nullopt;
@@ -211,7 +210,7 @@ protected:
             return WTF::nullopt;
 
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-        mutableThis.m_drawingContext.recorder().getPixelBuffer(outputFormat, srcRect);
+        mutableThis.m_drawingContext.recorder().getPixelBuffer(destinationFormat, srcRect);
         mutableThis.flushDrawingContextAsync();
 
         if (m_remoteRenderingBackendProxy->waitForGetPixelBufferToComplete(timeout))
@@ -221,12 +220,12 @@ protected:
         return pixelBuffer;
     }
 
-    void putPixelBuffer(WebCore::AlphaPremultiplication inputFormat, const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
+    void putPixelBuffer(const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
     {
         // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
         // This means that putPixelBuffer() is only called when resolutionScale() == 1.
         ASSERT(resolutionScale() == 1);
-        m_drawingContext.recorder().putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat);
+        m_drawingContext.recorder().putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
     }
 
     bool prefersPreparationForDisplay() override { return true; }

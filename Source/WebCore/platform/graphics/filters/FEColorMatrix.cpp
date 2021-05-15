@@ -285,8 +285,9 @@ void FEColorMatrix::platformApplySoftware()
     if (inBuffer)
         resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
 
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
     IntRect imageRect(IntPoint(), resultImage->logicalSize());
-    auto pixelBuffer = resultImage->getPixelBuffer(AlphaPremultiplication::Unpremultiplied, imageRect);
+    auto pixelBuffer = resultImage->getPixelBuffer(format, imageRect);
     if (!pixelBuffer)
         return;
 
@@ -313,7 +314,7 @@ void FEColorMatrix::platformApplySoftware()
         break;
     }
 
-    resultImage->putPixelBuffer(AlphaPremultiplication::Unpremultiplied, *pixelBuffer, imageRect);
+    resultImage->putPixelBuffer(*pixelBuffer, imageRect);
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

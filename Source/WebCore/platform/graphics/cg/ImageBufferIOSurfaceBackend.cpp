@@ -183,16 +183,16 @@ Vector<uint8_t> ImageBufferIOSurfaceBackend::toBGRAData() const
     return ImageBufferBackend::toBGRAData(lock.surfaceBaseAddress());
 }
 
-Optional<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+Optional<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     IOSurface::Locker lock(*m_surface);
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, lock.surfaceBaseAddress());
 }
 
-void ImageBufferIOSurfaceBackend::putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
-    ImageBufferBackend::putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
     m_requiresDrawAfterPutPixelBuffer = true;
 }
 

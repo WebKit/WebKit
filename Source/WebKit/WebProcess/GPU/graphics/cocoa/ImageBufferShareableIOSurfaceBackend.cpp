@@ -120,13 +120,13 @@ Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toBGRAData() const
     return { };
 }
 
-Optional<PixelBuffer> ImageBufferShareableIOSurfaceBackend::getPixelBuffer(AlphaPremultiplication, const IntRect&) const
+Optional<PixelBuffer> ImageBufferShareableIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 
-void ImageBufferShareableIOSurfaceBackend::putPixelBuffer(AlphaPremultiplication, const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication)
+void ImageBufferShareableIOSurfaceBackend::putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -1905,18 +1905,18 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    GetPixelBuffer(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect)
+    GetPixelBuffer(WebCore::PixelBufferFormat outputFormat, const WebCore::IntRect& srcRect)
         : m_srcRect(srcRect)
         , m_outputFormat(outputFormat)
     {
     }
 
-    AlphaPremultiplication outputFormat() const { return m_outputFormat; }
+    PixelBufferFormat outputFormat() const { return m_outputFormat; }
     IntRect srcRect() const { return m_srcRect; }
 
 private:
     IntRect m_srcRect;
-    AlphaPremultiplication m_outputFormat;
+    PixelBufferFormat m_outputFormat;
 };
 
 class PutPixelBuffer {
@@ -1925,8 +1925,8 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT PutPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
-    WEBCORE_EXPORT PutPixelBuffer(AlphaPremultiplication inputFormat, PixelBuffer&&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT PutPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT PutPixelBuffer(PixelBuffer&&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
 
     PutPixelBuffer(const PutPixelBuffer&);
     PutPixelBuffer(PutPixelBuffer&&) = default;
@@ -1935,7 +1935,6 @@ public:
 
     void swap(PutPixelBuffer&);
 
-    AlphaPremultiplication inputFormat() const { return m_inputFormat; }
     const PixelBuffer& pixelBuffer() const { return m_pixelBuffer; }
     IntRect srcRect() const { return m_srcRect; }
     IntPoint destPoint() const { return m_destPoint; }
@@ -1951,14 +1950,12 @@ private:
     IntRect m_srcRect;
     IntPoint m_destPoint;
     PixelBuffer m_pixelBuffer;
-    AlphaPremultiplication m_inputFormat;
     AlphaPremultiplication m_destFormat;
 };
 
 template<class Encoder>
 void PutPixelBuffer::encode(Encoder& encoder) const
 {
-    encoder << m_inputFormat;
     encoder << m_pixelBuffer;
     encoder << m_srcRect;
     encoder << m_destPoint;
@@ -1968,15 +1965,10 @@ void PutPixelBuffer::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<PutPixelBuffer> PutPixelBuffer::decode(Decoder& decoder)
 {
-    Optional<AlphaPremultiplication> inputFormat;
     Optional<PixelBuffer> pixelBuffer;
     Optional<IntRect> srcRect;
     Optional<IntPoint> destPoint;
     Optional<AlphaPremultiplication> destFormat;
-
-    decoder >> inputFormat;
-    if (!inputFormat)
-        return WTF::nullopt;
 
     decoder >> pixelBuffer;
     if (!pixelBuffer)
@@ -1994,7 +1986,7 @@ Optional<PutPixelBuffer> PutPixelBuffer::decode(Decoder& decoder)
     if (!destFormat)
         return WTF::nullopt;
 
-    return {{ *inputFormat, WTFMove(*pixelBuffer), *srcRect, *destPoint, *destFormat }};
+    return {{ WTFMove(*pixelBuffer), *srcRect, *destPoint, *destFormat }};
 }
 
 #if ENABLE(VIDEO)

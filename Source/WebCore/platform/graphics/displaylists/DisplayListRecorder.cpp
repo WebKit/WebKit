@@ -55,14 +55,14 @@ Recorder::~Recorder()
     LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
 }
 
-void Recorder::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& sourceRect)
+void Recorder::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect)
 {
     append<GetPixelBuffer>(outputFormat, sourceRect);
 }
 
-void Recorder::putPixelBuffer(WebCore::AlphaPremultiplication inputFormat, const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
+void Recorder::putPixelBuffer(const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
 {
-    append<PutPixelBuffer>(inputFormat, pixelBuffer, srcRect, destPoint, destFormat);
+    append<PutPixelBuffer>(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
 static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& changes, GraphicsContextState::StateChangeFlags changeFlags)

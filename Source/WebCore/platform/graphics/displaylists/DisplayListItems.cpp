@@ -775,20 +775,18 @@ static TextStream& operator<<(TextStream& ts, const GetPixelBuffer& item)
     return ts;
 }
 
-PutPixelBuffer::PutPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+PutPixelBuffer::PutPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
     : m_srcRect(srcRect)
     , m_destPoint(destPoint)
     , m_pixelBuffer(pixelBuffer.deepClone()) // This copy is actually required to preserve the semantics of putPixelBuffer().
-    , m_inputFormat(inputFormat)
     , m_destFormat(destFormat)
 {
 }
 
-PutPixelBuffer::PutPixelBuffer(AlphaPremultiplication inputFormat, PixelBuffer&& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+PutPixelBuffer::PutPixelBuffer(PixelBuffer&& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
     : m_srcRect(srcRect)
     , m_destPoint(destPoint)
     , m_pixelBuffer(WTFMove(pixelBuffer))
-    , m_inputFormat(inputFormat)
     , m_destFormat(destFormat)
 {
 }
@@ -797,7 +795,6 @@ PutPixelBuffer::PutPixelBuffer(const PutPixelBuffer& other)
     : m_srcRect(other.m_srcRect)
     , m_destPoint(other.m_destPoint)
     , m_pixelBuffer(other.m_pixelBuffer.deepClone())
-    , m_inputFormat(other.m_inputFormat)
     , m_destFormat(other.m_destFormat)
 {
 }
@@ -814,13 +811,11 @@ void PutPixelBuffer::swap(PutPixelBuffer& other)
     std::swap(m_srcRect, other.m_srcRect);
     std::swap(m_destPoint, other.m_destPoint);
     std::swap(m_pixelBuffer, other.m_pixelBuffer);
-    std::swap(m_inputFormat, other.m_inputFormat);
     std::swap(m_destFormat, other.m_destFormat);
 }
 
 static TextStream& operator<<(TextStream& ts, const PutPixelBuffer& item)
 {
-    ts.dumpProperty("inputFormat", item.inputFormat());
     ts.dumpProperty("pixelBufferSize", item.pixelBuffer().size());
     ts.dumpProperty("srcRect", item.srcRect());
     ts.dumpProperty("destPoint", item.destPoint());

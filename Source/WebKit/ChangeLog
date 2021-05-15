@@ -1,3 +1,29 @@
+2021-05-14  Sam Weinig  <weinig@apple.com>
+
+        Use PixelBufferFormat to specify ImageBuffer::getPixelBuffer destination format allowing for more control over data conversion
+        https://bugs.webkit.org/show_bug.cgi?id=225813
+
+        Reviewed by Darin Adler.
+
+        Update calls/implementations of getPixelBuffer/putPixelBuffer to adjust
+        to new signature. 
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::getPixelBuffer const):
+        (WebKit::CGDisplayListImageBufferBackend::putPixelBuffer):
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::getPixelBuffer const):
+        (WebKit::ImageBufferShareableBitmapBackend::putPixelBuffer):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::putPixelBuffer):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::getPixelBuffer const):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::putPixelBuffer):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+
 2021-05-14  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: `_WKInspector` leaks `WebInspectorUIProxy`

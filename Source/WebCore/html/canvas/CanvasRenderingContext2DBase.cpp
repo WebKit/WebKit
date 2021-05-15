@@ -2199,7 +2199,8 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx
     if (!buffer)
         return createEmptyImageData(imageDataRect.size());
 
-    auto pixelBuffer = buffer->getPixelBuffer(AlphaPremultiplication::Unpremultiplied, imageDataRect);
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    auto pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
     if (!pixelBuffer) {
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was ", imageDataRect.width(), " x ", imageDataRect.height()));
@@ -2246,7 +2247,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     sourceRect.intersect(IntRect { 0, 0, data.width(), data.height() });
 
     if (!sourceRect.isEmpty())
-        buffer->putPixelBuffer(AlphaPremultiplication::Unpremultiplied, data.pixelBuffer(), sourceRect, IntPoint { destOffset });
+        buffer->putPixelBuffer(data.pixelBuffer(), sourceRect, IntPoint { destOffset });
 
     didDraw(FloatRect { destRect }, { }); // ignore transform, shadow and clip
 }

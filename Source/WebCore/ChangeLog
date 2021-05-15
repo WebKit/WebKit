@@ -1,3 +1,109 @@
+2021-05-14  Sam Weinig  <weinig@apple.com>
+
+        Use PixelBufferFormat to specify ImageBuffer::getPixelData destination format allowing for more control over data conversion
+        https://bugs.webkit.org/show_bug.cgi?id=225813
+
+        Reviewed by Darin Adler.
+
+        The reprevious signature of ImageBuffer::getPixelBuffer:
+
+            ImageBuffer::getPixelBuffer(AlphaPremultiplication, const IntRect&);
+        
+        only allowed specifying the type of alpha premultiplication wanted, and hard coded
+        a pixel format of RGBA8 and color space of SRGB. To support accurate and efficient
+        access to pixel buffers with different pixel formats and color spaces we need to be
+        able to tell getPixelBuffer what we want up front, so that if the ImageBuffer already
+        has a DisplayP3 buffer, and we want DisplayP3 pixels, we don't first convert to SRGB
+        and then convert back to DisplayP3 (which would be slow and lose any out of gamut
+        data). The new signature allows us to specify the entire format triple:
+        
+            ImageBuffer::getPixelBuffer(const PixelBufferFormat&, const IntRect&);
+
+        Additionally, ImageBuffer::putPixelBuffer() no longer needs to provide the source
+        AlphaPremultiplication either, as the PixelBuffer itself also contains that information.
+
+        Now that we are passing color space information, we need to support color space conversion,
+        so PixelBufferConversion was updated to support color space conversion on CG platforms
+        using vImageConvert_AnyToAny. This is not currently excersised, but will be in a subsequent
+        change where canvas ImageData gains a color space setting, at which point it can be tested.
+
+        We also don't currently support color space conversion on non-CG platforms. This won't
+        be a problem in the short term, as only CG platforms support DisplayP3, the only other
+        color space that can be specified currently, but as cleanup, we should add support for
+        color space conversion using the ColorConversion and ColorTransferFunction infrastructure
+        for other ports, moving the existing support for SRGB to/from LinearSRGB conversions from
+        ImageBufferCairoBackend and ImageBufferCairoImageSurfaceBackend.
+
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createPromise):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::getImageData const):
+        (WebCore::CanvasRenderingContext2DBase::putImageData):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::screenshot):
+        * platform/graphics/ConcreteImageBuffer.h:
+        (WebCore::ConcreteImageBuffer::putPixelBuffer):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::putPixelBuffer):
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::convertToLuminanceMask):
+        (WebCore::ImageBufferBackend::getPixelBuffer const):
+        (WebCore::ImageBufferBackend::putPixelBuffer):
+        * platform/graphics/ImageBufferBackend.h:
+        * platform/graphics/PixelBufferConversion.cpp:
+        (WebCore::makeVImageCGImageFormat):
+        (WebCore::makeVImageBuffer):
+        (WebCore::convertImagePixelsAccelerated):
+        (WebCore::convertImagePixels):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::blurShadowBuffer):
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoSurfaceBackend::getPixelBuffer const):
+        (WebCore::ImageBufferCairoSurfaceBackend::putPixelBuffer):
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.h:
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::toCFData const):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::getPixelBuffer const):
+        (WebCore::ImageBufferCGBitmapBackend::putPixelBuffer):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::getPixelBuffer const):
+        (WebCore::ImageBufferIOSurfaceBackend::putPixelBuffer):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::PutPixelBuffer::PutPixelBuffer):
+        (WebCore::DisplayList::PutPixelBuffer::swap):
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::GetPixelBuffer::GetPixelBuffer):
+        (WebCore::DisplayList::GetPixelBuffer::outputFormat const):
+        (WebCore::DisplayList::PutPixelBuffer::encode const):
+        (WebCore::DisplayList::PutPixelBuffer::decode):
+        (WebCore::DisplayList::PutPixelBuffer::inputFormat const): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::getPixelBuffer):
+        (WebCore::DisplayList::Recorder::putPixelBuffer):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::platformApplySoftware):
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::imageBufferResult):
+        (WebCore::FilterEffect::convertPixelBufferToColorSpace):
+        (WebCore::FilterEffect::convertImageBufferToColorSpace):
+        (WebCore::FilterEffect::copyConvertedPixelBufferToDestination):
+        (WebCore::FilterEffect::copyUnmultipliedResult):
+        (WebCore::FilterEffect::copyPremultipliedResult):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/win/ImageBufferDirect2DBackend.cpp:
+        (WebCore::ImageBufferDirect2DBackend::getPixelBuffer const):
+        (WebCore::ImageBufferDirect2DBackend::putPixelBuffer):
+        * platform/graphics/win/ImageBufferDirect2DBackend.h:
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+
 2021-05-14  Devin Rousso  <drousso@apple.com>
 
         Sampled Page Top Color: move logic out of `Document`

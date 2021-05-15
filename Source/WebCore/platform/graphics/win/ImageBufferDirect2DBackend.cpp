@@ -312,16 +312,16 @@ Vector<uint8_t> ImageBufferDirect2DBackend::toBGRAData() const
     return { };
 }
 
-Optional<PixelBuffer> ImageBufferDirect2DBackend::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+Optional<PixelBuffer> ImageBufferDirect2DBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     notImplemented();
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, nullptr);
 }
 
-void ImageBufferDirect2DBackend::putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+void ImageBufferDirect2DBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     notImplemented();
-    ImageBufferBackend::putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat, nullptr);
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, nullptr);
 }
 
 } // namespace WebCore

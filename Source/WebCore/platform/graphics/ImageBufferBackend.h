@@ -25,13 +25,12 @@
 
 #pragma once
 
-#include "AlphaPremultiplication.h"
 #include "ColorSpace.h"
 #include "FloatRect.h"
 #include "GraphicsTypesGL.h"
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
-#include "PixelFormat.h"
+#include "PixelBufferFormat.h"
 #include "PlatformLayer.h"
 #include "RenderingMode.h"
 #include <wtf/RefPtr.h>
@@ -109,8 +108,8 @@ public:
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const = 0;
     virtual Vector<uint8_t> toBGRAData() const = 0;
 
-    virtual Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect&) const = 0;
-    virtual void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
+    virtual Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const = 0;
+    virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
@@ -150,8 +149,8 @@ protected:
 
     WEBCORE_EXPORT Vector<uint8_t> toBGRAData(void* data) const;
 
-    WEBCORE_EXPORT Optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect, void* data) const;
-    WEBCORE_EXPORT void putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
+    WEBCORE_EXPORT Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, void* data) const;
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
 
     Parameters m_parameters;
 };

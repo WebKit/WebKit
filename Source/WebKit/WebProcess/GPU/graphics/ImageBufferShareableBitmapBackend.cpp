@@ -163,14 +163,14 @@ Vector<uint8_t> ImageBufferShareableBitmapBackend::toBGRAData() const
     return ImageBufferBackend::toBGRAData(m_bitmap->data());
 }
 
-Optional<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+Optional<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_bitmap->data());
 }
 
-void ImageBufferShareableBitmapBackend::putPixelBuffer(AlphaPremultiplication inputFormat, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
+void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putPixelBuffer(inputFormat, pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->data());
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->data());
 }
 
 } // namespace WebKit
