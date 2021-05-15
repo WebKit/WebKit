@@ -1,3 +1,16 @@
+2021-05-15  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] REGRESSION: Kinetic scrolling on touchpad doesn't work with async scrolling off
+        https://bugs.webkit.org/show_bug.cgi?id=224182
+
+        Reviewed by Michael Catanzaro.
+
+        Don't clear the scroll history every time we scroll, that defeats the whole point of having
+        the scroll history.
+
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::scrollToPositionWithoutAnimation):
+
 2021-05-15  Antti Koivisto  <antti@apple.com>
 
         Don't allow :visited link style in subtrees that use mix-blend-mode
