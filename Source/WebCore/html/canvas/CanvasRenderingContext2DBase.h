@@ -32,6 +32,7 @@
 #include "CanvasLineJoin.h"
 #include "CanvasPath.h"
 #include "CanvasRenderingContext.h"
+#include "CanvasRenderingContext2DSettings.h"
 #include "CanvasStyle.h"
 #include "CanvasTextAlign.h"
 #include "CanvasTextBaseline.h"
@@ -78,10 +79,12 @@ using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasEle
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
 protected:
-    CanvasRenderingContext2DBase(CanvasBase&, bool usesCSSCompatibilityParseMode);
+    CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
 public:
     virtual ~CanvasRenderingContext2DBase();
+
+    const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
 
     float lineWidth() const { return state().lineWidth; }
     void setLineWidth(float);
@@ -328,6 +331,9 @@ private:
     bool isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
+    PixelFormat pixelFormat() const final;
+    DestinationColorSpace colorSpace() const final;
+
     void unwindStateStack();
     void realizeSavesLoop();
 
@@ -395,6 +401,7 @@ private:
     bool m_usesCSSCompatibilityParseMode;
     bool m_usesDisplayListDrawing { false };
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
+    CanvasRenderingContext2DSettings m_settings;
 };
 
 } // namespace WebCore

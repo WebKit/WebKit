@@ -1,3 +1,35 @@
+2021-05-15  Sam Weinig  <weinig@apple.com>
+
+        Move CanvasRenderingContext2DSettings down to CanvasRenderingContext2DBase so it can be used there (and to support OffscreenCanvas)
+        https://bugs.webkit.org/show_bug.cgi?id=225836
+
+        Reviewed by Simon Fraser.
+
+        In subsequent changes, it will be useful to have CanvasRenderingContext2DSettings accessible
+        in CanvasRenderingContext2DBase for implementing color space support in ImageData. 
+
+        While doing this, I noticed it was trivial to add support for passing the settings
+        to OffscreenCanvasRenderingContext2D, so I add that as well.
+
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::getContext):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::pixelFormat const): Deleted.
+        (WebCore::CanvasRenderingContext2D::colorSpace const): Deleted.
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::CanvasRenderingContext2DBase):
+        (WebCore::CanvasRenderingContext2DBase::pixelFormat const):
+        (WebCore::CanvasRenderingContext2DBase::colorSpace const):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        (WebCore::CanvasRenderingContext2DBase::getContextAttributes const):
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        (WebCore::OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D):
+        * html/canvas/OffscreenCanvasRenderingContext2D.h:
+        * html/canvas/PaintRenderingContext2D.cpp:
+        (WebCore::PaintRenderingContext2D::PaintRenderingContext2D):
+
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Move block formatting quirks to its own class

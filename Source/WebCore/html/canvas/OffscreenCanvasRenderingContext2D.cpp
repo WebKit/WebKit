@@ -48,8 +48,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvasRenderingContext2D);
 
-OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase& canvas)
-    : CanvasRenderingContext2DBase(canvas, false)
+OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings)
+    : CanvasRenderingContext2DBase(canvas, WTFMove(settings), false)
 {
 }
 

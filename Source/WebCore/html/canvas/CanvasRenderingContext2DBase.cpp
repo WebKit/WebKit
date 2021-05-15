@@ -224,10 +224,11 @@ static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline
     return TopTextBaseline;
 }
 
-CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, bool usesCSSCompatibilityParseMode)
+CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
     : CanvasRenderingContext(canvas)
     , m_stateStack(1)
     , m_usesCSSCompatibilityParseMode(usesCSSCompatibilityParseMode)
+    , m_settings(WTFMove(settings))
 {
 }
 
@@ -2609,6 +2610,17 @@ FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection d
         break;
     }
     return offset;
+}
+
+PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
+{
+    // FIXME: Take m_settings.alpha into account here and add PixelFormat::BGRX8.
+    return PixelFormat::BGRA8;
+}
+
+DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
+{
+    return toDestinationColorSpace(m_settings.colorSpace);
 }
 
 } // namespace WebCore

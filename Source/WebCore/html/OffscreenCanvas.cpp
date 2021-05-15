@@ -213,7 +213,11 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
             return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
         }
 
-        m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this);
+        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+
+        m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this, WTFMove(settings));
         if (!m_context)
             return { { WTF::nullopt } };
 

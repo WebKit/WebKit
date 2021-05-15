@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CanvasRenderingContext2DBase.h"
-#include "CanvasRenderingContext2DSettings.h"
 #include "HTMLCanvasElement.h"
 #include <memory>
 
@@ -42,8 +41,6 @@ public:
     virtual ~CanvasRenderingContext2D();
 
     HTMLCanvasElement& canvas() const { return downcast<HTMLCanvasElement>(canvasBase()); }
-
-    const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
 
     void drawFocusIfNeeded(Element&);
     void drawFocusIfNeeded(Path2D&, Element&);
@@ -61,8 +58,6 @@ private:
 
     bool is2d() const final { return true; }
     const FontProxy* fontProxy() final;
-    PixelFormat pixelFormat() const final;
-    DestinationColorSpace colorSpace() const final;
 
     void setFontWithoutUpdatingStyle(const String&);
 
@@ -71,8 +66,6 @@ private:
     void drawFocusIfNeededInternal(const Path&, Element&);
 
     TextDirection toTextDirection(CanvasRenderingContext2DBase::Direction, const RenderStyle** computedStyle = nullptr) const;
-
-    CanvasRenderingContext2DSettings m_settings;
 };
 
 } // namespace WebCore
