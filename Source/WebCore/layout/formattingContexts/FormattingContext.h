@@ -108,11 +108,11 @@ public:
     const ContainerBox& root() const { return *m_root; }
 
     LayoutState& layoutState() const;
+    const FormattingState& formattingState() const { return m_formattingState; }
 
 protected:
     using LayoutQueue = Vector<const Box*>;
 
-    const FormattingState& formattingState() const { return m_formattingState; }
     FormattingState& formattingState() { return m_formattingState; }
 
     void computeBorderAndPadding(const Box&, const HorizontalConstraints&);

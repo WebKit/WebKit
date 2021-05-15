@@ -1,3 +1,76 @@
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Move BlockMarginCollapse to its own class
+        https://bugs.webkit.org/show_bug.cgi?id=225762
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::formattingState const):
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::updateMarginAfterForPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::marginCollapse const):
+        * layout/formattingContexts/block/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::formattingState const):
+        (WebCore::Layout::BlockFormattingContext::Quirks::formattingContext const):
+        (WebCore::Layout::BlockFormattingContext::Quirks::geometry const):
+        (WebCore::Layout::BlockFormattingContext::quirks const):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::layoutState): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::layoutState const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::formattingContext const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::marginCollapse const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::MarginCollapse): Deleted.
+        * layout/formattingContexts/block/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockMarginCollapse::BlockMarginCollapse):
+        (WebCore::Layout::BlockMarginCollapse::hasClearance const):
+        (WebCore::Layout::BlockMarginCollapse::marginBeforeCollapsesWithParentMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::marginBeforeCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithParentMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithNextSiblingMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::marginsCollapseThrough const):
+        (WebCore::Layout::BlockMarginCollapse::computedPositiveAndNegativeMargin const):
+        (WebCore::Layout::BlockMarginCollapse::marginValue const):
+        (WebCore::Layout::BlockMarginCollapse::positiveNegativeValues const):
+        (WebCore::Layout::BlockMarginCollapse::positiveNegativeMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::positiveNegativeMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::marginBeforeIgnoringCollapsingThrough):
+        (WebCore::Layout::BlockMarginCollapse::collapsedVerticalValues):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::hasClearance const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithPreviousSiblingMarginAfter const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeCollapsesWithFirstInFlowChildMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithParentMarginAfter const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginAfterCollapsesWithNextSiblingMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::computedPositiveAndNegativeMargin const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginValue const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::updateMarginAfterForPreviousSibling): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeValues const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::positiveNegativeMarginAfter const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginBeforeIgnoringCollapsingThrough): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::collapsedVerticalValues): Deleted.
+        * layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockMarginCollapse::precomputedPositiveNegativeValues const):
+        (WebCore::Layout::BlockMarginCollapse::precomputedPositiveNegativeMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::precomputedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::precomputedMarginBefore): Deleted.
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+
 2021-05-15  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] REGRESSION: Kinetic scrolling on touchpad doesn't work with async scrolling off

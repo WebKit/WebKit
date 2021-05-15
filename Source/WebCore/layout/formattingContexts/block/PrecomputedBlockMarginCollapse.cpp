@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "BlockFormattingContext.h"
+#include "BlockMarginCollapse.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace Layout {
 
-UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeValues(const Box& layoutBox) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomputedPositiveNegativeValues(const Box& layoutBox) const
 {
     auto& blockFormattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
     if (blockFormattingState.hasUsedVerticalMargin(layoutBox))
@@ -51,7 +51,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::Marg
     return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin);
 }
 
-UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::MarginCollapse::precomputedPositiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomputedPositiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues) const
 {
     auto firstChildCollapsedMarginBefore = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox))
@@ -83,7 +83,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockFormattingContext::Marg
     return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedBefore);
 }
 
-PrecomputedMarginBefore BlockFormattingContext::MarginCollapse::precomputedMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues usedNonCollapsedMargin)
+PrecomputedMarginBefore BlockMarginCollapse::precomputedMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues usedNonCollapsedMargin)
 {
     ASSERT(layoutBox.isBlockLevelBox());
     // Don't pre-compute vertical margins for out of flow boxes.

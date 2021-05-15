@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingState.h"
+#include "BlockMarginCollapse.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
 #include "InvalidationState.h"
@@ -420,7 +421,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     boxGeometry.setContentBoxHeight(contentHeightAndMargin.contentHeight);
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
-    MarginCollapse::updateMarginAfterForPreviousSibling(*this, marginCollapse, layoutBox);
+    updateMarginAfterForPreviousSibling(layoutBox);
 }
 
 FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedIntrinsicWidthConstraints()
@@ -555,6 +556,53 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutB
         return containingBlockContentBoxTop;
 
     return containingBlockContentBoxTop + marginBefore(verticalMargin);
+}
+
+void BlockFormattingContext::updateMarginAfterForPreviousSibling(const Box& layoutBox)
+{
+    auto marginCollapse = this->marginCollapse();
+    auto& formattingState = this->formattingState();
+    // 1. Get the margin before value from the next in-flow sibling. This is the same as this box's margin after value now since they are collapsed.
+    // 2. Update the collapsed margin after value as well as the positive/negative cache.
+    // 3. Check if the box's margins collapse through.
+    // 4. If so, update the positive/negative cache.
+    // 5. In case of collapsed through margins check if the before margin collapes with the previous inflow sibling's after margin.
+    // 6. If so, jump to #2.
+    // 7. No need to propagate to parent because its margin is not computed yet (pre-computed at most).
+    auto* currentBox = &layoutBox;
+    while (marginCollapse.marginBeforeCollapsesWithPreviousSiblingMarginAfter(*currentBox)) {
+        auto& previousSibling = *currentBox->previousInFlowSibling();
+        auto previousSiblingVerticalMargin = formattingState.usedVerticalMargin(previousSibling);
+
+        auto collapsedVerticalMarginBefore = previousSiblingVerticalMargin.collapsedValues.before;
+        auto collapsedVerticalMarginAfter = geometryForBox(*currentBox).marginBefore();
+
+        auto marginsCollapseThrough = marginCollapse.marginsCollapseThrough(previousSibling);
+        if (marginsCollapseThrough)
+            collapsedVerticalMarginBefore = collapsedVerticalMarginAfter;
+
+        // Update positive/negative cache.
+        auto previousSiblingPositiveNegativeMargin = formattingState.usedVerticalMargin(previousSibling).positiveAndNegativeValues;
+        auto positiveNegativeMarginBefore = formattingState.usedVerticalMargin(*currentBox).positiveAndNegativeValues.before;
+
+        auto adjustedPreviousSiblingVerticalMargin = previousSiblingVerticalMargin;
+        adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.after = marginCollapse.computedPositiveAndNegativeMargin(positiveNegativeMarginBefore, previousSiblingPositiveNegativeMargin.after);
+        if (marginsCollapseThrough) {
+            adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.before = marginCollapse.computedPositiveAndNegativeMargin(previousSiblingPositiveNegativeMargin.before, adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.after);
+            adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.after = adjustedPreviousSiblingVerticalMargin.positiveAndNegativeValues.before;
+        }
+        formattingState.setUsedVerticalMargin(previousSibling, adjustedPreviousSiblingVerticalMargin);
+
+        if (!marginsCollapseThrough)
+            break;
+
+        currentBox = &previousSibling;
+    }
+}
+
+BlockMarginCollapse BlockFormattingContext::marginCollapse() const
+{
+    return BlockMarginCollapse(*this);
 }
 
 }
