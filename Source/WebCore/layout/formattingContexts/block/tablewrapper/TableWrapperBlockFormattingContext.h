@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingContext.h"
+#include "BlockFormattingQuirks.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ public:
     void setHorizontalConstraintsIgnoringFloats(const HorizontalConstraints& horizontalConstraints) { m_horizontalConstraintsIgnoringFloats = horizontalConstraints; }
 
 private:
-    class Quirks : public BlockFormattingContext::Quirks {
+    class Quirks : public BlockFormattingQuirks {
     public:
         Quirks(const TableWrapperBlockFormattingContext&);
 
@@ -64,7 +65,7 @@ private:
 };
 
 inline TableWrapperBlockFormattingContext::Quirks::Quirks(const TableWrapperBlockFormattingContext& formattingContext)
-    : BlockFormattingContext::Quirks(formattingContext)
+    : BlockFormattingQuirks(formattingContext)
 {
 }
 

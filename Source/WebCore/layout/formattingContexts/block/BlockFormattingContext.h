@@ -39,6 +39,7 @@ class LayoutUnit;
 namespace Layout {
 
 class Box;
+class BlockFormattingQuirks;
 class BlockMarginCollapse;
 class FloatingContext;
 
@@ -54,22 +55,8 @@ public:
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
-    class Quirks : public FormattingContext::Quirks {
-    public:
-        Quirks(const BlockFormattingContext&);
-
-        bool needsStretching(const Box&) const;
-        LayoutUnit stretchedInFlowHeight(const Box&, ContentHeightAndMargin);
-
-        bool shouldIgnoreCollapsedQuirkMargin(const Box&) const;
-        bool shouldCollapseMarginBeforeWithParentMarginBefore(const Box&) const;
-        bool shouldCollapseMarginAfterWithParentMarginAfter(const Box&) const;
-
-        const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Quirks::formattingContext()); }
-        BlockFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }
-
-    };
-    BlockFormattingContext::Quirks quirks() const { return Quirks(*this); }
+    BlockFormattingQuirks quirks() const;
+    BlockMarginCollapse marginCollapse() const;
 
     // This class implements positioning and sizing for boxes participating in a block formatting context.
     class Geometry : public FormattingContext::Geometry {
@@ -120,7 +107,6 @@ protected:
     Optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&, const ConstraintsPair&);
     void updateMarginAfterForPreviousSibling(const Box&);
 
-    BlockMarginCollapse marginCollapse() const;
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
 #if ASSERT_ENABLED
@@ -134,11 +120,6 @@ private:
 
 inline BlockFormattingContext::Geometry::Geometry(const BlockFormattingContext& blockFormattingContext)
     : FormattingContext::Geometry(blockFormattingContext)
-{
-}
-
-inline BlockFormattingContext::Quirks::Quirks(const BlockFormattingContext& blockFormattingContext)
-    : FormattingContext::Quirks(blockFormattingContext)
 {
 }
 

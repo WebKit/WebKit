@@ -110,6 +110,21 @@ public:
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
 
+    class Quirks {
+    public:
+        Quirks(const FormattingContext&);
+
+        LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&);
+
+    protected:
+        const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
+        LayoutState& layoutState() { return m_formattingContext.layoutState(); }
+        const FormattingContext& formattingContext() const { return m_formattingContext; }
+
+        const FormattingContext& m_formattingContext;
+    };
+    FormattingContext::Quirks quirks() const { return Quirks(*this); }
+
 protected:
     using LayoutQueue = Vector<const Box*>;
 
@@ -195,21 +210,6 @@ protected:
         const FormattingContext& m_formattingContext;
     };
     FormattingContext::Geometry geometry() const { return Geometry(*this); }
-
-    class Quirks {
-    public:
-        Quirks(const FormattingContext&);
-
-        LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&);
-
-    protected:
-        const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
-        LayoutState& layoutState() { return m_formattingContext.layoutState(); }
-        const FormattingContext& formattingContext() const { return m_formattingContext; }
-
-        const FormattingContext& m_formattingContext;
-    };
-    FormattingContext::Quirks quirks() const { return Quirks(*this); }
 
 private:
     void collectOutOfFlowDescendantsIfNeeded();
