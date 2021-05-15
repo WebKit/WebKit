@@ -649,6 +649,7 @@ fast/dom/timer-throttling-hidden-page.html [ Skip ]
 # TODO CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
 css3/blending/ [ Skip ]
 transitions/blendmode-transitions.html [ Skip ]
+fast/css/visited-link-mix-blend-mode.html [ Skip ]
 
 # Backdrop Filters do not work on Windows
 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ] 

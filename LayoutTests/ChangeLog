@@ -1,3 +1,14 @@
+2021-05-15  Antti Koivisto  <antti@apple.com>
+
+        Don't allow :visited link style in subtrees that use mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=225446
+        rdar://65686091
+
+        Reviewed by Darin Adler.
+
+        * fast/css/visited-link-mix-blend-mode-expected.html: Added.
+        * fast/css/visited-link-mix-blend-mode.html: Added.
+
 2021-05-14  John Wilander  <wilander@apple.com>
 
         Javascript can't access a SameSite=Strict cookie after page is loaded after a redirect from a third party site
