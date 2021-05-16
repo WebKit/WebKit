@@ -36,7 +36,6 @@ namespace Layout {
 
 class InlineFormattingGeometry;
 class InlineFormattingState;
-class InlineFormattingQuirks;
 class InvalidationState;
 class LineBox;
 
@@ -58,7 +57,6 @@ private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
     InlineFormattingGeometry geometry() const;
-    InlineFormattingQuirks quirks() const;
 
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
 

@@ -33,6 +33,7 @@
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutInitialContainingBlock.h"
+#include "TableFormattingQuirks.h"
 #include "TableFormattingState.h"
 
 namespace WebCore {
@@ -48,7 +49,7 @@ LayoutUnit TableFormattingGeometry::cellHeigh(const ContainerBox& cellBox) const
 {
     ASSERT(cellBox.isInFlow());
     auto contentHeight = LayoutUnit { };
-    if (TableFormattingQuirks(formattingContext()).shouldIgnoreChildContentVerticalMargin(cellBox)) {
+    if (layoutState().inQuirksMode() && TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(cellBox)) {
         ASSERT(cellBox.firstInFlowChild());
         auto formattingContext = this->formattingContext();
         auto& firstInFlowChild = *cellBox.firstInFlowChild();

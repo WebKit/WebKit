@@ -219,10 +219,16 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     ASSERT(tableBox.isTableBox());
     // Table is a special BFC content. Its height is mainly driven by the content. Computed height, min-height and max-height are all
     // already been taken into account during the TFC layout.
-    auto heightAndMargin = geometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { quirks().overriddenTableHeight(tableBox) });
+    auto overriddenTableHeight = [&]() -> Optional<LayoutUnit> {
+        if (layoutState().inQuirksMode())
+            return TableWrapperQuirks(*this).overriddenTableHeight(tableBox);
+        if (tableBox.hasInFlowOrFloatingChild())
+            return geometry().contentHeightForFormattingContextRoot(tableBox);
+        return { };
+    }();
 
-    auto marginCollapse = this->marginCollapse();
-    auto verticalMargin = marginCollapse.collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
+    auto heightAndMargin = geometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { overriddenTableHeight });
+    auto verticalMargin = marginCollapse().collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
     // Cache the computed positive and negative margin value pair.
     formattingState().setUsedVerticalMargin(tableBox, verticalMargin);
 
@@ -232,11 +238,6 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
     updateMarginAfterForPreviousSibling(tableBox);
-}
-
-TableWrapperQuirks TableWrapperBlockFormattingContext::quirks() const
-{
-    return TableWrapperQuirks(*this);
 }
 
 }

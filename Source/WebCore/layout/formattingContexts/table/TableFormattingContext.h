@@ -38,7 +38,6 @@ namespace Layout {
 
 class InvalidationState;
 class TableFormattingGeometry;
-class TableFormattingQuirks;
 
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
@@ -79,7 +78,6 @@ private:
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
 
     TableFormattingGeometry geometry() const;
-    TableFormattingQuirks quirks() const;
     const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };

@@ -40,7 +40,6 @@ namespace Layout {
 
 class Box;
 class BlockFormattingGeometry;
-class BlockFormattingQuirks;
 class BlockMarginCollapse;
 class FloatingContext;
 
@@ -82,7 +81,6 @@ protected:
 
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
     BlockFormattingGeometry geometry() const;
-    BlockFormattingQuirks quirks() const;
     BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED

@@ -70,7 +70,6 @@ private:
 
     bool hasClearance(const Box&) const;
 
-    BlockFormattingQuirks quirks() const;
     LayoutState& layoutState() { return m_blockFormattingContext.layoutState(); }
     const LayoutState& layoutState() const { return m_blockFormattingContext.layoutState(); }
     const BlockFormattingContext& formattingContext() const { return m_blockFormattingContext; }

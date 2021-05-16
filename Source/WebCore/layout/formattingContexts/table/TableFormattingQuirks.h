@@ -36,10 +36,7 @@ class TableFormattingQuirks : public FormattingQuirks {
 public:
     TableFormattingQuirks(const TableFormattingContext&);
 
-    bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&) const;
-
-private:
-    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingQuirks::formattingContext()); }
+    static bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&);
 };
 
 }

@@ -38,7 +38,6 @@
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "TableFormattingGeometry.h"
-#include "TableFormattingQuirks.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -520,12 +519,6 @@ TableFormattingGeometry TableFormattingContext::geometry() const
 {
     return TableFormattingGeometry(*this, formattingState().tableGrid());
 }
-
-TableFormattingQuirks TableFormattingContext::quirks() const
-{
-    return TableFormattingQuirks(*this);
-}
-
 
 }
 }

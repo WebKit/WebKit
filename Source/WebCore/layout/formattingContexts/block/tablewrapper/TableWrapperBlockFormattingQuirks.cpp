@@ -37,16 +37,14 @@ namespace Layout {
 TableWrapperQuirks::TableWrapperQuirks(const TableWrapperBlockFormattingContext& formattingContext)
     : BlockFormattingQuirks(formattingContext)
 {
+    ASSERT(layoutState().inQuirksMode());
 }
 
-Optional<LayoutUnit> TableWrapperQuirks::overriddenTableHeight(const ContainerBox& tableBox) const
+LayoutUnit TableWrapperQuirks::overriddenTableHeight(const ContainerBox& tableBox) const
 {
-    auto geometry = BlockFormattingGeometry { formattingContext() };
-    if (layoutState().inQuirksMode()) {
-        // In quirks mode always use the content height. Note that the tables with content take computed values into account.
-        return geometry.contentHeightForFormattingContextRoot(tableBox);
-    }
-    return tableBox.hasInFlowOrFloatingChild() ? geometry.contentHeightForFormattingContextRoot(tableBox) : Optional<LayoutUnit> { };
+    // In quirks mode always use the content height. Note that the tables with content take computed values into account.
+    auto& formattingContext = downcast<BlockFormattingContext>(this->formattingContext());
+    return BlockFormattingGeometry(formattingContext).contentHeightForFormattingContextRoot(tableBox);
 }
 
 }

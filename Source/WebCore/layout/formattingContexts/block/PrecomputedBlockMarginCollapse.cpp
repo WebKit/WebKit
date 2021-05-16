@@ -72,7 +72,8 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
     // 2. Gather positive and negative margin values from previous inflow sibling if margins are adjoining.
     // 3. Compute min/max positive and negative collapsed margin values using non-collpased computed margin before.
     auto collapsedMarginBefore = computedPositiveAndNegativeMargin(firstChildCollapsedMarginBefore(), previouSiblingCollapsedMarginAfter());
-    if (collapsedMarginBefore.isQuirk && quirks().shouldIgnoreCollapsedQuirkMargin(layoutBox))
+    auto shouldIgnoreCollapsedMargin = collapsedMarginBefore.isQuirk && layoutState().inQuirksMode() && BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(layoutBox);
+    if (shouldIgnoreCollapsedMargin)
         collapsedMarginBefore = { };
 
     auto nonCollapsedBefore = UsedVerticalMargin::PositiveAndNegativePair::Values { };

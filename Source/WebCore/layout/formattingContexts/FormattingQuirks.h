@@ -36,11 +36,10 @@ class FormattingQuirks {
 public:
     FormattingQuirks(const FormattingContext&);
 
-    LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&);
+    LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const;
 
 protected:
     const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
-    LayoutState& layoutState() { return m_formattingContext.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
 
     const FormattingContext& m_formattingContext;

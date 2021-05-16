@@ -34,8 +34,6 @@
 namespace WebCore {
 namespace Layout {
 
-class TableWrapperQuirks;
-
 // This class implements the special block formatting context layout logic for the table wrapper.
 // https://www.w3.org/TR/CSS22/tables.html#model
 class TableWrapperBlockFormattingContext final : public BlockFormattingContext {
@@ -48,8 +46,6 @@ public:
     void setHorizontalConstraintsIgnoringFloats(const HorizontalConstraints& horizontalConstraints) { m_horizontalConstraintsIgnoringFloats = horizontalConstraints; }
 
 private:
-    TableWrapperQuirks quirks() const;
-
     void layoutTableBox(const ContainerBox& tableBox, const ConstraintsForInFlowContent&);
 
     void computeBorderAndPaddingForTableBox(const ContainerBox&, const HorizontalConstraints&);

@@ -29,7 +29,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BlockFormattingGeometry.h"
-#include "BlockFormattingQuirks.h"
 #include "BlockFormattingState.h"
 #include "BlockMarginCollapse.h"
 #include "FloatingContext.h"
@@ -610,11 +609,6 @@ BlockFormattingGeometry BlockFormattingContext::geometry() const
 BlockMarginCollapse BlockFormattingContext::marginCollapse() const
 {
     return BlockMarginCollapse(*this);
-}
-
-BlockFormattingQuirks BlockFormattingContext::quirks() const
-{
-    return BlockFormattingQuirks(*this);
 }
 
 }

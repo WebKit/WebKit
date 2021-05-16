@@ -280,11 +280,10 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(con
         contentHeightAndMargin = complicatedCases(layoutBox, horizontalConstraints, overriddenVerticalValues);
     }
 
-    auto quirks = BlockFormattingQuirks { formattingContext() };
-    if (!quirks.needsStretching(layoutBox))
-        return contentHeightAndMargin;
-
-    contentHeightAndMargin.contentHeight = quirks.stretchedInFlowHeight(layoutBox, contentHeightAndMargin);
+    if (layoutState().inQuirksMode()) {
+        if (auto stretchedInFlowHeight = BlockFormattingQuirks(formattingContext()).stretchedInFlowHeightIfApplicable(layoutBox, contentHeightAndMargin))
+            contentHeightAndMargin.contentHeight = *stretchedInFlowHeight;
+    }
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << contentHeightAndMargin.contentHeight << "px) margin(" << contentHeightAndMargin.nonCollapsedMargin.before << "px, " << contentHeightAndMargin.nonCollapsedMargin.after << "px) -> layoutBox(" << &layoutBox << ")");
     return contentHeightAndMargin;

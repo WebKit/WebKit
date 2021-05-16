@@ -1,3 +1,80 @@
+2021-05-16  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Cleanup FormattingQuirk classes
+        https://bugs.webkit.org/show_bug.cgi?id=225746
+
+        Reviewed by Antti Koivisto.
+
+        Quirk functions should only be called when not in standards mode.
+
+        * layout/formattingContexts/FormattingQuirks.cpp:
+        (WebCore::Layout::FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight const):
+        (WebCore::Layout::FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight): Deleted.
+        * layout/formattingContexts/FormattingQuirks.h:
+        (WebCore::Layout::FormattingQuirks::layoutState const):
+        (WebCore::Layout::FormattingQuirks::layoutState): Deleted.
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::quirks const): Deleted.
+        * layout/formattingContexts/block/BlockFormattingContext.h:
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp:
+        (WebCore::Layout::BlockFormattingGeometry::inFlowContentHeightAndMargin):
+        * layout/formattingContexts/block/BlockFormattingQuirks.cpp:
+        (WebCore::Layout::BlockFormattingQuirks::BlockFormattingQuirks):
+        (WebCore::Layout::needsStretching):
+        (WebCore::Layout::BlockFormattingQuirks::stretchedInFlowHeightIfApplicable const):
+        (WebCore::Layout::BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin):
+        (WebCore::Layout::BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingQuirks::needsStretching const): Deleted.
+        (WebCore::Layout::BlockFormattingQuirks::stretchedInFlowHeight): Deleted.
+        (WebCore::Layout::BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin const): Deleted.
+        (WebCore::Layout::BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore const): Deleted.
+        (WebCore::Layout::BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter const): Deleted.
+        * layout/formattingContexts/block/BlockFormattingQuirks.h:
+        (WebCore::Layout::BlockFormattingQuirks::formattingContext const): Deleted.
+        * layout/formattingContexts/block/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockMarginCollapse::marginBeforeCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithParentMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::positiveNegativeMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::quirks const): Deleted.
+        * layout/formattingContexts/block/BlockMarginCollapse.h:
+        * layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockMarginCollapse::precomputedPositiveNegativeMarginBefore const):
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::quirks const): Deleted.
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.h:
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp:
+        (WebCore::Layout::TableWrapperQuirks::TableWrapperQuirks):
+        (WebCore::Layout::TableWrapperQuirks::overriddenTableHeight const):
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::quirks const): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::InlineFormattingGeometry::inlineLevelBoxAffectsLineBox const):
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingQuirks.cpp:
+        (WebCore::Layout::InlineFormattingQuirks::initialLineHeight const):
+        (WebCore::Layout::InlineFormattingQuirks::inlineLevelBoxAffectsLineBox const):
+        * layout/formattingContexts/inline/InlineFormattingQuirks.h:
+        (WebCore::Layout::InlineFormattingQuirks::formattingContext const): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::quirks const): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::cellHeigh const):
+        * layout/formattingContexts/table/TableFormattingQuirks.cpp:
+        (WebCore::Layout::TableFormattingQuirks::TableFormattingQuirks):
+        (WebCore::Layout::TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin):
+        (WebCore::Layout::TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin const): Deleted.
+        * layout/formattingContexts/table/TableFormattingQuirks.h:
+        (WebCore::Layout::TableFormattingQuirks::formattingContext const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayNonRootInlineBoxes const):
+
 2021-05-16  Tim Nguyen  <ntim@apple.com>
 
         Make will-change: transform-style create a containing block

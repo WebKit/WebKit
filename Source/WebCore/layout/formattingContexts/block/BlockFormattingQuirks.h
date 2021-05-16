@@ -36,15 +36,10 @@ class BlockFormattingQuirks : public FormattingQuirks {
 public:
     BlockFormattingQuirks(const BlockFormattingContext&);
 
-    bool needsStretching(const Box&) const;
-    LayoutUnit stretchedInFlowHeight(const Box&, ContentHeightAndMargin);
-
-    bool shouldIgnoreCollapsedQuirkMargin(const Box&) const;
-    bool shouldCollapseMarginBeforeWithParentMarginBefore(const Box&) const;
-    bool shouldCollapseMarginAfterWithParentMarginAfter(const Box&) const;
-
-protected:
-    const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingQuirks::formattingContext()); }
+    Optional<LayoutUnit> stretchedInFlowHeightIfApplicable(const Box&, ContentHeightAndMargin) const;
+    static bool shouldIgnoreCollapsedQuirkMargin(const Box&);
+    static bool shouldCollapseMarginBeforeWithParentMarginBefore(const Box&);
+    static bool shouldCollapseMarginAfterWithParentMarginAfter(const Box&);
 };
 
 }

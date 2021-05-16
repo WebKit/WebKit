@@ -38,17 +38,16 @@ namespace Layout {
 TableFormattingQuirks::TableFormattingQuirks(const TableFormattingContext& tableFormattingContext)
     : FormattingQuirks(tableFormattingContext)
 {
+    ASSERT(layoutState().inQuirksMode());
 }
 
-bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const ContainerBox& cellBox) const
+bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const ContainerBox& cellBox)
 {
     // Normally BFC root content height takes the margin box of the child content as vertical margins don't collapse with BFC roots,
     // but table cell boxes do collapse their (non-existing) margins with child quirk margins (so much quirk), so here we check
     // if the content height should include margins or not.
     // e.g <table><tr><td><p>text content</td></tr></table> <- <p>'s quirk margin collapses with the <td> so its content
     // height should not include vertical margins.
-    if (!layoutState().inQuirksMode())
-        return false;
     if (cellBox.establishesInlineFormattingContext())
         return false;
     if (!cellBox.hasInFlowChild())

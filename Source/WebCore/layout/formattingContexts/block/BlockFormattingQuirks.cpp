@@ -47,25 +47,23 @@ static bool isQuirkContainer(const Box& layoutBox)
 BlockFormattingQuirks::BlockFormattingQuirks(const BlockFormattingContext& blockFormattingContext)
     : FormattingQuirks(blockFormattingContext)
 {
+    ASSERT(layoutState().inQuirksMode());
 }
 
-bool BlockFormattingQuirks::needsStretching(const Box& layoutBox) const
+static bool needsStretching(const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow());
     // In quirks mode, in-flow body and html stretch to the initial containing block (height: auto only).
-    if (!layoutState().inQuirksMode())
-        return false;
-
     if (!layoutBox.isDocumentBox() && !layoutBox.isBodyBox())
         return false;
-
     return layoutBox.style().logicalHeight().isAuto();
 }
 
-LayoutUnit BlockFormattingQuirks::stretchedInFlowHeight(const Box& layoutBox, ContentHeightAndMargin contentHeightAndMargin)
+Optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicable(const Box& layoutBox, ContentHeightAndMargin contentHeightAndMargin) const
 {
-    ASSERT(needsStretching(layoutBox));
-    auto& formattingContext = this->formattingContext();
+    if (!needsStretching(layoutBox))
+        return { };
+    auto& formattingContext = downcast<BlockFormattingContext>(this->formattingContext());
     auto nonCollapsedVerticalMargin = contentHeightAndMargin.nonCollapsedMargin.before + contentHeightAndMargin.nonCollapsedMargin.after;
 
     if (layoutBox.isDocumentBox()) {
@@ -99,16 +97,16 @@ LayoutUnit BlockFormattingQuirks::stretchedInFlowHeight(const Box& layoutBox, Co
     bodyBoxContentHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.
     if (documentBox.isInFlow()) {
-        auto geometry = BlockFormattingGeometry { formattingContext };
-        auto precomputeDocumentBoxVerticalMargin = geometry.computedVerticalMargin(documentBox, geometry.constraintsForInFlowContent(initialContainingBlock, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk).horizontal);
+        auto formattingGeometry = BlockFormattingGeometry { formattingContext };
+        auto precomputeDocumentBoxVerticalMargin = formattingGeometry.computedVerticalMargin(documentBox, formattingGeometry.constraintsForInFlowContent(initialContainingBlock, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk).horizontal);
         bodyBoxContentHeight -= precomputeDocumentBoxVerticalMargin.before.valueOr(0) + precomputeDocumentBoxVerticalMargin.after.valueOr(0);
     }
     return std::max(contentHeightAndMargin.contentHeight,  bodyBoxContentHeight);
 }
 
-bool BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(const Box& layoutBox) const
+bool BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(const Box& layoutBox)
 {
-    return layoutState().inQuirksMode() && isQuirkContainer(layoutBox);
+    return isQuirkContainer(layoutBox);
 }
 
 enum class VerticalMargin { Before, After };
@@ -120,14 +118,14 @@ static inline bool hasQuirkMarginToCollapse(const Box& layoutBox, VerticalMargin
     return (verticalMargin == VerticalMargin::Before && style.hasMarginBeforeQuirk()) || (verticalMargin == VerticalMargin::After && style.hasMarginAfterQuirk());
 }
 
-bool BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(const Box& layoutBox) const
+bool BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(const Box& layoutBox)
 {
-    return layoutState().inQuirksMode() && hasQuirkMarginToCollapse(layoutBox, VerticalMargin::Before) && isQuirkContainer(layoutBox.containingBlock());
+    return hasQuirkMarginToCollapse(layoutBox, VerticalMargin::Before) && isQuirkContainer(layoutBox.containingBlock());
 }
 
-bool BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter(const Box& layoutBox) const
+bool BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter(const Box& layoutBox)
 {
-    return layoutState().inQuirksMode() && hasQuirkMarginToCollapse(layoutBox, VerticalMargin::After) && isQuirkContainer(layoutBox.containingBlock());
+    return hasQuirkMarginToCollapse(layoutBox, VerticalMargin::After) && isQuirkContainer(layoutBox.containingBlock());
 }
 
 }

@@ -36,7 +36,7 @@ class TableWrapperQuirks : public BlockFormattingQuirks {
 public:
     TableWrapperQuirks(const TableWrapperBlockFormattingContext&);
 
-    Optional<LayoutUnit> overriddenTableHeight(const ContainerBox& tableBox) const;
+    LayoutUnit overriddenTableHeight(const ContainerBox& tableBox) const;
 };
 
 }

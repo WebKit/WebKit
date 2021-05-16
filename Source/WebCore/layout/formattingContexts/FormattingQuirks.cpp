@@ -40,7 +40,7 @@ FormattingQuirks::FormattingQuirks(const FormattingContext& formattingContext)
 {
 }
 
-LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox)
+LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox) const
 {
     // In quirks mode, we go and travers the containing block chain to find a block level box with fixed height value, even if it means leaving
     // the current formatting context. FIXME: surely we need to do some tricks here when block direction support is added.
