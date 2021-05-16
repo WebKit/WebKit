@@ -66,6 +66,7 @@ bool WillChangeData::createsContainingBlockForOutOfFlowPositioned() const
         || containsProperty(CSSPropertyPerspective)
         // CSS transforms
         || containsProperty(CSSPropertyTransform)
+        || containsProperty(CSSPropertyTransformStyle)
         || containsProperty(CSSPropertyTranslate)
         || containsProperty(CSSPropertyRotate)
         || containsProperty(CSSPropertyScale)

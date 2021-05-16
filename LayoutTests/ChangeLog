@@ -1,3 +1,14 @@
+2021-05-16  Tim Nguyen  <ntim@apple.com>
+
+        Make will-change: transform-style create a containing block
+        https://bugs.webkit.org/show_bug.cgi?id=225441
+
+        Reviewed by Simon Fraser.
+
+        Marked relevant WPT as pass.
+
+        * TestExpectations:
+
 2021-05-15  Said Abou-Hallawa  <said@apple.com>
 
         Implement CanvasRenderingContext2D.createConicGradient
