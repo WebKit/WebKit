@@ -2438,7 +2438,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
         }
         LayoutRect layerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
         expandScrollRectToVisibleTargetRectToIncludeScrollPadding(box, layerBounds, localExposeRect);
-        LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, options.alignX, options.alignY);
+        LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, options.alignX, options.alignY, options.overridesVerticalScrollPosition);
 
         if (auto result = scrollableArea->updateScrollPosition(scrollPositionChangeOptionsForElement(box->element()), revealRect, localExposeRect))
             newRect = result.value();
@@ -2461,7 +2461,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
                 RenderBox* renderer = element ? element->renderBox() : nullptr;
                 expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, newRect);
 
-                LayoutRect exposeRect = getRectToExpose(viewRect, newRect, insideFixed, options.alignX, options.alignY);
+                LayoutRect exposeRect = getRectToExpose(viewRect, newRect, insideFixed, options.alignX, options.alignY, options.overridesVerticalScrollPosition);
                 IntPoint scrollPosition(roundedIntPoint(exposeRect.location()));
 
                 // Adjust offsets if they're outside of the allowable range.
@@ -2509,7 +2509,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             RenderBox* renderer = element ? element->renderBox() : nullptr;
             expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, targetRect);
 
-            LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY);
+            LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, options.alignX, options.alignY, options.overridesVerticalScrollPosition);
             // Avoid scrolling to the rounded value of revealRect.location() if we don't actually need to scroll
             if (revealRect != viewRect) {
                 // FIXME: Should we use document()->scrollingElement()?
@@ -2531,8 +2531,11 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
         parentLayer->scrollRectToVisible(newRect, insideFixed, options);
 }
 
-LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
+LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, LayoutRect exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY, bool overridesVerticalScrollPosition) const
 {
+    if (overridesVerticalScrollPosition)
+        exposeRect.moveBy({ 0, 200 });
+
     FrameView& frameView = renderer().view().frameView();
     if (renderer().isRenderView() && insideFixed) {
         // If the element is inside position:fixed and we're not scaled, no amount of scrolling is going to move things around.
@@ -2555,7 +2558,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const Lay
             unscaledExposeRect.setSize(unscaledExposeRect.size().shrunkTo(visualViewport.size()));
 
             // Compute how much we have to move the visualViewport to reveal the part of the layoutViewport that contains exposeRect.
-            LayoutRect requiredVisualViewport = getRectToExpose(visualViewport, unscaledExposeRect, false, alignX, alignY);
+            LayoutRect requiredVisualViewport = getRectToExpose(visualViewport, unscaledExposeRect, false, alignX, alignY, overridesVerticalScrollPosition);
             // Scale it back up.
             requiredVisualViewport.scale(frameView.frameScaleFactor());
             requiredVisualViewport.move(0, frameView.headerHeight());

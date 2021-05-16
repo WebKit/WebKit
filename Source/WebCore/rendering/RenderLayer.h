@@ -140,6 +140,7 @@ struct ScrollRectToVisibleOptions {
     ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
     ScrollBehavior behavior { ScrollBehavior::Auto };
     SmoothScrollFeatureEnablement overrideFeatureEnablement { SmoothScrollFeatureEnablement::Default };
+    bool overridesVerticalScrollPosition { false };
 };
 
 using ScrollingScope = uint64_t;
@@ -1058,7 +1059,7 @@ private:
 
     RenderLayer* enclosingTransformedAncestor() const;
 
-    LayoutRect getRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;
+    LayoutRect getRectToExpose(const LayoutRect& visibleRect, LayoutRect exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY, bool overridesVerticalScrollPosition) const;
 
     // Convert a point in absolute coords into layer coords, taking transforms into account
     LayoutPoint absoluteToContents(const LayoutPoint&) const;

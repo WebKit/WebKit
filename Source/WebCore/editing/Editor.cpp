@@ -269,6 +269,8 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection)
         options.add(FrameSelection::SmoothScroll);
     if (m_options & TemporarySelectionOption::OverrideSmoothScrollFeatureEnablment)
         options.add(FrameSelection::OverrideSmoothScrollFeatureEnablement);
+    if (m_options & TemporarySelectionOption::OverrideVerticalScrollPosition)
+        options.add(FrameSelection::OverrideVerticalScrollPosition);
     m_document->selection().setSelection(selection, options);
 }
 
