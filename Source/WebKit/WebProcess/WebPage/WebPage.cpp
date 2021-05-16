@@ -7581,13 +7581,13 @@ void WebPage::createMediaSessionCoordinator(const String& identifier, Completion
         return;
     }
 
-    auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
-    auto coordinator = RemoteMediaSessionCoordinator::create(*this, identifier);
-    m_remoteMediaSessionCoordinator = coordinator.ptr();
-    m_mediaSessionCoordinator = MediaSessionCoordinator::create(coordinator.get());
-    session.setCoordinator(m_mediaSessionCoordinator.get());
-
+    m_page->setMediaSessionCoordinator(RemoteMediaSessionCoordinator::create(*this, identifier));
     completionHandler(true);
+}
+
+void WebPage::invalidateMediaSessionCoordinator()
+{
+    m_page->invalidateMediaSessionCoordinator();
 }
 #endif
 

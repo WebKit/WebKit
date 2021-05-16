@@ -175,10 +175,10 @@ void RemoteMediaSessionCoordinator::playbackStateChanged(WebCore::MediaSessionPl
     m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::PlaybackStateChanged { state });
 }
 
-void RemoteMediaSessionCoordinator::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
+void RemoteMediaSessionCoordinator::trackIdentifierChanged(const String& identifier)
 {
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::CoordinatorStateChanged { state });
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, identifier);
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::TrackIdentifierChanged { identifier });
 }
 
 void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)
@@ -215,6 +215,13 @@ void RemoteMediaSessionCoordinator::setSessionTrack(const String& trackIdentifie
         coordinatorClient->setSessionTrack(trackIdentifier, WTFMove((completionHandler)));
     else
         completionHandler(false);
+}
+
+void RemoteMediaSessionCoordinator::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
+    if (auto coordinatorClient = client())
+        coordinatorClient->coordinatorStateChanged(state);
 }
 
 WTFLogChannel& RemoteMediaSessionCoordinator::logChannel() const

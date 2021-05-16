@@ -1440,6 +1440,7 @@ public:
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     void createMediaSessionCoordinator(const String&, CompletionHandler<void(bool)>&&);
+    void invalidateMediaSessionCoordinator();
 #endif
 
     void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }

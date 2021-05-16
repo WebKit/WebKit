@@ -38,6 +38,7 @@
 #include "MediaMetadata.h"
 #include "MediaSessionCoordinator.h"
 #include "Navigator.h"
+#include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/JSONValues.h>
 
@@ -136,6 +137,15 @@ MediaSession::MediaSession(Navigator& navigator)
 {
     m_logger = makeRefPtr(Document::sharedLogger());
     m_logIdentifier = nextLogIdentifier();
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    auto* frame = navigator.frame();
+    if (auto* page = frame ? frame->page() : nullptr) {
+        if (auto coordinatorPrivate = page->mediaSessionCoordinator())
+            createCoordinator(*coordinatorPrivate);
+    }
+#endif
+
     suspendIfNeeded();
 
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -146,6 +156,24 @@ MediaSession::~MediaSession() = default;
 bool MediaSession::virtualHasPendingActivity() const
 {
     return m_asyncEventQueue->hasPendingActivity();
+}
+
+void MediaSession::suspend(ReasonForSuspension reason)
+{
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    if (m_coordinator && reason == ReasonForSuspension::BackForwardCache)
+        m_coordinator->leave();
+#else
+    UNUSED_PARAM(reason);
+#endif
+}
+
+void MediaSession::stop()
+{
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    if (m_coordinator)
+        m_coordinator->close();
+#endif
 }
 
 void MediaSession::setMetadata(RefPtr<MediaMetadata>&& metadata)
@@ -171,17 +199,14 @@ void MediaSession::setReadyState(MediaSessionReadyState state)
     notifyReadyStateObservers();
 }
 
-void MediaSession::setCoordinator(MediaSessionCoordinator* coordinator)
+void MediaSession::createCoordinator(Ref<MediaSessionCoordinatorPrivate>&& coordinatorPrivate)
 {
-    if (m_coordinator == coordinator)
-        return;
-
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (m_coordinator)
         m_coordinator->setMediaSession(nullptr);
 
-    m_coordinator = coordinator;
+    m_coordinator = MediaSessionCoordinator::create(WTFMove(coordinatorPrivate));
 
     if (m_coordinator)
         m_coordinator->setMediaSession(this);

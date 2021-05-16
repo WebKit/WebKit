@@ -60,7 +60,7 @@ private:
     void positionStateChanged(const Optional<MediaPositionState>&) final;
     void readyStateChanged(MediaSessionReadyState) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
-    void coordinatorStateChanged(MediaSessionCoordinatorState) final;
+    void trackIdentifierChanged(const String&) final;
 
     const char* logClassName() const { return "MockMediaSessionCoordinator"; }
     WTFLogChannel& logChannel() const;

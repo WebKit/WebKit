@@ -148,10 +148,10 @@ void RemoteMediaSessionCoordinatorProxy::readyStateChanged(MediaSessionReadyStat
     m_privateCoordinator->readyStateChanged(state);
 }
 
-void RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
+void RemoteMediaSessionCoordinatorProxy::trackIdentifierChanged(const String& identifier)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_privateCoordinator->coordinatorStateChanged(state);
+    m_privateCoordinator->trackIdentifierChanged(identifier);
 }
 
 void RemoteMediaSessionCoordinatorProxy::seekSessionToTime(double time, CompletionHandler<void(bool)>&& callback)
@@ -172,6 +172,11 @@ void RemoteMediaSessionCoordinatorProxy::pauseSession(CompletionHandler<void(boo
 void RemoteMediaSessionCoordinatorProxy::setSessionTrack(const String& trackId, CompletionHandler<void(bool)>&& callback)
 {
     m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SetSessionTrack { trackId }, callback);
+}
+
+void RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
+{
+    m_webPageProxy.send(Messages::RemoteMediaSessionCoordinator::CoordinatorStateChanged { state });
 }
 
 #if !RELEASE_LOG_DISABLED

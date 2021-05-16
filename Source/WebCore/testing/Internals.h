@@ -1192,7 +1192,6 @@ private:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    RefPtr<MediaSessionCoordinator> m_mediaSessionCoordinator;
     RefPtr<MockMediaSessionCoordinator> m_mockMediaSessionCoordinator;
 #endif
 };

@@ -1,3 +1,64 @@
+2021-05-14  Jer Noble  <jer.noble@apple.com>
+
+        MediaSessionCoordinator survives page reload/navigation
+        https://bugs.webkit.org/show_bug.cgi?id=225822
+
+        Reviewed by Eric Carlson.
+
+        Because the MediaSessionCoordinator is created and owned by Page, it will survive
+        a reload (as Page is not re-created), and the same MediaSessionCoordinator object
+        will be added to MediaSession when the new Navigator is created.
+
+        Rather than have Page own the coordinator itself, it can instead own the
+        MediaSessionCoordinatorPrivate used to create the coordinator. When the MediaSession
+        is created, it will query the Page to ask for a MediaSessionCoordinatorPrivate to
+        use to create the coordinator, guaranteeing a new object is created.
+
+        The session itself should be left when the document is put into Back/Forward
+        Cache, or closed when the document is stopped entirely.
+
+        A few drive-by fixes:
+
+        The direction of coordinatorStateChanged() is now reversed; it flows down from the
+        UIProcess to update the state of the MediaSessionCoordinator. This allows the coordinator
+        to react when it's private implementation changes state.
+
+        Add a new upward notification when the trackIdentifier in MediaMetadata changes.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession):
+        (WebCore::MediaSession::suspend):
+        (WebCore::MediaSession::stop):
+        (WebCore::MediaSession::createCoordinator):
+        (WebCore::MediaSession::setCoordinator): Deleted.
+        * Modules/mediasession/MediaSession.h:
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::join):
+        (WebCore::MediaSessionCoordinator::leave):
+        (WebCore::MediaSessionCoordinator::close):
+        (WebCore::MediaSessionCoordinator::metadataChanged):
+        (WebCore::MediaSessionCoordinator::positionStateChanged):
+        (WebCore::MediaSessionCoordinator::playbackStateChanged):
+        (WebCore::MediaSessionCoordinator::readyStateChanged):
+        (WebCore::MediaSessionCoordinator::seekSessionToTime):
+        (WebCore::MediaSessionCoordinator::pauseSession):
+        (WebCore::MediaSessionCoordinator::coordinatorStateChanged):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h:
+        (WebCore::MediaSessionCoordinatorClient::coordinatorStateChanged):
+        * page/Page.cpp:
+        (WebCore::Page::setMediaSessionCoordinator):
+        (WebCore::Page::invalidateMediaSessionCoordinator):
+        * page/Page.h:
+        (WebCore::Page::mediaSessionCoordinator):
+        * testing/Internals.cpp:
+        (WebCore::Internals::registerMockMediaSessionCoordinator):
+        * testing/Internals.h:
+        * testing/MockMediaSessionCoordinator.cpp:
+        (WebCore::MockMediaSessionCoordinator::trackIdentifierChanged):
+        (WebCore::MockMediaSessionCoordinator::coordinatorStateChanged): Deleted.
+        * testing/MockMediaSessionCoordinator.h:
+
 2021-05-16  Chris Dumez  <cdumez@apple.com>
 
         Modernize / Optimize SQLiteStatement creation and preparation

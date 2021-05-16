@@ -1,3 +1,13 @@
+2021-05-15  Jer Noble  <jer.noble@apple.com>
+
+        MediaSessionCoordinator survives page reload/navigation
+        https://bugs.webkit.org/show_bug.cgi?id=225822
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/MediaSessionCoordinatorTest.mm:
+        (-[_WKMockMediaSessionCoordinator trackIdentifierChanged:]):
+
 2021-05-16  Chris Dumez  <cdumez@apple.com>
 
         Modernize / Optimize SQLiteStatement creation and preparation

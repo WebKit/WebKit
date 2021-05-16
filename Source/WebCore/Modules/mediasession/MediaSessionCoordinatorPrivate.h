@@ -49,6 +49,7 @@ public:
     virtual void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&&) = 0;
     virtual void pauseSession(CompletionHandler<void(bool)>&&) = 0;
     virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) { };
 };
 
 class MediaSessionCoordinatorPrivate : public RefCounted<MediaSessionCoordinatorPrivate> {
@@ -68,7 +69,7 @@ public:
     virtual void positionStateChanged(const Optional<MediaPositionState>&) = 0;
     virtual void readyStateChanged(MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(MediaSessionPlaybackState) = 0;
-    virtual void coordinatorStateChanged(MediaSessionCoordinatorState) = 0;
+    virtual void trackIdentifierChanged(const String&) = 0;
 
     void setLogger(const WTF::Logger&, const void*);
     virtual void setClient(WeakPtr<MediaSessionCoordinatorClient> client) { m_client = client;}

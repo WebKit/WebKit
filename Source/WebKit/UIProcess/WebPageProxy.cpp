@@ -10625,8 +10625,6 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(!m_mediaSessionCoordinatorProxy);
-
     sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
 
         if (!weakThis || !success) {

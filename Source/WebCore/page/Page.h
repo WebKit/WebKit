@@ -116,6 +116,7 @@ class LowPowerModeNotifier;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
 class MediaRecorderProvider;
+class MediaSessionCoordinatorPrivate;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
@@ -521,6 +522,12 @@ public:
 
 #if ENABLE(APPLICATION_MANIFEST)
     const Optional<ApplicationManifest>& applicationManifest() const { return m_applicationManifest; }
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    MediaSessionCoordinatorPrivate* mediaSessionCoordinator() { return m_mediaSessionCoordinator.get(); }
+    WEBCORE_EXPORT void setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
+    WEBCORE_EXPORT void invalidateMediaSessionCoordinator();
 #endif
 
     // Notifications when the Page starts and stops being presented via a native window.
@@ -1141,6 +1148,10 @@ private:
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<MediaSessionCoordinatorPrivate> m_mediaSessionCoordinator;
 #endif
 
     Vector<UserContentURLPattern> m_corsDisablingPatterns;

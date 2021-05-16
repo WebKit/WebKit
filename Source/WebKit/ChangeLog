@@ -1,3 +1,35 @@
+2021-05-14  Jer Noble  <jer.noble@apple.com>
+
+        MediaSessionCoordinator survives page reload/navigation
+        https://bugs.webkit.org/show_bug.cgi?id=225822
+
+        Reviewed by Eric Carlson.
+
+        Update the classes affected by virtual function changes in MediaSessionCoordinator. Update
+        the creation mechanism inside WebPage/Proxy.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _createMediaSessionCoordinatorForTesting:completionHandler:]):
+        * UIProcess/Media/MediaSessionCoordinatorProxyPrivate.h:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::trackIdentifierChanged):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createMediaSessionCoordinator):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp:
+        (WebKit::RemoteMediaSessionCoordinator::trackIdentifierChanged):
+        (WebKit::RemoteMediaSessionCoordinator::coordinatorStateChanged):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.h:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createMediaSessionCoordinator):
+        (WebKit::WebPage::invalidateMediaSessionCoordinator):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-05-16  Chris Dumez  <cdumez@apple.com>
 
         Modernize / Optimize SQLiteStatement creation and preparation

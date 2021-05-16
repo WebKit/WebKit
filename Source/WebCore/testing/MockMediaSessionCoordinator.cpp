@@ -120,10 +120,10 @@ void MockMediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState
     m_stateChangeListener->scheduleCallback(m_context.get(), "playbackStateChanged");
 }
 
-void MockMediaSessionCoordinator::coordinatorStateChanged(MediaSessionCoordinatorState state)
+void MockMediaSessionCoordinator::trackIdentifierChanged(const String& identifier)
 {
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "coordinatorStateChanged");
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, identifier);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "trackIdentifierChanged");
 }
 
 WTFLogChannel& MockMediaSessionCoordinator::logChannel() const

@@ -174,6 +174,11 @@
 #include "DisplayView.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include "MediaSessionCoordinator.h"
+#include "NavigatorMediaSession.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<Page*>& allPages()
@@ -3404,6 +3409,35 @@ void Page::dispatchAfterPrintEvent()
 void Page::setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&& paymentCoordinator)
 {
     m_paymentCoordinator = WTFMove(paymentCoordinator);
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void Page::setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& mediaSessionCoordinator)
+{
+    m_mediaSessionCoordinator = WTFMove(mediaSessionCoordinator);
+
+    auto* window = mainFrame().window();
+    if (auto* navigator = window ? window->optionalNavigator() : nullptr)
+        NavigatorMediaSession::mediaSession(*navigator).createCoordinator(*m_mediaSessionCoordinator);
+}
+
+void Page::invalidateMediaSessionCoordinator()
+{
+    m_mediaSessionCoordinator = nullptr;
+    auto* window = mainFrame().window();
+    if (!window)
+        return;
+
+    auto* navigator = window->optionalNavigator();
+    if (!navigator)
+        return;
+
+    auto* coordinator = NavigatorMediaSession::mediaSession(*navigator).coordinator();
+    if (!coordinator)
+        return;
+
+    coordinator->close();
 }
 #endif
 

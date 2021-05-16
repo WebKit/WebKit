@@ -141,6 +141,11 @@
     _lastStateChange = @"coordinatorStateChanged";
 }
 
+- (void)trackIdentifierChanged:(NSString *)trackIdentifier
+{
+    _lastStateChange = @"trackIdentifierChanged";
+}
+
 - (void)seekSessionToTime:(double)time
 {
     [self.delegate seekSessionToTime:time withCompletion:^(BOOL result) {

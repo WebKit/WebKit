@@ -89,7 +89,6 @@ void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
         }
 
         protectedThis->m_state = MediaSessionCoordinatorState::Joined;
-        protectedThis->m_privateCoordinator->coordinatorStateChanged(MediaSessionCoordinatorState::Joined);
         promise.resolve();
     });
 }
@@ -100,11 +99,20 @@ ExceptionOr<void> MediaSessionCoordinator::leave()
     if (m_state != MediaSessionCoordinatorState::Joined)
         return Exception { InvalidStateError, makeString("Unable to leave when state is ", convertEnumerationToString(m_state)) };
 
-    m_state = MediaSessionCoordinatorState::Closed;
-    m_privateCoordinator->leave();
-    m_privateCoordinator->coordinatorStateChanged(MediaSessionCoordinatorState::Closed);
+    close();
 
     return { };
+}
+
+void MediaSessionCoordinator::close()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_state = MediaSessionCoordinatorState::Closed;
+    if (!m_privateCoordinator)
+        return;
+
+    m_privateCoordinator->leave();
+    m_privateCoordinator = nullptr;
 }
 
 void MediaSessionCoordinator::seekTo(double time, DOMPromiseDeferred<void>&& promise)
@@ -248,6 +256,18 @@ void MediaSessionCoordinator::setMediaSession(MediaSession* session)
         m_session->addObserver(*this);
 }
 
+void MediaSessionCoordinator::metadataChanged(const RefPtr<MediaMetadata>& metadata)
+{
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+    if (!m_privateCoordinator)
+        return;
+
+    auto identifier = metadata ? metadata->trackIdentifier() : emptyString();
+    ALWAYS_LOG(LOGIDENTIFIER, m_state, ", trackIdentifier:", identifier);
+    m_privateCoordinator->trackIdentifierChanged(identifier);
+#endif
+}
+
 void MediaSessionCoordinator::positionStateChanged(const Optional<MediaPositionState>& positionState)
 {
     if (positionState)
@@ -256,6 +276,9 @@ void MediaSessionCoordinator::positionStateChanged(const Optional<MediaPositionS
         ALWAYS_LOG(LOGIDENTIFIER, "{ }");
 
     if (m_state != MediaSessionCoordinatorState::Joined)
+        return;
+
+    if (!m_privateCoordinator)
         return;
 
     if (!positionState) {
@@ -273,6 +296,9 @@ void MediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState pla
     if (m_state != MediaSessionCoordinatorState::Joined)
         return;
 
+    if (!m_privateCoordinator)
+        return;
+
     m_privateCoordinator->playbackStateChanged(playbackState);
 }
 
@@ -281,6 +307,9 @@ void MediaSessionCoordinator::readyStateChanged(MediaSessionReadyState readyStat
     ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", readyState);
 
     if (m_state != MediaSessionCoordinatorState::Joined)
+        return;
+
+    if (!m_privateCoordinator)
         return;
 
     m_privateCoordinator->readyStateChanged(readyState);
@@ -294,6 +323,16 @@ void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<v
         completionHandler(false);
         return;
     }
+
+    bool isPaused = m_session->playbackState() == MediaSessionPlaybackState::Paused;
+
+    if (isPaused && currentPositionApproximatelyEqualTo(time)) {
+        completionHandler(true);
+        return;
+    }
+
+    if (!isPaused)
+        m_session->callActionHandler({ .action = MediaSessionAction::Pause });
 
     m_session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = time });
     completionHandler(true);
@@ -325,7 +364,7 @@ void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& compl
         return;
     }
 
-    m_session->callActionHandler({ .action = MediaSessionAction::Play });
+    m_session->callActionHandler({ .action = MediaSessionAction::Pause });
     completionHandler(true);
 }
 
@@ -340,6 +379,14 @@ void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHan
 
     m_session->callActionHandler({ .action = MediaSessionAction::Settrack, .trackIdentifier = track });
     completionHandler(true);
+}
+
+void MediaSessionCoordinator::coordinatorStateChanged(MediaSessionCoordinatorState state)
+{
+    if (m_state == state)
+        return;
+    m_state = state;
+    ALWAYS_LOG(LOGIDENTIFIER, m_state);
 }
 
 bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time) const

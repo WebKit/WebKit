@@ -6219,7 +6219,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecutionContext& context, RefPtr<StringCallback>&& listener)
 {
-    if (m_mediaSessionCoordinator)
+    if (m_mockMediaSessionCoordinator)
         return { };
 
     auto* document = contextDocument();
@@ -6232,8 +6232,7 @@ ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecution
     auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
     auto mock = MockMediaSessionCoordinator::create(context, WTFMove(listener));
     m_mockMediaSessionCoordinator = mock.ptr();
-    m_mediaSessionCoordinator = MediaSessionCoordinator::create(mock.get());
-    session.setCoordinator(m_mediaSessionCoordinator.get());
+    session.createCoordinator(WTFMove(mock));
 
     return { };
 }
