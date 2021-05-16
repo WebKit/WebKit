@@ -48,7 +48,7 @@ LayoutUnit TableFormattingGeometry::cellHeigh(const ContainerBox& cellBox) const
 {
     ASSERT(cellBox.isInFlow());
     auto contentHeight = LayoutUnit { };
-    if (formattingContext().quirks().shouldIgnoreChildContentVerticalMargin(cellBox)) {
+    if (TableFormattingQuirks(formattingContext()).shouldIgnoreChildContentVerticalMargin(cellBox)) {
         ASSERT(cellBox.firstInFlowChild());
         auto formattingContext = this->formattingContext();
         auto& firstInFlowChild = *cellBox.firstInFlowChild();

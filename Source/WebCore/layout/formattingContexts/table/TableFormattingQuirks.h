@@ -40,7 +40,6 @@ public:
 
 private:
     const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingQuirks::formattingContext()); }
-    TableFormattingGeometry geometry() const { return formattingContext().geometry(); }
 };
 
 }

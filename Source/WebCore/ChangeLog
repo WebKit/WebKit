@@ -1,3 +1,17 @@
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Make redundant public helpers private in TableFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=225748
+
+        Reviewed by Antti Koivisto.
+
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::cellHeigh const):
+        * layout/formattingContexts/table/TableFormattingQuirks.h:
+        (WebCore::Layout::TableFormattingQuirks::formattingContext const):
+        (WebCore::Layout::TableFormattingQuirks::geometry const): Deleted.
+
 2021-05-15  Sam Weinig  <weinig@apple.com>
 
         Allow conditionally enabling OffscreenCanvas only for non-worker contexts
