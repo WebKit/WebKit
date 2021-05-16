@@ -37,6 +37,7 @@ namespace WebCore {
 namespace Layout {
 
 class InvalidationState;
+class TableFormattingGeometry;
 class TableFormattingQuirks;
 
 // This class implements the layout logic for table formatting contexts.
@@ -50,22 +51,8 @@ public:
 
     static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
 
-    class Geometry : public FormattingContext::Geometry {
-    public:
-        LayoutUnit cellHeigh(const ContainerBox&) const;
-        Edges computedCellBorder(const TableGrid::Cell&) const;
-        Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox);
-        FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);
-        InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
-
-    private:
-        friend class TableFormattingContext;
-        Geometry(const TableFormattingContext&, const TableGrid&);
-
-        const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Geometry::formattingContext()); }
-        const TableGrid& m_grid;
-    };
-    TableFormattingContext::Geometry geometry() const { return Geometry(*this, formattingState().tableGrid()); }
+    TableFormattingGeometry geometry() const;
+    TableFormattingQuirks quirks() const;
 
 private:
     class TableLayout {
@@ -83,8 +70,6 @@ private:
         const TableGrid& m_grid;
     };
 
-    TableFormattingQuirks quirks() const;
-
     TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
@@ -99,12 +84,6 @@ private:
     const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };
-
-inline TableFormattingContext::Geometry::Geometry(const TableFormattingContext& tableFormattingContext, const TableGrid& grid)
-    : FormattingContext::Geometry(tableFormattingContext)
-    , m_grid(grid)
-{
-}
 
 }
 }

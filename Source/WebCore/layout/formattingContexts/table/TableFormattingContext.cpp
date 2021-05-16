@@ -37,6 +37,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
+#include "TableFormattingGeometry.h"
 #include "TableFormattingQuirks.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
@@ -513,6 +514,11 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
         row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += distributedVerticalSpaces[rowIndex] + grid.verticalSpacing();
     }
+}
+
+TableFormattingGeometry TableFormattingContext::geometry() const
+{
+    return TableFormattingGeometry(*this, formattingState().tableGrid());
 }
 
 TableFormattingQuirks TableFormattingContext::quirks() const

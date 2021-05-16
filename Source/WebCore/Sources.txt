@@ -1562,7 +1562,7 @@ layout/layouttree/LayoutLineBreakBox.cpp
 layout/layouttree/LayoutReplacedBox.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
 layout/formattingContexts/table/TableFormattingContext.cpp
-layout/formattingContexts/table/TableFormattingContextGeometry.cpp
+layout/formattingContexts/table/TableFormattingGeometry.cpp
 layout/formattingContexts/table/TableFormattingQuirks.cpp
 layout/formattingContexts/table/TableFormattingState.cpp
 layout/formattingContexts/table/TableGrid.cpp
