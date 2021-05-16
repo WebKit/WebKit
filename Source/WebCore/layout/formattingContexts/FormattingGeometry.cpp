@@ -81,7 +81,7 @@ Optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& layoutBo
 
     if (!containingBlockHeight) {
         if (layoutState().inQuirksMode())
-            containingBlockHeight = formattingContext().quirks().heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
+            containingBlockHeight = FormattingQuirks(formattingContext()).heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
         else {
             auto nonAnonymousContainingBlockLogicalHeight = [&] {
                 // When the block level box is a direct child of an inline level box (<span><div></div></span>) and we wrap it into a continuation,

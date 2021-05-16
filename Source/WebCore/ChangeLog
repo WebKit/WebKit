@@ -1,5 +1,18 @@
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Make redundant public helpers private in FormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=225747
+
+        Reviewed by Antti Koivisto.
+
+        * layout/formattingContexts/FormattingContext.h:
+        * layout/formattingContexts/FormattingGeometry.cpp:
+        (WebCore::Layout::FormattingGeometry::computedHeightValue const):
+        * layout/formattingContexts/FormattingQuirks.cpp:
+        (WebCore::Layout::FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight):
+
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
         [LFC] Make redundant public helpers private in TableFormattingContext
         https://bugs.webkit.org/show_bug.cgi?id=225748
 

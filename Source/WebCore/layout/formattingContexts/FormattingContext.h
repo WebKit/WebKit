@@ -102,9 +102,6 @@ public:
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
 
-    FormattingGeometry geometry() const;
-    FormattingQuirks quirks() const;
-
 protected:
     using LayoutQueue = Vector<const Box*>;
 
@@ -117,6 +114,9 @@ protected:
 #endif
 
 private:
+    FormattingGeometry geometry() const;
+    FormattingQuirks quirks() const;
+
     void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
     void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
