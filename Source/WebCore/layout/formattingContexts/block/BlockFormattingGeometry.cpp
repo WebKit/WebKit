@@ -90,8 +90,9 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAn
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...
+        auto marginCollapse = BlockMarginCollapse { formattingContext() };
         auto& lastInFlowChild = *layoutContainer.lastInFlowChild();
-        if (!formattingContext().marginCollapse().marginAfterCollapsesWithParentMarginAfter(lastInFlowChild)) {
+        if (!marginCollapse.marginAfterCollapsesWithParentMarginAfter(lastInFlowChild)) {
             auto& lastInFlowBoxGeometry = formattingContext().geometryForBox(lastInFlowChild);
             auto bottomEdgeOfBottomMargin = BoxGeometry::borderBoxRect(lastInFlowBoxGeometry).bottom() + lastInFlowBoxGeometry.marginAfter();
             return { bottomEdgeOfBottomMargin - borderAndPaddingTop, nonCollapsedMargin };
@@ -99,7 +100,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAn
 
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
         auto* inFlowChild = &lastInFlowChild;
-        while (inFlowChild && formattingContext().marginCollapse().marginBeforeCollapsesWithParentMarginAfter(*inFlowChild))
+        while (inFlowChild && marginCollapse.marginBeforeCollapsesWithParentMarginAfter(*inFlowChild))
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
             auto& inFlowBoxGeometry = formattingContext().geometryForBox(*inFlowChild);
@@ -279,7 +280,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(con
         contentHeightAndMargin = complicatedCases(layoutBox, horizontalConstraints, overriddenVerticalValues);
     }
 
-    auto quirks = formattingContext().quirks();
+    auto quirks = BlockFormattingQuirks { formattingContext() };
     if (!quirks.needsStretching(layoutBox))
         return contentHeightAndMargin;
 

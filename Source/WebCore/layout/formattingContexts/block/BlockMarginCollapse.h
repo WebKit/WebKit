@@ -35,6 +35,8 @@ namespace Layout {
 // This class implements margin collapsing for block formatting context.
 class BlockMarginCollapse {
 public:
+    BlockMarginCollapse(const BlockFormattingContext&);
+
     UsedVerticalMargin collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
 
     PrecomputedMarginBefore precomputedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
@@ -51,12 +53,11 @@ public:
     bool marginAfterCollapsesWithNextSiblingMarginBefore(const Box&) const;
     bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const Box&) const;
 
+    UsedVerticalMargin::PositiveAndNegativePair::Values computedPositiveAndNegativeMargin(UsedVerticalMargin::PositiveAndNegativePair::Values, UsedVerticalMargin::PositiveAndNegativePair::Values) const;
+
     bool marginsCollapseThrough(const Box&) const;
 
 private:
-    friend class BlockFormattingContext;
-    BlockMarginCollapse(const BlockFormattingContext&);
-
     enum class MarginType { Before, After };
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeValues(const Box&, MarginType) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
@@ -65,11 +66,11 @@ private:
     UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const Box&) const;
 
-    UsedVerticalMargin::PositiveAndNegativePair::Values computedPositiveAndNegativeMargin(UsedVerticalMargin::PositiveAndNegativePair::Values, UsedVerticalMargin::PositiveAndNegativePair::Values) const;
     Optional<LayoutUnit> marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
     bool hasClearance(const Box&) const;
 
+    BlockFormattingQuirks quirks() const;
     LayoutState& layoutState() { return m_blockFormattingContext.layoutState(); }
     const LayoutState& layoutState() const { return m_blockFormattingContext.layoutState(); }
     const BlockFormattingContext& formattingContext() const { return m_blockFormattingContext; }

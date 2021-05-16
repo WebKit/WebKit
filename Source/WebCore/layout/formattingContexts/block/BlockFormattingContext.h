@@ -56,10 +56,6 @@ public:
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
 
-    BlockFormattingGeometry geometry() const;
-    BlockFormattingQuirks quirks() const;
-    BlockMarginCollapse marginCollapse() const;
-
 protected:
     struct ConstraintsPair {
         ConstraintsForInFlowContent formattingContextRoot;
@@ -85,6 +81,9 @@ protected:
     void updateMarginAfterForPreviousSibling(const Box&);
 
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    BlockFormattingGeometry geometry() const;
+    BlockFormattingQuirks quirks() const;
+    BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED
     void setPrecomputedMarginBefore(const Box& layoutBox, const PrecomputedMarginBefore& precomputedMarginBefore) { m_precomputedMarginBeforeList.set(&layoutBox, precomputedMarginBefore); }

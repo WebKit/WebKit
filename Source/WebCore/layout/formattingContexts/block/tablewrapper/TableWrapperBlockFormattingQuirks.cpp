@@ -41,11 +41,12 @@ TableWrapperQuirks::TableWrapperQuirks(const TableWrapperBlockFormattingContext&
 
 Optional<LayoutUnit> TableWrapperQuirks::overriddenTableHeight(const ContainerBox& tableBox) const
 {
+    auto geometry = BlockFormattingGeometry { formattingContext() };
     if (layoutState().inQuirksMode()) {
         // In quirks mode always use the content height. Note that the tables with content take computed values into account.
-        return formattingContext().geometry().contentHeightForFormattingContextRoot(tableBox);
+        return geometry.contentHeightForFormattingContextRoot(tableBox);
     }
-    return tableBox.hasInFlowOrFloatingChild() ? formattingContext().geometry().contentHeightForFormattingContextRoot(tableBox) : Optional<LayoutUnit> { };
+    return tableBox.hasInFlowOrFloatingChild() ? geometry.contentHeightForFormattingContextRoot(tableBox) : Optional<LayoutUnit> { };
 }
 
 }

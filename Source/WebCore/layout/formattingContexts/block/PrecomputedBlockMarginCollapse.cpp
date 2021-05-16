@@ -45,7 +45,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
     if (blockFormattingState.hasUsedVerticalMargin(layoutBox))
         return blockFormattingState.usedVerticalMargin(layoutBox).positiveAndNegativeValues.before;
 
-    auto geometry = formattingContext().geometry();
+    auto geometry = BlockFormattingGeometry { formattingContext() };
     auto horizontalConstraints = geometry.constraintsForInFlowContent(layoutBox.containingBlock()).horizontal;
     auto computedVerticalMargin = geometry.computedVerticalMargin(layoutBox, horizontalConstraints);
     auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
@@ -72,7 +72,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
     // 2. Gather positive and negative margin values from previous inflow sibling if margins are adjoining.
     // 3. Compute min/max positive and negative collapsed margin values using non-collpased computed margin before.
     auto collapsedMarginBefore = computedPositiveAndNegativeMargin(firstChildCollapsedMarginBefore(), previouSiblingCollapsedMarginAfter());
-    if (collapsedMarginBefore.isQuirk && formattingContext().quirks().shouldIgnoreCollapsedQuirkMargin(layoutBox))
+    if (collapsedMarginBefore.isQuirk && quirks().shouldIgnoreCollapsedQuirkMargin(layoutBox))
         collapsedMarginBefore = { };
 
     auto nonCollapsedBefore = UsedVerticalMargin::PositiveAndNegativePair::Values { };

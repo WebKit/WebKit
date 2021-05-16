@@ -88,7 +88,8 @@ LayoutUnit BlockFormattingQuirks::stretchedInFlowHeight(const Box& layoutBox, Co
     bodyBoxContentHeight -= bodyBoxGeometry.verticalBorder() + bodyBoxGeometry.verticalPadding().valueOr(0);
     // Body box never collapses its vertical margins with the document box but it might collapse its margin with its descendants.
     auto nonCollapsedMargin = contentHeightAndMargin.nonCollapsedMargin;
-    auto collapsedMargin = formattingContext.marginCollapse().collapsedVerticalValues(layoutBox, nonCollapsedMargin).collapsedValues;
+    auto marginCollapse = BlockMarginCollapse { formattingContext };
+    auto collapsedMargin = marginCollapse.collapsedVerticalValues(layoutBox, nonCollapsedMargin).collapsedValues;
     auto usedVerticalMargin = collapsedMargin.before.valueOr(nonCollapsedMargin.before);
     usedVerticalMargin += collapsedMargin.isCollapsedThrough ? nonCollapsedMargin.after : collapsedMargin.after.valueOr(nonCollapsedMargin.after);
     bodyBoxContentHeight -= usedVerticalMargin;
@@ -98,7 +99,7 @@ LayoutUnit BlockFormattingQuirks::stretchedInFlowHeight(const Box& layoutBox, Co
     bodyBoxContentHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.
     if (documentBox.isInFlow()) {
-        auto geometry = formattingContext.geometry();
+        auto geometry = BlockFormattingGeometry { formattingContext };
         auto precomputeDocumentBoxVerticalMargin = geometry.computedVerticalMargin(documentBox, geometry.constraintsForInFlowContent(initialContainingBlock, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk).horizontal);
         bodyBoxContentHeight -= precomputeDocumentBoxVerticalMargin.before.valueOr(0) + precomputeDocumentBoxVerticalMargin.after.valueOr(0);
     }
