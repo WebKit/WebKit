@@ -29,7 +29,6 @@
 #import <WebKit/_WKSameDocumentNavigationType.h>
 
 @class _WKContentRuleListAction;
-@class _WKWebsitePolicies;
 
 #if !TARGET_OS_IPHONE
 typedef NS_ENUM(NSInteger, _WKWebGLLoadPolicy) {
@@ -97,9 +96,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webViewWillEndNavigationGesture:(WKWebView *)webView withNavigationToBackForwardListItem:(WKBackForwardListItem *)item;
 - (void)_webView:(WKWebView *)webView willSnapshotBackForwardListItem:(WKBackForwardListItem *)item;
 - (void)_webViewDidRemoveNavigationGestureSnapshot:(WKWebView *)webView WK_API_AVAILABLE(macos(10.12), ios(10.0));
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:", macos(10.12.3, 10.14.4), ios(10.3, 12.2));
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("_webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:", macos(10.13.4, 10.15), ios(11.3, 13.0));
--(void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 - (void)_webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (void)_webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 

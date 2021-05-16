@@ -629,27 +629,6 @@ TEST(WebpagePreferences, WebsitePoliciesWithBridgingCast)
     EXPECT_TRUE(didInvokeDecisionHandler);
 }
 
-TEST(WebpagePreferences, WebsitePoliciesWithUnexpectedType)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
-    auto delegate = adoptNS([[WebsitePoliciesNavigationDelegate alloc] init]);
-
-    __block bool didCatchException = false;
-    [delegate setDecidePolicyForNavigationActionWithWebsitePolicies:^(WKNavigationAction *, WKWebpagePreferences *, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
-        @try {
-            id fakePolicies = @"Hello";
-            decisionHandler(WKNavigationActionPolicyAllow, (WKWebpagePreferences *)fakePolicies);
-        } @catch (NSException *exception) {
-            didCatchException = true;
-        }
-    }];
-
-    [webView setNavigationDelegate:delegate.get()];
-    [webView loadTestPageNamed:@"simple"];
-    TestWebKitAPI::Util::run(&didCatchException);
-}
-
 struct ParsedRange {
     ParsedRange(String string)
     {
@@ -1210,9 +1189,7 @@ static unsigned loadCount;
 
 @implementation CustomUserAgentDelegate
 
-IGNORE_WARNINGS_BEGIN("deprecated-implementations")
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
-IGNORE_WARNINGS_END
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
     auto websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
     if (navigationAction.targetFrame.mainFrame)
@@ -1302,7 +1279,7 @@ TEST(WebpagePreferences, WebsitePoliciesCustomUserAgent)
 
 @implementation CustomJavaScriptUserAgentDelegate
 
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
     auto websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
     if (navigationAction.targetFrame.mainFrame) {
@@ -1399,7 +1376,7 @@ TEST(WebpagePreferences, WebsitePoliciesCustomUserAgentAsSiteSpecificQuirks)
 
 @implementation CustomNavigatorPlatformDelegate
 
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
     auto websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
     if (navigationAction.targetFrame.mainFrame)
@@ -1560,12 +1537,12 @@ TEST(WebpagePreferences, WebsitePoliciesDeviceOrientationAskAccess)
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    // _webView:decidePolicyForNavigationAction:decisionHandler: should be called instead if it is implemented.
+    // webView:decidePolicyForNavigationAction:preferences:decisionHandler: should be called instead if it is implemented.
     EXPECT_TRUE(false);
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
-- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
     auto websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
     if (_popUpPolicyForURL)

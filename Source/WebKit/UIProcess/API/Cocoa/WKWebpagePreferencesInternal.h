@@ -25,7 +25,6 @@
 
 #import "APIWebsitePolicies.h"
 #import "WKObject.h"
-#import "_WKWebsitePolicies.h"
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 
 namespace WebKit {

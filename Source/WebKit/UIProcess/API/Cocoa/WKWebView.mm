@@ -119,7 +119,6 @@
 #import "_WKTextManipulationItem.h"
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
-#import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/AppHighlight.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
@@ -2769,10 +2768,6 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:url withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
-}
-
-- (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
-{
 }
 
 - (void)_updateWebpagePreferences:(WKWebpagePreferences *)webpagePreferences

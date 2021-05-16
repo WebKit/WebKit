@@ -1,3 +1,21 @@
+2021-05-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove _WKWebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=224293
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[CustomUserAgentDelegate _webView:decidePolicyForNavigationAction:preferences:userInfo:decisionHandler:]):
+        (-[CustomJavaScriptUserAgentDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[CustomNavigatorPlatformDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[PopUpPoliciesDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[PopUpPoliciesDelegate webView:decidePolicyForNavigationAction:preferences:decisionHandler:]):
+        (-[CustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]): Deleted.
+        (-[CustomJavaScriptUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]): Deleted.
+        (-[CustomNavigatorPlatformDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]): Deleted.
+        (-[PopUpPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]): Deleted.
+
 2021-05-15  Aakash Jain  <aakash_jain@apple.com>
 
         report-non-inclusive-language should skip node_modules directory
