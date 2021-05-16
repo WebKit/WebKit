@@ -1,3 +1,36 @@
+2021-05-15  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Ensure RemoteRenderingBackendProxy is restored to its original state when GPUP connection is closed
+        https://bugs.webkit.org/show_bug.cgi?id=225781
+        <rdar://76678163>
+
+        Reviewed by Darin Adler.
+
+        GPUProcess may exit in different scenarios: a crash, under memory pressure
+        or when it is not being used; see r276148. In all cases, the state of 
+        RemoteRenderingBackendProxy has to be restored to its original state when
+        it was created. gpuProcessConnectionDidClose() is supposed to do that.
+        But some members are not cleared in this function.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        Make sure the resource cache and the getImageData memory and semaphore
+        are cleared.
+
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+        Add this helper method to be called when a RemoteImageBufferProxy is first
+        created or when its backend is cleared.
+
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+        Add this new function to restore RemoteResourceCacheProxy to its original
+        state.
+
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+        (WebKit::RemoteResourceCacheProxy::imageBuffers const): Deleted.
+
 2021-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove _WKWebsitePolicies

@@ -86,6 +86,7 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
 {
     previousConnection.removeClient(*this);
     m_gpuProcessConnection = nullptr;
+    m_remoteResourceCacheProxy.remoteResourceCacheWasDestroyed();
 
     m_identifiersOfReusableHandles.clear();
     m_sharedDisplayListHandles.clear();
@@ -93,12 +94,11 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
     m_deferredWakeupMessageArguments = WTF::nullopt;
     m_remainingItemsToAppendBeforeSendingWakeup = 0;
 
-    for (auto& imageBuffer : m_remoteResourceCacheProxy.imageBuffers().values()) {
-        if (!imageBuffer)
-            continue;
-        send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer->logicalSize(), imageBuffer->renderingMode(), imageBuffer->resolutionScale(), imageBuffer->colorSpace(), imageBuffer->pixelFormat(), imageBuffer->renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        imageBuffer->clearBackend();
-    }
+    if (m_destroyGetPixelBufferSharedMemoryTimer.isActive())
+        m_destroyGetPixelBufferSharedMemoryTimer.stop();
+    m_getPixelBufferSemaphore = WTF::nullopt;
+    m_getPixelBufferSharedMemoryLength = 0;
+    m_getPixelBufferSharedMemory = nullptr;
 }
 
 IPC::Connection* RemoteRenderingBackendProxy::messageSenderConnection() const
@@ -125,6 +125,11 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
+void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
+{
+    send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat)
 {
     RefPtr<ImageBuffer> imageBuffer;
@@ -143,7 +148,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
         imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, resolutionScale, colorSpace, pixelFormat, *this);
 
     if (imageBuffer) {
-        send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat, imageBuffer->renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        createRemoteImageBuffer(*imageBuffer);
         return imageBuffer;
     }
 

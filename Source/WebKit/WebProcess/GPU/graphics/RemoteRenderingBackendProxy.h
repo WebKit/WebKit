@@ -82,6 +82,8 @@ public:
     bool waitForGetPixelBufferToComplete(IPC::Timeout);
     void destroyGetPixelBufferSharedMemory();
 
+    void createRemoteImageBuffer(WebCore::ImageBuffer&);
+        
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
@@ -130,17 +132,19 @@ private:
     void sendWakeupMessage(const GPUProcessWakeupMessageArguments&);
 
     RemoteRenderingBackendCreationParameters m_parameters;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
+
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;
     Deque<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfReusableHandles;
     Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
     Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
+
     Optional<IPC::Semaphore> m_getPixelBufferSemaphore;
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     uint64_t m_getPixelBufferSharedMemoryLength { 0 };
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 } // namespace WebKit

@@ -145,6 +145,18 @@ void RemoteResourceCacheProxy::didFinalizeRenderingUpdate()
     m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
 }
 
+void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
+{
+    for (auto& imageBuffer : m_imageBuffers.values()) {
+        if (!imageBuffer)
+            continue;
+        m_remoteRenderingBackendProxy.createRemoteImageBuffer(*imageBuffer);
+        imageBuffer->clearBackend();
+    }
+    m_nativeImages.clear();
+    m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
+}
+
 void RemoteResourceCacheProxy::releaseMemory()
 {
     m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
