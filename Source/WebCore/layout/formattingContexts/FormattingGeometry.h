@@ -48,6 +48,8 @@ struct VerticalGeometry;
 // This class implements generic positioning and sizing.
 class FormattingGeometry {
 public:
+    FormattingGeometry(const FormattingContext&);
+
     VerticalGeometry outOfFlowVerticalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenVerticalValues&) const;
     HorizontalGeometry outOfFlowHorizontalGeometry(const Box&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenHorizontalValues&);
 
@@ -88,9 +90,6 @@ public:
     Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth);
 
 protected:
-    friend class FormattingContext;
-    FormattingGeometry(const FormattingContext&);
-
     const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
     LayoutState& layoutState() { return m_formattingContext.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }

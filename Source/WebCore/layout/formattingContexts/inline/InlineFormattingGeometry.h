@@ -34,6 +34,8 @@ namespace Layout {
 
 class InlineFormattingGeometry : public FormattingGeometry {
 public:
+    InlineFormattingGeometry(const InlineFormattingContext&);
+
     LineBox lineBoxForLineContent(const LineBuilder::LineContent&);
     InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
 
@@ -41,9 +43,6 @@ public:
     ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
 
 private:
-    friend class InlineFormattingContext;
-    InlineFormattingGeometry(const InlineFormattingContext&);
-
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
 
 };

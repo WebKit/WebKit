@@ -34,13 +34,13 @@ namespace Layout {
 
 class InlineFormattingQuirks : public FormattingQuirks {
 public:
+    InlineFormattingQuirks(const InlineFormattingContext&);
+
     InlineLayoutUnit initialLineHeight() const;
     bool hasSoftWrapOpportunityAtImage() const;
     bool inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox&, const LineBox&) const;
 
 private:
-    friend class InlineFormattingContext;
-    InlineFormattingQuirks(const InlineFormattingContext&);
 
     const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingQuirks::formattingContext()); }
 

@@ -34,6 +34,8 @@ namespace Layout {
 
 class TableFormattingGeometry : public FormattingGeometry {
 public:
+    TableFormattingGeometry(const TableFormattingContext&, const TableGrid&);
+
     LayoutUnit cellHeigh(const ContainerBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
     Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox);
@@ -41,9 +43,6 @@ public:
     InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
 
 private:
-    friend class TableFormattingContext;
-    TableFormattingGeometry(const TableFormattingContext&, const TableGrid&);
-
     const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }
     const TableGrid& m_grid;
 };

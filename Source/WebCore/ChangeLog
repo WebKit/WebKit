@@ -1,5 +1,20 @@
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Make FormattingGeometry c'tors public
+        https://bugs.webkit.org/show_bug.cgi?id=225751
+
+        Reviewed by Antti Koivisto.
+
+        Remove unnecessary class friending.
+
+        * layout/formattingContexts/FormattingGeometry.h:
+        * layout/formattingContexts/block/BlockFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingQuirks.h:
+        * layout/formattingContexts/table/TableFormattingGeometry.h:
+
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
         [LFC] Move base formatting geometry to its own class
         https://bugs.webkit.org/show_bug.cgi?id=225752
 
