@@ -3207,6 +3207,7 @@ JSImageBitmapOptions.cpp
 JSImageBitmapRenderingContext.cpp
 JSImageBitmapRenderingContextSettings.cpp
 JSImageData.cpp
+JSImageDataSettings.cpp
 JSImageSmoothingQuality.cpp
 JSInputEvent.cpp
 JSInspectorAuditAccessibilityObject.cpp

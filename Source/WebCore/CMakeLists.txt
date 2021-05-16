@@ -1017,6 +1017,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ImageBitmap.idl
     html/ImageBitmapOptions.idl
     html/ImageData.idl
+    html/ImageDataSettings.idl
     html/MediaController.idl
     html/MediaEncryptedEvent.idl
     html/MediaError.idl

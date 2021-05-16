@@ -468,7 +468,7 @@ Optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(DestinationCo
     // Color space conversion happens internally when drawing from one image buffer to another
     convertedBuffer->context().drawImageBuffer(inputBuffer, rect);
     
-    PixelBufferFormat format { outputAlphaFormat, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    PixelBufferFormat format { outputAlphaFormat, PixelFormat::RGBA8, targetColorSpace };
     return convertedBuffer->getPixelBuffer(format, rect);
 }
 
@@ -504,7 +504,9 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
                 copyConvertedImageBufferToDestination(destination, *colorSpace, AlphaPremultiplication::Unpremultiplied, rect);
                 return;
             }
-            PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+
+            ASSERT(m_imageBufferResult->colorSpace() == m_resultColorSpace);
+            PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, m_resultColorSpace };
             m_unmultipliedImageResult = m_imageBufferResult->getPixelBuffer(format, { IntPoint(), m_absolutePaintRect.size() });
             if (!m_unmultipliedImageResult)
                 return;
@@ -512,7 +514,9 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
-            PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+            
+            ASSERT(m_premultipliedImageResult->format().colorSpace == m_resultColorSpace);
+            PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, m_resultColorSpace };
             m_unmultipliedImageResult = PixelBuffer::tryCreate(format, inputSize);
             if (!m_unmultipliedImageResult)
                 return;
@@ -539,7 +543,9 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
                 copyConvertedImageBufferToDestination(destination, *colorSpace, AlphaPremultiplication::Premultiplied, rect);
                 return;
             }
-            PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+
+            ASSERT(m_imageBufferResult->colorSpace() == m_resultColorSpace);
+            PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, m_resultColorSpace };
             m_premultipliedImageResult = m_imageBufferResult->getPixelBuffer(format, { IntPoint(), m_absolutePaintRect.size() });
             if (!m_premultipliedImageResult)
                 return;
@@ -547,7 +553,9 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
-            PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+
+            ASSERT(m_unmultipliedImageResult->format().colorSpace == m_resultColorSpace);
+            PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, m_resultColorSpace };
             m_premultipliedImageResult = PixelBuffer::tryCreate(format, inputSize);
             if (!m_premultipliedImageResult)
                 return;
@@ -590,7 +598,7 @@ Optional<PixelBuffer>& FilterEffect::createUnmultipliedImageResult()
     IntSize resultSize(m_absolutePaintRect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, m_resultColorSpace };
     m_unmultipliedImageResult = PixelBuffer::tryCreate(format, resultSize);
     return m_unmultipliedImageResult;
 }
@@ -609,7 +617,7 @@ Optional<PixelBuffer>& FilterEffect::createPremultipliedImageResult()
     IntSize resultSize(m_absolutePaintRect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
-    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, m_resultColorSpace };
     m_premultipliedImageResult = PixelBuffer::tryCreate(format, resultSize);
     return m_premultipliedImageResult;
 }

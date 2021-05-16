@@ -428,6 +428,12 @@ Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processA
     return {{ valueIndexForData(argument), RecordingSwizzleType::ImageData }};
 }
 
+Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(ImageDataSettings&)
+{
+    // FIXME: Implement.
+    return WTF::nullopt;
+}
+
 Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(ImageSmoothingQuality argument)
 {
     return {{ valueIndexForData(convertEnumerationToString(argument)), RecordingSwizzleType::String }};

@@ -70,6 +70,7 @@ class WebGLTransformFeedback;
 class WebGLUniformLocation;
 class WebGLVertexArrayObject;
 struct DOMMatrix2DInit;
+struct ImageDataSettings;
 enum class RecordingSwizzleType : int;
 enum class CanvasDirection;
 enum class CanvasFillRule;
@@ -150,6 +151,7 @@ enum ImageSmoothingQuality;
     macro(HTMLImageElement*) \
     macro(ImageBitmap*) \
     macro(ImageData*) \
+    macro(ImageDataSettings&) \
     macro(ImageSmoothingQuality) \
     macro(Optional<float>&) \
     macro(Path2D*) \

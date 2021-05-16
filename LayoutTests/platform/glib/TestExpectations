@@ -2358,6 +2358,7 @@ fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ ImageOnlyFailur
 webkit.org/b/224112 media/video-as-img-output-pts.html [ Timeout Pass ]
 
 webkit.org/b/225423 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
+webkit.org/b/225423 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
 webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 
 # Failing after r277073.

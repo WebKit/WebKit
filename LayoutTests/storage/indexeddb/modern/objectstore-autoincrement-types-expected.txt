@@ -26,6 +26,7 @@ PASS key is 3
 PASS request.result.primaryKey is imageData.primaryKey
 PASS request.result.width is imageData.width
 PASS request.result.height is imageData.height
+PASS request.result.colorSpace is imageData.colorSpace
 PASS key is 4
 PASS request.result.primaryKey is fileList.primaryKey
 PASS request.result.length is fileList.length
@@ -40,6 +41,7 @@ PASS request.result[1].type is file.type
 PASS request.result[2].primaryKey is imageData.primaryKey
 PASS request.result[2].width is imageData.width
 PASS request.result[2].height is imageData.height
+PASS request.result[2].colorSpace is imageData.colorSpace
 PASS request.result[3].primaryKey is fileList.primaryKey
 PASS request.result[3].length is fileList.length
 PASS successfullyParsed is true

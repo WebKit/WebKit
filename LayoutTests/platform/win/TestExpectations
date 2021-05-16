@@ -4635,4 +4635,6 @@ webexposed/counter-style-image-symbols-not-exposed.html [ Skip ]
 
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
-fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled.html [ Skip ]
+# Non-SRGB color spaces are not currently supported by the Windows port.
+fast/canvas/canvas-color-space-display-p3.html [ Skip ]
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]

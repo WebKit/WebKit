@@ -41,9 +41,13 @@ namespace WebCore {
 class PixelBuffer {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
+    static bool supportedPixelFormat(PixelFormat);
+
     WEBCORE_EXPORT static Optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
 
     PixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
+    PixelBuffer(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
     WEBCORE_EXPORT ~PixelBuffer();
 
     PixelBuffer(PixelBuffer&&) = default;
@@ -52,6 +56,8 @@ public:
     const PixelBufferFormat& format() const { return m_format; }
     const IntSize& size() const { return m_size; }
     JSC::Uint8ClampedArray& data() const { return m_data.get(); }
+
+    Ref<JSC::Uint8ClampedArray>&& takeData() { return WTFMove(m_data); }
 
     PixelBuffer deepClone() const;
 

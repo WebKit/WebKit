@@ -1,3 +1,142 @@
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Add support for creating/accessing/setting non-sRGB ImageData via canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225841
+
+        Reviewed by Darin Adler.
+
+        Test: fast/canvas/canvas-color-space-display-p3-ImageData.html
+
+        Add support for accessing non-sRGB (only DisplayP3 for now due
+        to the specification, but the support is general) pixel data in
+        HTML canvas.
+
+        Updates ImageData constructors and CanvasImageData operations to 
+        take optional ImageDataSettings dictionaries, which contain an 
+        optional color space (otherwise defaulting back to sRGB). 
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/ImageDataSettings.h: Added.
+        * html/ImageDataSettings.idl: Added.
+        Add new ImageDataSettings.idl and related files.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readImageBitmap):
+        Fixes FIXME and uses PixelBuffer directly rather than allocating
+        an unnecessary ImageData. This was done now since the relevent
+        ImageData constructor has gone away.
+
+        * html/ImageData.cpp:
+        (WebCore::computeDataSize):
+        (WebCore::ImageData::computeColorSpace):
+        (WebCore::ImageData::create):
+        (WebCore::ImageData::createUninitialized):
+        (WebCore::ImageData::ImageData):
+        (WebCore::ImageData::pixelBuffer const):
+        (WebCore::ImageData::dataSize): Deleted.
+        (WebCore::ImageData::deepClone const): Deleted.
+        * html/ImageData.h:
+        (WebCore::ImageData::size const):
+        (WebCore::ImageData::width const):
+        (WebCore::ImageData::height const):
+        (WebCore::ImageData::data const):
+        (WebCore::ImageData::colorSpace const):
+        (WebCore::ImageData::pixelBuffer const): Deleted.
+
+        - Reworked ImageData to no longer store a PixelBuffer, which has
+          extraneous information in it, but rather to store just what it
+          needs IntSize, Ref<JSC::Uint8ClampedArray>, and now PredefinedColorSpace.
+        - Updates create functions for new optional ImageDataSettings.
+        - Adds createUninitialized which follows spec language for ImageData creation
+          and is used by CanvasRenderingContext2D to create ImageData objects of with
+          the right color spaces, allowing for fallback to the canvas' own color space
+          when no ImageDataSettings color space is provided. It is uninitialized and
+          therefore requires the client to initialize the data to allow for support for
+          no alpha support in the future, which requires a non-zero initialization pattern.
+
+        * html/ImageData.idl:
+        Add optional ImageDataSettings parameters and the new colorSpace attribute.
+
+        * html/canvas/CanvasImageData.idl:
+        Add optional ImageDataSettings parameters.
+
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::initializeEmptyImageData):
+        Add helper to initialize the ImageData buffer. Right now it always calls
+        zeroFill(), but in the future it will need to do more.
+        
+        (WebCore::CanvasRenderingContext2DBase::createImageData const):
+        Update to account for this function being able to throw an exception (when 
+        out of memory) and use the new createUninitialized/initializeEmptyImageData
+        to create a correctly color spaced ImageData.
+
+        (WebCore::CanvasRenderingContext2DBase::createImageData const):
+        Update for new optional ImageDataSettings and use the new createUninitialized
+        initializeEmptyImageData to create a correctly color spaced ImageData.
+
+        (WebCore::CanvasRenderingContext2DBase::getImageData const):
+        Moves parameter checks to the begining to match the spec, and uses new 
+        createUninitialized/initializeEmptyImageData to create a correctly color 
+        spaced ImageData. Also, use the ImageData's color space when getting
+        the pixel buffer to actually return the right data!
+
+        * html/canvas/PredefinedColorSpace.cpp:
+        (WebCore::toPredefinedColorSpace):
+        * html/canvas/PredefinedColorSpace.h:
+        Add conversion function from DestinationColorSpace to PredefinedColorSpace.
+        Since DestinationColorSpace is a superset of PredefinedColorSpace, this can
+        fail, so this conversion returns an Optional.
+
+        * inspector/InspectorCanvas.cpp:
+        * inspector/InspectorCanvasCallTracer.cpp:
+        * inspector/InspectorCanvasCallTracer.h:
+        Stub out inspector support for ImageDataSettings.
+
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::getPixelBuffer const):
+        Use the ImageBuffer's actual color space as the source color space
+        rather than hard coding sRGB. This allows the color space conversion
+        to take place. Also remove some unnecessary temporary variables.
+
+        (WebCore::ImageBufferBackend::putPixelBuffer):
+        Use the ImageBuffer's actual color space as the destination color space
+        rather than hard coding sRGB. This allows the color space conversion
+        to take place. Also remove some unnecessary temporary variables.
+
+        * platform/graphics/PixelBuffer.cpp:
+        (WebCore::PixelBuffer::tryCreate):
+        (WebCore::PixelBuffer::PixelBuffer):
+        * platform/graphics/PixelBuffer.h:
+        (WebCore::PixelBuffer::takeData):
+        Add a few helpers to allow creationg to/from PixelBuffer
+        a bit easier.
+
+        * platform/graphics/PixelBufferConversion.cpp:
+        (WebCore::convertImagePixelsAccelerated):
+        Fix incorrect assertion. We want to assert that there is no error, not that
+        there is one.
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::convertImageBufferToColorSpace):
+        (WebCore::FilterEffect::copyUnmultipliedResult):
+        (WebCore::FilterEffect::copyPremultipliedResult):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        Stop hard coding SRGB for PixelBuffer color spaces and use the appropriate
+        color space for the task. We still do color space conversion through ImageBuffer
+        so we should come back and simplify code here to not always require that.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::videoSampleAvailable):
+        (WebCore::Internals::loadArtworkImage):
+        Update to specify a color space to maintain existing behavior.
+
 2021-05-16  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Cleanup margin collapsing class

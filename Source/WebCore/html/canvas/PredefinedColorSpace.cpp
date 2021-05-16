@@ -27,6 +27,7 @@
 #include "PredefinedColorSpace.h"
 
 #include "ColorSpace.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -43,6 +44,25 @@ DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace colorSpace)
 
     ASSERT_NOT_REACHED();
     return DestinationColorSpace::SRGB;
+}
+
+Optional<PredefinedColorSpace> toPredefinedColorSpace(DestinationColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case DestinationColorSpace::SRGB:
+        return PredefinedColorSpace::SRGB;
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    case DestinationColorSpace::LinearSRGB:
+        return WTF::nullopt;
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    case DestinationColorSpace::DisplayP3:
+        return PredefinedColorSpace::DisplayP3;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
 }
 
 }

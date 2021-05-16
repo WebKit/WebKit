@@ -1036,6 +1036,7 @@ $(PROJECT_DIR)/html/HTMLVideoElement.idl
 $(PROJECT_DIR)/html/ImageBitmap.idl
 $(PROJECT_DIR)/html/ImageBitmapOptions.idl
 $(PROJECT_DIR)/html/ImageData.idl
+$(PROJECT_DIR)/html/ImageDataSettings.idl
 $(PROJECT_DIR)/html/MediaController.idl
 $(PROJECT_DIR)/html/MediaEncryptedEvent.idl
 $(PROJECT_DIR)/html/MediaError.idl

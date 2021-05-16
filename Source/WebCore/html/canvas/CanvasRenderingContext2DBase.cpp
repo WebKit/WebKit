@@ -2160,38 +2160,40 @@ bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
     return false;
 }
 
-static RefPtr<ImageData> createEmptyImageData(const IntSize& size)
+static void initializeEmptyImageData(const ImageData& imageData)
 {
-    auto data = ImageData::create(size);
-    if (data)
-        data->data().zeroFill();
-    return data;
+    imageData.data().zeroFill();
 }
 
-RefPtr<ImageData> CanvasRenderingContext2DBase::createImageData(ImageData& imageData) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageData& existingImageData) const
 {
-    return createEmptyImageData(imageData.size());
+    auto newImageData = ImageData::createUninitialized(existingImageData.width(), existingImageData.height(), existingImageData.colorSpace());
+    if (!newImageData.hasException())
+        initializeEmptyImageData(newImageData.returnValue());
+    return newImageData;
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh, Optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
 
-    IntSize size { std::abs(sw), std::abs(sh) };
-    return createEmptyImageData(size);
+    auto imageData = ImageData::createUninitialized(std::abs(sw), std::abs(sh), m_settings.colorSpace, settings);
+    if (!imageData.hasException())
+        initializeEmptyImageData(imageData.returnValue());
+    return imageData;
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, Optional<ImageDataSettings> settings) const
 {
+    if (!sw || !sh)
+        return Exception { IndexSizeError };
+
     if (!canvasBase().originClean()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
         return Exception { SecurityError };
     }
-
-    if (!sw || !sh)
-        return Exception { IndexSizeError };
 
     if (sw < 0) {
         sx += sw;
@@ -2205,16 +2207,24 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx
     IntRect imageDataRect { sx, sy, sw, sh };
 
     ImageBuffer* buffer = canvasBase().buffer();
-    if (!buffer)
-        return createEmptyImageData(imageDataRect.size());
+    if (!buffer) {
+        auto imageData = ImageData::createUninitialized(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
+        if (!imageData.hasException())
+            initializeEmptyImageData(imageData.returnValue());
+        return imageData;
+    }
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
+
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
     auto pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
     if (!pixelBuffer) {
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was ", imageDataRect.width(), " x ", imageDataRect.height()));
         return Exception { InvalidStateError };
     }
+
+    ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
     return { { ImageData::create(WTFMove(*pixelBuffer)) } };
 }

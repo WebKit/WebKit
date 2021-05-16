@@ -1,3 +1,18 @@
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Add support for creating/accessing/setting non-sRGB ImageData via canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225841
+
+        Reviewed by Darin Adler.
+
+        Add support for tests enabling the CanvasColorSpaceEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::canvasColorSpaceEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete WebSQL code from WebKit2

@@ -2,5 +2,5 @@
 test getImageData with display-p3 and uint8 from display p3 uint8 canvas
 Actual output:
 
-FAIL test getImageData with display-p3 and uint8 from display p3 uint8 canvas assert_approx_equals: expected 62 +/- 2 but got 50
+PASS test getImageData with display-p3 and uint8 from display p3 uint8 canvas
 

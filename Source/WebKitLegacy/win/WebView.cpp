@@ -5667,6 +5667,8 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setOverscrollBehaviorEnabled(!!enabled);
 
+    settings.setCanvasColorSpaceEnabled(m_preferences->canvasColorSpaceEnabled());
+
     return S_OK;
 }
 

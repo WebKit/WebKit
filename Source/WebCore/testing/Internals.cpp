@@ -5331,7 +5331,7 @@ void Internals::videoSampleAvailable(MediaSample& sample)
     if (!rgba)
         return;
     
-    auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height());
+    auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
     if (!imageData.hasException())
         m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
     else
@@ -6203,7 +6203,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
     m_artworkImagePromise = makeUnique<ArtworkImagePromise>(WTFMove(promise));
     m_artworkLoader = makeUnique<ArtworkImageLoader>(*contextDocument(), url, [this](Image* image) {
         if (image) {
-            auto imageData = ImageData::create(unsigned(image->width()), unsigned(image->height()));
+            auto imageData = ImageData::create(image->width(), image->height(), { { PredefinedColorSpace::SRGB } });
             if (!imageData.hasException())
                 m_artworkImagePromise->resolve(imageData.releaseReturnValue());
             else

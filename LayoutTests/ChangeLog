@@ -1,3 +1,33 @@
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Add support for creating/accessing/setting non-sRGB ImageData via canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225841
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        Remove wide-gamut-canvas now that they should pass.
+
+        * fast/canvas/canvas-color-space-display-p3-ImageData-expected.txt: Added.
+        * fast/canvas/canvas-color-space-display-p3-ImageData.html: Added.
+        Add new test exercising getImageData and putImageData with non-sRGB canvases
+        and non-sRGB ImageData.
+ 
+        * fast/canvas/canvas-imageData-expected.txt:
+        Update results for updated error messages, which are a bit worse due additional
+        ambiguity in signatures.
+
+        * platform/glib/TestExpectations:
+        Mark new test as failing on glib due to lack of display-p3 support.
+
+        * platform/win/TestExpectations:
+        Mark new test as failing on Windows due to lack of display-p3 support.
+        Unskip CanvasRenderingContext2DSettings-colorSpace-enabled.html which
+        should now pass due to adding manual preferences support in WebKitLegacy/win. 
+
+        * storage/indexeddb/modern/objectstore-autoincrement-types-expected.txt:
+        Update results due to new attribute in ImageData that is auto printed.
+
 2021-05-16  Tim Nguyen  <ntim@apple.com>
 
         Make will-change: transform-style create a containing block

@@ -31,10 +31,22 @@
 
 namespace WebCore {
 
+bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case PixelFormat::RGBA8:
+    case PixelFormat::BGRA8:
+        return true;
+
+    case PixelFormat::RGB10:
+    case PixelFormat::RGB10A8:
+        return false;
+    }
+}
+
 Checked<unsigned, RecordOverflow> PixelBuffer::computeBufferSize(const PixelBufferFormat& format, const IntSize& size)
 {
-    // NOTE: Only 8-bit formats are currently supported.
-    ASSERT_UNUSED(format, format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8);
+    ASSERT_UNUSED(format, supportedPixelFormat(format.pixelFormat));
 
     constexpr unsigned bytesPerPixel = 4;
 
@@ -43,7 +55,7 @@ Checked<unsigned, RecordOverflow> PixelBuffer::computeBufferSize(const PixelBuff
 
 Optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
 {
-    ASSERT(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8);
+    ASSERT(supportedPixelFormat(format.pixelFormat));
     ASSERT(computeBufferSize(format, size).unsafeGet() == dataByteLength);
 
     auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(dataByteLength);
@@ -54,8 +66,7 @@ Optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat&
 
 Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
-    // NOTE: Only 8-bit formats are currently supported.
-    ASSERT(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8);
+    ASSERT(supportedPixelFormat(format.pixelFormat));
 
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
@@ -66,10 +77,33 @@ Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, co
     return { { format, size, pixelArray.releaseNonNull() } };
 }
 
+Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBuffer>&& arrayBuffer)
+{
+    ASSERT(supportedPixelFormat(format.pixelFormat));
+
+    auto bufferSize = computeBufferSize(format, size);
+    if (bufferSize.hasOverflowed())
+        return WTF::nullopt;
+    if (bufferSize.unsafeGet() != arrayBuffer->byteLength())
+        return WTF::nullopt;
+    auto pixelArray = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize.unsafeGet());
+    if (!pixelArray)
+        return WTF::nullopt;
+    return { { format, size, pixelArray.releaseNonNull() } };
+}
+
 PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
     : m_format { format }
     , m_size { size }
     , m_data { WTFMove(data) }
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4).unsafeGet() <= m_data->length());
+}
+
+PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, JSC::Uint8ClampedArray& data)
+    : m_format { format }
+    , m_size { size }
+    , m_data { data }
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4).unsafeGet() <= m_data->length());
 }

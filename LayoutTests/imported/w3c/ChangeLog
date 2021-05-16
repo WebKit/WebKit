@@ -1,3 +1,13 @@
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Add support for creating/accessing/setting non-sRGB ImageData via canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225841
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3-expected.txt:
+        Update result to passing.
+
 2021-05-15  Said Abou-Hallawa  <said@apple.com>
 
         Implement CanvasRenderingContext2D.createConicGradient

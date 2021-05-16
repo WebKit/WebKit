@@ -3141,22 +3141,9 @@ private:
             return JSValue();
         }
 
-        auto array = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, arrayBuffer->byteLength());
-        if (!array) {
-            fail();
-            return JSValue();
-        }
-
         IntSize logicalSize = IntSize(logicalWidth, logicalHeight);
         IntSize imageDataSize = logicalSize;
         imageDataSize.scale(resolutionScale);
-
-        // FIXME: Creating this ImageData is not necessary. We should skip right to creating a PixelBuffer directly.
-        auto imageData = ImageData::create(imageDataSize, array.releaseNonNull());
-        if (!imageData) {
-            fail();
-            return JSValue();
-        }
 
         auto buffer = ImageBitmap::createImageBuffer(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), logicalSize, RenderingMode::Unaccelerated, resolutionScale);
         if (!buffer) {
@@ -3164,7 +3151,14 @@ private:
             return JSValue();
         }
 
-        buffer->putPixelBuffer(imageData->pixelBuffer(), { IntPoint::zero(), logicalSize });
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+        auto pixelBuffer = PixelBuffer::tryCreate(format, imageDataSize, arrayBuffer.releaseNonNull());
+        if (!pixelBuffer) {
+            fail();
+            return JSValue();
+        }
+
+        buffer->putPixelBuffer(WTFMove(*pixelBuffer), { IntPoint::zero(), logicalSize });
 
         auto bitmap = ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer), OptionSet<SerializationState>::fromRaw(serializationState)));
         return getJSValue(bitmap);

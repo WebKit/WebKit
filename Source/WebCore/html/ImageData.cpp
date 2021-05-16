@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-Checked<unsigned, RecordOverflow> ImageData::dataSize(const IntSize& size)
+static Checked<unsigned, RecordOverflow> computeDataSize(const IntSize& size)
 {
     Checked<unsigned, RecordOverflow> checkedDataSize = 4;
     checkedDataSize *= static_cast<unsigned>(size.width());
@@ -43,57 +43,85 @@ Checked<unsigned, RecordOverflow> ImageData::dataSize(const IntSize& size)
     return checkedDataSize;
 }
 
+PredefinedColorSpace ImageData::computeColorSpace(Optional<ImageDataSettings> settings, PredefinedColorSpace defaultColorSpace)
+{
+    if (settings && settings->colorSpace)
+        return *settings->colorSpace;
+    return defaultColorSpace;
+}
+
 Ref<ImageData> ImageData::create(PixelBuffer&& pixelBuffer)
 {
-    return adoptRef(*new ImageData(WTFMove(pixelBuffer)));
+    auto colorSpace = toPredefinedColorSpace(pixelBuffer.format().colorSpace);
+    return adoptRef(*new ImageData(pixelBuffer.size(), pixelBuffer.takeData(), *colorSpace));
 }
 
 RefPtr<ImageData> ImageData::create(Optional<PixelBuffer>&& pixelBuffer)
 {
     if (!pixelBuffer)
         return nullptr;
-    return ImageData::create(WTFMove(*pixelBuffer));
+    return create(WTFMove(*pixelBuffer));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size)
 {
-    auto dataSize = ImageData::dataSize(size);
+    auto dataSize = computeDataSize(size);
     if (dataSize.hasOverflowed())
         return nullptr;
     auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
     if (!byteArray)
         return nullptr;
-    
-    return adoptRef(*new ImageData({ { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB }, size, byteArray.releaseNonNull() }));
+    return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), PredefinedColorSpace::SRGB));
 }
 
-RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray)
+RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray, PredefinedColorSpace colorSpace)
 {
-    auto dataSize = ImageData::dataSize(size);
-    if (dataSize.hasOverflowed() || dataSize.unsafeGet() > byteArray->length())
+    auto dataSize = computeDataSize(size);
+    if (dataSize.hasOverflowed() || dataSize.unsafeGet() != byteArray->length())
         return nullptr;
 
-    return adoptRef(*new ImageData({ { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB }, size, WTFMove(byteArray) }));
+    return adoptRef(*new ImageData(size, WTFMove(byteArray), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
+ExceptionOr<Ref<ImageData>> ImageData::createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, Optional<ImageDataSettings> settings)
+{
+    IntSize size(rows, pixelsPerRow);
+    auto dataSize = computeDataSize(size);
+    if (dataSize.hasOverflowed())
+        return Exception { RangeError, "Cannot allocate a buffer of this size"_s };
+
+    auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
+    if (!byteArray) {
+        // FIXME: Does this need to be a "real" out of memory error with setOutOfMemoryError called on it?
+        return Exception { RangeError, "Out of memory"_s };
+    }
+
+    auto colorSpace = computeColorSpace(settings, defaultColorSpace);
+    return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), colorSpace));
+}
+
+ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Optional<ImageDataSettings> settings)
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
+
     IntSize size(sw, sh);
-    auto dataSize = ImageData::dataSize(size);
+    auto dataSize = computeDataSize(size);
     if (dataSize.hasOverflowed())
         return Exception { RangeError, "Cannot allocate a buffer of this size"_s };
+
     auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize.unsafeGet());
     if (!byteArray) {
         // FIXME: Does this need to be a "real" out of memory error with setOutOfMemoryError called on it?
         return Exception { RangeError, "Out of memory"_s };
     }
     byteArray->zeroFill();
-    return adoptRef(*new ImageData({ { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB }, size, byteArray.releaseNonNull() }));
+
+    auto colorSpace = computeColorSpace(settings);
+    return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh)
+ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh, Optional<ImageDataSettings> settings)
 {
     unsigned length = byteArray->length();
     if (!length || length % 4)
@@ -107,22 +135,28 @@ ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray
     if (sh && sh.value() != height)
         return Exception { IndexSizeError, "sh value is not equal to height"_s };
 
-    auto result = create(IntSize(sw, height), WTFMove(byteArray));
-    if (!result)
+    IntSize size(sw, height);
+    auto dataSize = computeDataSize(size);
+    if (dataSize.hasOverflowed() || dataSize.unsafeGet() != byteArray->length())
         return Exception { RangeError };
-    return result.releaseNonNull();
+
+    auto colorSpace = computeColorSpace(settings);
+    return adoptRef(*new ImageData(size, WTFMove(byteArray), colorSpace));
 }
 
-ImageData::ImageData(PixelBuffer&& pixelBuffer)
-    : m_pixelBuffer(WTFMove(pixelBuffer))
+ImageData::ImageData(const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data, PredefinedColorSpace colorSpace)
+    : m_size(size)
+    , m_data(WTFMove(data))
+    , m_colorSpace(colorSpace)
 {
 }
 
 ImageData::~ImageData() = default;
 
-Ref<ImageData> ImageData::deepClone() const
+PixelBuffer ImageData::pixelBuffer() const
 {
-    return adoptRef(*new ImageData(m_pixelBuffer.deepClone()));
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
+    return { format, m_size, m_data.get() };
 }
 
 TextStream& operator<<(TextStream& ts, const ImageData& imageData)
