@@ -40,7 +40,7 @@ FlexFormattingGeometry::FlexFormattingGeometry(const FlexFormattingContext& flex
 {
 }
 
-FormattingContext::IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(const ContainerBox& flexItem)
+IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(const ContainerBox& flexItem)
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
@@ -52,7 +52,7 @@ FormattingContext::IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWi
             + fixedValue(style.marginEnd()).valueOr(0);
     };
 
-    auto computedIntrinsicWidthConstraints = [&]() -> FormattingContext::IntrinsicWidthConstraints {
+    auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
         auto logicalWidth = flexItem.style().logicalWidth();
         // Minimum/maximum width can't be depending on the containing block's width.
         auto needsResolvedContainingBlockWidth = logicalWidth.isCalculated() || logicalWidth.isPercent() || logicalWidth.isRelative();

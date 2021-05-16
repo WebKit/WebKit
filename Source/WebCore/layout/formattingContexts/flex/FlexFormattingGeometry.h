@@ -37,7 +37,7 @@ class FlexFormattingGeometry : public FormattingGeometry {
 public:
     FlexFormattingGeometry(const FlexFormattingContext&);
 
-    FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&);
+    IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&);
 
 private:
     const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingGeometry::formattingContext()); }

@@ -426,7 +426,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const 
     updateMarginAfterForPreviousSibling(layoutBox);
 }
 
-FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::computedIntrinsicWidthConstraints()
+IntrinsicWidthConstraints BlockFormattingContext::computedIntrinsicWidthConstraints()
 {
     auto& formattingState = this->formattingState();
     ASSERT(!formattingState.intrinsicWidthConstraints());

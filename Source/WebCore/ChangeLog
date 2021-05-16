@@ -1,3 +1,68 @@
+2021-05-16  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Cleanup FormattingContext class
+        https://bugs.webkit.org/show_bug.cgi?id=225744
+
+        Reviewed by Antti Koivisto.
+
+        This final patch makes the FormattingContext interface uncluttered.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::setIntrinsicWidthConstraints):
+        (WebCore::Layout::FormattingState::intrinsicWidthConstraints const):
+        (WebCore::Layout::FormattingState::setIntrinsicWidthConstraintsForBox):
+        (WebCore::Layout::FormattingState::intrinsicWidthConstraintsForBox const):
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::IntrinsicWidthConstraints::expand):
+        (WebCore::Layout::IntrinsicWidthConstraints::operator+=):
+        (WebCore::Layout::IntrinsicWidthConstraints::operator-=):
+        * layout/formattingContexts/FormattingContext.cpp:
+        * layout/formattingContexts/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::root const):
+        (WebCore::Layout::FormattingContext::formattingState const):
+        (WebCore::Layout::FormattingContext::isBlockFormattingContext const):
+        (WebCore::Layout::FormattingContext::isInlineFormattingContext const):
+        (WebCore::Layout::FormattingContext::isTableFormattingContext const):
+        (WebCore::Layout::FormattingContext::isTableWrapperBlockFormattingContext const):
+        (WebCore::Layout::FormattingContext::isFlexFormattingContext const):
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::expand): Deleted.
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::operator+=): Deleted.
+        (WebCore::Layout::FormattingContext::IntrinsicWidthConstraints::operator-=): Deleted.
+        * layout/formattingContexts/FormattingGeometry.cpp:
+        (WebCore::Layout::FormattingGeometry::computedWidthValue):
+        (WebCore::Layout::FormattingGeometry::shrinkToFitWidth):
+        (WebCore::Layout::FormattingGeometry::constrainByMinMaxWidth const):
+        (WebCore::Layout::FormattingGeometry::constraintsForOutOfFlowContent):
+        (WebCore::Layout::FormattingGeometry::constraintsForInFlowContent const):
+        * layout/formattingContexts/FormattingGeometry.h:
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints):
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp:
+        (WebCore::Layout::BlockFormattingGeometry::intrinsicWidthConstraints):
+        * layout/formattingContexts/block/BlockFormattingGeometry.h:
+        * layout/formattingContexts/block/BlockMarginCollapse.cpp:
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::computedIntrinsicWidthConstraints):
+        * layout/formattingContexts/flex/FlexFormattingGeometry.cpp:
+        (WebCore::Layout::FlexFormattingGeometry::intrinsicWidthConstraints):
+        * layout/formattingContexts/flex/FlexFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::intrinsicWidthConstraintsForCell):
+        * layout/formattingContexts/table/TableFormattingGeometry.h:
+        * layout/formattingContexts/table/TableGrid.h:
+        (WebCore::Layout::TableGrid::setWidthConstraints):
+        (WebCore::Layout::TableGrid::widthConstraints const):
+        (WebCore::Layout::TableGrid::Slot::widthConstraints const):
+        (WebCore::Layout::TableGrid::Slot::setWidthConstraints):
+
 2021-05-16  Sam Weinig  <weinig@apple.com>
 
         Add support for creating/accessing/setting non-sRGB ImageData via canvas

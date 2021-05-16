@@ -44,7 +44,7 @@ public:
     LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
     LayoutUnit staticHorizontalPosition(const Box&, const HorizontalConstraints&) const;
 
-    FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
+    IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&);
 
     ContentWidthAndMargin computedContentWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider);
 

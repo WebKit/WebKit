@@ -304,7 +304,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     cellBoxGeometry.setContentBoxHeight(geometry().cellHeigh(cellBox));
 }
 
-FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
+IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
 {
     ASSERT(!root().isSizeContainmentBox());
     // Tables have a slighty different concept of shrink to fit. It's really only different with non-auto "width" values, where
@@ -371,7 +371,7 @@ UniqueRef<TableGrid> TableFormattingContext::ensureTableGrid(const ContainerBox&
     return tableGrid;
 }
 
-FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColumns()
+IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColumns()
 {
     auto& formattingState = this->formattingState();
     auto& grid = formattingState.tableGrid();
@@ -413,7 +413,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
         fixedWidthColumns.append(fixedWidth());
     }
 
-    Vector<FormattingContext::IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
+    Vector<IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
     // 3. Collect he min/max width for each column but ignore column spans for now.
     Vector<SlotPosition> spanningCellPositionList;
     size_t numberOfActualColumns = 0;
@@ -429,7 +429,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
                 continue;
             }
             auto columnFixedWidth = fixedWidthColumns[columnIndex];
-            auto widthConstraints = !columnFixedWidth ? slot.widthConstraints() : FormattingContext::IntrinsicWidthConstraints { *columnFixedWidth, *columnFixedWidth };
+            auto widthConstraints = !columnFixedWidth ? slot.widthConstraints() : IntrinsicWidthConstraints { *columnFixedWidth, *columnFixedWidth };
             columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
             columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
         }

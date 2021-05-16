@@ -332,7 +332,7 @@ ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(con
     return contentWidthAndMargin;
 }
 
-FormattingContext::IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(const Box& layoutBox)
+IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(const Box& layoutBox)
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
@@ -344,7 +344,7 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicW
             + fixedValue(style.marginEnd()).valueOr(0);
     };
 
-    auto computedIntrinsicWidthConstraints = [&]() -> FormattingContext::IntrinsicWidthConstraints {
+    auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
         auto logicalWidth = layoutBox.style().logicalWidth();
         // Minimum/maximum width can't be depending on the containing block's width.
         auto needsResolvedContainingBlockWidth = logicalWidth.isCalculated() || logicalWidth.isPercent() || logicalWidth.isRelative();
@@ -381,7 +381,7 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicW
             return intrinsicWidthConstraints;
         }
 
-        auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
+        auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
         auto& formattingState = layoutState().formattingStateForBox(layoutBox);
         for (auto& child : childrenOfType<Box>(downcast<ContainerBox>(layoutBox))) {
             if (child.isOutOfFlowPositioned() || (child.isFloatAvoider() && !child.hasFloatClear()))

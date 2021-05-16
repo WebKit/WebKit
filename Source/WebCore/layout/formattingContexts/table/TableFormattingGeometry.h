@@ -39,7 +39,7 @@ public:
     LayoutUnit cellHeigh(const ContainerBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
     Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox);
-    FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);
+    IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);
     InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
 
 private:

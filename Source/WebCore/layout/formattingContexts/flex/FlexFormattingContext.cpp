@@ -59,7 +59,7 @@ LayoutUnit FlexFormattingContext::usedContentHeight() const
     return LayoutUnit { lines.last().bottom() - lines.first().top() };
 }
 
-FormattingContext::IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
+IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
 {
     return { };
 }

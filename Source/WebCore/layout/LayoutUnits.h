@@ -169,6 +169,29 @@ struct VerticalConstraints {
     Optional<LayoutUnit> logicalHeight;
 };
 
+struct ConstraintsForInFlowContent {
+    HorizontalConstraints horizontal;
+    VerticalConstraints vertical;
+};
+
+struct ConstraintsForOutOfFlowContent {
+    HorizontalConstraints horizontal;
+    VerticalConstraints vertical;
+    // Borders and padding are resolved against the containing block's content box as if the box was an in-flow box.
+    LayoutUnit borderAndPaddingConstraints;
+};
+
+struct IntrinsicWidthConstraints {
+    void expand(LayoutUnit horizontalValue);
+    IntrinsicWidthConstraints& operator+=(const IntrinsicWidthConstraints&);
+    IntrinsicWidthConstraints& operator+=(LayoutUnit);
+    IntrinsicWidthConstraints& operator-=(const IntrinsicWidthConstraints&);
+    IntrinsicWidthConstraints& operator-=(LayoutUnit);
+
+    LayoutUnit minimum;
+    LayoutUnit maximum;
+};
+
 struct OverriddenHorizontalValues {
     Optional<LayoutUnit> width;
     Optional<UsedHorizontalMargin> margin;
@@ -206,6 +229,38 @@ inline InlineLayoutUnit maxInlineLayoutUnit()
 #else
     return LayoutUnit::max();
 #endif
+}
+
+inline void IntrinsicWidthConstraints::expand(LayoutUnit horizontalValue)
+{
+    minimum += horizontalValue;
+    maximum += horizontalValue;
+}
+
+inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator+=(const IntrinsicWidthConstraints& other)
+{
+    minimum += other.minimum;
+    maximum += other.maximum;
+    return *this;
+}
+
+inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator+=(LayoutUnit value)
+{
+    expand(value);
+    return *this;
+}
+
+inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator-=(const IntrinsicWidthConstraints& other)
+{
+    minimum -= other.minimum;
+    maximum -= other.maximum;
+    return *this;
+}
+
+inline IntrinsicWidthConstraints& IntrinsicWidthConstraints::operator-=(LayoutUnit value)
+{
+    expand(-value);
+    return *this;
 }
 
 struct SlotPosition {

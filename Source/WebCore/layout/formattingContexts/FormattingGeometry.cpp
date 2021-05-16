@@ -143,7 +143,7 @@ Optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layoutBox
         // FIXME: Consider splitting up computedIntrinsicWidthConstraints so that we could computed the min and max values separately.
         auto intrinsicWidthConstraints = [&] {
             if (!containerBox.hasInFlowOrFloatingChild())
-                return FormattingContext::IntrinsicWidthConstraints { 0_lu, containingBlockWidth };
+                return IntrinsicWidthConstraints { 0_lu, containingBlockWidth };
             ASSERT(containerBox.establishesFormattingContext());
             auto& formattingState = layoutState().ensureFormattingState(containerBox);
             if (auto intrinsicWidthConstraints = formattingState.intrinsicWidthConstraints())
@@ -299,7 +299,7 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
     // 'padding-left', 'padding-right', 'border-right-width', 'margin-right', and the widths of any relevant scroll bars.
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
-    auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
+    auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
     auto hasContent = is<ContainerBox>(formattingContextRoot) && downcast<ContainerBox>(formattingContextRoot).hasInFlowOrFloatingChild();
     // The used width of the containment box is determined as if performing a normal layout of the box, except that it is treated as having no content.
     auto shouldIgnoreContent = formattingContextRoot.isSizeContainmentBox();  
@@ -1128,7 +1128,7 @@ ComputedVerticalMargin FormattingGeometry::computedVerticalMargin(const Box& lay
     return { computedValue(style.marginLeft(), containingBlockWidth), computedValue(style.marginRight(), containingBlockWidth) };
 }
 
-FormattingContext::IntrinsicWidthConstraints FormattingGeometry::constrainByMinMaxWidth(const Box& layoutBox, FormattingContext::IntrinsicWidthConstraints intrinsicWidth) const
+IntrinsicWidthConstraints FormattingGeometry::constrainByMinMaxWidth(const Box& layoutBox, IntrinsicWidthConstraints intrinsicWidth) const
 {
     auto& style = layoutBox.style();
     auto minWidth = fixedValue(style.logicalMinWidth());
@@ -1150,7 +1150,7 @@ FormattingContext::IntrinsicWidthConstraints FormattingGeometry::constrainByMinM
     return intrinsicWidth;
 }
 
-FormattingContext::ConstraintsForOutOfFlowContent FormattingGeometry::constraintsForOutOfFlowContent(const ContainerBox& containerBox)
+ConstraintsForOutOfFlowContent FormattingGeometry::constraintsForOutOfFlowContent(const ContainerBox& containerBox)
 {
     auto& boxGeometry = formattingContext().geometryForBox(containerBox);
     return {
@@ -1159,7 +1159,7 @@ FormattingContext::ConstraintsForOutOfFlowContent FormattingGeometry::constraint
         boxGeometry.contentBoxWidth() };
 }
 
-FormattingContext::ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<FormattingContext::EscapeReason> escapeReason) const
+ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<FormattingContext::EscapeReason> escapeReason) const
 {
     auto& boxGeometry = formattingContext().geometryForBox(containerBox, escapeReason);
     return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), computedHeight(containerBox) } };

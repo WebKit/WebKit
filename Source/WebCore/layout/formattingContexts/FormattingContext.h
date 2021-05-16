@@ -51,41 +51,16 @@ class LayoutState;
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(const ContainerBox& formattingContextRoot, FormattingState&);
     virtual ~FormattingContext();
 
-    struct ConstraintsForInFlowContent {
-        HorizontalConstraints horizontal;
-        VerticalConstraints vertical;
-    };
     virtual void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) = 0;
-
-    struct ConstraintsForOutOfFlowContent {
-        HorizontalConstraints horizontal;
-        VerticalConstraints vertical;
-        // Borders and padding are resolved against the containing block's content box as if the box was an in-flow box.
-        LayoutUnit borderAndPaddingConstraints;
-    };
     void layoutOutOfFlowContent(InvalidationState&, const ConstraintsForOutOfFlowContent&);
-
-    struct IntrinsicWidthConstraints {
-        void expand(LayoutUnit horizontalValue);
-        IntrinsicWidthConstraints& operator+=(const IntrinsicWidthConstraints&);
-        IntrinsicWidthConstraints& operator+=(LayoutUnit);
-        IntrinsicWidthConstraints& operator-=(const IntrinsicWidthConstraints&);
-        IntrinsicWidthConstraints& operator-=(LayoutUnit);
-
-        LayoutUnit minimum;
-        LayoutUnit maximum;
-    };
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
     virtual LayoutUnit usedContentHeight() const = 0;
 
-    bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
-    bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
-    bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
-    bool isTableWrapperBlockFormattingContext() const { return isBlockFormattingContext() && root().isTableWrapperBox(); }
-    bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
+    const ContainerBox& root() const { return *m_root; }
+    LayoutState& layoutState() const;
+    const FormattingState& formattingState() const { return m_formattingState; }
 
     enum class EscapeReason {
         TableQuirkNeedsGeometryFromEstablishedFormattingContext,
@@ -97,22 +72,24 @@ public:
         TableNeedsAccessToTableWrapper
     };
     const BoxGeometry& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;
-    const ContainerBox& root() const { return *m_root; }
 
-    LayoutState& layoutState() const;
-    const FormattingState& formattingState() const { return m_formattingState; }
+    bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
+    bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }
+    bool isTableFormattingContext() const { return root().establishesTableFormattingContext(); }
+    bool isTableWrapperBlockFormattingContext() const { return isBlockFormattingContext() && root().isTableWrapperBox(); }
+    bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
 
 protected:
-    using LayoutQueue = Vector<const Box*>;
+    FormattingContext(const ContainerBox& formattingContextRoot, FormattingState&);
 
     FormattingState& formattingState() { return m_formattingState; }
-
     void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
 
 #ifndef NDEBUG
     virtual void validateGeometryConstraintsAfterLayout() const;
 #endif
 
+    using LayoutQueue = Vector<const Box*>;
 private:
     FormattingGeometry geometry() const;
     FormattingQuirks quirks() const;
@@ -124,38 +101,6 @@ private:
     WeakPtr<const ContainerBox> m_root;
     FormattingState& m_formattingState;
 };
-
-inline void FormattingContext::IntrinsicWidthConstraints::expand(LayoutUnit horizontalValue)
-{
-    minimum += horizontalValue;
-    maximum += horizontalValue;
-}
-
-inline FormattingContext::IntrinsicWidthConstraints& FormattingContext::IntrinsicWidthConstraints::operator+=(const IntrinsicWidthConstraints& other)
-{
-    minimum += other.minimum;
-    maximum += other.maximum;
-    return *this;
-}
-
-inline FormattingContext::IntrinsicWidthConstraints& FormattingContext::IntrinsicWidthConstraints::operator+=(LayoutUnit value)
-{
-    expand(value);
-    return *this;
-}
-
-inline FormattingContext::IntrinsicWidthConstraints& FormattingContext::IntrinsicWidthConstraints::operator-=(const IntrinsicWidthConstraints& other)
-{
-    minimum -= other.minimum;
-    maximum -= other.maximum;
-    return *this;
-}
-
-inline FormattingContext::IntrinsicWidthConstraints& FormattingContext::IntrinsicWidthConstraints::operator-=(LayoutUnit value)
-{
-    expand(-value);
-    return *this;
-}
 
 }
 }

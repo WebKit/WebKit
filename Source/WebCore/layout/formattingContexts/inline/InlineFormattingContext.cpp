@@ -243,7 +243,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     }
 }
 
-FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraints()
+IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraints()
 {
     auto& layoutState = this->layoutState();
     ASSERT(!formattingState().intrinsicWidthConstraints());

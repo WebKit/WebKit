@@ -79,12 +79,12 @@ public:
     Optional<LayoutUnit> computedMinWidth(const Box&, LayoutUnit containingBlockWidth);
     Optional<LayoutUnit> computedMaxWidth(const Box&, LayoutUnit containingBlockWidth);
 
-    FormattingContext::IntrinsicWidthConstraints constrainByMinMaxWidth(const Box&, FormattingContext::IntrinsicWidthConstraints) const;
+    IntrinsicWidthConstraints constrainByMinMaxWidth(const Box&, IntrinsicWidthConstraints) const;
 
     LayoutUnit contentHeightForFormattingContextRoot(const ContainerBox&) const;
 
-    FormattingContext::ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const ContainerBox&);
-    FormattingContext::ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<FormattingContext::EscapeReason> = WTF::nullopt) const;
+    ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const ContainerBox&);
+    ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<FormattingContext::EscapeReason> = WTF::nullopt) const;
 
     Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
     Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth);

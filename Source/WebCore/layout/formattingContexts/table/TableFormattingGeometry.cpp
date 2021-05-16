@@ -120,15 +120,15 @@ Optional<LayoutUnit> TableFormattingGeometry::computedColumnWidth(const Containe
     return columnBox.columnWidth();
 }
 
-FormattingContext::IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCell(const TableGrid::Cell& cell)
+IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCell(const TableGrid::Cell& cell)
 {
     auto& cellBox = cell.box();
     auto& style = cellBox.style();
 
-    auto computedIntrinsicWidthConstraints = [&]() -> FormattingContext::IntrinsicWidthConstraints {
+    auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
         // Even fixed width cells expand to their minimum content width
         // <td style="width: 10px">test_content</td> will size to max(minimum content width, computed width).
-        auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { };
+        auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
         if (cellBox.hasChild())
             intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, layoutState())->computedIntrinsicWidthConstraints();
         if (auto fixedWidth = fixedValue(style.logicalWidth()))
