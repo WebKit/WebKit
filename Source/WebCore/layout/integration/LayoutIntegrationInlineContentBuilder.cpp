@@ -367,7 +367,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
 void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingContext& inlineFormattingContext, InlineContent& inlineContent) const
 {
     auto& inlineFormattingState = inlineFormattingContext.formattingState();
-    auto inlineQuirks = inlineFormattingContext.quirks();
+    auto inlineQuirks = Layout::InlineFormattingQuirks { inlineFormattingContext };
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
         if (!lineBox.hasInlineBox())

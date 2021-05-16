@@ -112,7 +112,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
     if (current.isBox() || next.isBox()) {
         auto isImageContent = current.layoutBox().isImage() || next.layoutBox().isImage();
         if (isImageContent)
-            return inlineFormattingContext.quirks().hasSoftWrapOpportunityAtImage();
+            return InlineFormattingQuirks(inlineFormattingContext).hasSoftWrapOpportunityAtImage();
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;

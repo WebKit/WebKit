@@ -389,7 +389,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
     // 1. Compute the line box height using the layout bounds geometry. This height computation strictly uses layout bounds and not normal inline level box geometries.
     // 2. Compute the baseline/logical top position of the root inline box. Aligned boxes push the root inline box around inside the line box.
     // 3. Finally align the inline level boxes using (mostly) normal inline level box geometries.
-    auto quirks = formattingContext().quirks();
+    auto quirks = InlineFormattingQuirks { formattingContext() };
     auto& rootInlineBox = lineBox.rootInlineBox();
 
     auto computeLineBoxLogicalHeight = [&] {

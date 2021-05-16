@@ -1,5 +1,20 @@
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Make redundant public helpers private in InlineFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=225749
+
+        Reviewed by Antti Koivisto.
+
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::isAtSoftWrapOpportunity):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayNonRootInlineBoxes const):
+
+2021-05-15  Alan Bujtas  <zalan@apple.com>
+
         [LFC] Make redundant public helpers private in BlockFormattingContext
         https://bugs.webkit.org/show_bug.cgi?id=225750
 

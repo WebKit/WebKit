@@ -49,8 +49,6 @@ public:
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
-    InlineFormattingQuirks quirks() const;
-
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
@@ -60,6 +58,7 @@ private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
     InlineFormattingGeometry geometry() const;
+    InlineFormattingQuirks quirks() const;
 
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
 
