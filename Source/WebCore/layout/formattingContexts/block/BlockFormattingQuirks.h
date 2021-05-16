@@ -32,6 +32,8 @@
 namespace WebCore {
 namespace Layout {
 
+class BlockFormattingContext;
+
 class BlockFormattingQuirks : public FormattingQuirks {
 public:
     BlockFormattingQuirks(const BlockFormattingContext&);

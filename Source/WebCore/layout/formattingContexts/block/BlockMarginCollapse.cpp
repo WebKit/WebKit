@@ -82,8 +82,10 @@ static bool establishesBlockFormattingContext(const Box& layoutBox)
     return layoutBox.establishesBlockFormattingContext();
 }
 
-BlockMarginCollapse::BlockMarginCollapse(const BlockFormattingContext& blockFormattingContext)
-    : m_blockFormattingContext(blockFormattingContext)
+BlockMarginCollapse::BlockMarginCollapse(const LayoutState& layoutState, const BlockFormattingState& blockFormattingState)
+    : m_layoutState(layoutState)
+    , m_blockFormattingState(blockFormattingState)
+    , m_inQuirksMode(layoutState.inQuirksMode())
 {
 }
 
@@ -93,7 +95,7 @@ bool BlockMarginCollapse::hasClearance(const Box& layoutBox) const
         return false;
     // FIXME: precomputedVerticalPositionForFormattingRoot logic ends up calling into this function when the layoutBox (first inflow child) has
     // not been laid out.
-    return formattingContext().formattingState().hasClearance(layoutBox);
+    return formattingState().hasClearance(layoutBox);
 }
 
 bool BlockMarginCollapse::marginBeforeCollapsesWithParentMarginAfter(const Box& layoutBox) const
@@ -120,7 +122,7 @@ bool BlockMarginCollapse::marginBeforeCollapsesWithParentMarginBefore(const Box&
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
     ASSERT(layoutBox.isBlockLevelBox());
 
-    if (layoutState().inQuirksMode() && BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(layoutBox))
+    if (inQuirksMode() && BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(layoutBox))
         return true;
 
     // Margins between a floated box and any other box do not collapse.
@@ -258,7 +260,7 @@ bool BlockMarginCollapse::marginAfterCollapsesWithParentMarginAfter(const Box& l
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    if (layoutState().inQuirksMode() && BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter(layoutBox))
+    if (inQuirksMode() && BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter(layoutBox))
         return true;
 
     // Margins between a floated box and any other box do not collapse.
@@ -349,7 +351,7 @@ bool BlockMarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter(con
 
     // This is a quirk behavior: When the margin after of the last inflow child (or a previous sibling with collapsed through margins)
     // collapses with a quirk parent's the margin before, then the same margin after does not collapses with the parent's margin after.
-    auto shouldIgnoreCollapsedMargin = layoutState().inQuirksMode() && BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(layoutBox);
+    auto shouldIgnoreCollapsedMargin = inQuirksMode() && BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(layoutBox);
     if (shouldIgnoreCollapsedMargin && marginAfterCollapsesWithParentMarginBefore(lastInFlowChild))
         return false;
 
@@ -477,11 +479,10 @@ Optional<LayoutUnit> BlockMarginCollapse::marginValue(UsedVerticalMargin::Positi
 
 UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiveNegativeValues(const Box& layoutBox, MarginType marginType) const
 {
-    auto& formattingState = formattingContext().formattingState();
     // By the time we get here in BFC layout to gather positive and negative margin values for either a previous sibling or a child box,
     // we mush have computed and cached those values.
-    ASSERT(formattingState.hasUsedVerticalMargin(layoutBox));
-    auto positiveAndNegativeVerticalMargin = formattingState.usedVerticalMargin(layoutBox).positiveAndNegativeValues;
+    ASSERT(formattingState().hasUsedVerticalMargin(layoutBox));
+    auto positiveAndNegativeVerticalMargin = formattingState().usedVerticalMargin(layoutBox).positiveAndNegativeValues;
     return marginType == MarginType::Before ? positiveAndNegativeVerticalMargin.before : positiveAndNegativeVerticalMargin.after; 
 }
 
@@ -503,7 +504,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiv
     // 2. Gather positive and negative margin values from previous inflow sibling if margins are adjoining.
     // 3. Compute min/max positive and negative collapsed margin values using non-collpased computed margin before.
     auto collapsedMarginBefore = computedPositiveAndNegativeMargin(firstChildCollapsedMarginBefore(), previouSiblingCollapsedMarginAfter());
-    auto shouldIgnoreCollapsedMargin = collapsedMarginBefore.isQuirk && layoutState().inQuirksMode() && BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(layoutBox);
+    auto shouldIgnoreCollapsedMargin = collapsedMarginBefore.isQuirk && inQuirksMode() && BlockFormattingQuirks::shouldIgnoreCollapsedQuirkMargin(layoutBox);
     if (shouldIgnoreCollapsedMargin)
         collapsedMarginBefore = { };
 

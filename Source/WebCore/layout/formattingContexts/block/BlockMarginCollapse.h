@@ -27,19 +27,23 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "BlockFormattingContext.h"
+#include "MarginTypes.h"
 
 namespace WebCore {
 namespace Layout {
 
+class Box;
+class BlockFormattingGeometry;
+class BlockFormattingState;
+class LayoutState;
+
 // This class implements margin collapsing for block formatting context.
 class BlockMarginCollapse {
 public:
-    BlockMarginCollapse(const BlockFormattingContext&);
+    BlockMarginCollapse(const LayoutState&, const BlockFormattingState&);
 
     UsedVerticalMargin collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
 
-    PrecomputedMarginBefore precomputedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues);
     LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, UsedVerticalMargin::NonCollapsedValues);
 
     bool marginBeforeCollapsesWithParentMarginBefore(const Box&) const;
@@ -57,24 +61,28 @@ public:
 
     bool marginsCollapseThrough(const Box&) const;
 
+    PrecomputedMarginBefore precomputedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&);
+
 private:
     enum class MarginType { Before, After };
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeValues(const Box&, MarginType) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
 
-    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
-    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const Box&) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const Box&, const BlockFormattingGeometry&) const;
 
     Optional<LayoutUnit> marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
     bool hasClearance(const Box&) const;
 
-    LayoutState& layoutState() { return m_blockFormattingContext.layoutState(); }
-    const LayoutState& layoutState() const { return m_blockFormattingContext.layoutState(); }
-    const BlockFormattingContext& formattingContext() const { return m_blockFormattingContext; }
+    bool inQuirksMode() const { return m_inQuirksMode; }
+    const LayoutState& layoutState() const { return m_layoutState; }
+    const BlockFormattingState& formattingState() const { return m_blockFormattingState; }
 
-    const BlockFormattingContext& m_blockFormattingContext;
+    const LayoutState& m_layoutState;
+    const BlockFormattingState& m_blockFormattingState;
+    bool m_inQuirksMode { false };
 };
 
 }

@@ -286,15 +286,16 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
     //
     // The idea here is that as long as we don't cross the block formatting context boundary, we should be able to pre-compute the final top position.
     // FIXME: we currently don't account for the "clear" property when computing the final position for an ancestor.
+    auto formattingGeometry = geometry();
     for (auto* ancestor = &layoutBox; ancestor && ancestor != &root(); ancestor = &ancestor->containingBlock()) {
         auto constraintsForAncestor = [&] {
             auto& containingBlock = ancestor->containingBlock();
-            return &containingBlock == &root() ? constraintsPair.formattingContextRoot : geometry().constraintsForInFlowContent(containingBlock);
+            return &containingBlock == &root() ? constraintsPair.formattingContextRoot : formattingGeometry.constraintsForInFlowContent(containingBlock);
         }();
 
-        auto computedVerticalMargin = geometry().computedVerticalMargin(*ancestor, constraintsForAncestor.horizontal);
+        auto computedVerticalMargin = formattingGeometry.computedVerticalMargin(*ancestor, constraintsForAncestor.horizontal);
         auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
-        auto precomputedMarginBefore = marginCollapse().precomputedMarginBefore(*ancestor, usedNonCollapsedMargin);
+        auto precomputedMarginBefore = marginCollapse().precomputedMarginBefore(*ancestor, usedNonCollapsedMargin, formattingGeometry);
 
         auto& boxGeometry = formattingState().boxGeometry(*ancestor);
         auto nonCollapsedValues = UsedVerticalMargin::NonCollapsedValues { precomputedMarginBefore.nonCollapsedValue, { } };
@@ -603,12 +604,12 @@ void BlockFormattingContext::updateMarginAfterForPreviousSibling(const Box& layo
 
 BlockFormattingGeometry BlockFormattingContext::geometry() const
 {
-    return BlockFormattingGeometry(*this);
+    return BlockFormattingGeometry { *this };
 }
 
 BlockMarginCollapse BlockFormattingContext::marginCollapse() const
 {
-    return BlockMarginCollapse(*this);
+    return BlockMarginCollapse { layoutState(), formattingState() };
 }
 
 }

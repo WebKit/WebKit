@@ -84,7 +84,7 @@ public:
     LayoutUnit contentHeightForFormattingContextRoot(const ContainerBox&) const;
 
     FormattingContext::ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const ContainerBox&);
-    FormattingContext::ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<FormattingContext::EscapeReason> = WTF::nullopt);
+    FormattingContext::ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<FormattingContext::EscapeReason> = WTF::nullopt) const;
 
     Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
     Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth);

@@ -1,5 +1,47 @@
 2021-05-16  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Cleanup margin collapsing class
+        https://bugs.webkit.org/show_bug.cgi?id=225745
+
+        Reviewed by Antti Koivisto.
+
+        BlockMarginCollapse needs LayoutState and BlockFormattingState only.
+
+        * layout/MarginTypes.h:
+        * layout/formattingContexts/FormattingGeometry.cpp:
+        (WebCore::Layout::FormattingGeometry::constraintsForInFlowContent const):
+        (WebCore::Layout::FormattingGeometry::constraintsForInFlowContent): Deleted.
+        * layout/formattingContexts/FormattingGeometry.h:
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::geometry const):
+        (WebCore::Layout::BlockFormattingContext::marginCollapse const):
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp:
+        (WebCore::Layout::BlockFormattingGeometry::inFlowNonReplacedContentHeightAndMargin):
+        * layout/formattingContexts/block/BlockFormattingQuirks.cpp:
+        (WebCore::Layout::BlockFormattingQuirks::stretchedInFlowHeightIfApplicable const):
+        * layout/formattingContexts/block/BlockFormattingQuirks.h:
+        * layout/formattingContexts/block/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockMarginCollapse::BlockMarginCollapse):
+        (WebCore::Layout::BlockMarginCollapse::hasClearance const):
+        (WebCore::Layout::BlockMarginCollapse::marginBeforeCollapsesWithParentMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithParentMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::marginAfterCollapsesWithLastInFlowChildMarginAfter const):
+        (WebCore::Layout::BlockMarginCollapse::positiveNegativeValues const):
+        (WebCore::Layout::BlockMarginCollapse::positiveNegativeMarginBefore const):
+        * layout/formattingContexts/block/BlockMarginCollapse.h:
+        (WebCore::Layout::BlockMarginCollapse::inQuirksMode const):
+        (WebCore::Layout::BlockMarginCollapse::layoutState const):
+        (WebCore::Layout::BlockMarginCollapse::formattingState const):
+        (WebCore::Layout::BlockMarginCollapse::layoutState): Deleted.
+        (WebCore::Layout::BlockMarginCollapse::formattingContext const): Deleted.
+        * layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockMarginCollapse::precomputedPositiveNegativeValues const):
+        (WebCore::Layout::BlockMarginCollapse::precomputedPositiveNegativeMarginBefore const):
+        (WebCore::Layout::BlockMarginCollapse::precomputedMarginBefore):
+
+2021-05-16  Alan Bujtas  <zalan@apple.com>
+
         [LFC] Cleanup FormattingQuirk classes
         https://bugs.webkit.org/show_bug.cgi?id=225746
 

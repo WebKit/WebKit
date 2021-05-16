@@ -1159,7 +1159,7 @@ FormattingContext::ConstraintsForOutOfFlowContent FormattingGeometry::constraint
         boxGeometry.contentBoxWidth() };
 }
 
-FormattingContext::ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<FormattingContext::EscapeReason> escapeReason)
+FormattingContext::ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<FormattingContext::EscapeReason> escapeReason) const
 {
     auto& boxGeometry = formattingContext().geometryForBox(containerBox, escapeReason);
     return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), computedHeight(containerBox) } };
