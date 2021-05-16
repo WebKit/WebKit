@@ -235,12 +235,12 @@ bool SQLiteIDBCursor::createSQLiteStatement(const String& sql)
     ASSERT(!m_currentUpperKey.isNull());
     ASSERT(m_transaction->sqliteTransaction());
 
-    m_statement = makeUnique<SQLiteStatement>(m_transaction->sqliteTransaction()->database(), sql);
-
-    if (m_statement->prepare() != SQLITE_OK) {
+    auto statement = m_transaction->sqliteTransaction()->database().prepareHeapStatement(sql);
+    if (!statement) {
         LOG_ERROR("Could not create cursor statement (prepare/id) - '%s'", m_transaction->sqliteTransaction()->database().lastErrorMsg());
         return false;
     }
+    m_statement = statement.value().moveToUniquePtr();
 
     return bindArguments();
 }
@@ -341,12 +341,12 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
 
     auto& database = m_transaction->sqliteTransaction()->database();
     if (!m_preIndexStatement) {
-        m_preIndexStatement = makeUnique<SQLiteStatement>(database, buildPreIndexStatement(isDirectionNext()));
-
-        if (m_preIndexStatement->prepare() != SQLITE_OK) {
+        auto preIndexStatement = database.prepareHeapStatement(buildPreIndexStatement(isDirectionNext()));
+        if (!preIndexStatement) {
             LOG_ERROR("Could not prepare pre statement - '%s'", database.lastErrorMsg());
             return false;
         }
+        m_preIndexStatement = preIndexStatement.value().moveToUniquePtr();
     }
 
     if (m_preIndexStatement->reset() != SQLITE_OK) {
@@ -588,9 +588,8 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         }
 
         if (!m_cachedObjectStoreStatement || m_cachedObjectStoreStatement->reset() != SQLITE_OK) {
-            m_cachedObjectStoreStatement = makeUnique<SQLiteStatement>(database, "SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;");
-            if (m_cachedObjectStoreStatement->prepare() != SQLITE_OK)
-                m_cachedObjectStoreStatement = nullptr;
+            if (auto cachedObjectStoreStatement = database.prepareHeapStatement("SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;"_s))
+                m_cachedObjectStoreStatement = cachedObjectStoreStatement.value().moveToUniquePtr();
         }
 
         if (!m_cachedObjectStoreStatement

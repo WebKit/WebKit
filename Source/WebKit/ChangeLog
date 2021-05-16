@@ -1,3 +1,70 @@
+2021-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Optimize SQLiteStatement creation and preparation
+        https://bugs.webkit.org/show_bug.cgi?id=225791
+
+        Reviewed by Sam Weinig.
+
+        Update code base now that the SQLiteDatabase & SQLiteStatement API has changed.
+        Also use more ASCIILiterals.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::enableForeignKeys):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::missingUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::columnsForTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::renameColumnInTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::scopedStatement const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::incrementRecordsDeletedCountForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsToBlockAndDeleteCookiesFor const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsToBlockButKeepCookiesFor const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsWithUserInteractionAsFirstParty const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsWithStorageAccess const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domains const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearGrandfathering):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::appendSubStatisticList const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttribution):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::migrateItemTableIfNeeded):
+        (WebKit::LocalStorageDatabase::databaseIsEmpty const):
+        (WebKit::LocalStorageDatabase::scopedStatement const):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::IconDatabase):
+        (WebKit::IconDatabase::populatePageURLToIconURLMap):
+        (WebKit::IconDatabase::pruneTimerFired):
+        (WebKit::IconDatabase::iconIDForIconURL):
+        (WebKit::IconDatabase::setIconIDForPageURL):
+        (WebKit::IconDatabase::iconData):
+        (WebKit::IconDatabase::addIcon):
+        (WebKit::IconDatabase::updateIconTimestamp):
+        (WebKit::IconDatabase::deleteIcon):
+
 2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete WebSQL code from WebKit2

@@ -65,12 +65,12 @@ static void addToDatabasesTable(const String& databasePath, const SecurityOrigin
     SQLiteDatabase database;
     database.open(databasePath);
 
-    SQLiteStatement addDatabaseStatement(database, "INSERT INTO Databases (origin, name, path) VALUES (?, ?, ?);");
-    addDatabaseStatement.prepare();
-    addDatabaseStatement.bindText(1, origin.databaseIdentifier());
-    addDatabaseStatement.bindText(2, newDatabaseName);
-    addDatabaseStatement.bindText(3, newDatabasePath);
-    addDatabaseStatement.executeCommand();
+    if (auto addDatabaseStatement = database.prepareStatement("INSERT INTO Databases (origin, name, path) VALUES (?, ?, ?);"_s)) {
+        addDatabaseStatement->bindText(1, origin.databaseIdentifier());
+        addDatabaseStatement->bindText(2, newDatabaseName);
+        addDatabaseStatement->bindText(3, newDatabasePath);
+        addDatabaseStatement->executeCommand();
+    }
 
     database.close();
 }

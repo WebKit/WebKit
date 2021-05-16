@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,9 @@ namespace WebCore {
 class SQLiteStatement {
     WTF_MAKE_NONCOPYABLE(SQLiteStatement); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT SQLiteStatement(SQLiteDatabase&, const String&);
     WEBCORE_EXPORT ~SQLiteStatement();
+    WEBCORE_EXPORT SQLiteStatement(SQLiteStatement&&);
     
-    WEBCORE_EXPORT int prepare();
     WEBCORE_EXPORT int bindBlob(int index, const void* blob, int size);
     WEBCORE_EXPORT int bindBlob(int index, const String&);
     WEBCORE_EXPORT int bindText(int index, const String&);
@@ -50,22 +49,17 @@ public:
     WEBCORE_EXPORT unsigned bindParameterCount() const;
 
     WEBCORE_EXPORT int step();
-    WEBCORE_EXPORT int finalize();
     WEBCORE_EXPORT int reset();
     
-    int prepareAndStep() { if (int error = prepare()) return error; return step(); }
-    
-    // prepares, steps, and finalizes the query.
+    // steps and finalizes the query.
     // returns true if all 3 steps succeed with step() returning SQLITE_DONE
     // returns false otherwise  
     WEBCORE_EXPORT bool executeCommand();
     
-    // prepares, steps, and finalizes.  
+    // steps, and finalizes.
     // returns true is step() returns SQLITE_ROW
     // returns false otherwise
     bool returnsAtLeastOneResult();
-
-    bool isExpired();
 
     // Returns -1 on last-step failing.  Otherwise, returns number of rows
     // returned in the last step()
@@ -90,15 +84,15 @@ public:
 
     SQLiteDatabase& database() { return m_database; }
     
-    const String& query() const { return m_query; }
-    
 private:
+    friend class SQLiteDatabase;
+    SQLiteStatement(SQLiteDatabase&, sqlite3_stmt*);
+
+    // Returns true if the prepared statement has been stepped at least once using step() but has neither run to completion (returned SQLITE_DONE from step()) nor been reset().
+    bool hasStartedStepping();
+
     SQLiteDatabase& m_database;
-    String m_query;
     sqlite3_stmt* m_statement;
-#if ASSERT_ENABLED
-    bool m_isPrepared { false };
-#endif
 };
 
 } // namespace WebCore

@@ -66,7 +66,8 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
             return;
         }
 
-        auto databaseVersionNumber = SQLiteStatement(m_db, "SELECT value FROM IconDatabaseInfo WHERE key = 'Version';").getColumnInt(0);
+        auto versionStatement = m_db.prepareStatement("SELECT value FROM IconDatabaseInfo WHERE key = 'Version';"_s);
+        auto databaseVersionNumber = versionStatement ? versionStatement->getColumnInt(0) : 0;
         if (databaseVersionNumber > currentDatabaseVersion) {
             LOG(IconDatabase, "Database version number %d is greater than our current version number %d - closing the database to prevent overwriting newer versions",
                 databaseVersionNumber, currentDatabaseVersion);
@@ -84,7 +85,7 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
         }
 
         // Reduce sqlite RAM cache size from default 2000 pages (~1.5kB per page). 3MB of cache for icon database is overkill.
-        SQLiteStatement(m_db, "PRAGMA cache_size = 200;").executeCommand();
+        m_db.executeCommand("PRAGMA cache_size = 200;"_s);
 
         if (allowDatabaseWrite == AllowDatabaseWrite::Yes) {
             m_pruneTimer = makeUnique<RunLoop::Timer<IconDatabase>>(RunLoop::current(), this, &IconDatabase::pruneTimerFired);
@@ -175,17 +176,17 @@ void IconDatabase::populatePageURLToIconURLMap()
         return;
 
     String importQuery = makeString("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > ", floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds()), ';');
-    SQLiteStatement query(m_db, importQuery);
-    if (query.prepare() != SQLITE_OK) {
+    auto query = m_db.prepareStatement(importQuery);
+    if (!query) {
         LOG_ERROR("Unable to prepare icon url import query");
         return;
     }
 
-    auto result = query.step();
+    auto result = query->step();
     LockHolder lockHolder(m_pageURLToIconURLMapLock);
     while (result == SQLITE_ROW) {
-        m_pageURLToIconURLMap.set(query.getColumnText(0), query.getColumnText(1));
-        result = query.step();
+        m_pageURLToIconURLMap.set(query->getColumnText(0), query->getColumnText(1));
+        result = query->step();
     }
 
     startPruneTimer();
@@ -214,12 +215,12 @@ void IconDatabase::pruneTimerFired()
     ASSERT(m_db.isOpen());
 
     if (!m_pruneIconsStatement) {
-        m_pruneIconsStatement = makeUnique<SQLiteStatement>(m_db, "DELETE FROM IconInfo WHERE stamp <= (?);");
-        if (m_pruneIconsStatement->prepare() != SQLITE_OK) {
+        auto pruneIconsStatement = m_db.prepareHeapStatement("DELETE FROM IconInfo WHERE stamp <= (?);"_s);
+        if (!pruneIconsStatement) {
             LOG_ERROR("Preparing statement pruneIcons failed");
-            m_pruneIconsStatement = nullptr;
             return;
         }
+        m_pruneIconsStatement = pruneIconsStatement.value().moveToUniquePtr();
     }
 
     if (m_pruneIconsStatement->bindInt64(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
@@ -230,8 +231,8 @@ void IconDatabase::pruneTimerFired()
     SQLiteTransaction transaction(m_db);
     transaction.begin();
     if (m_pruneIconsStatement->step() == SQLITE_DONE) {
-        m_db.executeCommand("DELETE FROM IconData WHERE iconID NOT IN (SELECT iconID FROM IconInfo);");
-        m_db.executeCommand("DELETE FROM PageURL WHERE iconID NOT IN (SELECT iconID FROM IconInfo);");
+        m_db.executeCommand("DELETE FROM IconData WHERE iconID NOT IN (SELECT iconID FROM IconInfo);"_s);
+        m_db.executeCommand("DELETE FROM PageURL WHERE iconID NOT IN (SELECT iconID FROM IconInfo);"_s);
     }
     m_pruneIconsStatement->reset();
 
@@ -285,12 +286,12 @@ Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& ex
     ASSERT(m_db.isOpen());
 
     if (!m_iconIDForIconURLStatement) {
-        m_iconIDForIconURLStatement = makeUnique<SQLiteStatement>(m_db, "SELECT IconInfo.iconID, IconInfo.stamp FROM IconInfo WHERE IconInfo.url = (?);");
-        if (m_iconIDForIconURLStatement->prepare() != SQLITE_OK) {
+        auto iconIDForIconURLStatement = m_db.prepareHeapStatement("SELECT IconInfo.iconID, IconInfo.stamp FROM IconInfo WHERE IconInfo.url = (?);"_s);
+        if (!iconIDForIconURLStatement) {
             LOG_ERROR("Preparing statement iconIDForIconURL failed");
-            m_iconIDForIconURLStatement = nullptr;
             return WTF::nullopt;
         }
+        m_iconIDForIconURLStatement = iconIDForIconURLStatement.value().moveToUniquePtr();
     }
 
     if (m_iconIDForIconURLStatement->bindText(1, iconURL) != SQLITE_OK) {
@@ -315,12 +316,12 @@ bool IconDatabase::setIconIDForPageURL(int64_t iconID, const String& pageURL)
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
     if (!m_setIconIDForPageURLStatement) {
-        m_setIconIDForPageURLStatement = makeUnique<SQLiteStatement>(m_db, "INSERT INTO PageURL (url, iconID) VALUES ((?), ?);");
-        if (m_setIconIDForPageURLStatement->prepare() != SQLITE_OK) {
+        auto setIconIDForPageURLStatement = m_db.prepareHeapStatement("INSERT INTO PageURL (url, iconID) VALUES ((?), ?);"_s);
+        if (!setIconIDForPageURLStatement) {
             LOG_ERROR("Preparing statement setIconIDForPageURL failed");
-            m_setIconIDForPageURLStatement = nullptr;
             return false;
         }
+        m_setIconIDForPageURLStatement = setIconIDForPageURLStatement.value().moveToUniquePtr();
     }
 
     if (m_setIconIDForPageURLStatement->bindText(1, pageURL) != SQLITE_OK
@@ -342,12 +343,12 @@ Vector<char> IconDatabase::iconData(int64_t iconID)
     ASSERT(m_db.isOpen());
 
     if (!m_iconDataStatement) {
-        m_iconDataStatement = makeUnique<SQLiteStatement>(m_db, "SELECT IconData.data FROM IconData WHERE IconData.iconID = (?);");
-        if (m_iconDataStatement->prepare() != SQLITE_OK) {
+        auto iconDataStatement = m_db.prepareHeapStatement("SELECT IconData.data FROM IconData WHERE IconData.iconID = (?);"_s);
+        if (!iconDataStatement) {
             LOG_ERROR("Preparing statement iconData failed");
-            m_iconDataStatement = nullptr;
             return { };
         }
+        m_iconDataStatement = iconDataStatement.value().moveToUniquePtr();
     }
 
     if (m_iconDataStatement->bindInt64(1, iconID) != SQLITE_OK) {
@@ -370,20 +371,20 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
     if (!m_addIconStatement) {
-        m_addIconStatement = makeUnique<SQLiteStatement>(m_db, "INSERT INTO IconInfo (url, stamp) VALUES (?, 0);");
-        if (m_addIconStatement->prepare() != SQLITE_OK) {
+        auto addIconStatement = m_db.prepareHeapStatement("INSERT INTO IconInfo (url, stamp) VALUES (?, 0);"_s);
+        if (!addIconStatement) {
             LOG_ERROR("Preparing statement addIcon failed");
-            m_addIconStatement = nullptr;
             return WTF::nullopt;
         }
+        m_addIconStatement = addIconStatement.value().moveToUniquePtr();
     }
     if (!m_addIconDataStatement) {
-        m_addIconDataStatement = makeUnique<SQLiteStatement>(m_db, "INSERT INTO IconData (iconID, data) VALUES (?, ?);");
-        if (m_addIconDataStatement->prepare() != SQLITE_OK) {
+        auto addIconDataStatement = m_db.prepareHeapStatement("INSERT INTO IconData (iconID, data) VALUES (?, ?);"_s);
+        if (!addIconDataStatement) {
             LOG_ERROR("Preparing statement addIconData failed");
-            m_addIconDataStatement = nullptr;
             return WTF::nullopt;
         }
+        m_addIconDataStatement = addIconDataStatement.value().moveToUniquePtr();
     }
 
     if (m_addIconStatement->bindText(1, iconURL) != SQLITE_OK) {
@@ -413,12 +414,12 @@ void IconDatabase::updateIconTimestamp(int64_t iconID, int64_t timestamp)
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
     if (!m_updateIconTimestampStatement) {
-        m_updateIconTimestampStatement = makeUnique<SQLiteStatement>(m_db, "UPDATE IconInfo SET stamp = ? WHERE iconID = ?;");
-        if (m_updateIconTimestampStatement->prepare() != SQLITE_OK) {
+        auto updateIconTimestampStatement = m_db.prepareHeapStatement("UPDATE IconInfo SET stamp = ? WHERE iconID = ?;"_s);
+        if (!updateIconTimestampStatement) {
             LOG_ERROR("Preparing statement updateIconTimestamp failed");
-            m_updateIconTimestampStatement = nullptr;
             return;
         }
+        m_updateIconTimestampStatement = updateIconTimestampStatement.value().moveToUniquePtr();
     }
 
     if (m_updateIconTimestampStatement->bindInt64(1, timestamp) != SQLITE_OK || m_updateIconTimestampStatement->bindInt64(2, iconID) != SQLITE_OK) {
@@ -437,28 +438,28 @@ void IconDatabase::deleteIcon(int64_t iconID)
     ASSERT(m_allowDatabaseWrite == AllowDatabaseWrite::Yes);
 
     if (!m_deletePageURLsForIconStatement) {
-        m_deletePageURLsForIconStatement = makeUnique<SQLiteStatement>(m_db, "DELETE FROM PageURL WHERE PageURL.iconID = (?);");
-        if (m_deletePageURLsForIconStatement->prepare() != SQLITE_OK) {
+        auto deletePageURLsForIconStatement = m_db.prepareHeapStatement("DELETE FROM PageURL WHERE PageURL.iconID = (?);"_s);
+        if (!deletePageURLsForIconStatement) {
             LOG_ERROR("Preparing statement deletePageURLsForIcon failed");
-            m_deletePageURLsForIconStatement = nullptr;
             return;
         }
+        m_deletePageURLsForIconStatement = deletePageURLsForIconStatement.value().moveToUniquePtr();
     }
     if (!m_deleteIconDataStatement) {
-        m_deleteIconDataStatement = makeUnique<SQLiteStatement>(m_db, "DELETE FROM IconData WHERE IconData.iconID = (?);");
-        if (m_deleteIconDataStatement->prepare() != SQLITE_OK) {
+        auto deleteIconDataStatement = m_db.prepareHeapStatement("DELETE FROM IconData WHERE IconData.iconID = (?);"_s);
+        if (!deleteIconDataStatement) {
             LOG_ERROR("Preparing statement deleteIcon failed");
-            m_deleteIconDataStatement = nullptr;
             return;
         }
+        m_deleteIconDataStatement = deleteIconDataStatement.value().moveToUniquePtr();
     }
     if (!m_deleteIconStatement) {
-        m_deleteIconStatement = makeUnique<SQLiteStatement>(m_db, "DELETE FROM IconInfo WHERE IconInfo.iconID = (?);");
-        if (m_deleteIconStatement->prepare() != SQLITE_OK) {
+        auto deleteIconStatement = m_db.prepareHeapStatement("DELETE FROM IconInfo WHERE IconInfo.iconID = (?);"_s);
+        if (!deleteIconStatement) {
             LOG_ERROR("Preparing statement deleteIcon failed");
-            m_deleteIconStatement = nullptr;
             return;
         }
+        m_deleteIconStatement = deleteIconStatement.value().moveToUniquePtr();
     }
 
     if (m_deletePageURLsForIconStatement->bindInt64(1, iconID) != SQLITE_OK

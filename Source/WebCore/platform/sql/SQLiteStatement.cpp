@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,87 +41,41 @@
 
 namespace WebCore {
 
-SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, const String& sql)
+SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, sqlite3_stmt* statement)
     : m_database(db)
-    , m_query(sql)
-    , m_statement(0)
+    , m_statement(statement)
+{
+    ASSERT(statement);
+}
+
+SQLiteStatement::SQLiteStatement(SQLiteStatement&& other)
+    : m_database(other.database())
+    , m_statement(std::exchange(other.m_statement, nullptr))
 {
 }
 
 SQLiteStatement::~SQLiteStatement()
 {
-    finalize();
-}
-
-int SQLiteStatement::prepare()
-{
-    ASSERT(!m_isPrepared);
-
-    LockHolder databaseLock(m_database.databaseMutex());
-
-    CString query = m_query.stripWhiteSpace().utf8();
-    
-    LOG(SQLDatabase, "SQL - prepare - %s", query.data());
-
-    // Pass the length of the string including the null character to sqlite3_prepare_v2;
-    // this lets SQLite avoid an extra string copy.
-    size_t lengthIncludingNullCharacter = query.length() + 1;
-
-    const char* tail = nullptr;
-    int error = sqlite3_prepare_v2(m_database.sqlite3Handle(), query.data(), lengthIncludingNullCharacter, &m_statement, &tail);
-
-    if (error != SQLITE_OK)
-        LOG(SQLDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", error, query.data(), sqlite3_errmsg(m_database.sqlite3Handle()));
-
-    if (tail && *tail)
-        error = SQLITE_ERROR;
-
-#if ASSERT_ENABLED
-    m_isPrepared = error == SQLITE_OK;
-#endif
-    return error;
+    sqlite3_finalize(m_statement);
 }
 
 int SQLiteStatement::step()
 {
     LockHolder databaseLock(m_database.databaseMutex());
 
-    if (!m_statement)
-        return SQLITE_OK;
-
     // The database needs to update its last changes count before each statement
     // in order to compute properly the lastChanges() return value.
     m_database.updateLastChangesCount();
 
-    LOG(SQLDatabase, "SQL - step - %s", m_query.ascii().data());
     int error = sqlite3_step(m_statement);
-    if (error != SQLITE_DONE && error != SQLITE_ROW) {
-        LOG(SQLDatabase, "sqlite3_step failed (%i)\nQuery - %s\nError - %s", 
-            error, m_query.ascii().data(), sqlite3_errmsg(m_database.sqlite3Handle()));
-    }
+    if (error != SQLITE_DONE && error != SQLITE_ROW)
+        LOG(SQLDatabase, "sqlite3_step failed (%i)\nError - %s", error, sqlite3_errmsg(m_database.sqlite3Handle()));
 
     return error;
-}
-    
-int SQLiteStatement::finalize()
-{
-#if ASSERT_ENABLED
-    m_isPrepared = false;
-#endif
-    if (!m_statement)
-        return SQLITE_OK;
-    LOG(SQLDatabase, "SQL - finalize - %s", m_query.ascii().data());
-    int result = sqlite3_finalize(m_statement);
-    m_statement = 0;
-    return result;
 }
 
 int SQLiteStatement::reset() 
 {
-    ASSERT(m_isPrepared);
-    if (!m_statement)
-        return SQLITE_OK;
-    LOG(SQLDatabase, "SQL - reset - %s", m_query.ascii().data());
     int status = sqlite3_reset(m_statement);
     sqlite3_clear_bindings(m_statement);
     return status;
@@ -129,41 +83,20 @@ int SQLiteStatement::reset()
 
 bool SQLiteStatement::executeCommand()
 {
-    if (!m_statement && prepare() != SQLITE_OK)
-        return false;
-    ASSERT(m_isPrepared);
-    if (step() != SQLITE_DONE) {
-        finalize();
-        return false;
-    }
-    finalize();
-    return true;
+    return step() == SQLITE_DONE;
 }
 
 bool SQLiteStatement::returnsAtLeastOneResult()
 {
-    if (!m_statement && prepare() != SQLITE_OK)
-        return false;
-    ASSERT(m_isPrepared);
-    if (step() != SQLITE_ROW) {
-        finalize();
-        return false;
-    }
-    finalize();
-    return true;
-
+    return step() == SQLITE_ROW;
 }
 
 int SQLiteStatement::bindBlob(int index, const void* blob, int size)
 {
-    ASSERT(m_isPrepared);
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
     ASSERT(blob || !size);
     ASSERT(size >= 0);
-
-    if (!m_statement)
-        return SQLITE_ERROR;
 
     return sqlite3_bind_blob(m_statement, index, blob, size, SQLITE_TRANSIENT);
 }
@@ -185,7 +118,6 @@ int SQLiteStatement::bindBlob(int index, const String& text)
 
 int SQLiteStatement::bindText(int index, const String& text)
 {
-    ASSERT(m_isPrepared);
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
 
@@ -204,7 +136,6 @@ int SQLiteStatement::bindText(int index, const String& text)
 
 int SQLiteStatement::bindInt(int index, int integer)
 {
-    ASSERT(m_isPrepared);
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
 
@@ -213,7 +144,6 @@ int SQLiteStatement::bindInt(int index, int integer)
 
 int SQLiteStatement::bindInt64(int index, int64_t integer)
 {
-    ASSERT(m_isPrepared);
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
 
@@ -222,7 +152,6 @@ int SQLiteStatement::bindInt64(int index, int64_t integer)
 
 int SQLiteStatement::bindDouble(int index, double number)
 {
-    ASSERT(m_isPrepared);
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
 
@@ -231,7 +160,6 @@ int SQLiteStatement::bindDouble(int index, double number)
 
 int SQLiteStatement::bindNull(int index)
 {
-    ASSERT(m_isPrepared);
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
 
@@ -249,26 +177,19 @@ int SQLiteStatement::bindValue(int index, const SQLValue& value)
 
 unsigned SQLiteStatement::bindParameterCount() const
 {
-    ASSERT(m_isPrepared);
-    if (!m_statement)
-        return 0;
     return sqlite3_bind_parameter_count(m_statement);
 }
 
 int SQLiteStatement::columnCount()
 {
-    ASSERT(m_isPrepared);
-    if (!m_statement)
-        return 0;
     return sqlite3_data_count(m_statement);
 }
 
 bool SQLiteStatement::isColumnNull(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return false;
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return false;
     if (columnCount() <= col)
         return false;
 
@@ -278,19 +199,14 @@ bool SQLiteStatement::isColumnNull(int col)
 bool SQLiteStatement::isColumnDeclaredAsBlob(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement) {
-        if (prepare() != SQLITE_OK)
-            return false;
-    }
     return equalLettersIgnoringASCIICase(StringView(sqlite3_column_decltype(m_statement, col)), "blob");
 }
 
 String SQLiteStatement::getColumnName(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return String();
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return String();
     if (columnCount() <= col)
         return String();
     return String(reinterpret_cast<const UChar*>(sqlite3_column_name16(m_statement, col)));
@@ -299,9 +215,8 @@ String SQLiteStatement::getColumnName(int col)
 SQLValue SQLiteStatement::getColumnValue(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return nullptr;
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return nullptr;
     if (columnCount() <= col)
         return nullptr;
 
@@ -330,9 +245,8 @@ SQLValue SQLiteStatement::getColumnValue(int col)
 String SQLiteStatement::getColumnText(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return String();
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return String();
     if (columnCount() <= col)
         return String();
     return String(reinterpret_cast<const UChar*>(sqlite3_column_text16(m_statement, col)), sqlite3_column_bytes16(m_statement, col) / sizeof(UChar));
@@ -341,9 +255,8 @@ String SQLiteStatement::getColumnText(int col)
 double SQLiteStatement::getColumnDouble(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return 0.0;
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return 0.0;
     if (columnCount() <= col)
         return 0.0;
     return sqlite3_column_double(m_statement, col);
@@ -352,9 +265,8 @@ double SQLiteStatement::getColumnDouble(int col)
 int SQLiteStatement::getColumnInt(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return 0;
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return 0;
     if (columnCount() <= col)
         return 0;
     return sqlite3_column_int(m_statement, col);
@@ -363,9 +275,8 @@ int SQLiteStatement::getColumnInt(int col)
 int64_t SQLiteStatement::getColumnInt64(int col)
 {
     ASSERT(col >= 0);
-    if (!m_statement)
-        if (prepareAndStep() != SQLITE_ROW)
-            return 0;
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return 0;
     if (columnCount() <= col)
         return 0;
     return sqlite3_column_int64(m_statement, col);
@@ -375,7 +286,7 @@ String SQLiteStatement::getColumnBlobAsString(int col)
 {
     ASSERT(col >= 0);
 
-    if (!m_statement && prepareAndStep() != SQLITE_ROW)
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
         return String();
 
     if (columnCount() <= col)
@@ -397,7 +308,7 @@ void SQLiteStatement::getColumnBlobAsVector(int col, Vector<char>& result)
 {
     ASSERT(col >= 0);
 
-    if (!m_statement && prepareAndStep() != SQLITE_ROW) {
+    if (!hasStartedStepping() && step() != SQLITE_ROW) {
         result.clear();
         return;
     }
@@ -423,7 +334,7 @@ void SQLiteStatement::getColumnBlobAsVector(int col, Vector<uint8_t>& result)
 {
     ASSERT(col >= 0);
 
-    if (!m_statement && prepareAndStep() != SQLITE_ROW) {
+    if (!hasStartedStepping() && step() != SQLITE_ROW) {
         result.clear();
         return;
     }
@@ -451,19 +362,16 @@ bool SQLiteStatement::returnTextResults(int col, Vector<String>& v)
 
     v.clear();
 
-    if (m_statement)
-        finalize();
-    if (prepare() != SQLITE_OK)
-        return false;
+    if (hasStartedStepping())
+        reset();
 
     while (step() == SQLITE_ROW)
         v.append(getColumnText(col));
     bool result = true;
     if (m_database.lastError() != SQLITE_DONE) {
         result = false;
-        LOG(SQLDatabase, "Error reading results from database query %s", m_query.ascii().data());
+        LOG(SQLDatabase, "SQLiteStatement::returnTextResults: Error reading results");
     }
-    finalize();
     return result;
 }
 
@@ -471,19 +379,16 @@ bool SQLiteStatement::returnIntResults(int col, Vector<int>& v)
 {
     v.clear();
 
-    if (m_statement)
-        finalize();
-    if (prepare() != SQLITE_OK)
-        return false;
+    if (hasStartedStepping())
+        reset();
 
     while (step() == SQLITE_ROW)
         v.append(getColumnInt(col));
     bool result = true;
     if (m_database.lastError() != SQLITE_DONE) {
         result = false;
-        LOG(SQLDatabase, "Error reading results from database query %s", m_query.ascii().data());
+        LOG(SQLDatabase, "SQLiteStatement::returnIntResults: Error reading results");
     }
-    finalize();
     return result;
 }
 
@@ -491,19 +396,16 @@ bool SQLiteStatement::returnInt64Results(int col, Vector<int64_t>& v)
 {
     v.clear();
 
-    if (m_statement)
-        finalize();
-    if (prepare() != SQLITE_OK)
-        return false;
+    if (hasStartedStepping())
+        reset();
 
     while (step() == SQLITE_ROW)
         v.append(getColumnInt64(col));
     bool result = true;
     if (m_database.lastError() != SQLITE_DONE) {
         result = false;
-        LOG(SQLDatabase, "Error reading results from database query %s", m_query.ascii().data());
+        LOG(SQLDatabase, "SQLiteStatement::returnInt64Results: Error reading results");
     }
-    finalize();
     return result;
 }
 
@@ -511,25 +413,22 @@ bool SQLiteStatement::returnDoubleResults(int col, Vector<double>& v)
 {
     v.clear();
 
-    if (m_statement)
-        finalize();
-    if (prepare() != SQLITE_OK)
-        return false;
+    if (hasStartedStepping())
+        reset();
 
     while (step() == SQLITE_ROW)
         v.append(getColumnDouble(col));
     bool result = true;
     if (m_database.lastError() != SQLITE_DONE) {
         result = false;
-        LOG(SQLDatabase, "Error reading results from database query %s", m_query.ascii().data());
+        LOG(SQLDatabase, "SQLiteStatement::returnDoubleResults: Error reading results");
     }
-    finalize();
     return result;
 }
 
-bool SQLiteStatement::isExpired()
+bool SQLiteStatement::hasStartedStepping()
 {
-    return !m_statement;
+    return sqlite3_stmt_busy(m_statement);
 }
 
 } // namespace WebCore

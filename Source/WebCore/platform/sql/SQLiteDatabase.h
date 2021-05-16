@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,10 @@
 
 #include <functional>
 #include <sqlite3.h>
+#include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -61,6 +63,8 @@ public:
     WEBCORE_EXPORT void updateLastChangesCount();
 
     WEBCORE_EXPORT bool executeCommand(const String&);
+    WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
+
     bool returnsAtLeastOneResult(const String&);
     
     WEBCORE_EXPORT bool tableExists(const String&);
@@ -69,6 +73,11 @@ public:
     WEBCORE_EXPORT int runIncrementalVacuumCommand();
     
     bool transactionInProgress() const { return m_transactionInProgress; }
+
+    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatement(const String& query);
+    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatement(ASCIILiteral query);
+    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatement(const String& query);
+    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatement(ASCIILiteral query);
 
     // Aborts the current database operation. This is thread safe.
     WEBCORE_EXPORT void interrupt();

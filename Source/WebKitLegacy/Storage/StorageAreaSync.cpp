@@ -278,9 +278,9 @@ void StorageAreaSync::migrateItemTableIfNeeded()
         return;
 
     {
-        SQLiteStatement query(m_database, "SELECT value FROM ItemTable LIMIT 1");
+        auto query = m_database.prepareStatement("SELECT value FROM ItemTable LIMIT 1"_s);
         // this query isn't ever executed.
-        if (query.isColumnDeclaredAsBlob(0))
+        if (query && query->isColumnDeclaredAsBlob(0))
             return;
     }
 
@@ -326,8 +326,8 @@ void StorageAreaSync::performImport()
         return;
     }
 
-    SQLiteStatement query(m_database, "SELECT key, value FROM ItemTable");
-    if (query.prepare() != SQLITE_OK) {
+    auto query = m_database.prepareStatement("SELECT key, value FROM ItemTable"_s);
+    if (!query) {
         LOG_ERROR("Unable to select items from ItemTable for local storage");
         markImported();
         return;
@@ -335,10 +335,10 @@ void StorageAreaSync::performImport()
 
     HashMap<String, String> itemMap;
 
-    int result = query.step();
+    int result = query->step();
     while (result == SQLITE_ROW) {
-        itemMap.set(query.getColumnText(0), query.getColumnBlobAsString(1));
-        result = query.step();
+        itemMap.set(query->getColumnText(0), query->getColumnBlobAsString(1));
+        result = query->step();
     }
 
     if (result != SQLITE_DONE) {
@@ -412,27 +412,27 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
 
     // If the clear flag is set, then we clear all items out before we write any new ones in.
     if (clearItems) {
-        SQLiteStatement clear(m_database, "DELETE FROM ItemTable");
-        if (clear.prepare() != SQLITE_OK) {
+        auto clear = m_database.prepareStatement("DELETE FROM ItemTable"_s);
+        if (!clear) {
             LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
             return;
         }
 
-        int result = clear.step();
+        int result = clear->step();
         if (result != SQLITE_DONE) {
             LOG_ERROR("Failed to clear all items in the local storage database - %i", result);
             return;
         }
     }
 
-    SQLiteStatement insert(m_database, "INSERT INTO ItemTable VALUES (?, ?)");
-    if (insert.prepare() != SQLITE_OK) {
+    auto insert = m_database.prepareStatement("INSERT INTO ItemTable VALUES (?, ?)"_s);
+    if (!insert) {
         LOG_ERROR("Failed to prepare insert statement - cannot write to local storage database");
         return;
     }
 
-    SQLiteStatement remove(m_database, "DELETE FROM ItemTable WHERE key=?");
-    if (remove.prepare() != SQLITE_OK) {
+    auto remove = m_database.prepareStatement("DELETE FROM ItemTable WHERE key=?"_s);
+    if (!remove) {
         LOG_ERROR("Failed to prepare delete statement - cannot write to local storage database");
         return;
     }
@@ -443,21 +443,21 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
     transaction.begin();
     for (HashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
         // Based on the null-ness of the second argument, decide whether this is an insert or a delete.
-        SQLiteStatement& query = it->value.isNull() ? remove : insert;
+        auto& query = it->value.isNull() ? remove : insert;
 
-        query.bindText(1, it->key);
+        query->bindText(1, it->key);
 
         // If the second argument is non-null, we're doing an insert, so bind it as the value.
         if (!it->value.isNull())
-            query.bindBlob(2, it->value);
+            query->bindBlob(2, it->value);
 
-        int result = query.step();
+        int result = query->step();
         if (result != SQLITE_DONE) {
             LOG_ERROR("Failed to update item in the local storage database - %i", result);
             break;
         }
 
-        query.reset();
+        query->reset();
     }
     transaction.commit();
 }
@@ -499,31 +499,33 @@ void StorageAreaSync::deleteEmptyDatabase()
     if (!m_database.isOpen())
         return;
 
-    SQLiteStatement query(m_database, "SELECT COUNT(*) FROM ItemTable");
-    if (query.prepare() != SQLITE_OK) {
-        LOG_ERROR("Unable to count number of rows in ItemTable for local storage");
-        return;
-    }
-
-    int result = query.step();
-    if (result != SQLITE_ROW) {
-        LOG_ERROR("No results when counting number of rows in ItemTable for local storage");
-        return;
-    }
-
-    int count = query.getColumnInt(0);
-    if (!count) {
-        query.finalize();
-        m_database.close();
-        if (StorageTracker::tracker().isActive()) {
-            callOnMainThread([databaseIdentifier = m_databaseIdentifier.isolatedCopy()] {
-                StorageTracker::tracker().deleteOriginWithIdentifier(databaseIdentifier);
-            });
-        } else {
-            String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
-            if (!FileSystem::deleteFile(databaseFilename))
-                LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8().data());
+    auto count = [&] {
+        auto query = m_database.prepareStatement("SELECT COUNT(*) FROM ItemTable"_s);
+        if (!query) {
+            LOG_ERROR("Unable to count number of rows in ItemTable for local storage");
+            return -1;
         }
+
+        int result = query->step();
+        if (result != SQLITE_ROW) {
+            LOG_ERROR("No results when counting number of rows in ItemTable for local storage");
+            return -1;
+        }
+
+        return query->getColumnInt(0);
+    }();
+    if (count)
+        return;
+
+    m_database.close();
+    if (StorageTracker::tracker().isActive()) {
+        callOnMainThread([databaseIdentifier = m_databaseIdentifier.isolatedCopy()] {
+            StorageTracker::tracker().deleteOriginWithIdentifier(databaseIdentifier);
+        });
+    } else {
+        String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+        if (!FileSystem::deleteFile(databaseFilename))
+            LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8().data());
     }
 }
 

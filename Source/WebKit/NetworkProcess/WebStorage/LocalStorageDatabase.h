@@ -62,7 +62,7 @@ private:
     bool migrateItemTableIfNeeded();
     bool databaseIsEmpty() const;
 
-    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, const String& query) const;
+    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query) const;
 
     String m_databasePath;
     mutable WebCore::SQLiteDatabase m_database;

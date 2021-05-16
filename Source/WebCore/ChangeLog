@@ -1,3 +1,159 @@
+2021-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Optimize SQLiteStatement creation and preparation
+        https://bugs.webkit.org/show_bug.cgi?id=225791
+
+        Reviewed by Sam Weinig.
+
+        Modernize / Optimize SQLiteStatement creation and preparation:
+        - The SQLiteStatement constructor is now private so that we never have a
+          SQLiteStatement that has not been "prepared". Only the SQLiteDatabase
+          can now construct SQLiteStatement objects. We already needed to pass
+          a SQLiteDatabase reference when constructing the SQLiteStatement anyway.
+        - The construct AND prepare a SQLiteStatement, we now call
+          SQLiteDatabase::prepareStatement() to get a stack object or
+          SQLiteDatabase::prepareHeapStatement() to get a heap one. These functions
+          return an Expected<> type so they will either return a "prepared"
+          SQLiteStatement or an unexpected SQLite error code.
+        - The prepare*Statement() functions now avoid String allocations in most
+          cases thanks to overloads taking in the query as an ASCIILiteral.
+        - Drop finalize() function on SQLiteStatement so SQLiteStatement objects
+          are always valid. It simplifies the implementation of SQLiteStatement
+          member functions. The SQLiteStatement destructor "finalizes" the statement
+          so users can simply destroy the SQLiteStatement if they need the object
+          to be finalize at a certain point (e.g. before closing a database).
+        - Drop the prepare() & prepareAndStep() SQLiteStatement member functions now
+          that SQLiteStatement are always prepared.
+        - Stop storing the SQL query as a String data member in SQLiteStatement class.
+          This is no longer needed now that they is no separe prepare step after the
+          construction. This makes the SQLiteStatement a bit smaller.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidBlobTables):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameAndVersionFromFile):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::cachedStatement):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::createSQLiteStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::setTextValueInDatabase):
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::Database::performGetTableNames):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::hasEntryForOriginNoLock):
+        (WebCore::DatabaseTracker::hasEntryForDatabase):
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesNoLock):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::quotaNoLock):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        (WebCore::DatabaseTracker::deleteDatabaseFileIfEmpty):
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup):
+        (WebCore::ApplicationCacheStorage::loadManifestHostHashes):
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateUsageForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache):
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion):
+        (WebCore::ApplicationCacheStorage::executeStatement):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::storeUpdatedType):
+        (WebCore::ApplicationCacheStorage::ensureOriginRecord):
+        (WebCore::ApplicationCacheStorage::storeNewestCache):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        (WebCore::ApplicationCacheStorage::remove):
+        (WebCore::ApplicationCacheStorage::manifestURLs):
+        (WebCore::ApplicationCacheStorage::deleteCacheGroupRecord):
+        (WebCore::ApplicationCacheStorage::checkForDeletedResources):
+        (WebCore::ApplicationCacheStorage::flatFileAreaSize):
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::verifySchemaVersion):
+        (WebCore::CookieJarDB::checkDatabaseValidity):
+        (WebCore::CookieJarDB::searchCookies):
+        (WebCore::CookieJarDB::getAllCookies):
+        (WebCore::CookieJarDB::allDomains):
+        (WebCore::CookieJarDB::createPrepareStatement):
+        (WebCore::CookieJarDB::executeSql):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+        (WebCore::SQLiteDatabase::useWALJournalMode):
+        (WebCore::SQLiteDatabase::maximumSize):
+        (WebCore::SQLiteDatabase::setMaximumSize):
+        (WebCore::SQLiteDatabase::pageSize):
+        (WebCore::SQLiteDatabase::freeSpaceSize):
+        (WebCore::SQLiteDatabase::totalSize):
+        (WebCore::SQLiteDatabase::executeCommand):
+        (WebCore::SQLiteDatabase::returnsAtLeastOneResult):
+        (WebCore::SQLiteDatabase::tableExists):
+        (WebCore::SQLiteDatabase::clearAllTables):
+        (WebCore::SQLiteDatabase::turnOnIncrementalAutoVacuum):
+        (WebCore::constructAndPrepareStatement):
+        (WebCore::SQLiteDatabase::prepareStatement):
+        (WebCore::SQLiteDatabase::prepareHeapStatement):
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::SQLiteStatement):
+        (WebCore::SQLiteStatement::~SQLiteStatement):
+        (WebCore::SQLiteStatement::step):
+        (WebCore::SQLiteStatement::reset):
+        (WebCore::SQLiteStatement::executeCommand):
+        (WebCore::SQLiteStatement::returnsAtLeastOneResult):
+        (WebCore::SQLiteStatement::bindBlob):
+        (WebCore::SQLiteStatement::bindText):
+        (WebCore::SQLiteStatement::bindInt):
+        (WebCore::SQLiteStatement::bindInt64):
+        (WebCore::SQLiteStatement::bindDouble):
+        (WebCore::SQLiteStatement::bindNull):
+        (WebCore::SQLiteStatement::bindParameterCount const):
+        (WebCore::SQLiteStatement::columnCount):
+        (WebCore::SQLiteStatement::isColumnNull):
+        (WebCore::SQLiteStatement::isColumnDeclaredAsBlob):
+        (WebCore::SQLiteStatement::getColumnName):
+        (WebCore::SQLiteStatement::getColumnValue):
+        (WebCore::SQLiteStatement::getColumnText):
+        (WebCore::SQLiteStatement::getColumnDouble):
+        (WebCore::SQLiteStatement::getColumnInt):
+        (WebCore::SQLiteStatement::getColumnInt64):
+        (WebCore::SQLiteStatement::getColumnBlobAsString):
+        (WebCore::SQLiteStatement::getColumnBlobAsVector):
+        (WebCore::SQLiteStatement::returnTextResults):
+        (WebCore::SQLiteStatement::returnIntResults):
+        (WebCore::SQLiteStatement::returnInt64Results):
+        (WebCore::SQLiteStatement::returnDoubleResults):
+        * platform/sql/SQLiteStatement.h:
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::checkDatabaseValidity):
+        (WebCore::SearchPopupMenuDB::verifySchemaVersion):
+        (WebCore::SearchPopupMenuDB::executeSimpleSql):
+        (WebCore::SearchPopupMenuDB::createPreparedStatement):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::ensureValidRecordsTable):
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+
 2021-05-16  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Cleanup FormattingContext class

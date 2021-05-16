@@ -113,18 +113,15 @@ static String formatErrorMessage(const char* message, int sqliteErrorCode, const
 
 static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, const String& value)
 {
-    SQLiteStatement statement(db, query);
-    int result = statement.prepare();
-
-    if (result != SQLITE_OK) {
+    auto statement = db.prepareStatement(query);
+    if (!statement) {
         LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.ascii().data());
         return false;
     }
 
-    statement.bindText(1, value);
+    statement->bindText(1, value);
 
-    result = statement.step();
-    if (result != SQLITE_DONE) {
+    if (statement->step() != SQLITE_DONE) {
         LOG_ERROR("Failed to step statement to set value in database (%s)", query.ascii().data());
         return false;
     }
@@ -134,17 +131,15 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 
 static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& query, String& resultString)
 {
-    SQLiteStatement statement(db, query);
-    int result = statement.prepare();
-
-    if (result != SQLITE_OK) {
-        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", result, query.ascii().data());
+    auto statement = db.prepareStatement(query);
+    if (!statement) {
+        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", statement.error(), query.ascii().data());
         return false;
     }
 
-    result = statement.step();
+    int result = statement->step();
     if (result == SQLITE_ROW) {
-        resultString = statement.getColumnText(0);
+        resultString = statement->getColumnText(0);
         return true;
     }
     if (result == SQLITE_DONE) {
@@ -714,8 +709,8 @@ Vector<String> Database::performGetTableNames()
 {
     disableAuthorizer();
 
-    SQLiteStatement statement(sqliteDatabase(), "SELECT name FROM sqlite_master WHERE type='table';");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = sqliteDatabase().prepareStatement("SELECT name FROM sqlite_master WHERE type='table';"_s);
+    if (!statement) {
         LOG_ERROR("Unable to retrieve list of tables for database %s", databaseDebugName().ascii().data());
         enableAuthorizer();
         return Vector<String>();
@@ -723,8 +718,8 @@ Vector<String> Database::performGetTableNames()
 
     Vector<String> tableNames;
     int result;
-    while ((result = statement.step()) == SQLITE_ROW) {
-        String name = statement.getColumnText(0);
+    while ((result = statement->step()) == SQLITE_ROW) {
+        String name = statement->getColumnText(0);
         if (name != unqualifiedInfoTableName)
             tableNames.append(name);
     }

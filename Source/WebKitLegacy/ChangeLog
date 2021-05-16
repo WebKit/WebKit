@@ -1,3 +1,25 @@
+2021-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Optimize SQLiteStatement creation and preparation
+        https://bugs.webkit.org/show_bug.cgi?id=225791
+
+        Reviewed by Sam Weinig.
+
+        Update code base now that the SQLiteDatabase & SQLiteStatement API has changed.
+        Also use more ASCIILiterals.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::migrateItemTableIfNeeded):
+        (WebKit::StorageAreaSync::performImport):
+        (WebKit::StorageAreaSync::sync):
+        (WebKit::StorageAreaSync::deleteEmptyDatabase):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::syncImportOriginIdentifiers):
+        (WebKit::StorageTracker::syncSetOriginDetails):
+        (WebKit::StorageTracker::syncDeleteAllOrigins):
+        (WebKit::StorageTracker::syncDeleteOrigin):
+        (WebKit::StorageTracker::databasePathForOrigin):
+
 2021-05-14  Chris Dumez  <cdumez@apple.com>
 
         Rename FileSystem::getFileSize() to FileSystem::fileSize()

@@ -1,3 +1,25 @@
+2021-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Optimize SQLiteStatement creation and preparation
+        https://bugs.webkit.org/show_bug.cgi?id=225791
+
+        Reviewed by Sam Weinig.
+
+        Allow constructing a UniqueRef<> from a C++ reference. std::unique_ptr<>() can be constructed
+        using a raw pointer and we can construct a UniqueRef<> from a std::unique_ptr<>() so I see
+        no reason not to allow that.
+
+        The reason I needed this is that I want to prevent call sites from allocating SQLiteStatement
+        without going through the SQLiteDatabase. As a result, I made the SQLiteStatement constructor
+        private and marked SQLiteDatabase as a friend class. SQLiteDatabase has to heap-allocate
+        a SQLiteStatement via new and then construct a UniqueRef<> for it. SQLiteDatabase cannot use
+        makeUniqueRef() because the SQLiteStatement constructor is private. I also cannot mark
+        makeUniqueRef() as a friend function of SQLiteStatement or anybody could heap allocate a
+        SQLiteStatement via makeUniqueRef (not just the SQLiteDatabase).
+
+        * wtf/UniqueRef.h:
+        (WTF::UniqueRef::UniqueRef):
+
 2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete WebSQL code from WebKit2

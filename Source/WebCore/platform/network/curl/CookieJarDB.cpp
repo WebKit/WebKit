@@ -181,8 +181,6 @@ bool CookieJarDB::openDatabase()
 void CookieJarDB::closeDatabase()
 {
     if (m_database.isOpen()) {
-        for (const auto& statement : m_statements)
-            statement.value.get()->finalize();
         m_statements.clear();
         m_database.close();
     }
@@ -193,7 +191,8 @@ void CookieJarDB::verifySchemaVersion()
     if (isOnMemory())
         return;
 
-    int version = SQLiteStatement(m_database, "PRAGMA user_version").getColumnInt(0);
+    auto statement = m_database.prepareStatement("PRAGMA user_version"_s);
+    int version = statement ? statement->getColumnInt(0) : 0;
     if (version == schemaVersion)
         return;
 
@@ -273,25 +272,25 @@ bool CookieJarDB::checkDatabaseValidity()
     if (!m_database.tableExists("Cookie"))
         return false;
 
-    SQLiteStatement integrity(m_database, "PRAGMA quick_check;");
-    if (integrity.prepare() != SQLITE_OK) {
+    auto integrity = m_database.prepareStatement("PRAGMA quick_check;"_s);
+    if (!integrity) {
         LOG_ERROR("Failed to execute database integrity check");
         return false;
     }
 
-    int resultCode = integrity.step();
+    int resultCode = integrity->step();
     if (resultCode != SQLITE_ROW) {
         LOG_ERROR("Integrity quick_check step returned %d", resultCode);
         return false;
     }
 
-    int columns = integrity.columnCount();
+    int columns = integrity->columnCount();
     if (columns != 1) {
         LOG_ERROR("Received %i columns performing integrity check, should be 1", columns);
         return false;
     }
 
-    String resultText = integrity.getColumnText(0);
+    String resultText = integrity->getColumnText(0);
 
     if (resultText != "ok") {
         LOG_ERROR("Cookie database integrity check failed - %s", resultText.ascii().data());
@@ -386,20 +385,16 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
 
     RegistrableDomain registrableDomain { requestUrl };
 
-    const String sql =
-        "SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie WHERE "\
+    auto pstmt = m_database.prepareStatement("SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie WHERE "\
         "(NOT ((session = 0) AND (expires < ?)))"
         "AND (httponly = COALESCE(NULLIF(?, -1), httponly)) "\
         "AND (secure = COALESCE(NULLIF(?, -1), secure)) "\
         "AND (session = COALESCE(NULLIF(?, -1), session)) "\
         "AND ((domain = ?) OR (domain GLOB ?)) "\
-        "ORDER BY length(path) DESC, lastupdated";
-
-    auto pstmt = makeUnique<SQLiteStatement>(m_database, sql);
+        "ORDER BY length(path) DESC, lastupdated"_s);
     if (!pstmt)
         return WTF::nullopt;
 
-    pstmt->prepare();
     pstmt->bindInt64(1, WallTime::now().secondsSinceEpoch().milliseconds());
     pstmt->bindInt(2, httpOnly ? *httpOnly : -1);
     pstmt->bindInt(3, secure ? *secure : -1);
@@ -410,9 +405,6 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         pstmt->bindNull(6);
     else
         pstmt->bindText(6, String("*.") + registrableDomain.string());
-
-    if (!pstmt)
-        return WTF::nullopt;
 
     Vector<Cookie> results;
 
@@ -453,7 +445,6 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         cookie.session = cookieSession;
         results.append(WTFMove(cookie));
     }
-    pstmt->finalize();
 
     return results;
 }
@@ -463,11 +454,11 @@ Vector<Cookie> CookieJarDB::getAllCookies()
     Vector<Cookie> result;
     if (!isEnabled() || !m_database.isOpen())
         return result;
-    const String sql = "SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie"_s;
-    auto pstmt = makeUnique<SQLiteStatement>(m_database, sql);
+
+    auto pstmt = m_database.prepareStatement("SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie"_s);
     if (!pstmt)
         return result;
-    pstmt->prepare();
+
     while (pstmt->step() == SQLITE_ROW) {
         Cookie cookie;
         cookie.name = pstmt->getColumnText(0);
@@ -482,7 +473,6 @@ Vector<Cookie> CookieJarDB::getAllCookies()
         cookie.session = (pstmt->getColumnInt(7) == 1);
         result.append(WTFMove(cookie));
     }
-    pstmt->finalize();
     return result;
 }
 
@@ -571,16 +561,15 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
 
 HashSet<String> CookieJarDB::allDomains()
 {
-    SQLiteStatement statement(m_database, SELECT_ALL_DOMAINS_SQL);
-    statement.prepare();
+    auto statement = m_database.prepareStatement(SELECT_ALL_DOMAINS_SQL);
+    if (!statement)
+        return { };
 
     HashSet<String> domains;
-    while (statement.step() == SQLITE_ROW) {
-        auto domain = statement.getColumnText(0);
+    while (statement->step() == SQLITE_ROW) {
+        auto domain = statement->getColumnText(0);
         domains.add(domain);
     }
-
-    statement.finalize();
     return domains;
 }
 
@@ -637,10 +626,9 @@ bool CookieJarDB::deleteAllCookies()
 
 void CookieJarDB::createPrepareStatement(const String& sql)
 {
-    auto statement = makeUnique<SQLiteStatement>(m_database, sql);
-    int ret = statement->prepare();
-    ASSERT_UNUSED(ret, ret == SQLITE_OK);
-    m_statements.add(sql, WTFMove(statement));
+    auto statement = m_database.prepareHeapStatement(sql);
+    ASSERT(statement);
+    m_statements.add(sql, statement.value().moveToUniquePtr());
 }
 
 SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)
@@ -653,10 +641,13 @@ SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)
 
 bool CookieJarDB::executeSql(const String& sql)
 {
-    SQLiteStatement statement(m_database, sql);
-    int ret = statement.prepareAndStep();
-    statement.finalize();
+    auto statement = m_database.prepareStatement(sql);
+    if (!statement && !checkSQLiteReturnCode(statement.error())) {
+        LOG_ERROR("Failed to prepare %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
+        return false;
+    }
 
+    int ret = statement->step();
     if (!checkSQLiteReturnCode(ret)) {
         LOG_ERROR("Failed to execute %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
         return false;

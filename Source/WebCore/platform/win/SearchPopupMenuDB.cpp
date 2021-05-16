@@ -130,25 +130,25 @@ bool SearchPopupMenuDB::checkDatabaseValidity()
     if (!m_database.tableExists("Search"))
         return false;
 
-    SQLiteStatement integrity(m_database, "PRAGMA quick_check;");
-    if (integrity.prepare() != SQLITE_OK) {
+    auto integrity = m_database.prepareStatement("PRAGMA quick_check;"_s);
+    if (!integrity) {
         LOG_ERROR("Failed to execute database integrity check");
         return false;
     }
 
-    int resultCode = integrity.step();
+    int resultCode = integrity->step();
     if (resultCode != SQLITE_ROW) {
         LOG_ERROR("Integrity quick_check step returned %d", resultCode);
         return false;
     }
 
-    int columns = integrity.columnCount();
+    int columns = integrity->columnCount();
     if (columns != 1) {
         LOG_ERROR("Received %i columns performing integrity check, should be 1", columns);
         return false;
     }
 
-    String resultText = integrity.getColumnText(0);
+    String resultText = integrity->getColumnText(0);
 
     if (resultText != "ok") {
         LOG_ERROR("Search autosave database integrity check failed - %s", resultText.ascii().data());
@@ -224,17 +224,19 @@ bool SearchPopupMenuDB::openDatabase()
 
 void SearchPopupMenuDB::closeDatabase()
 {
-    if (m_database.isOpen()) {
-        m_loadSearchTermsForNameStatement->finalize();
-        m_insertSearchTermStatement->finalize();
-        m_removeSearchTermsForNameStatement->finalize();
-        m_database.close();
-    }
+    if (!m_database.isOpen())
+        return;
+
+    m_loadSearchTermsForNameStatement = nullptr;
+    m_insertSearchTermStatement = nullptr;
+    m_removeSearchTermsForNameStatement = nullptr;
+    m_database.close();
 }
 
 void SearchPopupMenuDB::verifySchemaVersion()
 {
-    int version = SQLiteStatement(m_database, "PRAGMA user_version").getColumnInt(0);
+    auto statement = m_database.prepareStatement("PRAGMA user_version"_s);
+    int version = statement ? statement->getColumnInt(0) : 0;
     if (version == schemaVersion)
         return;
 
@@ -271,23 +273,25 @@ void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)
 
 int SearchPopupMenuDB::executeSimpleSql(const String& sql, bool ignoreError)
 {
-    SQLiteStatement statement(m_database, sql);
-    int ret = statement.prepareAndStep();
-    statement.finalize();
+    auto statement = m_database.prepareStatement(sql);
+    if (!statement) {
+        checkSQLiteReturnCode(statement.error());
+        return statement.error();
+    }
 
-    checkSQLiteReturnCode(ret);
+    int ret = statement->step();
     if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW && !ignoreError)
         LOG_ERROR("Failed to execute %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
-
     return ret;
 }
 
-std::unique_ptr<SQLiteStatement> SearchPopupMenuDB::createPreparedStatement(const String& sql)
+std::unique_ptr<SQLiteStatement> SearchPopupMenuDB::createPreparedStatement(ASCIILiteral sql)
 {
-    auto statement = makeUnique<SQLiteStatement>(m_database, sql);
-    int ret = statement->prepare();
-    ASSERT_UNUSED(ret, ret == SQLITE_OK);
-    return statement;
+    auto statement = m_database.prepareHeapStatement(sql);
+    ASSERT(statement);
+    if (!statement)
+        return nullptr;
+    return statement.value().moveToUniquePtr();
 }
 
 }

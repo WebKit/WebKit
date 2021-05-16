@@ -285,11 +285,11 @@ String RegistrationDatabase::ensureValidRecordsTable()
     String currentSchema;
     {
         // Fetch the schema for an existing records table.
-        SQLiteStatement statement(*m_database, "SELECT type, sql FROM sqlite_master WHERE tbl_name='Records'");
-        if (statement.prepare() != SQLITE_OK)
-            return "Unable to prepare statement to fetch schema for the Records table.";
+        auto statement = m_database->prepareStatement("SELECT type, sql FROM sqlite_master WHERE tbl_name='Records'"_s);
+        if (!statement)
+            return "Unable to prepare statement to fetch schema for the Records table."_s;
 
-        int sqliteResult = statement.step();
+        int sqliteResult = statement->step();
 
         // If there is no Records table at all, create it and then bail.
         if (sqliteResult == SQLITE_DONE) {
@@ -301,7 +301,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
         if (sqliteResult != SQLITE_ROW)
             return "Error executing statement to fetch schema for the Records table.";
 
-        currentSchema = statement.getColumnText(1);
+        currentSchema = statement->getColumnText(1);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -427,18 +427,18 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
     SQLiteTransaction transaction(*m_database);
     transaction.begin();
 
-    SQLiteStatement sql(*m_database, "INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s);
-    if (sql.prepare() != SQLITE_OK) {
+    auto insertStatement = m_database->prepareStatement("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s);
+    if (!insertStatement) {
         RELEASE_LOG_ERROR(ServiceWorker, "Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return false;
     }
 
     auto& scriptStorage = this->scriptStorage();
     for (auto& registration : removedRegistrations) {
-        SQLiteStatement sql(*m_database, "DELETE FROM Records WHERE key = ?");
-        if (sql.prepare() != SQLITE_OK
-            || sql.bindText(1, registration.toDatabaseKey()) != SQLITE_OK
-            || sql.step() != SQLITE_DONE) {
+        auto deleteStatement = m_database->prepareStatement("DELETE FROM Records WHERE key = ?"_s);
+        if (!deleteStatement
+            || deleteStatement->bindText(1, registration.toDatabaseKey()) != SQLITE_OK
+            || deleteStatement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to remove registration data from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return false;
         }
@@ -457,19 +457,19 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
         WTF::Persistence::Encoder certificateInfoEncoder;
         certificateInfoEncoder << data.certificateInfo;
 
-        if (sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
-            || sql.bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
-            || sql.bindText(3, data.registration.scopeURL.path().toString()) != SQLITE_OK
-            || sql.bindText(4, data.registration.key.topOrigin().databaseIdentifier()) != SQLITE_OK
-            || sql.bindDouble(5, data.registration.lastUpdateTime.secondsSinceEpoch().value()) != SQLITE_OK
-            || sql.bindText(6, updateViaCacheToString(data.registration.updateViaCache)) != SQLITE_OK
-            || sql.bindText(7, data.scriptURL.string()) != SQLITE_OK
-            || sql.bindText(8, workerTypeToString(data.workerType)) != SQLITE_OK
-            || sql.bindBlob(9, cspEncoder.buffer(), cspEncoder.bufferSize()) != SQLITE_OK
-            || sql.bindText(10, data.referrerPolicy) != SQLITE_OK
-            || sql.bindBlob(11, scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize()) != SQLITE_OK
-            || sql.bindBlob(12, certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize()) != SQLITE_OK
-            || sql.step() != SQLITE_DONE) {
+        if (insertStatement->bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
+            || insertStatement->bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
+            || insertStatement->bindText(3, data.registration.scopeURL.path().toString()) != SQLITE_OK
+            || insertStatement->bindText(4, data.registration.key.topOrigin().databaseIdentifier()) != SQLITE_OK
+            || insertStatement->bindDouble(5, data.registration.lastUpdateTime.secondsSinceEpoch().value()) != SQLITE_OK
+            || insertStatement->bindText(6, updateViaCacheToString(data.registration.updateViaCache)) != SQLITE_OK
+            || insertStatement->bindText(7, data.scriptURL.string()) != SQLITE_OK
+            || insertStatement->bindText(8, workerTypeToString(data.workerType)) != SQLITE_OK
+            || insertStatement->bindBlob(9, cspEncoder.buffer(), cspEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->bindText(10, data.referrerPolicy) != SQLITE_OK
+            || insertStatement->bindBlob(11, scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->bindBlob(12, certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return false;
         }
@@ -502,26 +502,26 @@ String RegistrationDatabase::importRecords()
     ASSERT(!isMainThread());
 
     RELEASE_LOG(ServiceWorker, "RegistrationDatabase::importRecords:");
-    SQLiteStatement sql(*m_database, "SELECT * FROM Records;"_s);
-    if (sql.prepare() != SQLITE_OK)
+    auto sql = m_database->prepareStatement("SELECT * FROM Records;"_s);
+    if (!sql)
         return makeString("Failed to prepare statement to retrieve registrations from records table (", m_database->lastError(), ") - ", m_database->lastErrorMsg());
 
-    int result = sql.step();
+    int result = sql->step();
 
-    for (; result == SQLITE_ROW; result = sql.step()) {
+    for (; result == SQLITE_ROW; result = sql->step()) {
         RELEASE_LOG(ServiceWorker, "RegistrationDatabase::importRecords: Importing a registration from the database");
-        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql.getColumnText(0));
-        auto originURL = URL { URL(), sql.getColumnText(1) };
-        auto scopePath = sql.getColumnText(2);
+        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql->getColumnText(0));
+        auto originURL = URL { URL(), sql->getColumnText(1) };
+        auto scopePath = sql->getColumnText(2);
         auto scopeURL = URL { originURL, scopePath };
-        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql.getColumnText(3));
-        auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql.getColumnDouble(4));
-        auto updateViaCache = stringToUpdateViaCache(sql.getColumnText(5));
-        auto scriptURL = URL { URL(), sql.getColumnText(6) };
-        auto workerType = stringToWorkerType(sql.getColumnText(7));
+        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql->getColumnText(3));
+        auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql->getColumnDouble(4));
+        auto updateViaCache = stringToUpdateViaCache(sql->getColumnText(5));
+        auto scriptURL = URL { URL(), sql->getColumnText(6) };
+        auto workerType = stringToWorkerType(sql->getColumnText(7));
 
         Vector<uint8_t> contentSecurityPolicyData;
-        sql.getColumnBlobAsVector(8, contentSecurityPolicyData);
+        sql->getColumnBlobAsVector(8, contentSecurityPolicyData);
         WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
         Optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
         if (contentSecurityPolicyData.size()) {
@@ -532,10 +532,10 @@ String RegistrationDatabase::importRecords()
             }
         }
 
-        auto referrerPolicy = sql.getColumnText(9);
+        auto referrerPolicy = sql->getColumnText(9);
 
         Vector<uint8_t> scriptResourceMapData;
-        sql.getColumnBlobAsVector(10, scriptResourceMapData);
+        sql->getColumnBlobAsVector(10, scriptResourceMapData);
         HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
 
         WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapData.data(), scriptResourceMapData.size());
@@ -550,7 +550,7 @@ String RegistrationDatabase::importRecords()
         }
 
         Vector<uint8_t> certificateInfoData;
-        sql.getColumnBlobAsVector(11, certificateInfoData);
+        sql->getColumnBlobAsVector(11, certificateInfoData);
         Optional<CertificateInfo> certificateInfo;
 
         WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoData.data(), certificateInfoData.size());

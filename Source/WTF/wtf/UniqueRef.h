@@ -61,6 +61,12 @@ public:
         ASSERT(m_ref);
     }
 
+    explicit UniqueRef(T& other)
+        : m_ref(&other)
+    {
+        ASSERT(m_ref);
+    }
+
     T& get() { ASSERT(m_ref); return *m_ref; }
     const T& get() const { ASSERT(m_ref); return *m_ref; }
 
@@ -79,12 +85,6 @@ private:
     template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);
     template<class U> friend UniqueRef<U> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<U>);
     template<class U> friend class UniqueRef;
-
-    UniqueRef(T& other)
-        : m_ref(&other)
-    {
-        ASSERT(m_ref);
-    }
 
     std::unique_ptr<T> m_ref;
 };

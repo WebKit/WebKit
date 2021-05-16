@@ -189,8 +189,8 @@ void StorageTracker::syncImportOriginIdentifiers()
         if (m_database.isOpen()) {
             SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-            SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
-            if (statement.prepare() != SQLITE_OK) {
+            auto statement = m_database.prepareStatement("SELECT origin FROM Origins"_s);
+            if (!statement) {
                 LOG_ERROR("Failed to prepare statement.");
                 return;
             }
@@ -199,8 +199,8 @@ void StorageTracker::syncImportOriginIdentifiers()
             
             {
                 LockHolder lockOrigins(m_originSetMutex);
-                while ((result = statement.step()) == SQLITE_ROW)
-                    m_originSet.add(statement.getColumnText(0).isolatedCopy());
+                while ((result = statement->step()) == SQLITE_ROW)
+                    m_originSet.add(statement->getColumnText(0).isolatedCopy());
             }
             
             if (result != SQLITE_DONE) {
@@ -316,16 +316,16 @@ void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const 
     if (!m_database.isOpen())
         return;
 
-    SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = m_database.prepareStatement("INSERT INTO Origins VALUES (?, ?)"_s);
+    if (!statement) {
         LOG_ERROR("Unable to establish origin '%s' in the tracker", originIdentifier.ascii().data());
         return;
     } 
     
-    statement.bindText(1, originIdentifier);
-    statement.bindText(2, databaseFile);
+    statement->bindText(1, originIdentifier);
+    statement->bindText(2, databaseFile);
     
-    if (statement.step() != SQLITE_DONE)
+    if (statement->step() != SQLITE_DONE)
         LOG_ERROR("Unable to establish origin '%s' in the tracker", originIdentifier.ascii().data());
 
     {
@@ -404,23 +404,23 @@ void StorageTracker::syncDeleteAllOrigins()
     if (!m_database.isOpen())
         return;
     
-    SQLiteStatement statement(m_database, "SELECT origin, path FROM Origins");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = m_database.prepareStatement("SELECT origin, path FROM Origins"_s);
+    if (!statement) {
         LOG_ERROR("Failed to prepare statement.");
         return;
     }
     
     int result;
-    while ((result = statement.step()) == SQLITE_ROW) {
-        if (!canDeleteOrigin(statement.getColumnText(0)))
+    while ((result = statement->step()) == SQLITE_ROW) {
+        if (!canDeleteOrigin(statement->getColumnText(0)))
             continue;
 
-        FileSystem::deleteFile(statement.getColumnText(1));
+        FileSystem::deleteFile(statement->getColumnText(1));
 
         {
             LockHolder locker(m_clientMutex);
             if (m_client)
-                m_client->dispatchDidModifyOrigin(statement.getColumnText(0));
+                m_client->dispatchDidModifyOrigin(statement->getColumnText(0));
         }
     }
     
@@ -441,12 +441,12 @@ void StorageTracker::syncDeleteAllOrigins()
         openTrackerDatabase(false);
         if (!m_database.isOpen())
             return;
-        SQLiteStatement deleteStatement(m_database, "DELETE FROM Origins");
-        if (deleteStatement.prepare() != SQLITE_OK) {
+        auto deleteStatement = m_database.prepareStatement("DELETE FROM Origins"_s);
+        if (!deleteStatement) {
             LOG_ERROR("Unable to prepare deletion of all origins");
             return;
         }
-        if (!deleteStatement.executeCommand()) {
+        if (!deleteStatement->executeCommand()) {
             LOG_ERROR("Unable to execute deletion of all origins");
             return;
         }
@@ -519,13 +519,13 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
         return;
     }
     
-    SQLiteStatement deleteStatement(m_database, "DELETE FROM Origins where origin=?");
-    if (deleteStatement.prepare() != SQLITE_OK) {
+    auto deleteStatement = m_database.prepareStatement("DELETE FROM Origins where origin=?"_s);
+    if (!deleteStatement) {
         LOG_ERROR("Unable to prepare deletion of origin '%s'", originIdentifier.ascii().data());
         return;
     }
-    deleteStatement.bindText(1, originIdentifier);
-    if (!deleteStatement.executeCommand()) {
+    deleteStatement->bindText(1, originIdentifier);
+    if (!deleteStatement->executeCommand()) {
         LOG_ERROR("Unable to execute deletion of origin '%s'", originIdentifier.ascii().data());
         return;
     }
@@ -614,17 +614,17 @@ String StorageTracker::databasePathForOrigin(const String& originIdentifier)
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-    SQLiteStatement pathStatement(m_database, "SELECT path FROM Origins WHERE origin=?");
-    if (pathStatement.prepare() != SQLITE_OK) {
+    auto pathStatement = m_database.prepareStatement("SELECT path FROM Origins WHERE origin=?"_s);
+    if (!pathStatement) {
         LOG_ERROR("Unable to prepare selection of path for origin '%s'", originIdentifier.ascii().data());
         return String();
     }
-    pathStatement.bindText(1, originIdentifier);
-    int result = pathStatement.step();
+    pathStatement->bindText(1, originIdentifier);
+    int result = pathStatement->step();
     if (result != SQLITE_ROW)
         return String();
 
-    return pathStatement.getColumnText(0);
+    return pathStatement->getColumnText(0);
 }
     
 uint64_t StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)

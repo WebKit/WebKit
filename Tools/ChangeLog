@@ -1,3 +1,16 @@
+2021-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Optimize SQLiteStatement creation and preparation
+        https://bugs.webkit.org/show_bug.cgi?id=225791
+
+        Reviewed by Sam Weinig.
+
+        Update code base now that the SQLiteDatabase & SQLiteStatement API has changed.
+        Also use more ASCIILiterals.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+        (TestWebKitAPI::addToDatabasesTable):
+
 2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delete WebSQL code from WebKit2

@@ -38,7 +38,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static const char getItemsQueryString[] = "SELECT key, value FROM ItemTable";
+static const ASCIILiteral getItemsQueryString { "SELECT key, value FROM ItemTable"_s };
 
 Ref<LocalStorageDatabase> LocalStorageDatabase::create(String&& databasePath, unsigned quotaInBytes)
 {
@@ -99,10 +99,10 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
     if (!m_database.tableExists("ItemTable"))
         return true;
 
-    SQLiteStatement query(m_database, "SELECT value FROM ItemTable LIMIT 1");
+    auto query = m_database.prepareStatement("SELECT value FROM ItemTable LIMIT 1"_s);
 
     // This query isn't ever executed, it's just used to check the column type.
-    if (query.isColumnDeclaredAsBlob(0))
+    if (query && query->isColumnDeclaredAsBlob(0))
         return true;
 
     // Create a new table with the right type, copy all the data over to it and then replace the new table with the old table.
@@ -302,19 +302,18 @@ bool LocalStorageDatabase::databaseIsEmpty() const
     if (!m_database.isOpen())
         return false;
 
-    SQLiteStatement query(m_database, "SELECT COUNT(*) FROM ItemTable");
-    if (query.prepare() != SQLITE_OK) {
+    auto query = m_database.prepareStatement("SELECT COUNT(*) FROM ItemTable"_s);
+    if (!query) {
         LOG_ERROR("Unable to count number of rows in ItemTable for local storage");
         return false;
     }
 
-    int result = query.step();
-    if (result != SQLITE_ROW) {
+    if (query->step() != SQLITE_ROW) {
         LOG_ERROR("No results when counting number of rows in ItemTable for local storage");
         return false;
     }
 
-    return !query.getColumnInt(0);
+    return !query->getColumnInt(0);
 }
 
 void LocalStorageDatabase::openIfExisting()
@@ -330,14 +329,15 @@ void LocalStorageDatabase::openIfExisting()
         scopedStatement(m_getItemsStatement, getItemsQueryString);
 }
 
-SQLiteStatementAutoResetScope LocalStorageDatabase::scopedStatement(std::unique_ptr<SQLiteStatement>& statement, const String& query) const
+SQLiteStatementAutoResetScope LocalStorageDatabase::scopedStatement(std::unique_ptr<SQLiteStatement>& statement, ASCIILiteral query) const
 {
     ASSERT(!RunLoop::isMain());
     if (!statement) {
-        statement = makeUnique<SQLiteStatement>(m_database, query);
-        ASSERT(m_database.isOpen());
-        if (statement->prepare() != SQLITE_OK)
+        auto statementOrError = m_database.prepareHeapStatement(query);
+        if (!statementOrError)
             return SQLiteStatementAutoResetScope { };
+        statement = statementOrError.value().moveToUniquePtr();
+        ASSERT(m_database.isOpen());
     }
     return SQLiteStatementAutoResetScope { statement.get() };
 }

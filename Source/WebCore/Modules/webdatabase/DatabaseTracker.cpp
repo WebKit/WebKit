@@ -235,15 +235,15 @@ bool DatabaseTracker::hasEntryForOriginNoLock(const SecurityOriginData& origin)
     if (!m_database.isOpen())
         return false;
 
-    SQLiteStatement statement(m_database, "SELECT origin FROM Origins where origin=?;");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = m_database.prepareStatement("SELECT origin FROM Origins where origin=?;"_s);
+    if (!statement) {
         LOG_ERROR("Failed to prepare statement.");
         return false;
     }
 
-    statement.bindText(1, origin.databaseIdentifier());
+    statement->bindText(1, origin.databaseIdentifier());
 
-    return statement.step() == SQLITE_ROW;
+    return statement->step() == SQLITE_ROW;
 }
 
 bool DatabaseTracker::hasEntryForDatabase(const SecurityOriginData& origin, const String& databaseIdentifier)
@@ -256,15 +256,15 @@ bool DatabaseTracker::hasEntryForDatabase(const SecurityOriginData& origin, cons
     }
 
     // We've got a tracker database. Set up a query to ask for the db of interest:
-    SQLiteStatement statement(m_database, "SELECT guid FROM Databases WHERE origin=? AND name=?;");
+    auto statement = m_database.prepareStatement("SELECT guid FROM Databases WHERE origin=? AND name=?;"_s);
 
-    if (statement.prepare() != SQLITE_OK)
+    if (!statement)
         return false;
 
-    statement.bindText(1, origin.databaseIdentifier());
-    statement.bindText(2, databaseIdentifier);
+    statement->bindText(1, origin.databaseIdentifier());
+    statement->bindText(2, databaseIdentifier);
 
-    return statement.step() == SQLITE_ROW;
+    return statement->step() == SQLITE_ROW;
 }
 
 uint64_t DatabaseTracker::maximumSize(Database& database)
@@ -325,26 +325,26 @@ String DatabaseTracker::fullPathForDatabaseNoLock(const SecurityOriginData& orig
     // See if we have a path for this database yet
     if (!m_database.isOpen())
         return String();
-    SQLiteStatement statement(m_database, "SELECT path FROM Databases WHERE origin=? AND name=?;");
 
-    if (statement.prepare() != SQLITE_OK)
-        return String();
+    {
+        auto statement = m_database.prepareStatement("SELECT path FROM Databases WHERE origin=? AND name=?;"_s);
+        if (!statement)
+            return String();
 
-    statement.bindText(1, originIdentifier);
-    statement.bindText(2, name);
+        statement->bindText(1, originIdentifier);
+        statement->bindText(2, name);
 
-    int result = statement.step();
+        int result = statement->step();
+        if (result == SQLITE_ROW)
+            return SQLiteFileSystem::appendDatabaseFileNameToPath(originPath, statement->getColumnText(0));
+        if (!createIfNotExists)
+            return String();
 
-    if (result == SQLITE_ROW)
-        return SQLiteFileSystem::appendDatabaseFileNameToPath(originPath, statement.getColumnText(0));
-    if (!createIfNotExists)
-        return String();
-
-    if (result != SQLITE_DONE) {
-        LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", originIdentifier.utf8().data(), name.utf8().data());
-        return String();
+        if (result != SQLITE_DONE) {
+            LOG_ERROR("Failed to retrieve filename from Database Tracker for origin %s, name %s", originIdentifier.utf8().data(), name.utf8().data());
+            return String();
+        }
     }
-    statement.finalize();
 
     String fileName = generateDatabaseFileName();
 
@@ -372,16 +372,16 @@ Vector<SecurityOriginData> DatabaseTracker::origins()
     if (!m_database.isOpen())
         return { };
 
-    SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = m_database.prepareStatement("SELECT origin FROM Origins"_s);
+    if (!statement) {
         LOG_ERROR("Failed to prepare statement.");
         return { };
     }
 
     Vector<SecurityOriginData> origins;
     int stepResult;
-    while ((stepResult = statement.step()) == SQLITE_ROW)
-        origins.append(SecurityOriginData::fromDatabaseIdentifier(statement.getColumnText(0))->isolatedCopy());
+    while ((stepResult = statement->step()) == SQLITE_ROW)
+        origins.append(SecurityOriginData::fromDatabaseIdentifier(statement->getColumnText(0))->isolatedCopy());
     origins.shrinkToFit();
 
     if (stepResult != SQLITE_DONE)
@@ -397,16 +397,16 @@ Vector<String> DatabaseTracker::databaseNamesNoLock(const SecurityOriginData& or
     if (!m_database.isOpen())
         return { };
 
-    SQLiteStatement statement(m_database, "SELECT name FROM Databases where origin=?;");
-    if (statement.prepare() != SQLITE_OK)
+    auto statement = m_database.prepareStatement("SELECT name FROM Databases where origin=?;"_s);
+    if (!statement)
         return { };
 
-    statement.bindText(1, origin.databaseIdentifier());
+    statement->bindText(1, origin.databaseIdentifier());
 
     Vector<String> names;
     int result;
-    while ((result = statement.step()) == SQLITE_ROW)
-        names.append(statement.getColumnText(0));
+    while ((result = statement->step()) == SQLITE_ROW)
+        names.append(statement->getColumnText(0));
     names.shrinkToFit();
 
     if (result != SQLITE_DONE) {
@@ -439,14 +439,14 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
         openTrackerDatabase(DontCreateIfDoesNotExist);
         if (!m_database.isOpen())
             return DatabaseDetails();
-        SQLiteStatement statement(m_database, "SELECT displayName, estimatedSize FROM Databases WHERE origin=? AND name=?");
-        if (statement.prepare() != SQLITE_OK)
+        auto statement = m_database.prepareStatement("SELECT displayName, estimatedSize FROM Databases WHERE origin=? AND name=?"_s);
+        if (!statement)
             return DatabaseDetails();
 
-        statement.bindText(1, originIdentifier);
-        statement.bindText(2, name);
+        statement->bindText(1, originIdentifier);
+        statement->bindText(2, name);
 
-        int result = statement.step();
+        int result = statement->step();
         if (result == SQLITE_DONE)
             return DatabaseDetails();
 
@@ -454,8 +454,8 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
             LOG_ERROR("Error retrieving details for database %s in origin %s from tracker database", name.utf8().data(), originIdentifier.utf8().data());
             return DatabaseDetails();
         }
-        displayName = statement.getColumnText(0);
-        expectedUsage = statement.getColumnInt64(1);
+        displayName = statement->getColumnText(0);
+        expectedUsage = statement->getColumnInt64(1);
     }
 
     String path = fullPathForDatabase(origin, name, false);
@@ -474,39 +474,41 @@ void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const
     openTrackerDatabase(CreateIfDoesNotExist);
     if (!m_database.isOpen())
         return;
-    SQLiteStatement statement(m_database, "SELECT guid FROM Databases WHERE origin=? AND name=?");
-    if (statement.prepare() != SQLITE_OK)
-        return;
 
-    statement.bindText(1, originIdentifier);
-    statement.bindText(2, name);
+    {
+        auto statement = m_database.prepareStatement("SELECT guid FROM Databases WHERE origin=? AND name=?"_s);
+        if (!statement)
+            return;
 
-    int result = statement.step();
-    if (result == SQLITE_ROW)
-        guid = statement.getColumnInt64(0);
-    statement.finalize();
+        statement->bindText(1, originIdentifier);
+        statement->bindText(2, name);
 
-    if (guid == 0) {
-        if (result != SQLITE_DONE)
-            LOG_ERROR("Error to determing existence of database %s in origin %s in tracker database", name.utf8().data(), originIdentifier.utf8().data());
-        else {
-            // This case should never occur - we should never be setting database details for a database that doesn't already exist in the tracker
-            // But since the tracker file is an external resource not under complete control of our code, it's somewhat invalid to make this an ASSERT case
-            // So we'll print an error instead
-            LOG_ERROR("Could not retrieve guid for database %s in origin %s from the tracker database - it is invalid to set database details on a database that doesn't already exist in the tracker", name.utf8().data(), originIdentifier.utf8().data());
+        int result = statement->step();
+        if (result == SQLITE_ROW)
+            guid = statement->getColumnInt64(0);
+
+        if (!guid) {
+            if (result != SQLITE_DONE)
+                LOG_ERROR("Error to determing existence of database %s in origin %s in tracker database", name.utf8().data(), originIdentifier.utf8().data());
+            else {
+                // This case should never occur - we should never be setting database details for a database that doesn't already exist in the tracker
+                // But since the tracker file is an external resource not under complete control of our code, it's somewhat invalid to make this an ASSERT case
+                // So we'll print an error instead
+                LOG_ERROR("Could not retrieve guid for database %s in origin %s from the tracker database - it is invalid to set database details on a database that doesn't already exist in the tracker", name.utf8().data(), originIdentifier.utf8().data());
+            }
+            return;
         }
-        return;
     }
 
-    SQLiteStatement updateStatement(m_database, "UPDATE Databases SET displayName=?, estimatedSize=? WHERE guid=?");
-    if (updateStatement.prepare() != SQLITE_OK)
+    auto updateStatement = m_database.prepareStatement("UPDATE Databases SET displayName=?, estimatedSize=? WHERE guid=?"_s);
+    if (!updateStatement)
         return;
 
-    updateStatement.bindText(1, displayName);
-    updateStatement.bindInt64(2, estimatedSize);
-    updateStatement.bindInt64(3, guid);
+    updateStatement->bindText(1, displayName);
+    updateStatement->bindInt64(2, estimatedSize);
+    updateStatement->bindInt64(3, guid);
 
-    if (updateStatement.step() != SQLITE_DONE) {
+    if (updateStatement->step() != SQLITE_DONE) {
         LOG_ERROR("Failed to update details for database %s in origin %s", name.utf8().data(), originIdentifier.utf8().data());
         return;
     }
@@ -671,15 +673,15 @@ uint64_t DatabaseTracker::quotaNoLock(const SecurityOriginData& origin)
     if (!m_database.isOpen())
         return quota;
 
-    SQLiteStatement statement(m_database, "SELECT quota FROM Origins where origin=?;");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = m_database.prepareStatement("SELECT quota FROM Origins where origin=?;"_s);
+    if (!statement) {
         LOG_ERROR("Failed to prepare statement.");
         return quota;
     }
-    statement.bindText(1, origin.databaseIdentifier());
+    statement->bindText(1, origin.databaseIdentifier());
 
-    if (statement.step() == SQLITE_ROW)
-        quota = statement.getColumnInt64(0);
+    if (statement->step() == SQLITE_ROW)
+        quota = statement->getColumnInt64(0);
 
     return quota;
 }
@@ -705,26 +707,26 @@ void DatabaseTracker::setQuota(const SecurityOriginData& origin, uint64_t quota)
 
     bool originEntryExists = hasEntryForOriginNoLock(origin);
     if (!originEntryExists) {
-        SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
-        if (statement.prepare() != SQLITE_OK) {
+        auto statement = m_database.prepareStatement("INSERT INTO Origins VALUES (?, ?)"_s);
+        if (!statement) {
             LOG_ERROR("Unable to establish origin %s in the tracker", origin.databaseIdentifier().utf8().data());
         } else {
-            statement.bindText(1, origin.databaseIdentifier());
-            statement.bindInt64(2, quota);
+            statement->bindText(1, origin.databaseIdentifier());
+            statement->bindInt64(2, quota);
 
-            if (statement.step() != SQLITE_DONE)
+            if (statement->step() != SQLITE_DONE)
                 LOG_ERROR("Unable to establish origin %s in the tracker", origin.databaseIdentifier().utf8().data());
             else
                 insertedNewOrigin = true;
         }
     } else {
-        SQLiteStatement statement(m_database, "UPDATE Origins SET quota=? WHERE origin=?");
-        bool error = statement.prepare() != SQLITE_OK;
+        auto statement = m_database.prepareStatement("UPDATE Origins SET quota=? WHERE origin=?"_s);
+        bool error = !statement;
         if (!error) {
-            statement.bindInt64(1, quota);
-            statement.bindText(2, origin.databaseIdentifier());
+            statement->bindInt64(1, quota);
+            statement->bindText(2, origin.databaseIdentifier());
 
-            error = !statement.executeCommand();
+            error = !statement->executeCommand();
         }
 
         if (error)
@@ -748,16 +750,16 @@ bool DatabaseTracker::addDatabase(const SecurityOriginData& origin, const String
     // New database should never be added until the origin has been established
     ASSERT(hasEntryForOriginNoLock(origin));
 
-    SQLiteStatement statement(m_database, "INSERT INTO Databases (origin, name, path) VALUES (?, ?, ?);");
+    auto statement = m_database.prepareStatement("INSERT INTO Databases (origin, name, path) VALUES (?, ?, ?);"_s);
 
-    if (statement.prepare() != SQLITE_OK)
+    if (!statement)
         return false;
 
-    statement.bindText(1, origin.databaseIdentifier());
-    statement.bindText(2, name);
-    statement.bindText(3, path);
+    statement->bindText(1, origin.databaseIdentifier());
+    statement->bindText(2, name);
+    statement->bindText(3, path);
 
-    if (!statement.executeCommand()) {
+    if (!statement->executeCommand()) {
         LOG_ERROR("Failed to add database %s to origin %s: %s\n", name.utf8().data(), origin.databaseIdentifier().utf8().data(), m_database.lastErrorMsg());
         return false;
     }
@@ -881,28 +883,28 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
         SQLiteTransaction transaction(m_database);
         transaction.begin();
 
-        SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=?");
-        if (statement.prepare() != SQLITE_OK) {
+        auto statement = m_database.prepareStatement("DELETE FROM Databases WHERE origin=?"_s);
+        if (!statement) {
             LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
             return false;
         }
 
-        statement.bindText(1, origin.databaseIdentifier());
+        statement->bindText(1, origin.databaseIdentifier());
 
-        if (!statement.executeCommand()) {
+        if (!statement->executeCommand()) {
             LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
             return false;
         }
 
-        SQLiteStatement originStatement(m_database, "DELETE FROM Origins WHERE origin=?");
-        if (originStatement.prepare() != SQLITE_OK) {
+        auto originStatement = m_database.prepareStatement("DELETE FROM Origins WHERE origin=?"_s);
+        if (!originStatement) {
             LOG_ERROR("Unable to prepare deletion of origin %s from tracker", origin.databaseIdentifier().utf8().data());
             return false;
         }
 
-        originStatement.bindText(1, origin.databaseIdentifier());
+        originStatement->bindText(1, origin.databaseIdentifier());
 
-        if (!originStatement.executeCommand()) {
+        if (!originStatement->executeCommand()) {
             LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
             return false;
         }
@@ -915,10 +917,10 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
 
         openTrackerDatabase(DontCreateIfDoesNotExist);
         if (m_database.isOpen()) {
-            SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
-            if (statement.prepare() != SQLITE_OK)
+            auto statement = m_database.prepareStatement("SELECT origin FROM Origins"_s);
+            if (!statement)
                 LOG_ERROR("Failed to prepare statement.");
-            else if (statement.step() == SQLITE_ROW)
+            else if (statement->step() == SQLITE_ROW)
                 isEmpty = false;
         }
 
@@ -1081,17 +1083,17 @@ bool DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const Str
 
     LockHolder lockDatabase(m_databaseGuard);
 
-    SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=? AND name=?");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = m_database.prepareStatement("DELETE FROM Databases WHERE origin=? AND name=?"_s);
+    if (!statement) {
         LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.utf8().data(), origin.databaseIdentifier().utf8().data());
         doneDeletingDatabase(origin, name);
         return false;
     }
 
-    statement.bindText(1, origin.databaseIdentifier());
-    statement.bindText(2, name);
+    statement->bindText(1, origin.databaseIdentifier());
+    statement->bindText(2, name);
 
-    if (!statement.executeCommand()) {
+    if (!statement->executeCommand()) {
         LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.utf8().data(), origin.databaseIdentifier().utf8().data());
         doneDeletingDatabase(origin, name);
         return false;
@@ -1197,13 +1199,11 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
                 for (auto& databases : *databaseNameMap) {
                     String databaseName = databases.key;
                     String databaseFileName;
-                    SQLiteStatement statement(m_database, "SELECT path FROM Databases WHERE origin=? AND name=?;");
-                    if (statement.prepare() == SQLITE_OK) {
-                        statement.bindText(1, origin.databaseIdentifier());
-                        statement.bindText(2, databaseName);
-                        if (statement.step() == SQLITE_ROW)
-                            databaseFileName = statement.getColumnText(0);
-                        statement.finalize();
+                    if (auto statement = m_database.prepareStatement("SELECT path FROM Databases WHERE origin=? AND name=?;"_s)) {
+                        statement->bindText(1, origin.databaseIdentifier());
+                        statement->bindText(2, databaseName);
+                        if (statement->step() == SQLITE_ROW)
+                            databaseFileName = statement->getColumnText(0);
                     }
                     
                     bool foundDeletedDatabase = false;
@@ -1258,13 +1258,14 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
     
     // Specify that we want the exclusive locking mode, so after the next write,
     // we'll be holding the lock to this database file.
-    SQLiteStatement lockStatement(database, "PRAGMA locking_mode=EXCLUSIVE;");
-    if (lockStatement.prepare() != SQLITE_OK)
-        return false;
-    int result = lockStatement.step();
-    if (result != SQLITE_ROW && result != SQLITE_DONE)
-        return false;
-    lockStatement.finalize();
+    {
+        auto lockStatement = database.prepareStatement("PRAGMA locking_mode=EXCLUSIVE;"_s);
+        if (!lockStatement)
+            return false;
+        int result = lockStatement->step();
+        if (result != SQLITE_ROW && result != SQLITE_DONE)
+            return false;
+    }
 
     if (!database.executeCommand("BEGIN EXCLUSIVE TRANSACTION;"))
         return false;
