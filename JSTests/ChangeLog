@@ -1,3 +1,12 @@
+2021-05-16  Saam Barati  <sbarati@apple.com>
+
+        DFGVarargsForwardingPhase shouldn't consult Flush
+        https://bugs.webkit.org/show_bug.cgi?id=225824
+
+        Reviewed by Filip Pizlo and Yusuke Suzuki.
+
+        * microbenchmarks/tail-call-forward-arguments-arguments-elimination.js: Added.
+
 2021-05-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Turn callGetter() / callSetter() into instance methods

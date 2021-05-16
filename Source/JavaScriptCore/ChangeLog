@@ -1,3 +1,29 @@
+2021-05-16  Saam Barati  <sbarati@apple.com>
+
+        DFGVarargsForwardingPhase shouldn't consult Flush
+        https://bugs.webkit.org/show_bug.cgi?id=225824
+
+        Reviewed by Filip Pizlo and Yusuke Suzuki.
+
+        In the Varargs Forwarding Phase, we were treating Flush as if it
+        were any other form of node that interferes with an argument
+        via clobbering a stack location.
+        
+        This isn't how Flush works though. It doesn't have execution
+        semantics at the node's graph location. Instead, Flush means that
+        any variable it's linked to in CPS should be flushed to the stack
+        between it and the Flush.
+        
+        The semantics of arguments is that they're already flushed to the
+        stack, and they've always been. Seeing a Flush node doesn't prevent
+        arguments elimination, we already know the arguments are on the stack,
+        and all we're searching for is if there is an interference operation
+        that says it'll clobber that stack slot. Flush isn't an interference operation.
+        
+        This is a 0.5% Speedometer progression.
+
+        * dfg/DFGVarargsForwardingPhase.cpp:
+
 2021-05-15  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Turn callGetter() / callSetter() into instance methods

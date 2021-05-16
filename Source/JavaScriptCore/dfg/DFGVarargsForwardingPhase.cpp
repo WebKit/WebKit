@@ -283,7 +283,6 @@ private:
                 break;
                 
             case SetLocal:
-            case Flush:
                 if (argumentsInvolveStackSlot(candidate, node->operand())) {
                     if (verbose)
                         dataLog("    Interference at ", node, "\n");
