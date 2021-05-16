@@ -1,3 +1,27 @@
+2021-05-16  Keith Miller  <keith_miller@apple.com>
+
+        IsoAlignedMemoryAllocator should use BitVector
+        https://bugs.webkit.org/show_bug.cgi?id=225852
+
+        Reviewed by Mark Lam.
+
+        Right now IsoAlignedMemoryAllocator uses FastBitVector, which does
+        not have inline storage for small sizes. However, it's not
+        uncommon for IsoAlignedMemoryAllocator to be holding onto only a
+        few blocks. Those blocks may exist for a long time, which some
+        data indicates causes IsoAlignedMemoryAllocator's FastBitVector to
+        pin a full physical page for one 8 byte allocation. Since
+        accessing the commited blocks list is not a particularly hot
+        operation, we should just use a BitVector instead.
+
+        This seems to be perf neutral on benchmarks.
+
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator):
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeAlignedMemory):
+        * heap/IsoAlignedMemoryAllocator.h:
+
 2021-05-16  Saam Barati  <sbarati@apple.com>
 
         DFGVarargsForwardingPhase shouldn't consult Flush
