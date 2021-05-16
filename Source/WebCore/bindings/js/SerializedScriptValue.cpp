@@ -233,8 +233,14 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
     default:
         return 0;
     }
-
 }
+
+enum class PredefinedColorSpaceTag : uint8_t {
+    SRGB = 0
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    , DisplayP3 = 1
+#endif
+};
 
 #if ENABLE(WEB_CRYPTO)
 
@@ -314,8 +320,9 @@ static unsigned countUsages(CryptoKeyUsageBitmap usages)
  * Version 5. added support for Map and Set types.
  * Version 6. added support for 8-bit strings.
  * Version 7. added support for File's lastModified attribute.
+ * Version 8. added support for ImageData's colorSpace attribute.
  */
-static const unsigned CurrentVersion = 7;
+static const unsigned CurrentVersion = 8;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -423,7 +430,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    FileListTag <length:uint32_t>(<file:FileData>){length}
  *
  * ImageData :-
- *    ImageDataTag <width:int32_t><height:int32_t><length:uint32_t><data:uint8_t{length}>
+ *    ImageDataTag <width:int32_t> <height:int32_t> <length:uint32_t> <data:uint8_t{length}> <colorSpace:PredefinedColorSpaceTag>
  *
  * Blob :-
  *    BlobTag <url:StringData><type:StringData><size:long long>
@@ -1229,6 +1236,7 @@ private:
                 write(data->height());
                 write(data->data().length());
                 write(data->data().data(), data->data().length());
+                write(data->colorSpace());
                 return true;
             }
             if (auto* regExp = jsDynamicCast<RegExpObject*>(vm, obj)) {
@@ -1556,6 +1564,20 @@ private:
         write(file.type());
         write(file.name());
         write(static_cast<double>(file.lastModifiedOverride().valueOr(-1)));
+    }
+
+    void write(PredefinedColorSpace colorSpace)
+    {
+        switch (colorSpace) {
+        case PredefinedColorSpace::SRGB:
+            writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::SRGB));
+            break;
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        case PredefinedColorSpace::DisplayP3:
+            writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::DisplayP3));
+            break;
+#endif
+        }
     }
 
 #if ENABLE(WEB_CRYPTO)
@@ -2537,6 +2559,26 @@ private:
         return true;
     }
 
+    bool read(PredefinedColorSpace& result)
+    {
+        uint8_t tag;
+        if (!read(tag))
+            return false;
+
+        switch (static_cast<PredefinedColorSpaceTag>(tag)) {
+        case PredefinedColorSpaceTag::SRGB:
+            result = PredefinedColorSpace::SRGB;
+            return true;
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        case PredefinedColorSpaceTag::DisplayP3:
+            result = PredefinedColorSpace::DisplayP3;
+            return true;
+#endif
+        default:
+            return false;
+        }
+    }
+
 #if ENABLE(WEB_CRYPTO)
     bool read(CryptoAlgorithmIdentifier& result)
     {
@@ -2864,15 +2906,9 @@ private:
 #endif
 
     template<class T>
-    JSValue getJSValue(T* nativeObj)
+    JSValue getJSValue(T&& nativeObj)
     {
-        return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), nativeObj);
-    }
-
-    template<class T>
-    JSValue getJSValue(T& nativeObj)
-    {
-        return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), nativeObj);
+        return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), std::forward<T>(nativeObj));
     }
 
     template<class T>
@@ -3141,8 +3177,8 @@ private:
             return JSValue();
         }
 
-        IntSize logicalSize = IntSize(logicalWidth, logicalHeight);
-        IntSize imageDataSize = logicalSize;
+        auto logicalSize = IntSize(logicalWidth, logicalHeight);
+        auto imageDataSize = logicalSize;
         imageDataSize.scale(resolutionScale);
 
         auto buffer = ImageBitmap::createImageBuffer(*scriptExecutionContextFromExecState(m_lexicalGlobalObject), logicalSize, RenderingMode::Unaccelerated, resolutionScale);
@@ -3374,23 +3410,33 @@ private:
                 fail();
                 return JSValue();
             }
-            if (!m_isDOMGlobalObject) {
-                m_ptr += length;
-                return jsNull();
+            auto bufferStart = m_ptr;
+            m_ptr += length;
+
+            auto resultColorSpace = PredefinedColorSpace::SRGB;
+            if (m_version > 7) {
+                if (!read(resultColorSpace))
+                    return JSValue();
             }
-            IntSize imageSize(width, height);
-            RELEASE_ASSERT(!length || (imageSize.area() * 4).unsafeGet() <= length);
-            auto result = ImageData::create(imageSize);
-            if (!result) {
+
+            if (length && (IntSize(width, height).area() * 4).unsafeGet() != length) {
+                fail();
+                return JSValue();
+            }
+
+            if (!m_isDOMGlobalObject)
+                return jsNull();
+
+            auto result = ImageData::createUninitialized(width, height, resultColorSpace);
+            if (result.hasException()) {
                 fail();
                 return JSValue();
             }
             if (length)
-                memcpy(result->data().data(), m_ptr, length);
+                memcpy(result.returnValue()->data().data(), bufferStart, length);
             else
-                result->data().zeroFill();
-            m_ptr += length;
-            return getJSValue(result.get());
+                result.returnValue()->data().zeroFill();
+            return getJSValue(result.releaseReturnValue());
         }
         case BlobTag: {
             CachedStringRef url;

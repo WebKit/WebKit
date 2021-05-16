@@ -1,5 +1,36 @@
 2021-05-16  Sam Weinig  <weinig@apple.com>
 
+        Support serializing ImageData object colorSpace property in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=225854
+
+        Reviewed by Chris Dumez.
+
+        Updates existing tests for new serialization version (version 8) and support
+        for serializing color space in ImageData.
+
+        To avoid multiple result files due to lack of support for display-p3, testing
+        that the display-p3 color space is serialized correctly was put into its own
+        test that is skipped on non-supporting platforms.
+
+        * platform/glib/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip structured-clone-image-data-display-p3.html on platforms that don't support
+        display-p3 color spaces.
+
+        * fast/storage/serialized-script-value.html:
+        Bump version to version 8.
+
+        * storage/indexeddb/resources/structured-clone.js:
+        * storage/indexeddb/structured-clone-expected.txt:
+        Add tests for ImageData colorSpace round tripping.
+
+        * storage/indexeddb/structured-clone-image-data-display-p3-expected.txt: Added.
+        * storage/indexeddb/structured-clone-image-data-display-p3.html: Added.
+        Add test for ImageData display-p3 colorSpace round tripping as its own test
+        to allow targetted skipping by non-supporting platforms.
+
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
         Add support for creating/accessing/setting non-sRGB ImageData via canvas
         https://bugs.webkit.org/show_bug.cgi?id=225841
 

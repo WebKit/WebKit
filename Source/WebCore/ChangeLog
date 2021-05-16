@@ -1,3 +1,38 @@
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Support serializing ImageData object colorSpace property in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=225854
+
+        Reviewed by Chris Dumez.
+
+        Test: storage/indexeddb/structured-clone-image-data-display-p3.html
+
+        Update SerializedScriptValue schema to version 8 and add serialization
+        of the colorSpace property.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::PredefinedColorSpaceTag):
+        Add copy of the PredefinedColorSpace values that are guaranteed to
+        stay consistent forever.
+
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        Add encoding of the colorSpace when serializing ImageData.
+
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::read):
+        Add coders for PredefinedColorSpaceTag.
+
+        (WebCore::CloneDeserializer::getJSValue):
+        Replace multiple overloads with one perfect forwarding overload which does
+        what we want and works with r-values.
+
+        (WebCore::CloneDeserializer::readImageBitmap):
+        Use auto in two places.
+
+        (WebCore::CloneDeserializer::readTerminal):
+        Add decoding of the colorSpace when deserializing ImageData. For prior versions,
+        the colorSpace defaults to sRGB, which was the only color space supported.
+
 2021-05-14  Jer Noble  <jer.noble@apple.com>
 
         MediaSessionCoordinator survives page reload/navigation

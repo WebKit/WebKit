@@ -2357,9 +2357,12 @@ fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ ImageOnlyFailur
 # It was a flaky crash until r275516, but it's still a timeout flaky.
 webkit.org/b/224112 media/video-as-img-output-pts.html [ Timeout Pass ]
 
-webkit.org/b/225423 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
-webkit.org/b/225423 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
 webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
+
+# Non-sRGB color spaces are not currently supported by the glib ports.
+fast/canvas/canvas-color-space-display-p3.html [ Skip ]
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
 # Failing after r277073.
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-10.html [ ImageOnlyFailure ]

@@ -4635,6 +4635,7 @@ webexposed/counter-style-image-symbols-not-exposed.html [ Skip ]
 
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
-# Non-SRGB color spaces are not currently supported by the Windows port.
+# Non-sRGB color spaces are not currently supported by the Windows port.
 fast/canvas/canvas-color-space-display-p3.html [ Skip ]
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
