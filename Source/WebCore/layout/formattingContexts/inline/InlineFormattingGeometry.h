@@ -27,12 +27,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FormattingContext.h"
+#include "FormattingGeometry.h"
 
 namespace WebCore {
 namespace Layout {
 
-class InlineFormattingGeometry : public FormattingContext::Geometry {
+class InlineFormattingGeometry : public FormattingGeometry {
 public:
     LineBox lineBoxForLineContent(const LineBuilder::LineContent&);
     InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
@@ -44,7 +44,7 @@ private:
     friend class InlineFormattingContext;
     InlineFormattingGeometry(const InlineFormattingContext&);
 
-    const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Geometry::formattingContext()); }
+    const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingGeometry::formattingContext()); }
 
 };
 

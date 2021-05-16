@@ -1510,7 +1510,7 @@ inspector/agents/worker/WorkerDebuggerAgent.cpp
 inspector/agents/worker/WorkerNetworkAgent.cpp
 inspector/agents/worker/WorkerRuntimeAgent.cpp
 layout/formattingContexts/FormattingContext.cpp
-layout/formattingContexts/FormattingContextGeometry.cpp
+layout/formattingContexts/FormattingGeometry.cpp
 layout/formattingContexts/FormattingQuirks.cpp
 layout/FormattingState.cpp
 layout/LayoutContext.cpp

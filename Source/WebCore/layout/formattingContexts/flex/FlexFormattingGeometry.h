@@ -27,22 +27,20 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FlexFormattingState.h"
-#include "FormattingContext.h"
-#include <wtf/IsoMalloc.h>
+#include "FormattingGeometry.h"
 
 namespace WebCore {
 namespace Layout {
 
 // This class implements positioning and sizing for flex items.
-class FlexFormattingGeometry : public FormattingContext::Geometry {
+class FlexFormattingGeometry : public FormattingGeometry {
 public:
     FlexFormattingGeometry(const FlexFormattingContext&);
 
     FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&);
 
 private:
-    const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingContext::Geometry::formattingContext()); }
+    const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingGeometry::formattingContext()); }
 };
 
 }

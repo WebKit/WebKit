@@ -27,13 +27,13 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FormattingContext.h"
+#include "FormattingGeometry.h"
 
 namespace WebCore {
 namespace Layout {
 
 // This class implements positioning and sizing for boxes participating in a block formatting context.
-class BlockFormattingGeometry : public FormattingContext::Geometry {
+class BlockFormattingGeometry : public FormattingGeometry {
 public:
     BlockFormattingGeometry(const BlockFormattingContext&);
 
@@ -53,7 +53,7 @@ private:
     ContentWidthAndMargin inFlowNonReplacedContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
     ContentWidthAndMargin inFlowReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
 
-    const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingContext::Geometry::formattingContext()); }
+    const BlockFormattingContext& formattingContext() const { return downcast<BlockFormattingContext>(FormattingGeometry::formattingContext()); }
 };
 
 }

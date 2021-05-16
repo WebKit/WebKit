@@ -27,12 +27,12 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FormattingContext.h"
+#include "FormattingGeometry.h"
 
 namespace WebCore {
 namespace Layout {
 
-class TableFormattingGeometry : public FormattingContext::Geometry {
+class TableFormattingGeometry : public FormattingGeometry {
 public:
     LayoutUnit cellHeigh(const ContainerBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
@@ -44,7 +44,7 @@ private:
     friend class TableFormattingContext;
     TableFormattingGeometry(const TableFormattingContext&, const TableGrid&);
 
-    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Geometry::formattingContext()); }
+    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }
     const TableGrid& m_grid;
 };
 

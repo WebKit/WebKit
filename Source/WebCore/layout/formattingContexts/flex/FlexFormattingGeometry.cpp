@@ -36,7 +36,7 @@ namespace WebCore {
 namespace Layout {
 
 FlexFormattingGeometry::FlexFormattingGeometry(const FlexFormattingContext& flexFormattingContext)
-    : FormattingContext::Geometry(flexFormattingContext)
+    : FormattingGeometry(flexFormattingContext)
 {
 }
 

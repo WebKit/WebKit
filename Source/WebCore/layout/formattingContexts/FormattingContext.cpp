@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingGeometry.h"
 #include "FormattingQuirks.h"
 #include "FormattingState.h"
 #include "InvalidationState.h"
@@ -269,6 +270,11 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
             continue;
         formattingState().addOutOfFlowBox(descendant);
     }
+}
+
+FormattingGeometry FormattingContext::geometry() const
+{
+    return FormattingGeometry(*this);
 }
 
 FormattingQuirks FormattingContext::quirks() const

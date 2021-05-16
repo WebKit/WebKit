@@ -43,7 +43,7 @@ namespace WebCore {
 namespace Layout {
 
 BlockFormattingGeometry::BlockFormattingGeometry(const BlockFormattingContext& blockFormattingContext)
-    : FormattingContext::Geometry(blockFormattingContext)
+    : FormattingGeometry(blockFormattingContext)
 {
 }
 
@@ -68,7 +68,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAn
         // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
 
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-        auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, horizontalConstraints);
+        auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
         auto borderAndPaddingTop = boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
         auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox);
@@ -149,7 +149,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
         auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
-        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
+        auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
         UsedHorizontalMargin usedHorizontalMargin;
         auto borderLeft = boxGeometry.borderLeft();
         auto borderRight = boxGeometry.borderRight();

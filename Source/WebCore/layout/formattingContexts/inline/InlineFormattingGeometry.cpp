@@ -664,7 +664,7 @@ void LineBoxBuilder::SimplifiedVerticalAlignment::adjust(const LineBox::InlineLe
 }
 
 InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingContext::Geometry(inlineFormattingContext)
+    : FormattingGeometry(inlineFormattingContext)
 {
 }
 
@@ -708,7 +708,7 @@ ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin
         width = shrinkToFitWidth(formattingContextRoot, horizontalConstraints.logicalWidth);
 
     // #2
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, horizontalConstraints);
+    auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(formattingContextRoot, horizontalConstraints);
 
     return ContentWidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) } };
 }

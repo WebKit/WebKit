@@ -39,7 +39,7 @@ namespace WebCore {
 namespace Layout {
 
 TableFormattingGeometry::TableFormattingGeometry(const TableFormattingContext& tableFormattingContext, const TableGrid& grid)
-    : FormattingContext::Geometry(tableFormattingContext)
+    : FormattingGeometry(tableFormattingContext)
     , m_grid(grid)
 {
 }
