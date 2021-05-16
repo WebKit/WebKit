@@ -1305,28 +1305,6 @@ WebRTCVP9Profile2CodecEnabled:
     WebKit:
       default: false
 
-WebSQLDisabled:
-  type: bool
-  humanReadableName: "Disable WebSQL"
-  humanReadableDescription: "Disable WebSQL"
-  webcoreBinding: RuntimeEnabledFeatures
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: true
-
-# FIXME: WebKitLegacy has an existing preference called 'WebSQLEnabled'. We should reconcile it with WebSQLDisabled.
-WebSQLEnabled:
-  type: bool
-  humanReadableName: "Enable WebSQL"
-  humanReadableDescription: "Enable WebSQL"
-  webcoreBinding: custom
-  exposed: [ WebKitLegacy ]
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": WebKit::defaultWebSQLEnabled()
-      default: true
-
 WebShareFileAPIEnabled:
   type: bool
   humanReadableName: "Web Share API Level 2"

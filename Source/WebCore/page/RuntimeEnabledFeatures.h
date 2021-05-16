@@ -128,7 +128,7 @@ public:
     bool cssTypedOMEnabled() const { return m_CSSTypedOMEnabled; }
 #endif
 
-    void setWebSQLDisabled(bool isDisabled) { m_webSQLEnabled = !isDisabled; }
+    void setWebSQLEnabled(bool isEnabled) { m_webSQLEnabled = isEnabled; }
     bool webSQLEnabled() const { return m_webSQLEnabled; }
 
     void setDialogElementEnabled(bool isEnabled) { m_dialogElementEnabled = isEnabled; }

@@ -98,7 +98,6 @@
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/DNS.h>
 #include <WebCore/DOMWindow.h>
-#include <WebCore/DatabaseManager.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -556,9 +555,6 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 {
     ASSERT(!m_sessionID);
     m_sessionID = parameters.sessionID;
-    
-    auto& databaseManager = DatabaseManager::singleton();
-    databaseManager.initialize(parameters.webSQLDatabaseDirectory);
 
     // FIXME: This should be constructed per data store, not per process.
     m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);

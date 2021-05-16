@@ -1,3 +1,29 @@
+2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete WebSQL code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=225739
+
+        Reviewed by Sihui Liu.
+
+        Deleted WebSQL code. We keep some code for website data store since it's possible
+        for user's device to still have WebSQL data, and we should be able to delete them.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::monitoredDataTypes):
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebSQLDisabled):
+        (WKPreferencesGetWebSQLDisabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetWebsiteDataStoreParameters):
+
 2021-05-15  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Ensure RemoteRenderingBackendProxy is restored to its original state when GPUP connection is closed

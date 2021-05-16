@@ -1,3 +1,13 @@
+2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete WebSQL code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=225739
+
+        Reviewed by Sihui Liu.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebSQLEnabled): Replaced setWebSQLDisabled.
+
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Make redundant public helpers private in FormattingContext

@@ -5305,7 +5305,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->webSQLEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setWebSQLDisabled(!enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setWebSQLEnabled(enabled);
 
     hr = prefsPrivate->visualViewportAPIEnabled(&enabled);
     if (FAILED(hr))

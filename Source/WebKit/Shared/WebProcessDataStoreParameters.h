@@ -40,8 +40,6 @@ struct WebProcessDataStoreParameters {
     String applicationCacheDirectory;
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String applicationCacheFlatFileSubdirectoryName;
-    String webSQLDatabaseDirectory;
-    SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
     String mediaCacheDirectory;
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     String mediaKeyStorageDirectory;
@@ -67,8 +65,6 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
     encoder << applicationCacheDirectory;
     encoder << applicationCacheDirectoryExtensionHandle;
     encoder << applicationCacheFlatFileSubdirectoryName;
-    encoder << webSQLDatabaseDirectory;
-    encoder << webSQLDatabaseDirectoryExtensionHandle;
     encoder << mediaCacheDirectory;
     encoder << mediaCacheDirectoryExtensionHandle;
     encoder << mediaKeyStorageDirectory;
@@ -102,15 +98,6 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
 
     String applicationCacheFlatFileSubdirectoryName;
     if (!decoder.decode(applicationCacheFlatFileSubdirectoryName))
-        return WTF::nullopt;
-
-    String webSQLDatabaseDirectory;
-    if (!decoder.decode(webSQLDatabaseDirectory))
-        return WTF::nullopt;
-
-    Optional<SandboxExtension::Handle> webSQLDatabaseDirectoryExtensionHandle;
-    decoder >> webSQLDatabaseDirectoryExtensionHandle;
-    if (!webSQLDatabaseDirectoryExtensionHandle)
         return WTF::nullopt;
 
     String mediaCacheDirectory;
@@ -166,8 +153,6 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
         WTFMove(applicationCacheDirectory),
         WTFMove(*applicationCacheDirectoryExtensionHandle),
         WTFMove(applicationCacheFlatFileSubdirectoryName),
-        WTFMove(webSQLDatabaseDirectory),
-        WTFMove(*webSQLDatabaseDirectoryExtensionHandle),
         WTFMove(mediaCacheDirectory),
         WTFMove(*mediaCacheDirectoryExtensionHandle),
         WTFMove(mediaKeyStorageDirectory),

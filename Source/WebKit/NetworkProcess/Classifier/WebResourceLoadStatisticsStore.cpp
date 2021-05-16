@@ -80,7 +80,6 @@ const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataT
 #if ENABLE(SERVICE_WORKER)
         WebsiteDataType::ServiceWorkerRegistrations,
 #endif
-        WebsiteDataType::WebSQLDatabases,
     }));
 
     ASSERT(RunLoop::isMain());

@@ -588,7 +588,6 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "CacheStorage", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Databases", pathSeparator, "IndexedDB", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "LocalStorage", pathSeparator, randomNumber)).get());
-        WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Databases", pathSeparator, "WebSQL", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "MediaKeys", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ResourceLoadStatistics", pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ServiceWorkers", pathSeparator, randomNumber)).get());

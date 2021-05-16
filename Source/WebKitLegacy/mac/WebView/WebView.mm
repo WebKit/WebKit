@@ -2933,7 +2933,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setVideoPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences videoPlaybackRequiresUserGesture]);
     settings.setAudioPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences audioPlaybackRequiresUserGesture]);
 
-    RuntimeEnabledFeatures::sharedFeatures().setWebSQLDisabled(![preferences webSQLEnabled]);
+    RuntimeEnabledFeatures::sharedFeatures().setWebSQLEnabled([preferences webSQLEnabled]);
     DatabaseManager::singleton().setIsAvailable([preferences databasesEnabled]);
     settings.setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
     _private->page->setSessionID([preferences privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID());

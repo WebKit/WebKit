@@ -1,3 +1,17 @@
+2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete WebSQL code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=225739
+
+        Reviewed by Sihui Liu.
+
+        Deleted the experimental feature to disable WebSQL since we've been shipping this,
+        and made the flag to selectively enable WebSQL in WebKit1 an internal debug setting
+        since nobody should be enabling this now.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-05-15  Sam Weinig  <weinig@apple.com>
 
         Allow conditionally enabling OffscreenCanvas only for non-worker contexts

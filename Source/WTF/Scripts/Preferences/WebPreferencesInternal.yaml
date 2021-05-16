@@ -834,6 +834,17 @@ WebRTCMDNSICECandidatesEnabled:
     WebKit:
       default: true
 
+WebSQLEnabled:
+  type: bool
+  humanReadableName: "Enable WebSQL"
+  humanReadableDescription: "Enable WebSQL"
+  webcoreBinding: custom
+  exposed: [ WebKitLegacy ]
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultWebSQLEnabled()
+      default: true
+
 ZoomOnDoubleTapWhenRoot:
   type: bool
   condition: PLATFORM(IOS_FAMILY)

@@ -447,7 +447,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
 {
 #if ENABLE(SANDBOX_EXTENSIONS)
-    SandboxExtension::consumePermanently(parameters.webSQLDatabaseDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaKeyStorageDirectoryExtensionHandle);
