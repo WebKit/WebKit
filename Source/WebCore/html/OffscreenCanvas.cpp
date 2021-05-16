@@ -73,6 +73,17 @@ WeakPtr<HTMLCanvasElement> DetachedOffscreenCanvas::takePlaceholderCanvas()
     return std::exchange(m_placeholderCanvas, nullptr);
 }
 
+bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
+{
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    if (context.isWorkerGlobalScope())
+        return RuntimeEnabledFeatures::sharedFeatures().offscreenCanvasInWorkersEnabled();
+#endif
+
+    ASSERT(context.isDocument());
+    return true;
+}
+
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
 {
     return adoptRef(*new OffscreenCanvas(scriptExecutionContext, width, height));

@@ -47,5 +47,5 @@
     attribute EventHandler onmessage;
 };
 
-[Conditional=OFFSCREEN_CANVAS, EnabledAtRuntime=OffscreenCanvas] DedicatedWorkerGlobalScope includes AnimationFrameProvider;
+[Conditional=OFFSCREEN_CANVAS_IN_WORKERS, EnabledAtRuntime=OffscreenCanvasInWorkers] DedicatedWorkerGlobalScope includes AnimationFrameProvider;
 [Conditional=WEB_RTC, EnabledBySetting=WebRTCInsertableStreams] DedicatedWorkerGlobalScope includes RTCRtpScriptTransformProvider;

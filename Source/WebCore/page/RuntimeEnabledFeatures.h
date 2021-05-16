@@ -64,6 +64,11 @@ public:
     bool offscreenCanvasEnabled() const { return m_isOffscreenCanvasEnabled; }
 #endif
 
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    void setOffscreenCanvasInWorkersEnabled(bool isEnabled) { m_isOffscreenCanvasInWorkersEnabled = isEnabled; }
+    bool offscreenCanvasInWorkersEnabled() const { return m_isOffscreenCanvasInWorkersEnabled; }
+#endif
+
     void setCacheAPIEnabled(bool isEnabled) { m_isCacheAPIEnabled = isEnabled; }
     bool cacheAPIEnabled() const { return m_isCacheAPIEnabled; }
 
@@ -261,6 +266,9 @@ private:
     bool m_isImageBitmapEnabled { true };
 #if ENABLE(OFFSCREEN_CANVAS)
     bool m_isOffscreenCanvasEnabled { false };
+#endif
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    bool m_isOffscreenCanvasInWorkersEnabled { false };
 #endif
     bool m_isCacheAPIEnabled { false };
     bool m_isWebSocketEnabled { true };

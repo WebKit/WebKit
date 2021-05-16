@@ -39,6 +39,7 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
 #include "RenderStyle.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include "StyleResolveForFontRaw.h"
 #include "TextMetrics.h"
@@ -47,6 +48,17 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvasRenderingContext2D);
+
+bool OffscreenCanvasRenderingContext2D::enabledForContext(ScriptExecutionContext& context)
+{
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    if (context.isWorkerGlobalScope())
+        return RuntimeEnabledFeatures::sharedFeatures().offscreenCanvasInWorkersEnabled();
+#endif
+
+    ASSERT(context.isDocument());
+    return true;
+}
 
 OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings)
     : CanvasRenderingContext2DBase(canvas, WTFMove(settings), false)

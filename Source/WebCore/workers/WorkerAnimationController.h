@@ -27,7 +27,7 @@
 
 #pragma once
 
-#if ENABLE(OFFSCREEN_CANVAS)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 
 #include "ActiveDOMObject.h"
 #include "DOMHighResTimeStamp.h"

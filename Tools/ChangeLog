@@ -1,3 +1,16 @@
+2021-05-15  Sam Weinig  <weinig@apple.com>
+
+        Allow conditionally enabling OffscreenCanvas only for non-worker contexts
+        https://bugs.webkit.org/show_bug.cgi?id=225845
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        Match current behavior of ENABLE_OFFSCREEN_CANVAS and OffscreenCanvasEnabled
+        for ENABLE_OFFSCREEN_CANVAS_IN_WORKERS and OffscreenCanvasInWorkersEnabled.
+
 2021-05-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove _WKWebsitePolicies

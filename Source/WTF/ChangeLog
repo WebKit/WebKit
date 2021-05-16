@@ -1,3 +1,16 @@
+2021-05-15  Sam Weinig  <weinig@apple.com>
+
+        Allow conditionally enabling OffscreenCanvas only for non-worker contexts
+        https://bugs.webkit.org/show_bug.cgi?id=225845
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Add new OffscreenCanvasInWorkersEnabled preference.
+
+        * wtf/PlatformEnable.h:
+        Add new ENABLE_OFFSCREEN_CANVAS_IN_WORKERS macro.
+
 2021-05-15  Alberto Garcia  <berto@igalia.com>
 
         CeilingOnPageSize too low for Loongson CPUs

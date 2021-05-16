@@ -71,6 +71,11 @@
             "values": ["*"],
             "supportsConjunction": true
         },
+        "ConditionalForWorker": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
         "ConditionallyReadWrite": {
             "contextsAllowed": ["attribute"],
             "values": ["*"],

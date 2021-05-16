@@ -1,3 +1,62 @@
+2021-05-15  Sam Weinig  <weinig@apple.com>
+
+        Allow conditionally enabling OffscreenCanvas only for non-worker contexts
+        https://bugs.webkit.org/show_bug.cgi?id=225845
+
+        Reviewed by Darin Adler.
+
+        Enable both compile time and runtime conditional enablement of just the
+        non-worker OffscreenCanvas code path.
+
+        To make this work a new IDL extended attribute was needed, ConditionalForWorker=FOO,
+        which allows specifying an additional macro to check for whether the constructor
+        should be exposed on workers. Ideally this would be generic for any context type,
+        but at the moment, the limited syntax of extended attributes makes that hard. If
+        generalization is needed (or a similar syntax is needed for something else) this can
+        be revisited.
+
+        To support runtime conditional exposure, the existing EnabledForContext, which calls
+        a static function on the implementation class passing the ScriptExecutationContext
+        is used. If conditional per context type ever becomes a common thing, we should add
+        another extended attribute (and add syntax to support like above) that allows specifying
+        both the context type and the setting name.
+
+        Other than that, uses of ENABLE_OFFSCREEN_CANVAS that guarded worker specific functionality
+        were replaced by ENABLE_OFFSCREEN_CANVAS_IN_WORKERS.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::computeMemoryCost const):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/preprocess-idls.pl:
+        (GenerateConstructorAttributes):
+        * html/HTMLCanvasElement.idl:
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::enabledForContext):
+        * html/OffscreenCanvas.h:
+        * html/OffscreenCanvas.idl:
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        (WebCore::OffscreenCanvasRenderingContext2D::enabledForContext):
+        * html/canvas/OffscreenCanvasRenderingContext2D.h:
+        * html/canvas/OffscreenCanvasRenderingContext2D.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setOffscreenCanvasInWorkersEnabled):
+        (WebCore::RuntimeEnabledFeatures::offscreenCanvasInWorkersEnabled const):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/WorkerAnimationController.cpp:
+        * workers/WorkerAnimationController.h:
+
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Make redundant public helpers private in InlineFormattingContext

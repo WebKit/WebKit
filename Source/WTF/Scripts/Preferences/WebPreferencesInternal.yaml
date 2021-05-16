@@ -559,6 +559,19 @@ OffscreenCanvasEnabled:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
+OffscreenCanvasInWorkersEnabled:
+  type: bool
+  humanReadableName: "OffscreenCanvas in Workers"
+  humanReadableDescription: "Support for the OffscreenCanvas APIs in Workers"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      default: false
+
 PreferFasterClickOverDoubleTap:
   type: bool
   humanReadableName: "Fast clicks beat DTTZ"

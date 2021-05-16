@@ -27,6 +27,8 @@
     CustomIsReachable,
     EnabledAtRuntime=OffscreenCanvas,
     Conditional=OFFSCREEN_CANVAS,
+    ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKER,
+    EnabledForContext,
     Exposed=(Window,Worker),
     JSGenerateToJSObject,
     JSCustomMarkFunction,

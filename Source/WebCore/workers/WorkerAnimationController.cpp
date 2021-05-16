@@ -28,7 +28,7 @@
 #include "config.h"
 #include "WorkerAnimationController.h"
 
-#if ENABLE(OFFSCREEN_CANVAS)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 
 #include "Performance.h"
 #include "RequestAnimationFrameCallback.h"

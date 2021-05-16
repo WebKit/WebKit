@@ -100,6 +100,7 @@ const TestFeatures& TestOptions::defaults()
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OfflineWebApplicationCacheEnabled", true },
             { "OffscreenCanvasEnabled", true },
+            { "OffscreenCanvasInWorkersEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PluginsEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
