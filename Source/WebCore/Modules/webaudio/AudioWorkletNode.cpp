@@ -68,7 +68,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
             return Exception { IndexSizeError, "Length of specified outputChannelCount does not match the given number of outputs"_s };
 
         for (auto& channelCount : *options.outputChannelCount) {
-            if (channelCount < 1 || channelCount > AudioContext::maxNumberOfChannels())
+            if (channelCount < 1 || channelCount > AudioContext::maxNumberOfChannels)
                 return Exception { NotSupportedError, "Provided number of channels for output is outside supported range"_s };
         }
     }

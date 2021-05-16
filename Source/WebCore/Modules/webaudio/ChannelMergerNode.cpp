@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ChannelMergerNode);
 
 ExceptionOr<Ref<ChannelMergerNode>> ChannelMergerNode::create(BaseAudioContext& context, const ChannelMergerOptions& options)
 {
-    if (options.numberOfInputs > AudioContext::maxNumberOfChannels() || !options.numberOfInputs)
+    if (options.numberOfInputs > AudioContext::maxNumberOfChannels || !options.numberOfInputs)
         return Exception { IndexSizeError, "Number of inputs is not in the allowed range."_s };
     
     auto merger = adoptRef(*new ChannelMergerNode(context, options.numberOfInputs));

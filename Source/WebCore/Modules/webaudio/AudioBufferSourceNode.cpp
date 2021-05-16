@@ -426,7 +426,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
-        ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
+        ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels);
 
         output(0)->setNumberOfChannels(numberOfChannels);
 

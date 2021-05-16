@@ -34,6 +34,7 @@
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "HRTFDatabaseLoader.h"
+#include "OfflineAudioContext.h"
 #include "WorkerRunLoop.h"
 #include <algorithm>
 #include <wtf/IsoMallocInlines.h>
@@ -44,7 +45,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
 
-OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+OfflineAudioDestinationNode::OfflineAudioDestinationNode(OfflineAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : AudioDestinationNode(context, sampleRate)
     , m_numberOfChannels(numberOfChannels)
     , m_renderTarget(WTFMove(renderTarget))
@@ -57,6 +58,16 @@ OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& conte
 OfflineAudioDestinationNode::~OfflineAudioDestinationNode()
 {
     uninitialize();
+}
+
+OfflineAudioContext& OfflineAudioDestinationNode::context()
+{
+    return downcast<OfflineAudioContext>(AudioDestinationNode::context());
+}
+
+const OfflineAudioContext& OfflineAudioDestinationNode::context() const
+{
+    return downcast<OfflineAudioContext>(AudioDestinationNode::context());
 }
 
 unsigned OfflineAudioDestinationNode::maxChannelCount() const

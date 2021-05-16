@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,37 +27,28 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "ActiveDOMObject.h"
-#include "AsyncAudioDecoder.h"
-#include "AudioBus.h"
-#include "AudioContextOptions.h"
 #include "AudioContextState.h"
 #include "AudioDestinationNode.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "OscillatorType.h"
 #include "PeriodicWaveConstraints.h"
-#include "ScriptExecutionContext.h"
-#include <JavaScriptCore/ConsoleTypes.h>
-#include <JavaScriptCore/Float32Array.h>
 #include <atomic>
-#include <wtf/HashSet.h>
+#include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MainThread.h>
-#include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class AnalyserNode;
+class AsyncAudioDecoder;
 class AudioBuffer;
 class AudioBufferCallback;
 class AudioBufferSourceNode;
 class AudioListener;
+class AudioNodeOutput;
 class AudioSummingJunction;
 class AudioWorklet;
 class BiquadFilterNode;
@@ -69,21 +60,17 @@ class DelayNode;
 class Document;
 class DynamicsCompressorNode;
 class GainNode;
-class HTMLMediaElement;
 class IIRFilterNode;
 class MediaElementAudioSourceNode;
-class MediaStream;
-class MediaStreamAudioDestinationNode;
-class MediaStreamAudioSourceNode;
 class OscillatorNode;
 class PannerNode;
 class PeriodicWave;
-class ScriptExecutionContext;
 class ScriptProcessorNode;
 class SecurityOrigin;
 class StereoPannerNode;
 class WaveShaperNode;
 
+struct AudioIOPosition;
 struct AudioParamDescriptor;
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -112,33 +99,24 @@ public:
     uint64_t contextID() const { return m_contextID; }
 
     Document* document() const;
-    bool isInitialized() const;
+    bool isInitialized() const { return m_isInitialized; }
     
-    bool isOfflineContext() const { return m_isOfflineContext; }
+    virtual bool isOfflineContext() const = 0;
+    virtual AudioDestinationNode& destination() = 0;
+    virtual const AudioDestinationNode& destination() const = 0;
 
-    AudioDestinationNode& destination() { return m_destinationNode.get(); }
-    const AudioDestinationNode& destination() const { return m_destinationNode.get(); }
-
-    size_t currentSampleFrame() const { return m_destinationNode->currentSampleFrame(); }
-    double currentTime() const { return m_destinationNode->currentTime(); }
-    float sampleRate() const;
+    size_t currentSampleFrame() const { return destination().currentSampleFrame(); }
+    double currentTime() const { return destination().currentTime(); }
+    float sampleRate() const { return destination().sampleRate(); }
     unsigned long activeSourceCount() const { return static_cast<unsigned long>(m_activeSourceCount); }
 
     void incrementActiveSourceCount();
     void decrementActiveSourceCount();
 
-    virtual bool shouldSuspend() { return false; }
-    
-    ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate);
-
     // Asynchronous audio file data decoding.
     void decodeAudioData(Ref<ArrayBuffer>&&, RefPtr<AudioBufferCallback>&&, RefPtr<AudioBufferCallback>&&, Optional<Ref<DeferredPromise>>&& = WTF::nullopt);
 
-    AudioListener& listener();
-
-    virtual void didSuspendRendering(size_t frame);
-
-    AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
+    AudioListener& listener() { return m_listener; }
 
     using State = AudioContextState;
     State state() const { return m_state; }
@@ -166,6 +144,7 @@ public:
     ExceptionOr<Ref<ConstantSourceNode>> createConstantSource();
     ExceptionOr<Ref<StereoPannerNode>> createStereoPanner();
     ExceptionOr<Ref<IIRFilterNode>> createIIRFilter(ScriptExecutionContext&, Vector<double>&& feedforward, Vector<double>&& feedback);
+    ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate);
 
     // Called at the start of each render quantum.
     void handlePreRenderTasks(const AudioIOPosition& outputPosition);
@@ -174,9 +153,6 @@ public:
 
     // Called at the end of each render quantum.
     void handlePostRenderTasks();
-
-    // Called periodically at the end of each render quantum to dereference finished source nodes.
-    void derefFinishedSourceNodes();
 
     // We schedule deletion of all marked nodes at the end of each realtime render quantum.
     void markForDeletion(AudioNode&);
@@ -194,7 +170,7 @@ public:
     void incrementConnectionCount()
     {
         ASSERT(isMainThread());
-        m_connectionCount++;
+        ++m_connectionCount;
     }
 
     unsigned connectionCount() const { return m_connectionCount; }
@@ -204,11 +180,10 @@ public:
     //
     
     void setAudioThread(Thread& thread) { m_audioThread = &thread; } // FIXME: check either not initialized or the same
-    Thread* audioThread() const { return m_audioThread; }
-    bool isAudioThread() const;
+    bool isAudioThread() const { return m_audioThread == &Thread::current(); }
 
     // Returns true only after the audio thread has been started and then shutdown.
-    bool isAudioThreadFinished() { return m_isAudioThreadFinished; }
+    bool isAudioThreadFinished() const { return m_isAudioThreadFinished; }
 
     // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
     void lock(bool& mustReleaseLock);
@@ -220,16 +195,14 @@ public:
     void unlock();
 
     // Returns true if this thread owns the context's lock.
-    bool isGraphOwner() const;
+    bool isGraphOwner() const { return m_graphOwnerThread == &Thread::current(); }
 
-    // Returns the maximum number of channels we can support.
-    static unsigned maxNumberOfChannels() { return MaxNumberOfChannels; }
+    // This is considering 32 is large enough for multiple channels audio.
+    // It is somewhat arbitrary and could be increased if necessary.
+    static constexpr unsigned maxNumberOfChannels = 32;
     
     // In AudioNode::decrementConnectionCount() a tryLock() is used for calling decrementConnectionCountWithLock(), but if it fails keep track here.
     void addDeferredDecrementConnectionCount(AudioNode*);
-
-    // In the audio thread at the start of each render cycle, we'll call handleDeferredDecrementConnectionCounts().
-    void handleDeferredDecrementConnectionCounts();
 
     // Only accessed when the graph lock is held.
     void markSummingJunctionDirty(AudioSummingJunction*);
@@ -239,14 +212,7 @@ public:
     void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
-
-    void finishedRendering(bool didRendering);
-
-    static unsigned s_hardwareContextCount;
 
     void isPlayingAudioDidChange();
 
@@ -262,7 +228,7 @@ public:
     const void* nextAudioParameterLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextAudioParameterIdentifier); }
 #endif
 
-    void postTask(WTF::Function<void()>&&);
+    void postTask(Function<void()>&&);
     bool isStopped() const { return m_isStopScheduled; }
     const SecurityOrigin* origin() const;
     void addConsoleMessage(MessageSource, MessageLevel, const String& message);
@@ -296,8 +262,7 @@ public:
     const HashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
 
 protected:
-    explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
-    BaseAudioContext(Document&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    explicit BaseAudioContext(Document&);
     
     void clearPendingActivity();
     void setPendingActivity();
@@ -313,7 +278,6 @@ protected:
     void addReaction(State, DOMPromiseDeferred<void>&&);
     void setState(State);
 
-    virtual void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) { }
     void clear();
 
 private:
@@ -327,12 +291,19 @@ private:
     void refSourceNode(AudioNode&);
     void derefSourceNode(AudioNode&);
 
+    // Called periodically at the end of each render quantum to dereference finished source nodes.
+    void derefFinishedSourceNodes();
+
+    // In the audio thread at the start of each render cycle, we'll call handleDeferredDecrementConnectionCounts().
+    void handleDeferredDecrementConnectionCounts();
+
     // EventTarget
-    void dispatchEvent(Event&) final;
+    EventTargetInterface eventTargetInterface() const final;
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
     // ActiveDOMObject API.
     void stop() override;
-    const char* activeDOMObjectName() const override;
 
     // When the context goes away, there might still be some sources which haven't finished playing.
     // Make sure to dereference them here.
@@ -366,13 +337,6 @@ private:
     // They will be scheduled for deletion (on the main thread) at the end of a render cycle (in realtime thread).
     Vector<AudioNode*> m_nodesToDelete;
 
-    bool m_isDeletionScheduled { false };
-    bool m_isStopScheduled { false };
-    bool m_isInitialized { false };
-    bool m_isAudioThreadFinished { false };
-    bool m_automaticPullNodesNeedUpdating { false };
-    bool m_isOfflineContext { false };
-
     // Only accessed when the graph lock is held.
     HashSet<AudioSummingJunction*> m_dirtySummingJunctions;
     HashSet<AudioNodeOutput*> m_dirtyAudioNodeOutputs;
@@ -385,35 +349,18 @@ private:
     Vector<AudioNode*> m_deferredBreakConnectionList;
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
-    RefPtr<AudioBuffer> m_renderTarget;
-    UniqueRef<AudioDestinationNode> m_destinationNode;
     Ref<AudioListener> m_listener;
 
-    unsigned m_connectionCount { 0 };
-
-    // Graph locking.
-    Lock m_contextGraphMutex;
-    // FIXME: Using volatile seems incorrect.
-    // https://bugs.webkit.org/show_bug.cgi?id=180332
-    Thread* volatile m_audioThread { nullptr };
-    Thread* volatile m_graphOwnerThread { nullptr }; // if the lock is held then this is the thread which owns it, otherwise == nullptr.
+    std::atomic<Thread*> m_audioThread;
+    std::atomic<Thread*> m_graphOwnerThread; // if the lock is held then this is the thread which owns it, otherwise == nullptr.
 
     std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
 
-    // This is considering 32 is large enough for multiple channels audio. 
-    // It is somewhat arbitrary and could be increased if necessary.
-    enum { MaxNumberOfChannels = 32 };
-
-    // Number of AudioBufferSourceNodes that are active (playing).
-    std::atomic<int> m_activeSourceCount { 0 };
-
-    State m_state { State::Suspended };
     RefPtr<PendingActivity<BaseAudioContext>> m_pendingActivity;
 
     AudioIOPosition m_outputPosition;
 
     HashMap<String, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
-    bool m_hasFinishedAudioSourceNodes { false };
 
     // These are cached per audio context for performance reasons. They cannot be
     // static because they rely on the sample rate.
@@ -421,6 +368,19 @@ private:
     RefPtr<PeriodicWave> m_cachedPeriodicWaveSquare;
     RefPtr<PeriodicWave> m_cachedPeriodicWaveSawtooth;
     RefPtr<PeriodicWave> m_cachedPeriodicWaveTriangle;
+
+    // Number of AudioBufferSourceNodes that are active (playing).
+    std::atomic<int> m_activeSourceCount;
+
+    unsigned m_connectionCount { 0 };
+    State m_state { State::Suspended };
+    Lock m_contextGraphLock;
+    bool m_isDeletionScheduled { false };
+    bool m_isStopScheduled { false };
+    bool m_isInitialized { false };
+    bool m_isAudioThreadFinished { false };
+    bool m_automaticPullNodesNeedUpdating { false };
+    bool m_hasFinishedAudioSourceNodes { false };
 };
 
 } // WebCore

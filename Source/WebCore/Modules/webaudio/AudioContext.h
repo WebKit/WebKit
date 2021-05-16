@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,23 @@
 
 #pragma once
 
-#include "AudioContextOptions.h"
 #include "BaseAudioContext.h"
 #include "DefaultAudioDestinationNode.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "PlatformMediaSession.h"
 #include "VisibilityChangeClient.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class DOMWindow;
+class HTMLMediaElement;
+class MediaStream;
+class MediaStreamAudioDestinationNode;
+class MediaStreamAudioSourceNode;
 
+struct AudioContextOptions;
 struct AudioTimestamp;
 
 class AudioContext final
@@ -48,15 +53,16 @@ class AudioContext final
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&& = { });
+    static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     ~AudioContext();
 
     WEBCORE_EXPORT static void setDefaultSampleRateForTesting(Optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
 
-    DefaultAudioDestinationNode& destination();
-    const DefaultAudioDestinationNode& destination() const;
+    DefaultAudioDestinationNode& destination() final { return m_destinationNode.get(); }
+    const DefaultAudioDestinationNode& destination() const final { return m_destinationNode.get(); }
+
     double baseLatency();
 
     AudioTimestamp getOutputTimestamp(DOMWindow&);
@@ -88,8 +94,8 @@ public:
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
-protected:
-    explicit AudioContext(Document&, const AudioContextOptions& = { });
+private:
+    AudioContext(Document&, const AudioContextOptions&);
 
     bool willBeginPlayback();
 
@@ -97,13 +103,15 @@ protected:
     const Logger& logger() const final;
 #endif
 
-private:
     void constructCommon();
 
     bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }
     bool pageConsentRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequirePageConsentForAudioStartRestriction; }
 
     bool willPausePlayback();
+
+    void uninitialize() final;
+    bool isOfflineContext() const final { return false; }
 
     // MediaProducer
     MediaProducer::MediaStateFlags mediaState() const final;
@@ -129,9 +137,11 @@ private:
     void visibilityStateChanged() final;
 
     // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
 
+    UniqueRef<DefaultAudioDestinationNode> m_destinationNode;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
 
     BehaviorRestrictions m_restrictions { NoRestrictions };
@@ -142,3 +152,7 @@ private:
 };
 
 } // WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioContext)
+    static bool isType(const WebCore::BaseAudioContext& context) { return !context.isOfflineContext(); }
+SPECIALIZE_TYPE_TRAITS_END()

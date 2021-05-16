@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012, Google Inc. All rights reserved.
+ * Copyright (C) 2020-2021, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,29 +27,35 @@
 
 #include "BaseAudioContext.h"
 #include "JSDOMPromiseDeferred.h"
-#include "OfflineAudioContextOptions.h"
 #include "OfflineAudioDestinationNode.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 
 namespace WebCore {
 
+struct OfflineAudioContextOptions;
+
 class OfflineAudioContext final : public BaseAudioContext {
     WTF_MAKE_ISO_ALLOCATED(OfflineAudioContext);
 public:
-    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, unsigned length, float sampleRate);
-    
     static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, const OfflineAudioContextOptions&);
-
-    void startOfflineRendering(Ref<DeferredPromise>&&);
-    void suspendOfflineRendering(double suspendTime, Ref<DeferredPromise>&&);
-    void resumeOfflineRendering(Ref<DeferredPromise>&&);
+    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, unsigned length, float sampleRate);
+    void startRendering(Ref<DeferredPromise>&&);
+    void suspendRendering(double suspendTime, Ref<DeferredPromise>&&);
+    void resumeRendering(Ref<DeferredPromise>&&);
+    void finishedRendering(bool didRendering);
+    void didSuspendRendering(size_t frame);
 
     unsigned length() const { return m_length; }
-    bool shouldSuspend() final;
+    bool shouldSuspend();
 
-    OfflineAudioDestinationNode& destination() { return static_cast<OfflineAudioDestinationNode&>(BaseAudioContext::destination()); }
-    const OfflineAudioDestinationNode& destination() const { return static_cast<const OfflineAudioDestinationNode&>(BaseAudioContext::destination()); }
+    OfflineAudioDestinationNode& destination() final { return m_destinationNode.get(); }
+    const OfflineAudioDestinationNode& destination() const final { return m_destinationNode.get(); }
+
+private:
+    OfflineAudioContext(Document&, const OfflineAudioContextOptions&);
+
+    AudioBuffer* renderTarget() const { return destination().renderTarget(); }
 
     // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
     void offlineLock(bool& mustReleaseLock);
@@ -72,17 +79,25 @@ public:
         bool m_mustReleaseLock;
     };
 
-private:
-    OfflineAudioContext(Document&, unsigned numberOfChannels, unsigned length, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
 
-    void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) final;
-    void didSuspendRendering(size_t frame) final;
+    // EventTarget
+    void dispatchEvent(Event&) final;
+
+    void settleRenderingPromise(ExceptionOr<Ref<AudioBuffer>>&&);
     void uninitialize() final;
+    bool isOfflineContext() const final { return true; }
 
-    RefPtr<DeferredPromise> m_pendingOfflineRenderingPromise;
+    UniqueRef<OfflineAudioDestinationNode> m_destinationNode;
+    RefPtr<DeferredPromise> m_pendingRenderingPromise;
     HashMap<unsigned /* frame */, RefPtr<DeferredPromise>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_suspendRequests;
     unsigned m_length;
-    bool m_didStartOfflineRendering { false };
+    bool m_didStartRendering { false };
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::OfflineAudioContext)
+    static bool isType(const WebCore::BaseAudioContext& context) { return context.isOfflineContext(); }
+SPECIALIZE_TYPE_TRAITS_END()

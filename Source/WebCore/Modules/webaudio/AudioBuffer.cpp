@@ -42,7 +42,7 @@ namespace WebCore {
 
 RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, LegacyPreventDetaching preventDetaching)
 {
-    if (!BaseAudioContext::isSupportedSampleRate(sampleRate) || !numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || !numberOfFrames)
+    if (!BaseAudioContext::isSupportedSampleRate(sampleRate) || !numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels || !numberOfFrames)
         return nullptr;
 
     auto buffer = adoptRef(*new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate, preventDetaching));
@@ -57,7 +57,7 @@ ExceptionOr<Ref<AudioBuffer>> AudioBuffer::create(const AudioBufferOptions& opti
     if (!options.numberOfChannels)
         return Exception { NotSupportedError, "Number of channels cannot be 0."_s };
 
-    if (options.numberOfChannels > AudioContext::maxNumberOfChannels())
+    if (options.numberOfChannels > AudioContext::maxNumberOfChannels)
         return Exception { NotSupportedError, "Number of channels cannot be more than max supported."_s };
     
     if (!options.length)

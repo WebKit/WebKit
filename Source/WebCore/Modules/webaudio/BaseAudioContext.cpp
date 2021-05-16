@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,6 @@
 #include "ConstantSourceNode.h"
 #include "ConstantSourceOptions.h"
 #include "ConvolverNode.h"
-#include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
 #include "DelayOptions.h"
 #include "Document.h"
@@ -68,8 +67,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
-#include "OfflineAudioCompletionEvent.h"
-#include "OfflineAudioDestinationNode.h"
 #include "OscillatorNode.h"
 #include "Page.h"
 #include "PannerNode.h"
@@ -80,8 +77,14 @@
 #include "StereoPannerNode.h"
 #include "StereoPannerOptions.h"
 #include "WaveShaperNode.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/Atomics.h>
+#include <wtf/IsoMallocInlines.h>
+#include <wtf/MainThread.h>
+#include <wtf/Ref.h>
 #include <wtf/Scope.h>
+#include <wtf/text/WTFString.h>
 
 #if DEBUG_AUDIONODE_REFERENCES
 #include <stdio.h>
@@ -90,20 +93,6 @@
 #if USE(GSTREAMER)
 #include "GStreamerCommon.h"
 #endif
-
-#if PLATFORM(IOS_FAMILY)
-#include "ScriptController.h"
-#include "Settings.h"
-#endif
-
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <wtf/Atomics.h>
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/MainThread.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Scope.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -114,9 +103,7 @@ bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
     return sampleRate >= 3000 && sampleRate <= 384000;
 }
 
-unsigned BaseAudioContext::s_hardwareContextCount;
-
-static uint64_t generateAudioContextID()
+static uint64_t generateContextID()
 {
     ASSERT(isMainThread());
     static uint64_t contextIDSeed = 0;
@@ -130,52 +117,18 @@ static HashSet<uint64_t>& liveAudioContexts()
     return contexts;
 }
 
-// Constructor for rendering to the audio hardware.
-BaseAudioContext::BaseAudioContext(Document& document, const AudioContextOptions& contextOptions)
+BaseAudioContext::BaseAudioContext(Document& document)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
-    , m_contextID(generateAudioContextID())
+    , m_contextID(generateContextID())
     , m_worklet(AudioWorklet::create(*this))
-    , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
     , m_listener(AudioListener::create(*this))
 {
     liveAudioContexts().add(m_contextID);
 
-    // According to spec AudioContext must die only after page navigate.
-    // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
-    setPendingActivity();
-
-    FFTFrame::initialize();
-
-    // Unlike OfflineAudioContext, AudioContext does not require calling resume() to start rendering.
-    // Lazy initialization starts rendering so we schedule a task here to make sure lazy initialization
-    // ends up happening, even if no audio node gets constructed.
-    postTask([this] {
-        if (m_isStopScheduled)
-            return;
-
-        lazyInitialize();
-    });
-}
-
-// Constructor for offline (non-realtime) rendering.
-BaseAudioContext::BaseAudioContext(Document& document, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
-    : ActiveDOMObject(document)
-#if !RELEASE_LOG_DISABLED
-    , m_logger(document.logger())
-    , m_logIdentifier(uniqueLogIdentifier())
-#endif
-    , m_contextID(generateAudioContextID())
-    , m_worklet(AudioWorklet::create(*this))
-    , m_isOfflineContext(true)
-    , m_renderTarget(WTFMove(renderTarget))
-    , m_destinationNode(makeUniqueRef<OfflineAudioDestinationNode>(*this, numberOfChannels, sampleRate, m_renderTarget.copyRef()))
-    , m_listener(AudioListener::create(*this))
-{
-    liveAudioContexts().add(m_contextID);
     FFTFrame::initialize();
 }
 
@@ -212,7 +165,7 @@ void BaseAudioContext::lazyInitialize()
     if (m_isAudioThreadFinished)
         return;
 
-    m_destinationNode->initialize();
+    destination().initialize();
 
     m_isInitialized = true;
 }
@@ -240,18 +193,10 @@ void BaseAudioContext::uninitialize()
         return;
 
     // This stops the audio thread and all audio rendering.
-    m_destinationNode->uninitialize();
+    destination().uninitialize();
 
     // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
     m_isAudioThreadFinished = true;
-
-    if (!isOfflineContext()) {
-        ASSERT(s_hardwareContextCount);
-        --s_hardwareContextCount;
-
-        // Offline contexts move to 'Closed' state when dispatching the completion event.
-        setState(State::Closed);
-    }
 
     {
         AutoLocker locker(*this);
@@ -266,11 +211,6 @@ void BaseAudioContext::uninitialize()
     derefUnfinishedSourceNodes();
 
     m_isInitialized = false;
-}
-
-bool BaseAudioContext::isInitialized() const
-{
-    return m_isInitialized;
 }
 
 void BaseAudioContext::addReaction(State state, DOMPromiseDeferred<void>&& promise)
@@ -302,14 +242,15 @@ void BaseAudioContext::setState(State state)
 
 void BaseAudioContext::stop()
 {
+    ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
     
-    ASSERT(isMainThread());
-    auto protectedThis = makeRef(*this);
-
     // Usually ScriptExecutionContext calls stop twice.
     if (m_isStopScheduled)
         return;
+
+    auto protectedThis = makeRef(*this);
+
     m_isStopScheduled = true;
 
     ASSERT(document());
@@ -319,19 +260,9 @@ void BaseAudioContext::stop()
     clear();
 }
 
-const char* BaseAudioContext::activeDOMObjectName() const
-{
-    return "AudioContext";
-}
-
 Document* BaseAudioContext::document() const
 {
     return downcast<Document>(m_scriptExecutionContext);
-}
-
-float BaseAudioContext::sampleRate() const
-{
-    return m_destinationNode->sampleRate();
 }
 
 bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
@@ -376,11 +307,6 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
                 successCallback->handleEvent(audioBuffer.ptr());
         });
     });
-}
-
-AudioListener& WebCore::BaseAudioContext::listener()
-{
-    return m_listener;
 }
 
 ExceptionOr<Ref<AudioBufferSourceNode>> BaseAudioContext::createBufferSource()
@@ -435,13 +361,13 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     // This parameter [numberOfInputChannels] determines the number of channels for this node's input. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
-    if (numberOfInputChannels > maxNumberOfChannels())
+    if (numberOfInputChannels > maxNumberOfChannels)
         return Exception { NotSupportedError, "numberOfInputChannels exceeds maximum number of channels"_s };
 
     // This parameter [numberOfOutputChannels] determines the number of channels for this node's output. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
-    if (numberOfOutputChannels > maxNumberOfChannels())
+    if (numberOfOutputChannels > maxNumberOfChannels)
         return Exception { NotSupportedError, "numberOfOutputChannels exceeds maximum number of channels"_s };
 
     return ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
@@ -583,11 +509,6 @@ ExceptionOr<Ref<IIRFilterNode>> BaseAudioContext::createIIRFilter(ScriptExecutio
     return IIRFilterNode::create(scriptExecutionContext, *this, WTFMove(options));
 }
 
-static bool isFinishedSourceNode(const AudioConnectionRefPtr<AudioNode>& node)
-{
-    return node->isFinishedSourceNode();
-}
-
 void BaseAudioContext::derefFinishedSourceNodes()
 {
     ASSERT(isGraphOwner());
@@ -596,7 +517,7 @@ void BaseAudioContext::derefFinishedSourceNodes()
     if (!m_hasFinishedAudioSourceNodes)
         return;
 
-    m_referencedSourceNodes.removeAllMatching(isFinishedSourceNode);
+    m_referencedSourceNodes.removeAllMatching([](auto& node) { return node->isFinishedSourceNode(); });
     m_hasFinishedAudioSourceNodes = false;
 }
 
@@ -641,7 +562,7 @@ void BaseAudioContext::lockInternal(bool& mustReleaseLock)
         mustReleaseLock = false;
     } else {
         // Acquire the lock.
-        m_contextGraphMutex.lock();
+        m_contextGraphLock.lock();
         m_graphOwnerThread = &thisThread;
         mustReleaseLock = true;
     }
@@ -649,13 +570,10 @@ void BaseAudioContext::lockInternal(bool& mustReleaseLock)
 
 bool BaseAudioContext::tryLock(bool& mustReleaseLock)
 {
-    Thread& thisThread = Thread::current();
-    bool isAudioThread = &thisThread == audioThread();
-
     // Try to catch cases of using try lock on main thread - it should use regular lock.
-    ASSERT(isAudioThread || isAudioThreadFinished());
+    ASSERT(isAudioThread() || isAudioThreadFinished());
     
-    if (!isAudioThread) {
+    if (!isAudioThread()) {
         // In release build treat tryLock() as lock() (since above ASSERT(isAudioThread) never fires) - this is the best we can do.
         lock(mustReleaseLock);
         return true;
@@ -663,16 +581,16 @@ bool BaseAudioContext::tryLock(bool& mustReleaseLock)
     
     bool hasLock;
     
-    if (&thisThread == m_graphOwnerThread) {
+    if (isGraphOwner()) {
         // Thread already has the lock.
         hasLock = true;
         mustReleaseLock = false;
     } else {
         // Don't already have the lock - try to acquire it.
-        hasLock = m_contextGraphMutex.tryLock();
+        hasLock = m_contextGraphLock.tryLock();
         
         if (hasLock)
-            m_graphOwnerThread = &thisThread;
+            m_graphOwnerThread = &Thread::current();
 
         mustReleaseLock = hasLock;
     }
@@ -685,17 +603,7 @@ void BaseAudioContext::unlock()
     ASSERT(m_graphOwnerThread == &Thread::current());
 
     m_graphOwnerThread = nullptr;
-    m_contextGraphMutex.unlock();
-}
-
-bool BaseAudioContext::isAudioThread() const
-{
-    return m_audioThread == &Thread::current();
-}
-
-bool BaseAudioContext::isGraphOwner() const
-{
-    return m_graphOwnerThread == &Thread::current();
+    m_contextGraphLock.unlock();
 }
 
 void BaseAudioContext::addDeferredDecrementConnectionCount(AudioNode* node)
@@ -739,26 +647,27 @@ void BaseAudioContext::handlePostRenderTasks()
     // The worst that can happen is that there will be some nodes which will take slightly longer than usual to be deleted or removed
     // from the render graph (in which case they'll render silence).
     bool mustReleaseLock;
-    if (tryLock(mustReleaseLock)) {
-        // Take care of finishing any derefs where the tryLock() failed previously.
-        handleDeferredDecrementConnectionCounts();
+    if (!tryLock(mustReleaseLock))
+        return;
 
-        // Dynamically clean up nodes which are no longer needed.
-        derefFinishedSourceNodes();
+    // Take care of finishing any derefs where the tryLock() failed previously.
+    handleDeferredDecrementConnectionCounts();
 
-        // Don't delete in the real-time thread. Let the main thread do it.
-        // Ref-counted objects held by certain AudioNodes may not be thread-safe.
-        scheduleNodeDeletion();
+    // Dynamically clean up nodes which are no longer needed.
+    derefFinishedSourceNodes();
 
-        // Fixup the state of any dirty AudioSummingJunctions and AudioNodeOutputs.
-        handleDirtyAudioSummingJunctions();
-        handleDirtyAudioNodeOutputs();
+    // Don't delete in the real-time thread. Let the main thread do it.
+    // Ref-counted objects held by certain AudioNodes may not be thread-safe.
+    scheduleNodeDeletion();
 
-        updateAutomaticPullNodes();
+    // Fixup the state of any dirty AudioSummingJunctions and AudioNodeOutputs.
+    handleDirtyAudioSummingJunctions();
+    handleDirtyAudioNodeOutputs();
 
-        if (mustReleaseLock)
-            unlock();
-    }
+    updateAutomaticPullNodes();
+
+    if (mustReleaseLock)
+        unlock();
 }
 
 void BaseAudioContext::handleDeferredDecrementConnectionCounts()
@@ -820,29 +729,28 @@ void BaseAudioContext::deleteMarkedNodes()
 
     // Protect this object from being deleted before we release the mutex locked by AutoLocker.
     auto protectedThis = makeRef(*this);
-    {
-        AutoLocker locker(*this);
 
-        while (m_nodesToDelete.size()) {
-            AudioNode* node = m_nodesToDelete.takeLast();
+    AutoLocker locker(*this);
 
-            // Before deleting the node, clear out any AudioNodeInputs from m_dirtySummingJunctions.
-            unsigned numberOfInputs = node->numberOfInputs();
-            for (unsigned i = 0; i < numberOfInputs; ++i)
-                m_dirtySummingJunctions.remove(node->input(i));
+    while (m_nodesToDelete.size()) {
+        AudioNode* node = m_nodesToDelete.takeLast();
 
-            // Before deleting the node, clear out any AudioNodeOutputs from m_dirtyAudioNodeOutputs.
-            unsigned numberOfOutputs = node->numberOfOutputs();
-            for (unsigned i = 0; i < numberOfOutputs; ++i)
-                m_dirtyAudioNodeOutputs.remove(node->output(i));
+        // Before deleting the node, clear out any AudioNodeInputs from m_dirtySummingJunctions.
+        unsigned numberOfInputs = node->numberOfInputs();
+        for (unsigned i = 0; i < numberOfInputs; ++i)
+            m_dirtySummingJunctions.remove(node->input(i));
 
-            ASSERT_WITH_MESSAGE(node->nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
+        // Before deleting the node, clear out any AudioNodeOutputs from m_dirtyAudioNodeOutputs.
+        unsigned numberOfOutputs = node->numberOfOutputs();
+        for (unsigned i = 0; i < numberOfOutputs; ++i)
+            m_dirtyAudioNodeOutputs.remove(node->output(i));
 
-            // Finally, delete it.
-            delete node;
-        }
-        m_isDeletionScheduled = false;
+        ASSERT_WITH_MESSAGE(node->nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
+
+        // Finally, delete it.
+        delete node;
     }
+    m_isDeletionScheduled = false;
 }
 
 void BaseAudioContext::markSummingJunctionDirty(AudioSummingJunction* summingJunction)
@@ -915,20 +823,21 @@ void BaseAudioContext::updateAutomaticPullNodes()
 {
     ASSERT(isGraphOwner());
 
-    if (m_automaticPullNodesNeedUpdating) {
-        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
-        // explicitly allow the following allocation(s).
-        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    if (!m_automaticPullNodesNeedUpdating)
+        return;
 
-        // Copy from m_automaticPullNodes to m_renderingAutomaticPullNodes.
-        m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-        unsigned i = 0;
-        for (auto& output : m_automaticPullNodes)
-            m_renderingAutomaticPullNodes[i++] = output;
+    // Copy from m_automaticPullNodes to m_renderingAutomaticPullNodes.
+    m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
 
-        m_automaticPullNodesNeedUpdating = false;
-    }
+    unsigned i = 0;
+    for (auto& output : m_automaticPullNodes)
+        m_renderingAutomaticPullNodes[i++] = output;
+
+    m_automaticPullNodesNeedUpdating = false;
 }
 
 void BaseAudioContext::processAutomaticPullNodes(size_t framesToProcess)
@@ -944,6 +853,7 @@ ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
+// FIXME: This should probably move to AudioContext.
 void BaseAudioContext::isPlayingAudioDidChange()
 {
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
@@ -958,53 +868,6 @@ void BaseAudioContext::isPlayingAudioDidChange()
     });
 }
 
-// FIXME: Move to OfflineAudioContext once WebKitOfflineAudioContext gets removed.
-void BaseAudioContext::finishedRendering(bool didRendering)
-{
-    ASSERT(isOfflineContext());
-    ASSERT(isMainThread());
-    auto finishedRenderingScope = WTF::makeScopeExit([this] {
-        didFinishOfflineRendering(Exception { InvalidStateError, "Offline rendering failed"_s });
-    });
-
-    if (!isMainThread())
-        return;
-
-    auto clearPendingActivityIfExitEarly = WTF::makeScopeExit([this] {
-        clearPendingActivity();
-    });
-
-
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    if (!didRendering)
-        return;
-
-    RefPtr<AudioBuffer> renderedBuffer = m_renderTarget.get();
-    setState(State::Closed);
-
-    ASSERT(renderedBuffer);
-    if (!renderedBuffer)
-        return;
-
-    // Avoid firing the event if the document has already gone away.
-    if (m_isStopScheduled)
-        return;
-
-    clearPendingActivityIfExitEarly.release();
-    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, OfflineAudioCompletionEvent::create(*renderedBuffer));
-
-    finishedRenderingScope.release();
-    didFinishOfflineRendering(renderedBuffer.releaseNonNull());
-}
-
-void BaseAudioContext::dispatchEvent(Event& event)
-{
-    EventTarget::dispatchEvent(event);
-    if (event.eventInterface() == OfflineAudioCompletionEventInterfaceType)
-        clearPendingActivity();
-}
-
 void BaseAudioContext::incrementActiveSourceCount()
 {
     ++m_activeSourceCount;
@@ -1015,18 +878,11 @@ void BaseAudioContext::decrementActiveSourceCount()
     --m_activeSourceCount;
 }
 
-void BaseAudioContext::didSuspendRendering(size_t)
-{
-    setState(State::Suspended);
-}
-
-void BaseAudioContext::postTask(WTF::Function<void()>&& task)
+void BaseAudioContext::postTask(Function<void()>&& task)
 {
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return;
-
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, WTFMove(task));
+    if (!m_isStopScheduled)
+        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, WTFMove(task));
 }
 
 const SecurityOrigin* BaseAudioContext::origin() const
@@ -1104,7 +960,7 @@ void BaseAudioContext::workletIsReady()
 
     // If we're already rendering when the worklet becomes ready, we need to restart
     // rendering in order to switch to the audio worklet thread.
-    m_destinationNode->restartRendering();
+    destination().restartRendering();
 }
 
 #if !RELEASE_LOG_DISABLED

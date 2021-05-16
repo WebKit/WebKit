@@ -62,7 +62,7 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
     if (m_bufferSize < AudioUtilities::renderQuantumSize)
         m_bufferSize = AudioUtilities::renderQuantumSize;
 
-    ASSERT(numberOfInputChannels <= AudioContext::maxNumberOfChannels());
+    ASSERT(numberOfInputChannels <= AudioContext::maxNumberOfChannels);
 
     initializeDefaultNodeOptions(numberOfInputChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
     addInput();

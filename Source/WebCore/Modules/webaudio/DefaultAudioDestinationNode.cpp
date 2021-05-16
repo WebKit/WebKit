@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 
-DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& context, Optional<float> sampleRate)
+DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, Optional<float> sampleRate)
     : AudioDestinationNode(context, sampleRate.valueOr(AudioDestination::hardwareSampleRate()))
 {
     ASSERT(BaseAudioContext::isSupportedSampleRate(AudioDestination::hardwareSampleRate()));
@@ -56,6 +56,16 @@ DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& conte
 DefaultAudioDestinationNode::~DefaultAudioDestinationNode()
 {
     uninitialize();
+}
+
+AudioContext& DefaultAudioDestinationNode::context()
+{
+    return downcast<AudioContext>(AudioDestinationNode::context());
+}
+
+const AudioContext& DefaultAudioDestinationNode::context() const
+{
+    return downcast<AudioContext>(AudioDestinationNode::context());
 }
 
 void DefaultAudioDestinationNode::initialize()

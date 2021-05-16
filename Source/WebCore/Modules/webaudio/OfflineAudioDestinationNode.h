@@ -33,13 +33,19 @@ namespace WebCore {
 
 class AudioBus;
 class AudioContext;
+class OfflineAudioContext;
     
 class OfflineAudioDestinationNode final : public AudioDestinationNode {
     WTF_MAKE_ISO_ALLOCATED(OfflineAudioDestinationNode);
 public:
-    OfflineAudioDestinationNode(BaseAudioContext&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    OfflineAudioDestinationNode(OfflineAudioContext&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
 
     virtual ~OfflineAudioDestinationNode();
+
+    OfflineAudioContext& context();
+    const OfflineAudioContext& context() const;
+
+    AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
     
     // AudioNode   
     void initialize() override;

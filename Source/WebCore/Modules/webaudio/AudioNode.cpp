@@ -387,7 +387,7 @@ ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
     if (!channelCount)
         return Exception { NotSupportedError, "Channel count cannot be 0"_s };
     
-    if (channelCount > AudioContext::maxNumberOfChannels())
+    if (channelCount > AudioContext::maxNumberOfChannels)
         return Exception { IndexSizeError, "Channel count exceeds maximum limit"_s };
 
     if (m_channelCount == channelCount)

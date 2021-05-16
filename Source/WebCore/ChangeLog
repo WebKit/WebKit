@@ -1,3 +1,102 @@
+2021-05-15  Chris Dumez  <cdumez@apple.com>
+
+        Clean up BaseAudioContext now that legacy/prefixed WebAudio is gone
+        https://bugs.webkit.org/show_bug.cgi?id=225843
+
+        Reviewed by Darin Adler.
+
+        The BaseAudioContext class hierarchy used to be a bit complicated when
+        we supposed legacy WebAudio because OfflineAudioContext would subclass
+        BaseAudioContext directly, while WebKitOfflineAudioContext would
+        subclass BaseAudioContext via AudioContext. The class hierarchy is now
+        a lot simpler, BaseAudioContext is the base class and it has exactly
+        2 subclasses: OfflineAudioContext and AudioContext (for real-time
+        rendering). Now that the legacy WebAudio code is gone, this patch
+        cleans up BaseAudioContext and moves as much code as possible to its
+        subclasses (OfflineAudioContext & AudioContext).
+
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::create):
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::uninitialize):
+        (WebCore::AudioContext::lazyInitialize):
+        (WebCore::AudioContext::activeDOMObjectName const):
+        * Modules/webaudio/AudioContext.h:
+        (isType):
+        * Modules/webaudio/AudioContextState.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::setChannelCount):
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::AudioNodeOutput):
+        (WebCore::AudioNodeOutput::setNumberOfChannels):
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::create):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::generateContextID):
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        (WebCore::BaseAudioContext::lazyInitialize):
+        (WebCore::BaseAudioContext::uninitialize):
+        (WebCore::BaseAudioContext::stop):
+        (WebCore::BaseAudioContext::createScriptProcessor):
+        (WebCore::BaseAudioContext::derefFinishedSourceNodes):
+        (WebCore::BaseAudioContext::lockInternal):
+        (WebCore::BaseAudioContext::tryLock):
+        (WebCore::BaseAudioContext::unlock):
+        (WebCore::BaseAudioContext::handlePostRenderTasks):
+        (WebCore::BaseAudioContext::deleteMarkedNodes):
+        (WebCore::BaseAudioContext::updateAutomaticPullNodes):
+        (WebCore::BaseAudioContext::postTask):
+        (WebCore::BaseAudioContext::workletIsReady):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::isInitialized const):
+        (WebCore::BaseAudioContext::currentSampleFrame const):
+        (WebCore::BaseAudioContext::currentTime const):
+        (WebCore::BaseAudioContext::sampleRate const):
+        (WebCore::BaseAudioContext::listener):
+        (WebCore::BaseAudioContext::incrementConnectionCount):
+        (WebCore::BaseAudioContext::isAudioThread const):
+        (WebCore::BaseAudioContext::isAudioThreadFinished const):
+        (WebCore::BaseAudioContext::isGraphOwner const):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        (WebCore::DefaultAudioDestinationNode::context):
+        (WebCore::DefaultAudioDestinationNode::context const):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::OfflineAudioContext):
+        (WebCore::OfflineAudioContext::create):
+        (WebCore::OfflineAudioContext::uninitialize):
+        (WebCore::OfflineAudioContext::activeDOMObjectName const):
+        (WebCore::OfflineAudioContext::startRendering):
+        (WebCore::OfflineAudioContext::suspendRendering):
+        (WebCore::OfflineAudioContext::resumeRendering):
+        (WebCore::OfflineAudioContext::didSuspendRendering):
+        (WebCore::OfflineAudioContext::finishedRendering):
+        (WebCore::OfflineAudioContext::settleRenderingPromise):
+        (WebCore::OfflineAudioContext::dispatchEvent):
+        * Modules/webaudio/OfflineAudioContext.h:
+        (isType):
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::context):
+        (WebCore::OfflineAudioDestinationNode::context const):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+
 2021-05-15  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Move inline formatting geometry to its own class

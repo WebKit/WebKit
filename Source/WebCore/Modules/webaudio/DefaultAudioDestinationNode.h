@@ -28,12 +28,16 @@
 
 namespace WebCore {
 
+class AudioContext;
 class AudioDestination;
     
 class DefaultAudioDestinationNode final : public AudioDestinationNode {
     WTF_MAKE_ISO_ALLOCATED(DefaultAudioDestinationNode);
 public:
-    explicit DefaultAudioDestinationNode(BaseAudioContext&, Optional<float> = WTF::nullopt);
+    explicit DefaultAudioDestinationNode(AudioContext&, Optional<float> = WTF::nullopt);
+
+    AudioContext& context();
+    const AudioContext& context() const;
     
     virtual ~DefaultAudioDestinationNode();
 
