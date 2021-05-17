@@ -33,6 +33,9 @@
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
 #else
+#if HAVE(OPENGL_ES_3)
+#include <GLES3/gl3.h>
+#endif // HAVE(OPENGL_ES_3)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #endif

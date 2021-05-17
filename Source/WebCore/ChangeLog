@@ -1,3 +1,14 @@
+2021-05-17  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] [2.33.1] Fails to build when HAVE_OPENGL_ES_3 is on
+        https://bugs.webkit.org/show_bug.cgi?id=225867
+
+        Reviewed by Adrian Perez de Castro.
+
+        Include GLES3/gl3.h if HAVE_OPENGL_ES_3 is set.
+
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.h:
+
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Use kAudioObjectPropertyElementMain where available
