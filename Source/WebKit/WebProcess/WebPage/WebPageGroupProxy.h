@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebUserContentController;
 
-class WebPageGroupProxy : public API::ObjectImpl<API::Object::Type::BundlePageGroup> {
+class WebPageGroupProxy : public RefCounted<WebPageGroupProxy> {
 public:
     static Ref<WebPageGroupProxy> create(const WebPageGroupData&);
     virtual ~WebPageGroupProxy();

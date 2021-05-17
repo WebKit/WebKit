@@ -48,10 +48,10 @@
 #import "WKWebProcessPlugInFormDelegatePrivate.h"
 #import "WKWebProcessPlugInLoadDelegate.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
-#import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WebPage.h"
+#import "WebPageGroupProxy.h"
 #import "WebProcess.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKRenderingProgressEventsInternal.h"
@@ -402,11 +402,6 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 - (WKWebProcessPlugInFrame *)mainFrame
 {
     return wrapper(_page->mainWebFrame());
-}
-
-- (WKWebProcessPlugInPageGroup *)pageGroup
-{
-    return wrapper(*_page->pageGroup());
 }
 
 #pragma mark WKObject protocol implementation

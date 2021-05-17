@@ -33,7 +33,6 @@
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
-#include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
 #include "APISerializedScriptValue.h"
 #include "APIString.h"
@@ -230,10 +229,6 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         break;
     }
 
-    case API::Object::Type::PageGroupHandle:
-        static_cast<const API::PageGroupHandle&>(object).encode(encoder);
-        break;
-
     case API::Object::Type::PageHandle:
         static_cast<const API::PageHandle&>(object).encode(encoder);
         break;
@@ -413,11 +408,6 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 
     case API::Object::Type::Null:
         result = nullptr;
-        break;
-
-    case API::Object::Type::PageGroupHandle:
-        if (!API::PageGroupHandle::decode(decoder, result))
-            return false;
         break;
 
     case API::Object::Type::PageHandle:

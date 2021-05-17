@@ -1,3 +1,21 @@
+2021-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Remove API::Object::Type::BundlePageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=225611
+
+        Reviewed by Brady Eidson.
+
+        Some tests were trying to encode a page group, but it was unused so I just removed them.
+
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DocumentStartUserScriptAlertCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleDisableOverrideBuiltinsBehavior.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleMakeAllShadowRootsOpen.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-05-17  Aakash Jain  <aakash_jain@apple.com>
 
         Style checker should check for non-inclusive terminology

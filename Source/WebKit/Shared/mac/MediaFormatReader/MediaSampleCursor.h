@@ -29,6 +29,7 @@
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SampleMap.h>
+#include <wtf/Identified.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Variant.h>
 

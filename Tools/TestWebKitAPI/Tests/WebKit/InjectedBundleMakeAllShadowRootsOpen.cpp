@@ -87,7 +87,7 @@ TEST(WebKit, InjectedBundleMakeAllShadowRootOpenTest)
 {
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleMakeAllShadowRootOpenTestPageGroup")));
 
-    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleMakeAllShadowRootOpenTest", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleMakeAllShadowRootOpenTest"));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageUIClientV0 uiClient;

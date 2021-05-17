@@ -30,7 +30,6 @@
 @class WKDOMDocument;
 @class WKDOMRange;
 @class WKWebProcessPlugInFrame;
-@class WKWebProcessPlugInPageGroup;
 @protocol WKWebProcessPlugInLoadDelegate;
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
@@ -41,8 +40,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (readonly) WKDOMRange *selectedRange;
 
 @property (readonly) WKWebProcessPlugInFrame *mainFrame;
-
-@property (readonly) WKWebProcessPlugInPageGroup *pageGroup WK_API_DEPRECATED_WITH_REPLACEMENT("_groupIdentifier", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @property (weak) id <WKWebProcessPlugInLoadDelegate> loadDelegate;
 

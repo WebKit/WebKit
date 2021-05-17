@@ -1,5 +1,45 @@
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
+        Remove API::Object::Type::BundlePageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=225611
+
+        Reviewed by Brady Eidson.
+
+        Its last use was removed in rdar://77775952
+
+        * Shared/API/APIObject.h:
+        * Shared/API/APIPageGroupHandle.cpp: Removed.
+        * Shared/API/APIPageGroupHandle.h: Removed.
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::SharedRingBufferStorage::setStorage):
+        (WebKit::SharedRingBufferStorage::allocate):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.h:
+        * Sources.txt:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::transformHandlesToObjects):
+        (WebKit::WebProcessProxy::transformObjectsToHandles):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm:
+        (-[WKWebProcessPlugInPageGroup identifier]): Deleted.
+        (-[WKWebProcessPlugInPageGroup dealloc]): Deleted.
+        (-[WKWebProcessPlugInPageGroup _apiObject]): Deleted.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroupInternal.h: Removed.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController pageGroup]): Deleted.
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+
+2021-05-17  Alex Christensen  <achristensen@webkit.org>
+
         [Cocoa] Remove prototype loadSimulatedRequest methods
         https://bugs.webkit.org/show_bug.cgi?id=223658
 
