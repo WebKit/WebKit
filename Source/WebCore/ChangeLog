@@ -1,3 +1,26 @@
+2021-05-17  Tim Nguyen  <ntim@apple.com>
+
+        will-change: position should not create a containing block for position: fixed elements
+        https://bugs.webkit.org/show_bug.cgi?id=225443
+
+        Reviewed by Antti Koivisto.
+
+        This partially undoes r276627 which made will-change: position create a CB for all out-of-flow elements:
+
+        - Removed CSSPropertyPosition from createsContainingBlockForOutOfFlowPositioned() to not create a containing block
+        for position: fixed; children.
+        - Added createsContainingBlockForAbsolutelyPositioned() with CSSPropertyPosition to still create a containing block
+        for position: absolute; children.
+
+        Enabled WPT (which covers both cases): css/css-will-change/will-change-fixpos-cb-position-1.html
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainAbsolutelyPositionedObjects const):
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::createsContainingBlockForAbsolutelyPositioned const):
+        (WebCore::WillChangeData::createsContainingBlockForOutOfFlowPositioned const):
+        * rendering/style/WillChangeData.h:
+
 2021-05-17  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r277560): conditional attribute typos in IDLs for OffscreenCanvas, OffscreenCanvasRenderingContext2D

@@ -60,10 +60,15 @@ bool WillChangeData::containsProperty(CSSPropertyID property) const
     return false;
 }
 
+bool WillChangeData::createsContainingBlockForAbsolutelyPositioned() const
+{
+    return createsContainingBlockForOutOfFlowPositioned()
+        || containsProperty(CSSPropertyPosition);
+}
+
 bool WillChangeData::createsContainingBlockForOutOfFlowPositioned() const
 {
-    return containsProperty(CSSPropertyPosition)
-        || containsProperty(CSSPropertyPerspective)
+    return containsProperty(CSSPropertyPerspective)
         // CSS transforms
         || containsProperty(CSSPropertyTransform)
         || containsProperty(CSSPropertyTransformStyle)

@@ -449,7 +449,7 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
     return style().position() != PositionType::Static
         || (isRenderBlock() && hasTransformRelatedProperty())
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
-        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
+        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned())
         || isSVGForeignObject()
         || shouldApplyLayoutContainment(*this)
         || isRenderView();
