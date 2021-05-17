@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "NativeWebWheelEvent.h"
 #include "WebEventConversion.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -86,6 +87,11 @@ WebWheelEvent WebWheelEventCoalescer::coalesce(const WebWheelEvent& a, const Web
 #endif
 }
 
+bool WebWheelEventCoalescer::isMomentumPhaseEvent(const WebWheelEvent& event)
+{
+    return event.phase() == WebWheelEvent::Phase::PhaseNone && event.momentumPhase() == WebWheelEvent::Phase::PhaseChanged;
+}
+
 bool WebWheelEventCoalescer::shouldDispatchEventNow(const WebWheelEvent& event) const
 {
 #if PLATFORM(GTK)
@@ -135,9 +141,25 @@ Optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
 
 bool WebWheelEventCoalescer::shouldDispatchEvent(const NativeWebWheelEvent& event)
 {
-    LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::shouldDispatchEvent " << event << " (" << m_wheelEventQueue.size() << " events in the queue, " << m_eventsBeingProcessed.size() << " event sequences being processed)");
+    LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::shouldDispatchEvent " << event << " (" << m_wheelEventQueue.size() << " events in the queue, " << m_eventsBeingProcessed.size() << " event sequences being processed, coalesce during decleration " << m_shouldCoalesceEventsDuringDeceleration << ")");
 
     m_wheelEventQueue.append(event);
+
+    auto lastEventInterval = event.timestamp() - m_lastEventTime;
+    m_lastEventTime = event.timestamp();
+
+    if (isMomentumPhaseEvent(event) && shouldCoalesceEventsDuringDeceleration() && lastEventInterval) {
+        constexpr double momentumVelocityEventFrequencyReductionThreashold = 320.0; // Points per second.
+        auto instantaneousVelocity = std::max(std::abs(event.delta().width()), std::abs(event.delta().height())) / lastEventInterval.seconds();
+
+        constexpr auto maxCoalescingInterval = WebCore::FullSpeedAnimationInterval;
+        auto lastDispatchedEventInterval = event.timestamp() - m_lastDispatchedEventTime;
+
+        if (instantaneousVelocity < momentumVelocityEventFrequencyReductionThreashold && lastDispatchedEventInterval < maxCoalescingInterval) {
+            LOG_WITH_STREAM(WheelEvents, stream << " coalesced event that came within " << lastDispatchedEventInterval.milliseconds() << " of previous dispatch");
+            return false;
+        }
+    }
 
     if (!m_eventsBeingProcessed.isEmpty()) {
         if (!shouldDispatchEventNow(m_wheelEventQueue.last())) {
@@ -148,6 +170,7 @@ bool WebWheelEventCoalescer::shouldDispatchEvent(const NativeWebWheelEvent& even
         // FIXME: This logic is confusing, and possibly not necessary.
     }
 
+    m_lastDispatchedEventTime = event.timestamp();
     return true;
 }
 
