@@ -1675,13 +1675,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
 }
 
-// FIXME(223658): Remove this once adopters have moved to the final API.
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
-{
-    THROW_IF_SUSPENDED;
-    return [self loadSimulatedRequest:request response:response responseData:data];
-}
-
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)string
 {
     THROW_IF_SUSPENDED;
@@ -1689,13 +1682,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
 
     return [self loadSimulatedRequest:request response:response.get() responseData:data];
-}
-
-// FIXME(223658): Remove this once adopters have moved to the final API.
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
-{
-    THROW_IF_SUSPENDED;
-    return [self loadSimulatedRequest:request responseHTMLString:string];
 }
 
 - (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL

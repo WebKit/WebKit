@@ -533,7 +533,6 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  @result A new navigation.
 */
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data WK_API_DEPRECATED_WITH_REPLACEMENT("loadSimulatedRequest:response:responseData:", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
 
 /*! @abstract Navigates to the requested file URL on the filesystem.
  @param request The request specifying the file URL to which to navigate.
@@ -555,7 +554,6 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  @result A new navigation.
 */
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)string NS_SWIFT_NAME(loadSimulatedRequest(_:responseHTML:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string NS_SWIFT_NAME(loadSimulatedRequest(_:withResponseHTML:)) WK_API_DEPRECATED_WITH_REPLACEMENT("loadSimulatedRequest:responseHTMLString:", macos(WK_MAC_TBA, WK_MAC_TBA), ios(WK_IOS_TBA, WK_IOS_TBA));
 
 #if !TARGET_OS_IPHONE
 /* @abstract Returns an NSPrintOperation object configured to print the contents of this WKWebView
