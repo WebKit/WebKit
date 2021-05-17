@@ -1,3 +1,30 @@
+2021-05-17  Youenn Fablet  <youenn@apple.com>
+
+        [ BigSur Debug wk2 ARM64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225534
+        <rdar://problem/77679466>
+
+        Reviewed by Eric Carlson.
+
+        In case the transform is stopped, the pipeTo operation will propagate the error/closure to the ReadableStream.
+        In that case, we need to stop enqueuing or we end up hitting the assert.
+        Handle this by adding a boolean which is set to true when SimpleReadableStreamSource::doCancel is called.
+        Make close and enqueue as no-op if that boolean is true.
+        Covered by test no longer crashing.
+
+        In addition, make sure to skip frames for which the array buffer is null as it might trigger debug asserts in libwebrtc.
+        Add a test to cover that case.
+
+        Test: http/wpt/webrtc/video-script-transform-keyframe-only.html
+
+        * Modules/mediastream/RTCRtpScriptTransformer.cpp:
+        (WebCore::RTCRtpScriptTransformer::writable):
+        * Modules/streams/ReadableStreamSource.cpp:
+        (WebCore::SimpleReadableStreamSource::doCancel):
+        (WebCore::SimpleReadableStreamSource::close):
+        (WebCore::SimpleReadableStreamSource::enqueue):
+        * Modules/streams/ReadableStreamSource.h:
+
 2021-05-17  Jer Noble  <jer.noble@apple.com>
 
         MediaSession action handlers aren't treated as having a user gesture

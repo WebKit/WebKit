@@ -82,4 +82,21 @@ void ReadableStreamSource::clean()
     }
 }
 
+void SimpleReadableStreamSource::doCancel()
+{
+    m_isCancelled = true;
+}
+
+void SimpleReadableStreamSource::close()
+{
+    if (!m_isCancelled)
+        controller().close();
+}
+
+void SimpleReadableStreamSource::enqueue(JSC::JSValue value)
+{
+    if (!m_isCancelled)
+        controller().enqueue(value);
+}
+
 } // namespace WebCore

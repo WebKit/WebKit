@@ -104,7 +104,10 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
             }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
                 return makeRef(value->rtcFrame());
             });
-            transformer->m_backend->processTransformedFrame(rtcFrame.get());
+
+            // If no data, skip the frame since there is nothing to packetize or decode.
+            if (rtcFrame->data().data)
+                transformer->m_backend->processTransformedFrame(rtcFrame.get());
             return { };
         }));
         if (writableOrException.hasException())
