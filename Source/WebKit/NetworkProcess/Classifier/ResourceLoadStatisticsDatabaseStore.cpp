@@ -436,9 +436,15 @@ void ResourceLoadStatisticsDatabaseStore::enableForeignKeys()
 
 TableAndIndexPair ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries(const String& tableName)
 {
-    auto getTableStatement = m_database.prepareStatement(makeString("SELECT sql FROM sqlite_master WHERE tbl_name='", tableName, "' AND type = 'table'"));
+    auto getTableStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'table'"_s);
     if (!getTableStatement) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries Unable to prepare statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (getTableStatement->bindText(1, tableName) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries Unable to bind statement to fetch schema for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return { };
     }
@@ -451,9 +457,15 @@ TableAndIndexPair ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueri
 
     String createTableQuery = getTableStatement->getColumnText(0);
 
-    auto getIndexStatement = m_database.prepareStatement(makeString("SELECT sql FROM sqlite_master WHERE tbl_name='", tableName, "' AND type = 'index'"));
+    auto getIndexStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'index'"_s);
     if (!getIndexStatement) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries Unable to prepare statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (getIndexStatement->bindText(1, tableName) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries Unable to bind statement to fetch index for the table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return { };
     }
@@ -521,27 +533,27 @@ bool ResourceLoadStatisticsDatabaseStore::needsUpdatedSchema()
     return false;
 }
 
-static String insertDistinctValuesInTableQuery(const String& table)
+static Expected<SQLiteStatement, int> insertDistinctValuesInTableStatement(SQLiteDatabase& database, const String& table)
 {
     if (table == "SubframeUnderTopFrameDomains")
-        return makeString("INSERT INTO SubframeUnderTopFrameDomains SELECT subFrameDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubframeUnderTopFrameDomains GROUP BY subFrameDomainID, topFrameDomainID");
+        return database.prepareStatement("INSERT INTO SubframeUnderTopFrameDomains SELECT subFrameDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubframeUnderTopFrameDomains GROUP BY subFrameDomainID, topFrameDomainID"_s);
 
     if (table == "SubresourceUnderTopFrameDomains")
-        return makeString("INSERT INTO SubresourceUnderTopFrameDomains SELECT subresourceDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubresourceUnderTopFrameDomains GROUP BY subresourceDomainID, topFrameDomainID");
+        return database.prepareStatement("INSERT INTO SubresourceUnderTopFrameDomains SELECT subresourceDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubresourceUnderTopFrameDomains GROUP BY subresourceDomainID, topFrameDomainID"_s);
 
     if (table == "SubresourceUniqueRedirectsTo")
-        return makeString("INSERT INTO SubresourceUniqueRedirectsTo SELECT subresourceDomainID, MAX(lastUpdated), toDomainID FROM _SubresourceUniqueRedirectsTo GROUP BY subresourceDomainID, toDomainID");
+        return database.prepareStatement("INSERT INTO SubresourceUniqueRedirectsTo SELECT subresourceDomainID, MAX(lastUpdated), toDomainID FROM _SubresourceUniqueRedirectsTo GROUP BY subresourceDomainID, toDomainID"_s);
 
     if (table == "TopFrameLinkDecorationsFrom")
-        return makeString("INSERT INTO TopFrameLinkDecorationsFrom SELECT toDomainID, MAX(lastUpdated), fromDomainID FROM _TopFrameLinkDecorationsFrom GROUP BY toDomainID, fromDomainID");
+        return database.prepareStatement("INSERT INTO TopFrameLinkDecorationsFrom SELECT toDomainID, MAX(lastUpdated), fromDomainID FROM _TopFrameLinkDecorationsFrom GROUP BY toDomainID, fromDomainID"_s);
 
     if (table == "UnattributedPrivateClickMeasurement")
-        return makeString("INSERT INTO UnattributedPrivateClickMeasurement SELECT sourceSiteDomainID, destinationSiteDomainID, sourceID, MAX(timeOfAdClick), token, signature, keyID FROM _UnattributedPrivateClickMeasurement GROUP BY sourceSiteDomainID, destinationSiteDomainID");
+        return database.prepareStatement("INSERT INTO UnattributedPrivateClickMeasurement SELECT sourceSiteDomainID, destinationSiteDomainID, sourceID, MAX(timeOfAdClick), token, signature, keyID FROM _UnattributedPrivateClickMeasurement GROUP BY sourceSiteDomainID, destinationSiteDomainID"_s);
 
     if (table == "AttributedPrivateClickMeasurement")
-        return makeString("INSERT INTO AttributedPrivateClickMeasurement SELECT sourceSiteDomainID, destinationSiteDomainID, sourceID, attributionTriggerData, priority, MAX(timeOfAdClick), earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination FROM _AttributedPrivateClickMeasurement GROUP BY sourceSiteDomainID, destinationSiteDomainID");
+        return database.prepareStatement("INSERT INTO AttributedPrivateClickMeasurement SELECT sourceSiteDomainID, destinationSiteDomainID, sourceID, attributionTriggerData, priority, MAX(timeOfAdClick), earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination FROM _AttributedPrivateClickMeasurement GROUP BY sourceSiteDomainID, destinationSiteDomainID"_s);
 
-    return makeString("INSERT INTO ", table, " SELECT DISTINCT * FROM _", table);
+    return database.prepareStatementSlow(makeString("INSERT INTO ", table, " SELECT DISTINCT * FROM _", table));
 }
 
 void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
@@ -553,8 +565,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     transaction.begin();
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
-        auto query = makeString("ALTER TABLE ", table, " RENAME TO _", table);
-        auto alterTable = m_database.prepareStatement(query);
+        auto alterTable = m_database.prepareStatementSlow(makeString("ALTER TABLE ", table, " RENAME TO _", table));
         if (!alterTable || alterTable->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to rename table, error message: %s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -569,16 +580,14 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     }
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
-        auto query = insertDistinctValuesInTableQuery(table);
-        auto migrateTableData = m_database.prepareStatement(query);
+        auto migrateTableData = insertDistinctValuesInTableStatement(m_database, table);
         if (!migrateTableData || migrateTableData->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to migrate schema, error message: %s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
         }
 
-        auto dropQuery = makeString("DROP TABLE _", table);
-        auto dropTableQuery = m_database.prepareStatement(dropQuery);
+        auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE _", table));
         if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -597,7 +606,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
 
 Vector<String> ResourceLoadStatisticsDatabaseStore::columnsForTable(const String& tableName)
 {
-    auto statement = m_database.prepareStatement(makeString("PRAGMA table_info(", tableName, ")"));
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
 
     if (!statement) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::getColumnsFromTableInfoStatement Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
@@ -622,7 +631,7 @@ void ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable(String&& tabl
         if (existingColumns.contains(column))
             continue;
         
-        auto statement = m_database.prepareStatement(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", column));
+        auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", column));
         if (!statement) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable Unable to prepare statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -648,7 +657,7 @@ void ResourceLoadStatisticsDatabaseStore::addMissingColumnsIfNecessary()
 
 void ResourceLoadStatisticsDatabaseStore::renameColumnInTable(String&& tableName, ExistingColumnName&& existingColumnName, ExpectedColumnName&& expectedColumnName)
 {
-    auto statement = m_database.prepareStatement(makeString("ALTER TABLE ", tableName, " RENAME COLUMN ", existingColumnName, " TO ", expectedColumnName));
+    auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " RENAME COLUMN ", existingColumnName, " TO ", expectedColumnName));
     if (!statement) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable Unable to prepare statement to rename column in table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -693,7 +702,7 @@ void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
 
     for (auto& table : *missingTables) {
         auto createTableQuery = expectedTableAndIndexQueries().get(table).first;
-        if (!m_database.executeCommand(createTableQuery))
+        if (!m_database.executeCommandSlow(createTableQuery))
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingTables failed to execute, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
     }
 
@@ -1040,7 +1049,7 @@ String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSe
 
 void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const String& statement, const HashSet<RegistrableDomain>& domainList, unsigned domainID)
 {
-    auto insertRelationshipStatement = m_database.prepareStatement(makeString(statement, ensureAndMakeDomainList(domainList), " );"));
+    auto insertRelationshipStatement = m_database.prepareStatementSlow(makeString(statement, ensureAndMakeDomainList(domainList), " );"));
     
     if (!insertRelationshipStatement
         || insertRelationshipStatement->bindInt(1, domainID) != SQLITE_OK) {
@@ -1181,9 +1190,9 @@ void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadSta
         insertDomainRelationships(statistic);
 }
 
-static const StringView joinSubStatisticsForSorting()
+static ASCIILiteral joinSubStatisticsForSorting()
 {
-    return "domainID,"
+    return "SELECT domainID,"
         "(countSubFrameUnderTopFrame + countSubResourceUnderTopFrame + countUniqueRedirectTo) as sum  "
         "FROM ( "
         "SELECT "
@@ -1198,7 +1207,7 @@ static const StringView joinSubStatisticsForSorting()
         "LEFT JOIN SubresourceUniqueRedirectsTo u ON o.domainID = u.subresourceDomainID "
         "WHERE isPrevalent LIKE ? "
         "and hadUserInteraction LIKE ? "
-        "GROUP BY domainID) ORDER BY sum DESC ";
+        "GROUP BY domainID) ORDER BY sum DESC;"_s;
 }
 
 Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> ResourceLoadStatisticsDatabaseStore::getThirdPartyDataForSpecificFirstPartyDomains(unsigned thirdPartyDomainID, const RegistrableDomain& thirdPartyDomain) const
@@ -1230,7 +1239,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
 
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
     const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%" : "1";
-    auto sortedStatistics = m_database.prepareStatement(makeString("SELECT ", joinSubStatisticsForSorting()));
+    auto sortedStatistics = m_database.prepareStatement(joinSubStatisticsForSorting());
     if (!sortedStatistics
         || sortedStatistics->bindText(1, prevalentDomainsBindParameter)
         || sortedStatistics->bindText(2, "%") != SQLITE_OK) {
@@ -1266,7 +1275,7 @@ void ResourceLoadStatisticsDatabaseStore::incrementRecordsDeletedCountForDomains
 {
     ASSERT(!RunLoop::isMain());
 
-    auto domainsToUpdateStatement = m_database.prepareStatement(makeString("UPDATE ObservedDomains SET dataRecordsRemoved = dataRecordsRemoved + 1 WHERE registrableDomain IN (", domainsToString(domains), ")"));
+    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET dataRecordsRemoved = dataRecordsRemoved + 1 WHERE registrableDomain IN (", domainsToString(domains), ")"));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::incrementStatisticsForDomains failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -1352,7 +1361,7 @@ void ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPreval
             prevalentDueToRedirect.insert(topFrameRedirectStatement->getColumnInt(0));
     }
 
-    auto markPrevalentStatement = m_database.prepareStatement(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(WTF::IteratorRange<StdSet<unsigned>::iterator>(prevalentDueToRedirect.begin(), prevalentDueToRedirect.end())), ")"));
+    auto markPrevalentStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(WTF::IteratorRange<StdSet<unsigned>::iterator>(prevalentDueToRedirect.begin(), prevalentDueToRedirect.end())), ")"));
     if (!markPrevalentStatement || markPrevalentStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent failed to execute, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -1384,7 +1393,7 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
 
     auto domainIDsOfInterest = builder.toString();
 
-    auto subresourceUnderTopFrameDomainsStatement = m_database.prepareStatement(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
+    auto subresourceUnderTopFrameDomainsStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
     if (subresourceUnderTopFrameDomainsStatement) {
         while (subresourceUnderTopFrameDomainsStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->getColumnInt(0));
@@ -1394,7 +1403,7 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
         }
     }
 
-    auto subresourceUniqueRedirectsToCountStatement = m_database.prepareStatement(makeString("SELECT subresourceDomainID, COUNT(toDomainID) FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
+    auto subresourceUniqueRedirectsToCountStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(toDomainID) FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
     if (subresourceUniqueRedirectsToCountStatement) {
         while (subresourceUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->getColumnInt(0));
@@ -1404,7 +1413,7 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
         }
     }
 
-    auto subframeUnderTopFrameDomainsCountStatement = m_database.prepareStatement(makeString("SELECT subframeDomainID, COUNT(topFrameDomainID) FROM SubframeUnderTopFrameDomains WHERE subframeDomainID IN (", domainIDsOfInterest, ") GROUP BY subframeDomainID"));
+    auto subframeUnderTopFrameDomainsCountStatement = m_database.prepareStatementSlow(makeString("SELECT subframeDomainID, COUNT(topFrameDomainID) FROM SubframeUnderTopFrameDomains WHERE subframeDomainID IN (", domainIDsOfInterest, ") GROUP BY subframeDomainID"));
     if (subframeUnderTopFrameDomainsCountStatement) {
         while (subframeUnderTopFrameDomainsCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->getColumnInt(0));
@@ -1414,7 +1423,7 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
         }
     }
 
-    auto topFrameUniqueRedirectsToCountStatement = m_database.prepareStatement(makeString("SELECT sourceDomainID, COUNT(toDomainID) FROM TopFrameUniqueRedirectsTo WHERE sourceDomainID IN (", domainIDsOfInterest, ") GROUP BY sourceDomainID"));
+    auto topFrameUniqueRedirectsToCountStatement = m_database.prepareStatementSlow(makeString("SELECT sourceDomainID, COUNT(toDomainID) FROM TopFrameUniqueRedirectsTo WHERE sourceDomainID IN (", domainIDsOfInterest, ") GROUP BY sourceDomainID"));
     if (topFrameUniqueRedirectsToCountStatement) {
         while (topFrameUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->getColumnInt(0));
@@ -1644,7 +1653,7 @@ void ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains(const HashSe
             RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains was not completed due to failed insert attempt", this);
     }
 
-    auto domainsToUpdateStatement = m_database.prepareStatement(makeString("UPDATE ObservedDomains SET grandfathered = 1 WHERE registrableDomain IN (", domainsToString(domains), ")"));
+    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 1 WHERE registrableDomain IN (", domainsToString(domains), ")"));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -1915,7 +1924,7 @@ void ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent(StdSet<unsigned>
 {
     ASSERT(!RunLoop::isMain());
 
-    auto domainsToUpdateStatement = m_database.prepareStatement(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(WTF::IteratorRange<StdSet<unsigned>::iterator>(domains.begin(), domains.end())), ")"));
+    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(WTF::IteratorRange<StdSet<unsigned>::iterator>(domains.begin(), domains.end())), ")"));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -2466,7 +2475,7 @@ void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&&
 
     auto listToClear = buildList(WTF::IteratorRange<Vector<unsigned>::iterator>(domainIDsToClear.begin(), domainIDsToClear.end()));
 
-    auto clearGrandfatheringStatement = m_database.prepareStatement(makeString("UPDATE ObservedDomains SET grandfathered = 0 WHERE domainID IN (", listToClear, ")"));
+    auto clearGrandfatheringStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 0 WHERE domainID IN (", listToClear, ")"));
     if (!clearGrandfatheringStatement)
         return;
     
@@ -2623,7 +2632,7 @@ void ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded()
 
     auto listToPrune = buildList(WTF::IteratorRange<Vector<unsigned>::iterator>(entriesToPrune.begin(), entriesToPrune.end()));
 
-    auto pruneCommand = m_database.prepareStatement(makeString("DELETE from ObservedDomains WHERE domainID IN (", listToPrune, ")"));
+    auto pruneCommand = m_database.prepareStatementSlow(makeString("DELETE from ObservedDomains WHERE domainID IN (", listToPrune, ")"));
     if (!pruneCommand || pruneCommand->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -2770,35 +2779,35 @@ String ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID(unsigned
     return result;
 }
 
-String ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement(const String& tableName) const
+ASCIILiteral ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement(const String& tableName) const
 {
     if (tableName == "StorageAccessUnderTopFrameDomains")
-        return "SELECT topLevelDomainID from StorageAccessUnderTopFrameDomains WHERE domainID = ?";
+        return "SELECT topLevelDomainID from StorageAccessUnderTopFrameDomains WHERE domainID = ?"_s;
     if (tableName == "TopFrameUniqueRedirectsTo")
-        return "SELECT toDomainID from TopFrameUniqueRedirectsTo WHERE sourceDomainID = ?";
+        return "SELECT toDomainID from TopFrameUniqueRedirectsTo WHERE sourceDomainID = ?"_s;
     if (tableName == "TopFrameUniqueRedirectsFrom")
-        return "SELECT fromDomainID from TopFrameUniqueRedirectsFrom WHERE targetDomainID = ?";
+        return "SELECT fromDomainID from TopFrameUniqueRedirectsFrom WHERE targetDomainID = ?"_s;
     if (tableName == "TopFrameLinkDecorationsFrom")
-        return "SELECT fromDomainID from TopFrameLinkDecorationsFrom WHERE toDomainID = ?";
+        return "SELECT fromDomainID from TopFrameLinkDecorationsFrom WHERE toDomainID = ?"_s;
     if (tableName == "TopFrameLoadedThirdPartyScripts")
-        return "SELECT subresourceDomainID from TopFrameLoadedThirdPartyScripts WHERE topFrameDomainID = ?";
+        return "SELECT subresourceDomainID from TopFrameLoadedThirdPartyScripts WHERE topFrameDomainID = ?"_s;
     if (tableName == "SubframeUnderTopFrameDomains")
-        return "SELECT topFrameDomainID from SubframeUnderTopFrameDomains WHERE subFrameDomainID = ?";
+        return "SELECT topFrameDomainID from SubframeUnderTopFrameDomains WHERE subFrameDomainID = ?"_s;
     if (tableName == "SubresourceUnderTopFrameDomains")
-        return "SELECT topFrameDomainID from SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?";
+        return "SELECT topFrameDomainID from SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"_s;
     if (tableName == "SubresourceUniqueRedirectsTo")
-        return "SELECT toDomainID from SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?";
+        return "SELECT toDomainID from SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?"_s;
     if (tableName == "SubresourceUniqueRedirectsFrom")
-        return "SELECT fromDomainID from SubresourceUniqueRedirectsFrom WHERE subresourceDomainID = ?";
+        return "SELECT fromDomainID from SubresourceUniqueRedirectsFrom WHERE subresourceDomainID = ?"_s;
     
-    return emptyString();
+    return ""_s;
 }
 
 void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& builder, const String& tableName, const String& domain) const
 {
     auto query = getSubStatisticStatement(tableName);
     
-    if (query.isEmpty())
+    if (!query.length())
         return;
     
     auto data = m_database.prepareStatement(query);

@@ -59,32 +59,32 @@ namespace WebCore {
     "  httponly INTEGER NOT NULL DEFAULT 0,"\
     "  secure INTEGER NOT NULL DEFAULT 0,"\
     "  lastupdated INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP, "\
-    "  UNIQUE(name, domain, path));"
+    "  UNIQUE(name, domain, path));"_s
 #define CREATE_DOMAIN_INDEX_SQL \
-    "CREATE INDEX IF NOT EXISTS domain_index ON Cookie(domain);"
+    "CREATE INDEX IF NOT EXISTS domain_index ON Cookie(domain);"_s
 #define CREATE_PATH_INDEX_SQL \
-    "CREATE INDEX IF NOT EXISTS path_index ON Cookie(path);"
+    "CREATE INDEX IF NOT EXISTS path_index ON Cookie(path);"_s
 #define SELECT_ALL_DOMAINS_SQL \
-    "SELECT DISTINCT domain FROM Cookie;"
+    "SELECT DISTINCT domain FROM Cookie;"_s
 #define CHECK_EXISTS_COOKIE_SQL \
-    "SELECT domain FROM Cookie WHERE ((domain = ?) OR (domain GLOB ?));"
+    "SELECT domain FROM Cookie WHERE ((domain = ?) OR (domain GLOB ?));"_s
 #define CHECK_EXISTS_HTTPONLY_COOKIE_SQL \
-    "SELECT name FROM Cookie WHERE (name = ?) AND (domain = ?) AND (path = ?) AND (httponly = 1);"
+    "SELECT name FROM Cookie WHERE (name = ?) AND (domain = ?) AND (path = ?) AND (httponly = 1);"_s
 #define SET_COOKIE_SQL \
     "INSERT OR REPLACE INTO Cookie (name, value, domain, path, expires, size, session, httponly, secure) "\
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"_s
 #define DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL \
-    "DELETE FROM Cookie WHERE name = ? AND domain = ? AND path = ?;"
+    "DELETE FROM Cookie WHERE name = ? AND domain = ? AND path = ?;"_s
 #define DELETE_COOKIE_BY_NAME_DOMAIN_SQL \
-    "DELETE FROM Cookie WHERE name = ? AND domain = ?;"
+    "DELETE FROM Cookie WHERE name = ? AND domain = ?;"_s
 #define DELETE_ALL_SESSION_COOKIE_SQL \
-    "DELETE FROM Cookie WHERE session = 1;"
+    "DELETE FROM Cookie WHERE session = 1;"_s
 #define DELETE_COOKIES_BY_DOMAIN_SQL \
-    "DELETE FROM Cookie WHERE domain = ? ;"
+    "DELETE FROM Cookie WHERE domain = ? ;"_s
 #define DELETE_COOKIES_BY_DOMAIN_EXCEPT_HTTP_ONLY_SQL \
-    "DELETE FROM Cookie WHERE (domain = ?) AND (httponly = 0);"
+    "DELETE FROM Cookie WHERE (domain = ?) AND (httponly = 0);"_s
 #define DELETE_ALL_COOKIE_SQL \
-    "DELETE FROM Cookie;"
+    "DELETE FROM Cookie;"_s
 
 
 // If the database schema is updated:
@@ -123,7 +123,7 @@ bool CookieJarDB::openDatabase()
     if (existsDatabaseFile) {
         if (m_database.open(m_databasePath)) {
             if (checkDatabaseValidity())
-                executeSql(DELETE_ALL_SESSION_COOKIE_SQL);
+                executeSQLStatement(m_database.prepareStatement(DELETE_ALL_SESSION_COOKIE_SQL));
             else {
                 // delete database and try to re-create again
                 LOG_ERROR("Cookie database validity check failed, attempting to recreate the database");
@@ -154,7 +154,9 @@ bool CookieJarDB::openDatabase()
     verifySchemaVersion();
 
     if (!existsDatabaseFile || !m_database.tableExists("Cookie")) {
-        bool ok = executeSql(CREATE_COOKIE_TABLE_SQL) && executeSql(CREATE_DOMAIN_INDEX_SQL) && executeSql(CREATE_PATH_INDEX_SQL);
+        bool ok = executeSQLStatement(m_database.prepareStatement(CREATE_COOKIE_TABLE_SQL))
+            && executeSQLStatement(m_database.prepareStatement(CREATE_DOMAIN_INDEX_SQL))
+            && executeSQLStatement(m_database.prepareStatement(CREATE_PATH_INDEX_SQL));
 
         if (!ok) {
             // give up create database at this time (all cookies on request/response are ignored)
@@ -211,7 +213,7 @@ void CookieJarDB::verifySchemaVersion()
     }
 
     // Update version
-    executeSql(makeString("PRAGMA user_version=", schemaVersion));
+    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version=", schemaVersion)));
 }
 
 void CookieJarDB::deleteAllTables()
@@ -621,10 +623,10 @@ bool CookieJarDB::deleteAllCookies()
     if (!isEnabled() || !m_database.isOpen())
         return false;
 
-    return executeSql(DELETE_ALL_COOKIE_SQL);
+    return executeSQLStatement(m_database.prepareStatement(DELETE_ALL_COOKIE_SQL));
 }
 
-void CookieJarDB::createPrepareStatement(const String& sql)
+void CookieJarDB::createPrepareStatement(ASCIILiteral sql)
 {
     auto statement = m_database.prepareHeapStatement(sql);
     ASSERT(statement);
@@ -639,9 +641,8 @@ SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)
     return *statement;
 }
 
-bool CookieJarDB::executeSql(const String& sql)
+bool CookieJarDB::executeSQLStatement(Expected<SQLiteStatement, int>&& statement)
 {
-    auto statement = m_database.prepareStatement(sql);
     if (!statement && !checkSQLiteReturnCode(statement.error())) {
         LOG_ERROR("Failed to prepare %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
         return false;

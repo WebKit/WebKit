@@ -235,7 +235,7 @@ bool SQLiteIDBCursor::createSQLiteStatement(const String& sql)
     ASSERT(!m_currentUpperKey.isNull());
     ASSERT(m_transaction->sqliteTransaction());
 
-    auto statement = m_transaction->sqliteTransaction()->database().prepareHeapStatement(sql);
+    auto statement = m_transaction->sqliteTransaction()->database().prepareHeapStatementSlow(sql);
     if (!statement) {
         LOG_ERROR("Could not create cursor statement (prepare/id) - '%s'", m_transaction->sqliteTransaction()->database().lastErrorMsg());
         return false;
@@ -341,7 +341,7 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
 
     auto& database = m_transaction->sqliteTransaction()->database();
     if (!m_preIndexStatement) {
-        auto preIndexStatement = database.prepareHeapStatement(buildPreIndexStatement(isDirectionNext()));
+        auto preIndexStatement = database.prepareHeapStatementSlow(buildPreIndexStatement(isDirectionNext()));
         if (!preIndexStatement) {
             LOG_ERROR("Could not prepare pre statement - '%s'", database.lastErrorMsg());
             return false;

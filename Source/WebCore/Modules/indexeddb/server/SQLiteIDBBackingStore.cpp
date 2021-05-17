@@ -71,6 +71,13 @@ static const int currentMetadataVersion = 1;
 // The IndexedDatabase spec defines the max key generator value as 2^53.
 static const uint64_t maxGeneratorValue = 0x20000000000000;
 
+#define TABLE_SCHEMA_PREFIX "CREATE TABLE "
+#define V3_RECORDS_TABLE_SCHEMA_SUFFIX " (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL, recordID INTEGER PRIMARY KEY)"_s
+#define V3_INDEX_RECORDS_TABLE_SCHEMA_SUFFIX " (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, objectStoreRecordID INTEGER NOT NULL ON CONFLICT FAIL)"_s;
+#define INDEX_INFO_TABLE_SCHEMA_SUFFIX " (id INTEGER NOT NULL ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, isUnique INTEGER NOT NULL ON CONFLICT FAIL, multiEntry INTEGER NOT NULL ON CONFLICT FAIL)"_s;
+#define BLOB_RECORDS_TABLE_SCHEMA_SUFFIX " (objectStoreRow INTEGER NOT NULL ON CONFLICT FAIL, blobURL TEXT NOT NULL ON CONFLICT FAIL)"_s;
+#define BLOB_FILES_TABLE_SCHEMA_SUFFIX " (blobURL TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, fileName TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL)"_s;
+
 static int idbKeyCollate(int aLength, const void* aBuffer, int bLength, const void* bBuffer)
 {
     IDBKeyData a, b;
@@ -126,21 +133,19 @@ static const String& v2RecordsTableSchemaAlternate()
     return v2RecordsTableSchemaString;
 }
 
-static const String v3RecordsTableSchema(const String& tableName)
+static ASCIILiteral v3RecordsTableSchema()
 {
-    return makeString("CREATE TABLE ", tableName, " (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL, recordID INTEGER PRIMARY KEY)");
+    return TABLE_SCHEMA_PREFIX "Records" V3_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String& v3RecordsTableSchema()
+static ASCIILiteral v3RecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> v3RecordsTableSchemaString(v3RecordsTableSchema("Records"));
-    return v3RecordsTableSchemaString;
+    return TABLE_SCHEMA_PREFIX "\"Records\"" V3_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String& v3RecordsTableSchemaAlternate()
+static ASCIILiteral v3RecordsTableSchemaTemp()
 {
-    static NeverDestroyed<WTF::String> v3RecordsTableSchemaString(v3RecordsTableSchema("\"Records\""));
-    return v3RecordsTableSchemaString;
+    return TABLE_SCHEMA_PREFIX "_Temp_Records" V3_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
 static const String v1IndexRecordsTableSchema(const String& tableName)
@@ -177,55 +182,39 @@ static const String& v2IndexRecordsTableSchemaAlternate()
     return v2IndexRecordsTableSchemaString;
 }
 
-static const String v3IndexRecordsTableSchema(const String& tableName)
+static ASCIILiteral v3IndexRecordsTableSchema()
 {
-    return makeString("CREATE TABLE ", tableName, " (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, objectStoreRecordID INTEGER NOT NULL ON CONFLICT FAIL)");
+    return TABLE_SCHEMA_PREFIX "IndexRecords" V3_INDEX_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String v3IndexRecordsTableSchema()
+static ASCIILiteral v3IndexRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<WTF::String> indexRecordsTableSchemaString = v3IndexRecordsTableSchema("IndexRecords");
-    return indexRecordsTableSchemaString;
+    return TABLE_SCHEMA_PREFIX "\"IndexRecords\"" V3_INDEX_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String v3IndexRecordsTableSchemaAlternate()
+static ASCIILiteral v3IndexRecordsTableSchemaTemp()
 {
-    static NeverDestroyed<WTF::String> indexRecordsTableSchemaString = v3IndexRecordsTableSchema("\"IndexRecords\"");
-    return indexRecordsTableSchemaString;
+    return TABLE_SCHEMA_PREFIX "_Temp_IndexRecords" V3_INDEX_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String blobRecordsTableSchema(const String& tableName)
+static ASCIILiteral blobRecordsTableSchema()
 {
-    return makeString("CREATE TABLE ", tableName, " (objectStoreRow INTEGER NOT NULL ON CONFLICT FAIL, blobURL TEXT NOT NULL ON CONFLICT FAIL)");
+    return TABLE_SCHEMA_PREFIX "BlobRecords" BLOB_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String& blobRecordsTableSchema()
+static ASCIILiteral blobRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<String> blobRecordsTableSchemaString(blobRecordsTableSchema("BlobRecords"));
-    return blobRecordsTableSchemaString;
+    return TABLE_SCHEMA_PREFIX "\"BlobRecords\"" BLOB_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String& blobRecordsTableSchemaAlternate()
+static ASCIILiteral blobFilesTableSchema()
 {
-    static NeverDestroyed<String> blobRecordsTableSchemaString(blobRecordsTableSchema("\"BlobRecords\""));
-    return blobRecordsTableSchemaString;
+    return TABLE_SCHEMA_PREFIX "BlobFiles" BLOB_FILES_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String blobFilesTableSchema(const String& tableName)
+static ASCIILiteral blobFilesTableSchemaAlternate()
 {
-    return makeString("CREATE TABLE ", tableName, " (blobURL TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, fileName TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL)");
-}
-
-static const String& blobFilesTableSchema()
-{
-    static NeverDestroyed<String> blobFilesTableSchemaString(blobFilesTableSchema("BlobFiles"));
-    return blobFilesTableSchemaString;
-}
-
-static const String& blobFilesTableSchemaAlternate()
-{
-    static NeverDestroyed<String> blobFilesTableSchemaString(blobFilesTableSchema("\"BlobFiles\""));
-    return blobFilesTableSchemaString;
+    return TABLE_SCHEMA_PREFIX "\"BlobFiles\"" BLOB_FILES_TABLE_SCHEMA_SUFFIX;
 }
 
 static String createV1ObjectStoreInfoSchema(ASCIILiteral tableName)
@@ -238,9 +227,14 @@ static String createV2ObjectStoreInfoSchema(ASCIILiteral tableName)
     return makeString("CREATE TABLE ", tableName, " (id INTEGER PRIMARY KEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, autoInc INTEGER NOT NULL ON CONFLICT FAIL)");
 }
 
-static String indexInfoTableSchema(ASCIILiteral tableName)
+static ASCIILiteral indexInfoTableSchema()
 {
-    return makeString("CREATE TABLE ", tableName, " (id INTEGER NOT NULL ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, isUnique INTEGER NOT NULL ON CONFLICT FAIL, multiEntry INTEGER NOT NULL ON CONFLICT FAIL)");
+    return TABLE_SCHEMA_PREFIX "IndexInfo" INDEX_INFO_TABLE_SCHEMA_SUFFIX;
+}
+
+static ASCIILiteral indexInfoTableSchemaTemp()
+{
+    return TABLE_SCHEMA_PREFIX "_Temp_IndexInfo" INDEX_INFO_TABLE_SCHEMA_SUFFIX;
 }
 
 SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory)
@@ -305,22 +299,22 @@ static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
     transaction.begin();
 
     // Create a temporary table with the correct schema and migrate all existing content over.
-    if (!database.executeCommand(v3RecordsTableSchema("_Temp_Records"))) {
+    if (!database.executeCommand(v3RecordsTableSchemaTemp())) {
         LOG_ERROR("Could not create temporary records table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
 
-    if (!database.executeCommand("INSERT INTO _Temp_Records (objectStoreID, key, value) SELECT objectStoreID, CAST(key AS TEXT), value FROM Records")) {
+    if (!database.executeCommand("INSERT INTO _Temp_Records (objectStoreID, key, value) SELECT objectStoreID, CAST(key AS TEXT), value FROM Records"_s)) {
         LOG_ERROR("Could not migrate existing Records content (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
 
-    if (!database.executeCommand("DROP TABLE Records")) {
+    if (!database.executeCommand("DROP TABLE Records"_s)) {
         LOG_ERROR("Could not drop existing Records table (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
 
-    if (!database.executeCommand("ALTER TABLE _Temp_Records RENAME TO Records")) {
+    if (!database.executeCommand("ALTER TABLE _Temp_Records RENAME TO Records"_s)) {
         LOG_ERROR("Could not rename temporary Records table (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
@@ -412,7 +406,7 @@ bool SQLiteIDBBackingStore::ensureValidRecordsTable()
 
     // Whether the updated records table already existed or if it was just created and the data migrated over,
     // make sure the uniqueness index exists.
-    if (!m_sqliteDB->executeCommand("CREATE UNIQUE INDEX IF NOT EXISTS RecordsIndex ON Records (objectStoreID, key);")) {
+    if (!m_sqliteDB->executeCommand("CREATE UNIQUE INDEX IF NOT EXISTS RecordsIndex ON Records (objectStoreID, key);"_s)) {
         LOG_ERROR("Could not create RecordsIndex on Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
@@ -470,22 +464,22 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
     transaction.begin();
 
     // Create a temporary table with the correct schema and migrate all existing content over.
-    if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchema("_Temp_IndexRecords"))) {
+    if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchemaTemp())) {
         LOG_ERROR("Could not create temporary index records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
 
-    if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_IndexRecords SELECT IndexRecords.indexID, IndexRecords.objectStoreID, IndexRecords.key, IndexRecords.value, Records.rowid FROM IndexRecords INNER JOIN Records ON Records.key = IndexRecords.value AND Records.objectStoreID = IndexRecords.objectStoreID")) {
+    if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_IndexRecords SELECT IndexRecords.indexID, IndexRecords.objectStoreID, IndexRecords.key, IndexRecords.value, Records.rowid FROM IndexRecords INNER JOIN Records ON Records.key = IndexRecords.value AND Records.objectStoreID = IndexRecords.objectStoreID"_s)) {
         LOG_ERROR("Could not migrate existing IndexRecords content (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
 
-    if (!m_sqliteDB->executeCommand("DROP TABLE IndexRecords")) {
+    if (!m_sqliteDB->executeCommand("DROP TABLE IndexRecords"_s)) {
         LOG_ERROR("Could not drop existing IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
 
-    if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords")) {
+    if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords"_s)) {
         LOG_ERROR("Could not rename temporary IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
@@ -539,7 +533,7 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
     SQLiteTransaction transaction(*m_sqliteDB);
     transaction.begin();
 
-    if (!m_sqliteDB->executeCommand("DROP INDEX IndexRecordsIndex")) {
+    if (!m_sqliteDB->executeCommand("DROP INDEX IndexRecordsIndex"_s)) {
         LOG_ERROR("Could not drop index IndexRecordsIndex in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
@@ -599,7 +593,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    if (!m_sqliteDB->executeCommand("CREATE TABLE IDBDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value TEXT NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_sqliteDB->executeCommand("CREATE TABLE IDBDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value TEXT NOT NULL ON CONFLICT FAIL);"_s)) {
         LOG_ERROR("Could not create IDBDatabaseInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         closeSQLiteDB();
         return nullptr;
@@ -611,13 +605,13 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
         return nullptr;
     }
 
-    if (!m_sqliteDB->executeCommand(indexInfoTableSchema("IndexInfo"_s))) {
+    if (!m_sqliteDB->executeCommand(indexInfoTableSchema())) {
         LOG_ERROR("Could not create IndexInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         closeSQLiteDB();
         return nullptr;
     }
 
-    if (!m_sqliteDB->executeCommand("CREATE TABLE KeyGenerators (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, currentKey INTEGER NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_sqliteDB->executeCommand("CREATE TABLE KeyGenerators (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, currentKey INTEGER NOT NULL ON CONFLICT FAIL);"_s)) {
         LOG_ERROR("Could not create KeyGenerators table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         closeSQLiteDB();
         return nullptr;
@@ -702,22 +696,22 @@ Optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTabl
     SQLiteTransaction transaction(*m_sqliteDB);
     transaction.begin();
 
-    if (!m_sqliteDB->executeCommand(createV2ObjectStoreInfoSchema("_Temp_ObjectStoreInfo"_s))) {
+    if (!m_sqliteDB->executeCommandSlow(createV2ObjectStoreInfoSchema("_Temp_ObjectStoreInfo"_s))) {
         LOG_ERROR("Could not create temporary ObjectStoreInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return WTF::nullopt;
     }
 
-    if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_ObjectStoreInfo (id, name, keyPath, autoInc) SELECT id, name, keyPath, autoInc FROM ObjectStoreInfo")) {
+    if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_ObjectStoreInfo (id, name, keyPath, autoInc) SELECT id, name, keyPath, autoInc FROM ObjectStoreInfo"_s)) {
         LOG_ERROR("Could not migrate existing ObjectStoreInfo content (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return WTF::nullopt;
     }
 
-    if (!m_sqliteDB->executeCommand("DROP TABLE ObjectStoreInfo")) {
+    if (!m_sqliteDB->executeCommand("DROP TABLE ObjectStoreInfo"_s)) {
         LOG_ERROR("Could not drop existing ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return WTF::nullopt;
     }
 
-    if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_ObjectStoreInfo RENAME TO ObjectStoreInfo")) {
+    if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_ObjectStoreInfo RENAME TO ObjectStoreInfo"_s)) {
         LOG_ERROR("Could not rename temporary ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return WTF::nullopt;
     }
@@ -733,7 +727,7 @@ bool SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate(const HashMap<std::
     SQLiteTransaction transaction(database);
     transaction.begin();
 
-    if (!database.executeCommand(indexInfoTableSchema("_Temp_IndexInfo"_s))) {
+    if (!database.executeCommand(indexInfoTableSchemaTemp())) {
         LOG_ERROR("Error creating _Temp_IndexInfo table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
@@ -778,12 +772,12 @@ bool SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate(const HashMap<std::
         }
     }
 
-    if (!database.executeCommand("DROP TABLE IndexInfo")) {
+    if (!database.executeCommand("DROP TABLE IndexInfo"_s)) {
         LOG_ERROR("Error dropping existing IndexInfo table (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
 
-    if (!database.executeCommand("ALTER TABLE _Temp_IndexInfo RENAME TO IndexInfo")) {
+    if (!database.executeCommand("ALTER TABLE _Temp_IndexInfo RENAME TO IndexInfo"_s)) {
         LOG_ERROR("Error renaming _Temp_IndexInfo table (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
@@ -798,7 +792,7 @@ bool SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate(const HashMap<st
     SQLiteTransaction transaction(database);
     transaction.begin();
 
-    if (!database.executeCommand(v3IndexRecordsTableSchema("_Temp_IndexRecords"))) {
+    if (!database.executeCommand(v3IndexRecordsTableSchemaTemp())) {
         LOG_ERROR("Error creating _Temp_IndexRecords table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
@@ -842,12 +836,12 @@ bool SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate(const HashMap<st
         }
     }
 
-    if (!database.executeCommand("DROP TABLE IndexRecords")) {
+    if (!database.executeCommand("DROP TABLE IndexRecords"_s)) {
         LOG_ERROR("Error dropping existing IndexRecords table (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
 
-    if (!database.executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords")) {
+    if (!database.executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords"_s)) {
         LOG_ERROR("Error renaming temporary IndexRecords table (%i) - %s", database.lastError(), database.lastErrorMsg());
         return false;
     }
@@ -3069,6 +3063,13 @@ bool SQLiteIDBBackingStore::hasTransaction(const IDBResourceIdentifier& transact
     ASSERT(isMainThread());
     return m_transactions.contains(transactionIdentifier);
 }
+
+#undef TABLE_SCHEMA_PREFIX
+#undef V3_RECORDS_TABLE_SCHEMA_SUFFIX
+#undef V3_INDEX_RECORDS_TABLE_SCHEMA_SUFFIX
+#undef INDEX_INFO_TABLE_SCHEMA_SUFFIX
+#undef BLOB_RECORDS_TABLE_SCHEMA_SUFFIX
+#undef BLOB_FILES_TABLE_SCHEMA_SUFFIX
 
 } // namespace IDBServer
 } // namespace WebCore

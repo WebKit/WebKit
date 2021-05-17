@@ -1,3 +1,41 @@
+2021-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Avoid more String creations when preparing SQLite statements
+        https://bugs.webkit.org/show_bug.cgi?id=225855
+
+        Reviewed by Alex Christensen.
+
+        Avoid more String creations when preparing SQLite statements by using ASCIILiteral. Also rename the
+        SQLiteDatabase::prepareStatement() / SQLiteDatabase::executeCommand() overloads that take in a 
+        String to make sure they are not called by mistake.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries):
+        (WebKit::insertDistinctValuesInTableStatement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::columnsForTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::renameColumnInTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        (WebKit::joinSubStatisticsForSorting):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::incrementRecordsDeletedCountForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearGrandfathering):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::appendSubStatisticList const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::openDatabase):
+        (WebKit::LocalStorageDatabase::migrateItemTableIfNeeded):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::createTablesIfNeeded):
+        (WebKit::IconDatabase::populatePageURLToIconURLMap):
+
 2021-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         Allow wheel events to be coalesced during scroll deceleration

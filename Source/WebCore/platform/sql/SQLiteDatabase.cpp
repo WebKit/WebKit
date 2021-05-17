@@ -293,7 +293,7 @@ void SQLiteDatabase::setMaximumSize(int64_t size)
     LockHolder locker(m_authorizerLock);
     enableAuthorizer(false);
 
-    auto statement = prepareStatement(makeString("PRAGMA max_page_count = ", newMaxPageCount));
+    auto statement = prepareStatementSlow(makeString("PRAGMA max_page_count = ", newMaxPageCount));
     if (!statement || statement->step() != SQLITE_ROW)
         LOG_ERROR("Failed to set maximum size of database to %lli bytes", static_cast<long long>(size));
 
@@ -351,7 +351,7 @@ int64_t SQLiteDatabase::totalSize()
 
 void SQLiteDatabase::setSynchronous(SynchronousPragma sync)
 {
-    executeCommand(makeString("PRAGMA synchronous = ", static_cast<unsigned>(sync)));
+    executeCommandSlow(makeString("PRAGMA synchronous = ", static_cast<unsigned>(sync)));
 }
 
 void SQLiteDatabase::setBusyTimeout(int ms)
@@ -370,9 +370,9 @@ void SQLiteDatabase::setBusyHandler(int(*handler)(void*, int))
         LOG(SQLDatabase, "Busy handler set on non-open database");
 }
 
-bool SQLiteDatabase::executeCommand(const String& query)
+bool SQLiteDatabase::executeCommandSlow(const String& query)
 {
-    auto statement = prepareStatement(query);
+    auto statement = prepareStatementSlow(query);
     return statement && statement->executeCommand();
 }
 
@@ -382,19 +382,17 @@ bool SQLiteDatabase::executeCommand(ASCIILiteral query)
     return statement && statement->executeCommand();
 }
 
-bool SQLiteDatabase::returnsAtLeastOneResult(const String& sql)
-{
-    auto statement = prepareStatement(sql);
-    return statement && statement->returnsAtLeastOneResult();
-}
-
-bool SQLiteDatabase::tableExists(const String& tablename)
+bool SQLiteDatabase::tableExists(const String& tableName)
 {
     if (!isOpen())
         return false;
 
-    auto statement = prepareStatement("SELECT name FROM sqlite_master WHERE type = 'table' AND name = '" + tablename + "';"_s);
-    return statement && statement->step() == SQLITE_ROW;
+    auto statement = prepareStatement("SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?;"_s);
+    if (!statement)
+        return false;
+    if (statement->bindText(1, tableName) != SQLITE_OK)
+        return false;
+    return statement->step() == SQLITE_ROW;
 }
 
 void SQLiteDatabase::clearAllTables()
@@ -409,7 +407,7 @@ void SQLiteDatabase::clearAllTables()
     for (Vector<String>::iterator table = tables.begin(); table != tables.end(); ++table ) {
         if (*table == "sqlite_sequence")
             continue;
-        if (!executeCommand("DROP TABLE " + *table))
+        if (!executeCommandSlow("DROP TABLE " + *table))
             LOG(SQLDatabase, "Unable to drop table %s", (*table).ascii().data());
     }
 }
@@ -677,7 +675,7 @@ static Expected<sqlite3_stmt*, int> constructAndPrepareStatement(SQLiteDatabase&
     return statement;
 }
 
-Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatement(const String& queryString)
+Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatementSlow(const String& queryString)
 {
     CString query = queryString.stripWhiteSpace().utf8();
     auto sqlStatement = constructAndPrepareStatement(*this, query.data(), query.length());
@@ -698,7 +696,7 @@ Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatement(ASCIILiteral que
     return SQLiteStatement { *this, sqlStatement.value() };
 }
 
-Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatement(const String& queryString)
+Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatementSlow(const String& queryString)
 {
     CString query = queryString.stripWhiteSpace().utf8();
     auto sqlStatement = constructAndPrepareStatement(*this, query.data(), query.length());

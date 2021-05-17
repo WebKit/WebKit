@@ -204,7 +204,7 @@ bool SearchPopupMenuDB::openDatabase()
 
     bool databaseValidity = true;
     if (!existsDatabaseFile || !m_database.tableExists("Search"))
-        databaseValidity = databaseValidity && (executeSimpleSql(createSearchTableSQL) == SQLITE_DONE);
+        databaseValidity = databaseValidity && (executeSQLStatement(m_database.prepareStatement(createSearchTableSQL)) == SQLITE_DONE);
 
     if (!databaseValidity) {
         // give up create database at this time (search terms will not be saved)
@@ -254,7 +254,8 @@ void SearchPopupMenuDB::verifySchemaVersion()
     }
 
     // Update version
-    executeSimpleSql(makeString("PRAGMA user_version=", schemaVersion));
+
+    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version=", schemaVersion)));
 }
 
 void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)
@@ -271,16 +272,15 @@ void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)
     }
 }
 
-int SearchPopupMenuDB::executeSimpleSql(const String& sql, bool ignoreError)
+int SearchPopupMenuDB::executeSQLStatement(Expected<SQLiteStatement, int>&& statement)
 {
-    auto statement = m_database.prepareStatement(sql);
     if (!statement) {
         checkSQLiteReturnCode(statement.error());
         return statement.error();
     }
 
     int ret = statement->step();
-    if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW && !ignoreError)
+    if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW)
         LOG_ERROR("Failed to execute %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
     return ret;
 }

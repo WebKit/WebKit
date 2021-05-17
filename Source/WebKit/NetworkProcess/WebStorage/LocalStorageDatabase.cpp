@@ -81,11 +81,11 @@ bool LocalStorageDatabase::openDatabase(ShouldCreateDatabase shouldCreateDatabas
     if (!migrateItemTableIfNeeded()) {
         // We failed to migrate the item table. In order to avoid trying to migrate the table over and over,
         // just delete it and start from scratch.
-        if (!m_database.executeCommand("DROP TABLE ItemTable"))
+        if (!m_database.executeCommand("DROP TABLE ItemTable"_s))
             LOG_ERROR("Failed to delete table ItemTable for local storage");
     }
 
-    if (!m_database.executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)")) {
+    if (!m_database.executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s)) {
         LOG_ERROR("Failed to create table ItemTable for local storage");
         return false;
     }
@@ -106,13 +106,13 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
         return true;
 
     // Create a new table with the right type, copy all the data over to it and then replace the new table with the old table.
-    static const char* commands[] = {
-        "DROP TABLE IF EXISTS ItemTable2",
-        "CREATE TABLE ItemTable2 (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)",
-        "INSERT INTO ItemTable2 SELECT * from ItemTable",
-        "DROP TABLE ItemTable",
-        "ALTER TABLE ItemTable2 RENAME TO ItemTable",
-        0,
+    static const ASCIILiteral commands[] = {
+        "DROP TABLE IF EXISTS ItemTable2"_s,
+        "CREATE TABLE ItemTable2 (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s,
+        "INSERT INTO ItemTable2 SELECT * from ItemTable"_s,
+        "DROP TABLE ItemTable"_s,
+        "ALTER TABLE ItemTable2 RENAME TO ItemTable"_s,
+        ASCIILiteral::null(),
     };
 
     SQLiteTransaction transaction(m_database);
@@ -122,7 +122,7 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
         if (m_database.executeCommand(commands[i]))
             continue;
 
-        LOG_ERROR("Failed to migrate table ItemTable for local storage when executing: %s", commands[i]);
+        LOG_ERROR("Failed to migrate table ItemTable for local storage when executing: %s", commands[i].characters());
 
         return false;
     }

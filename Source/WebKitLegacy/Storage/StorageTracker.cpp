@@ -146,7 +146,7 @@ void StorageTracker::openTrackerDatabase(bool createIfDoesNotExist)
     m_database.disableThreadingChecks();
     
     if (!m_database.tableExists("Origins")) {
-        if (!m_database.executeCommand("CREATE TABLE Origins (origin TEXT UNIQUE ON CONFLICT REPLACE, path TEXT);"))
+        if (!m_database.executeCommand("CREATE TABLE Origins (origin TEXT UNIQUE ON CONFLICT REPLACE, path TEXT);"_s))
             LOG_ERROR("Failed to create Origins table.");
     }
 }

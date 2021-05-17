@@ -1,3 +1,76 @@
+2021-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Avoid more String creations when preparing SQLite statements
+        https://bugs.webkit.org/show_bug.cgi?id=225855
+
+        Reviewed by Alex Christensen.
+
+        Avoid more String creations when preparing SQLite statements by using ASCIILiteral. Also rename the
+        SQLiteDatabase::prepareStatement() / SQLiteDatabase::executeCommand() overloads that take in a
+        String to make sure they are not called by mistake.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::v3RecordsTableSchema):
+        (WebCore::IDBServer::v3RecordsTableSchemaAlternate):
+        (WebCore::IDBServer::v3IndexRecordsTableSchema):
+        (WebCore::IDBServer::v3IndexRecordsTableSchemaAlternate):
+        (WebCore::IDBServer::blobRecordsTableSchema):
+        (WebCore::IDBServer::blobRecordsTableSchemaAlternate):
+        (WebCore::IDBServer::blobFilesTableSchema):
+        (WebCore::IDBServer::blobFilesTableSchemaAlternate):
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::createSQLiteStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::setTextValueInDatabase):
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::Database::performOpenAndVerify):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::openTrackerDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFileIfEmpty):
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::executeSQLCommand):
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion):
+        (WebCore::ApplicationCacheStorage::openDatabase):
+        (WebCore::ApplicationCacheStorage::empty):
+        (WebCore::ApplicationCacheStorage::checkForDeletedResources):
+        * loader/appcache/ApplicationCacheStorage.h:
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::verifySchemaVersion):
+        (WebCore::CookieJarDB::createPrepareStatement):
+        (WebCore::executeSQLStatement):
+        (WebCore::CookieJarDB::executeSqlSlow):
+        (WebCore::CookieJarDB::executeSql):
+        * platform/network/curl/CookieJarDB.h:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setMaximumSize):
+        (WebCore::SQLiteDatabase::setSynchronous):
+        (WebCore::SQLiteDatabase::executeCommandSlow):
+        (WebCore::SQLiteDatabase::tableExists):
+        (WebCore::SQLiteDatabase::clearAllTables):
+        (WebCore::SQLiteDatabase::prepareStatementSlow):
+        (WebCore::SQLiteDatabase::prepareHeapStatementSlow):
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteTransaction.cpp:
+        (WebCore::SQLiteTransaction::begin):
+        (WebCore::SQLiteTransaction::commit):
+        (WebCore::SQLiteTransaction::rollback):
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::verifySchemaVersion):
+        (WebCore::executeSQLStatement):
+        (WebCore::SearchPopupMenuDB::executeSimpleSql):
+        * platform/win/SearchPopupMenuDB.h:
+
 2021-05-17  Frederic Wang  <fwang@igalia.com>
 
         REGRESSION(r277425): Crash in FrameSelection::selectFrameElementInParentIfFullySelected

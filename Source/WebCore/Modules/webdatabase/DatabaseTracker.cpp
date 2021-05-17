@@ -127,14 +127,14 @@ void DatabaseTracker::openTrackerDatabase(TrackerCreationAction createAction)
     m_database.disableThreadingChecks();
 
     if (!m_database.tableExists("Origins")) {
-        if (!m_database.executeCommand("CREATE TABLE Origins (origin TEXT UNIQUE ON CONFLICT REPLACE, quota INTEGER NOT NULL ON CONFLICT FAIL);")) {
+        if (!m_database.executeCommand("CREATE TABLE Origins (origin TEXT UNIQUE ON CONFLICT REPLACE, quota INTEGER NOT NULL ON CONFLICT FAIL);"_s)) {
             // FIXME: and here
             LOG_ERROR("Failed to create Origins table");
         }
     }
 
     if (!m_database.tableExists("Databases")) {
-        if (!m_database.executeCommand("CREATE TABLE Databases (guid INTEGER PRIMARY KEY AUTOINCREMENT, origin TEXT, name TEXT, displayName TEXT, estimatedSize INTEGER, path TEXT);")) {
+        if (!m_database.executeCommand("CREATE TABLE Databases (guid INTEGER PRIMARY KEY AUTOINCREMENT, origin TEXT, name TEXT, displayName TEXT, estimatedSize INTEGER, path TEXT);"_s)) {
             // FIXME: and here
             LOG_ERROR("Failed to create Databases table");
         }
@@ -1267,15 +1267,15 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
             return false;
     }
 
-    if (!database.executeCommand("BEGIN EXCLUSIVE TRANSACTION;"))
+    if (!database.executeCommand("BEGIN EXCLUSIVE TRANSACTION;"_s))
         return false;
 
     // At this point, we hold the exclusive lock to this file.
     // Check that the database doesn't contain any tables.
-    if (!database.executeCommand("SELECT name FROM sqlite_master WHERE type='table';"))
+    if (!database.executeCommand("SELECT name FROM sqlite_master WHERE type='table';"_s))
         return false;
 
-    database.executeCommand("COMMIT TRANSACTION;");
+    database.executeCommand("COMMIT TRANSACTION;"_s);
 
     database.close();
 

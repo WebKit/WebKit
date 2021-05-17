@@ -62,9 +62,9 @@ void SQLiteTransaction::begin()
         SQLiteDatabaseTracker::incrementTransactionInProgressCount();
 #endif
         if (m_readOnly)
-            m_inProgress = m_db.executeCommand("BEGIN");
+            m_inProgress = m_db.executeCommand("BEGIN"_s);
         else
-            m_inProgress = m_db.executeCommand("BEGIN IMMEDIATE");
+            m_inProgress = m_db.executeCommand("BEGIN IMMEDIATE"_s);
         m_db.m_transactionInProgress = m_inProgress;
 #if PLATFORM(IOS_FAMILY)
         if (!m_inProgress)
@@ -77,7 +77,7 @@ void SQLiteTransaction::commit()
 {
     if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
-        m_inProgress = !m_db.executeCommand("COMMIT");
+        m_inProgress = !m_db.executeCommand("COMMIT"_s);
         m_db.m_transactionInProgress = m_inProgress;
 #if PLATFORM(IOS_FAMILY)
         if (!m_inProgress)
@@ -94,7 +94,7 @@ void SQLiteTransaction::rollback()
     // a non-zero/true result (http://www.sqlite.org/lang_transaction.html).
     if (m_inProgress) {
         ASSERT(m_db.m_transactionInProgress);
-        m_db.executeCommand("ROLLBACK");
+        m_db.executeCommand("ROLLBACK"_s);
         m_inProgress = false;
         m_db.m_transactionInProgress = false;
 #if PLATFORM(IOS_FAMILY)

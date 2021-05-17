@@ -262,7 +262,7 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 
     migrateItemTableIfNeeded();
 
-    if (!m_database.executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)")) {
+    if (!m_database.executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s)) {
         LOG_ERROR("Failed to create table ItemTable for local storage");
         markImported();
         m_databaseOpenFailed = true;
@@ -285,20 +285,20 @@ void StorageAreaSync::migrateItemTableIfNeeded()
     }
 
     // alter table for backward compliance, change the value type from TEXT to BLOB.
-    static const char* commands[] = {
-        "DROP TABLE IF EXISTS ItemTable2",
-        "CREATE TABLE ItemTable2 (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)",
-        "INSERT INTO ItemTable2 SELECT * from ItemTable",
-        "DROP TABLE ItemTable",
-        "ALTER TABLE ItemTable2 RENAME TO ItemTable",
-        0,
+    static const ASCIILiteral commands[] = {
+        "DROP TABLE IF EXISTS ItemTable2"_s,
+        "CREATE TABLE ItemTable2 (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s,
+        "INSERT INTO ItemTable2 SELECT * from ItemTable"_s,
+        "DROP TABLE ItemTable"_s,
+        "ALTER TABLE ItemTable2 RENAME TO ItemTable"_s,
+        ASCIILiteral::null(),
     };
 
     SQLiteTransaction transaction(m_database, false);
     transaction.begin();
     for (size_t i = 0; commands[i]; ++i) {
         if (!m_database.executeCommand(commands[i])) {
-            LOG_ERROR("Failed to migrate table ItemTable for local storage when executing: %s", commands[i]);
+            LOG_ERROR("Failed to migrate table ItemTable for local storage when executing: %s", commands[i].characters());
             transaction.rollback();
 
             // finally it will try to keep a backup of ItemTable for the future restoration.
@@ -306,7 +306,7 @@ void StorageAreaSync::migrateItemTableIfNeeded()
             // than continually hitting this case and never being able to use the local storage.
             // if this is ever hit, it's definitely a bug.
             ASSERT_NOT_REACHED();
-            if (!m_database.executeCommand("ALTER TABLE ItemTable RENAME TO Backup_ItemTable"))
+            if (!m_database.executeCommand("ALTER TABLE ItemTable RENAME TO Backup_ItemTable"_s))
                 LOG_ERROR("Failed to save ItemTable after migration job failed.");
 
             return;

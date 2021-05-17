@@ -113,7 +113,7 @@ static String formatErrorMessage(const char* message, int sqliteErrorCode, const
 
 static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, const String& value)
 {
-    auto statement = db.prepareStatement(query);
+    auto statement = db.prepareStatementSlow(query);
     if (!statement) {
         LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.ascii().data());
         return false;
@@ -131,7 +131,7 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 
 static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& query, String& resultString)
 {
-    auto statement = db.prepareStatement(query);
+    auto statement = db.prepareStatementSlow(query);
     if (!statement) {
         LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", statement.error(), query.ascii().data());
         return false;
@@ -370,7 +370,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
             if (!m_sqliteDatabase.tableExists(tableName)) {
                 m_new = true;
 
-                if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+                if (!m_sqliteDatabase.executeCommandSlow("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
                     String message = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();

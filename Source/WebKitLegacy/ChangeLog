@@ -1,3 +1,20 @@
+2021-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Avoid more String creations when preparing SQLite statements
+        https://bugs.webkit.org/show_bug.cgi?id=225855
+
+        Reviewed by Alex Christensen.
+
+        Avoid more String creations when preparing SQLite statements by using ASCIILiteral. Also rename the
+        SQLiteDatabase::prepareStatement() / SQLiteDatabase::executeCommand() overloads that take in a 
+        String to make sure they are not called by mistake.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::openDatabase):
+        (WebKit::StorageAreaSync::migrateItemTableIfNeeded):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::openTrackerDatabase):
+
 2021-05-16  Chris Dumez  <cdumez@apple.com>
 
         Modernize / Optimize SQLiteStatement creation and preparation

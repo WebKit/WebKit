@@ -124,42 +124,43 @@ bool IconDatabase::createTablesIfNeeded()
 
     m_db.clearAllTables();
 
-    if (!m_db.executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_db.executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);"_s)) {
         LOG_ERROR("Could not create PageURL table in database (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
     }
-    if (!m_db.executeCommand("CREATE INDEX PageURLIndex ON PageURL (url);")) {
+    if (!m_db.executeCommand("CREATE INDEX PageURLIndex ON PageURL (url);"_s)) {
         LOG_ERROR("Could not create PageURL index in database (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
     }
-    if (!m_db.executeCommand("CREATE TABLE IconInfo (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, stamp INTEGER);")) {
+    if (!m_db.executeCommand("CREATE TABLE IconInfo (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, stamp INTEGER);"_s)) {
         LOG_ERROR("Could not create IconInfo table in database (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
     }
-    if (!m_db.executeCommand("CREATE INDEX IconInfoIndex ON IconInfo (url, iconID);")) {
+    if (!m_db.executeCommand("CREATE INDEX IconInfoIndex ON IconInfo (url, iconID);"_s)) {
         LOG_ERROR("Could not create PageURL index in database (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
     }
-    if (!m_db.executeCommand("CREATE TABLE IconData (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, data BLOB);")) {
+    if (!m_db.executeCommand("CREATE TABLE IconData (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, data BLOB);"_s)) {
         LOG_ERROR("Could not create IconData table in database (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
     }
-    if (!m_db.executeCommand("CREATE INDEX IconDataIndex ON IconData (iconID);")) {
+    if (!m_db.executeCommand("CREATE INDEX IconDataIndex ON IconData (iconID);"_s)) {
         LOG_ERROR("Could not create PageURL index in database (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
     }
-    if (!m_db.executeCommand("CREATE TABLE IconDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+    if (!m_db.executeCommand("CREATE TABLE IconDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);"_s)) {
         LOG_ERROR("Could not create IconDatabaseInfo table in database (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
     }
-    if (!m_db.executeCommand(String("INSERT INTO IconDatabaseInfo VALUES ('Version', ") + String::number(currentDatabaseVersion) + ");")) {
+    auto statement = m_db.prepareStatement("INSERT INTO IconDatabaseInfo VALUES ('Version', ?);"_s);
+    if (!statement || statement->bindInt(1, currentDatabaseVersion) != SQLITE_OK || !statement->executeCommand()) {
         LOG_ERROR("Could not insert icon database version into IconDatabaseInfo table (%i) - %s", m_db.lastError(), m_db.lastErrorMsg());
         m_db.close();
         return false;
@@ -175,10 +176,14 @@ void IconDatabase::populatePageURLToIconURLMap()
     if (!m_db.isOpen())
         return;
 
-    String importQuery = makeString("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > ", floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds()), ';');
-    auto query = m_db.prepareStatement(importQuery);
+    auto query = m_db.prepareStatement("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > (?);"_s);
     if (!query) {
         LOG_ERROR("Unable to prepare icon url import query");
+        return;
+    }
+
+    if (query->bindInt64(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
+        LOG_ERROR("IconDatabase::populatePageURLToIconURLMap: failed to bind statement: %s", m_db.lastErrorMsg());
         return;
     }
 

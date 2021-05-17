@@ -52,36 +52,30 @@ namespace WebCore {
 
 static const uint64_t schemaVersion = 6;
 
-static const String recordsTableSchema(const String& tableName)
+#define RECORDS_TABLE_SCHEMA_PREFIX "CREATE TABLE "
+#define RECORDS_TABLE_SCHEMA_SUFFIX "(" \
+    "key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE" \
+    ", origin TEXT NOT NULL ON CONFLICT FAIL" \
+    ", scopeURL TEXT NOT NULL ON CONFLICT FAIL" \
+    ", topOrigin TEXT NOT NULL ON CONFLICT FAIL" \
+    ", lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL" \
+    ", updateViaCache TEXT NOT NULL ON CONFLICT FAIL" \
+    ", scriptURL TEXT NOT NULL ON CONFLICT FAIL" \
+    ", workerType TEXT NOT NULL ON CONFLICT FAIL" \
+    ", contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL" \
+    ", referrerPolicy TEXT NOT NULL ON CONFLICT FAIL" \
+    ", scriptResourceMap BLOB NOT NULL ON CONFLICT FAIL" \
+    ", certificateInfo BLOB NOT NULL ON CONFLICT FAIL" \
+    ")"_s;
+
+static ASCIILiteral recordsTableSchema()
 {
-    return makeString("CREATE TABLE ", tableName, " ("
-        "key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE"
-        ", origin TEXT NOT NULL ON CONFLICT FAIL"
-        ", scopeURL TEXT NOT NULL ON CONFLICT FAIL"
-        ", topOrigin TEXT NOT NULL ON CONFLICT FAIL"
-        ", lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL"
-        ", updateViaCache TEXT NOT NULL ON CONFLICT FAIL"
-        ", scriptURL TEXT NOT NULL ON CONFLICT FAIL"
-        ", workerType TEXT NOT NULL ON CONFLICT FAIL"
-        ", contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL"
-        ", referrerPolicy TEXT NOT NULL ON CONFLICT FAIL"
-        ", scriptResourceMap BLOB NOT NULL ON CONFLICT FAIL"
-        ", certificateInfo BLOB NOT NULL ON CONFLICT FAIL"
-        ")");
+    return RECORDS_TABLE_SCHEMA_PREFIX "Records" RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String recordsTableSchema()
+static ASCIILiteral recordsTableSchemaAlternate()
 {
-    ASSERT(!isMainThread());
-    static NeverDestroyed<String> schema(recordsTableSchema("Records"));
-    return schema;
-}
-
-static const String recordsTableSchemaAlternate()
-{
-    ASSERT(!isMainThread());
-    static NeverDestroyed<String> schema(recordsTableSchema("\"Records\""));
-    return schema;
+    return RECORDS_TABLE_SCHEMA_PREFIX "\"Records\"" RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
 static inline String databaseFilenameFromVersion(uint64_t version)
@@ -609,6 +603,9 @@ void RegistrationDatabase::databaseOpenedAndRecordsImported()
     if (m_store)
         m_store->databaseOpenedAndRecordsImported();
 }
+
+#undef RECORDS_TABLE_SCHEMA_PREFIX
+#undef RECORDS_TABLE_SCHEMA_SUFFIX
 
 } // namespace WebCore
 

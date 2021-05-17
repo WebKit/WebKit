@@ -112,7 +112,7 @@ bool SQLStatement::execute(Database& db)
 
     SQLiteDatabase& database = db.sqliteDatabase();
 
-    auto statement = database.prepareStatement(m_statement);
+    auto statement = database.prepareStatementSlow(m_statement);
     if (!statement) {
         LOG(StorageAPI, "Unable to verify correctness of statement %s - error %i (%s)", m_statement.ascii().data(), statement.error(), database.lastErrorMsg());
         if (statement.error() == SQLITE_INTERRUPT)

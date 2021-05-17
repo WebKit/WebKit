@@ -41,6 +41,7 @@
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -532,15 +533,14 @@ bool ApplicationCacheStorage::storeUpdatedQuotaForOrigin(const SecurityOrigin* o
     return executeStatement(updateStatement.value());
 }
 
-bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
+bool ApplicationCacheStorage::executeSQLCommand(ASCIILiteral sql)
 {
     ASSERT(SQLiteDatabaseTracker::hasTransactionInProgress());
     ASSERT(m_database.isOpen());
     
     bool result = m_database.executeCommand(sql);
     if (!result)
-        LOG_ERROR("Application Cache Storage: failed to execute statement \"%s\" error \"%s\"", 
-                  sql.utf8().data(), m_database.lastErrorMsg());
+        LOG_ERROR("Application Cache Storage: failed to execute statement \"%s\" error \"%s\"", sql.characters(), m_database.lastErrorMsg());
 
     return result;
 }
@@ -567,11 +567,7 @@ void ApplicationCacheStorage::verifySchemaVersion()
     SQLiteTransaction setDatabaseVersion(m_database);
     setDatabaseVersion.begin();
 
-    char userVersionSQL[32];
-    int unusedNumBytes = snprintf(userVersionSQL, sizeof(userVersionSQL), "PRAGMA user_version=%d", schemaVersion);
-    ASSERT_UNUSED(unusedNumBytes, static_cast<int>(sizeof(userVersionSQL)) >= unusedNumBytes);
-
-    auto statement = m_database.prepareStatement(userVersionSQL);
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA user_version=%", schemaVersion));
     if (!statement)
         return;
     
@@ -604,18 +600,18 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     
     // Create tables
     executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheGroups (id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "manifestHostHash INTEGER NOT NULL ON CONFLICT FAIL, manifestURL TEXT UNIQUE ON CONFLICT FAIL, newestCache INTEGER, origin TEXT)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS Caches (id INTEGER PRIMARY KEY AUTOINCREMENT, cacheGroup INTEGER, size INTEGER)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheWhitelistURLs (url TEXT NOT NULL ON CONFLICT FAIL, cache INTEGER NOT NULL ON CONFLICT FAIL)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheAllowsAllNetworkRequests (wildcard INTEGER NOT NULL ON CONFLICT FAIL, cache INTEGER NOT NULL ON CONFLICT FAIL)");
+                      "manifestHostHash INTEGER NOT NULL ON CONFLICT FAIL, manifestURL TEXT UNIQUE ON CONFLICT FAIL, newestCache INTEGER, origin TEXT)"_s);
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS Caches (id INTEGER PRIMARY KEY AUTOINCREMENT, cacheGroup INTEGER, size INTEGER)"_s);
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheWhitelistURLs (url TEXT NOT NULL ON CONFLICT FAIL, cache INTEGER NOT NULL ON CONFLICT FAIL)"_s);
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheAllowsAllNetworkRequests (wildcard INTEGER NOT NULL ON CONFLICT FAIL, cache INTEGER NOT NULL ON CONFLICT FAIL)"_s);
     executeSQLCommand("CREATE TABLE IF NOT EXISTS FallbackURLs (namespace TEXT NOT NULL ON CONFLICT FAIL, fallbackURL TEXT NOT NULL ON CONFLICT FAIL, "
-                      "cache INTEGER NOT NULL ON CONFLICT FAIL)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheEntries (cache INTEGER NOT NULL ON CONFLICT FAIL, type INTEGER, resource INTEGER NOT NULL)");
+                      "cache INTEGER NOT NULL ON CONFLICT FAIL)"_s);
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheEntries (cache INTEGER NOT NULL ON CONFLICT FAIL, type INTEGER, resource INTEGER NOT NULL)"_s);
     executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResources (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL ON CONFLICT FAIL, "
-                      "statusCode INTEGER NOT NULL, responseURL TEXT NOT NULL, mimeType TEXT, textEncodingName TEXT, headers TEXT, data INTEGER NOT NULL ON CONFLICT FAIL)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResourceData (id INTEGER PRIMARY KEY AUTOINCREMENT, data BLOB, path TEXT)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS DeletedCacheResources (id INTEGER PRIMARY KEY AUTOINCREMENT, path TEXT)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS Origins (origin TEXT UNIQUE ON CONFLICT IGNORE, quota INTEGER NOT NULL ON CONFLICT FAIL)");
+                      "statusCode INTEGER NOT NULL, responseURL TEXT NOT NULL, mimeType TEXT, textEncodingName TEXT, headers TEXT, data INTEGER NOT NULL ON CONFLICT FAIL)"_s);
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResourceData (id INTEGER PRIMARY KEY AUTOINCREMENT, data BLOB, path TEXT)"_s);
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS DeletedCacheResources (id INTEGER PRIMARY KEY AUTOINCREMENT, path TEXT)"_s);
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS Origins (origin TEXT UNIQUE ON CONFLICT IGNORE, quota INTEGER NOT NULL ON CONFLICT FAIL)"_s);
 
     // When a cache is deleted, all its entries and its allowlist should be deleted.
     executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheDeleted AFTER DELETE ON Caches"
@@ -624,19 +620,19 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
                       "  DELETE FROM CacheWhitelistURLs WHERE cache = OLD.id;"
                       "  DELETE FROM CacheAllowsAllNetworkRequests WHERE cache = OLD.id;"
                       "  DELETE FROM FallbackURLs WHERE cache = OLD.id;"
-                      " END");
+                      " END"_s);
 
     // When a cache entry is deleted, its resource should also be deleted.
     executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheEntryDeleted AFTER DELETE ON CacheEntries"
                       " FOR EACH ROW BEGIN"
                       "  DELETE FROM CacheResources WHERE id = OLD.resource;"
-                      " END");
+                      " END"_s);
 
     // When a cache resource is deleted, its data blob should also be deleted.
     executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheResourceDeleted AFTER DELETE ON CacheResources"
                       " FOR EACH ROW BEGIN"
                       "  DELETE FROM CacheResourceData WHERE id = OLD.data;"
-                      " END");
+                      " END"_s);
     
     // When a cache resource is deleted, if it contains a non-empty path, that path should
     // be added to the DeletedCacheResources table so the flat file at that path can
@@ -645,7 +641,7 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
                       " FOR EACH ROW"
                       " WHEN OLD.path NOT NULL BEGIN"
                       "  INSERT INTO DeletedCacheResources (path) values (OLD.path);"
-                      " END");
+                      " END"_s);
 }
 
 bool ApplicationCacheStorage::executeStatement(SQLiteStatement& statement)
@@ -1256,9 +1252,9 @@ void ApplicationCacheStorage::empty()
         return;
     
     // Clear cache groups, caches, cache resources, and origins.
-    executeSQLCommand("DELETE FROM CacheGroups");
-    executeSQLCommand("DELETE FROM Caches");
-    executeSQLCommand("DELETE FROM Origins");
+    executeSQLCommand("DELETE FROM CacheGroups"_s);
+    executeSQLCommand("DELETE FROM Caches"_s);
+    executeSQLCommand("DELETE FROM Origins"_s);
     
     // Clear the storage IDs for the caches in memory.
     // The caches will still work, but cached resources will not be saved to disk 
@@ -1439,7 +1435,7 @@ void ApplicationCacheStorage::checkForDeletedResources()
         FileSystem::deleteFile(fullPath);
     } while (selectPaths->step() == SQLITE_ROW);
     
-    executeSQLCommand("DELETE FROM DeletedCacheResources");
+    executeSQLCommand("DELETE FROM DeletedCacheResources"_s);
 }
     
 long long ApplicationCacheStorage::flatFileAreaSize()
