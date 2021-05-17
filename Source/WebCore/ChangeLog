@@ -1,3 +1,23 @@
+2021-05-17  Frederic Wang  <fwang@igalia.com>
+
+        REGRESSION(r277425): Crash in FrameSelection::selectFrameElementInParentIfFullySelected
+        https://bugs.webkit.org/show_bug.cgi?id=225795
+
+        Reviewed by Ryosuke Niwa.
+
+        r277425 claimed that in FrameSelection::setSelectionWithoutUpdatingAppearance,
+        !m_document->frame() was equivalent to !selectionEndpointsBelongToMultipleDocuments &&
+        !selectionIsInAnotherDocument && selectionIsInDetachedDocument, but it misses the case when
+        newSelection.document() is null. So this patch adds back this particular case to the
+        original "if" block. This patch also adds an ASSERT on m_document->frame().
+
+        No new tests.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance): Add back the case
+        !m_document->frame() && !newSelection.document() to the first sanity check and ASSERT on
+        m_document->frame() after the second sanity check.
+
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Null check m_resource in SubresourceLoader::didReceiveResponse
