@@ -504,6 +504,20 @@ void AudioContext::mediaCanStart(Document& document)
     mayResumePlayback(true);
 }
 
+void AudioContext::isPlayingAudioDidChange()
+{
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
+    // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
+    // we could be on the audio I/O thread here and the call into WebCore could block.
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (auto* document = protectedThis->document())
+            document->updateIsPlayingMedia();
+    });
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& AudioContext::logger() const
 {

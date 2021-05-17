@@ -83,6 +83,8 @@ public:
 
     void startRendering();
 
+    void isPlayingAudioDidChange();
+
     // Restrictions to change default behaviors.
     enum BehaviorRestrictionFlags {
         NoRestrictions = 0,

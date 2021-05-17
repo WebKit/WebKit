@@ -29,6 +29,7 @@
 #include "ActiveDOMObject.h"
 #include "AudioContextState.h"
 #include "AudioDestinationNode.h"
+#include "AudioIOCallback.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "OscillatorType.h"
@@ -213,8 +214,6 @@ public:
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final;
-
-    void isPlayingAudioDidChange();
 
     virtual void sourceNodeWillBeginPlayback(AudioNode&);
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
