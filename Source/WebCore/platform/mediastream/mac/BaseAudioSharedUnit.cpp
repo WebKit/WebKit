@@ -103,7 +103,7 @@ OSStatus BaseAudioSharedUnit::startUnit()
     forEachClient([](auto& client) {
         client.audioUnitWillStart();
     });
-    ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+    ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
 
     if (auto error = startInternal()) {
         captureFailed();

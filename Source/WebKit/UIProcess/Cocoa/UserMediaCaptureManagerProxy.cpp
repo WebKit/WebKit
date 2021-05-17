@@ -103,7 +103,7 @@ public:
         auto bufferSize = AudioSession::sharedSession().sampleRate() / 50;
         if (AudioSession::sharedSession().preferredBufferSize() > bufferSize)
             AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
-        AudioSession::sharedSession().setCategory(AudioSession::PlayAndRecord, RouteSharingPolicy::Default);
+        AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, RouteSharingPolicy::Default);
     }
 
     void start()

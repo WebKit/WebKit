@@ -94,12 +94,11 @@ RemoteAudioSessionConfiguration& RemoteAudioSession::configuration()
 void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy policy)
 {
 #if PLATFORM(COCOA)
-    auto& configuration = this->configuration();
-    if (type == configuration.category && policy == configuration.routeSharingPolicy)
+    if (type == m_category && policy == m_routeSharingPolicy)
         return;
 
-    configuration.category = type;
-    configuration.routeSharingPolicy = policy;
+    m_category = type;
+    m_routeSharingPolicy = policy;
 
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetCategory(type, policy), { });
 #else
@@ -125,20 +124,10 @@ bool RemoteAudioSession::tryToSetActiveInternal(bool active)
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
 #if PLATFORM(COCOA)
-    return configuration().category;
+    return m_category;
 #else
-    return None;
+    return AudioSession::CategoryType::None;
 #endif
-}
-
-void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& configuration)
-{
-    bool mutedStateChanged = !m_configuration || configuration.isMuted != m_configuration->isMuted;
-
-    m_configuration = WTFMove(configuration);
-
-    if (mutedStateChanged)
-        handleMutedStateChange();
 }
 
 }

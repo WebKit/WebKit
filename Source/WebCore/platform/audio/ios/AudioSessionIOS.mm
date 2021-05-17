@@ -108,7 +108,7 @@ public:
 };
 
 AudioSessionPrivate::AudioSessionPrivate(AudioSession* session)
-    : m_categoryOverride(AudioSession::None)
+    : m_categoryOverride(AudioSession::CategoryType::None)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_interruptionObserverHelper = adoptNS([[WebInterruptionObserverHelper alloc] initWithCallback:session]);
@@ -138,7 +138,7 @@ void AudioSession::setCategory(CategoryType newCategory, RouteSharingPolicy poli
 
     LOG(Media, "AudioSession::setCategory() - category = %s", convertEnumerationToString(newCategory).ascii().data());
 
-    if (categoryOverride() && categoryOverride() != newCategory) {
+    if (categoryOverride() !=  CategoryType::None && categoryOverride() != newCategory) {
         LOG(Media, "AudioSession::setCategory() - override set, NOT changing");
         return;
     }
@@ -148,27 +148,27 @@ void AudioSession::setCategory(CategoryType newCategory, RouteSharingPolicy poli
     AVAudioSessionCategoryOptions options = 0;
 
     switch (newCategory) {
-    case AmbientSound:
+    case CategoryType::AmbientSound:
         categoryString = AVAudioSessionCategoryAmbient;
         break;
-    case SoloAmbientSound:
+    case CategoryType::SoloAmbientSound:
         categoryString = AVAudioSessionCategorySoloAmbient;
         break;
-    case MediaPlayback:
+    case CategoryType::MediaPlayback:
         categoryString = AVAudioSessionCategoryPlayback;
         break;
-    case RecordAudio:
+    case CategoryType::RecordAudio:
         categoryString = AVAudioSessionCategoryRecord;
         break;
-    case PlayAndRecord:
+    case CategoryType::PlayAndRecord:
         categoryString = AVAudioSessionCategoryPlayAndRecord;
         categoryMode = AVAudioSessionModeVideoChat;
         options |= AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowAirPlay;
         break;
-    case AudioProcessing:
+    case CategoryType::AudioProcessing:
         categoryString = AVAudioSessionCategoryAudioProcessing;
         break;
-    case None:
+    case CategoryType::None:
         categoryString = AVAudioSessionCategoryAmbient;
         break;
     }
@@ -184,18 +184,18 @@ AudioSession::CategoryType AudioSession::category() const
 {
     NSString *categoryString = [[PAL::getAVAudioSessionClass() sharedInstance] category];
     if ([categoryString isEqual:AVAudioSessionCategoryAmbient])
-        return AmbientSound;
+        return CategoryType::AmbientSound;
     if ([categoryString isEqual:AVAudioSessionCategorySoloAmbient])
-        return SoloAmbientSound;
+        return CategoryType::SoloAmbientSound;
     if ([categoryString isEqual:AVAudioSessionCategoryPlayback])
-        return MediaPlayback;
+        return CategoryType::MediaPlayback;
     if ([categoryString isEqual:AVAudioSessionCategoryRecord])
-        return RecordAudio;
+        return CategoryType::RecordAudio;
     if ([categoryString isEqual:AVAudioSessionCategoryPlayAndRecord])
-        return PlayAndRecord;
+        return CategoryType::PlayAndRecord;
     if ([categoryString isEqual:AVAudioSessionCategoryAudioProcessing])
-        return AudioProcessing;
-    return None;
+        return CategoryType::AudioProcessing;
+    return CategoryType::None;
 }
 
 RouteSharingPolicy AudioSession::routeSharingPolicy() const

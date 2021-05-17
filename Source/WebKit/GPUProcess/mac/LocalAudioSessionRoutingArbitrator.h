@@ -61,7 +61,7 @@ private:
     void leaveRoutingAbritration() final;
 
     UniqueRef<WebCore::SharedRoutingArbitrator::Token> m_token;
-    WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::None };
+    WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
     ArbitrationStatus m_arbitrationStatus { ArbitrationStatus::None };
     WallTime m_arbitrationUpdateTime;
 };

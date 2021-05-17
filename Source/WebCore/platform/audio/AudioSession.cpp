@@ -102,7 +102,7 @@ void AudioSession::setCategory(CategoryType, RouteSharingPolicy)
 AudioSession::CategoryType AudioSession::categoryOverride() const
 {
     notImplemented();
-    return None;
+    return AudioSession::CategoryType::None;
 }
 
 void AudioSession::setCategoryOverride(CategoryType)
@@ -113,7 +113,7 @@ void AudioSession::setCategoryOverride(CategoryType)
 AudioSession::CategoryType AudioSession::category() const
 {
     notImplemented();
-    return None;
+    return AudioSession::CategoryType::None;
 }
 
 float AudioSession::sampleRate() const

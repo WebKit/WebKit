@@ -60,7 +60,7 @@ public:
     static AudioSession& sharedSession();
     virtual ~AudioSession();
 
-    enum CategoryType : uint8_t {
+    enum class CategoryType : uint8_t {
         None,
         AmbientSound,
         SoloAmbientSound,

@@ -1,3 +1,41 @@
+2021-05-17  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] WebContent process should not pull audio session category from the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=225826
+
+        Reviewed by Darin Adler.
+
+        Remove `category` and `routeSharingPolicy` from `RemoteAudioSessionConfiguration`
+        because we should not pull these properties from the GPU process.
+
+        Remove IPC message `RemoteAudioSession::ConfigurationChanged` because it is not used.
+
+        * GPUProcess/mac/LocalAudioSessionRoutingArbitrator.h:
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        (WebKit::RemoteAudioSessionProxy::configuration):
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::categoryCanMixWithOthers):
+        (WebKit::RemoteAudioSessionProxyManager::updateCategory):
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.h:
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::setCategory):
+        (WebKit::RemoteAudioSession::category const):
+        (WebKit::RemoteAudioSession::configurationChanged): Deleted.
+        * WebProcess/GPU/media/RemoteAudioSession.h:
+        * WebProcess/GPU/media/RemoteAudioSession.messages.in:
+
+        * WebProcess/GPU/media/RemoteAudioSessionConfiguration.h:
+        (WebKit::RemoteAudioSessionConfiguration::encode const):
+        (WebKit::RemoteAudioSessionConfiguration::decode):
+
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+
 2021-05-14  Jer Noble  <jer.noble@apple.com>
 
         MediaSessionCoordinator survives page reload/navigation

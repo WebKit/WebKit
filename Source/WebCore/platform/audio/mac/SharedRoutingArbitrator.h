@@ -55,7 +55,7 @@ public:
     void endRoutingArbitrationForToken(const Token&);
 
 private:
-    Optional<AudioSession::CategoryType> m_currentCategory { AudioSession::None };
+    Optional<AudioSession::CategoryType> m_currentCategory { AudioSession::CategoryType::None };
     WeakHashSet<Token> m_tokens;
     Vector<ArbitrationCallback> m_enqueuedCallbacks;
     bool m_setupArbitrationOngoing { false };

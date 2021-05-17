@@ -60,8 +60,6 @@ RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
 {
     auto& session = audioSessionManager().session();
     return {
-        session.category(),
-        session.routeSharingPolicy(),
         session.routingContextUID(),
         session.sampleRate(),
         session.bufferSize(),

@@ -94,7 +94,7 @@ public:
     static OSStatus handleBufferSizeChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
 
     Optional<bool> lastMutedState;
-    AudioSession::CategoryType category { AudioSession::None };
+    AudioSession::CategoryType category { AudioSession::CategoryType::None };
 #if ENABLE(ROUTING_ARBITRATION)
     bool setupArbitrationOngoing { false };
     Optional<bool> playingToBluetooth;
@@ -228,7 +228,7 @@ void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
         m_routingArbitrationClient->leaveRoutingAbritration();
     }
 
-    if (category == AmbientSound || category == SoloAmbientSound || category == AudioProcessing || category == None)
+    if (category == CategoryType::AmbientSound || category == CategoryType::SoloAmbientSound || category == CategoryType::AudioProcessing || category == CategoryType::None)
         return;
 
     using RoutingArbitrationError = AudioSessionRoutingArbitrationClient::RoutingArbitrationError;

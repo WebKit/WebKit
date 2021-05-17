@@ -5405,19 +5405,19 @@ String Internals::audioSessionCategory() const
 {
 #if USE(AUDIO_SESSION)
     switch (AudioSession::sharedSession().category()) {
-    case AudioSession::AmbientSound:
+    case AudioSession::CategoryType::AmbientSound:
         return "AmbientSound"_s;
-    case AudioSession::SoloAmbientSound:
+    case AudioSession::CategoryType::SoloAmbientSound:
         return "SoloAmbientSound"_s;
-    case AudioSession::MediaPlayback:
+    case AudioSession::CategoryType::MediaPlayback:
         return "MediaPlayback"_s;
-    case AudioSession::RecordAudio:
+    case AudioSession::CategoryType::RecordAudio:
         return "RecordAudio"_s;
-    case AudioSession::PlayAndRecord:
+    case AudioSession::CategoryType::PlayAndRecord:
         return "PlayAndRecord"_s;
-    case AudioSession::AudioProcessing:
+    case AudioSession::CategoryType::AudioProcessing:
         return "AudioProcessing"_s;
-    case AudioSession::None:
+    case AudioSession::CategoryType::None:
         return "None"_s;
     }
 #endif

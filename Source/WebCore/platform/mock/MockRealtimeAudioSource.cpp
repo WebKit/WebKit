@@ -138,7 +138,7 @@ void MockRealtimeAudioSource::startProducingData()
 #if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().audioCaptureFactory().setActiveSource(*this);
     PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
-    ASSERT(AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+    ASSERT(AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
 #endif
 
     if (!sampleRate())

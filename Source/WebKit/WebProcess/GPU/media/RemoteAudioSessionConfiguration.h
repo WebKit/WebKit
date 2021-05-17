@@ -32,9 +32,6 @@
 namespace WebKit {
 
 struct RemoteAudioSessionConfiguration {
-
-    WebCore::AudioSession::CategoryType category { WebCore::AudioSession::CategoryType::None };
-    WebCore::RouteSharingPolicy routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     String routingContextUID;
     float sampleRate { 0 };
     size_t bufferSize { 0 };
@@ -47,8 +44,6 @@ struct RemoteAudioSessionConfiguration {
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
-        encoder << category;
-        encoder << routeSharingPolicy;
         encoder << routingContextUID;
         encoder << sampleRate;
         encoder << bufferSize;
@@ -62,16 +57,6 @@ struct RemoteAudioSessionConfiguration {
     template <class Decoder>
     static Optional<RemoteAudioSessionConfiguration> decode(Decoder& decoder)
     {
-        Optional<WebCore::AudioSession::CategoryType> category;
-        decoder >> category;
-        if (!category)
-            return WTF::nullopt;
-
-        Optional<WebCore::RouteSharingPolicy> routeSharingPolicy;
-        decoder >> routeSharingPolicy;
-        if (!routeSharingPolicy)
-            return WTF::nullopt;
-
         Optional<String> routingContextUID;
         decoder >> routingContextUID;
         if (!routingContextUID)
@@ -113,8 +98,6 @@ struct RemoteAudioSessionConfiguration {
             return WTF::nullopt;
 
         return {{
-            WTFMove(*category),
-            WTFMove(*routeSharingPolicy),
             WTFMove(*routingContextUID),
             *sampleRate,
             *bufferSize,

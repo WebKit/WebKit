@@ -131,14 +131,14 @@ void MediaSessionManagerCocoa::updateSessionState()
         return;
 
     RouteSharingPolicy policy = RouteSharingPolicy::Default;
-    AudioSession::CategoryType category = AudioSession::None;
+    auto category = AudioSession::CategoryType::None;
     if (captureCount)
-        category = AudioSession::PlayAndRecord;
+        category = AudioSession::CategoryType::PlayAndRecord;
     else if (hasAudibleAudioOrVideoMediaType) {
-        category = AudioSession::MediaPlayback;
+        category = AudioSession::CategoryType::MediaPlayback;
         policy = RouteSharingPolicy::LongFormAudio;
     } else if (webAudioCount)
-        category = AudioSession::AmbientSound;
+        category = AudioSession::CategoryType::AmbientSound;
 
     ALWAYS_LOG(LOGIDENTIFIER, "setting category = ", category, ", policy = ", policy);
     AudioSession::sharedSession().setCategory(category, policy);
