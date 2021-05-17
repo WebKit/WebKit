@@ -1,3 +1,9 @@
+2021-05-17  Dean Jackson  <dino@apple.com>
+
+        Skip WebXR tests again. They are flakey.
+
+        * TestExpectations:
+
 2021-05-17  Youenn Fablet  <youenn@apple.com>
 
         [ BigSur Debug wk2 ARM64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html is flaky crashing
