@@ -1564,6 +1564,17 @@ void WebPageProxy::showDataDetectorsUIForPositionInformation(const InteractionIn
     pageClient().showDataDetectorsUIForPositionInformation(positionInfo);
 }
 
+Color WebPageProxy::platformUnderPageBackgroundColor() const
+{
+    if (auto contentViewBackgroundColor = pageClient().contentViewBackgroundColor(); contentViewBackgroundColor.isValid())
+        return contentViewBackgroundColor;
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    return UIColor.systemBackgroundColor.CGColor;
+#else
+    return UIColor.whiteColor.CGColor;
+#endif
+}
 
 } // namespace WebKit
 

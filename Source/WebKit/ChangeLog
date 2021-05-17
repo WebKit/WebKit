@@ -1,5 +1,225 @@
 2021-05-17  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r277505. rdar://problem/78110796
+
+    Promote `-[WKWebView _pageExtendedBackgroundColor]` SPI to `-[WKWebView underPageBackgroundColor]` API
+    https://bugs.webkit.org/show_bug.cgi?id=225615
+    <rdar://problem/76568094>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    `underPageBackgroundColor` is a `null_resettable` property that will return (in order of validity)
+     - the most recent non-null value provided
+     - the CSS `background-color` of the `<body>` and/or `<html>` (this is the current value of `_pageExtendedBackgroundColor`)
+     - the underlying platform view's background color
+    Modifications to this property will not have any effect until control is returned to the runloop.
+    
+    Tests: WKWebViewUnderPageBackgroundColor.OnLoad
+           WKWebViewUnderPageBackgroundColor.SingleSolidColor
+           WKWebViewUnderPageBackgroundColor.SingleBlendedColor
+           WKWebViewUnderPageBackgroundColor.MultipleSolidColors
+           WKWebViewUnderPageBackgroundColor.MultipleBlendedColors
+           WKWebViewUnderPageBackgroundColor.KVO
+           WKWebViewUnderPageBackgroundColor.MatchesScrollView
+    
+    * page/Page.h:
+    (WebCore::Page::underPageBackgroundColorOverride const): Added.
+    * page/Page.cpp:
+    (WebCore::Page::setUnderPageBackgroundColorOverride): Added.
+    Hold the client-overriden value for `underPageBackgroundColor` so that it can be used when
+    drawing the overscroll layer.
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor):
+    Remove the experimental settings `UseSampledPageTopColorForScrollAreaBackgroundColor` and
+    `UseThemeColorForScrollAreaBackgroundColor` now that clients can override the default
+    overscroll area background color using `-[WKWebView setUnderPageBackgroundColor:]`.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::themeColorChanged):
+    It's no longer necessary to force the overscroll area to redraw since that'll be handled by
+    a client calling `-[WKWebView setUnderPageBackgroundColor:]` (possibly in response to a
+    `-[WKWebView themeColor]` KVO notification).
+    
+    Source/WebKit:
+    
+    `underPageBackgroundColor` is a `null_resettable` property that will return (in order of validity)
+     - the most recent non-null value provided
+     - the CSS `background-color` of the `<body>` and/or `<html>` (this is the current value of `_pageExtendedBackgroundColor`)
+     - the underlying platform view's background color
+    Modifications to this property will not have any effect until control is returned to the runloop.
+    
+    * UIProcess/API/Cocoa/WKWebView.h:
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView underPageBackgroundColor]): Added.
+    (-[WKWebView setUnderPageBackgroundColor:]): Added.
+    (+[WKWebView automaticallyNotifiesObserversOfUnderPageBackgroundColor]): Added.
+    
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (baseScrollViewBackgroundColor):
+    (scrollViewBackgroundColor):
+    Remove the experimental settings `UseSampledPageTopColorForScrollAreaBackgroundColor` and
+    `UseThemeColorForScrollAreaBackgroundColor` now that clients can override the default
+    overscroll area background color using `-[WKWebView setUnderPageBackgroundColor:]`.
+    
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::underPageBackgroundColor const): Added.
+    (WebKit::WebPageProxy::setUnderPageBackgroundColorOverride): Added.
+    (WebKit::WebPageProxy::pageExtendedBackgroundColorDidChange):
+    (WebKit::WebPageProxy::platformUnderPageBackgroundColor const): Added.
+    (WebKit::WebPageProxy::scrollAreaBackgroundColor const): Deleted.
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::platformUnderPageBackgroundColor const): Added.
+    * UIProcess/mac/WebPageProxyMac.mm:
+    (WebKit::WebPageProxy::platformUnderPageBackgroundColor const): Added.
+    Store the client-overriden value for `underPageBackgroundColor` and manage state changes.
+    
+    * UIProcess/PageClient.h:
+    (WebKit::PageClient::underPageBackgroundColorWillChange): Added.
+    (WebKit::PageClient::underPageBackgroundColorDidChange): Added.
+    * UIProcess/Cocoa/PageClientImplCocoa.h:
+    * UIProcess/Cocoa/PageClientImplCocoa.mm:
+    (WebKit::PageClientImplCocoa::underPageBackgroundColorWillChange): Added.
+    (WebKit::PageClientImplCocoa::underPageBackgroundColorDidChange): Added.
+    Add ObjC KVO support for `-[WKWebView underPageBackgroundColor]`.
+    
+    * UIProcess/ios/PageClientImplIOS.h:
+    * UIProcess/ios/PageClientImplIOS.mm:
+    (WebKit::PageClientImpl::contentViewBackgroundColor): Added.
+    Provide a way to get the `backgroundColor` of the `WKContentView`. This is needed on iOS
+    because `scrollViewBackgroundColor` (now `WebPageProxy::platformUnderPageBackgroundColor`)
+    would use this value before falling back to the underlying platform view's background color.
+    
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::setUnderPageBackgroundColorOverride): Added.
+    Pass the client-overriden value for `underPageBackgroundColor` to the WebProcess so that it
+    can be used when drawing the overscroll layer.
+    
+    * UIProcess/ViewSnapshotStore.cpp:
+    (WebKit::ViewSnapshotStore::recordSnapshot):
+    Go back to using the `pageExtendedBackgroundColor` (before r273083).
+    
+    Source/WTF:
+    
+    `underPageBackgroundColor` is a `null_resettable` property that will return (in order of validity)
+     - the most recent non-null value provided
+     - the CSS `background-color` of the `<body>` and/or `<html>` (this is the current value of `_pageExtendedBackgroundColor`)
+     - the underlying platform view's background color
+    Modifications to this property will not have any effect until control is returned to the runloop.
+    
+    * Scripts/Preferences/WebPreferencesInternal.yaml:
+    Remove the experimental settings `UseSampledPageTopColorForScrollAreaBackgroundColor`and
+    `UseThemeColorForScrollAreaBackgroundColor` now that clients can override the default
+    overscroll area background color using `-[WKWebView setUnderPageBackgroundColor:]`.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewUnderPageBackgroundColor.mm: Renamed from PageExtendedBackgroundColor.mm.
+    (defaultBackgroundColor): Added.
+    (TEST.WKWebViewUnderPageBackgroundColor.OnLoad):
+    (TEST.WKWebViewUnderPageBackgroundColor.SingleSolidColor): Added.
+    (TEST.WKWebViewUnderPageBackgroundColor.SingleBlendedColor): Added.
+    (TEST.WKWebViewUnderPageBackgroundColor.MultipleSolidColors): Added.
+    (TEST.WKWebViewUnderPageBackgroundColor.MultipleBlendedColors): Added.
+    (-[WKWebViewUnderPageBackgroundColorObserver initWithWebView:]): Added.
+    (-[WKWebViewUnderPageBackgroundColorObserver observeValueForKeyPath:ofObject:change:context:]): Added.
+    (TEST.WKWebViewUnderPageBackgroundColor.KVO):
+    (TEST.WKWebViewUnderPageBackgroundColor.MatchesScrollView): Added.
+    (TEST.WKWebViewUnderPageBackgroundColor.MultipleStyles): Deleted.
+    (-[WKWebViewPageExtendedBackgroundColorObserver initWithWebView:]): Deleted.
+    (-[WKWebViewPageExtendedBackgroundColorObserver observeValueForKeyPath:ofObject:change:context:]): Deleted.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm:
+    (createWebViewWithSampledPageTopColorMaxDifference):
+    (TEST.SampledPageTopColor.ExperimentalUseSampledPageTopColorForScrollAreaBackgroundColor): Deleted.
+    * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewThemeColor.mm:
+    (createWebView): Deleted.
+    (TEST.WKWebView.ExperimentalUseThemeColorForScrollAreaBackgroundColor): Deleted.
+    Remove the experimental settings `UseSampledPageTopColorForScrollAreaBackgroundColor` and
+    `UseThemeColorForScrollAreaBackgroundColor` now that clients can override the default
+    overscroll area background color using `-[WKWebView setUnderPageBackgroundColor:]`.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277505 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-14  Devin Rousso  <drousso@apple.com>
+
+            Promote `-[WKWebView _pageExtendedBackgroundColor]` SPI to `-[WKWebView underPageBackgroundColor]` API
+            https://bugs.webkit.org/show_bug.cgi?id=225615
+            <rdar://problem/76568094>
+
+            Reviewed by Wenson Hsieh.
+
+            `underPageBackgroundColor` is a `null_resettable` property that will return (in order of validity)
+             - the most recent non-null value provided
+             - the CSS `background-color` of the `<body>` and/or `<html>` (this is the current value of `_pageExtendedBackgroundColor`)
+             - the underlying platform view's background color
+            Modifications to this property will not have any effect until control is returned to the runloop.
+
+            * UIProcess/API/Cocoa/WKWebView.h:
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView underPageBackgroundColor]): Added.
+            (-[WKWebView setUnderPageBackgroundColor:]): Added.
+            (+[WKWebView automaticallyNotifiesObserversOfUnderPageBackgroundColor]): Added.
+
+            * UIProcess/API/ios/WKWebViewIOS.mm:
+            (baseScrollViewBackgroundColor):
+            (scrollViewBackgroundColor):
+            Remove the experimental settings `UseSampledPageTopColorForScrollAreaBackgroundColor` and
+            `UseThemeColorForScrollAreaBackgroundColor` now that clients can override the default
+            overscroll area background color using `-[WKWebView setUnderPageBackgroundColor:]`.
+
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::underPageBackgroundColor const): Added.
+            (WebKit::WebPageProxy::setUnderPageBackgroundColorOverride): Added.
+            (WebKit::WebPageProxy::pageExtendedBackgroundColorDidChange):
+            (WebKit::WebPageProxy::platformUnderPageBackgroundColor const): Added.
+            (WebKit::WebPageProxy::scrollAreaBackgroundColor const): Deleted.
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::platformUnderPageBackgroundColor const): Added.
+            * UIProcess/mac/WebPageProxyMac.mm:
+            (WebKit::WebPageProxy::platformUnderPageBackgroundColor const): Added.
+            Store the client-overriden value for `underPageBackgroundColor` and manage state changes.
+
+            * UIProcess/PageClient.h:
+            (WebKit::PageClient::underPageBackgroundColorWillChange): Added.
+            (WebKit::PageClient::underPageBackgroundColorDidChange): Added.
+            * UIProcess/Cocoa/PageClientImplCocoa.h:
+            * UIProcess/Cocoa/PageClientImplCocoa.mm:
+            (WebKit::PageClientImplCocoa::underPageBackgroundColorWillChange): Added.
+            (WebKit::PageClientImplCocoa::underPageBackgroundColorDidChange): Added.
+            Add ObjC KVO support for `-[WKWebView underPageBackgroundColor]`.
+
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::contentViewBackgroundColor): Added.
+            Provide a way to get the `backgroundColor` of the `WKContentView`. This is needed on iOS
+            because `scrollViewBackgroundColor` (now `WebPageProxy::platformUnderPageBackgroundColor`)
+            would use this value before falling back to the underlying platform view's background color.
+
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::setUnderPageBackgroundColorOverride): Added.
+            Pass the client-overriden value for `underPageBackgroundColor` to the WebProcess so that it
+            can be used when drawing the overscroll layer.
+
+            * UIProcess/ViewSnapshotStore.cpp:
+            (WebKit::ViewSnapshotStore::recordSnapshot):
+            Go back to using the `pageExtendedBackgroundColor` (before r273083).
+
+2021-05-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r277528. rdar://problem/78109685
 
     REGRESSION (r269824): Random tile corruption when scrolling/zooming in macCatalyst

@@ -81,19 +81,11 @@
 
 @end
 
-enum class UseSampledPageTopColorForScrollAreaBackgroundColor : bool { Yes, No };
-static RetainPtr<TestWKWebView> createWebViewWithSampledPageTopColorMaxDifference(double sampledPageTopColorMaxDifference, double sampledPageTopColorMinHeight = 0, UseSampledPageTopColorForScrollAreaBackgroundColor useSampledPageTopColorForScrollAreaBackgroundColor = UseSampledPageTopColorForScrollAreaBackgroundColor::No)
+static RetainPtr<TestWKWebView> createWebViewWithSampledPageTopColorMaxDifference(double sampledPageTopColorMaxDifference, double sampledPageTopColorMinHeight = 0)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setSampledPageTopColorMaxDifference:sampledPageTopColorMaxDifference];
     [configuration _setSampledPageTopColorMinHeight:sampledPageTopColorMinHeight];
-
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"UseSampledPageTopColorForScrollAreaBackgroundColor"]) {
-            [[configuration preferences] _setEnabled:(useSampledPageTopColorForScrollAreaBackgroundColor == UseSampledPageTopColorForScrollAreaBackgroundColor::Yes) forInternalDebugFeature:feature];
-            break;
-        }
-    }
 
     return adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 }
@@ -358,34 +350,3 @@ TEST(SampledPageTopColor, DISABLED_DisplayP3)
     EXPECT_IN_RANGE(components[2], 1.00, 1.01);
     EXPECT_EQ(components[3], 1);
 }
-
-#if PLATFORM(IOS_FAMILY)
-
-// There's no API/SPI to get the background color of the scroll area on macOS.
-
-TEST(SampledPageTopColor, ExperimentalUseSampledPageTopColorForScrollAreaBackgroundColor)
-{
-    auto webViewWithoutThemeColorForScrollAreaBackgroundColor = createWebViewWithSampledPageTopColorMaxDifference(5, 0, UseSampledPageTopColorForScrollAreaBackgroundColor::No);
-    EXPECT_NULL([webViewWithoutThemeColorForScrollAreaBackgroundColor _sampledPageTopColor]);
-
-    [webViewWithoutThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, { "red"_s, "blue"_s })];
-    EXPECT_NULL([webViewWithoutThemeColorForScrollAreaBackgroundColor _sampledPageTopColor]);
-    EXPECT_EQ(WebCore::Color([webViewWithoutThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor), WebCore::Color::white);
-
-    waitForSampledPageTopColorToChangeForHTML(webViewWithoutThemeColorForScrollAreaBackgroundColor.get(), createHTMLGradientWithColorStops("right"_s, { "red"_s, "red"_s }));
-    EXPECT_EQ(WebCore::Color([webViewWithoutThemeColorForScrollAreaBackgroundColor _sampledPageTopColor].CGColor), WebCore::Color::red);
-    EXPECT_EQ(WebCore::Color([webViewWithoutThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor), WebCore::Color::white);
-
-    auto webViewWithThemeColorForScrollAreaBackgroundColor = createWebViewWithSampledPageTopColorMaxDifference(5, 0, UseSampledPageTopColorForScrollAreaBackgroundColor::Yes);
-    EXPECT_NULL([webViewWithThemeColorForScrollAreaBackgroundColor _sampledPageTopColor]);
-
-    [webViewWithThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:createHTMLGradientWithColorStops("right"_s, { "red"_s, "blue"_s })];
-    EXPECT_NULL([webViewWithThemeColorForScrollAreaBackgroundColor _sampledPageTopColor]);
-    EXPECT_EQ(WebCore::Color([webViewWithThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor), WebCore::Color::white);
-
-    waitForSampledPageTopColorToChangeForHTML(webViewWithThemeColorForScrollAreaBackgroundColor.get(), createHTMLGradientWithColorStops("right"_s, { "red"_s, "red"_s }));
-    EXPECT_EQ(WebCore::Color([webViewWithThemeColorForScrollAreaBackgroundColor _sampledPageTopColor].CGColor), WebCore::Color::red);
-    EXPECT_EQ(WebCore::Color([webViewWithThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor), WebCore::Color::red);
-}
-
-#endif // PLATFORM(IOS_FAMILY)

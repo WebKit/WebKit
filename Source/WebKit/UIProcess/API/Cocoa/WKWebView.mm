@@ -1721,6 +1721,21 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return WebCore::platformColor(themeColor);
 }
 
+- (CocoaColor *)underPageBackgroundColor
+{
+    return WebCore::platformColor(_page->underPageBackgroundColor());
+}
+
+- (void)setUnderPageBackgroundColor:(CocoaColor *)underPageBackgroundColorOverride
+{
+    _page->setUnderPageBackgroundColorOverride(underPageBackgroundColorOverride.CGColor);
+}
+
++ (BOOL)automaticallyNotifiesObserversOfUnderPageBackgroundColor
+{
+    return NO;
+}
+
 @end
 
 #pragma mark -
@@ -3188,11 +3203,13 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     _page->setCanUseCredentialStorage(canUseCredentialStorage);
 }
 
+// FIXME: Remove old `-[WKWebView _themeColor]` SPI <rdar://76662644>
 - (CocoaColor *)_themeColor
 {
     return [self themeColor];
 }
 
+// FIXME: Remove old `-[WKWebView _pageExtendedBackgroundColor]` SPI <rdar://77789732>
 - (CocoaColor *)_pageExtendedBackgroundColor
 {
     auto pageExtendedBackgroundColor = _page->pageExtendedBackgroundColor();
