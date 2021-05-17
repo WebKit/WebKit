@@ -4669,7 +4669,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-paint-size-001.html [ Im
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-size-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-size-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-stacking-context-001a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-paint-stacking-context-001b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-table-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-table-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-strict-001.html [ ImageOnlyFailure ]
@@ -4856,7 +4855,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-
 webkit.org/b/224928 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/225035 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html [ ImageOnlyFailure ]
 webkit.org/b/225034 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003.html [ ImageOnlyFailure ]
-webkit.org/b/225442 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-contain-1.html [ ImageOnlyFailure ]
 webkit.org/b/224902 [ Debug ] imported/w3c/web-platform-tests/css/css-will-change/parsing/will-change-invalid.html [ Skip ]
 
 # Implement offset-* properties

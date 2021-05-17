@@ -1,3 +1,23 @@
+2021-05-17  Rob Buis  <rbuis@igalia.com>
+
+        will-change: contain should create a containing block
+        https://bugs.webkit.org/show_bug.cgi?id=225442
+
+        Reviewed by Antti Koivisto.
+
+        Make will-change: contain cause the element to be a containing block for both
+        position: fixed and position: absolute cases as well as create a CSS stacking
+        context for the element.
+
+        Tests: imported/w3c/web-platform-tests/css/css-contain/contain-paint-stacking-context-001b.html
+               imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-contain-1.html
+
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::createsContainingBlockForOutOfFlowPositioned const):
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueWillChange):
+
 2021-05-17  Tim Nguyen  <ntim@apple.com>
 
         will-change: position should not create a containing block for position: fixed elements

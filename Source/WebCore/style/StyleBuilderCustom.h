@@ -2003,8 +2003,11 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
             willChange->addFeature(WillChangeData::Feature::Contents);
             break;
         default:
-            if (primitiveValue.isPropertyID())
+            if (primitiveValue.isPropertyID()) {
+                if (primitiveValue.propertyID() == CSSPropertyContain && !builderState.document().settings().cssContainmentEnabled())
+                    break;
                 willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
+            }
             break;
         }
     }

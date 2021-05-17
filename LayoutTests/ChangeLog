@@ -1,3 +1,18 @@
+2021-05-17  Rob Buis  <rbuis@igalia.com>
+
+        will-change: contain should create a containing block
+        https://bugs.webkit.org/show_bug.cgi?id=225442
+
+        Reviewed by Antti Koivisto.
+
+        Tests contain-paint-stacking-context-001b.html (testing
+        that will-change: contain creates a containing block) and
+        contain-paint-stacking-context-001b.html (which tests that
+        will-change: contain creates a CSS stacking context) now
+        pass, so no longer mark them as image failures.
+
+        * TestExpectations:
+
 2021-05-17  Tim Nguyen  <ntim@apple.com>
 
         will-change: position should not create a containing block for position: fixed elements

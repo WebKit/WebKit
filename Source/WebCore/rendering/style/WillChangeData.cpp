@@ -75,6 +75,7 @@ bool WillChangeData::createsContainingBlockForOutOfFlowPositioned() const
         || containsProperty(CSSPropertyTranslate)
         || containsProperty(CSSPropertyRotate)
         || containsProperty(CSSPropertyScale)
+        || containsProperty(CSSPropertyContain)
         // CSS filter & backdrop-filter
         // FIXME: exclude root element for those properties (bug 225034)
 #if ENABLE(FILTERS_LEVEL_2)
@@ -115,6 +116,7 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
+    case CSSPropertyContain:
         return true;
     default:
         return false;
