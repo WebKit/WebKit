@@ -1,3 +1,25 @@
+2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Validate DocumentMarkerLineStyle::Mode when decoding DrawDotsForDocumentMarker
+        https://bugs.webkit.org/show_bug.cgi?id=225874
+        rdar://77885775
+
+        Reviewed by Simon Fraser.
+
+        Add validation around the style mode enum in `DrawDotsForDocumentMarker`'s `DocumentMarkerLineStyle`. To ensure
+        that these enum values are safely decoded when deserializing `DrawDotsForDocumentMarker` items from arbitrary
+        data, we store and read the style mode as `DocumentMarkerLineStyle::Mode`'s underlying type: a `uint8_t`. Upon
+        item validation, we'll then return `false` from `isValid()` in the case where the underlying value is not a
+        valid `DocumentMarkerLineStyle::Mode`.
+
+        This is necessary because copying invalid enum class types triggers undefined behavior in C++, so we need to
+        avoid copying the enum value as a `DocumentMarkerLineStyle::Mode` prior to validation.
+
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::operator<<):
+        (WebCore::DisplayList::DrawDotsForDocumentMarker::isValid const):
+        * platform/graphics/displaylists/DisplayListItems.h:
+
 2021-05-17  Chris Dumez  <cdumez@apple.com>
 
         Avoid more String creations when preparing SQLite statements

@@ -40,6 +40,7 @@
 #include "PixelBuffer.h"
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Variant.h>
 
@@ -1272,11 +1273,23 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    DrawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+    using UnderlyingDocumentMarkerLineStyleType = std::underlying_type<DocumentMarkerLineStyle::Mode>::type;
+
+    DrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
         : m_rect(rect)
-        , m_style(style)
+        , m_styleMode(static_cast<UnderlyingDocumentMarkerLineStyleType>(style.mode))
+        , m_styleShouldUseDarkAppearance(style.shouldUseDarkAppearance)
     {
     }
+
+    DrawDotsForDocumentMarker(const FloatRect& rect, UnderlyingDocumentMarkerLineStyleType styleMode, bool styleShouldUseDarkAppearance)
+        : m_rect(rect)
+        , m_styleMode(styleMode)
+        , m_styleShouldUseDarkAppearance(styleShouldUseDarkAppearance)
+    {
+    }
+
+    bool isValid() const { return isValidEnum<DocumentMarkerLineStyle::Mode>(m_styleMode); }
 
     FloatRect rect() const { return m_rect; }
 
@@ -1287,7 +1300,8 @@ public:
 
 private:
     FloatRect m_rect;
-    DocumentMarkerLineStyle m_style;
+    UnderlyingDocumentMarkerLineStyleType m_styleMode { 0 };
+    bool m_styleShouldUseDarkAppearance { false };
 };
 
 class DrawEllipse {
