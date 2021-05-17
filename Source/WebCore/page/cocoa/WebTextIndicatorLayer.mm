@@ -30,6 +30,7 @@
 #import "GraphicsContext.h"
 #import "PathUtilities.h"
 #import "TextIndicator.h"
+#import "TextIndicatorWindow.h"
 #import "WebActionDisablingCALayerDelegate.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -38,19 +39,14 @@
 #import <pal/spi/cocoa/NSColorSPI.h>
 #endif
 
-constexpr CFTimeInterval bounceAnimationDuration = 0.12;
 constexpr CFTimeInterval bounceWithCrossfadeAnimationDuration = 0.3;
 constexpr CFTimeInterval fadeInAnimationDuration = 0.15;
-constexpr CFTimeInterval timeBeforeFadeStarts = bounceAnimationDuration + 0.2;
 constexpr CFTimeInterval fadeOutAnimationDuration = 0.3;
 
-constexpr CGFloat midBounceScale = 1.25;
 constexpr CGFloat borderWidth = 0;
 constexpr CGFloat cornerRadius = 0;
 constexpr CGFloat dropShadowOffsetX = 0;
 constexpr CGFloat dropShadowOffsetY = 1;
-constexpr CGFloat dropShadowBlurRadius = 2;
-constexpr CGFloat rimShadowBlurRadius = 1;
 
 constexpr NSString * const textLayerKey = @"TextLayer";
 constexpr NSString * const dropShadowLayerKey = @"DropShadowLayer";
@@ -132,12 +128,11 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
     if (!(self = [super init]))
         return nil;
     
+    self.anchorPoint = CGPointZero;
     self.frame = frame;
 
     _textIndicator = &textIndicator;
     _margin = margin;
-
-    self.anchorPoint = CGPointZero;
 
     RefPtr<WebCore::NativeImage> contentsImage;
     WebCore::FloatSize contentsImageLogicalSize { 1, 1 };
@@ -192,7 +187,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
         RetainPtr<CALayer> dropShadowLayer = adoptNS([[CALayer alloc] init]);
         [dropShadowLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [dropShadowLayer setShadowColor:dropShadowColor.get()];
-        [dropShadowLayer setShadowRadius:dropShadowBlurRadius];
+        [dropShadowLayer setShadowRadius:WebCore::dropShadowBlurRadius];
         [dropShadowLayer setShadowOffset:CGSizeMake(dropShadowOffsetX, dropShadowOffsetY)];
         [dropShadowLayer setShadowPath:translatedPath.platformPath()];
         [dropShadowLayer setShadowOpacity:1];
@@ -204,7 +199,7 @@ static bool indicatorWantsFadeIn(const WebCore::TextIndicator& indicator)
         [rimShadowLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [rimShadowLayer setFrame:yellowHighlightRect];
         [rimShadowLayer setShadowColor:rimShadowColor.get()];
-        [rimShadowLayer setShadowRadius:rimShadowBlurRadius];
+        [rimShadowLayer setShadowRadius:WebCore::rimShadowBlurRadius];
         [rimShadowLayer setShadowPath:translatedPath.platformPath()];
         [rimShadowLayer setShadowOffset:CGSizeZero];
         [rimShadowLayer setShadowOpacity:1];
@@ -245,7 +240,7 @@ static RetainPtr<CAKeyframeAnimation> createBounceAnimation(CFTimeInterval durat
     RetainPtr<CAKeyframeAnimation> bounceAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
     [bounceAnimation setValues:@[
         [NSValue valueWithCATransform3D:CATransform3DIdentity],
-        [NSValue valueWithCATransform3D:CATransform3DMakeScale(midBounceScale, midBounceScale, 1)],
+        [NSValue valueWithCATransform3D:CATransform3DMakeScale(WebCore::midBounceScale, WebCore::midBounceScale, 1)],
         [NSValue valueWithCATransform3D:CATransform3DIdentity]
         ]];
     [bounceAnimation setDuration:duration];
@@ -294,7 +289,7 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
     if ([self indicatorWantsBounce:*_textIndicator]) {
         if (indicatorWantsContentCrossfade(*_textIndicator))
             return bounceWithCrossfadeAnimationDuration;
-        return bounceAnimationDuration;
+        return WebCore::bounceAnimationDuration.value();
     }
 
     return fadeInAnimationDuration;

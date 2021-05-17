@@ -155,6 +155,8 @@ private:
     void storeAppHighlight(WebCore::AppHighlight&&) const final;
 #endif
 
+    void setTextIndicator(const WebCore::TextIndicatorData&) const final;
+
 #if ENABLE(POINTER_LOCK)
     bool requestPointerLock() final;
     void requestPointerUnlock() final;
