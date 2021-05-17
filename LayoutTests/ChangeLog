@@ -1,3 +1,13 @@
+2021-05-17  Jer Noble  <jer.noble@apple.com>
+
+        MediaSession action handlers aren't treated as having a user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=225875
+
+        Reviewed by Eric Carlson.
+
+        * media/media-session/user-gesture-action-handlers-expected.txt: Added.
+        * media/media-session/user-gesture-action-handlers.html: Added.
+
 2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Several OffscreenCanvas tests are failing since r277543.

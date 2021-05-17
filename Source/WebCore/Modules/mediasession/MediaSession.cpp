@@ -275,6 +275,7 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
 bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails)
 {
     if (auto handler = m_actionHandlers.get(actionDetails.action)) {
+        UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
         handler->handleEvent(actionDetails);
         return true;
     }

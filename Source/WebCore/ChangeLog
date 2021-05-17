@@ -1,3 +1,18 @@
+2021-05-17  Jer Noble  <jer.noble@apple.com>
+
+        MediaSession action handlers aren't treated as having a user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=225875
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-session/user-gesture-action-handlers.html
+
+        We treat remote control commands as having a user gesture, but not when firing
+        a MediaSession action handler; we should treat them the same.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::callActionHandler):
+
 2021-05-17  Chris Dumez  <cdumez@apple.com>
 
         Move more logic from AudioDestinationNode to its subclasses
