@@ -1,5 +1,15 @@
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
+        Fix clean build after r277606
+        https://bugs.webkit.org/show_bug.cgi?id=223658
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentSecurityPolicy.mm:
+        (TEST):
+        Use API instead of removed API.
+        Why EWS didn't find this, we may never know.
+
+2021-05-17  Alex Christensen  <achristensen@webkit.org>
+
         [Cocoa] Remove prototype loadSimulatedRequest methods
         https://bugs.webkit.org/show_bug.cgi?id=223658
 
