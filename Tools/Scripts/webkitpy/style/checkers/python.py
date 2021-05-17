@@ -30,6 +30,7 @@ from webkitcorepy import StringIO
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
 
 import pycodestyle
 
@@ -40,6 +41,7 @@ class PythonChecker(object):
     def __init__(self, file_path, handle_style_error):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
+        self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
 
     def check(self, lines):
         self._check_pycodestyle(lines)
@@ -47,6 +49,7 @@ class PythonChecker(object):
         # Pylint can't live happily in python 2 and 3 world, we need to pick one
         if sys.version_info < (3, 0):
             self._check_pylint(lines)
+        self._inclusive_language_checker.check(lines)
 
     def _check_pycodestyle(self, lines):
         # Initialize pycodestyle.options, which is necessary for

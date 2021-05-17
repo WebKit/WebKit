@@ -26,6 +26,7 @@
 from sys import maxsize
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 from webkitpy.style.checkers.common import TabChecker, match, search, searchIgnorecase
+from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
 
 
 class ChangeLogChecker(object):
@@ -38,6 +39,7 @@ class ChangeLogChecker(object):
         self.handle_style_error = handle_style_error
         self.should_line_be_checked = should_line_be_checked
         self._tab_checker = TabChecker(file_path, handle_style_error)
+        self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
 
     def check_entry(self, first_line_checked, entry_lines):
         if not entry_lines:
@@ -79,6 +81,7 @@ class ChangeLogChecker(object):
 
     def check(self, lines):
         self._tab_checker.check(lines)
+        self._inclusive_language_checker.check(lines)
         first_line_checked = 0
         entry_lines = []
 

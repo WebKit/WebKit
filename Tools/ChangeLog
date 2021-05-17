@@ -1,3 +1,22 @@
+2021-05-17  Aakash Jain  <aakash_jain@apple.com>
+
+        Style checker should check for non-inclusive terminology
+        https://bugs.webkit.org/show_bug.cgi?id=213088
+
+        Reviewed by Jonathan Bedard.
+
+        Style checker should check for non-inclusive terminology so that we can avoid unintentional addition
+        of non-inclusive terminology in our codebase.
+        * Scripts/webkitpy/style/checkers/inclusive_language.py: Added inclusive language checker.
+        (InclusiveLanguageChecker):
+        (InclusiveLanguageChecker.check):
+        * Scripts/webkitpy/style/checkers/changelog.py: Check for inclusive language.
+        * Scripts/webkitpy/style/checkers/cpp.py: Ditto.
+        * Scripts/webkitpy/style/checkers/js.py: Ditto.
+        * Scripts/webkitpy/style/checkers/python.py: Ditto.
+        * Scripts/webkitpy/style/checkers/text.py: Ditto.
+        * Scripts/report-non-inclusive-language: Ignore the newly added inclusive_language.py file.
+
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix clean build after r277606

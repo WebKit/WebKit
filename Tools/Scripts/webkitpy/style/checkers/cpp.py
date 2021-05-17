@@ -48,6 +48,7 @@ import unicodedata
 from webkitcorepy import unicode, Version
 
 from webkitpy.style.checkers.common import match, search, sub, subn
+from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version_name_map import VersionNameMap
 
@@ -4701,6 +4702,7 @@ class CppChecker(object):
         self.file_path = file_path
         self.handle_style_error = handle_style_error
         self.min_confidence = min_confidence
+        self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
         _unit_test_config = unit_test_config
 
     # Useful for unit testing.
@@ -4727,3 +4729,4 @@ class CppChecker(object):
             return
         _process_lines(self.file_path, self.file_extension, lines,
                        self.handle_style_error, self.min_confidence)
+        self._inclusive_language_checker.check(lines)
