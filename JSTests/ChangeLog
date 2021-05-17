@@ -1,3 +1,14 @@
+2021-05-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r271119): Object methods defined with shorthand notation cannot access "caller" in non-strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=225277
+
+        Reviewed by Darin Adler.
+
+        * stress/caller-and-arguments-properties-for-functions-that-dont-have-them.js: Now covers #157461 and #157863. 
+        * stress/function-caller-cross-realm-via-call-apply.js: Added, coverage for #34553.
+        * stress/function-hidden-as-caller.js: Also adds test case for #102276.
+
 2021-05-16  Saam Barati  <sbarati@apple.com>
 
         DFGVarargsForwardingPhase shouldn't consult Flush
