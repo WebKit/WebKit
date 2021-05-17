@@ -1,3 +1,16 @@
+2021-05-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r277560): conditional attribute typos in IDLs for OffscreenCanvas, OffscreenCanvasRenderingContext2D
+        https://bugs.webkit.org/show_bug.cgi?id=225858
+
+        Unreviewed. Tweaking the for-worker conditional attribute values for the
+        OffscreenCanvas and OffscreenCanvasRenderingContext2D interfaces after
+        the r277560 refactoring. The mismatch in the conditional values left the
+        two interfaces outside any worker global space.
+
+        * html/OffscreenCanvas.idl:
+        * html/canvas/OffscreenCanvasRenderingContext2D.idl:
+
 2021-05-16  Sam Weinig  <weinig@apple.com>
 
         Support serializing ImageData object colorSpace property in SerializedScriptValue

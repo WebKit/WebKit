@@ -49,7 +49,7 @@ enum OffscreenRenderingContextType
     GenerateIsReachable=Impl,
     EnabledAtRuntime=OffscreenCanvas,
     Conditional=OFFSCREEN_CANVAS,
-    ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKER,
+    ConditionalForWorker=OFFSCREEN_CANVAS_IN_WORKERS,
     EnabledForContext,
     Exposed=(Window,Worker)
 ] interface OffscreenCanvas : EventTarget {
