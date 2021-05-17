@@ -579,9 +579,13 @@ OSStatus CoreAudioSharedUnit::defaultOutputDevice(uint32_t* deviceID)
     AudioObjectPropertyAddress address = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+        kAudioObjectPropertyElementMain
+#else
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
         ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     };
 
     if (AudioObjectHasProperty(kAudioObjectSystemObject, &address)) {

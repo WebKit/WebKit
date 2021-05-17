@@ -1,5 +1,42 @@
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
+        Use kAudioObjectPropertyElementMain where available
+        https://bugs.webkit.org/show_bug.cgi?id=224635
+
+        Reviewed by Eric Carlson.
+
+        * platform/audio/mac/AudioHardwareListenerMac.cpp:
+        (WebCore::isAudioHardwareProcessRunning):
+        (WebCore::currentDeviceSupportedBufferSizes):
+        (WebCore::processIsRunningPropertyDescriptor):
+        (WebCore::outputDevicePropertyDescriptor):
+        * platform/audio/mac/AudioSessionMac.mm:
+        (WebCore::defaultDevice):
+        (WebCore::defaultDeviceTransportIsBluetooth):
+        (WebCore::AudioSessionPrivate::addSampleRateObserverIfNeeded):
+        (WebCore::AudioSessionPrivate::addBufferSizeObserverIfNeeded):
+        (WebCore::AudioSession::sampleRate const):
+        (WebCore::AudioSession::bufferSize const):
+        (WebCore::AudioSession::maximumNumberOfOutputChannels const):
+        (WebCore::AudioSession::setPreferredBufferSize):
+        (WebCore::AudioSession::isMuted const):
+        (WebCore::AudioSession::addMutedStateObserver):
+        (WebCore::AudioSession::removeMutedStateObserver):
+        * platform/mediastream/mac/CoreAudioCaptureDevice.cpp:
+        (WebCore::getDeviceInfo):
+        (WebCore::CoreAudioCaptureDevice::CoreAudioCaptureDevice):
+        (WebCore::CoreAudioCaptureDevice::relatedAudioDeviceIDs):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::deviceHasInputStreams):
+        (WebCore::deviceHasOutputStreams):
+        (WebCore::isValidCaptureDevice):
+        (WebCore::CoreAudioCaptureDeviceManager::coreAudioCaptureDevices):
+        (WebCore::computeAudioDeviceList):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::defaultOutputDevice):
+
+2021-05-17  Alex Christensen  <achristensen@webkit.org>
+
         Null check m_resource in SubresourceLoader::didReceiveResponse
         https://bugs.webkit.org/show_bug.cgi?id=225879
 
