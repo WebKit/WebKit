@@ -1,3 +1,14 @@
+2021-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Null check m_resource in SubresourceLoader::didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=225879
+        <rdar://78084804>
+
+        Reviewed by Chris Dumez.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+
 2021-05-17  Youenn Fablet  <youenn@apple.com>
 
         [ BigSur Debug wk2 ARM64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html is flaky crashing
