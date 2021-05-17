@@ -7,6 +7,7 @@ PASS operator stretching inside Phantom
 PASS operator stretching inside Math
 PASS operator stretching inside Menclose
 PASS operator stretching inside Mpadded
+FAIL operator stretching inside Unknown assert_greater_than_equal: expected a number greater than or equal to 100 but got 0
 ↨
 
 ↨

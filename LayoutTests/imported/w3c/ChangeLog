@@ -1,3 +1,141 @@
+2021-05-16  Cameron McCormack  <heycam@apple.com>
+
+        Make MathML WPTs wait for all font loads
+        https://bugs.webkit.org/show_bug.cgi?id=225728
+
+        Reviewed by Darin Adler.
+
+        With current interop issues around font loading, there's no guarantee
+        that waiting on the document.fonts.ready promise in the load event will
+        catch font loads initiated by content. Since these tests are not
+        explicitly testing font loading behavior, change to wait explicitly for
+        all fonts to load.
+
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-bar-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-001-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-002-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-003-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-003.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-004-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-004.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-005-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-005.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/mrow/no-spacing.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/mrow/spacing.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006.html:
+        * web-platform-tests/mathml/presentation-markup/radicals/dynamic-radical-paint-invalidation-001.html:
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/cramped-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/empty-underover.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative.html:
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height.html:
+        * web-platform-tests/mathml/relations/css-styling/color-005.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-013.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-014.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-2.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-3.html:
+        * web-platform-tests/mathml/relations/css-styling/lengths-2.html:
+        * web-platform-tests/mathml/relations/css-styling/visibility-005.html:
+        * web-platform-tests/mathml/support/fonts.js: Added.
+        (loadAllFonts):
+
 2021-05-16  Sam Weinig  <weinig@apple.com>
 
         Add support for creating/accessing/setting non-sRGB ImageData via canvas
