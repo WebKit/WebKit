@@ -27,7 +27,6 @@
 
 #import "AppDelegate.h"
 #import <WebKit/WKUserContentControllerPrivate.h>
-#import <WebKit/_WKUserContentExtensionStore.h>
 
 @implementation ExtensionManagerWindowController
 
@@ -38,7 +37,7 @@
         NSArray* installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
         if (installedContentExtensions) {
             for (NSString *identifier in installedContentExtensions) {
-                [[_WKUserContentExtensionStore defaultStore] lookupContentExtensionForIdentifier:identifier completionHandler:^(_WKUserContentFilter *extension, NSError *error)
+                [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *list, NSError *error)
                 {
                     if (error) {
                         NSLog(@"Extension store got out of sync with system defaults.");
@@ -46,7 +45,7 @@
                     }
 
                     BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
-                    [appDelegate.userContentContoller _addUserContentFilter:extension];
+                    [appDelegate.userContentContoller addContentRuleList:list];
                 }];
             }
                 
@@ -83,7 +82,7 @@
         NSString *identifier = url.lastPathComponent;
         NSString *jsonString = [[NSString alloc] initWithContentsOfURL:url encoding:NSUTF8StringEncoding error:nil];
 
-        [[_WKUserContentExtensionStore defaultStore] compileContentExtensionForIdentifier:identifier encodedContentExtension:jsonString completionHandler:^(_WKUserContentFilter *extension, NSError *error)
+        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:jsonString completionHandler:^(WKContentRuleList *list, NSError *error)
         {
             
             if (error) {
@@ -108,7 +107,7 @@
             [arrayController addObject:identifier];
 
             BrowserAppDelegate* appDelegate = [[NSApplication sharedApplication] browserAppDelegate];
-            [appDelegate.userContentContoller _addUserContentFilter:extension];
+            [appDelegate.userContentContoller addContentRuleList:list];
         }];
     }];
 
@@ -120,7 +119,7 @@
 
     NSString *identifierToRemove = arrayController.arrangedObjects[index];
 
-    [[_WKUserContentExtensionStore defaultStore] removeContentExtensionForIdentifier:identifierToRemove completionHandler:^(NSError *error)
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:identifierToRemove completionHandler:^(NSError *error)
     {
         if (error) {
             NSAlert *alert = [NSAlert alertWithError:error];

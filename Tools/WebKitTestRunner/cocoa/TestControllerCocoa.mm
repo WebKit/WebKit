@@ -35,6 +35,7 @@
 #import "WebCoreTestSupport.h"
 #import <Foundation/Foundation.h>
 #import <Security/SecItem.h>
+#import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -50,8 +51,6 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKApplicationManifest.h>
-#import <WebKit/_WKUserContentExtensionStore.h>
-#import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/MainThread.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -263,15 +262,16 @@ void TestController::setDefaultCalendarType(NSString *identifier, NSString *loca
 void TestController::resetContentExtensions()
 {
     __block bool doneRemoving = false;
-    [[_WKUserContentExtensionStore defaultStore] removeContentExtensionForIdentifier:@"TestContentExtensions" completionHandler:^(NSError *error) {
+    // FIXME: This does not match the store used in TestController::configureContentExtensionForTest. It probably should.
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"TestContentExtensions" completionHandler:^(NSError *error) {
         doneRemoving = true;
     }];
     platformRunUntil(doneRemoving, noTimeout);
-    [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
+    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
 
     if (auto* webView = mainWebView()) {
         TestRunnerWKWebView *platformView = webView->platformView();
-        [platformView.configuration.userContentController _removeAllUserContentFilters];
+        [platformView.configuration.userContentController removeAllContentRuleLists];
     }
 }
 

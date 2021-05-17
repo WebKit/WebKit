@@ -29,6 +29,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKMutableDictionary.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPagePrivate.h>
@@ -43,7 +44,6 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsitePolicies.h>
 #import <WebKit/_WKCustomHeaderFields.h>
-#import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Function.h>
 #import <wtf/HashMap.h>
@@ -137,15 +137,15 @@ static size_t alertCount;
 
 TEST(WebpagePreferences, WebsitePoliciesContentBlockersEnabled)
 {
-    [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
+    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     doneCompiling = false;
     NSString* contentBlocker = @"[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]";
-    [[_WKUserContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"WebsitePoliciesTest" encodedContentExtension:contentBlocker completionHandler:^(_WKUserContentFilter *filter, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"WebsitePoliciesTest" encodedContentRuleList:contentBlocker completionHandler:^(WKContentRuleList *list, NSError *error) {
         EXPECT_TRUE(error == nil);
-        [[configuration userContentController] _addUserContentFilter:filter];
+        [[configuration userContentController] addContentRuleList:list];
         doneCompiling = true;
     }];
     TestWebKitAPI::Util::run(&doneCompiling);
@@ -170,7 +170,7 @@ TEST(WebpagePreferences, WebsitePoliciesContentBlockersEnabled)
     [webView _reloadWithoutContentBlockers];
     TestWebKitAPI::Util::run(&receivedAlert);
 
-    [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
+    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
 }
 
 @interface AutoplayPoliciesDelegate : TestNavigationDelegate <WKNavigationDelegate, WKUIDelegatePrivate>
