@@ -1,5 +1,11 @@
 2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Several OffscreenCanvas tests are failing since r277543.
+
+        * platform/glib/TestExpectations:
+
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Skip tests requiring support for 'display-p3'.
 
         * platform/glib/TestExpectations:
