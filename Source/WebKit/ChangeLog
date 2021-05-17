@@ -1,5 +1,38 @@
 2021-05-17  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r277528. rdar://problem/78109685
+
+    REGRESSION (r269824): Random tile corruption when scrolling/zooming in macCatalyst
+    https://bugs.webkit.org/show_bug.cgi?id=225837
+    <rdar://problem/75053997>
+    
+    Reviewed by Simon Fraser.
+    
+    * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+    (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+    Mark the newly front buffer non-volatile before painting into it.
+    This was lost in r269824. Oddly, this caused less trouble than
+    one might expect, except on some particular hardware.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277528 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-14  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r269824): Random tile corruption when scrolling/zooming in macCatalyst
+            https://bugs.webkit.org/show_bug.cgi?id=225837
+            <rdar://problem/75053997>
+
+            Reviewed by Simon Fraser.
+
+            * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+            (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+            Mark the newly front buffer non-volatile before painting into it.
+            This was lost in r269824. Oddly, this caused less trouble than
+            one might expect, except on some particular hardware.
+
+2021-05-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r277453. rdar://problem/78108967
 
     Add textIndicator bounce for AppHighlights on scroll.
