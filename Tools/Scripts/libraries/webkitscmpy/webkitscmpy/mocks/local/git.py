@@ -26,6 +26,8 @@ import re
 import time
 
 from datetime import datetime
+from mock import patch
+
 from webkitcorepy import mocks, OutputCapture, StringIO
 from webkitscmpy import local, Commit, Contributor
 from webkitscmpy.program.canonicalize.committer import main as committer_main
@@ -327,6 +329,12 @@ nothing to commit, working tree clean
                 ),
             ), *git_svn_routes
         )
+
+    def __enter__(self):
+        # TODO: Use shutil directly when Python 2.7 is removed
+        from whichcraft import which
+        self.patches.append(patch('whichcraft.which', lambda cmd: dict(git=self.executable).get(cmd, which(cmd))))
+        return super(Git, self).__enter__()
 
     @property
     def branch(self):

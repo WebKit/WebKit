@@ -1,3 +1,20 @@
+2021-05-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Support testing on machines without svn installed
+        https://bugs.webkit.org/show_bug.cgi?id=225891
+        <rdar://problem/78126369>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.executable): Ensure whichcraft import support mock.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__enter__): Mock git executable location.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__enter__): Mock svn executable location.
+
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Remove API::Object::Type::BundlePageGroup

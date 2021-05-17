@@ -28,8 +28,6 @@ import six
 from webkitcorepy import run
 from webkitscmpy import ScmBase
 
-# TODO: Use shutil directly when Python 2.7 is removed
-from whichcraft import which
 
 class Scm(ScmBase):
     # Projects can define for themselves what constitutes a development vs a production branch,
@@ -39,6 +37,8 @@ class Scm(ScmBase):
 
     @classmethod
     def executable(cls, program):
+        # TODO: Use shutil directly when Python 2.7 is removed
+        from whichcraft import which
         path = which(program)
         if path is None:
             raise OSError("Cannot find '{}' program".format(program))
