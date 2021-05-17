@@ -73,8 +73,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
     CCallHelpers::Call call = jit.call(OperationPtrTag);
-
-    CCallHelpers::Jump exceptionCheck = jit.emitExceptionCheck(vm);
+    CCallHelpers::Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
 
 #if CPU(X86_64)
     jit.pop(X86Registers::ebp);

@@ -1,3 +1,92 @@
+2021-05-16  Mark Lam  <mark.lam@apple.com>
+
+        Implement baseline op_enter, op_ret, op_check_traps, op_throw using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225846
+
+        Reviewed by Filip Pizlo.
+
+        op_enter, op_ret, op_check_traps are 3 of the most common opcodes.  Throwing in
+        op_throw because it's easy.
+
+        In this patch, the following changes were also made:
+
+        1. Renamed copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer() to
+           copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer().
+
+           It is only used by the baseline JIT.  Changed it to always operate on
+           RegisterAtOffsetList::llintBaselineCalleeSaveRegisters().  This removes the
+           dependency on a current codeBlock being compiled, and allows us to use it
+           for a JIT thunk.
+
+        2. Added JIT::emitNakedNearJump() to make it easy to emit direct jumps to JIT thunks.
+
+           Currently, it is only used by op_ret and op_throw.
+
+        3. Changed some thunks to use emitNonPatchableExceptionCheck() instead
+           emitExceptionCheck() to make it explicit that these are not intended to be
+           patchable.
+
+        With this patch, --dumpLinkBufferStats shows the following changes in emitted
+        JIT code size (using a single run of the CLI version of JetStream2 on AS Mac)
+        comparing to current tip of tree:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 77429400 (73.842430 MB)  72407904 (69.053558 MB)  0.94x (reduction)
+                   DFG: 36160880 (34.485703 MB)  36622176 (34.925629 MB)  1.01x
+                 Thunk: 23159024 (22.086166 MB)  23295448 (22.216270 MB)  1.01x
+           InlineCache: 22068348 (21.046017 MB)  22157236 (21.130787 MB)  1.00x
+                   FTL: 6004736 (5.726562 MB)    6030536 (5.751167 MB)    1.00x
+                  Wasm: 2429204 (2.316669 MB)    2300872 (2.194283 MB)    0.95x (probably noise)
+               YarrJIT: 1522488 (1.451958 MB)    1522616 (1.452080 MB)    1.00x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        Cumulative diff since the start of this effort to put more code in JIT thunks:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  72407904 (69.053558 MB)  0.81x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36622176 (34.925629 MB)  0.94x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  23295448 (22.216270 MB)  1.00x
+           InlineCache: 22027416 (21.006981 MB)  22157236 (21.130787 MB)  1.01x
+                   FTL: 6575772 (6.271145 MB)    6030536 (5.751167 MB)    0.92x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2300872 (2.194283 MB)    1.00x
+               YarrJIT: 1538956 (1.467663 MB)    1522616 (1.452080 MB)    0.99x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::sub64):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor):
+        (JSC::AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        (JSC::NearJumpRecord::NearJumpRecord):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearJump):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emitSlow_op_check_traps):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeExtraCTIThunks):
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::generateThunk):
+
 2021-05-16  Keith Miller  <keith_miller@apple.com>
 
         IsoAlignedMemoryAllocator should use BitVector

@@ -1893,7 +1893,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     jit.setupArguments<decltype(operationGetFromScope)>(globalObjectGPR, instructionGPR);
     jit.prepareCallOperation(vm);
     CCallHelpers::Call operation = jit.call(OperationPtrTag);
-    CCallHelpers::Jump exceptionCheck = jit.emitExceptionCheck(vm);
+    CCallHelpers::Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
 
 #if CPU(X86_64)
     jit.pop(X86Registers::ebp);
@@ -2114,7 +2114,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_to_scopeGenerator(VM& vm)
 
     jit.prepareCallOperation(vm);
     CCallHelpers::Call operation = jit.call(OperationPtrTag);
-    CCallHelpers::Jump exceptionCheck = jit.emitExceptionCheck(vm);
+    CCallHelpers::Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
 
 #if CPU(X86_64)
     jit.pop(X86Registers::ebp);

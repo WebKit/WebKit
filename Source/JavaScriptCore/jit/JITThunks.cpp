@@ -364,6 +364,11 @@ void JITThunks::preinitializeExtraCTIThunks(VM& vm)
     ctiStub(vm, JIT::slow_op_put_by_val_prepareCallGenerator);
     ctiStub(vm, JIT::slow_op_put_private_name_prepareCallGenerator);
     ctiStub(vm, JIT::slow_op_put_to_scopeGenerator);
+
+    ctiStub(vm, JIT::op_check_traps_handlerGenerator);
+    ctiStub(vm, JIT::op_enter_handlerGenerator);
+    ctiStub(vm, JIT::op_ret_handlerGenerator);
+    ctiStub(vm, JIT::op_throw_handlerGenerator);
 }
 
 #endif // ENABLE(EXTRA_CTI_THUNKS)

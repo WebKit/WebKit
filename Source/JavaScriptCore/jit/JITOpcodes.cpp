@@ -32,11 +32,13 @@
 #include "BytecodeGenerator.h"
 #include "Exception.h"
 #include "JITInlines.h"
+#include "JITThunks.h"
 #include "JSCast.h"
 #include "JSFunction.h"
 #include "JSPropertyNameEnumerator.h"
 #include "LinkBuffer.h"
 #include "SuperSampler.h"
+#include "ThunkGenerators.h"
 #include "TypeLocation.h"
 #include "TypeProfilerLog.h"
 #include "VirtualRegister.h"
@@ -358,11 +360,30 @@ void JIT::emit_op_ret(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpRet>();
     emitGetVirtualRegister(bytecode.m_value, returnValueGPR);
 
+#if !ENABLE(EXTRA_CTI_THUNKS)
     checkStackPointerAlignment();
     emitRestoreCalleeSaves();
     emitFunctionEpilogue();
     ret();
+#else
+    emitNakedNearJump(vm().getCTIStub(op_ret_handlerGenerator).code());
+#endif
 }
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_ret_handlerGenerator(VM& vm)
+{
+    JIT jit(vm);
+
+    jit.checkStackPointerAlignment();
+    jit.emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
+    jit.emitFunctionEpilogue();
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_ret_handler");
+}
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 void JIT::emit_op_to_primitive(const Instruction* currentInstruction)
 {
@@ -579,11 +600,52 @@ void JIT::emit_op_throw(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpThrow>();
     ASSERT(regT0 == returnValueGPR);
+
+#if !ENABLE(EXTRA_CTI_THUNKS)
     copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
     emitGetVirtualRegister(bytecode.m_value, regT0);
     callOperationNoExceptionCheck(operationThrow, TrustedImmPtr(m_codeBlock->globalObject()), regT0);
     jumpToExceptionHandler(vm());
+#else
+    constexpr GPRReg bytecodeOffsetGPR = argumentGPR2;
+    constexpr GPRReg thrownValueGPR = argumentGPR1;
+
+    uint32_t bytecodeOffset = m_bytecodeIndex.offset();
+    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+    emitGetVirtualRegister(bytecode.m_value, thrownValueGPR);
+    emitNakedNearJump(vm().getCTIStub(op_throw_handlerGenerator).code());
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 }
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
+{
+    JIT jit(vm);
+
+    constexpr GPRReg bytecodeOffsetGPR = argumentGPR2;
+    constexpr GPRReg thrownValueGPR = argumentGPR1;
+    
+    jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
+
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+    jit.loadPtr(&vm.topEntryFrame, argumentGPR0);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(argumentGPR0);
+#endif
+
+    constexpr GPRReg globalObjectGPR = argumentGPR0;
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
+    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+
+    jit.setupArguments<decltype(operationThrow)>(globalObjectGPR, thrownValueGPR);
+    jit.prepareCallOperation(vm);
+    Call operation = jit.call(OperationPtrTag);
+    jit.jumpToExceptionHandler(vm);
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationThrow));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_throw_handler");
+}
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 template<typename Op>
 void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStrictEqType type)
@@ -1036,13 +1098,114 @@ void JIT::emit_op_enter(const Instruction*)
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
     size_t count = m_codeBlock->numVars();
+#if !ENABLE(EXTRA_CTI_THUNKS)
     for (size_t j = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); j < count; ++j)
         emitInitRegister(virtualRegisterForLocal(j));
 
     emitWriteBarrier(m_codeBlock);
 
     emitEnterOptimizationCheck();
+#else
+    ASSERT(m_bytecodeIndex.offset() == 0);
+    constexpr GPRReg localsToInitGPR = argumentGPR0;
+    constexpr GPRReg canBeOptimizedGPR = argumentGPR4;
+
+    unsigned localsToInit = count - CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
+    RELEASE_ASSERT(localsToInit < count);
+    move(TrustedImm32(localsToInit * sizeof(Register)), localsToInitGPR);
+    move(TrustedImm32(canBeOptimized()), canBeOptimizedGPR);
+    emitNakedNearCall(vm().getCTIStub(op_enter_handlerGenerator).retaggedCode<NoPtrTag>());
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 }
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
+{
+    JIT jit(vm);
+
+#if CPU(X86_64)
+    jit.push(X86Registers::ebp);
+#elif CPU(ARM64)
+    jit.tagReturnAddress();
+    jit.pushPair(framePointerRegister, linkRegister);
+#endif
+    // op_enter is always at bytecodeOffset 0.
+    jit.store32(TrustedImm32(0), tagFor(CallFrameSlot::argumentCountIncludingThis));
+
+    constexpr GPRReg localsToInitGPR = argumentGPR0;
+    constexpr GPRReg iteratorGPR = argumentGPR1;
+    constexpr GPRReg endGPR = argumentGPR2;
+    constexpr GPRReg undefinedGPR = argumentGPR3;
+    constexpr GPRReg canBeOptimizedGPR = argumentGPR4;
+
+    size_t startLocal = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters();
+    int startOffset = virtualRegisterForLocal(startLocal).offset();
+    jit.move(TrustedImm64(startOffset * sizeof(Register)), iteratorGPR);
+    jit.sub64(iteratorGPR, localsToInitGPR, endGPR);
+
+    jit.move(TrustedImm64(JSValue::encode(jsUndefined())), undefinedGPR);
+    auto initLoop = jit.label();
+    Jump initDone = jit.branch32(LessThanOrEqual, iteratorGPR, endGPR);
+    {
+        jit.store64(undefinedGPR, BaseIndex(GPRInfo::callFrameRegister, iteratorGPR, TimesOne));
+        jit.sub64(TrustedImm32(sizeof(Register)), iteratorGPR);
+        jit.jump(initLoop);
+    }
+    initDone.link(&jit);
+
+    // emitWriteBarrier(m_codeBlock).
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
+    Jump ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
+
+    jit.move(canBeOptimizedGPR, GPRInfo::numberTagRegister); // save.
+    jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(&vm, argumentGPR1);
+    jit.prepareCallOperation(vm);
+    Call operationWriteBarrierCall = jit.call(OperationPtrTag);
+
+    jit.move(GPRInfo::numberTagRegister, canBeOptimizedGPR); // restore.
+    jit.move(TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
+    ownerIsRememberedOrInEden.link(&jit);
+
+#if ENABLE(DFG_JIT)
+    Call operationOptimizeCall;
+    if (Options::useDFGJIT()) {
+        // emitEnterOptimizationCheck().
+        JumpList skipOptimize;
+
+        skipOptimize.append(jit.branchTest32(Zero, canBeOptimizedGPR));
+
+        jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
+        skipOptimize.append(jit.branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(argumentGPR1, CodeBlock::offsetOfJITExecuteCounter())));
+
+        jit.copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+
+        jit.setupArguments<decltype(operationOptimize)>(&vm, TrustedImm32(0));
+        jit.prepareCallOperation(vm);
+        operationOptimizeCall = jit.call(OperationPtrTag);
+
+        skipOptimize.append(jit.branchTestPtr(Zero, returnValueGPR));
+        jit.farJump(returnValueGPR, GPRInfo::callFrameRegister);
+
+        skipOptimize.link(&jit);
+    }
+#endif // ENABLE(DFG_JIT)
+
+#if CPU(X86_64)
+    jit.pop(X86Registers::ebp);
+#elif CPU(ARM64)
+    jit.popPair(framePointerRegister, linkRegister);
+#endif
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    patchBuffer.link(operationWriteBarrierCall, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
+#if ENABLE(DFG_JIT)
+    if (Options::useDFGJIT())
+        patchBuffer.link(operationOptimizeCall, FunctionPtr<OperationPtrTag>(operationOptimize));
+#endif
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_enter_handler");
+}
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 void JIT::emit_op_get_scope(const Instruction* currentInstruction)
 {
@@ -1208,7 +1371,7 @@ void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<Sl
     if (canBeOptimized()) {
         linkAllSlowCases(iter);
 
-        copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
+        copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
         callOperation(operationOptimize, &vm(), m_bytecodeIndex.asBits());
         Jump noOptimizedEntry = branchTestPtr(Zero, returnValueGPR);
@@ -1251,8 +1414,56 @@ void JIT::emitSlow_op_check_traps(const Instruction*, Vector<SlowCaseEntry>::ite
 {
     linkAllSlowCases(iter);
 
+#if !ENABLE(EXTRA_CTI_THUNKS)
     callOperation(operationHandleTraps, TrustedImmPtr(m_codeBlock->globalObject()));
+#else
+    constexpr GPRReg bytecodeOffsetGPR = argumentGPR3;
+    uint32_t bytecodeOffset = m_bytecodeIndex.offset();
+    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+
+    emitNakedNearCall(vm().getCTIStub(op_check_traps_handlerGenerator).retaggedCode<NoPtrTag>());
+#endif
 }
+
+#if ENABLE(EXTRA_CTI_THUNKS)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& vm)
+{
+    JIT jit(vm);
+
+#if CPU(X86_64)
+    jit.push(X86Registers::ebp);
+#elif CPU(ARM64)
+    jit.tagReturnAddress();
+    jit.pushPair(framePointerRegister, linkRegister);
+#endif
+
+    constexpr GPRReg bytecodeOffsetGPR = argumentGPR3;
+    jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
+
+    constexpr GPRReg codeBlockGPR = argumentGPR3;
+    constexpr GPRReg globalObjectGPR = argumentGPR0;
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
+    jit.loadPtr(Address(codeBlockGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    
+    jit.setupArguments<decltype(operationHandleTraps)>(globalObjectGPR);
+    jit.prepareCallOperation(vm);
+    CCallHelpers::Call operation = jit.call(OperationPtrTag);
+    CCallHelpers::Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
+
+#if CPU(X86_64)
+    jit.pop(X86Registers::ebp);
+#elif CPU(ARM64)
+    jit.popPair(framePointerRegister, linkRegister);
+#endif
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationHandleTraps));
+    auto handler = vm.jitStubs->existingCTIStub(popThunkStackPreservesAndHandleExceptionGenerator, NoLockingNecessary);
+    patchBuffer.link(exceptionCheck, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_check_traps_handler");
+}
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 void JIT::emit_op_new_regexp(const Instruction* currentInstruction)
 {

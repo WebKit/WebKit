@@ -105,6 +105,14 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedNearTailCall(CodePtr<NoPtrTag> target)
     return nakedCall;
 }
 
+ALWAYS_INLINE JIT::Jump JIT::emitNakedNearJump(CodePtr<JITThunkPtrTag> target)
+{
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    Jump nakedJump = jump();
+    m_nearJumps.append(NearJumpRecord(nakedJump, CodeLocationLabel(target)));
+    return nakedJump;
+}
+
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex.offset()).bits();

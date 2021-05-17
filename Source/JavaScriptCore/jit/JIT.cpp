@@ -93,7 +93,7 @@ void JIT::emitEnterOptimizationCheck()
     skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     ASSERT(!m_bytecodeIndex.offset());
 
-    copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
+    copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
     callOperation(operationOptimize, &vm(), m_bytecodeIndex.asBits());
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
@@ -904,6 +904,10 @@ CompilationResult JIT::link()
         patchBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
 #endif
 
+    for (auto& record : m_nearJumps) {
+        if (record.target)
+            patchBuffer.link(record.from, record.target);
+    }
     for (auto& record : m_nearCalls) {
         if (record.callee)
             patchBuffer.link(record.from, record.callee);

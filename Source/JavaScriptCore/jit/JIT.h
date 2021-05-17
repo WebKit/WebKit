@@ -94,6 +94,17 @@ namespace JSC {
     using FarCallRecord = CallRecord<OperationPtrTag>;
     using NearCallRecord = CallRecord<JSInternalPtrTag>;
 
+    struct NearJumpRecord {
+        MacroAssembler::Jump from;
+        CodeLocationLabel<JITThunkPtrTag> target;
+
+        NearJumpRecord() = default;
+        NearJumpRecord(MacroAssembler::Jump from, CodeLocationLabel<JITThunkPtrTag> target)
+            : from(from)
+            , target(target)
+        { }
+    };
+
     struct JumpTable {
         MacroAssembler::Jump from;
         unsigned toBytecodeOffset;
@@ -788,6 +799,11 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_val_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_private_name_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_to_scopeGenerator(VM&);
+
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_ret_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
 #endif
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
@@ -926,8 +942,9 @@ namespace JSC {
 
         void updateTopCallFrame();
 
-        Call emitNakedNearCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
-        Call emitNakedNearTailCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
+        Call emitNakedNearCall(CodePtr<NoPtrTag> function = { });
+        Call emitNakedNearTailCall(CodePtr<NoPtrTag> function = { });
+        Jump emitNakedNearJump(CodePtr<JITThunkPtrTag> function = { });
 
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
@@ -979,6 +996,7 @@ namespace JSC {
 
         Vector<FarCallRecord> m_farCalls;
         Vector<NearCallRecord> m_nearCalls;
+        Vector<NearJumpRecord> m_nearJumps;
         Vector<Label> m_labels;
         HashMap<BytecodeIndex, Label> m_checkpointLabels;
         Vector<JITGetByIdGenerator> m_getByIds;
