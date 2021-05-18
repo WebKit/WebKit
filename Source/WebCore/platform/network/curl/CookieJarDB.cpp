@@ -644,13 +644,13 @@ SQLiteStatement& CookieJarDB::preparedStatement(const String& sql)
 bool CookieJarDB::executeSQLStatement(Expected<SQLiteStatement, int>&& statement)
 {
     if (!statement && !checkSQLiteReturnCode(statement.error())) {
-        LOG_ERROR("Failed to prepare %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
+        LOG_ERROR("Failed to prepare sql statement with error: %s", m_database.lastErrorMsg());
         return false;
     }
 
     int ret = statement->step();
     if (!checkSQLiteReturnCode(ret)) {
-        LOG_ERROR("Failed to execute %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
+        LOG_ERROR("Failed to execute %s error: %s", statement->query().ascii().data(), m_database.lastErrorMsg());
         return false;
     }
 
