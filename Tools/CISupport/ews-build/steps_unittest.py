@@ -1751,16 +1751,16 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         rc = self.runStep()
         self.assertEqual(self.getProperty(self.property_exceed_failure_limit), True)
         self.assertEqual(self.getProperty(self.property_failures),
-                            ['imported/blink/storage/indexeddb/blob-valid-before-commit.html',
-                             'imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html'])
+                         ['imported/blink/storage/indexeddb/blob-valid-before-commit.html',
+                          'imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html'])
         return rc
 
     def test_parse_results_json_flakes(self):
@@ -2908,11 +2908,9 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('patch_id', '1234')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='WebKitBuild/release.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='WebKitBuild/release.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
@@ -2929,11 +2927,9 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('patch_id', '1234')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='WebKitBuild/release.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='WebKitBuild/release.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 1,
         )
@@ -3127,7 +3123,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
                                               '--patch_id', '1234',
                                               '--identifier', 'mac-highsierra-x86_64-release',
                                               '--archive', 'public_html/archives/mac-highsierra-x86_64-release/1234.zip',
-                                             ])
+                                              ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Transferred archive to S3')
@@ -3146,7 +3142,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
                                               '--patch_id', '1234',
                                               '--identifier', 'ios-simulator-12-x86_64-debug',
                                               '--archive', 'public_html/archives/ios-simulator-12-x86_64-debug/1234.zip',
-                                             ])
+                                              ])
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to transfer archive to S3')
@@ -3162,6 +3158,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SKIPPED, state_string='Transferred archive to S3 (skipped)')
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.runStep()
+
 
 class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -3604,11 +3601,9 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildnumber', '12')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='layout-test-results.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='layout-test-results.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
@@ -3626,11 +3621,9 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildnumber', '120')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='layout-test-results.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='layout-test-results.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
@@ -3661,7 +3654,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
                                               '-d',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
-                                             ])
+                                              ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
@@ -3681,7 +3674,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                               'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun.zip',
                                               '-d',
                                               'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun',
-                                             ])
+                                              ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
@@ -3701,7 +3694,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
                                               '-d',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
-                                             ])
+                                              ])
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='failed (2) (failure)')
