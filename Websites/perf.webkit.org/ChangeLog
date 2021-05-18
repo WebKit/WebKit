@@ -1,3 +1,13 @@
+2021-05-18  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Commits updater should ignore null revision identifier
+        https://bugs.webkit.org/show_bug.cgi?id=225911
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/include/commit-updater.php:
+        * server-tests/api-report-commits-tests.js:
+
 2021-05-07  Zhifei Fang  <zhifei_fang@apple.com>
         
         Add support for syncing repo with commit revision label.
