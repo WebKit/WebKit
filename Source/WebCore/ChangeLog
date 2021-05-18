@@ -1,3 +1,22 @@
+2021-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Drop SQLiteStatement::return*Results() functions
+        https://bugs.webkit.org/show_bug.cgi?id=225899
+
+        Reviewed by Alex Christensen.
+
+        Drop SQLiteStatement::return*Results() functions. All of them are unused
+        except for returnTextResults(), which is used only once in SQLiteDatabase.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::clearAllTables):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::returnTextResults): Deleted.
+        (WebCore::SQLiteStatement::returnIntResults): Deleted.
+        (WebCore::SQLiteStatement::returnInt64Results): Deleted.
+        (WebCore::SQLiteStatement::returnDoubleResults): Deleted.
+        * platform/sql/SQLiteStatement.h:
+
 2021-05-17  Sihui Liu  <sihui_liu@apple.com>
 
         Remove SQLiteStatement::isColumnNull and its use

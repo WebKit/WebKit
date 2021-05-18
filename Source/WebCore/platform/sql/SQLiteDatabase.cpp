@@ -397,18 +397,17 @@ bool SQLiteDatabase::tableExists(const String& tableName)
 
 void SQLiteDatabase::clearAllTables()
 {
-    Vector<String> tables;
-    auto statement = prepareStatement("SELECT name FROM sqlite_master WHERE type='table';"_s);
-    if (!statement || !statement->returnTextResults(0, tables)) {
-        LOG(SQLDatabase, "Unable to retrieve list of tables from database");
+    auto statement = prepareStatement("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';"_s);
+    if (!statement) {
+        LOG(SQLDatabase, "Failed to prepare statement to retrieve list of tables from database");
         return;
     }
-    
-    for (Vector<String>::iterator table = tables.begin(); table != tables.end(); ++table ) {
-        if (*table == "sqlite_sequence")
-            continue;
-        if (!executeCommandSlow("DROP TABLE " + *table))
-            LOG(SQLDatabase, "Unable to drop table %s", (*table).ascii().data());
+    Vector<String> tables;
+    while (statement->step() == SQLITE_ROW)
+        tables.append(statement->getColumnText(0));
+    for (auto& table : tables) {
+        if (!executeCommandSlow("DROP TABLE " + table))
+            LOG(SQLDatabase, "Unable to drop table %s", table.ascii().data());
     }
 }
 

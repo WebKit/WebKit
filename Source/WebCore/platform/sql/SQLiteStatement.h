@@ -78,11 +78,6 @@ public:
     WEBCORE_EXPORT void getColumnBlobAsVector(int col, Vector<char>&);
     WEBCORE_EXPORT void getColumnBlobAsVector(int col, Vector<uint8_t>&);
 
-    bool returnTextResults(int col, Vector<String>&);
-    bool returnIntResults(int col, Vector<int>&);
-    bool returnInt64Results(int col, Vector<int64_t>&);
-    bool returnDoubleResults(int col, Vector<double>&);
-
     SQLiteDatabase& database() { return m_database; }
     
 private:
