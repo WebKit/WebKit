@@ -1224,6 +1224,10 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
 
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002.html [ Failure Pass ]
+
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Pass Timeout ]
 

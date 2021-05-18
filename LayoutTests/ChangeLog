@@ -1,5 +1,11 @@
 2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Some mathml tests are failing in EWS GTK-WK2 but passing in post-commit bot.
+
+        * platform/glib/TestExpectations:
+
+2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. fast/canvas/canvas-conic-gradient-angle.html is an image failure.
 
         * platform/glib/TestExpectations:
