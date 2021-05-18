@@ -1,3 +1,20 @@
+2021-05-18  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r275013): Trying to navigate in a WKWebView from a command line tool crashes the Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=225938
+        <rdar://problem/78029118>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        Some kinds of processes do not have a bundle identifier, so requiring one
+        is simply not going to work.
+
+        Also, make the other exit()s in this function use CRASH() instead, so
+        that they make traditional crash logs instead of just exiting with a
+        non-zero error code (which is much quieter).
+
 2021-05-18  Alex Christensen  <achristensen@webkit.org>
 
         Allow SafariForWebKitDevelopment to launch successfully
