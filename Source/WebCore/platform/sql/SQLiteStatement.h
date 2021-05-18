@@ -40,7 +40,7 @@ public:
     
     WEBCORE_EXPORT int bindBlob(int index, const void* blob, int size);
     WEBCORE_EXPORT int bindBlob(int index, const String&);
-    WEBCORE_EXPORT int bindText(int index, const String&);
+    WEBCORE_EXPORT int bindText(int index, StringView);
     WEBCORE_EXPORT int bindInt(int index, int);
     WEBCORE_EXPORT int bindInt64(int index, int64_t);
     WEBCORE_EXPORT int bindDouble(int index, double);

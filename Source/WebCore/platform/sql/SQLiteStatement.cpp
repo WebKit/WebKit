@@ -110,22 +110,17 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     return bindBlob(index, characters, text.length() * sizeof(UChar));
 }
 
-int SQLiteStatement::bindText(int index, const String& text)
+int SQLiteStatement::bindText(int index, StringView text)
 {
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
 
-    // String::characters() returns 0 for the empty string, which SQLite
-    // treats as a null, so we supply a non-null pointer for that case.
-    auto upconvertedCharacters = StringView(text).upconvertedCharacters();
-    UChar anyCharacter = 0;
-    const UChar* characters;
-    if (text.isEmpty() && !text.isNull())
-        characters = &anyCharacter;
-    else
-        characters = upconvertedCharacters;
+    // Fast path when the input text is all ASCII.
+    if (text.is8Bit() && text.isAllASCII())
+        return sqlite3_bind_text(m_statement, index, text.length() ? reinterpret_cast<const char*>(text.characters8()) : "", text.length(), SQLITE_TRANSIENT);
 
-    return sqlite3_bind_text16(m_statement, index, characters, sizeof(UChar) * text.length(), SQLITE_TRANSIENT);
+    auto utf8Text = text.utf8();
+    return sqlite3_bind_text(m_statement, index, utf8Text.data(), utf8Text.length(), SQLITE_TRANSIENT);
 }
 
 int SQLiteStatement::bindInt(int index, int integer)
@@ -192,7 +187,7 @@ String SQLiteStatement::getColumnName(int col)
         return String();
     if (columnCount() <= col)
         return String();
-    return String(reinterpret_cast<const UChar*>(sqlite3_column_name16(m_statement, col)));
+    return String::fromUTF8(sqlite3_column_name(m_statement, col));
 }
 
 SQLValue SQLiteStatement::getColumnValue(int col)
@@ -207,18 +202,16 @@ SQLValue SQLiteStatement::getColumnValue(int col)
     // "(mostly) ignored"
     sqlite3_value* value = sqlite3_column_value(m_statement, col);
     switch (sqlite3_value_type(value)) {
-        case SQLITE_INTEGER:    // SQLValue and JS don't represent integers, so use FLOAT -case
-        case SQLITE_FLOAT:
-            return sqlite3_value_double(value);
-        case SQLITE_BLOB:       // SQLValue and JS don't represent blobs, so use TEXT -case
-        case SQLITE_TEXT: {
-            const UChar* string = reinterpret_cast<const UChar*>(sqlite3_value_text16(value));
-            return StringImpl::create8BitIfPossible(string);
-        }
-        case SQLITE_NULL:
-            return nullptr;
-        default:
-            break;
+    case SQLITE_INTEGER: // SQLValue and JS don't represent integers, so use FLOAT -case
+    case SQLITE_FLOAT:
+        return sqlite3_value_double(value);
+    case SQLITE_BLOB: // SQLValue and JS don't represent blobs, so use TEXT -case
+    case SQLITE_TEXT:
+        return String::fromUTF8(sqlite3_value_text(value), sqlite3_value_bytes(value));
+    case SQLITE_NULL:
+        return nullptr;
+    default:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -232,7 +225,7 @@ String SQLiteStatement::getColumnText(int col)
         return String();
     if (columnCount() <= col)
         return String();
-    return String(reinterpret_cast<const UChar*>(sqlite3_column_text16(m_statement, col)), sqlite3_column_bytes16(m_statement, col) / sizeof(UChar));
+    return String::fromUTF8(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col));
 }
     
 double SQLiteStatement::getColumnDouble(int col)

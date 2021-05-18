@@ -1,3 +1,30 @@
+2021-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Use UTF-8 internally from Strings inside SQLiteStatement
+        https://bugs.webkit.org/show_bug.cgi?id=225890
+
+        Reviewed by Darin Adler.
+
+        Use UTF-8 internally from Strings inside SQLiteStatement. Our SQLite databases use UTF-8
+        internally for text encoding (since we open the database with sqlite3_open_v2() and not
+        sqlite3_open16()).
+
+        Previously, we were providing UTF-16 strings to SQLite, which meant it had to convert it
+        internally to UTF-8. Also, whenever we were requesting a string from SQLite, it had to
+        convert it from UTF-8 to UTF-16 before returning it to us. Our String constructed from
+        returned from SQLiteStatement would also be 16-bit encoded, even if all ASCII so we were
+        potentially wasting memory too.
+
+        We now provide UTF-8 to SQLite by using StringView::utf8(). We also request UTF-8 strings
+        from SQLite and rely on String::fromUTF8() to convert it to a WTF::String. For all ASCII
+        characters, this means we'll end up with a 8-bit String and save memory.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindText):
+        (WebCore::SQLiteStatement::getColumnName):
+        (WebCore::SQLiteStatement::getColumnText):
+        * platform/sql/SQLiteStatement.h:
+
 2021-05-18  Said Abou-Hallawa  <said@apple.com>
 
         Allow logging minimal info about uploading media files

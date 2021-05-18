@@ -363,7 +363,7 @@ bool CookieJarDB::hasCookies(const URL& url)
         statement.bindNull(2);
     } else {
         statement.bindText(1, registrableDomain.string());
-        statement.bindText(2, String("*.") + registrableDomain.string());
+        statement.bindText(2, makeString("*.", registrableDomain.string()));
     }
 
     return statement.step() == SQLITE_ROW;
@@ -406,7 +406,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
     if (CookieUtil::isIPAddress(requestHost) || !requestHost.contains('.') || registrableDomain.isEmpty())
         pstmt->bindNull(6);
     else
-        pstmt->bindText(6, String("*.") + registrableDomain.string());
+        pstmt->bindText(6, makeString("*.", registrableDomain.string()));
 
     Vector<Cookie> results;
 
