@@ -355,10 +355,7 @@ inline void Structure::didReplaceProperty(PropertyOffset offset)
 {
     if (LIKELY(!hasRareData()))
         return;
-    StructureRareData::PropertyWatchpointMap* map = rareData()->m_replacementWatchpointSets.get();
-    if (LIKELY(!map))
-        return;
-    WatchpointSet* set = map->get(offset);
+    WatchpointSet* set = rareData()->m_replacementWatchpointSets.get(offset);
     if (LIKELY(!set))
         return;
     set->fireAll(vm(), "Property did get replaced");
@@ -370,10 +367,7 @@ inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset
     StructureRareData* rareData = tryRareData();
     if (!rareData)
         return nullptr;
-    StructureRareData::PropertyWatchpointMap* map = rareData->m_replacementWatchpointSets.get();
-    if (!map)
-        return nullptr;
-    return map->get(offset);
+    return rareData->m_replacementWatchpointSets.get(offset);
 }
 
 template<typename DetailsFunc>
