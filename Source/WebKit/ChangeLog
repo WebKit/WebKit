@@ -1,3 +1,22 @@
+2021-05-18  Garrett Davidson  <garrett_davidson@apple.com>
+
+        Add nil checks for LAContexts before inserting them in the dictionaries.
+        https://bugs.webkit.org/show_bug.cgi?id=225897
+
+        Reviewed by Tim Horton.
+
+        In 225218 we stopped dropping requests that didn't have LAContexts. However, that let us
+        proceed only until we tried to put the (nil) LAContext in an NSDictionary to make a Sec*
+        call, which throws an exception. This patch adds proper nil checking before inserting the
+        contexts into the dictionaries.
+
+        Manually tested registration and assertion on macOS with and without LAContexts.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserVerification):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::createCredentialPrivateKey const):
+
 2021-05-18  Chris Dumez  <cdumez@apple.com>
 
         ReadOnlySharedRingBufferStorage::updateFrameBounds() should validate boundsBufferSize

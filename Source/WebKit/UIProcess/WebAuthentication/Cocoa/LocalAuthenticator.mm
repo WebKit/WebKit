@@ -602,19 +602,22 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     RetainPtr<CFDataRef> signature;
     auto nsCredentialId = toNSData(response->rawId());
     {
-        auto query = adoptNS([[NSMutableDictionary alloc] init]);
-        [query setDictionary:@{
+        NSMutableDictionary *queryDictionary = [@{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrApplicationLabel: nsCredentialId.get(),
-            (id)kSecUseAuthenticationContext: context,
             (id)kSecReturnRef: @YES,
 #if HAVE(DATA_PROTECTION_KEYCHAIN)
             (id)kSecUseDataProtectionKeychain: @YES
 #else
             (id)kSecAttrNoLegacy: @YES
 #endif
-        }];
+        } mutableCopy];
+
+        if (context)
+            queryDictionary[(id)kSecUseAuthenticationContext] = context;
+
+        auto query = adoptNS(queryDictionary);
         updateQueryIfNecessary(query.get());
 
         CFTypeRef privateKeyRef = nullptr;
