@@ -82,11 +82,6 @@ bool SQLiteStatement::executeCommand()
     return step() == SQLITE_DONE;
 }
 
-bool SQLiteStatement::returnsAtLeastOneResult()
-{
-    return step() == SQLITE_ROW;
-}
-
 int SQLiteStatement::bindBlob(int index, const void* blob, int size)
 {
     ASSERT(index > 0);

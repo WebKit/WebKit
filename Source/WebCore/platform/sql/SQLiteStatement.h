@@ -55,11 +55,6 @@ public:
     // returns true if all 3 steps succeed with step() returning SQLITE_DONE
     // returns false otherwise  
     WEBCORE_EXPORT bool executeCommand();
-    
-    // steps, and finalizes.
-    // returns true is step() returns SQLITE_ROW
-    // returns false otherwise
-    bool returnsAtLeastOneResult();
 
     // Returns -1 on last-step failing.  Otherwise, returns number of rows
     // returned in the last step()

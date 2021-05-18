@@ -1,5 +1,16 @@
 2021-05-17  Chris Dumez  <cdumez@apple.com>
 
+        Drop unused SQLiteStatement::returnsAtLeastOneResult()
+        https://bugs.webkit.org/show_bug.cgi?id=225901
+
+        Reviewed by Darin Adler.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::returnsAtLeastOneResult): Deleted.
+        * platform/sql/SQLiteStatement.h:
+
+2021-05-17  Chris Dumez  <cdumez@apple.com>
+
         Drop SQLiteStatement::return*Results() functions
         https://bugs.webkit.org/show_bug.cgi?id=225899
 
