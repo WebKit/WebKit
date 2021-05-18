@@ -1059,6 +1059,15 @@ DiagnosticLoggingClient& Page::diagnosticLoggingClient() const
     return *m_diagnosticLoggingClient;
 }
 
+void Page::logMediaDiagnosticMessage(const FormData* formData) const
+{
+    unsigned imageOrMediaFilesCount = formData ? formData->imageOrMediaFilesCount() : 0;
+    if (!imageOrMediaFilesCount)
+        return;
+    auto message = makeString(imageOrMediaFilesCount, imageOrMediaFilesCount == 1 ? " media file has been submitted" : " media files have been submitted");
+    diagnosticLoggingClient().logDiagnosticMessageWithDomain(message, DiagnosticLoggingDomain::Media);
+}
+
 void Page::setMediaVolume(float volume)
 {
     if (!(volume >= 0 && volume <= 1))

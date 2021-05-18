@@ -28,6 +28,7 @@
 #include "DOMFormData.h"
 #include "File.h"
 #include "FormDataBuilder.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
@@ -121,6 +122,21 @@ Ref<FormData> FormData::isolatedCopy() const
         formData->m_elements.uncheckedAppend(element.isolatedCopy());
 
     return formData;
+}
+
+unsigned FormData::imageOrMediaFilesCount() const
+{
+    unsigned imageOrMediaFilesCount = 0;
+    for (auto& element : m_elements) {
+        auto* encodedFileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data);
+        if (!encodedFileData)
+            continue;
+
+        auto mimeType = MIMETypeRegistry::mimeTypeForPath(encodedFileData->filename);
+        if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
+            ++imageOrMediaFilesCount;
+    }
+    return imageOrMediaFilesCount;
 }
 
 uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const

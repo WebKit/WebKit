@@ -1,3 +1,15 @@
+2021-05-18  Said Abou-Hallawa  <said@apple.com>
+
+        Allow logging minimal info about uploading media files
+        https://bugs.webkit.org/show_bug.cgi?id=225636
+        <rdar://problem/76639138>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::addParametersShared):
+        Centralize logging uploading the images and media files.
+
 2021-05-18  Keith Miller  <keith_miller@apple.com>
 
         Temporarily revert r276592 as it breaks some native apps

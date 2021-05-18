@@ -1,3 +1,30 @@
+2021-05-18  Said Abou-Hallawa  <said@apple.com>
+
+        Allow logging minimal info about uploading media files
+        https://bugs.webkit.org/show_bug.cgi?id=225636
+        <rdar://problem/76639138>
+
+        Reviewed by Alex Christensen.
+
+        Files can be uploaded to a server by many different ways: through a form
+        submit, an xhr, a file fetch or through a worker. r275103 handled the
+        form submit only. Instead of handling this case by case, we can add the
+        logging code in a shared place where all the file uploading goes through.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        Delete the code which was part of r275103.
+
+        * page/Page.cpp:
+        (WebCore::Page::logMediaDiagnosticMessage const):
+        * page/Page.h:
+        Make the Page be responsible for logging the media files info.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::imageOrMediaFilesCount const):
+        * platform/network/FormData.h:
+        Make the FormData count how many images or media files it has.
+
 2021-05-18  Keith Miller  <keith_miller@apple.com>
 
         Temporarily revert r276592 as it breaks some native apps

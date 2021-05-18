@@ -105,6 +105,7 @@ class DragController;
 class EditorClient;
 class Element;
 class FocusController;
+class FormData;
 class Frame;
 class HTMLMediaElement;
 class HistoryItem;
@@ -495,6 +496,8 @@ public:
     WEBCORE_EXPORT unsigned pageCount() const;
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
+
+    WEBCORE_EXPORT void logMediaDiagnosticMessage(const FormData*) const;
 
     PerformanceLoggingClient* performanceLoggingClient() const { return m_performanceLoggingClient.get(); }
 

@@ -241,6 +241,7 @@ public:
 
     bool containsPasswordData() const { return m_containsPasswordData; }
     void setContainsPasswordData(bool containsPasswordData) { m_containsPasswordData = containsPasswordData; }
+    unsigned imageOrMediaFilesCount() const;
 
     static EncodingType parseEncodingType(const String& type)
     {
