@@ -45,41 +45,6 @@
 
 2021-05-17  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r277459. rdar://problem/78110796
-
-    [macOS] experimental "Use theme color for scroll area background" isn't working
-    https://bugs.webkit.org/show_bug.cgi?id=225726
-    <rdar://problem/77933000>
-    
-    Reviewed by Tim Horton.
-    
-    * rendering/RenderLayerCompositor.cpp:
-    (WebCore::RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor):
-    (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
-    Fix last remaining `m_layerForOverhangAreas->setBackgroundColor` to use the helper function
-    `RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor` instead so that all
-    paths that update the overscroll area color check the experimental settings too.
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277459 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2021-05-13  Devin Rousso  <drousso@apple.com>
-
-            [macOS] experimental "Use theme color for scroll area background" isn't working
-            https://bugs.webkit.org/show_bug.cgi?id=225726
-            <rdar://problem/77933000>
-
-            Reviewed by Tim Horton.
-
-            * rendering/RenderLayerCompositor.cpp:
-            (WebCore::RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor):
-            (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
-            Fix last remaining `m_layerForOverhangAreas->setBackgroundColor` to use the helper function
-            `RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor` instead so that all
-            paths that update the overscroll area color check the experimental settings too.
-
-2021-05-17  Russell Epstein  <repstein@apple.com>
-
         Cherry-pick r277453. rdar://problem/78108967
 
     Add textIndicator bounce for AppHighlights on scroll.
