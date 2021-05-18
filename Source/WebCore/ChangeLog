@@ -1,3 +1,29 @@
+2021-05-18  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r276796. rdar://problem/78162377
+
+    Unreviewed, fix crashloop after r276744
+    <rdar://problem/77333886>
+    
+    * dom/Document.cpp:
+    (WebCore::Document::determineSampledPageTopColor):
+    Don't attempt to get the value from the `Optional<Lab<float>>` unless we know for sure that
+    it's valid. This amounts to always making sure we either `continue` (or `return` if that
+    snapshot is not an outlier) instead of only doing it if the snapshot is an outlier.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276796 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-29  Devin Rousso  <drousso@apple.com>
+
+            Unreviewed, fix crashloop after r276744
+            <rdar://problem/77333886>
+
+            * dom/Document.cpp:
+            (WebCore::Document::determineSampledPageTopColor):
+            Don't attempt to get the value from the `Optional<Lab<float>>` unless we know for sure that
+            it's valid. This amounts to always making sure we either `continue` (or `return` if that
+            snapshot is not an outlier) instead of only doing it if the snapshot is an outlier.
+
 2021-05-13  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r277453. rdar://problem/77996171

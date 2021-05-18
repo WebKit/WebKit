@@ -3963,8 +3963,11 @@ void Document::determineSampledPageTopColor()
 
     for (size_t i = 0; i < numSnapshots; ++i) {
         auto snapshot = pixelColorAtTopX(frameWidth * i / (numSnapshots - 1));
-        if (!snapshot && !shouldStopAfterFindingNonMatchingColor(i))
-            return;
+        if (!snapshot) {
+            if (shouldStopAfterFindingNonMatchingColor(i))
+                return;
+            continue;
+        }
 
         snapshots[i] = *snapshot;
 
