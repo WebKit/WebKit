@@ -984,8 +984,6 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     String databaseName;
     {
         auto sql = m_sqliteDB->prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';"_s);
-        if (sql->isColumnNull(0))
-            return nullptr;
         databaseName = sql->getColumnText(0);
         if (databaseName != m_identifier.databaseName()) {
             LOG_ERROR("Database name in the info database ('%s') does not match the expected name ('%s')", databaseName.utf8().data(), m_identifier.databaseName().utf8().data());
@@ -995,8 +993,6 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     uint64_t databaseVersion;
     {
         auto sql = m_sqliteDB->prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
-        if (sql->isColumnNull(0))
-            return nullptr;
         String stringVersion = sql->getColumnText(0);
         auto parsedVersion = parseInteger<uint64_t>(stringVersion);
         if (!parsedVersion) {

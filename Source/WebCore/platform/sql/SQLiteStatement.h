@@ -67,7 +67,6 @@ public:
 
     bool isReadOnly();
     
-    WEBCORE_EXPORT bool isColumnNull(int col);
     WEBCORE_EXPORT bool isColumnDeclaredAsBlob(int col);
     String getColumnName(int col);
     SQLValue getColumnValue(int col);

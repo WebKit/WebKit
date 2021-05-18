@@ -1,3 +1,20 @@
+2021-05-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove SQLiteStatement::isColumnNull and its use
+        https://bugs.webkit.org/show_bug.cgi?id=225892
+
+        Reviewed by Chris Dumez.
+
+        SQLiteStatement::isColumnNull is only used in SQLiteIDBBackingStore and it is actually not needed, because 
+        SQLiteIDBBackingStore can use getColumnText to evaluate the statement and get the result. So the check is
+        redundant.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::isColumnNull): Deleted.
+        * platform/sql/SQLiteStatement.h:
+
 2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs

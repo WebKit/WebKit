@@ -181,17 +181,6 @@ int SQLiteStatement::columnCount()
     return sqlite3_data_count(m_statement);
 }
 
-bool SQLiteStatement::isColumnNull(int col)
-{
-    ASSERT(col >= 0);
-    if (!hasStartedStepping() && step() != SQLITE_ROW)
-        return false;
-    if (columnCount() <= col)
-        return false;
-
-    return sqlite3_column_type(m_statement, col) == SQLITE_NULL;
-}
-
 bool SQLiteStatement::isColumnDeclaredAsBlob(int col)
 {
     ASSERT(col >= 0);
