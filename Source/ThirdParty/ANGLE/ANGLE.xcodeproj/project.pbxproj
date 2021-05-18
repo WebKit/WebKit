@@ -834,12 +834,6 @@
 		DF83E39A2639FED4000825EF /* ContextImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB304AC1DE4164800D2C405 /* ContextImpl.cpp */; };
 		DF83E39B2639FED4000825EF /* QueryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD597D2284FB8F0018F2D8 /* QueryImpl.cpp */; };
 		DF83E39C2639FED4000825EF /* renderer_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB304CD1DE4164800D2C405 /* renderer_utils.cpp */; };
-		DF83E39D2639FEF6000825EF /* visibility.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEAB25818D6800894E24 /* visibility.metal */; };
-		DF83E39E2639FEFD000825EF /* gen_mipmap.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB225818D6800894E24 /* gen_mipmap.metal */; };
-		DF83E39F2639FF02000825EF /* gen_indices.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB325818D6800894E24 /* gen_indices.metal */; };
-		DF83E3A02639FF06000825EF /* copy_buffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEAF25818D6800894E24 /* copy_buffer.metal */; };
-		DF83E3A12639FF0B000825EF /* clear.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEB125818D6800894E24 /* clear.metal */; };
-		DF83E3A22639FF11000825EF /* blit.metal in Sources */ = {isa = PBXBuildFile; fileRef = FF81FEAA25818D6800894E24 /* blit.metal */; };
 		FF2D2F5525C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
 /* End PBXBuildFile section */
 
@@ -3652,7 +3646,6 @@
 				DF83E2372639FCD5000825EF /* AstHelpers.cpp in Sources */,
 				DF83E2AF2639FD83000825EF /* ASTMetadataHLSL.cpp in Sources */,
 				DF83E3332639FE18000825EF /* AttributeMap.cpp in Sources */,
-				DF83E3A22639FF11000825EF /* blit.metal in Sources */,
 				DF83E3592639FE92000825EF /* BlitGL.cpp in Sources */,
 				DF83E2EA2639FE17000825EF /* BlobCache.cpp in Sources */,
 				DF83E2BC2639FD83000825EF /* blocklayout.cpp in Sources */,
@@ -3670,7 +3663,6 @@
 				DF83E32C2639FE18000825EF /* Caps.cpp in Sources */,
 				DF83E2892639FD33000825EF /* ClampFragDepth.cpp in Sources */,
 				DF83E2672639FD33000825EF /* ClampPointSize.cpp in Sources */,
-				DF83E3A12639FF0B000825EF /* clear.metal in Sources */,
 				DF83E35C2639FE92000825EF /* ClearMultiviewGL.cpp in Sources */,
 				DF83E2CB2639FD84000825EF /* CodeGen.cpp in Sources */,
 				DF83E2D62639FD84000825EF /* CollectVariables.cpp in Sources */,
@@ -3689,7 +3681,6 @@
 				DF83E3582639FE92000825EF /* ContextGL.cpp in Sources */,
 				DF83E39A2639FED4000825EF /* ContextImpl.cpp in Sources */,
 				DF83E3772639FEB8000825EF /* ContextMtl.mm in Sources */,
-				DF83E3A02639FF06000825EF /* copy_buffer.metal in Sources */,
 				DF83E2DD2639FE17000825EF /* copyimage.cpp in Sources */,
 				DF83E2F12639FE17000825EF /* Debug.cpp in Sources */,
 				DF83E2172639FC74000825EF /* debug.cpp in Sources */,
@@ -3766,8 +3757,6 @@
 				DF83E2252639FC80000825EF /* FunctionsCGL.cpp in Sources */,
 				DF83E34F2639FE92000825EF /* FunctionsEAGL.mm in Sources */,
 				DF83E3572639FE92000825EF /* FunctionsGL.cpp in Sources */,
-				DF83E39F2639FF02000825EF /* gen_indices.metal in Sources */,
-				DF83E39E2639FEFD000825EF /* gen_mipmap.metal in Sources */,
 				DF83E2E82639FE17000825EF /* GLES1Renderer.cpp in Sources */,
 				DF83E2ED2639FE17000825EF /* GLES1State.cpp in Sources */,
 				DF83E3412639FE2A000825EF /* global_state.cpp in Sources */,
@@ -4037,7 +4026,6 @@
 				DF83E35F2639FE92000825EF /* VertexArrayGL.cpp in Sources */,
 				DF83E3882639FEB8000825EF /* VertexArrayMtl.mm in Sources */,
 				DF83E31C2639FE17000825EF /* VertexAttribute.cpp in Sources */,
-				DF83E39D2639FEF6000825EF /* visibility.metal in Sources */,
 				DF83E3692639FE92000825EF /* WindowSurfaceCGL.mm in Sources */,
 				DF83E3512639FE92000825EF /* WindowSurfaceEAGL.mm in Sources */,
 				DF83E30C2639FE17000825EF /* WorkerThread.cpp in Sources */,
