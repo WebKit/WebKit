@@ -281,7 +281,7 @@ int SearchPopupMenuDB::executeSQLStatement(Expected<SQLiteStatement, int>&& stat
 
     int ret = statement->step();
     if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW)
-        LOG_ERROR("Failed to execute %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
+        LOG_ERROR("Failed to execute SQL error: %s", m_database.lastErrorMsg());
     return ret;
 }
 

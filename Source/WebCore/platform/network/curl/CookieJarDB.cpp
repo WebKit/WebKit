@@ -650,7 +650,7 @@ bool CookieJarDB::executeSQLStatement(Expected<SQLiteStatement, int>&& statement
 
     int ret = statement->step();
     if (!checkSQLiteReturnCode(ret)) {
-        LOG_ERROR("Failed to execute %s error: %s", statement->query().ascii().data(), m_database.lastErrorMsg());
+        LOG_ERROR("Failed to execute SQL error: %s", m_database.lastErrorMsg());
         return false;
     }
 

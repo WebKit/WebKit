@@ -1,3 +1,15 @@
+2021-05-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Unreviewed debug build fix for r277601.
+        https://bugs.webkit.org/show_bug.cgi?id=225855
+        <rdar://problem/78116715>
+
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::executeSQLStatement):
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::executeSQLStatement):
+        Removed the undefined variables from debug messages.
+
 2021-05-17  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary SQLiteDatabase::updateLastChangesCount()
