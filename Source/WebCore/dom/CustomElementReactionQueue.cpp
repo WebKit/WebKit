@@ -172,10 +172,10 @@ void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& eleme
 
 void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
 {
-    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     if (element.document().refCount() <= 0)
         return; // Don't enqueue disconnectedCallback if the entire document is getting destructed.
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.reactionQueue());
     auto& queue = *element.reactionQueue();
     if (!queue.m_interface->hasDisconnectedCallback())

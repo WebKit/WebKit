@@ -1,3 +1,19 @@
+2021-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ASSERTION FAILED: isReactionAllowed() in enqueueDisconnectedCallbackIfNeeded during document teardown
+        https://bugs.webkit.org/show_bug.cgi?id=224033
+
+        Reviewed by Maciej Stachowiak.
+
+        Moved the bug assertion to after an early exit for when we're in the middle of destorying the document.
+
+        enqueueDisconnectedCallbackIfNeeded will be called on custom elements in these circumstances
+        but there is no correctness issue here since we exit early.
+
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded):
+
 2021-05-18  Frederic Wang  <fwang@igalia.com>
 
         SHOULD NEVER BE REACHED in FrameSelection::setSelectionWithoutUpdatingAppearance
