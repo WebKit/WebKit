@@ -1,3 +1,21 @@
+2021-05-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden a few tests and unify some expectations
+
+        Unreviewed test gardening.
+
+        Removed some deprecated WPE baselines, moving expectations from GTK to
+        Glib.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/security/block-test-expected.txt: Renamed from LayoutTests/platform/gtk/security/block-test-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/content-type/script.window-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window-expected.txt: Removed.
+        * platform/wpe/security/block-test-expected.txt: Removed.
+
 2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. imported/w3c/web-platform-tests/eventsource/eventsource-close.htm is crashing since r277601.

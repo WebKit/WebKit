@@ -907,6 +907,10 @@ webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ DumpJSConsoleLogInStdErr ]
 
+# Soup upstream issue #111
+webkit.org/b/179475 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
+webkit.org/b/179475 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1105,6 +1109,8 @@ webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip
 webkit.org/b/223624 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Slow ]
+
+webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
@@ -1421,6 +1427,10 @@ webkit.org/b/206503 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharnes
 webkit.org/b/224668 imported/w3c/web-platform-tests/html/infrastructure/common-dom-interfaces/collections/htmlformcontrolscollection.html [ Failure Pass ]
 webkit.org/b/224668 imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements.html [ Failure Pass ]
 webkit.org/b/224668 imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Failure Pass ]
+
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
+
+webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs

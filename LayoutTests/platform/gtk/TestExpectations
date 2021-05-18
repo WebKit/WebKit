@@ -196,9 +196,6 @@ webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
 webkit.org/b/218349 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/218349 mathml/presentation/href-style.html [ ImageOnlyFailure ]
 
-# OpenGL issues
-webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
-
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]
 
@@ -2006,8 +2003,6 @@ webkit.org/b/191002 imported/w3c/web-platform-tests/intersection-observer/ [ Pas
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Skip ]
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Skip ]
 
-webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Failure ]
-
 webkit.org/b/191400 fast/block/basic/child-block-level-box-with-height-percent.html [ Failure ]
 webkit.org/b/191400 fast/block/basic/inline-content-with-floating-images2.html [ Failure ]
 webkit.org/b/191400 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
@@ -2041,10 +2036,6 @@ webkit.org/b/192434 fast/inline/inline-content-with-float-and-margin.html [ Fail
 webkit.org/b/166536 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
-
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
 
 webkit.org/b/193491 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Failure ]
 
