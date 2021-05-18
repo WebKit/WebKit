@@ -64,6 +64,8 @@ public:
     // Returns -1 on last-step failing.  Otherwise, returns number of rows
     // returned in the last step()
     int columnCount();
+
+    bool isReadOnly();
     
     WEBCORE_EXPORT bool isColumnNull(int col);
     WEBCORE_EXPORT bool isColumnDeclaredAsBlob(int col);

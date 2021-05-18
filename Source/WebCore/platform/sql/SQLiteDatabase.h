@@ -60,8 +60,6 @@ public:
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 
-    WEBCORE_EXPORT void updateLastChangesCount();
-
     WEBCORE_EXPORT bool executeCommandSlow(const String&);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     
@@ -81,6 +79,8 @@ public:
     WEBCORE_EXPORT void interrupt();
 
     int64_t lastInsertRowID();
+
+    // This function returns the number of rows modified, inserted or deleted by the most recently completed INSERT, UPDATE or DELETE statement.
     WEBCORE_EXPORT int lastChanges();
 
     void setBusyTimeout(int ms);
@@ -185,8 +185,6 @@ private:
 
     int m_openError { SQLITE_ERROR };
     CString m_openErrorMessage;
-
-    int m_lastChangesCount { 0 };
 };
 
 } // namespace WebCore

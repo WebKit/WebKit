@@ -63,10 +63,6 @@ int SQLiteStatement::step()
 {
     LockHolder databaseLock(m_database.databaseMutex());
 
-    // The database needs to update its last changes count before each statement
-    // in order to compute properly the lastChanges() return value.
-    m_database.updateLastChangesCount();
-
     int error = sqlite3_step(m_statement);
     if (error != SQLITE_DONE && error != SQLITE_ROW)
         LOG(SQLDatabase, "sqlite3_step failed (%i)\nError - %s", error, sqlite3_errmsg(m_database.sqlite3Handle()));
@@ -429,6 +425,11 @@ bool SQLiteStatement::returnDoubleResults(int col, Vector<double>& v)
 bool SQLiteStatement::hasStartedStepping()
 {
     return sqlite3_stmt_busy(m_statement);
+}
+
+bool SQLiteStatement::isReadOnly()
+{
+    return sqlite3_stmt_readonly(m_statement);
 }
 
 } // namespace WebCore

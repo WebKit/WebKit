@@ -445,20 +445,12 @@ int64_t SQLiteDatabase::lastInsertRowID()
     return sqlite3_last_insert_rowid(m_db);
 }
 
-void SQLiteDatabase::updateLastChangesCount()
-{
-    if (!m_db)
-        return;
-
-    m_lastChangesCount = sqlite3_total_changes(m_db);
-}
-
 int SQLiteDatabase::lastChanges()
 {
     if (!m_db)
         return 0;
 
-    return sqlite3_total_changes(m_db) - m_lastChangesCount;
+    return sqlite3_changes(m_db);
 }
 
 int SQLiteDatabase::lastError()

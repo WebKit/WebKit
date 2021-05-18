@@ -187,10 +187,10 @@ bool SQLStatement::execute(Database& db)
         return false;
     }
 
-    // FIXME: If the spec allows triggers, and we want to be "accurate" in a different way, we'd use
-    // sqlite3_total_changes() here instead of sqlite3_changed, because that includes rows modified from within a trigger
-    // For now, this seems sufficient
-    resultSet->setRowsAffected(database.lastChanges());
+    // rowsAffected should be 0 for read only statements (e.g. SELECT statement). However, SQLiteDatabase::lastChanges() returns
+    // the number of changes made by the most recent INSERT, UPDATE or DELETE statement.
+    if (!statement->isReadOnly())
+        resultSet->setRowsAffected(database.lastChanges());
 
     m_resultSet = WTFMove(resultSet);
     return true;
