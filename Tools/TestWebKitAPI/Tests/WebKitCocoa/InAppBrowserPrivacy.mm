@@ -1838,4 +1838,43 @@ TEST(InAppBrowserPrivacy, NonAppBoundRequestWithServiceWorkerSoftUpdate)
 {
     softUpdateTest(IsAppBound::No);
 }
+
+static void runWebProcessPlugInTest(IsAppBound isAppBound)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"InAppBrowserPrivacyPlugIn"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+
+    NSString *url = @"https://webkit.org";
+
+    __block bool isDone = false;
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    if (isAppBound == IsAppBound::No) {
+        NSMutableURLRequest *nonAppBoundRequest = request;
+        APP_BOUND_REQUEST_ADDITIONS
+        request = nonAppBoundRequest;
+    }
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    isDone = false;
+    bool expectingAppBoundRequests = isAppBound == IsAppBound::Yes ? true : false;
+    [webView _appBoundNavigationData:^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppBoundRequestTesting, expectingAppBoundRequests);
+        EXPECT_EQ(data.hasLoadedNonAppBoundRequestTesting, !expectingAppBoundRequests);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, WebProcessPluginTestAppBound)
+{
+    runWebProcessPlugInTest(IsAppBound::Yes);
+}
+
+TEST(InAppBrowserPrivacy, WebProcessPluginTestNonAppBound)
+{
+    runWebProcessPlugInTest(IsAppBound::No);
+}
 #endif

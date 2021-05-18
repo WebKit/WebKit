@@ -1,3 +1,18 @@
+2021-05-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        WebFrameLoaderClient::dispatchWillSendRequest sometimes resets app-bound value
+        https://bugs.webkit.org/show_bug.cgi?id=225829
+        <rdar://problem/78034595>
+
+        Reviewed by Alex Christensen.
+
+        webPage->injectedBundleResourceLoadClient().willSendRequestForFrame
+        can sometimes return a completely new request. We should make sure the
+        app-bound value is kept when this happens.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r277605.
