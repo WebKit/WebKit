@@ -1,3 +1,18 @@
+2021-05-18  Alan Bujtas  <zalan@apple.com>
+
+        Difficult to scroll calcalist.co.il webpage, scrolling gets 'stuck'
+        https://bugs.webkit.org/show_bug.cgi?id=225905
+        <rdar://77692680>
+
+        Reviewed by Simon Fraser.
+
+        The (implicit) integral flooring on the line height may produce short containing block for the inline content.
+
+        Test: fast/inline/vertical-top-on-subpixel-makes-inline-box-overflow.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+
 2021-05-18  Frederic Wang  <fwang@igalia.com>
 
         Use RefPtr for local ref counted objects of FrameSelection::setSelectionWithoutUpdatingAppearance
