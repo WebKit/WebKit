@@ -935,6 +935,11 @@ static bool validateArgument(id argument)
     return false;
 }
 
+- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
+{
+    [self closeAllMediaPresentationsWithCompletionHandler:completionHandler];
+}
+
 - (void)closeAllMediaPresentationsWithCompletionHandler:(void (^)(void))completionHandler
 {
     THROW_IF_SUSPENDED;
@@ -952,6 +957,11 @@ static bool validateArgument(id argument)
 #endif
 }
 
+- (void)pauseAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self pauseAllMediaPlaybackWithCompletionHandler:completionHandler];
+}
+
 - (void)pauseAllMediaPlaybackWithCompletionHandler:(void (^)(void))completionHandler
 {
     THROW_IF_SUSPENDED;
@@ -961,6 +971,16 @@ static bool validateArgument(id argument)
     }
 
     _page->pauseAllMediaPlayback(makeBlockPtr(completionHandler));
+}
+
+- (void)resumeAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self setAllMediaPlaybackSuspended:NO completionHandler:completionHandler];
+}
+
+- (void)suspendAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self setAllMediaPlaybackSuspended:YES completionHandler:completionHandler];
 }
 
 - (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(void (^)(void))completionHandler
@@ -992,6 +1012,11 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     }
     ASSERT_NOT_REACHED();
     return WKMediaPlaybackStateNone;
+}
+
+- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler
+{
+    [self requestMediaPlaybackStateWithCompletionHandler:completionHandler];
 }
 
 - (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler
