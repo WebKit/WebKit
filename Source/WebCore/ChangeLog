@@ -1,3 +1,31 @@
+2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs
+        https://bugs.webkit.org/show_bug.cgi?id=225886
+        rdar://78114708
+
+        Reviewed by Chris Dumez.
+
+        Implement some stricter validation around object identifiers in when decoding display list items in the GPU
+        Process. Currently, we only check for the empty value (i.e. raw identifier value of 0) when iterating over these
+        items, but treat an identifier with the deleted value as valid; instead, we should be treating items with either
+        empty or deleted identifiers as invalid.
+
+        To address this, we introduce a new helper method, `ObjectIdentifier::isValid`, and turn existing checks for
+        `!!identifier` into `identifier.isValid()`.
+
+        Test: DisplayListTests.InlineItemValidationFailure
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::ClipToImageBuffer::isValid const):
+        (WebCore::DisplayList::DrawImageBuffer::isValid const):
+        (WebCore::DisplayList::DrawNativeImage::isValid const):
+        (WebCore::DisplayList::DrawPattern::isValid const):
+        (WebCore::DisplayList::PaintFrameForMedia::isValid const):
+        (WebCore::DisplayList::FlushContext::isValid const):
+        (WebCore::DisplayList::MetaCommandChangeItemBuffer::isValid const):
+        (WebCore::DisplayList::MetaCommandChangeDestinationImageBuffer::isValid const):
+
 2021-05-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Unreviewed debug build fix for r277601.

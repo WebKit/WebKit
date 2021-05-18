@@ -768,7 +768,7 @@ public:
     
     RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
     FloatRect destinationRect() const { return m_destinationRect; }
-    bool isValid() const { return !!m_imageBufferIdentifier; }
+    bool isValid() const { return m_imageBufferIdentifier.isValid(); }
 
     void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
 
@@ -1016,7 +1016,7 @@ public:
     FloatRect destinationRect() const { return m_destinationRect; }
     ImagePaintingOptions options() const { return m_options; }
     // FIXME: We might want to validate ImagePaintingOptions.
-    bool isValid() const { return !!m_imageBufferIdentifier; }
+    bool isValid() const { return m_imageBufferIdentifier.isValid(); }
 
     void apply(GraphicsContext&, WebCore::ImageBuffer&) const;
 
@@ -1051,7 +1051,7 @@ public:
     const FloatRect& source() const { return m_srcRect; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
     // FIXME: We might want to validate ImagePaintingOptions.
-    bool isValid() const { return !!m_imageIdentifier; }
+    bool isValid() const { return m_imageIdentifier.isValid(); }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     void apply(GraphicsContext&, NativeImage&) const;
@@ -1083,7 +1083,7 @@ public:
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
     // FIXME: We might want to validate ImagePaintingOptions.
-    bool isValid() const { return !!m_imageIdentifier; }
+    bool isValid() const { return m_imageIdentifier.isValid(); }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     void apply(GraphicsContext&, NativeImage&) const;
@@ -2018,7 +2018,7 @@ public:
     const FloatRect& destination() const { return m_destination; }
     MediaPlayerIdentifier identifier() const { return m_identifier; }
 
-    bool isValid() const { return !!m_identifier; }
+    bool isValid() const { return m_identifier.isValid(); }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
@@ -2251,7 +2251,7 @@ public:
     }
 
     FlushIdentifier identifier() const { return m_identifier; }
-    bool isValid() const { return !!m_identifier; }
+    bool isValid() const { return m_identifier.isValid(); }
 
     void apply(GraphicsContext&) const;
 
@@ -2273,7 +2273,7 @@ public:
     }
 
     ItemBufferIdentifier identifier() const { return m_identifier; }
-    bool isValid() const { return !!m_identifier; }
+    bool isValid() const { return m_identifier.isValid(); }
 
 private:
     ItemBufferIdentifier m_identifier;
@@ -2291,7 +2291,7 @@ public:
     }
 
     RenderingResourceIdentifier identifier() const { return m_identifier; }
-    bool isValid() const { return !!m_identifier; }
+    bool isValid() const { return m_identifier.isValid(); }
 
 private:
     RenderingResourceIdentifier m_identifier;
