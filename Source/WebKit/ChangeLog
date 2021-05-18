@@ -1,3 +1,13 @@
+2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal macOS build
+
+        Add a missing `WebCore::` namespace before `TranslationContextMenuInfo`.
+        This error was likely masked by a `using namespace WebCore;` present in an earlier unified source.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleContextMenuTranslation):
+
 2021-05-17  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] promote submenus items if there is only one

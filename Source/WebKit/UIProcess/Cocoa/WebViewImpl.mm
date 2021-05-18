@@ -5591,7 +5591,7 @@ bool WebViewImpl::canHandleContextMenuTranslation() const
     return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
 }
 
-void WebViewImpl::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
+void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo& info)
 {
     if (!canHandleContextMenuTranslation()) {
         ASSERT_NOT_REACHED();
