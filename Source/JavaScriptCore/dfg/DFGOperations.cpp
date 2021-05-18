@@ -3616,7 +3616,7 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (CallLinkInfo* callLinkI
             codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired);
     }
     
-    linkDirectFor(callFrame, *callLinkInfo, codeBlock, codePtr);
+    linkDirectCall(callFrame, *callLinkInfo, codeBlock, codePtr);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* codeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase* exit))

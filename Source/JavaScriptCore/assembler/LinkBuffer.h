@@ -403,6 +403,7 @@ private:
     Profile m_profile { Profile::Uncategorized };
     MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
+    Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
 
     static size_t s_profileCummulativeLinkedSizes[numberOfProfiles];
 };

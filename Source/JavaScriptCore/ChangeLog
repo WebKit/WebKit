@@ -1,3 +1,125 @@
+2021-05-18  Saam Barati  <sbarati@apple.com>
+
+        Add Data Call ICs that don't repatch and use them in the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=225321
+        <rdar://problem/77773796>
+
+        Reviewed by Michael Saboff.
+
+        This patch adds Data ICs for calls. Data ICs for calls work by loading a code 
+        pointer from CallLinkInfo, and indirect calling that pointer. This means that
+        to repatch such an IC, all we need to do is replace a code pointer inside
+        CallLinkInfo. No need to repatch the JIT code.
+        
+        The current implementation only does this for monomorphic calls. We still
+        repatch the JIT code for polymorphic calls. In a followup, we will also
+        opt polymorphic call ICs into data-based calls:
+        https://bugs.webkit.org/show_bug.cgi?id=225793
+        
+        This patch only uses Data Call ICs for the Baseline JIT. Even with that, it
+        reduces the number of calls to cacheFlush by ~45% on JetStream2.
+        
+        Performance is neutral on AS Macs, but it paves the way towards doing
+        unlinked JITting in JSC.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::addLateLinkTask):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/LinkBuffer.h:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CallLinkInfo::fastPathStart):
+        (JSC::CallLinkInfo::slowPathStart):
+        (JSC::CallLinkInfo::doneLocation):
+        (JSC::CallLinkInfo::setMonomorphicCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        (JSC::CallLinkInfo::emitFirstInstructionForDataIC):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::emitFastPath):
+        (JSC::CallLinkInfo::emitTailCallFastPath):
+        (JSC::CallLinkInfo::emitSlowPath):
+        (JSC::CallLinkInfo::emitDirectFastPath):
+        (JSC::CallLinkInfo::emitDirectTailCallFastPath):
+        (JSC::CallLinkInfo::initializeDirectCall):
+        (JSC::CallLinkInfo::setDirectCallTarget):
+        (JSC::CallLinkInfo::setSlowPathCallDestination):
+        (JSC::CallLinkInfo::revertCallToStub):
+        (JSC::CallLinkInfo::setStub):
+        (JSC::CallLinkInfo::callReturnLocation): Deleted.
+        (JSC::CallLinkInfo::patchableJump): Deleted.
+        (JSC::CallLinkInfo::hotPathBegin): Deleted.
+        (JSC::CallLinkInfo::setCallee): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::calleeGPR const):
+        (JSC::CallLinkInfo::isDataIC const):
+        (JSC::CallLinkInfo::setUsesDataICs):
+        (JSC::CallLinkInfo::setCodeLocations):
+        (JSC::CallLinkInfo::offsetOfCallee):
+        (JSC::CallLinkInfo::offsetOfMonomorphicCallDestination):
+        (JSC::CallLinkInfo::offsetOfSlowPathCallDestination):
+        (JSC::CallLinkInfo::setCallLocations): Deleted.
+        (JSC::CallLinkInfo::hotPathOther): Deleted.
+        (JSC::CallLinkInfo::setStub): Deleted.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addJSCall):
+        (JSC::DFG::JITCompiler::addJSDirectCall):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectCallRecord::JSDirectCallRecord):
+        (JSC::DFG::JITCompiler::addJSDirectTailCall): Deleted.
+        (JSC::DFG::JITCompiler::JSDirectTailCallRecord::JSDirectTailCallRecord): Deleted.
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::emitJITCodeOver):
+        * jit/CCallHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::unlink):
+        * jit/Repatch.cpp:
+        (JSC::linkSlowPathTo):
+        (JSC::linkSlowFor):
+        (JSC::linkMonomorphicCall):
+        (JSC::linkDirectCall):
+        (JSC::revertCall):
+        (JSC::unlinkCall):
+        (JSC::linkPolymorphicCall):
+        (JSC::linkFor): Deleted.
+        (JSC::linkDirectFor): Deleted.
+        (JSC::unlinkFor): Deleted.
+        * jit/Repatch.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2021-05-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r276655.

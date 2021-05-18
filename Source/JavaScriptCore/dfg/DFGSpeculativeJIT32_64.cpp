@@ -838,19 +838,16 @@ void SpeculativeJIT::emitCall(Node* node)
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);
             
-            JITCompiler::PatchableJump patchableJump = m_jit.patchableJump();
             JITCompiler::Label mainPath = m_jit.label();
             
             m_jit.emitStoreCallSiteIndex(callSite);
             
-            info->setFrameShuffleData(shuffleData);
-            CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
-            
-            JITCompiler::Call call = m_jit.nearTailCall();
-            
+            info->emitDirectTailCallFastPath(m_jit, [&] {
+                info->setFrameShuffleData(shuffleData);
+                CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
+            });
+
             JITCompiler::Label slowPath = m_jit.label();
-            patchableJump.m_jump.linkTo(slowPath, &m_jit);
-            
             silentSpillAllRegisters(InvalidGPRReg);
             callOperation(operationLinkDirectCall, info, calleePayloadGPR);
             silentFillAllRegisters();
@@ -859,7 +856,7 @@ void SpeculativeJIT::emitCall(Node* node)
             
             useChildren(node);
             
-            m_jit.addJSDirectTailCall(patchableJump, call, slowPath, info);
+            m_jit.addJSDirectCall(slowPath, info);
             return;
         }
         
@@ -867,7 +864,7 @@ void SpeculativeJIT::emitCall(Node* node)
         
         m_jit.emitStoreCallSiteIndex(callSite);
         
-        JITCompiler::Call call = m_jit.nearCall();
+        info->emitDirectFastPath(m_jit);
         JITCompiler::Jump done = m_jit.jump();
         
         JITCompiler::Label slowPath = m_jit.label();
@@ -879,7 +876,7 @@ void SpeculativeJIT::emitCall(Node* node)
         
         setResultAndResetStack();
         
-        m_jit.addJSDirectCall(call, slowPath, info);
+        m_jit.addJSDirectCall(slowPath, info);
         return;
     }
     
@@ -888,21 +885,25 @@ void SpeculativeJIT::emitCall(Node* node)
     slowPath.append(m_jit.branchIfNotCell(JSValueRegs(calleeTagGPR, calleePayloadGPR)));
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
 
+    CCallHelpers::JumpList slowCases;
     if (isTail) {
-        if (node->op() == TailCall) {
-            info->setFrameShuffleData(shuffleData);
-            CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
-        } else {
-            m_jit.emitRestoreCalleeSaves();
-            m_jit.prepareForTailCallSlow();
-        }
-    }
-
-    JITCompiler::Call fastCall = isTail ? m_jit.nearTailCall() : m_jit.nearCall();
+        slowCases = info->emitTailCallFastPath(m_jit, calleePayloadGPR, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
+            if (node->op() == TailCall) {
+                info->setFrameShuffleData(shuffleData);
+                CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
+            } else {
+                m_jit.emitRestoreCalleeSaves();
+                m_jit.prepareForTailCallSlow();
+            }
+        });
+    } else
+        slowCases = info->emitFastPath(m_jit, calleePayloadGPR, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
 
     JITCompiler::Jump done = m_jit.jump();
 
     slowPath.link(&m_jit);
+    slowCases.link(&m_jit);
+    auto slowPathStart = m_jit.label();
 
     if (node->op() == TailCall) {
         CallFrameShuffler callFrameShuffler(m_jit, shuffleData);
@@ -927,18 +928,18 @@ void SpeculativeJIT::emitCall(Node* node)
             m_jit.emitRestoreCalleeSaves();
     }
 
-    m_jit.move(TrustedImmPtr(info), GPRInfo::regT2);
     m_jit.move(TrustedImmPtr::weakPointer(m_graph, globalObject), GPRInfo::regT3);
-    JITCompiler::Call slowCall = m_jit.nearCall();
+    info->emitSlowPath(vm(), m_jit);
 
     done.link(&m_jit);
+    auto doneLocation = m_jit.label();
 
     if (isTail)
         m_jit.abortWithReason(JITDidReturnFromTailCall);
     else
         setResultAndResetStack();
 
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, info);
+    m_jit.addJSCall(slowPathStart, doneLocation, info);
 }
 
 template<bool strict>

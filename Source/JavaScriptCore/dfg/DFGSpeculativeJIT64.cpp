@@ -830,18 +830,14 @@ void SpeculativeJIT::emitCall(Node* node)
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);
             
-            JITCompiler::PatchableJump patchableJump = m_jit.patchableJump();
             JITCompiler::Label mainPath = m_jit.label();
-            
             m_jit.emitStoreCallSiteIndex(callSite);
-            
-            callLinkInfo->setFrameShuffleData(shuffleData);
-            CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
-            
-            JITCompiler::Call call = m_jit.nearTailCall();
-            
+
+            callLinkInfo->emitDirectTailCallFastPath(m_jit, [&] {
+                callLinkInfo->setFrameShuffleData(shuffleData);
+                CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
+            });
             JITCompiler::Label slowPath = m_jit.label();
-            patchableJump.m_jump.linkTo(slowPath, &m_jit);
             
             silentSpillAllRegisters(InvalidGPRReg);
             callOperation(operationLinkDirectCall, callLinkInfo, calleeGPR);
@@ -851,15 +847,13 @@ void SpeculativeJIT::emitCall(Node* node)
             
             useChildren(node);
             
-            m_jit.addJSDirectTailCall(patchableJump, call, slowPath, callLinkInfo);
+            m_jit.addJSDirectCall(slowPath, callLinkInfo);
             return;
         }
         
         JITCompiler::Label mainPath = m_jit.label();
-        
         m_jit.emitStoreCallSiteIndex(callSite);
-        
-        JITCompiler::Call call = m_jit.nearCall();
+        callLinkInfo->emitDirectFastPath(m_jit);
         JITCompiler::Jump done = m_jit.jump();
         
         JITCompiler::Label slowPath = m_jit.label();
@@ -874,30 +868,29 @@ void SpeculativeJIT::emitCall(Node* node)
         
         setResultAndResetStack();
         
-        m_jit.addJSDirectCall(call, slowPath, callLinkInfo);
+        m_jit.addJSDirectCall(slowPath, callLinkInfo);
         return;
     }
     
     m_jit.emitStoreCallSiteIndex(callSite);
     
-    JITCompiler::DataLabelPtr targetToCheck;
-    JITCompiler::Jump slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, TrustedImmPtr(nullptr));
-
+    CCallHelpers::JumpList slowCases;
     if (isTail) {
-        if (node->op() == TailCall) {
-            callLinkInfo->setFrameShuffleData(shuffleData);
-            CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
-        } else {
-            m_jit.emitRestoreCalleeSaves();
-            m_jit.prepareForTailCallSlow();
-        }
-    }
-
-    JITCompiler::Call fastCall = isTail ? m_jit.nearTailCall() : m_jit.nearCall();
-
+        slowCases = callLinkInfo->emitTailCallFastPath(m_jit, calleeGPR, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
+            if (node->op() == TailCall) {
+                callLinkInfo->setFrameShuffleData(shuffleData);
+                CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
+            } else {
+                m_jit.emitRestoreCalleeSaves();
+                m_jit.prepareForTailCallSlow();
+            }
+        });
+    } else
+        slowCases = callLinkInfo->emitFastPath(m_jit, calleeGPR, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
     JITCompiler::Jump done = m_jit.jump();
 
-    slowPath.link(&m_jit);
+    slowCases.link(&m_jit);
+    auto slowPathStart = m_jit.label();
 
     if (node->op() == TailCall) {
         CallFrameShuffler callFrameShuffler(m_jit, shuffleData);
@@ -905,23 +898,22 @@ void SpeculativeJIT::emitCall(Node* node)
         callFrameShuffler.prepareForSlowPath();
     } else {
         m_jit.move(calleeGPR, GPRInfo::regT0); // Callee needs to be in regT0
-
         if (isTail)
             m_jit.emitRestoreCalleeSaves(); // This needs to happen after we moved calleeGPR to regT0
     }
 
-    m_jit.move(TrustedImmPtr(callLinkInfo), GPRInfo::regT2); // Link info needs to be in regT2
     m_jit.move(TrustedImmPtr::weakPointer(m_graph, globalObject), GPRInfo::regT3); // JSGlobalObject needs to be in regT3
-    JITCompiler::Call slowCall = m_jit.nearCall();
+    callLinkInfo->emitSlowPath(vm(), m_jit);
 
     done.link(&m_jit);
+    auto doneLocation = m_jit.label();
 
     if (isTail)
         m_jit.abortWithReason(JITDidReturnFromTailCall);
     else
         setResultAndResetStack();
 
-    m_jit.addJSCall(fastCall, slowCall, targetToCheck, callLinkInfo);
+    m_jit.addJSCall(slowPathStart, doneLocation, callLinkInfo);
 }
 
 // Clang should allow unreachable [[clang::fallthrough]] in template functions if any template expansion uses it

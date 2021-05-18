@@ -963,10 +963,9 @@ CompilationResult JIT::link()
 
     for (auto& compilationInfo : m_callCompilationInfo) {
         CallLinkInfo& info = *compilationInfo.callLinkInfo;
-        info.setCallLocations(
-            CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOfNearCall<JSInternalPtrTag>(compilationInfo.callReturnLocation)),
-            CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.hotPathBegin)),
-            patchBuffer.locationOfNearCall<JSInternalPtrTag>(compilationInfo.hotPathOther));
+        info.setCodeLocations(
+            patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.slowPathStart),
+            patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.doneLocation));
     }
 
     {

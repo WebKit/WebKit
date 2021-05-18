@@ -186,9 +186,8 @@ namespace JSC {
     };
 
     struct CallCompilationInfo {
-        MacroAssembler::DataLabelPtr hotPathBegin;
-        MacroAssembler::Call hotPathOther;
-        MacroAssembler::Call callReturnLocation;
+        MacroAssembler::Label slowPathStart;
+        MacroAssembler::Label doneLocation;
         CallLinkInfo* callLinkInfo;
     };
 

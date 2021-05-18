@@ -257,31 +257,18 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     finalizeInlineCaches(m_instanceOfs, linkBuffer);
     finalizeInlineCaches(m_privateBrandAccesses, linkBuffer);
 
-    auto linkCallThunk = FunctionPtr<NoPtrTag>(vm().getCTIStub(linkCallThunkGenerator).retaggedCode<NoPtrTag>());
     for (auto& record : m_jsCalls) {
         CallLinkInfo& info = *record.info;
-        linkBuffer.link(record.slowCall, linkCallThunk);
-        info.setCallLocations(
-            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.slowCall)),
-            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(record.targetToCheck)),
-            linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.fastCall));
+        info.setCodeLocations(
+            linkBuffer.locationOf<JSInternalPtrTag>(record.slowPathStart),
+            linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
     }
     
-    for (JSDirectCallRecord& record : m_jsDirectCalls) {
+    for (auto& record : m_jsDirectCalls) {
         CallLinkInfo& info = *record.info;
-        linkBuffer.link(record.call, linkBuffer.locationOf<NoPtrTag>(record.slowPath));
-        info.setCallLocations(
-            CodeLocationLabel<JSInternalPtrTag>(),
+        info.setCodeLocations(
             linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
-            linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.call));
-    }
-    
-    for (JSDirectTailCallRecord& record : m_jsDirectTailCalls) {
-        CallLinkInfo& info = *record.info;
-        info.setCallLocations(
-            linkBuffer.locationOf<JSInternalPtrTag>(record.patchableJump),
-            linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
-            linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.call));
+            CodeLocationLabel<JSInternalPtrTag>());
     }
 
 #if ENABLE(EXTRA_CTI_THUNKS)

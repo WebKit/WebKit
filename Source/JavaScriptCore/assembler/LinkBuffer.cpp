@@ -439,6 +439,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
 #endif // !ENABLE(BRANCH_COMPACTION)
 
     m_linkTasks = WTFMove(macroAssembler.m_linkTasks);
+    m_lateLinkTasks = WTFMove(macroAssembler.m_lateLinkTasks);
 }
 
 void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort effort)
@@ -470,6 +471,8 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort e
 void LinkBuffer::performFinalization()
 {
     for (auto& task : m_linkTasks)
+        task->run(*this);
+    for (auto& task : m_lateLinkTasks)
         task->run(*this);
 
 #ifndef NDEBUG

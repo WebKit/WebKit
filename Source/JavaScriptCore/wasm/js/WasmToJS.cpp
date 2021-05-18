@@ -261,19 +261,18 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     CallLinkInfo* callLinkInfo = callLinkInfos.add(CodeOrigin());
     callLinkInfo->setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
-    JIT::DataLabelPtr targetToCheck;
-    JIT::TrustedImmPtr initialRightValue(nullptr);
-    JIT::Jump slowPath = jit.branchPtrWithPatch(MacroAssembler::NotEqual, importJSCellGPRReg, targetToCheck, initialRightValue);
-    JIT::Call fastCall = jit.nearCall();
+    auto slowPath = callLinkInfo->emitFastPath(jit, importJSCellGPRReg, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
+
     JIT::Jump done = jit.jump();
     slowPath.link(&jit);
+    auto slowPathStart = jit.label();
     // Callee needs to be in regT0 here.
-    jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::regT2); // Link info needs to be in regT2.
     jit.loadWasmContextInstance(GPRInfo::regT3);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT3, Instance::offsetOfOwner()), GPRInfo::regT3);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT3, JSWebAssemblyInstance::offsetOfGlobalObject()), GPRInfo::regT3);
-    JIT::Call slowCall = jit.nearCall();
+    callLinkInfo->emitSlowPath(vm, jit);
     done.link(&jit);
+    auto doneLocation = jit.label();
 
     if (signature.returnCount() == 1) {
         switch (signature.returnType(0).kind) {
@@ -421,11 +420,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    patchBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(vm.getCTIStub(linkCallThunkGenerator).code()));
-    CodeLocationLabel<JSInternalPtrTag> callReturnLocation(patchBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall));
-    CodeLocationLabel<JSInternalPtrTag> hotPathBegin(patchBuffer.locationOf<JSInternalPtrTag>(targetToCheck));
-    CodeLocationNearCall<JSInternalPtrTag> hotPathOther = patchBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall);
-    callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
+    callLinkInfo->setCodeLocations(
+        patchBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
+        patchBuffer.locationOf<JSInternalPtrTag>(doneLocation));
 
     return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
 }
