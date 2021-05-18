@@ -1,3 +1,24 @@
+2021-05-17  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] promote submenus items if there is only one
+        https://bugs.webkit.org/show_bug.cgi?id=225883
+
+        Reviewed by Eric Carlson.
+
+        As an example, if a `<video>` only has subtitles and not any other languages, the "Subtitles"
+        submenu should really be top-level (i.e. have "Subtitles" be the title of the entire
+        contextmenu instead of being a submenu of a title-less contextmenu) in the contextmenu shown
+        when tapping the tracks button.
+
+        Tests: media/modern-media-controls/tracks-support/auto-text-track.html
+               media/modern-media-controls/tracks-support/click-track-in-contextmenu.html
+               media/modern-media-controls/tracks-support/hidden-tracks.html
+               media/modern-media-controls/tracks-support/off-text-track.html
+               media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::showMediaControlsContextMenu):
+
 2021-05-17  Alberto Garcia  <berto@igalia.com>
 
         [GTK] [2.33.1] Fails to build when HAVE_OPENGL_ES_3 is on

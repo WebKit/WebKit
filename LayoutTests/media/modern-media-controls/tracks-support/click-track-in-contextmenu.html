@@ -43,24 +43,14 @@ function clickOnTracksButton(continuation)
 async function clickOnFrenchAudioTrack()
 {
     debug("Selecting 'French' track...");
-    let contextmenu = await getTracksContextMenu();
-    let languagesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Languages");
-    if (languagesMenu?.children?.length) {
-        await UIHelper.chooseMenuAction(languagesMenu.title);
-        await UIHelper.delayFor(500); // give time for the UIMenu to animate
-    }
+    await getTracksContextMenu();
     await UIHelper.chooseMenuAction("French Sound");
 }
 
 async function clickOnSpanishAudioTrack()
 {
     debug("Selecting 'Spanish' track...");
-    let contextmenu = await getTracksContextMenu();
-    let languagesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Languages");
-    if (languagesMenu?.children?.length) {
-        await UIHelper.chooseMenuAction(languagesMenu.title);
-        await UIHelper.delayFor(500); // give time for the UIMenu to animate
-    }
+    await getTracksContextMenu();
     await UIHelper.chooseMenuAction("Spanish Sound");
 }
 

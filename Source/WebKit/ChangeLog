@@ -1,3 +1,18 @@
+2021-05-17  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] promote submenus items if there is only one
+        https://bugs.webkit.org/show_bug.cgi?id=225883
+
+        Reviewed by Eric Carlson.
+
+        As an example, if a `<video>` only has subtitles and not any other languages, the "Subtitles"
+        submenu should really be top-level (i.e. have "Subtitles" be the title of the entire
+        contextmenu instead of being a submenu of a title-less contextmenu) in the contextmenu shown
+        when tapping the tracks button.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showMediaControlsContextMenu:items:completionHandler:]):
+
 2021-05-17  Alex Christensen  <achristensen@webkit.org>
 
         Remove API::Object::Type::BundlePageGroup

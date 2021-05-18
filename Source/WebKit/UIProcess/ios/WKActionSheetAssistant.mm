@@ -825,12 +825,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_mediaControlsContextMenu);
     ASSERT(!_mediaControlsContextMenuCallback);
 
+    String menuTitle;
+    if (items.size() == 1) {
+        menuTitle = WTFMove(items[0].title);
+        items = WTFMove(items[0].children);
+    }
+
     if (items.isEmpty()) {
         completionHandler(WebCore::MediaControlsContextMenuItem::invalidID);
         return;
     }
 
-    _mediaControlsContextMenu = [UIMenu menuWithTitle:@"" children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(items)]];
+    _mediaControlsContextMenu = [UIMenu menuWithTitle:WTFMove(menuTitle) children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(items)]];
     _mediaControlsContextMenuTargetFrame = WTFMove(targetFrame);
     _mediaControlsContextMenuCallback = WTFMove(completionHandler);
 

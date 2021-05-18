@@ -591,7 +591,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #endif
 
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    if (optionsJSONObject->getBoolean("promoteSubMenus"_s).valueOr(false)) {
+    if ((items.size() == 1 && items[0].type() == SubmenuType) || optionsJSONObject->getBoolean("promoteSubMenus"_s).valueOr(false)) {
         for (auto&& item : std::exchange(items, { })) {
             if (!items.isEmpty())
                 items.append({ SeparatorType, invalidMenuItemIdentifier, /* title */ nullString() });

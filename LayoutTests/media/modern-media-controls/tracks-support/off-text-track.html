@@ -26,13 +26,6 @@ media.addEventListener("play", () => {
             debug("Tapping tracks button...");
             await pressOnElement(shadowRoot.querySelector("button.tracks"));
             contextmenu = await getTracksContextMenu();
-
-            let subtitlesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Subtitles");
-            if (subtitlesMenu?.children?.length) {
-                await UIHelper.chooseMenuAction(subtitlesMenu.title);
-                await UIHelper.delayFor(500); // give time for the UIMenu to animate
-                contextmenu = [subtitlesMenu];
-            }
             checkedItems = contextmenu[0].children.filter((item) => item.checked);
             shouldBe("checkedItems.length", "1");
             shouldBeEqualToString("checkedItems[0].title", "Off");
