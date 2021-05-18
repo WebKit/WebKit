@@ -1,3 +1,41 @@
+2021-05-18  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r277661. rdar://problem/78175007
+
+    Stop compiling ANGLE metal files twice
+    https://bugs.webkit.org/show_bug.cgi?id=225919
+    <rdar://78013511>
+    
+    Reviewed by Dean Jackson.
+    
+    ANGLE currently generates an unused default.metallib that conflicts with other default.metallibs being built.
+    Since it is unused, remove it.
+    What we currently do is put all the source bytes into gDefaultMetallibSrc and compile it at runtime.
+    This could be optimized to do it at compile time and use newLibraryWithData instead of newLibraryWithSource,
+    but that should be done separately.
+    
+    * ANGLE.xcodeproj/project.pbxproj:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277661 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-18  Alex Christensen  <achristensen@webkit.org>
+
+            Stop compiling ANGLE metal files twice
+            https://bugs.webkit.org/show_bug.cgi?id=225919
+            <rdar://78013511>
+
+            Reviewed by Dean Jackson.
+
+            ANGLE currently generates an unused default.metallib that conflicts with other default.metallibs being built.
+            Since it is unused, remove it.
+            What we currently do is put all the source bytes into gDefaultMetallibSrc and compile it at runtime.
+            This could be optimized to do it at compile time and use newLibraryWithData instead of newLibraryWithSource,
+            but that should be done separately.
+
+            * ANGLE.xcodeproj/project.pbxproj:
+
 2021-05-12  Kyle Piddington  <kpiddington@apple.com>
 
         [Angle METAL] Remove thread qualifiers and pass-by-reference qualifiers for cast functions
