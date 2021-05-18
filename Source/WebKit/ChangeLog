@@ -1,3 +1,32 @@
+2021-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enabling IPC testing API should prevent WebContent process from getting terminated in more cases
+        https://bugs.webkit.org/show_bug.cgi?id=225906
+        <rdar://problem/78138794>
+
+        Rebaselined the tests.
+
+        * Scripts/webkit/tests/TestWithIfMessageMessageReceiver.cpp:
+        (WebKit::TestWithIfMessage::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp:
+        (WebKit::TestWithImageData::didReceiveMessage):
+        (WebKit::TestWithImageData::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (WebKit::TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage):
+        (WebKit::TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage):
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+        (WebKit::TestWithSemaphore::didReceiveMessage):
+        (WebKit::TestWithSemaphore::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithStreamBufferMessageReceiver.cpp:
+        (WebKit::TestWithStreamBuffer::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp:
+        (WebKit::TestWithStream::didReceiveStreamMessage):
+        * Scripts/webkit/tests/TestWithSuperclassMessageReceiver.cpp:
+        (WebKit::TestWithSuperclass::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (WebKit::TestWithoutAttributes::didReceiveMessage):
+        (WebKit::TestWithoutAttributes::didReceiveSyncMessage):
+
 2021-05-18  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r277614.

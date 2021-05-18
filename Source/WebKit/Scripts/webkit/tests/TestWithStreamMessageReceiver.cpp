@@ -56,6 +56,10 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& co
 #endif
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
+#if ENABLE(IPC_TESTING_API)
+    if (connection.connection().ignoreInvalidMessageForTesting())
+        return;
+#endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
 }
 
