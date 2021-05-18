@@ -1,5 +1,15 @@
 2021-05-18  Zhifei Fang  <zhifei_fang@apple.com>
 
+        Clean up git svn mapping when git pull
+        https://bugs.webkit.org/show_bug.cgi?id=225934
+
+        Reviewed by Ryosuke Niwa.
+
+        * tools/sync-commits.py:
+        (GitRepository._fetch_remote):
+
+2021-05-18  Zhifei Fang  <zhifei_fang@apple.com>
+
         Commits updater should ignore null revision identifier
         https://bugs.webkit.org/show_bug.cgi?id=225911
 

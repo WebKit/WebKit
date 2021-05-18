@@ -288,6 +288,7 @@ class GitRepository(Repository):
     def _fetch_remote(self):
         self._run_git_command(['pull', self._git_url])
         if self._report_svn_revision:
+            subprocess.check_call(['rm', '-rf', os.path.join(self._git_checkout, '.git/svn')])
             self._run_git_command(['svn', 'fetch'])
 
     def _fetch_all_hashes(self):
