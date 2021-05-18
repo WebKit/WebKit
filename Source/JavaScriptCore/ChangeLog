@@ -1,3 +1,103 @@
+2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Temporarily revert r276592 as it breaks some native apps
+        https://bugs.webkit.org/show_bug.cgi?id=225917
+
+        Unreviewed, revert.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        * debugger/DebuggerScope.h:
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.h:
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter):
+        * runtime/CustomGetterSetter.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::put):
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::put):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::doPutPropertySecurityCheck):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::doPutPropertySecurityCheck):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::prototypeChainMayInterceptStoreTo):
+        (JSC::definePropertyOnReceiverSlow): Deleted.
+        (JSC::JSObject::definePropertyOnReceiver): Deleted.
+        (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::doPutPropertySecurityCheck):
+        (JSC::JSObject::hasNonReifiedStaticProperties): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+        (JSC::JSObject::putInlineForJSObject):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putInlineFast): Deleted.
+        * runtime/JSProxy.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesGetOwnPropertySlot const):
+        (JSC::TypeInfo::overridesAnyFormOfGetOwnPropertyNames const):
+        (JSC::TypeInfo::hasPutPropertySecurityCheck const):
+        (JSC::TypeInfo::hasStaticPropertyTable const): Deleted.
+        (JSC::TypeInfo::overridesPut const): Deleted.
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        (JSC::lookupPut):
+        * runtime/PropertySlot.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::put):
+        * runtime/ProxyObject.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::context const):
+        (JSC::PutPropertySlot::type const):
+        (JSC::PutPropertySlot::isInitialization const):
+        (JSC::PutPropertySlot::isTaintedByOpaqueObject const): Deleted.
+        (JSC::PutPropertySlot::setIsTaintedByOpaqueObject): Deleted.
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::StringPrototype::create):
+        * runtime/StringPrototype.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+        * runtime/Structure.h:
+        (JSC::Structure::takesSlowPathInDFGForImpureProperty):
+        (JSC::Structure::hasNonReifiedStaticProperties const): Deleted.
+        * tools/JSDollarVM.cpp:
+
 2021-05-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation] Fix PlayStation port

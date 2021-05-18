@@ -69,8 +69,6 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInlineExcludingProto(VM& vm)
         Structure* structure = obj->structure(vm);
         if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype())
             return false;
-        if (obj != this && structure->typeInfo().overridesPut())
-            return false;
 
         prototype = obj->getPrototypeDirect(vm);
         if (prototype.isNull())
@@ -251,43 +249,32 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
     return result;
 }
 
-// https://tc39.es/ecma262/#sec-ordinaryset
+// ECMA 8.6.2.2
 ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
+
     // Try indexed put first. This is required for correctness, since loads on property names that appear like
     // valid indices will never look in the named property storage.
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
-        if (UNLIKELY(isThisValueAltered(slot, thisObject)))
-            return ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
-        return thisObject->methodTable(vm)->putByIndex(thisObject, globalObject, index.value(), value, slot.isStrictMode());
+    if (Optional<uint32_t> index = parseIndex(propertyName))
+        RELEASE_AND_RETURN(scope, putByIndex(thisObject, globalObject, index.value(), value, slot.isStrictMode()));
+
+    if (thisObject->canPerformFastPutInline(vm, propertyName)) {
+        ASSERT(!thisObject->prototypeChainMayInterceptStoreTo(vm, propertyName));
+        if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
+            return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+        return true;
     }
 
-    if (!thisObject->canPerformFastPutInline(vm, propertyName))
-        return thisObject->putInlineSlow(globalObject, propertyName, value, slot);
-    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
-        return definePropertyOnReceiver(globalObject, propertyName, value, slot);
-    if (UNLIKELY(thisObject->hasNonReifiedStaticProperties(vm)))
-        return thisObject->putInlineFastReplacingStaticPropertyIfNeeded(globalObject, propertyName, value, slot);
-    return thisObject->putInlineFast(globalObject, propertyName, value, slot);
-}
-
-ALWAYS_INLINE bool JSObject::putInlineFast(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    ASSERT(!parseIndex(propertyName));
-
-    VM& vm = getVM(globalObject);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // FIXME: For a failure due to non-extensible structure, the error message is misleading.
-    if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
-        return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
-    return true;
+    RELEASE_AND_RETURN(scope, thisObject->putInlineSlow(globalObject, propertyName, value, slot));
 }
 
 // HasOwnProperty(O, P) from section 7.3.11 in the spec.
@@ -330,7 +317,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         unsigned currentAttributes;
         PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
         if (offset != invalidOffset) {
-            if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
+            if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnly)
                 return false;
 
             putDirect(vm, offset, value);
@@ -389,7 +376,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     unsigned currentAttributes;
     offset = structure->get(vm, propertyName, currentAttributes);
     if (offset != invalidOffset) {
-        if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
+        if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnly)
             return false;
 
         structure->didReplaceProperty(offset);

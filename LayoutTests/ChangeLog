@@ -1,3 +1,15 @@
+2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Temporarily revert r276592 as it breaks some native apps
+        https://bugs.webkit.org/show_bug.cgi?id=225917
+
+        Unreviewed, revert
+
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt:
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html:
+        * js/dom/reflect-set-onto-dom-expected.txt:
+        * js/dom/script-tests/reflect-set-onto-dom.js:
+
 2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. File several printing tests that were crashing under own bug.

@@ -134,8 +134,8 @@ bool GenericArguments<Type>::put(JSCell* cell, JSGlobalObject* globalObject, Pro
 
     // https://tc39.github.io/ecma262/#sec-arguments-exotic-objects-set-p-v-receiver
     // Fall back to the OrdinarySet when the receiver is altered from the thisObject.
-    if (UNLIKELY(slot.thisValue() != thisObject))
-        RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, ident, value, slot));
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, ident, value, slot.thisValue(), slot.isStrictMode()));
     
     Optional<uint32_t> index = parseIndex(ident);
     if (index && thisObject->isMappedArgument(index.value())) {
@@ -143,7 +143,9 @@ bool GenericArguments<Type>::put(JSCell* cell, JSGlobalObject* globalObject, Pro
         return true;
     }
 
-    RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, ident, value, slot));
+    auto result = Base::put(thisObject, globalObject, ident, value, slot);
+    RETURN_IF_EXCEPTION(scope, false);
+    RELEASE_AND_RETURN(scope, result);
 }
 
 template<typename Type>

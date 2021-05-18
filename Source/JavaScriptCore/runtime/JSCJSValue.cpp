@@ -212,7 +212,7 @@ JSObject* JSValue::synthesizePrototype(JSGlobalObject* globalObject) const
     return nullptr;
 }
 
-// https://tc39.es/ecma262/#sec-ordinaryset
+// ECMA 8.7.2
 bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = globalObject->vm();
@@ -221,14 +221,69 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
     if (Optional<uint32_t> index = parseIndex(propertyName))
         RELEASE_AND_RETURN(scope, putToPrimitiveByIndex(globalObject, index.value(), value, slot.isStrictMode()));
 
-    if (isString() && propertyName.uid() == vm.propertyNames->length.impl())
-        return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     // Check if there are any setters or getters in the prototype chain
     JSObject* obj = synthesizePrototype(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !obj);
     if (UNLIKELY(!obj))
         return false;
-    RELEASE_AND_RETURN(scope, obj->methodTable(vm)->put(obj, globalObject, propertyName, value, slot));
+    JSValue prototype;
+    if (propertyName != vm.propertyNames->underscoreProto) {
+        while (true) {
+            Structure* structure = obj->structure(vm);
+            if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().hasPutPropertySecurityCheck())
+                break;
+            if (obj->type() == ProxyObjectType) {
+                auto* proxy = jsCast<ProxyObject*>(obj);
+                RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
+            }
+            prototype = obj->getPrototype(vm, globalObject);
+            RETURN_IF_EXCEPTION(scope, false);
+
+            if (prototype.isNull())
+                return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+            obj = asObject(prototype);
+        }
+    }
+
+    for (; ; obj = asObject(prototype)) {
+        Structure* structure = obj->structure(vm);
+        if (UNLIKELY(structure->typeInfo().hasPutPropertySecurityCheck())) {
+            obj->methodTable(vm)->doPutPropertySecurityCheck(obj, globalObject, propertyName, slot);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
+        unsigned attributes;
+        PropertyOffset offset = structure->get(vm, propertyName, attributes);
+        if (offset != invalidOffset) {
+            if (attributes & PropertyAttribute::ReadOnly)
+                return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+
+            JSValue gs = obj->getDirect(offset);
+            if (gs.isGetterSetter())
+                RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(gs)->callSetter(globalObject, *this, value, slot.isStrictMode()));
+
+            if (gs.isCustomGetterSetter()) {
+                auto setter = jsCast<CustomGetterSetter*>(gs.asCell())->setter();
+                bool isAccessor = attributes & PropertyAttribute::CustomAccessor;
+                auto result = callCustomSetter(globalObject, setter, isAccessor, obj, slot.thisValue(), value, propertyName);
+                if (result != TriState::Indeterminate)
+                    RELEASE_AND_RETURN(scope, result == TriState::True);
+            }
+
+            // If there's an existing property on the object or one of its 
+            // prototypes it should be replaced, so break here.
+            break;
+        }
+        if (obj->type() == ProxyObjectType) {
+            auto* proxy = jsCast<ProxyObject*>(obj);
+            RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
+        }
+        prototype = obj->getPrototype(vm, globalObject);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (prototype.isNull())
+            break;
+    }
+    
+    return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
 }
 
 bool JSValue::putToPrimitiveByIndex(JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)

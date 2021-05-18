@@ -15,7 +15,7 @@
         doTest = function()
         {
             targetWindow = document.getElementById("target").contentWindow;
-            array = [];
+            var array = [];
             array.__proto__.__proto__ = targetWindow;
             array[0] = 11.11;
             array[2] = 22.22;
@@ -24,15 +24,11 @@
                     testFailed("toString is called by 10101010 setter");
                 }
             };
-            cocoaValue = {
+            array["cocoa"] = {
                 toString() {
                     testFailed("toString is called by cocoa setter");
                 }
             };
-            shouldThrowErrorName("array.cocoa = cocoaValue", "SecurityError");
-
-            Object.setPrototypeOf(String.prototype, targetWindow);
-            shouldThrowErrorName("'str'.cocoa = cocoaValue", "SecurityError");
             finishJSTest();
         }
     </script>

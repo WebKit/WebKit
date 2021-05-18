@@ -1,3 +1,12 @@
+2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Temporarily revert r276592 as it breaks some native apps
+        https://bugs.webkit.org/show_bug.cgi?id=225917
+
+        Unreviewed, revert.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2021-05-18  Garrett Davidson  <garrett_davidson@apple.com>
 
         Add nil checks for LAContexts before inserting them in the dictionaries.
