@@ -3995,6 +3995,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(IPC_TESTING_API)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
+
+    WebProcess::singleton().parentProcessConnection()->setIgnoreInvalidMessageForTesting();
+    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+        gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #endif
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(IOS)

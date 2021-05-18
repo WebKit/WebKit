@@ -1240,6 +1240,10 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         ASSERT(connectionInfo.auditToken);
         m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
+#if ENABLE(IPC_TESTING_API)
+        if (parentProcessConnection()->ignoreInvalidMessageForTesting())
+            m_gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
+#endif
 
         for (auto& page : m_pageMap.values()) {
             // If page is null, then it is currently being constructed.

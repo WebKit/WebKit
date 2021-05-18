@@ -1,3 +1,29 @@
+2021-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enabling IPC testing API should prevent WebContent process from getting terminated in more cases
+        https://bugs.webkit.org/show_bug.cgi?id=225906
+
+        Reviewed by Wenson Hsieh.
+
+        Avoid hitting debug assertions in WebContent process when a dispatched message isn't processed
+        in a message receivers and don't kill WebContent process in GPU processs when RemoteRenderingBackend
+        receives a bad IPC message.
+
+        Also fixed a typo in encodeSharedMemory where we were exiting early when the protection was ReadWrite
+        instead of when it was not ReadWrite or ReadOnly.
+
+        These fixes are needed to land tests for recent GPU process fixes.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::encodeSharedMemory):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureGPUProcessConnection):
+
 2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs

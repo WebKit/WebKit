@@ -954,6 +954,10 @@ def generate_message_handler(receiver):
         else:
             result.append('    UNUSED_PARAM(decoder);\n')
             result.append('    UNUSED_PARAM(connection);\n')
+            result.append('#if ENABLE(IPC_TESTING_API)\n')
+            result.append('    if (connection.connection().ignoreInvalidMessageForTesting())\n')
+            result.append('        return;\n')
+            result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());\n')
         result.append('}\n')
     elif async_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE) or receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE):
@@ -973,6 +977,10 @@ def generate_message_handler(receiver):
         else:
             result.append('    UNUSED_PARAM(connection);\n')
             result.append('    UNUSED_PARAM(decoder);\n')
+            result.append('#if ENABLE(IPC_TESTING_API)\n')
+            result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
+            result.append('        return;\n')
+            result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());\n')
         result.append('}\n')
 
@@ -989,6 +997,10 @@ def generate_message_handler(receiver):
         result.append('    UNUSED_PARAM(connection);\n')
         result.append('    UNUSED_PARAM(decoder);\n')
         result.append('    UNUSED_PARAM(replyEncoder);\n')
+        result.append('#if ENABLE(IPC_TESTING_API)\n')
+        result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
+        result.append('        return false;\n')
+        result.append('#endif // ENABLE(IPC_TESTING_API)\n')
         result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());\n')
         result.append('    return false;\n')
         result.append('}\n')

@@ -43,9 +43,17 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
+#if ENABLE(IPC_TESTING_API)
+#define WEB_PROCESS_TERMINATE_CONDITION !m_gpuConnectionToWebProcess->connection().ignoreInvalidMessageForTesting()
+#else
+#define WEB_PROCESS_TERMINATE_CONDITION true
+#endif
+
 #define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
-    RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), #message); \
-    m_gpuConnectionToWebProcess->terminateWebProcess();
+    if (WEB_PROCESS_TERMINATE_CONDITION) { \
+        RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), #message); \
+        m_gpuConnectionToWebProcess->terminateWebProcess(); \
+    }
 
 #define MESSAGE_CHECK(assertion, message) do { \
     if (UNLIKELY(!(assertion))) { \
