@@ -293,6 +293,24 @@ TEST(SampledPageTopColor, HitTestHTMLImage)
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
+TEST(SampledPageTopColor, HitTestHTMLCanvasWithoutRenderingContext)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    waitForSampledPageTopColorToChangeForHTML(webView.get(), @"<body style='margin: 0'><canvas style='width: 100%; height: 100%; background-color: red'></canvas>Test");
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::red);
+}
+
+TEST(SampledPageTopColor, HitTestHTMLCanvasWithRenderingContext)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0'><canvas style='width: 100%; height: 100%; background-color: red'></canvas>Test<script>document.querySelector('canvas').getContext('2d')</script>"];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+}
+
 TEST(SampledPageTopColor, HitTestCSSBackgroundImage)
 {
     auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);

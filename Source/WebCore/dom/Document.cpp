@@ -3908,6 +3908,11 @@ static bool isValidPageSampleLocation(Document& document, const IntPoint& locati
         if (renderer->style().hasTransitions() || renderer->style().hasAnimations())
             return false;
 
+        // Skip `<canvas>` but only if they've been drawn into. Guess this by seeing if there's already
+        // a `CanvasRenderingContext`, which is only created by JavaScript.
+        if (is<HTMLCanvasElement>(node) && downcast<HTMLCanvasElement>(node).renderingContext())
+            return false;
+
         // Skip 3rd-party `<iframe>` as the content likely won't match the rest of the page.
         if (is<HTMLIFrameElement>(node) && !areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(node).location(), document.url()))
             return false;
