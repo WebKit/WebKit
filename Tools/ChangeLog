@@ -1,3 +1,16 @@
+2021-05-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Forward booted simulators to children processes
+        https://bugs.webkit.org/show_bug.cgi?id=225933
+        <rdar://problem/78169900>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/api_tests/runner.py:
+        (setup_shard): Set DeviceManager global variable from parent process.
+        (Runner.command_for_port): Use Port's device manager instead of simulated device manager.
+        (Runner.run): Pass DeviceManager details to children processes.
+
 2021-05-18  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Style fixes in steps_unittest.py
