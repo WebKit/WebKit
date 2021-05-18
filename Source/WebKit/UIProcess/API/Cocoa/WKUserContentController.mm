@@ -40,6 +40,7 @@
 #import "WKWebViewInternal.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
+#import "_WKUserContentFilterInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import <WebCore/SecurityOrigin.h>
@@ -274,10 +275,24 @@ private:
     _userContentControllerProxy->addUserScript(*userScript->_userScript, WebKit::InjectUserScriptImmediately::Yes);
 }
 
+- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->addContentRuleList(*userContentFilter->_contentRuleList->_contentRuleList);
+#endif
+}
+
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     _userContentControllerProxy->removeContentRuleList(userContentFilterName);
+#endif
+}
+
+- (void)_removeAllUserContentFilters
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->removeAllContentRuleLists();
 #endif
 }
 

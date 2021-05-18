@@ -27,6 +27,7 @@
 
 @class WKContentWorld;
 @class WKUserScript;
+@class _WKUserContentFilter;
 @class _WKUserContentWorld;
 @class _WKUserStyleSheet;
 
@@ -37,7 +38,9 @@
 
 - (void)_addUserScriptImmediately:(WKUserScript *)userScript WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
+- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_API_AVAILABLE(macos(10.11), ios(9.0));
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_API_AVAILABLE(macos(10.11), ios(9.0));
+- (void)_removeAllUserContentFilters WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 @property (nonatomic, readonly, copy) NSArray<_WKUserStyleSheet *> *_userStyleSheets WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet WK_API_AVAILABLE(macos(10.12), ios(10.0));

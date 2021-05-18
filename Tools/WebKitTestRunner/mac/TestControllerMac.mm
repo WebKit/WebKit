@@ -42,6 +42,8 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKUserContentExtensionStore.h>
+#import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <mach-o/dyld.h>
 
 @interface NSSound ()
@@ -204,10 +206,10 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     } else
         tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES];
 
-    [[WKContentRuleListStore storeWithURL:tempDir] compileContentRuleListForIdentifier:@"TestContentExtensions" encodedContentRuleList:contentExtensionString.get() completionHandler:^(WKContentRuleList *list, NSError *error)
+    [[_WKUserContentExtensionStore storeWithURL:tempDir] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString.get() completionHandler:^(_WKUserContentFilter *filter, NSError *error)
     {
         if (!error)
-            [mainWebView()->platformView().configuration.userContentController addContentRuleList:list];
+            [mainWebView()->platformView().configuration.userContentController _addUserContentFilter:filter];
         else
             NSLog(@"%@", [error helpAnchor]);
         doneCompiling = true;

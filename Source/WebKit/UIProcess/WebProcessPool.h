@@ -707,6 +707,10 @@ private:
     mutable RetainPtr<NSSet> m_classesForParameterCoder;
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    HashMap<String, String> m_encodedContentExtensions;
+#endif
+
 #if ENABLE(GAMEPAD)
     WeakHashSet<WebProcessProxy> m_processesUsingGamepads;
 #endif

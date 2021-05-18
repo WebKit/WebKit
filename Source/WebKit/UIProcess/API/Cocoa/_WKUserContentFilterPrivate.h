@@ -23,42 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebURLSchemeHandlerCocoa.h"
+#import <WebKit/_WKUserContentFilter.h>
 
-#import "WKFoundation.h"
-#import "WKURLSchemeHandler.h"
-#import "WKURLSchemeTaskInternal.h"
-#import "WKWebViewInternal.h"
-#import "WebURLSchemeTask.h"
-#import <wtf/RunLoop.h>
+@class WKUserContentRuleList;
 
-namespace WebKit {
+@interface _WKUserContentFilter (WKPrivate)
 
-Ref<WebURLSchemeHandlerCocoa> WebURLSchemeHandlerCocoa::create(id <WKURLSchemeHandler> apiHandler)
-{
-    return adoptRef(*new WebURLSchemeHandlerCocoa(apiHandler));
-}
+- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
-WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler> apiHandler)
-    : m_apiHandler(apiHandler)
-{
-}
-
-void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() startURLSchemeTask:strongTask.get()];
-}
-
-void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() stopURLSchemeTask:strongTask.get()];
-    else
-        task.suppressTaskStoppedExceptions();
-}
-
-} // namespace WebKit
+@end

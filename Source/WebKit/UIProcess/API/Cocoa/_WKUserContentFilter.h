@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebURLSchemeHandlerCocoa.h"
+#import <WebKit/WKFoundation.h>
 
-#import "WKFoundation.h"
-#import "WKURLSchemeHandler.h"
-#import "WKURLSchemeTaskInternal.h"
-#import "WKWebViewInternal.h"
-#import "WebURLSchemeTask.h"
-#import <wtf/RunLoop.h>
+WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
+@interface _WKUserContentFilter : NSObject
 
-namespace WebKit {
-
-Ref<WebURLSchemeHandlerCocoa> WebURLSchemeHandlerCocoa::create(id <WKURLSchemeHandler> apiHandler)
-{
-    return adoptRef(*new WebURLSchemeHandlerCocoa(apiHandler));
-}
-
-WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler> apiHandler)
-    : m_apiHandler(apiHandler)
-{
-}
-
-void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() startURLSchemeTask:strongTask.get()];
-}
-
-void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() stopURLSchemeTask:strongTask.get()];
-    else
-        task.suppressTaskStoppedExceptions();
-}
-
-} // namespace WebKit
+@end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,41 +24,36 @@
  */
 
 #import "config.h"
-#import "WebURLSchemeHandlerCocoa.h"
+#import "_WKUserContentFilterInternal.h"
 
-#import "WKFoundation.h"
-#import "WKURLSchemeHandler.h"
-#import "WKURLSchemeTaskInternal.h"
-#import "WKWebViewInternal.h"
-#import "WebURLSchemeTask.h"
-#import <wtf/RunLoop.h>
+#import "WKContentRuleListInternal.h"
+#import "WebCompiledContentRuleList.h"
+#import <WebCore/ContentExtensionCompiler.h>
+#import <WebCore/ContentExtensionError.h>
+#import <string>
 
-namespace WebKit {
+@implementation _WKUserContentFilter
 
-Ref<WebURLSchemeHandlerCocoa> WebURLSchemeHandlerCocoa::create(id <WKURLSchemeHandler> apiHandler)
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
 {
-    return adoptRef(*new WebURLSchemeHandlerCocoa(apiHandler));
+    return [_contentRuleList _apiObject];
 }
 
-WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler> apiHandler)
-    : m_apiHandler(apiHandler)
+@end
+
+@implementation _WKUserContentFilter (WKPrivate)
+
+- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList
 {
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _contentRuleList = contentRuleList;
+    
+    return self;
 }
 
-void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() startURLSchemeTask:strongTask.get()];
-}
-
-void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() stopURLSchemeTask:strongTask.get()];
-    else
-        task.suppressTaskStoppedExceptions();
-}
-
-} // namespace WebKit
+@end

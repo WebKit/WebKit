@@ -1,3 +1,15 @@
+2021-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r277605.
+
+        Broke iOS tests
+
+        Reverted changeset:
+
+        "Remove _WKUserContentFilter and _WKUserContentExtensionStore"
+        https://bugs.webkit.org/show_bug.cgi?id=224391
+        https://commits.webkit.org/r277605
+
 2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal macOS build

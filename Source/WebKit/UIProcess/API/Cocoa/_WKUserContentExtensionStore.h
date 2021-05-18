@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebURLSchemeHandlerCocoa.h"
+#import <WebKit/WKFoundation.h>
 
-#import "WKFoundation.h"
-#import "WKURLSchemeHandler.h"
-#import "WKURLSchemeTaskInternal.h"
-#import "WKWebViewInternal.h"
-#import "WebURLSchemeTask.h"
-#import <wtf/RunLoop.h>
+@class _WKUserContentFilter;
 
-namespace WebKit {
+WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
+@interface _WKUserContentExtensionStore : NSObject
 
-Ref<WebURLSchemeHandlerCocoa> WebURLSchemeHandlerCocoa::create(id <WKURLSchemeHandler> apiHandler)
-{
-    return adoptRef(*new WebURLSchemeHandlerCocoa(apiHandler));
-}
++ (instancetype)defaultStore;
++ (instancetype)storeWithURL:(NSURL *)url;
 
-WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler> apiHandler)
-    : m_apiHandler(apiHandler)
-{
-}
+- (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *) NS_RELEASES_ARGUMENT encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler;
+- (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler;
+- (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler;
 
-void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() startURLSchemeTask:strongTask.get()];
-}
+@end
 
-void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeTask& task)
-{
-    auto strongTask = retainPtr(wrapper(task));
-    if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() stopURLSchemeTask:strongTask.get()];
-    else
-        task.suppressTaskStoppedExceptions();
-}
+WK_EXTERN NSString * const _WKUserContentExtensionsDomain WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
-} // namespace WebKit
+typedef NS_ENUM(NSInteger, _WKUserContentExtensionStoreErrorCode) {
+    _WKUserContentExtensionStoreErrorLookupFailed,
+    _WKUserContentExtensionStoreErrorVersionMismatch,
+    _WKUserContentExtensionStoreErrorCompileFailed,
+    _WKUserContentExtensionStoreErrorRemoveFailed,
+} WK_API_AVAILABLE(macos(10.12), ios(10.0));
