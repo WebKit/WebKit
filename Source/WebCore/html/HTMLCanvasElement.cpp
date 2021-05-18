@@ -260,9 +260,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
             if (!isWebGLType(contextId))
                 return Optional<RenderingContext> { WTF::nullopt };
             auto version = toWebGLVersion(contextId);
-            if (version == WebGLVersion::WebGL1 && !m_context->isWebGL1())
-                return Optional<RenderingContext> { WTF::nullopt };
-            if (version != WebGLVersion::WebGL1 && m_context->isWebGL1())
+            if ((version == WebGLVersion::WebGL1) != m_context->isWebGL1())
                 return Optional<RenderingContext> { WTF::nullopt };
             if (is<WebGLRenderingContext>(*m_context))
                 return Optional<RenderingContext> { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
@@ -487,11 +485,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(WebGLVersion type,
         if (!m_context->isWebGL())
             return nullptr;
 
-        // The phrasing of these checks avoids compile-time guards for WebGL2 support.
-        if (type == WebGLVersion::WebGL1 && !m_context->isWebGL1())
-            return nullptr;
-
-        if (type != WebGLVersion::WebGL1 && m_context->isWebGL1())
+        if ((type == WebGLVersion::WebGL1) != m_context->isWebGL1())
             return nullptr;
     }
 
