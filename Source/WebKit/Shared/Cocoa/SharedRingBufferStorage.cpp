@@ -70,8 +70,12 @@ void ReadOnlySharedRingBufferStorage::updateFrameBounds()
         m_startFrame = m_endFrame = 0;
         return;
     }
-
-    auto pair = sharedBounds->boundsBuffer[sharedBounds->boundsBufferIndex.load(std::memory_order_acquire)];
+    unsigned boundsBufferIndex = sharedBounds->boundsBufferIndex.load(std::memory_order_acquire);
+    if (UNLIKELY(boundsBufferIndex >= boundsBufferSize)) {
+        m_startFrame = m_endFrame = 0;
+        return;
+    }
+    auto pair = sharedBounds->boundsBuffer[boundsBufferIndex];
     m_startFrame = pair.first;
     m_endFrame = pair.second;
 }

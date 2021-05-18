@@ -1,3 +1,16 @@
+2021-05-18  Chris Dumez  <cdumez@apple.com>
+
+        ReadOnlySharedRingBufferStorage::updateFrameBounds() should validate boundsBufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=225918
+
+        Reviewed by Youenn Fablet.
+
+        ReadOnlySharedRingBufferStorage::updateFrameBounds() should validate boundsBufferSize since the
+        process writing the buffer size on the other end may not be trusted.
+
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::ReadOnlySharedRingBufferStorage::updateFrameBounds):
+
 2021-05-18  Youenn Fablet  <youenn@apple.com>
 
         Resurrect WKWebView media controls API removed in https://bugs.webkit.org/show_bug.cgi?id=221929
