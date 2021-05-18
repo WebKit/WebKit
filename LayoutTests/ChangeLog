@@ -1,3 +1,16 @@
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Reintroduce platform specific baselines removed in r277577 that are still needed.
+
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Added.
+
 2021-05-17  Robert Jenner  <jenner@apple.com>
 
         REGRESSION(r277116): [ macOS Release wk2 ] media/modern-media-controls/pip-support/pip-support-enabled.html (layout-test) is a flaky text failure
