@@ -1922,7 +1922,7 @@ bool FrameSelection::contains(const LayoutPoint& point) const
 void FrameSelection::selectFrameElementInParentIfFullySelected()
 {
     // Find the parent frame; if there is none, then we have nothing to do.
-    Frame* parent = m_document->frame()->tree().parent();
+    auto parent = makeRefPtr(m_document->frame()->tree().parent());
     if (!parent)
         return;
     Page* page = m_document->page();
@@ -1938,10 +1938,10 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
         return;
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
-    Element* ownerElement = m_document->ownerElement();
+    auto ownerElement = makeRefPtr(m_document->ownerElement());
     if (!ownerElement)
         return;
-    ContainerNode* ownerElementParent = ownerElement->parentNode();
+    auto ownerElementParent = makeRefPtr(ownerElement->parentNode());
     if (!ownerElementParent)
         return;
         
@@ -1951,13 +1951,13 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
 
     // Create compute positions before and after the element.
     unsigned ownerElementNodeIndex = ownerElement->computeNodeIndex();
-    VisiblePosition beforeOwnerElement(VisiblePosition(Position(ownerElementParent, ownerElementNodeIndex, Position::PositionIsOffsetInAnchor)));
-    VisiblePosition afterOwnerElement(VisiblePosition(Position(ownerElementParent, ownerElementNodeIndex + 1, Position::PositionIsOffsetInAnchor), Affinity::Upstream));
+    VisiblePosition beforeOwnerElement(VisiblePosition(Position(ownerElementParent.get(), ownerElementNodeIndex, Position::PositionIsOffsetInAnchor)));
+    VisiblePosition afterOwnerElement(VisiblePosition(Position(ownerElementParent.get(), ownerElementNodeIndex + 1, Position::PositionIsOffsetInAnchor), Affinity::Upstream));
 
     // Focus on the parent frame, and then select from before this element to after.
     VisibleSelection newSelection(beforeOwnerElement, afterOwnerElement);
     if (parent->selection().shouldChangeSelection(newSelection)) {
-        page->focusController().setFocusedFrame(parent);
+        page->focusController().setFocusedFrame(parent.get());
         // Previous focus can trigger DOM events, ensure the selection did not become orphan.
         if (newSelection.isOrphan())
             parent->selection().clear();
