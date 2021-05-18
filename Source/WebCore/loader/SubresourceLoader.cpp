@@ -409,7 +409,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     if (shouldIncludeCertificateInfo())
         response.includeCertificateInfo();
 
-    if (m_resource && m_resource->resourceToRevalidate()) {
+    if (m_resource->resourceToRevalidate()) {
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy
             // Existing resource is ok, just use it updating the expiration time.
@@ -448,16 +448,14 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             ResourceResponse opaqueRedirectedResponse = response;
             opaqueRedirectedResponse.setType(ResourceResponse::Type::Opaqueredirect);
             opaqueRedirectedResponse.setTainting(ResourceResponse::Tainting::Opaqueredirect);
-            if (m_resource)
-                m_resource->responseReceived(opaqueRedirectedResponse);
+            m_resource->responseReceived(opaqueRedirectedResponse);
             if (!reachedTerminalState())
                 ResourceLoader::didReceiveResponse(opaqueRedirectedResponse, [completionHandlerCaller = WTFMove(completionHandlerCaller)] { });
             return;
         }
     }
 
-    if (m_resource)
-        m_resource->responseReceived(response);
+    m_resource->responseReceived(response);
     if (reachedTerminalState())
         return;
 
@@ -470,7 +468,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
 
         // FIXME: Main resources have a different set of rules for multipart than images do.
         // Hopefully we can merge those 2 paths.
-        if (isResponseMultipart && m_resource && m_resource->type() != CachedResource::Type::MainResource) {
+        if (isResponseMultipart && m_resource->type() != CachedResource::Type::MainResource) {
             m_loadingMultipartContent = true;
 
             // We don't count multiParts in a CachedResourceLoader's request count
@@ -485,8 +483,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
         auto* buffer = resourceData();
         if (m_loadingMultipartContent && buffer && buffer->size()) {
             // The resource data will change as the next part is loaded, so we need to make a copy.
-            if (m_resource)
-                m_resource->finishLoading(buffer->copy().ptr(), { });
+            m_resource->finishLoading(buffer->copy().ptr(), { });
             clearResourceData();
             // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.
             // After the first multipart section is complete, signal to delegates that this load is "finished"
