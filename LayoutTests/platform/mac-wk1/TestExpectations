@@ -268,9 +268,6 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
 
-# <rdar://problem/23500327> storage/websql/alter-to-info-table.html
-storage/websql/alter-to-info-table.html [ Pass Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 
