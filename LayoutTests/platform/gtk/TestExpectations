@@ -1022,6 +1022,8 @@ webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-termi
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
 webkit.org/b/225637 imported/w3c/web-platform-tests/fetch/content-length/content-length.html [ Crash ]
+# Crashing since r277601.
+webkit.org/b/225637 imported/w3c/web-platform-tests/eventsource/eventsource-close.htm [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
