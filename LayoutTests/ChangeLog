@@ -1,5 +1,11 @@
 2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html is failing.
+
+        * platform/glib/TestExpectations:
+
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Reintroduce platform specific baselines removed in r277577 that are still needed.
 
         * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Added.
