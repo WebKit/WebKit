@@ -29,7 +29,9 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include "JITInlines.h"
 #include "JITThunks.h"
+#include "ThunkGenerators.h"
 #include "VM.h"
 
 namespace JSC {

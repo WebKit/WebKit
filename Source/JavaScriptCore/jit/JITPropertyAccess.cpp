@@ -38,6 +38,7 @@
 #include "PrivateFieldPutKind.h"
 #include "SlowPathCall.h"
 #include "StructureStubInfo.h"
+#include "ThunkGenerators.h"
 #include <wtf/ScopedLambda.h>
 #include <wtf/StringPrintStream.h>
 
