@@ -814,7 +814,7 @@ void RenderLayer::updateLayerListsIfNeeded()
 String RenderLayer::name() const
 {
     StringBuilder name;
-    name.append(renderer().debugDescription());
+    name.append(renderer().description());
 
     if (isReflection())
         name.appendLiteral(" (reflection)");

@@ -1754,6 +1754,12 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
     return p;
 }
 
+String Node::description() const
+{
+    auto name = nodeName();
+    return makeString(name.isEmpty() ? "<none>" : "", name);
+}
+
 String Node::debugDescription() const
 {
     auto name = nodeName();

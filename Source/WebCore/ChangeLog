@@ -1,3 +1,44 @@
+2021-05-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Layer names should not contain object addresses in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=225926
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid putting object addresses in layer name strings (which end up on CALayers)
+        to reduce string bloat.
+
+        RenderLayer::name() now calls a description() function on RenderObject, which
+        in turn calls the same on its Node. These description() functions don't put
+        object addresses in the string.
+
+        Alternatives considered: #ifdeffing in the debugDescription() implementations:
+        I decided not to because calling a function called debugFoo in release seems
+        wrong. It might also be useful to dump the string with addresses when debugging
+        in a release build.
+
+        Renaming debugDescription() to description() and passing a behavior enum:
+        Seems about as complicated as this change.
+
+        * dom/Element.cpp:
+        (WebCore::appendAttributes):
+        (WebCore::Element::description const):
+        (WebCore::Element::debugDescription const):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::description const):
+        * dom/Node.h:
+        * dom/Text.cpp:
+        (WebCore::appendTextRepresentation):
+        (WebCore::Text::description const):
+        (WebCore::Text::debugDescription const):
+        * dom/Text.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::name const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::description const):
+        * rendering/RenderObject.h:
+
 2021-05-18  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] RemoteAudioSession calls into AVAudioSession when GPUP is enabled, causing hangs

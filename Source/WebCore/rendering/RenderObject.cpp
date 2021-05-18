@@ -2410,6 +2410,17 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
 
 #endif
 
+String RenderObject::description() const
+{
+    StringBuilder builder;
+
+    builder.append(renderName(), ' ');
+    if (node())
+        builder.append(' ', node()->description());
+    
+    return builder.toString();
+}
+
 String RenderObject::debugDescription() const
 {
     StringBuilder builder;

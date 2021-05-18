@@ -429,6 +429,7 @@ public:
     };
     virtual void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree);
 
+    virtual String description() const;
     virtual String debugDescription() const;
 
 #if ENABLE(TREE_DEBUGGING)

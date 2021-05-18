@@ -2723,18 +2723,14 @@ void Element::finishParsingChildren()
     checkForSiblingStyleChanges(*this, FinishedParsingChildren, ElementTraversal::lastChild(*this), nullptr);
 }
 
-String Element::debugDescription() const
+static void appendAttributes(StringBuilder& builder, const Element& element)
 {
-    StringBuilder builder;
+    if (element.hasID())
+        builder.append(" id=\'", element.getIdAttribute(), '\'');
 
-    builder.append(ContainerNode::debugDescription());
-
-    if (hasID())
-        builder.append(" id=\'", getIdAttribute(), '\'');
-
-    if (hasClass()) {
+    if (element.hasClass()) {
         builder.appendLiteral(" class=\'");
-        size_t classNamesToDump = classNames().size();
+        size_t classNamesToDump = element.classNames().size();
         constexpr size_t maxNumClassNames = 7;
         bool addEllipsis = false;
         if (classNamesToDump > maxNumClassNames) {
@@ -2745,12 +2741,30 @@ String Element::debugDescription() const
         for (size_t i = 0; i < classNamesToDump; ++i) {
             if (i > 0)
                 builder.append(' ');
-            builder.append(classNames()[i]);
+            builder.append(element.classNames()[i]);
         }
         if (addEllipsis)
             builder.append(" ...");
         builder.append('\'');
     }
+}
+
+String Element::description() const
+{
+    StringBuilder builder;
+
+    builder.append(ContainerNode::description());
+    appendAttributes(builder, *this);
+
+    return builder.toString();
+}
+
+String Element::debugDescription() const
+{
+    StringBuilder builder;
+
+    builder.append(ContainerNode::debugDescription());
+    appendAttributes(builder, *this);
 
     return builder.toString();
 }

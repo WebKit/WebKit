@@ -726,6 +726,7 @@ public:
     void resetFragmentedFlowStateOnRemoval();
     void initializeFragmentedFlowStateOnInsertion();
 
+    virtual String description() const;
     virtual String debugDescription() const;
 
 protected:

@@ -55,6 +55,7 @@ public:
 
     void updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
+    String description() const final;
     String debugDescription() const final;
 
 protected:
