@@ -1262,10 +1262,6 @@ webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
 
-# These would pass if we used the same expectations as in LayoutTests/platform/ios/, but there's no way currently to specify architecture-specific expectations.
-[ arm64 ] imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Skip ]
-[ arm64 ] imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Skip ]
-
 webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Pass Timeout ]
 
 webkit.org/b/221857 fast/selectors/text-field-selection-window-inactive-text-shadow.html [ Pass ImageOnlyFailure ]
