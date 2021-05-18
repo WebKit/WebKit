@@ -1,5 +1,14 @@
 2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB][GTK] Unreviewed test gardening. File several printing tests that were crashing under own bug.
+
+        Also updated baseline of tests that was failing.
+
+        * platform/glib/fast/selectors/unqualified-hover-strict-expected.txt: Updated.
+        * platform/gtk/TestExpectations:
+
+2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Some mathml tests are failing in EWS GTK-WK2 but passing in post-commit bot.
 
         * platform/glib/TestExpectations:

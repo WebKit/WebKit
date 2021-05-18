@@ -1022,6 +1022,10 @@ webkit.org/b/225637 imported/w3c/web-platform-tests/fetch/content-length/content
 # Crashing since r277601.
 webkit.org/b/225637 imported/w3c/web-platform-tests/eventsource/eventsource-close.htm [ Crash ]
 
+webkit.org/b/225921 editing/execCommand/print.html [ Crash ]
+webkit.org/b/225921 fast/media/print-restores-previous-mediatype.html [ Crash ]
+webkit.org/b/225921 printing/print-close-crash.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1159,11 +1163,7 @@ webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Fai
 
 # Tests that fail on the EWS queue since we enabled tests there (obsolete). TODO: the failures below should be filed under a different bug).
 webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure Pass ]
-webkit.org/b/186638 editing/execCommand/print.html [ Crash ]
 webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
-webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Crash ]
-webkit.org/b/186638 fast/selectors/unqualified-hover-strict.html [ Failure ]
-webkit.org/b/186638 printing/print-close-crash.html [ Crash ]
 
 # Tests failing on the EWS queue.
 webkit.org/b/186638 fast/forms/select/popup-closes-on-blur.html [ Failure Pass ]
