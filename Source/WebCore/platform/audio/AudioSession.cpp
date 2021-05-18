@@ -31,22 +31,41 @@
 #include "NotImplemented.h"
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(MAC)
+#include "AudioSessionMac.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#include "AudioSessionIOS.h"
+#endif
+
 namespace WebCore {
 
-static UniqueRef<AudioSession>& sharedAudioSession()
+static Optional<UniqueRef<AudioSession>>& sharedAudioSession()
 {
-    static NeverDestroyed<UniqueRef<AudioSession>> session = AudioSession::create();
+    static NeverDestroyed<Optional<UniqueRef<AudioSession>>> session;
     return session.get();
 }
 
 UniqueRef<AudioSession> AudioSession::create()
 {
+#if PLATFORM(MAC)
+    return makeUniqueRef<AudioSessionMac>();
+#elif PLATFORM(IOS_FAMILY)
+    return makeUniqueRef<AudioSessionIOS>();
+#else
     return makeUniqueRef<AudioSession>();
+#endif
 }
+
+AudioSession::AudioSession() = default;
+AudioSession::~AudioSession() = default;
 
 AudioSession& AudioSession::sharedSession()
 {
-    return sharedAudioSession();
+    if (!sharedAudioSession())
+        sharedAudioSession() = AudioSession::create();
+    return *sharedAudioSession();
 }
 
 void AudioSession::setSharedSession(UniqueRef<AudioSession>&& session)
@@ -63,36 +82,25 @@ bool AudioSession::tryToSetActive(bool active)
     return true;
 }
 
-#if !PLATFORM(IOS_FAMILY)
 void AudioSession::addInterruptionObserver(InterruptionObserver&)
-{
-}
-
-void AudioSession::removeInterruptionObserver(InterruptionObserver&)
-{
-}
-
-void AudioSession::beginInterruption()
-{
-}
-
-void AudioSession::endInterruption(MayResume)
-{
-}
-#endif
-
-#if !PLATFORM(COCOA)
-class AudioSessionPrivate {
-    WTF_MAKE_FAST_ALLOCATED;
-};
-
-AudioSession::AudioSession()
-    : m_private(nullptr)
 {
     notImplemented();
 }
 
-AudioSession::~AudioSession() = default;
+void AudioSession::removeInterruptionObserver(InterruptionObserver&)
+{
+    notImplemented();
+}
+
+void AudioSession::beginInterruption()
+{
+    notImplemented();
+}
+
+void AudioSession::endInterruption(MayResume)
+{
+    notImplemented();
+}
 
 void AudioSession::setCategory(CategoryType, RouteSharingPolicy)
 {
@@ -167,9 +175,6 @@ String AudioSession::routingContextUID() const
     return emptyString();
 }
 
-#endif // !PLATFORM(COCOA)
-
-#if !PLATFORM(MAC)
 void AudioSession::audioOutputDeviceChanged()
 {
     notImplemented();
@@ -179,8 +184,6 @@ void AudioSession::setIsPlayingToBluetoothOverride(Optional<bool>)
 {
     notImplemented();
 }
-#endif // !PLATFORM(COCOA)
-
 
 String convertEnumerationToString(RouteSharingPolicy enumerationValue)
 {

@@ -1,3 +1,128 @@
+2021-05-18  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] RemoteAudioSession calls into AVAudioSession when GPUP is enabled, causing hangs
+        https://bugs.webkit.org/show_bug.cgi?id=223564
+        <rdar://74750291>
+
+        Reviewed by Eric Carlson.
+
+        Now that AudioSession can have two different implementations at runtime, it should be an
+        actual virtual class, whose concrete, per-platform implementations are derivations of the
+        base class. Make AudioSessionIOS and AudioSessionMac true subclasses of AudioSession, and
+        allow RemoteAudioSession to derive from that same base class (rather than AudioSessionIOS
+        or AudioSessionMac).
+
+        Also ensure AudioSessionIOS or AudioSessionMac is not accidentally created when calling
+        AudioSession::setSharedSession() by making the NeverDestroyed object holding the session
+        an Optional, and only lazily creating the session from AudioSession::sharedSession() if
+        one has not been explicitly set already.
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::sharedAudioSession):
+        (WebCore::AudioSession::create):
+        (WebCore::AudioSession::sharedSession):
+        (WebCore::AudioSession::addInterruptionObserver):
+        (WebCore::AudioSession::removeInterruptionObserver):
+        (WebCore::AudioSession::beginInterruption):
+        (WebCore::AudioSession::endInterruption):
+        (WebCore::AudioSession::setIsPlayingToBluetoothOverride):
+        (WebCore::AudioSession::AudioSession): Deleted.
+        * platform/audio/AudioSession.h:
+        * platform/audio/ios/AudioSessionIOS.h: Added.
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSessionIOS::AudioSessionIOS):
+        (WebCore::AudioSessionIOS::~AudioSessionIOS):
+        (WebCore::AudioSessionIOS::setCategory):
+        (WebCore::AudioSessionIOS::category const):
+        (WebCore::AudioSessionIOS::routeSharingPolicy const):
+        (WebCore::AudioSessionIOS::routingContextUID const):
+        (WebCore::AudioSessionIOS::setCategoryOverride):
+        (WebCore::AudioSessionIOS::categoryOverride const):
+        (WebCore::AudioSessionIOS::sampleRate const):
+        (WebCore::AudioSessionIOS::bufferSize const):
+        (WebCore::AudioSessionIOS::numberOfOutputChannels const):
+        (WebCore::AudioSessionIOS::maximumNumberOfOutputChannels const):
+        (WebCore::AudioSessionIOS::tryToSetActiveInternal):
+        (WebCore::AudioSessionIOS::preferredBufferSize const):
+        (WebCore::AudioSessionIOS::setPreferredBufferSize):
+        (WebCore::AudioSessionIOS::isMuted const):
+        (WebCore::AudioSessionIOS::handleMutedStateChange):
+        (WebCore::AudioSessionIOS::addInterruptionObserver):
+        (WebCore::AudioSessionIOS::removeInterruptionObserver):
+        (WebCore::AudioSessionIOS::beginInterruption):
+        (WebCore::AudioSessionIOS::endInterruption):
+        (WebCore::AudioSessionPrivate::AudioSessionPrivate): Deleted.
+        (WebCore::AudioSessionPrivate::~AudioSessionPrivate): Deleted.
+        (WebCore::AudioSession::AudioSession): Deleted.
+        (WebCore::AudioSession::~AudioSession): Deleted.
+        (WebCore::AudioSession::setCategory): Deleted.
+        (WebCore::AudioSession::category const): Deleted.
+        (WebCore::AudioSession::routeSharingPolicy const): Deleted.
+        (WebCore::AudioSession::routingContextUID const): Deleted.
+        (WebCore::AudioSession::setCategoryOverride): Deleted.
+        (WebCore::AudioSession::categoryOverride const): Deleted.
+        (WebCore::AudioSession::sampleRate const): Deleted.
+        (WebCore::AudioSession::bufferSize const): Deleted.
+        (WebCore::AudioSession::numberOfOutputChannels const): Deleted.
+        (WebCore::AudioSession::maximumNumberOfOutputChannels const): Deleted.
+        (WebCore::AudioSession::tryToSetActiveInternal): Deleted.
+        (WebCore::AudioSession::preferredBufferSize const): Deleted.
+        (WebCore::AudioSession::setPreferredBufferSize): Deleted.
+        (WebCore::AudioSession::isMuted const): Deleted.
+        (WebCore::AudioSession::handleMutedStateChange): Deleted.
+        (WebCore::AudioSession::addInterruptionObserver): Deleted.
+        (WebCore::AudioSession::removeInterruptionObserver): Deleted.
+        (WebCore::AudioSession::beginInterruption): Deleted.
+        (WebCore::AudioSession::endInterruption): Deleted.
+        * platform/audio/mac/AudioSessionMac.h: Added.
+        * platform/audio/mac/AudioSessionMac.mm:
+        (WebCore::AudioSessionMac::addSampleRateObserverIfNeeded const):
+        (WebCore::AudioSessionMac::handleSampleRateChange):
+        (WebCore::AudioSessionMac::addBufferSizeObserverIfNeeded const):
+        (WebCore::AudioSessionMac::handleBufferSizeChange):
+        (WebCore::AudioSessionMac::audioOutputDeviceChanged):
+        (WebCore::AudioSessionMac::setIsPlayingToBluetoothOverride):
+        (WebCore::AudioSessionMac::setCategory):
+        (WebCore::AudioSessionMac::setCategoryOverride):
+        (WebCore::AudioSessionMac::sampleRate const):
+        (WebCore::AudioSessionMac::bufferSize const):
+        (WebCore::AudioSessionMac::numberOfOutputChannels const):
+        (WebCore::AudioSessionMac::maximumNumberOfOutputChannels const):
+        (WebCore::AudioSessionMac::tryToSetActiveInternal):
+        (WebCore::AudioSessionMac::routeSharingPolicy const):
+        (WebCore::AudioSessionMac::routingContextUID const):
+        (WebCore::AudioSessionMac::preferredBufferSize const):
+        (WebCore::AudioSessionMac::setPreferredBufferSize):
+        (WebCore::AudioSessionMac::isMuted const):
+        (WebCore::AudioSessionMac::handleMutedStateChange):
+        (WebCore::AudioSessionMac::addMutedStateObserver):
+        (WebCore::AudioSessionMac::removeMutedStateObserver):
+        (): Deleted.
+        (WebCore::AudioSessionPrivate::addSampleRateObserverIfNeeded): Deleted.
+        (WebCore::AudioSessionPrivate::handleSampleRateChange): Deleted.
+        (WebCore::AudioSessionPrivate::addBufferSizeObserverIfNeeded): Deleted.
+        (WebCore::AudioSessionPrivate::handleBufferSizeChange): Deleted.
+        (WebCore::AudioSession::AudioSession): Deleted.
+        (WebCore::AudioSession::category const): Deleted.
+        (WebCore::AudioSession::audioOutputDeviceChanged): Deleted.
+        (WebCore::AudioSession::setIsPlayingToBluetoothOverride): Deleted.
+        (WebCore::AudioSession::setCategory): Deleted.
+        (WebCore::AudioSession::categoryOverride const): Deleted.
+        (WebCore::AudioSession::setCategoryOverride): Deleted.
+        (WebCore::AudioSession::sampleRate const): Deleted.
+        (WebCore::AudioSession::bufferSize const): Deleted.
+        (WebCore::AudioSession::numberOfOutputChannels const): Deleted.
+        (WebCore::AudioSession::maximumNumberOfOutputChannels const): Deleted.
+        (WebCore::AudioSession::tryToSetActiveInternal): Deleted.
+        (WebCore::AudioSession::routeSharingPolicy const): Deleted.
+        (WebCore::AudioSession::routingContextUID const): Deleted.
+        (WebCore::AudioSession::preferredBufferSize const): Deleted.
+        (WebCore::AudioSession::setPreferredBufferSize): Deleted.
+        (WebCore::AudioSession::isMuted const): Deleted.
+        (WebCore::AudioSession::handleMutedStateChange): Deleted.
+        (WebCore::AudioSession::addMutedStateObserver): Deleted.
+        (WebCore::AudioSession::removeMutedStateObserver): Deleted.
+
 2021-05-18  Chris Dumez  <cdumez@apple.com>
 
         Use UTF-8 internally from Strings inside SQLiteStatement
