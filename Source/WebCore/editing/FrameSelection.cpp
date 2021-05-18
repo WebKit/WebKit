@@ -1958,7 +1958,11 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
     VisibleSelection newSelection(beforeOwnerElement, afterOwnerElement);
     if (parent->selection().shouldChangeSelection(newSelection)) {
         page->focusController().setFocusedFrame(parent);
-        parent->selection().setSelection(newSelection);
+        // Previous focus can trigger DOM events, ensure the selection did not become orphan.
+        if (newSelection.isOrphan())
+            parent->selection().clear();
+        else
+            parent->selection().setSelection(newSelection);
     }
 }
 

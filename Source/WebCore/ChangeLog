@@ -1,3 +1,21 @@
+2021-05-18  Frederic Wang  <fwang@igalia.com>
+
+        SHOULD NEVER BE REACHED in FrameSelection::setSelectionWithoutUpdatingAppearance
+        https://bugs.webkit.org/show_bug.cgi?id=225219
+
+        Reviewed by Ryosuke Niwa.
+
+        When FrameSelection::selectFrameElementInParentIfFullySelected sets focus on the parent
+        frame, that can trigger DOM events, possibly making orphan the newSelection prepared before.
+        This patch fixes that issue by clearing the selection on that parent frame in such a
+        situation.
+
+        Test: editing/selection/selection-in-iframe-removed-assert.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected): Check if the
+        newSelection became orphan and if so, clear it.
+
 2021-05-17  Chris Dumez  <cdumez@apple.com>
 
         Drop unused SQLiteStatement::returnsAtLeastOneResult()
