@@ -519,15 +519,17 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
         return;
     }
     
-    auto deleteStatement = m_database.prepareStatement("DELETE FROM Origins where origin=?"_s);
-    if (!deleteStatement) {
-        LOG_ERROR("Unable to prepare deletion of origin '%s'", originIdentifier.ascii().data());
-        return;
-    }
-    deleteStatement->bindText(1, originIdentifier);
-    if (!deleteStatement->executeCommand()) {
-        LOG_ERROR("Unable to execute deletion of origin '%s'", originIdentifier.ascii().data());
-        return;
+    {
+        auto deleteStatement = m_database.prepareStatement("DELETE FROM Origins where origin=?"_s);
+        if (!deleteStatement) {
+            LOG_ERROR("Unable to prepare deletion of origin '%s'", originIdentifier.ascii().data());
+            return;
+        }
+        deleteStatement->bindText(1, originIdentifier);
+        if (!deleteStatement->executeCommand()) {
+            LOG_ERROR("Unable to execute deletion of origin '%s'", originIdentifier.ascii().data());
+            return;
+        }
     }
 
     FileSystem::deleteFile(path);

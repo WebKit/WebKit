@@ -32,6 +32,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,7 +48,7 @@ class DatabaseAuthorizer;
 class SQLiteStatement;
 class SQLiteTransaction;
 
-class SQLiteDatabase {
+class SQLiteDatabase : public CanMakeWeakPtr<SQLiteDatabase> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);
     friend class SQLiteTransaction;
@@ -155,6 +156,9 @@ public:
 
     WEBCORE_EXPORT void releaseMemory();
 
+    void incrementStatementCount();
+    void decrementStatementCount();
+
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 
@@ -171,6 +175,7 @@ private:
     bool m_transactionInProgress { false };
 #if ASSERT_ENABLED
     bool m_sharable { false };
+    std::atomic<unsigned> m_statementCount { 0 };
 #endif
 
     bool m_useWAL { false };
@@ -186,5 +191,20 @@ private:
     int m_openError { SQLITE_ERROR };
     CString m_openErrorMessage;
 };
+
+inline void SQLiteDatabase::incrementStatementCount()
+{
+#if ASSERT_ENABLED
+    ++m_statementCount;
+#endif
+}
+
+inline void SQLiteDatabase::decrementStatementCount()
+{
+#if ASSERT_ENABLED
+    ASSERT(m_statementCount);
+    --m_statementCount;
+#endif
+}
 
 } // namespace WebCore

@@ -46,17 +46,20 @@ SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, sqlite3_stmt* statement)
     , m_statement(statement)
 {
     ASSERT(statement);
+    m_database.incrementStatementCount();
 }
 
 SQLiteStatement::SQLiteStatement(SQLiteStatement&& other)
     : m_database(other.database())
     , m_statement(std::exchange(other.m_statement, nullptr))
 {
+    m_database.incrementStatementCount();
 }
 
 SQLiteStatement::~SQLiteStatement()
 {
     sqlite3_finalize(m_statement);
+    m_database.decrementStatementCount();
 }
 
 int SQLiteStatement::step()

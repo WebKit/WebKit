@@ -883,30 +883,32 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
         SQLiteTransaction transaction(m_database);
         transaction.begin();
 
-        auto statement = m_database.prepareStatement("DELETE FROM Databases WHERE origin=?"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
-            return false;
-        }
+        {
+            auto statement = m_database.prepareStatement("DELETE FROM Databases WHERE origin=?"_s);
+            if (!statement) {
+                LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
+                return false;
+            }
 
-        statement->bindText(1, origin.databaseIdentifier());
+            statement->bindText(1, origin.databaseIdentifier());
 
-        if (!statement->executeCommand()) {
-            LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
-            return false;
-        }
+            if (!statement->executeCommand()) {
+                LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
+                return false;
+            }
 
-        auto originStatement = m_database.prepareStatement("DELETE FROM Origins WHERE origin=?"_s);
-        if (!originStatement) {
-            LOG_ERROR("Unable to prepare deletion of origin %s from tracker", origin.databaseIdentifier().utf8().data());
-            return false;
-        }
+            auto originStatement = m_database.prepareStatement("DELETE FROM Origins WHERE origin=?"_s);
+            if (!originStatement) {
+                LOG_ERROR("Unable to prepare deletion of origin %s from tracker", origin.databaseIdentifier().utf8().data());
+                return false;
+            }
 
-        originStatement->bindText(1, origin.databaseIdentifier());
+            originStatement->bindText(1, origin.databaseIdentifier());
 
-        if (!originStatement->executeCommand()) {
-            LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
-            return false;
+            if (!originStatement->executeCommand()) {
+                LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin.databaseIdentifier().utf8().data());
+                return false;
+            }
         }
 
         transaction.commit();

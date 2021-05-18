@@ -222,6 +222,8 @@ void SQLiteDatabase::useWALJournalMode()
 void SQLiteDatabase::close()
 {
     if (m_db) {
+        ASSERT_WITH_MESSAGE(!m_statementCount, "All SQLiteTransaction objects should be destroyed before closing the database");
+
         // FIXME: This is being called on the main thread during JS GC. <rdar://problem/5739818>
         // ASSERT(m_openingThread == &Thread::current());
         sqlite3* db = m_db;
