@@ -1,3 +1,79 @@
+2021-05-18  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r277452. rdar://problem/78179698
+
+    REGRESSION (r276945): [iOS] Focus rings are too large
+    https://bugs.webkit.org/show_bug.cgi?id=225778
+    <rdar://problem/77858341>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    r276945 updated scaling logic to ensure that the scale of the base CTM
+    matches the device scale factor. The change itself makes our base CTM
+    more correct, but exposed a longstanding bug with our focus ring
+    implementation.
+    
+    Focus rings are drawn using CoreGraphics, using CGFocusRingStyle. On
+    macOS, the style is initialized using NSInitializeCGFocusRingStyleForTime.
+    However, on iOS, we initialize the style ourselves, using UIKit constants.
+    Currently, the focus ring's style's radius is set to
+    +[UIFocusRingStyle cornerRadius], a constant of 8. This is the longstanding
+    issue. CGFocusRingStyle's radius is not a corner radius, but is the
+    width of the focus ring. In UIKit, this width is represented by
+    +[UIFocusRingStyle borderThickness], a constant of 3. WebKit has always
+    intended to match this width, as evidenced by the default outline-width
+    of 3px in the UA style sheet.
+    
+    Considering the large disparity between the existing and expected radius
+    value, it may be surprising that this mistake has gone unnoticed since
+    2019, when focus rings were first introduced on iOS. This is where r276945
+    comes into play. Prior to r276945, the scale of the base CTM did not match
+    the device scale factor. This meant that CG scaled down the constant of 8
+    to 4 CSS pixels (1 (base CTM) / 2 (device scale factor)). After r276945,
+    the two scales are equal and the focus ring is drawn as 8 CSS pixels, much
+    larger than the expected 3px.
+    
+    Test: fast/forms/ios/focus-ring-size.html
+    
+    * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+    (WebCore::drawFocusRingAtTime):
+    
+    To fix, use the correct SPI to get the focus ring width,
+    +[UIFocusRingStyle borderThickness]. This ensures that focus rings have
+    the right width, following r276945.
+    
+    The change also fixes focus ring repaint issues that arose from the
+    fact that the outline-width was 3px, but the painted width was 4px.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/ios/UIKitSPI.h:
+    
+    LayoutTests:
+    
+    Added a regression test to verify the size of the focus ring on iOS.
+    The test works by drawing an overlay on top of an input element, that
+    is just large enough to obscure the focus ring. If the focus ring is
+    too large, the ring will not obscured, leading to a mismatch failure.
+    
+    * fast/forms/ios/focus-ring-size-expected.html: Added.
+    * fast/forms/ios/focus-ring-size.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277452 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-13  Aditya Keerthi  <akeerthi@apple.com>
+
+            REGRESSION (r276945): [iOS] Focus rings are too large
+            https://bugs.webkit.org/show_bug.cgi?id=225778
+            <rdar://problem/77858341>
+
+            Reviewed by Tim Horton.
+
+            * pal/spi/ios/UIKitSPI.h:
+
 2021-05-13  Tim Horton  <timothy_horton@apple.com>
 
         Work around WebCore failing to build due to NDEBUG getting undefined in release

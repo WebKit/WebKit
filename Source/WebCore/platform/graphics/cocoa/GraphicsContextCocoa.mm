@@ -74,7 +74,7 @@ static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset,
     focusRingStyle.tint = kCGFocusRingTintBlue;
     focusRingStyle.ordering = kCGFocusRingOrderingNone;
     focusRingStyle.alpha = [PAL::getUIFocusRingStyleClass() maxAlpha];
-    focusRingStyle.radius = [PAL::getUIFocusRingStyleClass() cornerRadius];
+    focusRingStyle.radius = [PAL::getUIFocusRingStyleClass() borderThickness];
     focusRingStyle.threshold = [PAL::getUIFocusRingStyleClass() alphaThreshold];
     focusRingStyle.bounds = CGRectZero;
 #endif
