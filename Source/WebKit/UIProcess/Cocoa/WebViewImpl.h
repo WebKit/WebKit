@@ -94,6 +94,7 @@ class PageConfiguration;
 }
 
 namespace WebCore {
+class IntPoint;
 struct ShareDataWithParsedURL;
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
@@ -301,6 +302,14 @@ public:
     void viewDidHide();
     void viewDidUnhide();
     void activeSpaceDidChange();
+
+    void pageDidScroll(const WebCore::IntPoint&);
+
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    NSRect scrollViewFrame();
+    bool hasScrolledContentsUnderTitlebar();
+    void updateTitlebarAdjacencyState();
+#endif
 
     NSView *hitTest(CGPoint);
 
@@ -860,6 +869,12 @@ private:
     
 #if ENABLE(DRAG_SUPPORT)
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
+#endif
+
+#if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+    bool m_pageIsScrolledToTop { true };
+    bool m_isRegisteredScrollViewSeparatorTrackingAdapter { false };
+    NSRect m_lastScrollViewFrame { NSZeroRect };
 #endif
 
     RetainPtr<NSMenu> m_domPasteMenu;
