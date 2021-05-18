@@ -1,3 +1,17 @@
+2021-05-18  Philippe Normand  <pnormand@igalia.com>
+
+        [MediaStream][GStreamer] Flaky fast/mediastream/MediaStream-video-element-video-tracks-disabled.html
+        https://bugs.webkit.org/show_bug.cgi?id=225651
+
+        Reviewed by Alicia Boya Garcia.
+
+        Push the black frame as soon as the corresponding track has been disabled. The black frame
+        is also now created once only and reused, instead of re-creating it 30 times per second (or
+        whatever the frame rate is). The cached frame is updated when the track dimensions change as
+        well.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+
 2021-05-18  Alan Bujtas  <zalan@apple.com>
 
         Difficult to scroll calcalist.co.il webpage, scrolling gets 'stuck'

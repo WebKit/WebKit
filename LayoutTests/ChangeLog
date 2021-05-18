@@ -1,3 +1,15 @@
+2021-05-18  Philippe Normand  <pnormand@igalia.com>
+
+        [MediaStream][GStreamer] Flaky fast/mediastream/MediaStream-video-element-video-tracks-disabled.html
+        https://bugs.webkit.org/show_bug.cgi?id=225651
+
+        Reviewed by Alicia Boya Garcia.
+
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled.html: Delay the
+        notifyDone call to give the video element some time to render the black frame corresponding
+        to the disabled track. This might still flake on the bots, if that is the case we might need
+        to reassess how the test behaves or decide to mark it as expected flaky on glib ports.
+
 2021-05-18  Alan Bujtas  <zalan@apple.com>
 
         Difficult to scroll calcalist.co.il webpage, scrolling gets 'stuck'
