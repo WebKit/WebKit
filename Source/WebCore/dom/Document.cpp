@@ -3928,8 +3928,7 @@ void Document::determineSampledPageTopColor()
     });
 
     // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
-    auto pixelColorAtTopX = [&] (int x) -> Optional<Lab<float>> {
-        IntPoint location(x, 0);
+    auto pixelColor = [&] (IntPoint&& location) -> Optional<Lab<float>> {
         IntSize size(1, 1);
 
         if (isHitTestLocationThirdPartyFrame(LayoutPoint(location)))
@@ -3962,7 +3961,7 @@ void Document::determineSampledPageTopColor()
     };
 
     for (size_t i = 0; i < numSnapshots; ++i) {
-        auto snapshot = pixelColorAtTopX(frameWidth * i / (numSnapshots - 1));
+        auto snapshot = pixelColor(IntPoint(frameWidth * i / (numSnapshots - 1), 0));
         if (!snapshot) {
             if (shouldStopAfterFindingNonMatchingColor(i))
                 return;
@@ -4002,6 +4001,24 @@ void Document::determineSampledPageTopColor()
                     return;
                 }
                 continue;
+            }
+        }
+    }
+
+    // Decrease the height by one pixel so that the last snapshot is within bounds and not off-by-one.
+    auto minHeight = settings().sampledPageTopColorMinHeight() - 1;
+    if (minHeight > 0) {
+        if (nonMatchingColorIndex) {
+            if (auto leftMiddleSnapshot = pixelColor(IntPoint(0, minHeight))) {
+                if (colorDifference(*leftMiddleSnapshot, snapshots[0]) > maxDifference)
+                    return;
+            }
+        }
+
+        if (nonMatchingColorIndex != numSnapshots - 1) {
+            if (auto rightMiddleSnapshot = pixelColor(IntPoint(frameWidth, minHeight))) {
+                if (colorDifference(*rightMiddleSnapshot, snapshots[numSnapshots - 1]) > maxDifference)
+                    return;
             }
         }
     }
