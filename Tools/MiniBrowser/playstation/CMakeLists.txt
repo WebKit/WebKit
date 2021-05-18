@@ -1,6 +1,6 @@
 find_library(TOOLKIT_LIBRARY ToolKitten)
 
-PLAYSTATION_COPY_SHARED_LIBRARIES(MiniBrowser_CopySharedLibs
+PLAYSTATION_COPY_REQUIREMENTS(MiniBrowser_CopySharedLibs
     FILES ${TOOLKIT_LIBRARY}
 )
 

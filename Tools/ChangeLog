@@ -1,3 +1,19 @@
+2021-05-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Fix PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=225913
+
+        Reviewed by Don Olmstead.
+
+        Fix PlayStation port
+
+        * MiniBrowser/playstation/CMakeLists.txt: Rename
+        PLAYSTATION_COPY_SHARED_LIBRARIES to PLAYSTATION_COPY_REQUIREMENTS.
+
+        * MiniBrowser/playstation/WebViewWindow.cpp:
+        (WebViewWindow::updateTitle): Add nullptr check.
+        (WebViewWindow::updateURL): Add nullptr check.
+
 2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs

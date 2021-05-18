@@ -1,3 +1,18 @@
+2021-05-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Fix PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=225913
+
+        Reviewed by Don Olmstead.
+
+        Fix PlayStation port
+
+        * PlatformPlayStation.cmake: Rename
+        PLAYSTATION_COPY_SHARED_LIBRARIES to PLAYSTATION_COPY_REQUIREMENTS.
+        * accessibility/AccessibilityMenuList.cpp: 
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * platform/graphics/PixelBufferFormat.h: Include wtf/Optional.h.
+
 2021-05-18  Kenneth Russell  <kbr@chromium.org>
 
         Clean up code distinguishing between webgl/webgl2 contexts

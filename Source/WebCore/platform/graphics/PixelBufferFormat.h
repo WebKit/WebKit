@@ -29,6 +29,7 @@
 #include "ColorSpace.h"
 #include "PixelFormat.h"
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

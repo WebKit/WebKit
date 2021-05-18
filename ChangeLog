@@ -1,3 +1,17 @@
+2021-05-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Fix PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=225913
+
+        Reviewed by Don Olmstead.
+
+        Fix PlayStation port
+
+        * Source/cmake/OptionsPlayStation.cmake: Rename
+        PLAYSTATION_COPY_SHARED_LIBRARIES to PLAYSTATION_COPY_REQUIREMENTS and
+        let it copy more general files.
+        Touch ebootparam.ini by the playstation_tools_copy custom_target.
+
 2021-05-15  Sam Weinig  <weinig@apple.com>
 
         Allow conditionally enabling OffscreenCanvas only for non-worker contexts

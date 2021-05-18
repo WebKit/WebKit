@@ -1,3 +1,15 @@
+2021-05-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Fix PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=225913
+
+        Reviewed by Don Olmstead.
+
+        Fix PlayStation port
+
+        * wtf/PlatformPlayStation.cmake: Rename
+        PLAYSTATION_COPY_SHARED_LIBRARIES to PLAYSTATION_COPY_REQUIREMENTS.
+
 2021-05-17  Saam Barati  <sbarati@apple.com>
 
         Enable JS to emit sign posts and trace points under Options::exposeProfilersOnGlobalObject

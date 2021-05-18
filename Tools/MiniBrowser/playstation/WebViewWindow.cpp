@@ -395,6 +395,9 @@ void WebViewWindow::updateSurface(toolkitten::IntRect dirtyRect)
 void WebViewWindow::updateTitle()
 {
     WKRetainPtr<WKStringRef> title = adoptWK(WKPageCopyTitle(page()));
+    if (!title)
+        return;
+
     m_title = toUTF8String(title.get());
     if (m_client.didUpdateTitle)
         m_client.didUpdateTitle(this);
@@ -403,6 +406,9 @@ void WebViewWindow::updateTitle()
 void WebViewWindow::updateURL()
 {
     WKRetainPtr<WKURLRef> url = adoptWK(WKPageCopyActiveURL(page()));
+    if (!url)
+        return;
+
     WKRetainPtr<WKStringRef> urlStr = adoptWK(WKURLCopyString(url.get()));
     m_url = toUTF8String(urlStr.get());
     if (m_client.didUpdateURL)
