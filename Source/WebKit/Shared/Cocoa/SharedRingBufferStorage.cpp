@@ -80,14 +80,14 @@ void ReadOnlySharedRingBufferStorage::updateFrameBounds()
     m_endFrame = pair.second;
 }
 
-void SharedRingBufferStorage::setStorage(RefPtr<SharedMemory>&& storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
+void SharedRingBufferStorage::setStorage(RefPtr<SharedMemory>&& storage, const CAAudioStreamDescription& format, size_t frameCount)
 {
     m_storage = WTFMove(storage);
     if (m_storageChangedHandler)
         m_storageChangedHandler(m_storage.get(), format, frameCount);
 }
 
-void SharedRingBufferStorage::allocate(size_t byteCount, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
+void SharedRingBufferStorage::allocate(size_t byteCount, const CAAudioStreamDescription& format, size_t frameCount)
 {
     auto sharedMemory = SharedMemory::allocate(byteCount + sizeof(FrameBounds));
     new (NotNull, sharedMemory->data()) FrameBounds;

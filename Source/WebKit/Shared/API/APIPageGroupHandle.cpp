@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "APIPageGroupHandle.h"
 
-#include "APIObject.h"
-#include "StorageNamespaceIdentifier.h"
-#include "WebPageGroupData.h"
-#include <wtf/Ref.h>
+#include "ArgumentCoders.h"
+#include "Decoder.h"
+#include "Encoder.h"
 
-namespace WebCore {
-class PageGroup;
+namespace API {
+
+Ref<PageGroupHandle> PageGroupHandle::create(WebKit::WebPageGroupData&& webPageGroupData)
+{
+    return adoptRef(*new PageGroupHandle(WTFMove(webPageGroupData)));
 }
 
-namespace WebKit {
+PageGroupHandle::PageGroupHandle(WebKit::WebPageGroupData&& webPageGroupData)
+    : m_webPageGroupData(WTFMove(webPageGroupData))
+{
+}
 
-class WebUserContentController;
+PageGroupHandle::~PageGroupHandle()
+{
+}
 
-class WebPageGroupProxy : public API::ObjectImpl<API::Object::Type::BundlePageGroup> {
-public:
-    static Ref<WebPageGroupProxy> create(const WebPageGroupData&);
-    virtual ~WebPageGroupProxy();
+void PageGroupHandle::encode(IPC::Encoder& encoder) const
+{
+    encoder << m_webPageGroupData;
+}
 
-    const String& identifier() const { return m_data.identifier; }
-    uint64_t pageGroupID() const { return m_data.pageGroupID; }
-    StorageNamespaceIdentifier localStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(pageGroupID()); }
-    WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
+bool PageGroupHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
+{
+    Optional<WebKit::WebPageGroupData> webPageGroupData;
+    decoder >> webPageGroupData;
+    if (!webPageGroupData)
+        return false;
 
-private:
-    WebPageGroupProxy(const WebPageGroupData&);
+    result = create(WTFMove(*webPageGroupData));
+    return true;
+}
 
-    WebPageGroupData m_data;
-    WebCore::PageGroup* m_pageGroup;
-};
-
-} // namespace WebKit
+}

@@ -1,3 +1,16 @@
+2021-05-18  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r277614.
+        <rdar://78167889>
+
+        Broke Mail
+
+        Reverted changeset:
+
+        "Remove API::Object::Type::BundlePageGroup"
+        https://bugs.webkit.org/show_bug.cgi?id=225611
+        https://commits.webkit.org/r277614
+
 2021-05-18  Said Abou-Hallawa  <said@apple.com>
 
         Allow logging minimal info about uploading media files

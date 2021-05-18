@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef APIPageGroupHandle_h
+#define APIPageGroupHandle_h
 
 #include "APIObject.h"
-#include "StorageNamespaceIdentifier.h"
 #include "WebPageGroupData.h"
-#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
-namespace WebCore {
-class PageGroup;
+namespace IPC {
+class Decoder;
+class Encoder;
 }
 
-namespace WebKit {
+namespace API {
 
-class WebUserContentController;
-
-class WebPageGroupProxy : public API::ObjectImpl<API::Object::Type::BundlePageGroup> {
+class PageGroupHandle : public ObjectImpl<Object::Type::PageGroupHandle> {
 public:
-    static Ref<WebPageGroupProxy> create(const WebPageGroupData&);
-    virtual ~WebPageGroupProxy();
+    static Ref<PageGroupHandle> create(WebKit::WebPageGroupData&&);
+    virtual ~PageGroupHandle();
 
-    const String& identifier() const { return m_data.identifier; }
-    uint64_t pageGroupID() const { return m_data.pageGroupID; }
-    StorageNamespaceIdentifier localStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(pageGroupID()); }
-    WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
+    const WebKit::WebPageGroupData& webPageGroupData() const { return m_webPageGroupData; }
+
+    void encode(IPC::Encoder&) const;
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<Object>&);
 
 private:
-    WebPageGroupProxy(const WebPageGroupData&);
+    explicit PageGroupHandle(WebKit::WebPageGroupData&&);
 
-    WebPageGroupData m_data;
-    WebCore::PageGroup* m_pageGroup;
+    const WebKit::WebPageGroupData m_webPageGroupData;
 };
 
-} // namespace WebKit
+} // namespace API
+
+
+#endif // APIPageGroupHandle_h

@@ -63,6 +63,7 @@
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInInternal.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
+#import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WKWebpagePreferencesInternal.h"
@@ -424,6 +425,12 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::BundleNodeHandle:
         wrapper = [WKWebProcessPlugInNodeHandle alloc];
+        break;
+
+    case Type::BundlePageGroup:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN;
+        wrapper = [WKWebProcessPlugInPageGroup alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_END;
         break;
 
     case Type::BundleRangeHandle:

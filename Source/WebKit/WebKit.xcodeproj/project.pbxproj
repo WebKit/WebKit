@@ -464,6 +464,7 @@
 		1F7506B81859165D00EC0FF7 /* WKWebProcessPlugInFrameInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F01816B1858DC1500F92884 /* WKWebProcessPlugInFrameInternal.h */; };
 		1F7D36C118DA513F00D9D659 /* APIDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */; };
 		1FB00AC7185F76460019142E /* WKWebProcessPlugInPageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FB00AC4185F76460019142E /* WKWebProcessPlugInPageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1FB00AC9185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FB00AC6185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h */; };
 		263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 263172CE18B469490065B9C3 /* NativeWebTouchEvent.h */; };
 		2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */; };
 		2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */; };
@@ -2658,6 +2659,8 @@
 		1A334DEA16DE8B68006A8E38 /* StorageAreaMap.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaMap.messages.in; sourceTree = "<group>"; };
 		1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageAreaMapMessageReceiver.cpp; path = DerivedSources/WebKit2/StorageAreaMapMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAreaMapMessages.h; path = DerivedSources/WebKit2/StorageAreaMapMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A3A73CB1A48C6D4007231B3 /* APIPageGroupHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIPageGroupHandle.cpp; sourceTree = "<group>"; };
+		1A3A73CC1A48C6D4007231B3 /* APIPageGroupHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPageGroupHandle.h; sourceTree = "<group>"; };
 		1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesInternal.h; sourceTree = "<group>"; };
 		1A3CC16418906ACF001E6ED8 /* WKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebView.mm; sourceTree = "<group>"; };
 		1A3CC16518906ACF001E6ED8 /* WKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebView.h; sourceTree = "<group>"; };
@@ -3112,6 +3115,7 @@
 		1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIDownloadClient.h; sourceTree = "<group>"; };
 		1FB00AC4185F76460019142E /* WKWebProcessPlugInPageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInPageGroup.h; sourceTree = "<group>"; };
 		1FB00AC5185F76460019142E /* WKWebProcessPlugInPageGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugInPageGroup.mm; sourceTree = "<group>"; };
+		1FB00AC6185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInPageGroupInternal.h; sourceTree = "<group>"; };
 		263172CE18B469490065B9C3 /* NativeWebTouchEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebTouchEvent.h; sourceTree = "<group>"; };
 		26659AA0185FAAED004303DD /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleContentRectUpdateInfo.h; sourceTree = "<group>"; };
@@ -7229,6 +7233,7 @@
 				CEC8F9CA1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h */,
 				1FB00AC4185F76460019142E /* WKWebProcessPlugInPageGroup.h */,
 				1FB00AC5185F76460019142E /* WKWebProcessPlugInPageGroup.mm */,
+				1FB00AC6185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h */,
 				374942191DF1F9FF0033C19F /* WKWebProcessPlugInRangeHandle.h */,
 				374942181DF1F9FF0033C19F /* WKWebProcessPlugInRangeHandle.mm */,
 				3749421C1DF1FAB90033C19F /* WKWebProcessPlugInRangeHandleInternal.h */,
@@ -10879,6 +10884,8 @@
 				BC33DD671238464600360F3F /* APINumber.h */,
 				B63403F814910D57001070B5 /* APIObject.cpp */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
+				1A3A73CB1A48C6D4007231B3 /* APIPageGroupHandle.cpp */,
+				1A3A73CC1A48C6D4007231B3 /* APIPageGroupHandle.h */,
 				1AC1336D18565D2B00F3EC05 /* APIPageHandle.cpp */,
 				1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */,
 				F634445512A885C8000612D8 /* APISecurityOrigin.h */,
@@ -12979,6 +12986,7 @@
 				1F7506B61859165700EC0FF7 /* WKWebProcessPlugInNodeHandleInternal.h in Headers */,
 				CEC8F9CB1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h in Headers */,
 				1FB00AC7185F76460019142E /* WKWebProcessPlugInPageGroup.h in Headers */,
+				1FB00AC9185F76460019142E /* WKWebProcessPlugInPageGroupInternal.h in Headers */,
 				BC04EFFC16E65AFB00E336F0 /* WKWebProcessPlugInPrivate.h in Headers */,
 				3749421B1DF1F9FF0033C19F /* WKWebProcessPlugInRangeHandle.h in Headers */,
 				3749421D1DF1FAB90033C19F /* WKWebProcessPlugInRangeHandleInternal.h in Headers */,

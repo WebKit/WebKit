@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "WKWebProcessPlugInPageGroup.h"
 
-#include "APIObject.h"
-#include "StorageNamespaceIdentifier.h"
-#include "WebPageGroupData.h"
-#include <wtf/Ref.h>
-
-namespace WebCore {
-class PageGroup;
-}
+#import "WKBase.h"
+#import "WebPageGroupProxy.h"
 
 namespace WebKit {
 
-class WebUserContentController;
-
-class WebPageGroupProxy : public API::ObjectImpl<API::Object::Type::BundlePageGroup> {
-public:
-    static Ref<WebPageGroupProxy> create(const WebPageGroupData&);
-    virtual ~WebPageGroupProxy();
-
-    const String& identifier() const { return m_data.identifier; }
-    uint64_t pageGroupID() const { return m_data.pageGroupID; }
-    StorageNamespaceIdentifier localStorageNamespaceIdentifier() const { return makeObjectIdentifier<StorageNamespaceIdentifierType>(pageGroupID()); }
-    WebCore::PageGroup* corePageGroup() const { return m_pageGroup; }
-
-private:
-    WebPageGroupProxy(const WebPageGroupData&);
-
-    WebPageGroupData m_data;
-    WebCore::PageGroup* m_pageGroup;
+template<> struct WrapperTraits<WebPageGroupProxy> {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    using WrapperClass = WKWebProcessPlugInPageGroup;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 };
 
-} // namespace WebKit
+}
+
+@interface WKWebProcessPlugInPageGroup () <WKObject>
+@end
