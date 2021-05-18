@@ -1911,54 +1911,15 @@ void WebPageProxy::setUnderlayColor(const Color& color)
         send(Messages::WebPage::SetUnderlayColor(color));
 }
 
-Color WebPageProxy::underPageBackgroundColor() const
+Color WebPageProxy::scrollAreaBackgroundColor() const
 {
-    if (m_underPageBackgroundColorOverride.isValid())
-        return m_underPageBackgroundColorOverride;
+    if (m_preferences->useThemeColorForScrollAreaBackgroundColor() && m_themeColor.isValid())
+        return m_themeColor;
 
-    if (m_pageExtendedBackgroundColor.isValid())
-        return m_pageExtendedBackgroundColor;
+    if (m_preferences->useSampledPageTopColorForScrollAreaBackgroundColor() && m_sampledPageTopColor.isValid())
+        return m_sampledPageTopColor;
 
-    return platformUnderPageBackgroundColor();
-}
-
-void WebPageProxy::setUnderPageBackgroundColorOverride(Color&& newUnderPageBackgroundColorOverride)
-{
-    if (newUnderPageBackgroundColorOverride == m_underPageBackgroundColorOverride)
-        return;
-
-    auto oldUnderPageBackgroundColor = underPageBackgroundColor();
-    auto oldUnderPageBackgroundColorOverride = std::exchange(m_underPageBackgroundColorOverride, newUnderPageBackgroundColorOverride);
-    bool changesUnderPageBackgroundColor = !equalIgnoringSemanticColor(oldUnderPageBackgroundColor, underPageBackgroundColor());
-    m_underPageBackgroundColorOverride = WTFMove(oldUnderPageBackgroundColorOverride);
-
-    if (changesUnderPageBackgroundColor)
-        pageClient().underPageBackgroundColorWillChange();
-
-    m_underPageBackgroundColorOverride = WTFMove(newUnderPageBackgroundColorOverride);
-
-    if (changesUnderPageBackgroundColor)
-        pageClient().underPageBackgroundColorDidChange();
-
-    if (m_hasPendingUnderPageBackgroundColorOverrideToDispatch)
-        return;
-
-    m_hasPendingUnderPageBackgroundColorOverrideToDispatch = true;
-
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)] {
-        if (!weakThis)
-            return;
-
-        if (!m_hasPendingUnderPageBackgroundColorOverrideToDispatch)
-            return;
-
-        m_hasPendingUnderPageBackgroundColorOverrideToDispatch = false;
-
-        didChangeBackgroundColor();
-
-        if (hasRunningProcess())
-            send(Messages::WebPage::SetUnderPageBackgroundColorOverride(m_underPageBackgroundColorOverride));
-    });
+    return m_pageExtendedBackgroundColor;
 }
 
 void WebPageProxy::viewWillStartLiveResize()
@@ -8597,24 +8558,13 @@ void WebPageProxy::themeColorChanged(const Color& themeColor)
     pageClient().themeColorDidChange();
 }
 
-void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& newPageExtendedBackgroundColor)
+void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& pageExtendedBackgroundColor)
 {
-    if (m_pageExtendedBackgroundColor == newPageExtendedBackgroundColor)
+    if (m_pageExtendedBackgroundColor == pageExtendedBackgroundColor)
         return;
 
-    auto oldUnderPageBackgroundColor = underPageBackgroundColor();
-    auto oldPageExtendedBackgroundColor = std::exchange(m_pageExtendedBackgroundColor, newPageExtendedBackgroundColor);
-    bool changesUnderPageBackgroundColor = !equalIgnoringSemanticColor(oldUnderPageBackgroundColor, underPageBackgroundColor());
-    m_pageExtendedBackgroundColor = WTFMove(oldPageExtendedBackgroundColor);
-
-    if (changesUnderPageBackgroundColor)
-        pageClient().underPageBackgroundColorWillChange();
     pageClient().pageExtendedBackgroundColorWillChange();
-
-    m_pageExtendedBackgroundColor = newPageExtendedBackgroundColor;
-
-    if (changesUnderPageBackgroundColor)
-        pageClient().underPageBackgroundColorDidChange();
+    m_pageExtendedBackgroundColor = pageExtendedBackgroundColor;
     pageClient().pageExtendedBackgroundColorDidChange();
 }
 
@@ -8627,15 +8577,6 @@ void WebPageProxy::sampledPageTopColorChanged(const Color& sampledPageTopColor)
     m_sampledPageTopColor = sampledPageTopColor;
     pageClient().sampledPageTopColorDidChange();
 }
-
-#if !PLATFORM(COCOA)
-
-Color WebPageProxy::platformUnderPageBackgroundColor() const
-{
-    return Color::transparentBlack;
-}
-
-#endif // !PLATFORM(COCOA)
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)

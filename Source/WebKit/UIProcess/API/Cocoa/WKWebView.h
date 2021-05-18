@@ -580,20 +580,6 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 @property (nonatomic, readonly, nullable) NSColor *themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
 #endif
 
-/*! @abstract The color drawn behind the active page.
- @discussion A color derived from the content of the active page, such as by blending the background color of
- the <html> and <body> elements with the @link backgroundColor @/link of this @link WKWebView @/link. Used as
- the background color under the page's content, such as for scroll bouncing areas. Can be overridden by the
- owner application for custom styling without having to modify the page's style.
- the background of scroll bouncing areas.
- @link WKWebView @/link is key-value observing (KVO) compliant for this property.
- */
-#if TARGET_OS_IPHONE
-@property (nonatomic, null_resettable, copy) UIColor *underPageBackgroundColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
-#else
-@property (nonatomic, null_resettable, copy) NSColor *underPageBackgroundColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
-#endif
-
 @end
 
 #if !TARGET_OS_IPHONE

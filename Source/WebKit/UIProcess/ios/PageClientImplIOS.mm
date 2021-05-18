@@ -1008,11 +1008,6 @@ void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callba
     [m_contentView runModalJavaScriptDialog:WTFMove(callback)];
 }
 
-WebCore::Color PageClientImpl::contentViewBackgroundColor()
-{
-    return [m_contentView backgroundColor].CGColor;
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

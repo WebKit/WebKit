@@ -2563,25 +2563,6 @@ Color Page::sampledPageTopColor() const
     return document->sampledPageTopColor();
 }
 
-void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorOverride)
-{
-    if (underPageBackgroundColorOverride == m_underPageBackgroundColorOverride)
-        return;
-
-    m_underPageBackgroundColorOverride = WTFMove(underPageBackgroundColorOverride);
-
-    scheduleRenderingUpdate({ });
-
-#if ENABLE(RUBBER_BANDING)
-    if (auto frameView = makeRefPtr(mainFrame().view())) {
-        if (auto* renderView = frameView->renderView()) {
-            if (renderView->usesCompositing())
-                renderView->compositor().updateLayerForOverhangAreasBackgroundColor();
-        }
-    }
-#endif // ENABLE(RUBBER_BANDING)
-}
-
 // These are magical constants that might be tweaked over time.
 static const double gMinimumPaintedAreaRatio = 0.1;
 static const double gMaximumUnpaintedAreaRatio = 0.04;

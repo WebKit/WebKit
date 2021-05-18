@@ -3882,8 +3882,15 @@ void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
 
     if (m_renderView.settings().backgroundShouldExtendBeyondPage()) {
         backgroundColor = ([&] {
-            if (auto underPageBackgroundColorOverride = page().underPageBackgroundColorOverride(); underPageBackgroundColorOverride.isValid())
-                return underPageBackgroundColorOverride;
+            if (page().settings().useThemeColorForScrollAreaBackgroundColor()) {
+                if (auto themeColor = page().themeColor(); themeColor.isValid())
+                    return themeColor;
+            }
+
+            if (page().settings().useSampledPageTopColorForScrollAreaBackgroundColor()) {
+                if (auto sampledPageTopColor = page().sampledPageTopColor(); sampledPageTopColor.isValid())
+                    return sampledPageTopColor;
+            }
 
             return m_rootExtendedBackgroundColor;
         })();

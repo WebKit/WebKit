@@ -672,9 +672,7 @@ public:
 
     WebCore::Color sampledPageTopColor() const { return m_sampledPageTopColor; }
 
-    WebCore::Color underPageBackgroundColor() const;
-    WebCore::Color underPageBackgroundColorOverride() const { return m_underPageBackgroundColorOverride; }
-    void setUnderPageBackgroundColorOverride(WebCore::Color&&);
+    WebCore::Color scrollAreaBackgroundColor() const;
 
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
@@ -2110,7 +2108,6 @@ private:
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
     void sampledPageTopColorChanged(const WebCore::Color&);
-    WebCore::Color platformUnderPageBackgroundColor() const;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString);
     void didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured);
@@ -2655,12 +2652,9 @@ private:
     LayerHostingMode m_layerHostingMode { LayerHostingMode::InProcess };
 
     WebCore::Color m_themeColor;
-    WebCore::Color m_underPageBackgroundColorOverride;
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
     WebCore::Color m_sampledPageTopColor;
-
-    bool m_hasPendingUnderPageBackgroundColorOverrideToDispatch { false };
 
     bool m_useFixedLayout { false };
     WebCore::IntSize m_fixedLayoutSize;
