@@ -835,6 +835,8 @@
 		DF83E39B2639FED4000825EF /* QueryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD597D2284FB8F0018F2D8 /* QueryImpl.cpp */; };
 		DF83E39C2639FED4000825EF /* renderer_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB304CD1DE4164800D2C405 /* renderer_utils.cpp */; };
 		FF2D2F5525C8B14A002FB699 /* FixTypeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */; };
+		FF582E1626544FC4006DA5B8 /* ProvokingVertexHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF582E1426544FC4006DA5B8 /* ProvokingVertexHelper.mm */; };
+		FF582E1726544FC4006DA5B8 /* ProvokingVertexHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1666,6 +1668,10 @@
 		FF33284425F6CA9D005FDFC4 /* NameNamelessUniformBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameNamelessUniformBuffers.cpp; sourceTree = "<group>"; };
 		FF33284725F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntroduceVertexIndexID.cpp; sourceTree = "<group>"; };
 		FF33284825F6CAB9005FDFC4 /* IntroduceVertexIndexID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroduceVertexIndexID.h; sourceTree = "<group>"; };
+		FF582E1426544FC4006DA5B8 /* ProvokingVertexHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProvokingVertexHelper.mm; sourceTree = "<group>"; };
+		FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProvokingVertexHelper.h; sourceTree = "<group>"; };
+		FF582E1826544FE5006DA5B8 /* rewrite_indices.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = rewrite_indices.metal; sourceTree = "<group>"; };
+		FF582E1926544FFA006DA5B8 /* rewrite_indices_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rewrite_indices_shared.h; sourceTree = "<group>"; };
 		FF81FE8025818D6800894E24 /* mtl_glslang_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_glslang_utils.h; sourceTree = "<group>"; };
 		FF81FE8125818D6800894E24 /* ProgramMtl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramMtl.h; sourceTree = "<group>"; };
 		FF81FE8225818D6800894E24 /* DisplayMtl_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayMtl_api.h; sourceTree = "<group>"; };
@@ -3011,6 +3017,8 @@
 				FF81FE9D25818D6800894E24 /* mtl_utils.mm */,
 				FF81FE8125818D6800894E24 /* ProgramMtl.h */,
 				FF81FECD25818D6800894E24 /* ProgramMtl.mm */,
+				FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */,
+				FF582E1426544FC4006DA5B8 /* ProvokingVertexHelper.mm */,
 				FF81FE8425818D6800894E24 /* QueryMtl.h */,
 				FF81FE8D25818D6800894E24 /* QueryMtl.mm */,
 				FF81FE8F25818D6800894E24 /* RenderBufferMtl.h */,
@@ -3047,6 +3055,8 @@
 				FF81FEB325818D6800894E24 /* gen_indices.metal */,
 				FF81FEB225818D6800894E24 /* gen_mipmap.metal */,
 				FF81FEAE25818D6800894E24 /* mtl_default_shaders_src_autogen.inc */,
+				FF582E1826544FE5006DA5B8 /* rewrite_indices.metal */,
+				FF582E1926544FFA006DA5B8 /* rewrite_indices_shared.h */,
 				FF81FEAB25818D6800894E24 /* visibility.metal */,
 			);
 			path = shaders;
@@ -3364,6 +3374,7 @@
 				31CD0081249184FD00486F27 /* ProgramPipeline.h in Headers */,
 				31CD0019249184E700486F27 /* ProgramPipelineGL.h in Headers */,
 				31CD0041249184F400486F27 /* ProgramPipelineImpl.h in Headers */,
+				FF582E1726544FC4006DA5B8 /* ProvokingVertexHelper.h in Headers */,
 				31CDFF9B2491849800486F27 /* PruneEmptyCases.h in Headers */,
 				31CDFF862491849800486F27 /* PruneNoOps.h in Headers */,
 				31CDFFD6249184A700486F27 /* QualifierTypes.h in Headers */,
@@ -3857,6 +3868,7 @@
 				DF83E3602639FE92000825EF /* ProgramPipelineGL.cpp in Sources */,
 				DF83E38F2639FED4000825EF /* ProgramPipelineImpl.cpp in Sources */,
 				DF83E2392639FCD5000825EF /* ProgramPrelude.cpp in Sources */,
+				FF582E1626544FC4006DA5B8 /* ProvokingVertexHelper.mm in Sources */,
 				DF83E2702639FD33000825EF /* PruneEmptyCases.cpp in Sources */,
 				DF83E27C2639FD33000825EF /* PruneNoOps.cpp in Sources */,
 				DF83E2A02639FD83000825EF /* QualifierTypes.cpp in Sources */,

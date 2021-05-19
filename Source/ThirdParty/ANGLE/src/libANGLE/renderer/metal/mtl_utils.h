@@ -182,6 +182,18 @@ angle::Result GetTriangleFanIndicesCount(ContextMtl *context,
                                          GLsizei vetexCount,
                                          uint32_t *numElemsOut);
 
+angle::Result CreateMslShader(Context *context,
+                              id<MTLLibrary> shaderLib,
+                              NSString * shaderName,
+                              MTLFunctionConstantValues *funcConstants,
+                              AutoObjCPtr<id<MTLFunction>> *shaderOut);
+
+angle::Result CreateMslShader(Context * _Nonnull context,
+                              id<MTLLibrary> shaderLib,
+                              NSString * _Nonnull shaderName,
+                              MTLFunctionConstantValues * _Nullable funcConstants,
+                              id<MTLFunction> _Nullable  * _Nonnull  shaderOut);
+
 NS_ASSUME_NONNULL_END
 }  // namespace mtl
 }  // namespace rx

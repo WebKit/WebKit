@@ -2807,6 +2807,245 @@ kernel void combineVisibilityResult(uint idx [[thread_position_in_grid]],
     finalResults[0] = finalResult16x4;
 }
 # 7 "temp_master_source.metal" 2
+# 1 "./rewrite_indices.metal" 1
+# 10 "./rewrite_indices.metal"
+#include <metal_stdlib>
+
+# 1 "./rewrite_indices_shared.h" 1
+# 12 "./rewrite_indices.metal" 2
+using namespace metal;
+
+constant uint fixIndexBufferKey [[ function_constant(2000) ]];
+constant bool indexBufferIsUint16 = (((fixIndexBufferKey >> 0U) & 0x03U) == 2U);
+constant bool indexBufferIsUint32 = (((fixIndexBufferKey >> 0U) & 0x03U) == 3U);
+constant bool outIndexBufferIsUint16 = (((fixIndexBufferKey >> 2U) & 0x03U) == 2U);
+constant bool outIndexBufferIsUint32 = (((fixIndexBufferKey >> 2U) & 0x03U) == 3U);
+constant bool doPrimRestart = (fixIndexBufferKey & 0x00100U);
+constant uint fixIndexBufferMode = (fixIndexBufferKey >> 4U) & 0x0FU;
 
 
+static inline uint readIdx(
+                           const device ushort *indexBufferUint16,
+                           const device uint *indexBufferUint32,
+                           const uint restartIndex,
+                           const uint indexCount,
+                           uint idx,
+                           thread bool &foundRestart,
+                           thread uint &indexThatRestartedFirst
+                           )
+{
+    uint inIndex = idx;
+    if(inIndex < indexCount)
+    {
+        if(indexBufferIsUint16)
+        {
+            inIndex = indexBufferUint16[inIndex];
+        }
+        else if(indexBufferIsUint32)
+        {
+            inIndex = indexBufferUint32[inIndex];
+        }
+    }
+    else
+    {
+        foundRestart = true;
+        indexThatRestartedFirst = idx;
+    }
+    if(doPrimRestart && !foundRestart && inIndex == restartIndex)
+    {
+        foundRestart = true;
+        indexThatRestartedFirst = idx;
+    }
+    return inIndex;
+}
+
+static inline void outputPrimitive(
+                                   const device ushort *indexBufferUint16,
+                                   const device uint *indexBufferUint32,
+                                   device ushort *outIndexBufferUint16,
+                                   device uint *outIndexBufferUint32,
+                                   const uint restartIndex,
+                                   const uint indexCount,
+                                   thread uint &baseIndex,
+                                   uint onIndex,
+                                   thread uint &onOutIndex
+                                   )
+{
+    if(baseIndex > onIndex) return;
+    bool foundRestart = false;
+    uint indexThatRestartedFirst = 0;
+# 86 "./rewrite_indices.metal"
+    switch(fixIndexBufferMode)
+    {
+        //MtlFixIndexBufferKeyPoints
+        case 0x00U:
+        {
+            auto tmpIndex = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex, foundRestart, indexThatRestartedFirst);
+            if(foundRestart)
+            {
+                baseIndex = indexThatRestartedFirst + 1;
+                return;
+            }
+
+            ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex; } onOutIndex++; });
+        }
+        break;
+        //MtlFixIndexBufferKeyLines
+        case 0x01U:
+        {
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
+            if(foundRestart)
+            {
+                baseIndex = indexThatRestartedFirst + 1;
+                return;
+            }
+            if((onIndex - baseIndex) & 1) return;
+
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+            }
+        }
+        break;
+        //MtlFixIndexBufferKeyLineStrip
+        case 0x03U:
+        {
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
+            if(foundRestart)
+            {
+                baseIndex = indexThatRestartedFirst + 1;
+                return;
+            }
+
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+            }
+        }
+        break;
+        //MtlFixIndexBufferKeyTriangles
+        case 0x04U:
+        {
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex2 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 2, foundRestart, indexThatRestartedFirst);
+            if(foundRestart)
+            {
+                baseIndex = indexThatRestartedFirst + 1;
+                return;
+            }
+            if(((onIndex - baseIndex) % 3) != 0) return;
+
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+            }
+            else
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2; } onOutIndex++; });
+            }
+        }
+        break;
+        //MtlFixIndexBufferKeyTriangleStrip
+        case 0x05U:
+        {
+            uint isOdd = ((onIndex - baseIndex) & 1);
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0 + isOdd, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1 - isOdd, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex2 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 2, foundRestart, indexThatRestartedFirst);
+            if(foundRestart)
+            {
+                baseIndex = indexThatRestartedFirst + 1;
+                return;
+            }
+
+            if(fixIndexBufferKey & 0x00200U)
+            {
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+                ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+            }
+            else
+            {
+
+                if(isOdd)
+                {
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+                }
+                else
+                {
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex0; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex0; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex1; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex1; } onOutIndex++; });
+                    ({ if(outIndexBufferIsUint16) { outIndexBufferUint16[(onOutIndex)] = tmpIndex2; } if(outIndexBufferIsUint32) { outIndexBufferUint32[(onOutIndex)] = tmpIndex2; } onOutIndex++; });
+                }
+            }
+
+            assert(onOutIndex <= (onIndex + 1) * 3);
+            assert(onOutIndex <= (indexCount - 2) * 3);
+        }
+        break;
+
+    }
+
+
+}
+
+kernel void fixIndexBuffer(
+                           const device ushort *indexBufferUint16 [[ buffer(0), function_constant(indexBufferIsUint16) ]],
+                           const device uint *indexBufferUint32 [[ buffer(0), function_constant(indexBufferIsUint32) ]],
+                           device ushort *outIndexBufferUint16 [[ buffer(1), function_constant(outIndexBufferIsUint16) ]],
+                           device uint *outIndexBufferUint32 [[ buffer(1), function_constant(outIndexBufferIsUint32) ]],
+                           constant uint &indexCount [[ buffer(2) ]],
+                           uint prim [[thread_position_in_grid]])
+{
+    constexpr uint restartIndex = 0xFFFFFFFF;
+    uint baseIndex = 0;
+    uint onIndex = onIndex;
+    uint onOutIndex = onOutIndex;
+    switch(fixIndexBufferMode)
+    {
+        case 0x00U:
+            onIndex = prim;
+            onOutIndex = prim;
+            break;
+        case 0x01U:
+            onIndex = prim * 2 + 0;
+            onOutIndex = prim * 2 + 0;
+            break;
+        case 0x03U:
+            onIndex = prim;
+            onOutIndex = prim * 2 + 0;
+            break;
+        case 0x04U:
+            onIndex = prim * 3 + 0;
+            onOutIndex = prim * 3 + 0;
+            break;
+        case 0x05U:
+            onIndex = prim;
+            onOutIndex = prim * 3 + 0;
+            break;
+    }
+    outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, restartIndex, indexCount, baseIndex, onIndex, onOutIndex);
+}
+# 8 "temp_master_source.metal" 2
 )";
