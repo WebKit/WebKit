@@ -1,3 +1,36 @@
+2021-05-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] <select multiple> picker should collapse sections when tapping anywhere on a group header
+        https://bugs.webkit.org/show_bug.cgi?id=225974
+        <rdar://problem/77930033>
+
+        Reviewed by Wenson Hsieh.
+
+        Currently, the <select multiple> picker only collapses a section when
+        tapping on the disclosure button on the side of the group header. Instead,
+        a tap anywhere on the group header should collapse/expand the corresponding
+        section.
+
+        The new behavior is achieved by introducing WKSelectPickerGroupHeaderView,
+        a view that encapsulates the header label and disclosure icon. A tap
+        gesture recognizer is added to animate the icon, and notify the its
+        owner (WKSelectPickerTableViewController) when the view is tapped.
+
+        This patch also corrects the icon animation in RTL layouts, and corrects
+        the spacing between the header label and icon.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPickerGroupHeaderView initWithGroupName:section:]):
+        (-[WKSelectPickerGroupHeaderView setCollapsed:animated:]):
+        (-[WKSelectPickerGroupHeaderView setDelegate:]):
+        (-[WKSelectPickerGroupHeaderView didTapHeader:]):
+        (+[WKSelectPickerGroupHeaderView preferredFont]):
+        (+[WKSelectPickerGroupHeaderView preferredMargin]):
+        (+[WKSelectPickerGroupHeaderView preferredHeight]):
+        (-[WKSelectPickerTableViewController tableView:heightForHeaderInSection:]):
+        (-[WKSelectPickerTableViewController tableView:viewForHeaderInSection:]):
+        (-[WKSelectPickerTableViewController didTapSelectPickerGroupHeaderView:]):
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         Update Base64 encoding/decoding to match more modern WebKit conventions
