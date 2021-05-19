@@ -60,7 +60,7 @@ public:
         m_gpConstDefs.ensureSize(gpArraySize);
         unsigned fpArraySize = AbsoluteTmpMapper<FP>::absoluteIndex(code.numTmps(FP));
         m_fpNumWarmUsesAndDefs.resize(fpArraySize);
-        m_fpConstDefs.ensureSize(gpArraySize);
+        m_fpConstDefs.ensureSize(fpArraySize);
 
         for (BasicBlock* block : code) {
             double frequency = block->frequency();

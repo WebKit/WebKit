@@ -1,3 +1,16 @@
+2021-05-19  Robin Morisset  <rmorisset@apple.com>
+
+        Fix typo in AirUseCounts
+        https://bugs.webkit.org/show_bug.cgi?id=225977
+        rdar://78210501
+
+        Reviewed by Mark Lam.
+
+        Add the testcase found by Tuomas.
+
+        * stress/register-allocator-stress.js: Added.
+        (foo):
+
 2021-05-18  Keith Miller  <keith_miller@apple.com>
 
         Temporarily revert r276592 as it breaks some native apps
