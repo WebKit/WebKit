@@ -1,3 +1,19 @@
+2021-05-18  Alan Bujtas  <zalan@apple.com>
+
+        The containing block for a fixed renderer has to be a type of RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=225924
+        <rdar://77968716>
+
+        Reviewed by Simon Fraser.
+
+        While an atomic inline level box with layout containment can certainly be the containing block for fixed (and absolute) boxes,
+        the current render tree logic requires a containing block to be the type of RenderBlock.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::nearestNonAnonymousContainingBlockIncludingSelf): make this function static so that we can call it from containingBlockForFixedPosition()
+        (WebCore::RenderElement::containingBlockForFixedPosition const):
+        (WebCore::RenderElement::containingBlockForAbsolutePosition const):
+
 2021-05-18  Simon Fraser  <simon.fraser@apple.com>
 
         Layer names should not contain object addresses in release builds
