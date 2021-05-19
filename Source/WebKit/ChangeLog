@@ -1,3 +1,18 @@
+2021-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Improve logging in ProcessThrottler::invalidateAllActivities()
+        https://bugs.webkit.org/show_bug.cgi?id=225766
+
+        Reviewed by Geoffrey Garen.
+
+        Improve logging in ProcessThrottler::invalidateAllActivities(). We now log the number
+        of foreground and background activities. Normally each activity logs when getting
+        invalidated so we know this number. However, some activities are "quiet" and do not
+        log when invalidated (e.g. activities taken for IPC).
+
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::invalidateAllActivities):
+
 2021-05-19  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] <select multiple> picker checkmarks should use large symbol scale
