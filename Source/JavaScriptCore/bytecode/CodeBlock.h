@@ -71,6 +71,7 @@
 #include <wtf/Bag.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FixedVector.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
@@ -572,6 +573,9 @@ public:
     size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers(); }
     const Identifier& identifier(int index) const { return m_unlinkedCode->identifier(index); }
 #endif
+#if ASSERT_ENABLED
+    bool hasIdentifier(UniquedStringImpl*);
+#endif
 
     Vector<WriteBarrier<Unknown>>& constants() { return m_constantRegisters; }
     unsigned addConstant(const ConcurrentJSLocker&, JSValue v)
@@ -1056,6 +1060,11 @@ private:
     double m_previousCounter { 0 };
 
     std::unique_ptr<RareData> m_rareData;
+
+#if ASSERT_ENABLED
+    Lock m_cachedIdentifierUidsLock;
+    HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
+#endif
 };
 
 template <typename ExecutableType>

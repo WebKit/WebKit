@@ -2898,13 +2898,62 @@ size_t CodeBlock::numberOfDFGIdentifiers() const
 
 const Identifier& CodeBlock::identifier(int index) const
 {
-    size_t unlinkedIdentifiers = m_unlinkedCode->numberOfIdentifiers();
+    UnlinkedCodeBlock* unlinkedCode = m_unlinkedCode.get();
+    size_t unlinkedIdentifiers = unlinkedCode->numberOfIdentifiers();
     if (static_cast<unsigned>(index) < unlinkedIdentifiers)
-        return m_unlinkedCode->identifier(index);
+        return unlinkedCode->identifier(index);
     ASSERT(JITCode::isOptimizingJIT(jitType()));
     return m_jitCode->dfgCommon()->m_dfgIdentifiers[index - unlinkedIdentifiers];
 }
 #endif // ENABLE(DFG_JIT)
+
+#if ASSERT_ENABLED
+bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
+{
+    UnlinkedCodeBlock* unlinkedCode = m_unlinkedCode.get();
+    size_t unlinkedIdentifiers = unlinkedCode->numberOfIdentifiers();
+    size_t numberOfDFGIdentifiers = this->numberOfDFGIdentifiers();
+    size_t numberOfIdentifiers = unlinkedIdentifiers + numberOfDFGIdentifiers;
+
+    if (numberOfIdentifiers > 100) {
+        if (m_cachedIdentifierUids.size() != numberOfIdentifiers) {
+            Locker locker(m_cachedIdentifierUidsLock);
+            createRareDataIfNecessary();
+            HashSet<UniquedStringImpl*> cachedIdentifierUids;
+            cachedIdentifierUids.reserveInitialCapacity(numberOfIdentifiers);
+            for (unsigned index = 0; index < unlinkedIdentifiers; ++index) {
+                const Identifier& identifier = unlinkedCode->identifier(index);
+                cachedIdentifierUids.add(identifier.impl());
+            }
+            if (numberOfDFGIdentifiers) {
+                ASSERT(JITCode::isOptimizingJIT(jitType()));
+                auto& dfgIdentifiers = m_jitCode->dfgCommon()->m_dfgIdentifiers;
+                for (unsigned index = 0; index < numberOfDFGIdentifiers; ++index) {
+                    const Identifier& identifier = dfgIdentifiers[index];
+                    cachedIdentifierUids.add(identifier.impl());
+                }
+            }
+            WTF::storeStoreFence();
+            m_cachedIdentifierUids = WTFMove(cachedIdentifierUids);
+        }
+        return m_cachedIdentifierUids.contains(uid);
+    }
+
+    for (unsigned index = 0; index < unlinkedIdentifiers; ++index) {
+        const Identifier& identifier = unlinkedCode->identifier(index);
+        if (identifier.impl() == uid)
+            return true;
+    }
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
+    auto& dfgIdentifiers = m_jitCode->dfgCommon()->m_dfgIdentifiers;
+    for (unsigned index = 0; index < numberOfDFGIdentifiers; ++index) {
+        const Identifier& identifier = dfgIdentifiers[index];
+        if (identifier.impl() == uid)
+            return true;
+    }
+    return false;
+}
+#endif
 
 void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {

@@ -1,3 +1,37 @@
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
+        Speed up debug validation in CacheableIdentifier::createFromIdentifierOwnedByCodeBlock().
+        https://bugs.webkit.org/show_bug.cgi?id=225948
+        rdar://78175542
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Introduce CodeBlock::hasIdentifier() so that we can encapsulate the identifier
+           search better.  Change CacheableIdentifier::createFromIdentifierOwnedByCodeBlock()
+           to call this method instead of rolling its own identifier search.
+
+        2. If the CodeBlock is pathological and has a ridiculous number of identifiers
+           to search, create a cached hash set of the identifiers, and use that for
+           doing the search instead.
+
+           Apparently, YouTube can have a single JS function with 2177689 bytecodes, where
+           a large portion of those are put_by_ids.  The function also has some 17k+
+           identifiers.  With that may bytecodes doing a validation search on 17k+
+           identifiers in a Debug build, the site can become un-useable.  This optimization
+           brings it back from un-useable to barely tolerable on the Debug build.
+
+        3. Also fetch the UnlinkedCodeBlock from the WriteBarrier field just once in
+           CodeBlock::identifier() and CodeBlock::hasIdentifier().  This may not matter
+           on a Release build, but it can add up on a Debug build, which is already slow.
+           We should try to avoid doing redundant validation via the WriteBarrier access.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::identifier const):
+        (JSC::CodeBlock::hasIdentifier):
+        * bytecode/CodeBlock.h:
+        * runtime/CacheableIdentifierInlines.h:
+        (JSC::CacheableIdentifier::createFromIdentifierOwnedByCodeBlock):
+
 2021-05-19  Saam Barati  <sbarati@apple.com>
 
         Link Baseline JIT code off the main thread
