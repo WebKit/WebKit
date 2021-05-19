@@ -1,3 +1,21 @@
+2021-05-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Prune CommonSlowPaths of JITPropertyAccess functions
+        https://bugs.webkit.org/show_bug.cgi?id=225953
+
+        Reviewed by Mark Lam.
+
+        A few bytecode operations with slow paths in JITPropertyAccess appear to have either redundant or unnecessary
+        "common" slow paths; namely, get_private_name and del_by_val already have LLInt slow paths, while in_by_id
+        and get_by_id_with_this can have their "common" slow path moved to be LLInt-specific.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CommonSlowPaths.h:
+
 2021-05-18  Robin Morisset  <rmorisset@apple.com>
 
         Make AirAllocateRegistersByGraphColoring use less memory
