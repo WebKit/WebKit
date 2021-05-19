@@ -1,3 +1,27 @@
+2021-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Add more bounds checking and input validation in DisplayListIterator
+        https://bugs.webkit.org/show_bug.cgi?id=225937
+        rdar://71848559
+
+        Reviewed by Ryosuke Niwa.
+
+        Harden logic for iterating display list items.
+
+        1.  Check that the item type enum is valid after reading it from the cursor.
+        2.  In the case of out-of-line items, verify that the data length of the encoded object is limited to a
+            reasonable size (4 GB) and does not exceed the capacity of the current item buffer before attempting to read
+            and decode the item.
+
+        Note that in all cases, validation failure results in web process termination via a MESSAGE_CHECK initiated by
+        the GPU Process.
+
+        * platform/graphics/displaylists/DisplayListIterator.cpp:
+        (WebCore::DisplayList::DisplayList::Iterator::updateCurrentItem):
+
+        Note that this additionally caps the size of any given out-of-line display list item to the (comfortably large)
+        numerical limit of `uint32_t`.
+
 2021-05-19  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: unwrapParamsOrException.exception().code() != ExistingExceptionError on http/wpt/preload/change-link-rel-attribute.html
