@@ -78,9 +78,12 @@ bool AudioSummingJunction::removeOutput(AudioNodeOutput& output)
     if (!m_outputs.remove(&output))
         return false;
 
-    if (m_pendingRenderingOutputs.isEmpty())
+    if (m_pendingRenderingOutputs.isEmpty()) {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         m_pendingRenderingOutputs = copyToVector(m_outputs);
-    else
+    } else
         m_pendingRenderingOutputs.removeFirst(&output);
 
     markRenderingStateAsDirty();
