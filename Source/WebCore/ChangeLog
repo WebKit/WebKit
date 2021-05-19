@@ -1,3 +1,54 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        HTMLCanvasElement toDataURL and toBlob do unnecessary data copies through a CFDataRef
+        https://bugs.webkit.org/show_bug.cgi?id=225853
+
+        Reviewed by Darin Adler.
+
+        When trying to encode either a PixelBuffer or a ImageBuffer to an image for
+        blob or dataURL creation, we were using a method that required always first
+        creating a CFDataRef and then copying that CFDataRef's data into what we needed.
+
+        Instead, we can use a callback based CGDataConsumer and some passed around
+        functors to get the data directly as it is being encoded and process it as
+        needed. ScopedLambda is used to avoid unnecessary inlining or allocation that
+        a template based functor or WTF::Function would require respectively.
+
+        * platform/graphics/cg/ImageBufferCGBackend.h:
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::toCFData const): Deleted.
+        (WebCore::ImageBufferCGBackend::copyPlatformImageForEncoding const):
+        Factor out PlatformImagePtr creation into its own function. This replaces the
+        toCFData virtual function, and is used in conjunction with the data/dataURL
+        functions in ImageBufferCGBackend to produce the encoded data.
+
+        (WebCore::ImageBufferCGBackend::toData const):
+        (WebCore::ImageBufferCGBackend::toDataURL const):
+        Rework to use copyPlatformImageForEncoding and data/dataURL in ImageBufferCGBackend
+        to produce the encoded data.
+
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::copyPlatformImageForEncoding const):
+        (WebCore::ImageBufferIOSurfaceBackend::toCFData const): Deleted.
+        Like toCFData before it, copyPlatformImageForEncoding is virtual allowing for this
+        override in ImageBufferIOSurfaceBackend.
+
+        * platform/graphics/cg/ImageBufferUtilitiesCG.h:
+        * platform/graphics/cg/ImageBufferUtilitiesCG.cpp:
+        (WebCore::encode):
+        (WebCore::encodeToVector):
+        (WebCore::encodeToDataURL):
+        (WebCore::data):
+        (WebCore::dataURL):
+        (WebCore::encodeImage): Deleted.
+        (WebCore::cfData): Deleted.
+        (WebCore::dataVector): Deleted.
+        Replace encodeImage(), which filled in a CFMutableDataRef, with overloads of data() and
+        dataURL() that now use a callback based CGDataConsumer and some callback functors to 
+        allow the encoded data to be consumed as it is being created. Also makes use of new 
+        base64Encoded() adapter to base64 encode directly in makeString().
+
 2021-05-19  Chris Dumez  <cdumez@apple.com>
 
         Drop "get" prefix from SQLiteStatement member functions as well as out-parameters

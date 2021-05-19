@@ -166,7 +166,7 @@ void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, co
         destContext.drawNativeImage(*image, backendSize, destRect, adjustedSrcRect, options);
 }
 
-RetainPtr<CFDataRef> ImageBufferIOSurfaceBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
+RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution preserveResolution) const
 {
     if (m_requiresDrawAfterPutPixelBuffer) {
         // Force recreating the IOSurface cached image.
@@ -174,7 +174,7 @@ RetainPtr<CFDataRef> ImageBufferIOSurfaceBackend::toCFData(const String& mimeTyp
         context().fillRect(FloatRect(1, 1, 0, 0));
         m_requiresDrawAfterPutPixelBuffer = false;
     }
-    return ImageBufferCGBackend::toCFData(mimeType, quality, preserveResolution);
+    return ImageBufferCGBackend::copyCGImageForEncoding(destinationUTI, preserveResolution);
 }
 
 Vector<uint8_t> ImageBufferIOSurfaceBackend::toBGRAData() const

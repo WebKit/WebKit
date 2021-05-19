@@ -60,7 +60,6 @@ public:
 
     void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
 
-    RetainPtr<CFDataRef> toCFData(const String& mimeType, Optional<double> quality, PreserveResolution) const override;
     Vector<uint8_t> toBGRAData() const override;
 
     Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
@@ -77,6 +76,9 @@ public:
 protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;
+
+    // ImageBufferCGBackend overrides.
+    RetainPtr<CGImageRef> copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution) const final;
 
     std::unique_ptr<IOSurface> m_surface;
     mutable bool m_requiresDrawAfterPutPixelBuffer { false };

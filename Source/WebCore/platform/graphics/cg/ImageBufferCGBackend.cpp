@@ -168,20 +168,11 @@ void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatR
     CGContextTranslateCTM(cgContext, -destRect.x(), -destRect.maxY());
 }
 
-RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
+RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution preserveResolution) const
 {
-#if ENABLE(GPU_PROCESS)
-    ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-#else
-    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-#endif
+    if (CFEqual(destinationUTI, jpegUTI())) {
+        // FIXME: Should this be using the same logic as ImageBufferUtilitiesCG?
 
-    auto uti = utiFromImageBufferMIMEType(mimeType);
-    ASSERT(uti);
-
-    PlatformImagePtr image;
-
-    if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
         PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
         auto pixelBuffer = getPixelBuffer(format, logicalRect());
@@ -197,49 +188,57 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
         auto dataProvider = adoptCF(CGDataProviderCreateWithData(&pixelArray.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
             static_cast<JSC::Uint8ClampedArray*>(context)->deref();
         }));
-        
         if (!dataProvider)
             return nullptr;
 
         auto imageSize = pixelBuffer->size();
-        image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer->format().colorSpace), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
-    } else if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
+        return adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer->format().colorSpace), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    }
+
+    if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
         auto nativeImage = copyNativeImage(CopyBackingStore);
         if (!nativeImage)
             return nullptr;
-        image = nativeImage->platformImage();
-        image = createCroppedImageIfNecessary(image.get(), backendSize());
-    } else {
-        auto nativeImage = copyNativeImage(DontCopyBackingStore);
-        if (!nativeImage)
-            return nullptr;
-        image = nativeImage->platformImage();
-        auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-        CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
-        CGContextClipToRect(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()));
-        CGContextDrawImage(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()), image.get());
-        image = adoptCF(CGBitmapContextCreateImage(context.get()));
+        return createCroppedImageIfNecessary(nativeImage->platformImage().get(), backendSize());
     }
-
-    auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
-    if (!encodeImage(image.get(), uti.get(), quality, cfData.get()))
+    
+    auto nativeImage = copyNativeImage(DontCopyBackingStore);
+    if (!nativeImage)
         return nullptr;
-
-    return WTFMove(cfData);
+    auto image = nativeImage->platformImage();
+    auto context = adoptCF(CGBitmapContextCreate(0, backendSize().width(), backendSize().height(), 8, 4 * backendSize().width(), sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
+    CGContextClipToRect(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()));
+    CGContextDrawImage(context.get(), CGRectMake(0, 0, backendSize().width(), backendSize().height()), image.get());
+    return adoptCF(CGBitmapContextCreateImage(context.get()));
 }
 
 Vector<uint8_t> ImageBufferCGBackend::toData(const String& mimeType, Optional<double> quality) const
 {
-    if (auto data = toCFData(mimeType, quality, PreserveResolution::No))
-        return dataVector(data.get());
-    return { };
+#if ENABLE(GPU_PROCESS)
+    ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#else
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#endif
+
+    auto destinationUTI = utiFromImageBufferMIMEType(mimeType);
+    auto image = copyCGImageForEncoding(destinationUTI.get(), PreserveResolution::No);
+
+    return WebCore::data(image.get(), destinationUTI.get(), quality);
 }
 
 String ImageBufferCGBackend::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
 {
-    if (auto data = toCFData(mimeType, quality, preserveResolution))
-        return dataURL(data.get(), mimeType);
-    return "data:,"_s;
+#if ENABLE(GPU_PROCESS)
+    ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#else
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#endif
+
+    auto destinationUTI = utiFromImageBufferMIMEType(mimeType);
+    auto image = copyCGImageForEncoding(destinationUTI.get(), preserveResolution);
+
+    return WebCore::dataURL(image.get(), destinationUTI.get(), mimeType, quality);
 }
 
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
