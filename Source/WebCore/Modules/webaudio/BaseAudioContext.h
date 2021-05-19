@@ -38,6 +38,7 @@
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MainThread.h>
+#include <wtf/RecursiveLockAdapter.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
@@ -186,17 +187,10 @@ public:
     // Returns true only after the audio thread has been started and then shutdown.
     bool isAudioThreadFinished() const { return m_isAudioThreadFinished; }
 
-    // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
-    void lock(bool& mustReleaseLock);
-
-    // Returns true if we own the lock.
-    // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
-    bool tryLock(bool& mustReleaseLock);
-
-    void unlock();
+    RecursiveLock& graphLock() { return m_graphLock; }
 
     // Returns true if this thread owns the context's lock.
-    bool isGraphOwner() const { return m_graphOwnerThread == &Thread::current(); }
+    bool isGraphOwner() const { return m_graphLock.isOwner(); }
 
     // This is considering 32 is large enough for multiple channels audio.
     // It is somewhat arbitrary and could be increased if necessary.
@@ -232,25 +226,6 @@ public:
     const SecurityOrigin* origin() const;
     void addConsoleMessage(MessageSource, MessageLevel, const String& message);
 
-    class AutoLocker {
-    public:
-        explicit AutoLocker(BaseAudioContext& context)
-            : m_context(context)
-        {
-            m_context.lock(m_mustReleaseLock);
-        }
-
-        ~AutoLocker()
-        {
-            if (m_mustReleaseLock)
-                m_context.unlock();
-        }
-
-    private:
-        BaseAudioContext& m_context;
-        bool m_mustReleaseLock;
-    };
-
     virtual void lazyInitialize();
 
     static bool isSupportedSampleRate(float sampleRate);
@@ -265,8 +240,6 @@ protected:
     
     void clearPendingActivity();
     void setPendingActivity();
-
-    void lockInternal(bool& mustReleaseLock);
 
     virtual void uninitialize();
 
@@ -351,7 +324,8 @@ private:
     Ref<AudioListener> m_listener;
 
     std::atomic<Thread*> m_audioThread;
-    std::atomic<Thread*> m_graphOwnerThread; // if the lock is held then this is the thread which owns it, otherwise == nullptr.
+
+    RecursiveLock m_graphLock;
 
     std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
 
@@ -373,7 +347,6 @@ private:
 
     unsigned m_connectionCount { 0 };
     State m_state { State::Suspended };
-    Lock m_contextGraphLock;
     bool m_isDeletionScheduled { false };
     bool m_isStopScheduled { false };
     bool m_isInitialized { false };

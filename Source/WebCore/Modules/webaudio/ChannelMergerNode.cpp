@@ -66,7 +66,7 @@ ChannelMergerNode::ChannelMergerNode(BaseAudioContext& context, unsigned numberO
     
     initialize();
 
-    BaseAudioContext::AutoLocker contextLocker(context);
+    Locker contextLocker { context.graphLock() };
     disableOutputs();
 }
 

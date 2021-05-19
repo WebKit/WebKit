@@ -144,7 +144,7 @@ ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 
     {
         // The context must be locked since changing the buffer can re-configure the number of channels that are output.
-        BaseAudioContext::AutoLocker contextLocker(context());
+        Locker contextLocker { context().graphLock() };
 
         // Synchronize with process().
         auto locker = holdLock(m_processLock);

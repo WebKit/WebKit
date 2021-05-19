@@ -113,7 +113,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
 
     {
         // The node should be manually added to the automatic pull node list, even without a connect() call.
-        BaseAudioContext::AutoLocker contextLocker(context);
+        Locker contextLocker { context.graphLock() };
         node->updatePullStatus();
     }
 

@@ -57,28 +57,6 @@ private:
 
     AudioBuffer* renderTarget() const { return destination().renderTarget(); }
 
-    // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
-    void offlineLock(bool& mustReleaseLock);
-
-    class OfflineAutoLocker {
-    public:
-        explicit OfflineAutoLocker(OfflineAudioContext& context)
-            : m_context(context)
-        {
-            m_context.offlineLock(m_mustReleaseLock);
-        }
-
-        ~OfflineAutoLocker()
-        {
-            if (m_mustReleaseLock)
-                m_context.unlock();
-        }
-
-    private:
-        OfflineAudioContext& m_context;
-        bool m_mustReleaseLock;
-    };
-
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
 

@@ -114,7 +114,7 @@ void WaveShaperNode::setOversample(OverSampleType type)
     INFO_LOG(LOGIDENTIFIER, type);
 
     // Synchronize with any graph changes or changes to channel configuration.
-    AudioContext::AutoLocker contextLocker(context());
+    Locker contextLocker { context().graphLock() };
     waveShaperProcessor()->setOversample(processorType(type));
 }
 

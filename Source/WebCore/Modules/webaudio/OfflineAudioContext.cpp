@@ -144,7 +144,7 @@ void OfflineAudioContext::suspendRendering(double suspendTime, Ref<DeferredPromi
         return;
     }
 
-    AutoLocker locker(*this);
+    Locker locker { graphLock() };
     auto addResult = m_suspendRequests.add(frame, promise.ptr());
     if (!addResult.isNewEntry) {
         promise->reject(Exception { InvalidStateError, "There is already a pending suspend request at this frame"_s });
@@ -183,9 +183,10 @@ void OfflineAudioContext::resumeRendering(Ref<DeferredPromise>&& promise)
 bool OfflineAudioContext::shouldSuspend()
 {
     ASSERT(!isMainThread());
-    // Note that OfflineAutoLocker uses lock() instead of tryLock(). We usually avoid blocking the AudioThread
+    // Note that we are not using a tryLock() here. We usually avoid blocking the AudioThread
     // on lock() but we don't have a choice here since the suspension need to be exact.
-    OfflineAutoLocker locker(*this);
+    // Also, this not a real-time AudioContext so blocking the AudioThread is not as harmful.
+    Locker locker { graphLock() };
     return m_suspendRequests.contains(currentSampleFrame());
 }
 
@@ -197,7 +198,7 @@ void OfflineAudioContext::didSuspendRendering(size_t frame)
 
     RefPtr<DeferredPromise> promise;
     {
-        AutoLocker locker(*this);
+        Locker locker { graphLock() };
         promise = m_suspendRequests.take(frame);
     }
     ASSERT(promise);
@@ -242,12 +243,6 @@ void OfflineAudioContext::settleRenderingPromise(ExceptionOr<Ref<AudioBuffer>>&&
         return;
     }
     promise->resolve<IDLInterface<AudioBuffer>>(result.releaseReturnValue());
-}
-
-void OfflineAudioContext::offlineLock(bool& mustReleaseLock)
-{
-    ASSERT(!isMainThread());
-    lockInternal(mustReleaseLock);
 }
 
 void OfflineAudioContext::dispatchEvent(Event& event)

@@ -416,7 +416,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
         return Exception { InvalidStateError, "The buffer was already set"_s };
 
     // The context must be locked since changing the buffer can re-configure the number of channels that are output.
-    BaseAudioContext::AutoLocker contextLocker(context());
+    Locker contextLocker { context().graphLock() };
     
     // This synchronizes with process().
     auto locker = holdLock(m_processLock);

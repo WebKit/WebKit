@@ -1,3 +1,15 @@
+2021-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Locker for locking BaseAudioContext's graph lock
+        https://bugs.webkit.org/show_bug.cgi?id=225935
+
+        Reviewed by Sam Weinig.
+
+        * wtf/RecursiveLockAdapter.h:
+        (WTF::RecursiveLockAdapter::isOwner const):
+        Add isOwner() function that returns true if the current thread is holding the lock.
+        This is needed for WebAudio purposes.
+
 2021-05-18  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Titlebar separator doesn't show when WKWebView is scrolled

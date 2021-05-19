@@ -199,7 +199,7 @@ void BaseAudioContext::uninitialize()
     m_isAudioThreadFinished = true;
 
     {
-        AutoLocker locker(*this);
+        Locker locker { graphLock() };
         // This should have been called from handlePostRenderTasks() at the end of rendering.
         // However, in case of lock contention, the tryLock() call could have failed in handlePostRenderTasks(),
         // leaving nodes in m_referencedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
@@ -524,7 +524,7 @@ void BaseAudioContext::derefFinishedSourceNodes()
 void BaseAudioContext::refSourceNode(AudioNode& node)
 {
     ASSERT(isMainThread());
-    AutoLocker locker(*this);
+    Locker locker { graphLock() };
 
     ASSERT(!m_referencedSourceNodes.contains(&node));
     // Reference source node to keep it alive and playing even if its JS wrapper gets garbage collected.
@@ -545,70 +545,12 @@ void BaseAudioContext::derefUnfinishedSourceNodes()
     m_referencedSourceNodes.clear();
 }
 
-void BaseAudioContext::lock(bool& mustReleaseLock)
-{
-    // Don't allow regular lock in real-time audio thread.
-    ASSERT(isMainThread());
-
-    lockInternal(mustReleaseLock);
-}
-
-void BaseAudioContext::lockInternal(bool& mustReleaseLock)
-{
-    Thread& thisThread = Thread::current();
-
-    if (&thisThread == m_graphOwnerThread) {
-        // We already have the lock.
-        mustReleaseLock = false;
-    } else {
-        // Acquire the lock.
-        m_contextGraphLock.lock();
-        m_graphOwnerThread = &thisThread;
-        mustReleaseLock = true;
-    }
-}
-
-bool BaseAudioContext::tryLock(bool& mustReleaseLock)
-{
-    // Try to catch cases of using try lock on main thread - it should use regular lock.
-    ASSERT(isAudioThread() || isAudioThreadFinished());
-    
-    if (!isAudioThread()) {
-        // In release build treat tryLock() as lock() (since above ASSERT(isAudioThread) never fires) - this is the best we can do.
-        lock(mustReleaseLock);
-        return true;
-    }
-    
-    bool hasLock;
-    
-    if (isGraphOwner()) {
-        // Thread already has the lock.
-        hasLock = true;
-        mustReleaseLock = false;
-    } else {
-        // Don't already have the lock - try to acquire it.
-        hasLock = m_contextGraphLock.tryLock();
-        
-        if (hasLock)
-            m_graphOwnerThread = &Thread::current();
-
-        mustReleaseLock = hasLock;
-    }
-    
-    return hasLock;
-}
-
-void BaseAudioContext::unlock()
-{
-    ASSERT(m_graphOwnerThread == &Thread::current());
-
-    m_graphOwnerThread = nullptr;
-    m_contextGraphLock.unlock();
-}
-
 void BaseAudioContext::addDeferredDecrementConnectionCount(AudioNode* node)
 {
     ASSERT(isAudioThread());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     m_deferredBreakConnectionList.append(node);
 }
 
@@ -618,24 +560,20 @@ void BaseAudioContext::handlePreRenderTasks(const AudioIOPosition& outputPositio
 
     // At the beginning of every render quantum, try to update the internal rendering graph state (from main thread changes).
     // It's OK if the tryLock() fails, we'll just take slightly longer to pick up the changes.
-    bool mustReleaseLock;
-    if (tryLock(mustReleaseLock)) {
+    if (auto locker = Locker<RecursiveLock>::tryLock(graphLock())) {
         // Fixup the state of any dirty AudioSummingJunctions and AudioNodeOutputs.
         handleDirtyAudioSummingJunctions();
         handleDirtyAudioNodeOutputs();
 
         updateAutomaticPullNodes();
         m_outputPosition = outputPosition;
-
-        if (mustReleaseLock)
-            unlock();
     }
 }
 
 AudioIOPosition BaseAudioContext::outputPosition()
 {
     ASSERT(isMainThread());
-    AutoLocker locker(*this);
+    Locker locker { graphLock() };
     return m_outputPosition;
 }
 
@@ -646,8 +584,8 @@ void BaseAudioContext::handlePostRenderTasks()
     // Must use a tryLock() here too. Don't worry, the lock will very rarely be contended and this method is called frequently.
     // The worst that can happen is that there will be some nodes which will take slightly longer than usual to be deleted or removed
     // from the render graph (in which case they'll render silence).
-    bool mustReleaseLock;
-    if (!tryLock(mustReleaseLock))
+    auto locker = Locker<RecursiveLock>::tryLock(graphLock());
+    if (!locker)
         return;
 
     // Take care of finishing any derefs where the tryLock() failed previously.
@@ -665,9 +603,6 @@ void BaseAudioContext::handlePostRenderTasks()
     handleDirtyAudioNodeOutputs();
 
     updateAutomaticPullNodes();
-
-    if (mustReleaseLock)
-        unlock();
 }
 
 void BaseAudioContext::handleDeferredDecrementConnectionCounts()
@@ -727,10 +662,10 @@ void BaseAudioContext::deleteMarkedNodes()
 {
     ASSERT(isMainThread());
 
-    // Protect this object from being deleted before we release the mutex locked by AutoLocker.
+    // Protect this object from being deleted before we release the lock.
     auto protectedThis = makeRef(*this);
 
-    AutoLocker locker(*this);
+    Locker locker { graphLock() };
 
     while (m_nodesToDelete.size()) {
         AudioNode* node = m_nodesToDelete.takeLast();
@@ -765,7 +700,7 @@ void BaseAudioContext::markSummingJunctionDirty(AudioSummingJunction* summingJun
 void BaseAudioContext::removeMarkedSummingJunction(AudioSummingJunction* summingJunction)
 {
     ASSERT(isMainThread());
-    AutoLocker locker(*this);
+    Locker locker { graphLock() };
     m_dirtySummingJunctions.remove(summingJunction);
 }
 
@@ -782,7 +717,7 @@ void BaseAudioContext::markAudioNodeOutputDirty(AudioNodeOutput* output)
 
 void BaseAudioContext::handleDirtyAudioSummingJunctions()
 {
-    ASSERT(isGraphOwner());    
+    ASSERT(isGraphOwner());
 
     for (auto& junction : m_dirtySummingJunctions)
         junction->updateRenderingState();
@@ -792,7 +727,7 @@ void BaseAudioContext::handleDirtyAudioSummingJunctions()
 
 void BaseAudioContext::handleDirtyAudioNodeOutputs()
 {
-    ASSERT(isGraphOwner());    
+    ASSERT(isGraphOwner());
 
     for (auto& output : m_dirtyAudioNodeOutputs)
         output->updateRenderingState();

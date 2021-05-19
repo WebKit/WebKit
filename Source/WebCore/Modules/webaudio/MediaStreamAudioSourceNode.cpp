@@ -118,7 +118,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
 
     {
         // The context must be locked when changing the number of output channels.
-        AudioContext::AutoLocker contextLocker(context());
+        Locker contextLocker { context().graphLock() };
 
         // Do any necesssary re-configuration to the output's number of channels.
         output(0)->setNumberOfChannels(numberOfChannels);

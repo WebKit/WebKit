@@ -1,3 +1,59 @@
+2021-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Locker for locking BaseAudioContext's graph lock
+        https://bugs.webkit.org/show_bug.cgi?id=225935
+
+        Reviewed by Sam Weinig.
+
+        Use WTF::Locker for locking BaseAudioContext's graph lock instead of our own AutoLocker.
+        Also use WTF::RecursiveLock instead of duplicating the recursive locking logic inside
+        BaseAudioContext. This means we no longer need lock() / tryLock() / unlock() functions
+        on BaseAudioContext. We now expose the BaseAudioContext's RecursiveLock via a graphLock()
+        getter and the caller sites can just use a Locker.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        (WebCore::AudioNode::setChannelCount):
+        (WebCore::AudioNode::setChannelCountMode):
+        (WebCore::AudioNode::setChannelInterpretation):
+        (WebCore::AudioNode::enableOutputsIfNecessary):
+        (WebCore::AudioNode::decrementConnectionCount):
+        (WebCore::AudioNode::deref):
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::create):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::uninitialize):
+        (WebCore::BaseAudioContext::refSourceNode):
+        (WebCore::BaseAudioContext::addDeferredDecrementConnectionCount):
+        (WebCore::BaseAudioContext::handlePreRenderTasks):
+        (WebCore::BaseAudioContext::outputPosition):
+        (WebCore::BaseAudioContext::handlePostRenderTasks):
+        (WebCore::BaseAudioContext::deleteMarkedNodes):
+        (WebCore::BaseAudioContext::removeMarkedSummingJunction):
+        (WebCore::BaseAudioContext::handleDirtyAudioSummingJunctions):
+        (WebCore::BaseAudioContext::handleDirtyAudioNodeOutputs):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::graphLock):
+        (WebCore::BaseAudioContext::isGraphOwner const):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::ChannelMergerNode):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::suspendRendering):
+        (WebCore::OfflineAudioContext::shouldSuspend):
+        (WebCore::OfflineAudioContext::didSuspendRendering):
+        * Modules/webaudio/OfflineAudioContext.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::setOversample):
+
 2021-05-18  Alan Bujtas  <zalan@apple.com>
 
         The containing block for a fixed renderer has to be a type of RenderBlock
