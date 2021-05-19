@@ -171,6 +171,7 @@ public:
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
     bool getOwnPropertySlotInline(JSGlobalObject*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE_IF_ASSERT_ENABLED static void doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&);
 
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
     // currently returns incorrect results for the DOM window (with non-own properties)
@@ -201,7 +202,6 @@ public:
     static bool putInlineForJSObject(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE NEVER_INLINE static bool definePropertyOnReceiver(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     // putByIndex assumes that the receiver is this JSCell object.
     JS_EXPORT_PRIVATE static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
         
@@ -218,13 +218,12 @@ public:
 
     ALWAYS_INLINE bool putByIndexInline(JSGlobalObject* globalObject, uint64_t propertyName, JSValue value, bool shouldThrow)
     {
-        VM& vm = getVM(globalObject);
         if (LIKELY(propertyName <= MAX_ARRAY_INDEX))
             return putByIndexInline(globalObject, static_cast<uint32_t>(propertyName), value, shouldThrow);
 
         ASSERT(propertyName <= maxSafeInteger());
         PutPropertySlot slot(this, shouldThrow);
-        return methodTable(vm)->put(this, globalObject, Identifier::from(vm, propertyName), value, slot);
+        return putInlineForJSObject(this, globalObject, Identifier::from(getVM(globalObject), propertyName), value, slot);
     }
         
     // This is similar to the putDirect* methods:
@@ -643,7 +642,6 @@ public:
     //  - attributes will be respected (after the call the property will exist with the given attributes)
     //  - the property name is assumed to not be an index.
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
-    bool putDirect(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
@@ -770,11 +768,6 @@ public:
     bool hasGetterSetterProperties(VM& vm) { return structure(vm)->hasGetterSetterProperties(); }
     bool hasCustomGetterSetterProperties(VM& vm) { return structure(vm)->hasCustomGetterSetterProperties(); }
 
-    bool hasNonReifiedStaticProperties(VM& vm)
-    {
-        return TypeInfo::hasStaticPropertyTable(inlineTypeFlags()) && !structure(vm)->staticPropertiesReified();
-    }
-
     // putOwnDataProperty has 'put' like semantics, however this method:
     //  - assumes the object contains no own getter/setter properties.
     //  - provides no special handling for __proto__
@@ -821,6 +814,7 @@ public:
     bool isFrozen(VM& vm) { return structure(vm)->isFrozen(vm); }
 
     JS_EXPORT_PRIVATE bool anyObjectInChainMayInterceptIndexedAccesses(VM&) const;
+    JS_EXPORT_PRIVATE bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
     bool needsSlowPutIndexing(VM&) const;
 
 private:
@@ -1113,8 +1107,6 @@ private:
     bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
 
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    bool putInlineFast(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     bool getNonIndexPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
     bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&);
@@ -1447,6 +1439,10 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject
 {
     return getOwnPropertySlotImpl(object, globalObject, propertyName, slot);
 }
+
+ALWAYS_INLINE void JSObject::doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&)
+{
+}
 #endif
 
 // It may seem crazy to inline a function this large but it makes a big difference
@@ -1539,13 +1535,6 @@ inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
     ASSERT(!value.isGetterSetter() && !(attributes & PropertyAttribute::Accessor));
     ASSERT(!value.isCustomGetterSetter() && !(attributes & PropertyAttribute::CustomAccessorOrValue));
     PutPropertySlot slot(this);
-    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
-}
-
-inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
-{
-    ASSERT(!value.isGetterSetter());
-    ASSERT(!value.isCustomGetterSetter());
     return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
 }
 

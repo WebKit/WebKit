@@ -1,3 +1,238 @@
+2021-05-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r277665. rdar://problem/78224090
+
+    Temporarily revert r276592 as it breaks some native apps
+    https://bugs.webkit.org/show_bug.cgi?id=225917
+    
+    JSTests:
+    
+    Unreviewed, revert.
+    
+    
+    * microbenchmarks/put-slow-no-cache-array.js: Removed.
+    * microbenchmarks/put-slow-no-cache-function.js: Removed.
+    * microbenchmarks/put-slow-no-cache-js-proxy.js: Removed.
+    * microbenchmarks/put-slow-no-cache-long-prototype-chain.js: Removed.
+    * microbenchmarks/put-slow-no-cache.js: Removed.
+    * microbenchmarks/reflect-set-with-receiver.js: Removed.
+    * stress/custom-get-set-proto-chain-put.js:
+    (getObjects):
+    (let.base.of.getBases):
+    * stress/module-namespace-access-set-fails.js: Removed.
+    * stress/put-non-reified-static-accessor-or-custom.js: Removed.
+    * stress/put-non-reified-static-function-or-custom.js: Removed.
+    * stress/put-to-primitive-non-reified-static-custom.js: Removed.
+    * stress/put-to-primitive.js: Removed.
+    * stress/put-to-proto-chain-overrides-put.js: Removed.
+    * stress/typed-array-canonical-numeric-index-string-set.js: Removed.
+    
+    LayoutTests/imported/w3c:
+    
+    Unreviewed, revert.
+    
+    
+    * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver-expected.txt: Removed.
+    * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver.html: Removed.
+    * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver-expected.txt:
+    * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver.html:
+    
+    Source/JavaScriptCore:
+    
+    Unreviewed, revert.
+    
+    
+    * API/JSCallbackObject.h:
+    * API/JSCallbackObjectFunctions.h:
+    (JSC::JSCallbackObject<Parent>::put):
+    * debugger/DebuggerScope.h:
+    * runtime/ClassInfo.h:
+    * runtime/ClonedArguments.h:
+    * runtime/CustomGetterSetter.cpp:
+    (JSC::callCustomSetter):
+    * runtime/CustomGetterSetter.h:
+    * runtime/ErrorConstructor.h:
+    * runtime/ErrorInstance.h:
+    * runtime/GenericArguments.h:
+    * runtime/GenericArgumentsInlines.h:
+    (JSC::GenericArguments<Type>::put):
+    * runtime/GetterSetter.h:
+    * runtime/JSArray.cpp:
+    (JSC::JSArray::put):
+    * runtime/JSArray.h:
+    * runtime/JSArrayBufferView.cpp:
+    (JSC::JSArrayBufferView::put):
+    * runtime/JSArrayBufferView.h:
+    * runtime/JSCJSValue.cpp:
+    (JSC::JSValue::putToPrimitive):
+    * runtime/JSCell.cpp:
+    (JSC::JSCell::doPutPropertySecurityCheck):
+    * runtime/JSCell.h:
+    * runtime/JSFunction.cpp:
+    (JSC::JSFunction::put):
+    * runtime/JSFunction.h:
+    * runtime/JSGenericTypedArrayView.h:
+    * runtime/JSGlobalLexicalEnvironment.h:
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::put):
+    * runtime/JSGlobalObject.h:
+    * runtime/JSLexicalEnvironment.h:
+    * runtime/JSModuleEnvironment.h:
+    * runtime/JSModuleNamespaceObject.h:
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::doPutPropertySecurityCheck):
+    (JSC::JSObject::putInlineSlow):
+    (JSC::JSObject::prototypeChainMayInterceptStoreTo):
+    (JSC::definePropertyOnReceiverSlow): Deleted.
+    (JSC::JSObject::definePropertyOnReceiver): Deleted.
+    (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded): Deleted.
+    * runtime/JSObject.h:
+    (JSC::JSObject::putByIndexInline):
+    (JSC::JSObject::doPutPropertySecurityCheck):
+    (JSC::JSObject::hasNonReifiedStaticProperties): Deleted.
+    * runtime/JSObjectInlines.h:
+    (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+    (JSC::JSObject::putInlineForJSObject):
+    (JSC::JSObject::putDirectInternal):
+    (JSC::JSObject::putInlineFast): Deleted.
+    * runtime/JSProxy.h:
+    * runtime/JSTypeInfo.h:
+    (JSC::TypeInfo::overridesGetOwnPropertySlot const):
+    (JSC::TypeInfo::overridesAnyFormOfGetOwnPropertyNames const):
+    (JSC::TypeInfo::hasPutPropertySecurityCheck const):
+    (JSC::TypeInfo::hasStaticPropertyTable const): Deleted.
+    (JSC::TypeInfo::overridesPut const): Deleted.
+    * runtime/Lookup.h:
+    (JSC::putEntry):
+    (JSC::lookupPut):
+    * runtime/PropertySlot.h:
+    * runtime/ProxyObject.cpp:
+    (JSC::ProxyObject::put):
+    * runtime/ProxyObject.h:
+    * runtime/PutPropertySlot.h:
+    (JSC::PutPropertySlot::PutPropertySlot):
+    (JSC::PutPropertySlot::context const):
+    (JSC::PutPropertySlot::type const):
+    (JSC::PutPropertySlot::isInitialization const):
+    (JSC::PutPropertySlot::isTaintedByOpaqueObject const): Deleted.
+    (JSC::PutPropertySlot::setIsTaintedByOpaqueObject): Deleted.
+    * runtime/ReflectObject.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/RegExpObject.cpp:
+    (JSC::RegExpObject::put):
+    * runtime/RegExpObject.h:
+    * runtime/StringObject.cpp:
+    (JSC::StringObject::put):
+    * runtime/StringObject.h:
+    * runtime/StringPrototype.cpp:
+    (JSC::StringPrototype::finishCreation):
+    (JSC::StringPrototype::create):
+    * runtime/StringPrototype.h:
+    * runtime/Structure.cpp:
+    (JSC::Structure::validateFlags):
+    * runtime/Structure.h:
+    (JSC::Structure::takesSlowPathInDFGForImpureProperty):
+    (JSC::Structure::hasNonReifiedStaticProperties const): Deleted.
+    * tools/JSDollarVM.cpp:
+    
+    Source/WebCore:
+    
+    Unreviewed, revert.
+    
+    
+    * bindings/js/JSDOMWindowCustom.cpp:
+    (WebCore::JSDOMWindow::doPutPropertySecurityCheck):
+    (WebCore::JSDOMWindow::put):
+    * bindings/js/JSLocationCustom.cpp:
+    (WebCore::JSLocation::doPutPropertySecurityCheck):
+    * bindings/js/JSRemoteDOMWindowCustom.cpp:
+    (WebCore::JSRemoteDOMWindow::put):
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GeneratePut):
+    (GenerateHeader):
+    * bindings/scripts/test/JS/JSTestDomainSecurity.h:
+    * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+    (WebCore::JSTestIndexedSetterNoIdentifier::put):
+    * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.h:
+    * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+    (WebCore::JSTestIndexedSetterThrowingException::put):
+    * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.h:
+    * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+    (WebCore::JSTestIndexedSetterWithIdentifier::put):
+    * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.h:
+    * bindings/scripts/test/JS/JSTestInterface.h:
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+    (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::put):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+    (WebCore::JSTestNamedAndIndexedSetterThrowingException::put):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.h:
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+    (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::put):
+    * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+    (WebCore::JSTestNamedSetterNoIdentifier::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+    (WebCore::JSTestNamedSetterThrowingException::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+    (WebCore::JSTestNamedSetterWithIdentifier::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+    (WebCore::JSTestNamedSetterWithIndexedGetter::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+    (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyOverrideBuiltIns.cpp:
+    (WebCore::JSTestNamedSetterWithLegacyOverrideBuiltIns::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyOverrideBuiltIns.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp:
+    (WebCore::JSTestNamedSetterWithLegacyUnforgeableProperties::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.h:
+    * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.cpp:
+    (WebCore::JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::put):
+    * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h:
+    * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+    (WebCore::JSTestPluginInterface::put):
+    * bindings/scripts/test/JS/JSTestPluginInterface.h:
+    * bridge/objc/objc_runtime.h:
+    * bridge/runtime_array.h:
+    * bridge/runtime_object.h:
+    
+    Source/WebKit:
+    
+    Unreviewed, revert.
+    
+    
+    * WebProcess/Plugins/Netscape/JSNPObject.h:
+    
+    LayoutTests:
+    
+    Unreviewed, revert
+    
+    
+    * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt:
+    * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html:
+    * js/dom/reflect-set-onto-dom-expected.txt:
+    * js/dom/script-tests/reflect-set-onto-dom.js:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277665 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+            Temporarily revert r276592 as it breaks some native apps
+            https://bugs.webkit.org/show_bug.cgi?id=225917
+
+            Unreviewed, revert.
+
+            * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver-expected.txt: Removed.
+            * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver.html: Removed.
+            * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver-expected.txt:
+            * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver.html:
+
 2021-05-13  Martin Robinson  <mrobinson@webkit.org>
 
         Import new and updated css-scroll-snap WPT tests
