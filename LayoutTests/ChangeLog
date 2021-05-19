@@ -1,3 +1,20 @@
+2021-05-18  Cameron McCormack  <heycam@apple.com>
+
+        Record gradient and pattern filled canvas text in the correct coordinate system.
+        https://bugs.webkit.org/show_bug.cgi?id=222881
+        <rdar://75155310>
+
+        Reviewed by Myles C. Maxfield.
+
+        Re-enable GPUP canvas rendering in the affected tests.
+
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-2.html:
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-3.html:
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-4.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-2.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-3.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html:
+
 2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update two baselines of inspector test that were failing.

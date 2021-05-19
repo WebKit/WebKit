@@ -77,6 +77,8 @@ public:
 
 private:
     friend class DrawGlyphsRecorder;
+    Recorder(Recorder& parent, GraphicsContext&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
+
     bool hasPlatformContext() const override { return false; }
     bool canDrawImageBuffer(const ImageBuffer&) const override;
     PlatformGraphicsContext* platformContext() const override { return nullptr; }
@@ -234,6 +236,7 @@ private:
 
     DisplayList& m_displayList;
     Delegate* m_delegate;
+    bool m_isNested;
 
     Vector<ContextState, 4> m_stateStack;
 

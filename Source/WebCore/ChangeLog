@@ -1,3 +1,40 @@
+2021-05-18  Cameron McCormack  <heycam@apple.com>
+
+        Record gradient and pattern filled canvas text in the correct coordinate system.
+        https://bugs.webkit.org/show_bug.cgi?id=222881
+        <rdar://75155310>
+
+        Reviewed by Myles C. Maxfield.
+
+        When we draw canvas text with a gradient or pattern, we use
+        GraphicsContext::clipToDrawingCommands to set up a mask, which
+        we then draw a filled rectangle with. When GPUP canvas rendering is
+        enabled, Recorder::clipToDrawingCommands needs to ensure that the
+        commands that draw the text are recorded in a coordinate system that
+        matches the one that will be used to draw into the mask ImageBuffer
+        during replaying. (And for complete correctness, an otherwise fresh
+        GraphicsContext must be used for recording the text drawing commands,
+        since it's possible other GraphicsContext state could be
+        introspected.)
+
+        So we handle this by setting up a nested display list recorder,
+        targeting the same DisplayList but with a fresh GraphicsContext with
+        the right initial CTM, to record the nested drawing commands into.
+
+        The refactoring in https://trac.webkit.org/changeset/273291/webkit
+        dropped some code that set up the CTM for the nested drawing commands,
+        which is restored here.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawTextUnchecked):
+        * platform/graphics/displaylists/DisplayListDrawGlyphsRecorder.h:
+        (WebCore::DisplayList::DrawGlyphsRecorder::drawGlyphsDeconstruction const):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+        (WebCore::DisplayList::Recorder::~Recorder):
+        (WebCore::DisplayList::Recorder::clipToDrawingCommands):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
 2021-05-18  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Locker for locking BaseAudioContext's graph lock
