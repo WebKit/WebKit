@@ -40,6 +40,7 @@
 #include "StackAlignment.h"
 #include <wtf/HashSet.h>
 #include <wtf/IndexMap.h>
+#include <wtf/SmallSet.h>
 #include <wtf/WeakRandom.h>
 
 namespace JSC {
@@ -311,7 +312,13 @@ public:
     }
 
     void addFastTmp(Tmp);
-    bool isFastTmp(Tmp tmp) const { return m_fastTmps.contains(tmp); }
+
+    template<typename Functor>
+    void forEachFastTmp(const Functor& functor) const
+    {
+        for (Tmp tmp : m_fastTmps)
+            functor(tmp);
+    }
     
     CFG& cfg() const { return *m_cfg; }
     
@@ -379,7 +386,7 @@ private:
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     SparseCollection<Special> m_specials;
     std::unique_ptr<CFG> m_cfg;
-    HashSet<Tmp> m_fastTmps;
+    SmallSet<Tmp, TmpHash, 2> m_fastTmps;
     CCallSpecial* m_cCallSpecial { nullptr };
     unsigned m_numGPTmps { 0 };
     unsigned m_numFPTmps { 0 };

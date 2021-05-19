@@ -1,3 +1,51 @@
+2021-05-18  Robin Morisset  <rmorisset@apple.com>
+
+        Make AirAllocateRegistersByGraphColoring use less memory
+        https://bugs.webkit.org/show_bug.cgi?id=225848
+
+        Reviewed by Filip Pizlo.
+
+        Two changes: the addition of LikelyDenseUnsignedIntegerSet, and various improvements to Small(Ptr)Set.
+
+        The latter include:
+        - Renaming SmallPtrSet into SmallSet, as it now supports integers as well as pointers.
+        - Reducing its size by sharing the same storage for m_buffer and for m_smallStorage.
+        This is safe to do, because all operations branch on isSmall() which depends purely on m_capacity.
+        - Adding trivial size(), isEmpty() and memoryUse() methods
+        - Adding a comment at the top of the file explaining when to use, and (more importantly) not to use SmallSet.
+
+        LikelyDenseUnsignedIntegerSet is an even more specialized data structure, that can represent sets of unsigned integers very compactly if they are clustered.
+
+        Finally I added an outOfLineMemoryUse() method to BitVector, making it more convenient to compare the memory consumption of different data structures in the register allocator.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BitVector.h:
+        * wtf/CMakeLists.txt:
+        * wtf/LikelyDenseUnsignedIntegerSet.cpp: Copied from Source/WTF/wtf/SmallPtrSet.cpp.
+        * wtf/LikelyDenseUnsignedIntegerSet.h: Added.
+        (WTF::LikelyDenseUnsignedIntegerSet::LikelyDenseUnsignedIntegerSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::~LikelyDenseUnsignedIntegerSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::contains const):
+        (WTF::LikelyDenseUnsignedIntegerSet::add):
+        (WTF::LikelyDenseUnsignedIntegerSet::size const):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::iterator):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::m_shift):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator++):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator* const):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator== const):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator!= const):
+        (WTF::LikelyDenseUnsignedIntegerSet::begin const):
+        (WTF::LikelyDenseUnsignedIntegerSet::end const):
+        (WTF::LikelyDenseUnsignedIntegerSet::memoryUse const):
+        (WTF::LikelyDenseUnsignedIntegerSet::validate const):
+        (WTF::LikelyDenseUnsignedIntegerSet::isBitVector const):
+        (WTF::LikelyDenseUnsignedIntegerSet::isValidValue const):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToHashSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToBitVector):
+        * wtf/SmallPtrSet.h: Removed.
+        * wtf/SmallSet.cpp: Renamed from Source/WTF/wtf/SmallPtrSet.cpp.
+        * wtf/SmallSet.h: Added.
+
 2021-05-18  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Locker for locking BaseAudioContext's graph lock

@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include <wtf/SmallPtrSet.h>
+#include <wtf/SmallSet.h>
 
 #include <wtf/NeverDestroyed.h>
 
 namespace WTF {
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SmallPtrSet);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SmallSet);
 
 } // namespace WTF

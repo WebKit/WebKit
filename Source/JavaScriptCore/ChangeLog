@@ -1,3 +1,44 @@
+2021-05-18  Robin Morisset  <rmorisset@apple.com>
+
+        Make AirAllocateRegistersByGraphColoring use less memory
+        https://bugs.webkit.org/show_bug.cgi?id=225848
+
+        Reviewed by Filip Pizlo.
+
+        We've had some jetsam problems caused by the main Air register allocator, which caused us to lower Options::maximumTmpsForGraphColoring.
+        Hence this patch tries to improve the memory usage of the allocator. It includes several changes:
+        - Change the datastructure used for representing the interference graph. Before it was effectively a HashSet<std::pair<uint16_t, uint16_t>. Now, it is either a Bitvector (for n < 400 for now, can be tweaked easily), or a Vector<LikelyDenseUnsignedIntegerSet<uint16_t>> otherwise.
+        LikelyDenseUnsignedIntegerSet is a new datastructure introduced by this patch, it is either a HashSet if very sparse, or a BitVector + an amount to shift it by.
+        This is by far the largest memory reduction in this patch, it reduces the maximum memory used for an interference graph in tsf-wasm in JetStream2 from 16MB to 700kB, and in mruby-wasm.aotoki.dev from 262MB to 20MB (the later only happen when we increase Options::maximumTmpsForGraphColoring.. this is the exact function which caused us to lower it).
+        Its effect on smaller functions in JetStream2 is rarely as dramatic but always an improvement, and improvements between 2x and 5x are extremely common (10x to 30x are significantly rarer but do occur).
+        - In order to easily test this change and any further change to this datastructure, the old approach was preserved as InterferenceHashSet, and a template to run two such datastructures in parallel, checking their equivalence was added: InstrumentedInterferenceGraph. Running with it and reportInterferenceGraphMemoryUse set to true was used to compute the numbers given above.
+        - There was already some template parameter to change the size of the tmp indices from unsigned to uint16_t but the code failed to compile unless it was unsigned. I fixed this, made more consistent use of it, and switched to uint16_t in the very common case that we have less than 65k Tmps (we can have more despite the option because of spilling). This halved the memory usage of various other datastructures in the register allocator
+        - unspillableTmps was a HashSet<unsigned>. Since it is often quite dense (often around 20% on JetStream2), I replaced it by a Bitvector instead
+        - m_biases was a HashMap<IndexType, HashSet<IndexType>>. Since it is extremely rare that the sets have more than 8 elements (from looking at some instrumented run of JetStream2), I replaced it by HashMap<IndexType, SmallSet<IndexType>>. This not only significantly reduces memory, but nearly halves the time spent in assignColors(around 80ms -> 40ms in JetStream 2)
+        - UseCounts was needlessly general: it is only used by the register allocator (all other references to UseCounts refer to the completely different B3::UseCounts), so there is no point in it computing, and then storing lots of irrelevant data. A float is also more than enough precision (especially since it is pretty much always 1, 10, 100, or 1000 in practice…). Also, since we only need it indexed by Tmps, we can use a Vector with AbsoluteTmpMapper instead of its HashMap. These changes are not just memory savings, they also make selectSpill way faster (570ms -> 250ms on my machine on JetStream2)
+        - While I was at it, I did a couple of other tweaks to the logic of selectSpill. In particular, instead of having to check for isFastTmp every time, I just put the fast tmps directly in unspillableTmps, which prevents them from getting added to m_spillWorklist in the first place. This + a bit of clean-up (for example putting an early exit instead of setting score to infinity in the case of dead tmps) resulted in a further perf win (to roughly 200ms spent in selectSpill() on JetStream2)
+
+        All together, this patch reduces the time spent in the register allocator by roughly 15 to 20% in JetStream2 (tested both with the Briggs and the IRC allocators on my MBP 2019).
+
+        I do not yet have precise performance numbers for this exact patch, but benchmarking a previous version of it (with a less optimized interference graph) resulted in significant RAMification improvements (around 1%), and more surprisingly some JetStream2 improvements on weaker machines (e.g. an iPhone 7 gained > 1%). I believe these gains come either from less trashing of the caches, or less contention caused by the memory traffic.
+        I will try to update the bugzilla with more up-to-date thorough results when I get them.
+
+        This patch does not increase Options::maximumTmpsForGraphColoring, I intend to do that in a separate patch to make it easier to revert in case of a problem.
+
+        * b3/B3ReduceLoopStrength.cpp:
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        (JSC::B3::Air::allocateRegistersByGraphColoring):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::forEachFastTmp const):
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        (JSC::B3::Air::UseCounts::isConstDef const):
+        (JSC::B3::Air::UseCounts::numWarmUsesAndDefs const):
+        (JSC::B3::Air::UseCounts::dump const):
+        * parser/Nodes.h:
+
 2021-05-18  Saam Barati  <sbarati@apple.com>
 
         Add Data Call ICs that don't repatch and use them in the baseline JIT

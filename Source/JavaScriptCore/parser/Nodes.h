@@ -36,7 +36,7 @@
 #include "SymbolTable.h"
 #include "VariableEnvironment.h"
 #include <wtf/MathExtras.h>
-#include <wtf/SmallPtrSet.h>
+#include <wtf/SmallSet.h>
 
 namespace JSC {
 
@@ -53,7 +53,7 @@ namespace JSC {
     class RegisterID;
     class ScopeNode;
 
-    typedef SmallPtrSet<UniquedStringImpl*> UniquedStringImplPtrSet;
+    typedef SmallSet<UniquedStringImpl*> UniquedStringImplPtrSet;
 
     enum class Operator : uint8_t {
         Equal,
