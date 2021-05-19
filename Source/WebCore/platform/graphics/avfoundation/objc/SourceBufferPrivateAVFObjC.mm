@@ -409,6 +409,9 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
         if (!weakThis)
             return;
 
+        if (auto player = this->player())
+            player->characteristicsChanged();
+
         if  (m_mediaSamples.isEmpty()) {
             m_initializationSegmentIsHandled = true;
             ALWAYS_LOG(LOGIDENTIFIER, "initialization segment is handled");

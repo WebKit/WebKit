@@ -1,3 +1,29 @@
+2021-05-19  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] MSE-based video pauses when put in background; PiP context menu disabled
+        https://bugs.webkit.org/show_bug.cgi?id=225958
+        <rdar://78130303>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-has-audio-video.html
+
+        In r277116, in order to reduce the CPU usage incurred when pushing state changes from
+        the GPU process to the WebContent process, state changes to `hasAudio` and `hasVideo`
+        were now only updated when the MediaPlayer indicated that its `characteristicsChanged()`.
+        However, in SourceBufferPrivateAVFObjC, this call was performed too early, before the
+        SourceBuffer in the WebContent process had informed SourceBufferPrivate of newly added
+        audio and video tracks. Thus the cached values of `hasAudio` and `hasVideo` inside the
+        WebContent process were never updated.
+
+        Call `characteristicsChanged()` from the callback handler of `didReceiveInitializationSegment()`,
+        which will be called only after the WebContent process completes its handling of the
+        new initialization segment, which includes telling the SourceBufferPrivate in the GPU
+        process about newly added audio and video tracks.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseInitializationData):
+
 2021-05-19  Antti Koivisto  <antti@apple.com>
 
         Factor pseudo class invalidation code in Document::updateHoverActiveState into a lambda

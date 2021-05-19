@@ -1,3 +1,14 @@
+2021-05-19  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] MSE-based video pauses when put in background; PiP context menu disabled
+        https://bugs.webkit.org/show_bug.cgi?id=225958
+        <rdar://78130303>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-has-audio-video-expected.txt: Added.
+        * media/media-source/media-source-has-audio-video.html: Added.
+
 2021-05-18  Cameron McCormack  <heycam@apple.com>
 
         Record gradient and pattern filled canvas text in the correct coordinate system.
