@@ -101,7 +101,7 @@ TEST(WKWebView, CheckViolationReportDocumentURIForDataProtocol)
         NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"data:text/html"] MIMEType:@"text/HTML" expectedContentLength:[data length] textEncodingName:@"UTF-8"]);
 
-        [webView loadSimulatedRequest:loadRequest response:response.get() responseData:data];
+        [webView loadSimulatedRequest:loadRequest withResponse:response.get() responseData:data];
         [webView waitForMessage:@"document-uri: data"];
     }
 }
