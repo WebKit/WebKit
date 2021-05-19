@@ -247,6 +247,7 @@ void ProgramMtl::reset(ContextMtl *context)
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mMslShaderTranslateInfo[shaderType].reset();
+        mCurrentShaderVariants[shaderType] = nullptr;
     }
     mMslXfbOnlyVertexShaderInfo.reset();
 
@@ -1164,6 +1165,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
             pipelineDesc.rasterizationEnabled()
                 ? &mFragmentShaderVariants[pipelineDesc.emulateCoverageMask]
                 : nullptr;
+        
     }
 
     ANGLE_TRY(commitUniforms(context, cmdEncoder));
@@ -1257,8 +1259,7 @@ angle::Result ProgramMtl::updateTextures(const gl::Context *glContext,
         }
 
         const mtl::TranslatedShaderInfo &shaderInfo =
-            *mCurrentShaderVariants[shaderType]->translatedSrcInfo;
-
+            mCurrentShaderVariants[shaderType]->translatedSrcInfo ? *mCurrentShaderVariants[shaderType]->translatedSrcInfo : mMslShaderTranslateInfo[shaderType];
         bool hasDepthSampler = false;
 
         for (uint32_t textureIndex = 0; textureIndex < mState.getSamplerBindings().size();
@@ -1334,7 +1335,9 @@ angle::Result ProgramMtl::updateUniformBuffers(ContextMtl *context,
 
     for (gl::ShaderType shaderType : gl::AllGLES2ShaderTypes())
     {
-        if (mCurrentShaderVariants[shaderType]->translatedSrcInfo->hasUBOArgumentBuffer)
+        const mtl::TranslatedShaderInfo &shaderInfo =
+            mCurrentShaderVariants[shaderType]->translatedSrcInfo ? *mCurrentShaderVariants[shaderType]->translatedSrcInfo : mMslShaderTranslateInfo[shaderType];
+        if (shaderInfo.hasUBOArgumentBuffer)
         {
             ANGLE_TRY(
                 encodeUniformBuffersInfoArgumentBuffer(context, cmdEncoder, blocks, shaderType));
@@ -1470,6 +1473,7 @@ angle::Result ProgramMtl::encodeUniformBuffersInfoArgumentBuffer(
     gl::ShaderType shaderType)
 {
     const gl::State &glState = context->getState();
+    ASSERT(mCurrentShaderVariants[shaderType]->translatedSrcInfo);
     const mtl::TranslatedShaderInfo &shaderInfo =
         *mCurrentShaderVariants[shaderType]->translatedSrcInfo;
 
