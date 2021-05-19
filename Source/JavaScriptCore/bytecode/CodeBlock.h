@@ -281,7 +281,6 @@ public:
         Bag<CallLinkInfo> m_callLinkInfos;
         SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
         SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
-        FixedVector<RareCaseProfile> m_rareCaseProfiles;
         FixedVector<SimpleJumpTable> m_switchJumpTables;
         FixedVector<StringJumpTable> m_stringSwitchJumpTables;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
@@ -347,28 +346,6 @@ public:
 
     void setCalleeSaveRegisters(RegisterSet);
     void setCalleeSaveRegisters(RegisterAtOffsetList&&);
-
-    void setRareCaseProfiles(FixedVector<RareCaseProfile>&&);
-    RareCaseProfile* rareCaseProfileForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
-    unsigned rareCaseProfileCountForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
-
-    bool likelyToTakeSlowCase(BytecodeIndex bytecodeIndex)
-    {
-        if (!hasBaselineJITProfiling())
-            return false;
-        ConcurrentJSLocker locker(m_lock);
-        unsigned value = rareCaseProfileCountForBytecodeIndex(locker, bytecodeIndex);
-        return value >= Options::likelyToTakeSlowCaseMinimumCount();
-    }
-
-    bool couldTakeSlowCase(BytecodeIndex bytecodeIndex)
-    {
-        if (!hasBaselineJITProfiling())
-            return false;
-        ConcurrentJSLocker locker(m_lock);
-        unsigned value = rareCaseProfileCountForBytecodeIndex(locker, bytecodeIndex);
-        return value >= Options::couldTakeSlowCaseMinimumCount();
-    }
 
     // We call this when we want to reattempt compiling something with the baseline JIT. Ideally
     // the baseline JIT would not add data to CodeBlock, but instead it would put its data into

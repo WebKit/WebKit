@@ -1067,22 +1067,6 @@ private:
             break;
         }
         
-        if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
-            switch (node->op()) {
-            case UInt32ToNumber:
-            case ArithAdd:
-            case ArithSub:
-            case ValueAdd:
-            case ValueMod:
-            case ArithMod: // for ArithMod "MayOverflow" means we tried to divide by zero, or we saw double.
-                node->mergeFlags(NodeMayOverflowInt32InBaseline);
-                break;
-                
-            default:
-                break;
-            }
-        }
-        
         return node;
     }
     
@@ -5435,7 +5419,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (metadata.m_toThisStatus != ToThisOK
                 || !cachedStructure
                 || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
-                || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
                 setThis(addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));

@@ -515,10 +515,6 @@ void JIT::privateCompileSlowCases()
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
 
-    FixedVector<RareCaseProfile> rareCaseProfiles;
-    if (shouldEmitProfiling())
-        rareCaseProfiles = FixedVector<RareCaseProfile>(m_bytecodeCountHavingSlowCase);
-    
     unsigned bytecodeCountHavingSlowCase = 0;
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
         m_bytecodeIndex = iter->to;
@@ -529,10 +525,6 @@ void JIT::privateCompileSlowCases()
 
         const Instruction* currentInstruction = m_codeBlock->instructions().at(m_bytecodeIndex).ptr();
         
-        RareCaseProfile* rareCaseProfile = nullptr;
-        if (shouldEmitProfiling())
-            rareCaseProfile = &rareCaseProfiles.at(bytecodeCountHavingSlowCase);
-
         if (JITInternal::verbose)
             dataLogLn("Baseline JIT emitting slow code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
 
@@ -647,9 +639,6 @@ void JIT::privateCompileSlowCases()
         RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen.");
         RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen.");
         
-        if (shouldEmitProfiling())
-            add32(TrustedImm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
-
         emitJumpSlowToHot(jump(), 0);
         ++bytecodeCountHavingSlowCase;
     }
@@ -662,9 +651,6 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
     RELEASE_ASSERT(m_privateBrandAccessIndex == m_privateBrandAccesses.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
-
-    if (shouldEmitProfiling())
-        m_codeBlock->setRareCaseProfiles(WTFMove(rareCaseProfiles));
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.

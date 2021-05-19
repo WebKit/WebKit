@@ -1040,7 +1040,6 @@ size_t CodeBlock::JITData::size(const ConcurrentJSLocker&) const
     size += m_subICs.estimatedAllocationSizeInBytes();
     size += m_byValInfos.estimatedAllocationSizeInBytes();
     size += m_callLinkInfos.estimatedAllocationSizeInBytes();
-    size += m_rareCaseProfiles.size() * sizeof(decltype(*m_rareCaseProfiles.data()));
     size += m_switchJumpTables.size() * sizeof(decltype(*m_switchJumpTables.data()));
     size += m_stringSwitchJumpTables.size() * sizeof(decltype(*m_stringSwitchJumpTables.data()));
     // FIXME: account for m_calleeSaveRegisters but it's not a big deal since it's a fixed size and small.
@@ -1762,30 +1761,6 @@ CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(BytecodeIndex index)
         }
     }
     return nullptr;
-}
-
-void CodeBlock::setRareCaseProfiles(FixedVector<RareCaseProfile>&& rareCaseProfiles)
-{
-    ConcurrentJSLocker locker(m_lock);
-    ensureJITData(locker).m_rareCaseProfiles = WTFMove(rareCaseProfiles);
-}
-
-RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex)
-{
-    if (auto* jitData = m_jitData.get()) {
-        return tryBinarySearch<RareCaseProfile, BytecodeIndex>(
-            jitData->m_rareCaseProfiles, jitData->m_rareCaseProfiles.size(), bytecodeIndex,
-            getRareCaseProfileBytecodeIndex);
-    }
-    return nullptr;
-}
-
-unsigned CodeBlock::rareCaseProfileCountForBytecodeIndex(const ConcurrentJSLocker& locker, BytecodeIndex bytecodeIndex)
-{
-    RareCaseProfile* profile = rareCaseProfileForBytecodeIndex(locker, bytecodeIndex);
-    if (profile)
-        return profile->m_counter;
-    return 0;
 }
 
 void CodeBlock::setCalleeSaveRegisters(RegisterSet registerSet)
@@ -3137,11 +3112,6 @@ void CodeBlock::dumpValueProfiles()
         profile.dump(WTF::dataFile());
         dataLogF("\n");
     });
-    dataLog("RareCaseProfile for ", *this, ":\n");
-    if (auto* jitData = m_jitData.get()) {
-        for (RareCaseProfile* profile : jitData->m_rareCaseProfiles)
-            dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
-    }
 }
 #endif // ENABLE(VERBOSE_VALUE_PROFILE)
 

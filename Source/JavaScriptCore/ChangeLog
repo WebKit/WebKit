@@ -1,3 +1,61 @@
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
+        Ripping out broken Baseline JIT rare case profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=225983
+
+        Reviewed by Saam Barati and Robin Morisset.
+
+        The profiling has been broken in recent times.  Fixing it to work does not appear
+        to improve performance.  Ripping out the profiling appears to not hurt performance.
+        However, ripping out the profiling appears to save on code size generated for the
+        Baseline JIT.
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 73299112 (69.903481 MB)  65910128 (62.856796 MB)  0.90x (reduction)
+                   DFG: 36850540 (35.143414 MB)  36374400 (34.689331 MB)  0.99x
+                 Thunk: 23128652 (22.057201 MB)  22892292 (21.831791 MB)  0.99x
+           InlineCache: 22210972 (21.182034 MB)  22083508 (21.060474 MB)  0.99x
+                   FTL: 6065064 (5.784096 MB)    6128080 (5.844193 MB)    1.01x
+                  Wasm: 2305124 (2.198338 MB)    2309732 (2.202732 MB)    1.00x
+               YarrJIT: 1522712 (1.452171 MB)    1536104 (1.464943 MB)    1.01x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        Cumulative diff since the start of this effort to put more code in JIT thunks:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  65910128 (62.856796 MB)  0.74x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36374400 (34.689331 MB)  0.93x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  22892292 (21.831791 MB)  0.99x
+           InlineCache: 22027416 (21.006981 MB)  22083508 (21.060474 MB)  1.00x
+                   FTL: 6575772 (6.271145 MB)    6128080 (5.844193 MB)    0.93x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2309732 (2.202732 MB)    1.00x
+               YarrJIT: 1538956 (1.467663 MB)    1536104 (1.464943 MB)    1.00x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        Benchmarking was done with Speedometer2 and JetSteam2 on an M1 Mac.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::JITData::size const):
+        (JSC::CodeBlock::dumpValueProfiles):
+        (JSC::CodeBlock::setRareCaseProfiles): Deleted.
+        (JSC::CodeBlock::rareCaseProfileForBytecodeIndex): Deleted.
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeIndex): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::likelyToTakeSlowCase): Deleted.
+        (JSC::CodeBlock::couldTakeSlowCase): Deleted.
+        * bytecode/ValueProfile.h:
+        (JSC::RareCaseProfile::RareCaseProfile): Deleted.
+        (JSC::getRareCaseProfileBytecodeIndex): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+
 2021-05-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC} Remove exception checks from non-throwing function calls in Baseline JIT
