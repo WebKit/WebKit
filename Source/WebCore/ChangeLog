@@ -1,3 +1,26 @@
+2021-05-19  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] use a `dictionary ApplePayPaymentMethodModeDetails` instead of a raw `JSObject`
+        https://bugs.webkit.org/show_bug.cgi?id=225903
+        <rdar://problem/78134060>
+
+        Reviewed by Andy Estes.
+
+        No change in functionality.
+
+        * Modules/applepay/ApplePayPaymentMethodModeDetails.idl: Added.
+        * Modules/applepay/ApplePayPaymentMethodModeDetails.h: Added.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::didChangePaymentMethodMode):
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-05-19  Alan Bujtas  <zalan@apple.com>
 
         Calculated width percent loses the floating point and cause line wrap

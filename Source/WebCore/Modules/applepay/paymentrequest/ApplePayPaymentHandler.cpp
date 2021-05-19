@@ -38,6 +38,7 @@
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayModifier.h"
 #include "ApplePayPayment.h"
+#include "ApplePayPaymentMethodModeDetails.h"
 #include "ApplePayPaymentMethodModeUpdate.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
@@ -51,6 +52,7 @@
 #include "JSApplePayLineItemData.h"
 #include "JSApplePayPayment.h"
 #include "JSApplePayPaymentMethod.h"
+#include "JSApplePayPaymentMethodModeDetails.h"
 #include "JSApplePayRequest.h"
 #include "JSDOMConvert.h"
 #include "LinkIconCollector.h"
@@ -71,11 +73,11 @@
 #include "Settings.h"
 #include <JavaScriptCore/JSONObject.h>
 
-namespace WebCore {
-
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/ApplePayPaymentHandlerAdditions.cpp>
 #endif
+
+namespace WebCore {
 
 static ExceptionOr<ApplePayRequest> convertAndValidate(ScriptExecutionContext& context, JSC::JSValue data)
 {
@@ -757,16 +759,9 @@ void ApplePayPaymentHandler::didChangePaymentMethodMode(String&& paymentMethodMo
     ASSERT(m_updateState == UpdateState::None);
     m_updateState = UpdateState::PaymentMethodMode;
 
-    m_paymentRequest->paymentMethodChanged(WTF::get<URL>(m_identifier).string(), [paymentMethodMode = WTFMove(paymentMethodMode)] (JSC::JSGlobalObject& lexicalGlobalObject) -> JSC::Strong<JSC::JSObject> {
-        auto& vm = lexicalGlobalObject.vm();
-
-        JSC::JSLockHolder lock(vm);
-
-        auto* object = JSC::constructEmptyObject(&lexicalGlobalObject);
-#if defined(ApplePayPaymentHandlerAdditions_didChangePaymentMethodMode)
-        ApplePayPaymentHandlerAdditions_didChangePaymentMethodMode
-#endif
-        return { vm, object };
+    ApplePayPaymentMethodModeDetails applePayPaymentMethodModeDetails { WTFMove(paymentMethodMode) };
+    m_paymentRequest->paymentMethodChanged(WTF::get<URL>(m_identifier).string(), [applePayPaymentMethodModeDetails = WTFMove(applePayPaymentMethodModeDetails)] (JSC::JSGlobalObject& lexicalGlobalObject) {
+        return toJSDictionary(lexicalGlobalObject, applePayPaymentMethodModeDetails);
     });
 }
 
