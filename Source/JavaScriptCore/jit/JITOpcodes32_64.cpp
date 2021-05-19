@@ -113,7 +113,7 @@ void JIT::emitSlow_op_new_object(const Instruction* currentInstruction, Vector<S
     auto& metadata = bytecode.metadata(m_codeBlock);
     VirtualRegister dst = bytecode.m_dst;
     Structure* structure = metadata.m_objectAllocationProfile.structure();
-    callOperation(operationNewObject, TrustedImmPtr(&vm()), structure);
+    callOperationNoExceptionCheck(operationNewObject, &vm(), structure);
     emitStoreCell(dst, returnValueGPR);
 }
 
@@ -931,7 +931,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
-    callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, TrustedImmPtr(&vm()));
+    callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, &vm());
     Jump isCatchableException = branchTest32(NonZero, returnValueGPR);
     jumpToExceptionHandler(vm());
     isCatchableException.link(this);
@@ -955,9 +955,9 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     ValueProfileAndVirtualRegisterBuffer* buffer = metadata.m_buffer;
     if (buffer || !shouldEmitProfiling())
-        callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
+        callOperationNoExceptionCheck(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
     else
-        callOperation(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
+        callOperationNoExceptionCheck(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
     farJump(returnValueGPR, NoPtrTag);
@@ -1009,7 +1009,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     farJump(regT1, NoPtrTag);
 
     notInt32.link(this);
-    callOperationNoExceptionCheck(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
+    callOperationNoExceptionCheck(operationSwitchImmWithUnknownKeyType, &vm(), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, NoPtrTag);
 }
 
@@ -1423,7 +1423,7 @@ void JIT::emit_op_profile_type(const Instruction* currentInstruction)
     store32(regT1, Address(regT2, TypeProfilerLog::currentLogEntryOffset()));
     jumpToEnd.append(branchPtr(NotEqual, regT1, TrustedImmPtr(cachedTypeProfilerLog->logEndPtr())));
     // Clear the log if we're at the end of the log.
-    callOperation(operationProcessTypeProfilerLog, &vm());
+    callOperationNoExceptionCheck(operationProcessTypeProfilerLog, &vm());
 
     jumpToEnd.link(this);
 }

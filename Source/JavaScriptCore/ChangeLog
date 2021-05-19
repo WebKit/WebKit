@@ -1,3 +1,29 @@
+2021-05-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC} Remove exception checks from non-throwing function calls in Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=224920
+
+        Reviewed by Tadeu Zagallo.
+
+        These functions are not taking JSGlobalObject and will not throw an error.
+        Use callOperationNoExceptionCheck instead to avoid emitting unnecessary exception checks.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+
 2021-05-19  Robin Morisset  <rmorisset@apple.com>
 
         Fix typo in AirUseCounts

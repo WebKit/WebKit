@@ -2174,7 +2174,7 @@ void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBa
         ownerNotCell = branchIfNotCell(regT0);
 
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), regT0, regT1);
-    callOperation(operationWriteBarrierSlowPath, &vm(), regT0);
+    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), regT0);
     ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBaseAndValue || mode == ShouldFilterBase)
@@ -2243,7 +2243,7 @@ void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBa
         ownerNotCell = branchIfNotCell(regT0);
 
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), regT1, regT2);
-    callOperation(operationWriteBarrierSlowPath, &vm(), regT1);
+    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), regT1);
     ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
@@ -2325,7 +2325,7 @@ void JIT::emitWriteBarrier(VirtualRegister owner, WriteBarrierMode mode)
 void JIT::emitWriteBarrier(JSCell* owner)
 {
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), owner, regT0);
-    callOperation(operationWriteBarrierSlowPath, &vm(), owner);
+    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), owner);
     ownerIsRememberedOrInEden.link(this);
 }
 
