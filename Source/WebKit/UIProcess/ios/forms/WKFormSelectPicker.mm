@@ -996,6 +996,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     [cell textLabel].text = option->text;
     [cell textLabel].enabled = !option->disabled;
     [cell setUserInteractionEnabled:!option->disabled];
+    [cell imageView].preferredSymbolConfiguration = [UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody scale:UIImageSymbolScaleLarge];
 
     if (option->isSelected)
         [cell imageView].image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
