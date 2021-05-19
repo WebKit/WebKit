@@ -162,8 +162,8 @@ private:
             // Allocate a ring buffer large enough to contain 2 seconds of audio.
             m_numberOfFrames = m_description.sampleRate() * 2;
             m_ringBuffer.reset();
-            auto storage = makeUniqueRef<SharedRingBufferStorage>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-            m_ringBuffer = makeUnique<CARingBuffer>(WTFMove(storage), m_description.streamDescription(), m_numberOfFrames);
+            m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&SourceProxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+            m_ringBuffer->allocate(m_description.streamDescription(), m_numberOfFrames);
         }
 
         ASSERT(is<WebAudioBufferList>(audioData));

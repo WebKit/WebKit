@@ -1,3 +1,35 @@
+2021-05-19  Chris Dumez  <cdumez@apple.com>
+
+        [Hardening] CARingBuffer should validate the storage size before adopting it
+        https://bugs.webkit.org/show_bug.cgi?id=225928
+        <rdar://73575595>
+
+        Reviewed by Jer Noble.
+
+        We use a lot of SharedMemory-backed CARingBuffers. The pattern is that a process creates the
+        SharedMemory then sends a SharedMemory::Handle to another process, who adopts it as storage
+        for its CARingBuffer. Because the process that sends us the SharedMemory::Handle may not be
+        trusted, we need to validate that the size of the storage is sufficient based on the
+        CARingBuffer's format & frameCount.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged):
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        (WebKit::RemoteMediaRecorder::audioSamplesStorageChanged):
+        * Shared/Cocoa/SharedRingBufferStorage.cpp:
+        (WebKit::ReadOnlySharedRingBufferStorage::size const):
+        (WebKit::ReadOnlySharedRingBufferStorage::allocate):
+        (WebKit::SharedRingBufferStorage::allocate):
+        * Shared/Cocoa/SharedRingBufferStorage.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::setStorage):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::RemoteAudio::setStorage):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::RemoteAudio::setStorage):
+
 2021-05-18  Tim Horton  <timothy_horton@apple.com>
 
         allowsContentJavaScript API not applied from defaultWebpagePreferences

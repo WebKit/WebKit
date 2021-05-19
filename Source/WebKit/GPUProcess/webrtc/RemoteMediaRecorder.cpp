@@ -69,7 +69,7 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(const SharedMemory::IPCHand
 
     m_description = description;
 
-    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
+    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames).moveToUniquePtr();
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 
