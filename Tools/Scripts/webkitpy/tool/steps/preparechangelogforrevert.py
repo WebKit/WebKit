@@ -26,23 +26,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitcorepy import string_utils
+
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config import urls
-from webkitpy.tool import grammar
 from webkitpy.tool.steps.abstractstep import AbstractStep
 
 
 class PrepareChangeLogForRevert(AbstractStep):
     @classmethod
     def _message_for_revert(cls, revision_list, reason, description_list, reverted_bug_url_list, revert_bug_url=None):
-        message = "Unreviewed, reverting %s.\n" % grammar.join_with_separators(['r' + str(revision) for revision in revision_list])
+        message = "Unreviewed, reverting %s.\n" % string_utils.join(['r' + str(revision) for revision in revision_list])
         if revert_bug_url:
             message += "%s\n" % revert_bug_url
         message += "\n"
         if reason:
             message += "%s\n" % reason
         message += "\n"
-        message += "Reverted %s:\n\n" % grammar.pluralize(len(revision_list), "changeset", showCount=False)
+        message += "Reverted changeset%s:\n\n" % ('s' if len(revision_list) > 1 else '')
         for index in range(len(revision_list)):
             if description_list[index]:
                 message += "\"%s\"\n" % description_list[index]

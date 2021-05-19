@@ -42,6 +42,8 @@ import sys
 import time
 from collections import defaultdict, OrderedDict
 
+from webkitcorepy.string_utils import pluralize
+
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
@@ -54,7 +56,6 @@ from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS, TestRunResults
-from webkitpy.tool.grammar import pluralize
 from webkitpy.results.upload import Upload
 from webkitpy.xcode.device_type import DeviceType
 

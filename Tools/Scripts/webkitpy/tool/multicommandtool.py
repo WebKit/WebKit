@@ -36,7 +36,7 @@ import sys
 
 from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
 
-from webkitpy.tool.grammar import pluralize
+from webkitcorepy.string_utils import pluralize
 
 _log = logging.getLogger(__name__)
 

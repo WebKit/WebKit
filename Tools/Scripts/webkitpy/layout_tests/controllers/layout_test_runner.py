@@ -31,6 +31,8 @@ import logging
 import threading
 import time
 
+from webkitcorepy.string_utils import pluralize
+
 from webkitpy.common import message_pool
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.layout_tests.controllers import single_test_runner
@@ -38,7 +40,6 @@ from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
-from webkitpy.tool import grammar
 
 
 _log = logging.getLogger(__name__)
@@ -114,7 +115,7 @@ class LayoutTestRunner(object):
         if self._options.dry_run:
             return run_results
 
-        self._printer.write_update('Starting %s ...' % grammar.pluralize(num_workers, "worker"))
+        self._printer.write_update('Starting %s ...' % pluralize(num_workers, "worker"))
 
         try:
             with message_pool.get(self, self._worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:

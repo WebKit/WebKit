@@ -37,6 +37,8 @@ import re
 from datetime import datetime
 from optparse import make_option
 
+from webkitcorepy.string_utils import pluralize
+
 from webkitpy.tool import steps
 
 import webkitpy.common.config.urls as config_urls
@@ -52,7 +54,6 @@ from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.port import platform_options, configuration_options
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
-from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)

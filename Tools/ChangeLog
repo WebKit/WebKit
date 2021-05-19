@@ -1,3 +1,46 @@
+2021-05-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Deprecate webkitpy/tool/grammar.py
+        https://bugs.webkit.org/show_bug.cgi?id=225943
+        <rdar://problem/78180111>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/bisect-builds:
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_found):
+        (Printer.print_workers_and_shards):
+        (Printer._print_one_line_summary):
+        * Scripts/webkitpy/test/printer.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        (FlakyTestReporter._lookup_bug_for_flaky_test):
+        (FlakyTestReporter._create_bug_for_flaky_test):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchProcessingCommand.execute):
+        (ProcessBugsMixin._fetch_list_of_patches_to_process):
+        (ProcessURLsMixin._fetch_list_of_patches_to_process):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (SuggestNominations._print_nominations):
+        (SuggestNominations._print_counts):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (CleanPendingCommit._flags_to_clear_on_patch):
+        (PostCommits.execute):
+        * Scripts/webkitpy/tool/grammar.py: Removed.
+        * Scripts/webkitpy/tool/grammar_unittest.py: Removed.
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        (ObsoletePatches.run):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        (PrepareChangeLogForRevert._message_for_revert):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+        * Scripts/webkitpy/tool/steps/reopenbugafterrevert.py:
+        (ReopenBugAfterRevert.run):
+
 2021-05-19  Jonathan Bedard  <JonWBedard@gmail.com>
 
         [webkitscmpy] Apply logging options to every command
