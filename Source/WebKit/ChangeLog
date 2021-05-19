@@ -1,5 +1,20 @@
 2021-05-18  Tim Horton  <timothy_horton@apple.com>
 
+        allowsContentJavaScript API not applied from defaultWebpagePreferences
+        https://bugs.webkit.org/show_bug.cgi?id=225957
+
+        Reviewed by Wenson Hsieh.
+
+        New API test: WebKit.AllowsContentJavaScriptFromDefaultPreferences
+
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        allowsContentJavaScript works fine on the per-navigation-level WKWebpagePreferences,
+        but is ignored if applied on the WKWebViewConfiguration's defaultWebpagePreferences,
+        because it is not copied in copy(). Copy it!
+
+2021-05-18  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r277683): WebContent process crashing in unit tests
         https://bugs.webkit.org/show_bug.cgi?id=225955
         rdar://78184041
