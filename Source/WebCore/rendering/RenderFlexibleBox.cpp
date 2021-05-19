@@ -1225,7 +1225,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, Layo
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
         LayoutUnit contentSize;
         Length childCrossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
-        if (useChildAspectRatio(child))
+        if (child.isRenderReplaced() && useChildAspectRatio(child))
             contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
         else
             contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).valueOr(0);
@@ -1242,7 +1242,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, Layo
             return std::max(childSize, std::min(specifiedSize, contentSize));
         }
 
-        if (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child)) {
+        if (child.isRenderReplaced() && (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child))) {
             LayoutUnit transferredSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
             transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize);
             return std::max(childSize, std::min(transferredSize, contentSize));

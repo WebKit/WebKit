@@ -1,3 +1,15 @@
+2021-05-19  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=225964
+        Fix flex-aspect-ratio-002+004.html
+
+        Reviewed by Sergio Villar Senin.
+
+        Import tests.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-002.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-004.html:
+
 2021-05-18  Keith Miller  <keith_miller@apple.com>
 
         Temporarily revert r276592 as it breaks some native apps

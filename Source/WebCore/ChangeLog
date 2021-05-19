@@ -1,3 +1,20 @@
+2021-05-19  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=225964
+        Fix flex-aspect-ratio-002+004.html
+
+        Reviewed by Sergio Villar Senin.
+
+        Flex should not do transferred size suggestion for non-replaced aspect-ratio items:
+        https://drafts.csswg.org/css-flexbox-1/#min-size-auto
+
+        Tests: imported/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-002.html
+               imported/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-004.html
+
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+
 2021-05-18  Cameron McCormack  <heycam@apple.com>
 
         Record gradient and pattern filled canvas text in the correct coordinate system.
