@@ -1,3 +1,20 @@
+2021-05-19  Jonathan Bedard  <JonWBedard@gmail.com>
+
+        [webkitscmpy] Apply logging options to every command
+        https://bugs.webkit.org/show_bug.cgi?id=225939
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Specify help for the LoggingGroup, apply logging group to all subparsers.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/canonicalize/__init__.py:
+        (Canonicalize.parser): Remove LoggingGroup.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py:
+        (Info.parser): Remove LoggingGroup.
+
 2021-05-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277444.

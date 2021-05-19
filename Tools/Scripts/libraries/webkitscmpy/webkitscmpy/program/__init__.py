@@ -45,7 +45,11 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
         description='Custom git tooling from the WebKit team to interact with a ' +
                     'repository using identifers',
     )
-    arguments.LoggingGroup(parser)
+    arguments.LoggingGroup(
+        parser,
+        loggers=loggers,
+        help='{} amount of logging and commit information displayed',
+    )
 
     group = parser.add_argument_group('Repository')
     group.add_argument(
@@ -64,6 +68,11 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     for program in programs:
         subparser = subparsers.add_parser(program.name, help=program.help)
         subparser.set_defaults(main=program.main)
+        arguments.LoggingGroup(
+            subparser,
+            loggers=loggers,
+            help='{} amount of logging and commit information displayed',
+        )
         program.parser(subparser, loggers=loggers)
 
     parsed = parser.parse_args(args=args)

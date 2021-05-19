@@ -38,25 +38,20 @@ class Canonicalize(Command):
 
     @classmethod
     def parser(cls, parser, loggers=None):
-        output_args = arguments.LoggingGroup(
-            parser,
-            loggers=loggers,
-            help='{} amount of logging and `git rebase` information displayed'
-        )
-        output_args.add_argument(
+        parser.add_argument(
             '--identifier', '--no-identifier',
             help='Add in the identifier to commit messages, true by default',
             action=arguments.NoAction,
             dest='identifier',
             default=True,
         )
-        output_args.add_argument(
+        parser.add_argument(
             '--remote',
             help='Compare against a different remote',
             dest='remote',
             default='origin',
         )
-        output_args.add_argument(
+        parser.add_argument(
             '--number', '-n',  type=int,
             help='Number of commits to be canonicalized, regardless of the state of the remote',
             dest='number',

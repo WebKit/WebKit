@@ -33,12 +33,6 @@ class Checkout(Command):
 
     @classmethod
     def parser(cls, parser, loggers=None):
-        arguments.LoggingGroup(
-            parser,
-            loggers=loggers,
-            help='{} amount of logging and commit information displayed'
-        )
-
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
