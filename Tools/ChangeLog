@@ -1,3 +1,27 @@
+2021-05-19  Aakash Jain  <aakash_jain@apple.com>
+
+        Use Python 3 for running various scripts on build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=225929
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py: Use Python 3. Also removed ./ from invocation to match with ews code.
+        (TriggerCrashLogSubmission):
+        (WaitForCrashCollection):
+        (CleanBuildIfScheduled):
+        (DeleteStaleBuildFiles):
+        (ArchiveBuiltProduct):
+        (ArchiveMinifiedBuiltProduct):
+        (ExtractBuiltProduct):
+        * CISupport/build-webkit-org/steps_unittest.py: Updated unit-tests.
+        (TestCleanBuildIfScheduled.test_success):
+        (TestCleanBuildIfScheduled.test_failure):
+        * CISupport/built-product-archive: Updated shebang to Python 3.
+        * CISupport/clean-build:
+        * CISupport/delete-stale-build-files:
+        * CISupport/trigger-crash-log-submission:
+        * CISupport/wait-for-crash-collection:
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         Update Base64 encoding/decoding to match more modern WebKit conventions

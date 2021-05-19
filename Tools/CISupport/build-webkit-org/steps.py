@@ -179,21 +179,21 @@ class TriggerCrashLogSubmission(shell.Compile):
     name = "trigger-crash-log-submission"
     description = ["triggering crash log submission"]
     descriptionDone = ["triggered crash log submission"]
-    command = ["python", "./Tools/CISupport/trigger-crash-log-submission"]
+    command = ["python3", "Tools/CISupport/trigger-crash-log-submission"]
 
 
 class WaitForCrashCollection(shell.Compile):
     name = "wait-for-crash-collection"
     description = ["waiting for crash collection to quiesce"]
     descriptionDone = ["crash collection has quiesced"]
-    command = ["python", "./Tools/CISupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
+    command = ["python3", "Tools/CISupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
 
 
 class CleanBuildIfScheduled(shell.Compile):
     name = "delete-WebKitBuild-directory"
     description = ["deleting WebKitBuild directory"]
     descriptionDone = ["deleted WebKitBuild directory"]
-    command = ["python", "./Tools/CISupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/CISupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
     def start(self):
         if not self.getProperty('is_clean'):
@@ -206,7 +206,7 @@ class DeleteStaleBuildFiles(shell.Compile):
     name = "delete-stale-build-files"
     description = ["deleting stale build files"]
     descriptionDone = ["deleted stale build files"]
-    command = ["python", "./Tools/CISupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/CISupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
     def start(self):
         if self.getProperty('is_clean'):  # Nothing to be done if WebKitBuild had been removed.
@@ -322,7 +322,7 @@ class CompileJSCOnly(CompileWebKit):
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/CISupport/built-product-archive",
+    command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-built-product"
     description = ["archiving built product"]
@@ -331,7 +331,7 @@ class ArchiveBuiltProduct(shell.ShellCommand):
 
 
 class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
-    command = ["python", "./Tools/CISupport/built-product-archive",
+    command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
 
 
@@ -358,7 +358,7 @@ class GenerateMiniBrowserBundle(shell.ShellCommand):
 
 
 class ExtractBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/CISupport/built-product-archive",
+    command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "extract"]
     name = "extract-built-product"
     description = ["extracting built product"]

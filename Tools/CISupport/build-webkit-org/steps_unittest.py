@@ -276,7 +276,7 @@ class TestCleanBuildIfScheduled(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/CISupport/clean-build', '--platform=ios-14', '--release'],
+                command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-14', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='deleted WebKitBuild directory')
@@ -292,7 +292,7 @@ class TestCleanBuildIfScheduled(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/CISupport/clean-build', '--platform=ios-simulator-14', '--debug'],
+                command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-simulator-14', '--debug'],
             ) + 2
             + ExpectShell.log('stdio', stdout='Unexpected error.'),
         )
