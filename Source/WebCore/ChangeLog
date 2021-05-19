@@ -1,3 +1,95 @@
+2021-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Pull ServicesOverlayController::Highlight out into a separate helper class
+        https://bugs.webkit.org/show_bug.cgi?id=225968
+
+        Reviewed by Tim Horton.
+
+        Refactor some code for painting data detector highlights (`DDHighlightRef`), by pulling what is currently
+        `ServicesOverlayController::Highlight` out into a separate helper class. In a future patch, I plan on using this
+        functionality for the image overlay controller to support rendering data detector highlights there.
+
+        This patch also makes some minor adjustments:
+
+        -   Make `DataDetectorHighlight` capable of being stored in a `WeakPtr`, and have `ServicesOverlayController`
+            hold on to a `WeakHashSet<DataDetectorHighlight>` instead of a hash set of raw pointers. This additionally
+            makes it unnecessary to add methods for `DataDetectorHighlight` to notify `ServicesOverlayController` upon
+            creation or destruction, since we can simply add the newly created highlight to the weak set after creating
+            it, and since it's a `WeakPtr`, it will get cleaned up upon destruction.
+
+        -   Make DataDetectorHighlight::Type an enum class, and make `m_dirtyHighlightTypes` an `OptionSet` instead of
+            a raw bitmask.
+
+        -   Use `auto` in a few places where the type is apparent (e.g. in some places where we use `adoptCF`).
+
+        -   Make `highlightFadeAnimationDuration` a `WTF::Seconds` instead of a raw floating point value.
+
+        -   Add a FIXME in `DataDetectorHighlight::paintContents` about the need to refactor this painting logic so that
+            it does *not* use the platform `CGContextRef` directly.
+
+        No change in behavior.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/mac/ServicesOverlayController.h:
+        (WebCore::ServicesOverlayController::activeHighlight const):
+        (WebCore::ServicesOverlayController::Highlight::ddHighlight const): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::range const): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::layer const): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::type const): Deleted.
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::~ServicesOverlayController):
+        (WebCore::ServicesOverlayController::selectionRectsDidChange):
+        (WebCore::ServicesOverlayController::selectedTelephoneNumberRangesChanged):
+        (WebCore::ServicesOverlayController::invalidateHighlightsOfType):
+        (WebCore::ServicesOverlayController::buildPotentialHighlightsIfNeeded):
+        (WebCore::ServicesOverlayController::mouseIsOverHighlight const):
+        (WebCore::ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown const):
+        (WebCore::ServicesOverlayController::removeAllPotentialHighlightsOfType):
+        (WebCore::ServicesOverlayController::buildPhoneNumberHighlights):
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        (WebCore::ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighlights):
+        (WebCore::ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight):
+        (WebCore::ServicesOverlayController::determineActiveHighlight):
+        (WebCore::ServicesOverlayController::mouseEvent):
+        (WebCore::ServicesOverlayController::didScrollFrame):
+        (WebCore::ServicesOverlayController::handleClick):
+        (WebCore::ServicesOverlayController::shouldRemoveHighlightLayerAfterFadingOut const):
+        (WebCore::ServicesOverlayController::Highlight::createForSelection): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::createForTelephoneNumber): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::Highlight): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::~Highlight): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::setDDHighlight): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::invalidate): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::notifyFlushRequired): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::paintContents): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::deviceScaleFactor const): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::fadeIn): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::fadeOut): Deleted.
+        (WebCore::ServicesOverlayController::Highlight::didFinishFadeOutAnimation): Deleted.
+        (WebCore::ServicesOverlayController::highlightsAreEquivalent): Deleted.
+        (WebCore::ServicesOverlayController::didCreateHighlight): Deleted.
+        (WebCore::ServicesOverlayController::willDestroyHighlight): Deleted.
+        * platform/mac/DataDetectorHighlight.h: Added.
+        (WebCore::DataDetectorHighlightClient::shouldRemoveHighlightLayerAfterFadingOut const):
+        (WebCore::DataDetectorHighlight::highlight const):
+        (WebCore::DataDetectorHighlight::range const):
+        (WebCore::DataDetectorHighlight::layer const):
+        (WebCore::DataDetectorHighlight::type const):
+        * platform/mac/DataDetectorHighlight.mm: Added.
+        (WebCore::DataDetectorHighlight::createForSelection):
+        (WebCore::DataDetectorHighlight::createForTelephoneNumber):
+        (WebCore::DataDetectorHighlight::DataDetectorHighlight):
+        (WebCore::DataDetectorHighlight::setHighlight):
+        (WebCore::DataDetectorHighlight::invalidate):
+        (WebCore::DataDetectorHighlight::notifyFlushRequired):
+        (WebCore::DataDetectorHighlight::paintContents):
+        (WebCore::DataDetectorHighlight::deviceScaleFactor const):
+        (WebCore::DataDetectorHighlight::fadeIn):
+        (WebCore::DataDetectorHighlight::fadeOut):
+        (WebCore::DataDetectorHighlight::didFinishFadeOutAnimation):
+        (WebCore::areEquivalent):
+
 2021-05-18  Darin Adler  <darin@apple.com>
 
         Move CFStringRef and NSString support from StringBuilder into StringConcatenateCF

@@ -481,6 +481,7 @@ platform/ios/wak/WebCoreThreadRun.cpp
 platform/ios/wak/WebCoreThreadSystemInterface.cpp
 platform/mac/BlocklistUpdater.mm
 platform/mac/CursorMac.mm @no-unify
+platform/mac/DataDetectorHighlight.mm
 platform/mac/HIDDevice.cpp
 platform/mac/HIDElement.cpp
 platform/mac/KeyEventMac.mm @no-unify
