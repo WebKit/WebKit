@@ -1,3 +1,17 @@
+2021-05-19  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: unwrapParamsOrException.exception().code() != ExistingExceptionError on http/wpt/preload/change-link-rel-attribute.html
+        https://bugs.webkit.org/show_bug.cgi?id=224845
+        <rdar://problem/76928843>
+
+        Reviewed by Mark Lam.
+
+        Covered by existing tests.
+
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::unwrapKey):
+        Remove debug assertion since there are valid cases where it can happen.
+
 2021-05-19  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=225964
