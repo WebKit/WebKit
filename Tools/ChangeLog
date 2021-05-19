@@ -1,3 +1,16 @@
+2021-05-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277675.
+        https://bugs.webkit.org/show_bug.cgi?id=225954
+
+        Broke Mac API tests trying to fix iOS
+
+        Reverted changeset:
+
+        "[webkitpy] Forward booted simulators to children processes"
+        https://bugs.webkit.org/show_bug.cgi?id=225933
+        https://trac.webkit.org/changeset/277675
+
 2021-05-18  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Titlebar separator doesn't show when WKWebView is scrolled
