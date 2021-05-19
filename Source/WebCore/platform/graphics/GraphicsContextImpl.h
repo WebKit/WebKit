@@ -33,7 +33,7 @@ class GraphicsContextImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GraphicsContextImpl);
 public:
-    GraphicsContextImpl(GraphicsContext&, const FloatRect& initialClip, const AffineTransform&);
+    GraphicsContextImpl(GraphicsContext&);
     virtual ~GraphicsContextImpl();
 
     GraphicsContext& graphicsContext() const { return m_graphicsContext; }

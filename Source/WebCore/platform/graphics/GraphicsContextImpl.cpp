@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-GraphicsContextImpl::GraphicsContextImpl(GraphicsContext& context, const FloatRect&, const AffineTransform&)
+GraphicsContextImpl::GraphicsContextImpl(GraphicsContext& context)
     : m_graphicsContext(context)
 {
 }

@@ -40,7 +40,7 @@ namespace WebCore {
 namespace DisplayList {
 
 Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DrawGlyphsDeconstruction drawGlyphsDeconstruction)
-    : GraphicsContextImpl(context, initialClip, AffineTransform())
+    : GraphicsContextImpl(context)
     , m_displayList(displayList)
     , m_delegate(delegate)
     , m_isNested(false)
@@ -51,7 +51,7 @@ Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const Gra
 }
 
 Recorder::Recorder(Recorder& parent, GraphicsContext& context, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : GraphicsContextImpl(context, initialClip, AffineTransform())
+    : GraphicsContextImpl(context)
     , m_displayList(parent.m_displayList)
     , m_delegate(parent.m_delegate)
     , m_isNested(true)

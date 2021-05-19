@@ -1,3 +1,22 @@
+2021-05-19  Cameron McCormack  <heycam@apple.com>
+
+        Remove unused GraphicsContextImpl constructor arguments
+        https://bugs.webkit.org/show_bug.cgi?id=225583
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/GraphicsContextImpl.cpp:
+        (WebCore::GraphicsContextImpl::GraphicsContextImpl):
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::GraphicsContextImplCairo):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::CairoOperationRecorder):
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp:
+        (WebCore::GraphicsContextImplDirect2D::GraphicsContextImplDirect2D):
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         HTMLCanvasElement toDataURL and toBlob do unnecessary data copies through a CFDataRef
