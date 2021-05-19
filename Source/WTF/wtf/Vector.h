@@ -641,6 +641,15 @@ public:
             TypeOperations::uninitializedFill(begin(), end(), val);
     }
 
+    Vector(const T* data, size_t dataSize)
+        : Base(dataSize, dataSize)
+    {
+        asanSetInitialBufferSizeTo(dataSize);
+
+        if (begin())
+            TypeOperations::uninitializedCopy(data, data + dataSize, begin());
+    }
+
     Vector(std::initializer_list<T> initializerList)
     {
         reserveInitialCapacity(initializerList.size());

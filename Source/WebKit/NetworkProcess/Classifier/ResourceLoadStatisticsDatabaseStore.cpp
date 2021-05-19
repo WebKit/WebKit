@@ -455,7 +455,7 @@ TableAndIndexPair ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueri
         return { };
     }
 
-    String createTableQuery = getTableStatement->getColumnText(0);
+    String createTableQuery = getTableStatement->columnText(0);
 
     auto getIndexStatement = m_database.prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name=? AND type = 'index'"_s);
     if (!getIndexStatement) {
@@ -472,7 +472,7 @@ TableAndIndexPair ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueri
 
     Optional<String> index;
     if (getIndexStatement->step() == SQLITE_ROW) {
-        auto rawIndex = String(getIndexStatement->getColumnText(0));
+        auto rawIndex = String(getIndexStatement->columnText(0));
         if (!rawIndex.isEmpty())
             index = rawIndex;
     }
@@ -505,7 +505,7 @@ bool ResourceLoadStatisticsDatabaseStore::missingUniqueIndices()
         return { };
     }
 
-    if (statement->getColumnInt(0) < expectedIndexCount)
+    if (statement->columnInt(0) < expectedIndexCount)
         return true;
 
     return false;
@@ -616,7 +616,7 @@ Vector<String> ResourceLoadStatisticsDatabaseStore::columnsForTable(const String
 
     Vector<String> columns;
     while (statement->step() == SQLITE_ROW) {
-        auto name = statement->getColumnText(1);
+        auto name = statement->columnText(1);
         columns.append(name);
     }
 
@@ -737,7 +737,7 @@ void ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
             return;
         }
 
-        currentSchema = statement->getColumnText(1);
+        currentSchema = statement->columnText(1);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -789,7 +789,7 @@ bool ResourceLoadStatisticsDatabaseStore::isEmpty() const
         ASSERT_NOT_REACHED();
         return false;
     }
-    return !scopedStatement->getColumnInt(0);
+    return !scopedStatement->columnInt(0);
 }
 
 bool ResourceLoadStatisticsDatabaseStore::createUniqueIndices()
@@ -1007,7 +1007,7 @@ bool ResourceLoadStatisticsDatabaseStore::relationshipExists(SQLiteStatementAuto
         ASSERT_NOT_REACHED();
         return false;
     }
-    return !!statement->getColumnInt(0);
+    return !!statement->columnInt(0);
 }
 
 Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const RegistrableDomain& domain) const
@@ -1024,7 +1024,7 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
     if (scopedStatement->step() != SQLITE_ROW)
         return WTF::nullopt;
 
-    return scopedStatement->getColumnInt(0);
+    return scopedStatement->columnInt(0);
 }
 
 String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSet<RegistrableDomain>& domainList)
@@ -1119,14 +1119,14 @@ void ResourceLoadStatisticsDatabaseStore::merge(WebCore::SQLiteStatement* curren
 {
     ASSERT(!RunLoop::isMain());
 
-    auto currentRegistrableDomain = current->getColumnText(RegistrableDomainIndex);
-    auto currentLastSeen = current->getColumnDouble(LastSeenIndex);
-    auto currentMostRecentUserInteraction = current->getColumnDouble(MostRecentUserInteractionTimeIndex);
-    bool currentGrandfathered = current->getColumnInt(GrandfatheredIndex);
-    bool currentIsPrevalent = current->getColumnInt(IsPrevalentIndex);
-    bool currentIsVeryPrevalent = current->getColumnInt(IsVeryPrevalentIndex);
-    unsigned currentDataRecordsRemoved = current->getColumnInt(DataRecordsRemovedIndex);
-    bool currentIsScheduledForAllButCookieDataRemoval = current->getColumnInt(IsScheduledForAllButCookieDataRemovalIndex);
+    auto currentRegistrableDomain = current->columnText(RegistrableDomainIndex);
+    auto currentLastSeen = current->columnDouble(LastSeenIndex);
+    auto currentMostRecentUserInteraction = current->columnDouble(MostRecentUserInteractionTimeIndex);
+    bool currentGrandfathered = current->columnInt(GrandfatheredIndex);
+    bool currentIsPrevalent = current->columnInt(IsPrevalentIndex);
+    bool currentIsVeryPrevalent = current->columnInt(IsVeryPrevalentIndex);
+    unsigned currentDataRecordsRemoved = current->columnInt(DataRecordsRemovedIndex);
+    bool currentIsScheduledForAllButCookieDataRemoval = current->columnInt(IsScheduledForAllButCookieDataRemovalIndex);
 
     ASSERT(currentRegistrableDomain == other.registrableDomain.string());
 
@@ -1222,7 +1222,7 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> Reso
     }
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
     while (scopedStatement->step() == SQLITE_ROW) {
-        RegistrableDomain firstPartyDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(getDomainStringFromDomainID(m_getAllSubStatisticsStatement->getColumnInt(0)));
+        RegistrableDomain firstPartyDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(getDomainStringFromDomainID(m_getAllSubStatisticsStatement->columnInt(0)));
         thirdPartyDataForSpecificFirstPartyDomains.appendIfNotContains(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty { firstPartyDomain, hasStorageAccess(firstPartyDomain, thirdPartyDomain), getMostRecentlyUpdatedTimestamp(thirdPartyDomain, firstPartyDomain) });
     }
     return thirdPartyDataForSpecificFirstPartyDomains;
@@ -1248,8 +1248,8 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
         return thirdPartyDataList;
     }
     while (sortedStatistics->step() == SQLITE_ROW) {
-        if (hasBeenThirdParty(sortedStatistics->getColumnInt(1))) {
-            auto thirdPartyDomainID = sortedStatistics->getColumnInt(0);
+        if (hasBeenThirdParty(sortedStatistics->columnInt(1))) {
+            auto thirdPartyDomainID = sortedStatistics->columnInt(0);
             auto thirdPartyDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(getDomainStringFromDomainID(thirdPartyDomainID));
             thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { thirdPartyDomain, getThirdPartyDataForSpecificFirstPartyDomains(thirdPartyDomainID, thirdPartyDomain) });
         }
@@ -1302,7 +1302,7 @@ unsigned ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomains
     }
     
     while (findSubresources->step() == SQLITE_ROW) {
-        int newDomainID = findSubresources->getColumnInt(0);
+        int newDomainID = findSubresources->columnInt(0);
         auto insertResult = nonPrevalentRedirectionSources.insert(newDomainID);
         if (insertResult.second)
             newlyIdentifiedDomains.insert(newDomainID);
@@ -1317,7 +1317,7 @@ unsigned ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomains
     }
     
     while (findTopFrames->step() == SQLITE_ROW) {
-        int newDomainID = findTopFrames->getColumnInt(0);
+        int newDomainID = findTopFrames->columnInt(0);
         auto insertResult = nonPrevalentRedirectionSources.insert(newDomainID);
         if (insertResult.second)
             newlyIdentifiedDomains.insert(newDomainID);
@@ -1352,13 +1352,13 @@ void ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPreval
     auto subresourceRedirectStatement = m_database.prepareStatement("SELECT DISTINCT SubresourceUniqueRedirectsTo.subresourceDomainID FROM SubresourceUniqueRedirectsTo JOIN ObservedDomains ON ObservedDomains.domainID = SubresourceUniqueRedirectsTo.toDomainID AND ObservedDomains.isPrevalent = 1"_s);
     if (subresourceRedirectStatement) {
         while (subresourceRedirectStatement->step() == SQLITE_ROW)
-            prevalentDueToRedirect.insert(subresourceRedirectStatement->getColumnInt(0));
+            prevalentDueToRedirect.insert(subresourceRedirectStatement->columnInt(0));
     }
 
     auto topFrameRedirectStatement = m_database.prepareStatement("SELECT DISTINCT TopFrameUniqueRedirectsTo.sourceDomainID FROM TopFrameUniqueRedirectsTo JOIN ObservedDomains ON ObservedDomains.domainID = TopFrameUniqueRedirectsTo.toDomainID AND ObservedDomains.isPrevalent = 1"_s);
     if (topFrameRedirectStatement) {
         while (topFrameRedirectStatement->step() == SQLITE_ROW)
-            prevalentDueToRedirect.insert(topFrameRedirectStatement->getColumnInt(0));
+            prevalentDueToRedirect.insert(topFrameRedirectStatement->columnInt(0));
     }
 
     auto markPrevalentStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(WTF::IteratorRange<StdSet<unsigned>::iterator>(prevalentDueToRedirect.begin(), prevalentDueToRedirect.end())), ")"));
@@ -1376,9 +1376,9 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     auto notVeryPrevalentResourcesStatement = m_database.prepareStatement("SELECT domainID, registrableDomain, isPrevalent FROM ObservedDomains WHERE isVeryPrevalent = 0"_s);
     if (notVeryPrevalentResourcesStatement) {
         while (notVeryPrevalentResourcesStatement->step() == SQLITE_ROW) {
-            unsigned key = static_cast<unsigned>(notVeryPrevalentResourcesStatement->getColumnInt(0));
-            NotVeryPrevalentResources value({ RegistrableDomain::uncheckedCreateFromRegistrableDomainString(notVeryPrevalentResourcesStatement->getColumnText(1))
-                , notVeryPrevalentResourcesStatement->getColumnInt(2) ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low
+            unsigned key = static_cast<unsigned>(notVeryPrevalentResourcesStatement->columnInt(0));
+            NotVeryPrevalentResources value({ RegistrableDomain::uncheckedCreateFromRegistrableDomainString(notVeryPrevalentResourcesStatement->columnText(1))
+                , notVeryPrevalentResourcesStatement->columnInt(2) ? ResourceLoadPrevalence::High : ResourceLoadPrevalence::Low
                 , 0, 0, 0, 0 });
             results.add(key, value);
         }
@@ -1396,40 +1396,40 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     auto subresourceUnderTopFrameDomainsStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
     if (subresourceUnderTopFrameDomainsStatement) {
         while (subresourceUnderTopFrameDomainsStatement->step() == SQLITE_ROW) {
-            unsigned domainID = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->getColumnInt(0));
+            unsigned domainID = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->columnInt(0));
             auto result = results.find(domainID);
             if (result != results.end())
-                result->value.subresourceUnderTopFrameDomainsCount = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->getColumnInt(1));
+                result->value.subresourceUnderTopFrameDomainsCount = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->columnInt(1));
         }
     }
 
     auto subresourceUniqueRedirectsToCountStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(toDomainID) FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
     if (subresourceUniqueRedirectsToCountStatement) {
         while (subresourceUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
-            unsigned domainID = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->getColumnInt(0));
+            unsigned domainID = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->columnInt(0));
             auto result = results.find(domainID);
             if (result != results.end())
-                result->value.subresourceUniqueRedirectsToCount = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->getColumnInt(1));
+                result->value.subresourceUniqueRedirectsToCount = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->columnInt(1));
         }
     }
 
     auto subframeUnderTopFrameDomainsCountStatement = m_database.prepareStatementSlow(makeString("SELECT subframeDomainID, COUNT(topFrameDomainID) FROM SubframeUnderTopFrameDomains WHERE subframeDomainID IN (", domainIDsOfInterest, ") GROUP BY subframeDomainID"));
     if (subframeUnderTopFrameDomainsCountStatement) {
         while (subframeUnderTopFrameDomainsCountStatement->step() == SQLITE_ROW) {
-            unsigned domainID = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->getColumnInt(0));
+            unsigned domainID = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->columnInt(0));
             auto result = results.find(domainID);
             if (result != results.end())
-                result->value.subframeUnderTopFrameDomainsCount = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->getColumnInt(1));
+                result->value.subframeUnderTopFrameDomainsCount = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->columnInt(1));
         }
     }
 
     auto topFrameUniqueRedirectsToCountStatement = m_database.prepareStatementSlow(makeString("SELECT sourceDomainID, COUNT(toDomainID) FROM TopFrameUniqueRedirectsTo WHERE sourceDomainID IN (", domainIDsOfInterest, ") GROUP BY sourceDomainID"));
     if (topFrameUniqueRedirectsToCountStatement) {
         while (topFrameUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
-            unsigned domainID = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->getColumnInt(0));
+            unsigned domainID = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->columnInt(0));
             auto result = results.find(domainID);
             if (result != results.end())
-                result->value.topFrameUniqueRedirectsToCount = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->getColumnInt(1));
+                result->value.topFrameUniqueRedirectsToCount = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->columnInt(1));
         }
     }
 
@@ -1864,11 +1864,11 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const Registrabl
         return false;
     }
 
-    bool hadUserInteraction = !!scopedStatement->getColumnInt(0);
+    bool hadUserInteraction = !!scopedStatement->columnInt(0);
     if (!hadUserInteraction)
         return false;
     
-    WallTime mostRecentUserInteractionTime = WallTime::fromRawSeconds(scopedStatement->getColumnDouble(1));
+    WallTime mostRecentUserInteractionTime = WallTime::fromRawSeconds(scopedStatement->columnDouble(1));
 
     if (hasStatisticsExpired(mostRecentUserInteractionTime, operatingDatesWindow)) {
         // Drop privacy sensitive data because we no longer need it.
@@ -1948,7 +1948,7 @@ void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionH
     
     Vector<String> domains;
     while (scopedStatement->step() == SQLITE_ROW)
-        domains.append(scopedStatement->getColumnText(0));
+        domains.append(scopedStatement->columnText(0));
     std::sort(domains.begin(), domains.end(), WTF::codePointCompareLessThan);
 
     StringBuilder result;
@@ -1977,7 +1977,7 @@ bool ResourceLoadStatisticsDatabaseStore::predicateValueForDomain(SQLiteStatemen
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::predicateValueForDomain failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         return false;
     }
-    return !!predicateStatement->getColumnInt(0);
+    return !!predicateStatement->columnInt(0);
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isPrevalentResource(const RegistrableDomain& domain) const
@@ -2114,7 +2114,7 @@ Seconds ResourceLoadStatisticsDatabaseStore::getMostRecentlyUpdatedTimestamp(con
     if (scopedStatement->step() != SQLITE_ROW)
         return Seconds { ResourceLoadStatistics::NoExistingTimestamp  };
 
-    return Seconds { scopedStatement->getColumnDouble(0) };
+    return Seconds { scopedStatement->columnDouble(0) };
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isGrandfathered(const RegistrableDomain& domain) const
@@ -2218,7 +2218,7 @@ std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, Optional<unsigned>> 
         }
 
         if (scopedStatement->step() == SQLITE_ROW) {
-            unsigned domainID = scopedStatement->getColumnInt(0);
+            unsigned domainID = scopedStatement->columnInt(0);
             return { AddedRecord::No, domainID };
         }
     }
@@ -2271,7 +2271,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::allDomains() cons
 
     Vector<RegistrableDomain> domains;
     while (scopedStatement->step() == SQLITE_ROW)
-        domains.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(scopedStatement->getColumnText(0)));
+        domains.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(scopedStatement->columnText(0)));
     return domains;
 }
 
@@ -2313,8 +2313,8 @@ CookieAccess ResourceLoadStatisticsDatabaseStore::cookieAccess(const SubResource
     }
 
     bool hasNoEntry = statement->step() != SQLITE_ROW;
-    bool isPrevalent = !hasNoEntry && !!statement->getColumnInt(0);
-    bool hadUserInteraction = !hasNoEntry && statement->getColumnInt(1) ? true : false;
+    bool isPrevalent = !hasNoEntry && !!statement->columnInt(0);
+    bool hadUserInteraction = !hasNoEntry && statement->columnInt(1) ? true : false;
 
     if (!areAllThirdPartyCookiesBlockedUnder(topFrameDomain) && !isPrevalent)
         return CookieAccess::BasedOnCookiePolicy;
@@ -2344,7 +2344,7 @@ StorageAccessPromptWasShown ResourceLoadStatisticsDatabaseStore::hasUserGrantedS
         || statement->step() != SQLITE_ROW)
         return StorageAccessPromptWasShown::No;
 
-    return !!statement->getColumnInt(0) ? StorageAccessPromptWasShown::Yes : StorageAccessPromptWasShown::No;
+    return !!statement->columnInt(0) ? StorageAccessPromptWasShown::Yes : StorageAccessPromptWasShown::No;
 }
 
 Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::domainsToBlockAndDeleteCookiesFor() const
@@ -2357,7 +2357,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::domainsToBlockAnd
         return results;
     
     while (statement->step() == SQLITE_ROW)
-        results.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->getColumnText(0)));
+        results.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)));
     
     return results;
 }
@@ -2372,7 +2372,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::domainsToBlockBut
         return results;
     
     while (statement->step() == SQLITE_ROW)
-        results.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->getColumnText(0)));
+        results.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)));
 
     return results;
 }
@@ -2387,7 +2387,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::domainsWithUserIn
         return results;
     
     while (statement->step() == SQLITE_ROW)
-        results.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->getColumnText(0)));
+        results.append(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)));
 
     return results;
 }
@@ -2402,7 +2402,7 @@ HashMap<TopFrameDomain, SubResourceDomain> ResourceLoadStatisticsDatabaseStore::
         return results;
 
     while (statement->step() == SQLITE_ROW)
-        results.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->getColumnText(1)), RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->getColumnText(0)));
+        results.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(1)), RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)));
 
     return results;
 }
@@ -2453,13 +2453,13 @@ Vector<ResourceLoadStatisticsDatabaseStore::DomainData> ResourceLoadStatisticsDa
         return results;
     
     while (statement->step() == SQLITE_ROW) {
-        results.append({ static_cast<unsigned>(statement->getColumnInt(0))
-            , RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->getColumnText(1))
-            , WallTime::fromRawSeconds(statement->getColumnDouble(2))
-            , statement->getColumnInt(3) ? true : false
-            , statement->getColumnInt(4) ? true : false
-            , statement->getColumnInt(5) ? true : false
-            , static_cast<unsigned>(statement->getColumnInt(6))
+        results.append({ static_cast<unsigned>(statement->columnInt(0))
+            , RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(1))
+            , WallTime::fromRawSeconds(statement->columnDouble(2))
+            , statement->columnInt(3) ? true : false
+            , statement->columnInt(4) ? true : false
+            , statement->columnInt(5) ? true : false
+            , static_cast<unsigned>(statement->columnInt(6))
         });
     }
     
@@ -2609,7 +2609,7 @@ void ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded()
         return;
     
     if (scopedStatement->step() == SQLITE_ROW)
-        count = scopedStatement->getColumnInt(0);
+        count = scopedStatement->columnInt(0);
 
     if (count <= parameters().maxStatisticsEntries)
         return;
@@ -2628,7 +2628,7 @@ void ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded()
 
     Vector<unsigned> entriesToPrune;
     while (recordsToPrune->step() == SQLITE_ROW)
-        entriesToPrune.append(recordsToPrune->getColumnInt(0));
+        entriesToPrune.append(recordsToPrune->columnInt(0));
 
     auto listToPrune = buildList(WTF::IteratorRange<Vector<unsigned>::iterator>(entriesToPrune.begin(), entriesToPrune.end()));
 
@@ -2743,7 +2743,7 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount(const Regi
         || subresourceUniqueRedirectsTo->step() != SQLITE_ROW)
         return false;
     
-    return (subFrameUnderTopFrameCount->getColumnInt(0) == 1 && subresourceUnderTopFrameCount->getColumnInt(0) == 1 && subresourceUniqueRedirectsTo->getColumnInt(0) == 1);
+    return (subFrameUnderTopFrameCount->columnInt(0) == 1 && subresourceUnderTopFrameCount->columnInt(0) == 1 && subresourceUniqueRedirectsTo->columnInt(0) == 1);
 }
 
 static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
@@ -2774,7 +2774,7 @@ String ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID(unsigned
     }
     
     if (scopedStatement->step() == SQLITE_ROW)
-        result = m_domainStringFromDomainIDStatement->getColumnText(0);
+        result = m_domainStringFromDomainIDStatement->columnText(0);
     
     return result;
 }
@@ -2825,11 +2825,11 @@ void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& 
     builder.append(tableName);
     builder.appendLiteral(":\n");
     
-    auto result = getDomainStringFromDomainID(data->getColumnInt(0));
+    auto result = getDomainStringFromDomainID(data->columnInt(0));
     appendNextEntry(builder, result);
     
     while (data->step() == SQLITE_ROW) {
-        result = getDomainStringFromDomainID(data->getColumnInt(0));
+        result = getDomainStringFromDomainID(data->columnInt(0));
         appendNextEntry(builder, result);
     }
 }
@@ -2855,15 +2855,15 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     builder.append('\n');
     
     // User interaction
-    appendBoolean(builder, "hadUserInteraction", m_getResourceDataByDomainNameStatement->getColumnInt(HadUserInteractionIndex));
+    appendBoolean(builder, "hadUserInteraction", m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
     builder.append('\n');
     builder.appendLiteral("    mostRecentUserInteraction: ");
-    if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->getColumnDouble(MostRecentUserInteractionTimeIndex))))
+    if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex))))
         builder.appendLiteral("within 24 hours");
     else
         builder.appendLiteral("-1");
     builder.append('\n');
-    appendBoolean(builder, "grandfathered", m_getResourceDataByDomainNameStatement->getColumnInt(GrandfatheredIndex));
+    appendBoolean(builder, "grandfathered", m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
     builder.append('\n');
 
     // Storage access
@@ -2876,7 +2876,7 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom", domain);
     appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts", domain);
 
-    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval", m_getResourceDataByDomainNameStatement->getColumnInt(IsScheduledForAllButCookieDataRemovalIndex));
+    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval", m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex));
     builder.append('\n');
 
     // Subframe stats
@@ -2888,11 +2888,11 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     appendSubStatisticList(builder, "SubresourceUniqueRedirectsFrom", domain);
 
     // Prevalent Resource
-    appendBoolean(builder, "isPrevalentResource", m_getResourceDataByDomainNameStatement->getColumnInt(IsPrevalentIndex));
+    appendBoolean(builder, "isPrevalentResource", m_getResourceDataByDomainNameStatement->columnInt(IsPrevalentIndex));
     builder.append('\n');
-    appendBoolean(builder, "isVeryPrevalentResource", m_getResourceDataByDomainNameStatement->getColumnInt(IsVeryPrevalentIndex));
+    appendBoolean(builder, "isVeryPrevalentResource", m_getResourceDataByDomainNameStatement->columnInt(IsVeryPrevalentIndex));
     builder.append('\n');
-    builder.append("    dataRecordsRemoved: ", m_getResourceDataByDomainNameStatement->getColumnInt(DataRecordsRemovedIndex));
+    builder.append("    dataRecordsRemoved: ", m_getResourceDataByDomainNameStatement->columnInt(DataRecordsRemovedIndex));
     builder.append('\n');
 }
 
@@ -2938,7 +2938,7 @@ bool ResourceLoadStatisticsDatabaseStore::domainIDExistsInDatabase(int domainID)
         return false;
     }
 
-    return m_linkDecorationExistsStatement->getColumnInt(0) || m_scriptLoadExistsStatement->getColumnInt(0) || m_subFrameExistsStatement->getColumnInt(0) || m_subResourceExistsStatement->getColumnInt(0) || m_uniqueRedirectExistsStatement->getColumnInt(0) || m_observedDomainsExistsStatement->getColumnInt(0);
+    return m_linkDecorationExistsStatement->columnInt(0) || m_scriptLoadExistsStatement->columnInt(0) || m_subFrameExistsStatement->columnInt(0) || m_subResourceExistsStatement->columnInt(0) || m_uniqueRedirectExistsStatement->columnInt(0) || m_observedDomainsExistsStatement->columnInt(0);
 }
 
 void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
@@ -2953,14 +2953,14 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
         return;
     }
 
-    m_operatingDatesSize = countOperatingDatesStatement->getColumnInt(0);
+    m_operatingDatesSize = countOperatingDatesStatement->columnInt(0);
 
     if (!getMostRecentOperatingDateStatement || getMostRecentOperatingDateStatement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getFirstOperatingDateStatement failed to step, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return;
     }
-    m_mostRecentOperatingDate = OperatingDate(getMostRecentOperatingDateStatement->getColumnInt(0), getMostRecentOperatingDateStatement->getColumnInt(1), getMostRecentOperatingDateStatement->getColumnInt(2));
+    m_mostRecentOperatingDate = OperatingDate(getMostRecentOperatingDateStatement->columnInt(0), getMostRecentOperatingDateStatement->columnInt(1), getMostRecentOperatingDateStatement->columnInt(2));
 
     if (!getOperatingDateWindowStatement) {
         RELEASE_LOG_ERROR_IF_ALLOWED(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters getOperatingDateWindowStatement failed during the call to prepare() with error message: %" PRIVATE_LOG_STRING ".", this, m_database.lastErrorMsg());
@@ -2977,7 +2977,7 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
             ASSERT_NOT_REACHED();
             return;
         }
-        m_shortWindowOperatingDate = OperatingDate(getOperatingDateWindowStatement->getColumnInt(0), getOperatingDateWindowStatement->getColumnInt(1), getOperatingDateWindowStatement->getColumnInt(2));
+        m_shortWindowOperatingDate = OperatingDate(getOperatingDateWindowStatement->columnInt(0), getOperatingDateWindowStatement->columnInt(1), getOperatingDateWindowStatement->columnInt(2));
     }
 
     if (m_operatingDatesSize <= operatingDatesWindowLong - 1)
@@ -2990,7 +2990,7 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
             ASSERT_NOT_REACHED();
             return;
         }
-        m_longWindowOperatingDate = OperatingDate(getOperatingDateWindowStatement->getColumnInt(0), getOperatingDateWindowStatement->getColumnInt(1), getOperatingDateWindowStatement->getColumnInt(2));
+        m_longWindowOperatingDate = OperatingDate(getOperatingDateWindowStatement->columnInt(0), getOperatingDateWindowStatement->columnInt(1), getOperatingDateWindowStatement->columnInt(2));
     }
 }
 
@@ -3106,21 +3106,21 @@ void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const
 
 PrivateClickMeasurement ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement* statement, PrivateClickMeasurementAttributionType attributionType)
 {
-    auto sourceSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(0));
-    auto destinationSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(1));
-    auto sourceID = statement->getColumnInt(2);
-    auto timeOfAdClick = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnDouble(5) : statement->getColumnDouble(3);
-    auto token = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnText(7) : statement->getColumnText(4);
-    auto signature = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnText(8) : statement->getColumnText(5);
-    auto keyID = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->getColumnText(9) : statement->getColumnText(6);
+    auto sourceSiteDomain = getDomainStringFromDomainID(statement->columnInt(0));
+    auto destinationSiteDomain = getDomainStringFromDomainID(statement->columnInt(1));
+    auto sourceID = statement->columnInt(2);
+    auto timeOfAdClick = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnDouble(5) : statement->columnDouble(3);
+    auto token = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnText(7) : statement->columnText(4);
+    auto signature = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnText(8) : statement->columnText(5);
+    auto keyID = attributionType == PrivateClickMeasurementAttributionType::Attributed ? statement->columnText(9) : statement->columnText(6);
 
     PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributionDestinationSite(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), { }, { }, WallTime::fromRawSeconds(timeOfAdClick));
     
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
-        auto attributionTriggerData = statement->getColumnInt(3);
-        auto priority = statement->getColumnInt(4);
-        auto sourceEarliestTimeToSendValue = statement->getColumnDouble(6);
-        auto destinationEarliestTimeToSendValue = statement->getColumnDouble(10);
+        auto attributionTriggerData = statement->columnInt(3);
+        auto priority = statement->columnInt(4);
+        auto sourceEarliestTimeToSendValue = statement->columnDouble(6);
+        auto destinationEarliestTimeToSendValue = statement->columnDouble(10);
 
         if (attributionTriggerData != -1)
             attribution.setAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData { static_cast<uint32_t>(attributionTriggerData), WebCore::PrivateClickMeasurement::Priority(priority) });
@@ -3399,17 +3399,17 @@ void ResourceLoadStatisticsDatabaseStore::clearExpiredPrivateClickMeasurement()
 
 String ResourceLoadStatisticsDatabaseStore::attributionToString(WebCore::SQLiteStatement* statement, PrivateClickMeasurementAttributionType attributionType)
 {
-    auto sourceSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(0));
-    auto destinationSiteDomain = getDomainStringFromDomainID(statement->getColumnInt(1));
-    auto sourceID = statement->getColumnInt(2);
+    auto sourceSiteDomain = getDomainStringFromDomainID(statement->columnInt(0));
+    auto destinationSiteDomain = getDomainStringFromDomainID(statement->columnInt(1));
+    auto sourceID = statement->columnInt(2);
 
     StringBuilder builder;
     builder.append("Source site: ", sourceSiteDomain, "\nAttribute on site: ", destinationSiteDomain, "\nSource ID: ", sourceID);
 
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
-        auto attributionTriggerData = statement->getColumnInt(3);
-        auto priority = statement->getColumnInt(4);
-        auto earliestTimeToSend = statement->getColumnInt(6);
+        auto attributionTriggerData = statement->columnInt(3);
+        auto priority = statement->columnInt(4);
+        auto earliestTimeToSend = statement->columnInt(6);
 
         if (attributionTriggerData != -1) {
             builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
@@ -3437,7 +3437,7 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
         return { };
     }
 
-    if (!privateClickMeasurementDataExists->getColumnInt(0) && !privateClickMeasurementDataExists->getColumnInt(1))
+    if (!privateClickMeasurementDataExists->columnInt(0) && !privateClickMeasurementDataExists->columnInt(1))
         return "\nNo stored Private Click Measurement data.\n"_s;
 
     auto unattributedScopedStatement = this->scopedStatement(m_allUnattributedPrivateClickMeasurementAttributionsStatement, allUnattributedPrivateClickMeasurementAttributionsQuery, "privateClickMeasurementToString"_s);
@@ -3499,11 +3499,11 @@ std::pair<Optional<SourceEarliestTimeToSend>, Optional<DestinationEarliestTimeTo
     Optional<DestinationEarliestTimeToSend> earliestTimeToSendToDestination;
     
     // A value of 0.0 indicates that the report has been sent to the respective site.
-    if (scopedStatement->getColumnDouble(0) > 0.0)
-        earliestTimeToSendToSource = scopedStatement->getColumnDouble(0);
+    if (scopedStatement->columnDouble(0) > 0.0)
+        earliestTimeToSendToSource = scopedStatement->columnDouble(0);
     
-    if (scopedStatement->getColumnDouble(1) > 0.0)
-        earliestTimeToSendToDestination = scopedStatement->getColumnDouble(1);
+    if (scopedStatement->columnDouble(1) > 0.0)
+        earliestTimeToSendToDestination = scopedStatement->columnDouble(1);
     
     return std::make_pair(earliestTimeToSendToSource, earliestTimeToSendToDestination);
 }

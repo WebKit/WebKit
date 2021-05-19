@@ -67,7 +67,7 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
         }
 
         auto versionStatement = m_db.prepareStatement("SELECT value FROM IconDatabaseInfo WHERE key = 'Version';"_s);
-        auto databaseVersionNumber = versionStatement ? versionStatement->getColumnInt(0) : 0;
+        auto databaseVersionNumber = versionStatement ? versionStatement->columnInt(0) : 0;
         if (databaseVersionNumber > currentDatabaseVersion) {
             LOG(IconDatabase, "Database version number %d is greater than our current version number %d - closing the database to prevent overwriting newer versions",
                 databaseVersionNumber, currentDatabaseVersion);
@@ -190,7 +190,7 @@ void IconDatabase::populatePageURLToIconURLMap()
     auto result = query->step();
     LockHolder lockHolder(m_pageURLToIconURLMapLock);
     while (result == SQLITE_ROW) {
-        m_pageURLToIconURLMap.set(query->getColumnText(0), query->getColumnText(1));
+        m_pageURLToIconURLMap.set(query->columnText(0), query->columnText(1));
         result = query->step();
     }
 
@@ -306,8 +306,8 @@ Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& ex
 
     Optional<int64_t> result;
     if (m_iconIDForIconURLStatement->step() == SQLITE_ROW) {
-        result = m_iconIDForIconURLStatement->getColumnInt64(0);
-        expired = m_iconIDForIconURLStatement->getColumnInt64(1) <= floor((WallTime::now() - iconExpirationTime).secondsSinceEpoch().seconds());
+        result = m_iconIDForIconURLStatement->columnInt64(0);
+        expired = m_iconIDForIconURLStatement->columnInt64(1) <= floor((WallTime::now() - iconExpirationTime).secondsSinceEpoch().seconds());
     }
 
     m_iconIDForIconURLStatement->reset();
@@ -342,7 +342,7 @@ bool IconDatabase::setIconIDForPageURL(int64_t iconID, const String& pageURL)
     return true;
 }
 
-Vector<char> IconDatabase::iconData(int64_t iconID)
+Vector<uint8_t> IconDatabase::iconData(int64_t iconID)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
@@ -361,10 +361,7 @@ Vector<char> IconDatabase::iconData(int64_t iconID)
         return { };
     }
 
-    Vector<char> result;
-    if (m_iconDataStatement->step() == SQLITE_ROW)
-        m_iconDataStatement->getColumnBlobAsVector(0, result);
-
+    auto result = m_iconDataStatement->columnBlob(0);
     m_iconDataStatement->reset();
     return result;
 }
@@ -542,7 +539,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
 
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTFMove(completionHandler)]() mutable {
         Optional<int64_t> iconID;
-        Vector<char> iconData;
+        Vector<uint8_t> iconData;
         String iconURL;
         {
             LockHolder lockHolder(m_pageURLToIconURLMapLock);

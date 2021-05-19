@@ -552,11 +552,9 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         statement = m_statement.get();
     }
 
-    record.rowID = statement->getColumnInt64(0);
+    record.rowID = statement->columnInt64(0);
     ASSERT(record.rowID);
-
-    Vector<uint8_t> keyData;
-    statement->getColumnBlobAsVector(1, keyData);
+    auto keyData = statement->columnBlob(1);
 
     if (!deserializeIDBKeyData(keyData.data(), keyData.size(), record.record.key)) {
         LOG_ERROR("Unable to deserialize key data from database while advancing cursor");
@@ -564,7 +562,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         return FetchResult::Failure;
     }
 
-    statement->getColumnBlobAsVector(2, keyData);
+    keyData = statement->columnBlob(2);
 
     // The primaryKey of an ObjectStore cursor is the same as its key.
     if (m_indexID == IDBIndexInfo::InvalidId) {
@@ -602,10 +600,9 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
         int result = m_cachedObjectStoreStatement->step();
 
-        if (result == SQLITE_ROW) {
-            m_cachedObjectStoreStatement->getColumnBlobAsVector(0, keyData);
-            record.record.value = { ThreadSafeDataBuffer::create(WTFMove(keyData)) };
-        } else if (result == SQLITE_DONE) {
+        if (result == SQLITE_ROW)
+            record.record.value = { ThreadSafeDataBuffer::create(m_cachedObjectStoreStatement->columnBlob(0)) };
+        else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.
             // Skip over it.
             return FetchResult::ShouldFetchAgain;

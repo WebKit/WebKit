@@ -194,7 +194,7 @@ void CookieJarDB::verifySchemaVersion()
         return;
 
     auto statement = m_database.prepareStatement("PRAGMA user_version"_s);
-    int version = statement ? statement->getColumnInt(0) : 0;
+    int version = statement ? statement->columnInt(0) : 0;
     if (version == schemaVersion)
         return;
 
@@ -292,7 +292,7 @@ bool CookieJarDB::checkDatabaseValidity()
         return false;
     }
 
-    String resultText = integrity->getColumnText(0);
+    String resultText = integrity->columnText(0);
 
     if (resultText != "ok") {
         LOG_ERROR("Cookie database integrity check failed - %s", resultText.ascii().data());
@@ -415,14 +415,14 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         if (results.size() > MAX_COOKIE_PER_DOMAIN)
             break;
 
-        String cookieName = pstmt->getColumnText(0);
-        String cookieValue = pstmt->getColumnText(1);
-        String cookieDomain = pstmt->getColumnText(2).convertToASCIILowercase();
-        String cookiePath = pstmt->getColumnText(3);
-        double cookieExpires = (double)pstmt->getColumnInt64(4);
-        bool cookieHttpOnly = (pstmt->getColumnInt(5) == 1);
-        bool cookieSecure = (pstmt->getColumnInt(6) == 1);
-        bool cookieSession = (pstmt->getColumnInt(7) == 1);
+        String cookieName = pstmt->columnText(0);
+        String cookieValue = pstmt->columnText(1);
+        String cookieDomain = pstmt->columnText(2).convertToASCIILowercase();
+        String cookiePath = pstmt->columnText(3);
+        double cookieExpires = (double)pstmt->columnInt64(4);
+        bool cookieHttpOnly = (pstmt->columnInt(5) == 1);
+        bool cookieSecure = (pstmt->columnInt(6) == 1);
+        bool cookieSession = (pstmt->columnInt(7) == 1);
 
         if (!CookieUtil::domainMatch(cookieDomain, requestHost))
             continue;
@@ -463,16 +463,16 @@ Vector<Cookie> CookieJarDB::getAllCookies()
 
     while (pstmt->step() == SQLITE_ROW) {
         Cookie cookie;
-        cookie.name = pstmt->getColumnText(0);
-        cookie.value = pstmt->getColumnText(1);
-        cookie.domain = pstmt->getColumnText(2).convertToASCIILowercase();
-        cookie.path = pstmt->getColumnText(3);
-        double cookieExpires = (double)pstmt->getColumnInt64(4);
+        cookie.name = pstmt->columnText(0);
+        cookie.value = pstmt->columnText(1);
+        cookie.domain = pstmt->columnText(2).convertToASCIILowercase();
+        cookie.path = pstmt->columnText(3);
+        double cookieExpires = (double)pstmt->columnInt64(4);
         if (cookieExpires)
             cookie.expires = cookieExpires;
-        cookie.httpOnly = (pstmt->getColumnInt(5) == 1);
-        cookie.secure = (pstmt->getColumnInt(6) == 1);
-        cookie.session = (pstmt->getColumnInt(7) == 1);
+        cookie.httpOnly = (pstmt->columnInt(5) == 1);
+        cookie.secure = (pstmt->columnInt(6) == 1);
+        cookie.session = (pstmt->columnInt(7) == 1);
         result.append(WTFMove(cookie));
     }
     return result;
@@ -569,7 +569,7 @@ HashSet<String> CookieJarDB::allDomains()
 
     HashSet<String> domains;
     while (statement->step() == SQLITE_ROW) {
-        auto domain = statement->getColumnText(0);
+        auto domain = statement->columnText(0);
         domains.add(domain);
     }
     return domains;

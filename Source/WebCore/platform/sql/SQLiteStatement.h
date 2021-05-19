@@ -63,15 +63,14 @@ public:
     bool isReadOnly();
     
     WEBCORE_EXPORT bool isColumnDeclaredAsBlob(int col);
-    String getColumnName(int col);
-    SQLValue getColumnValue(int col);
-    WEBCORE_EXPORT String getColumnText(int col);
-    WEBCORE_EXPORT double getColumnDouble(int col);
-    WEBCORE_EXPORT int getColumnInt(int col);
-    WEBCORE_EXPORT int64_t getColumnInt64(int col);
-    WEBCORE_EXPORT String getColumnBlobAsString(int col);
-    WEBCORE_EXPORT void getColumnBlobAsVector(int col, Vector<char>&);
-    WEBCORE_EXPORT void getColumnBlobAsVector(int col, Vector<uint8_t>&);
+    String columnName(int col);
+    SQLValue columnValue(int col);
+    WEBCORE_EXPORT String columnText(int col);
+    WEBCORE_EXPORT double columnDouble(int col);
+    WEBCORE_EXPORT int columnInt(int col);
+    WEBCORE_EXPORT int64_t columnInt64(int col);
+    WEBCORE_EXPORT String columnBlobAsString(int col);
+    WEBCORE_EXPORT Vector<uint8_t> columnBlob(int col);
 
     SQLiteDatabase& database() { return m_database; }
     

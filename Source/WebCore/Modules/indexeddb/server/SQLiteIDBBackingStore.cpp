@@ -280,7 +280,7 @@ static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
             return false;
         }
 
-        currentSchema = statement->getColumnText(1);
+        currentSchema = statement->columnText(1);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -352,7 +352,7 @@ bool SQLiteIDBBackingStore::ensureValidBlobTables()
             LOG_ERROR("Error executing statement to fetch schema for the BlobRecords table.");
             return false;
         } else
-            currentSchema = statement->getColumnText(1);
+            currentSchema = statement->columnText(1);
     }
 
     if (currentSchema != blobRecordsTableSchema() && currentSchema != blobRecordsTableSchemaAlternate()) {
@@ -385,7 +385,7 @@ bool SQLiteIDBBackingStore::ensureValidBlobTables()
             return false;
         }
 
-        currentSchema = statement->getColumnText(1);
+        currentSchema = statement->columnText(1);
     }
 
     if (currentSchema != blobFilesTableSchema() && currentSchema != blobFilesTableSchemaAlternate()) {
@@ -445,7 +445,7 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
             return false;
         }
 
-        currentSchema = statement->getColumnText(1);
+        currentSchema = statement->columnText(1);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -520,7 +520,7 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
             return false;
         }
 
-        currentSchema = statement->getColumnText(0);
+        currentSchema = statement->columnText(0);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -577,7 +577,7 @@ bool SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex()
             return false;
         }
 
-        currentSchema = statement->getColumnText(0);
+        currentSchema = statement->columnText(0);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -680,7 +680,7 @@ Optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTabl
             return WTF::nullopt;
         }
 
-        currentSchema = statement->getColumnText(0);
+        currentSchema = statement->columnText(0);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -741,14 +741,13 @@ bool SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate(const HashMap<std::
 
         int result = statement->step();
         while (result == SQLITE_ROW) {
-            uint64_t id = statement->getColumnInt64(0);
-            String name = statement->getColumnText(1);
-            uint64_t objectStoreID = statement->getColumnInt64(2);
+            uint64_t id = statement->columnInt64(0);
+            String name = statement->columnText(1);
+            uint64_t objectStoreID = statement->columnInt64(2);
             uint64_t newID = indexIDMap.get({ objectStoreID, id });
-            Vector<uint8_t> keyPathBuffer;
-            statement->getColumnBlobAsVector(3, keyPathBuffer);
-            bool unique = statement->getColumnInt(4);
-            bool multiEntry = statement->getColumnInt(5);
+            auto keyPathBuffer = statement->columnBlob(3);
+            bool unique = statement->columnInt(4);
+            bool multiEntry = statement->columnInt(5);
 
             auto sql = cachedStatement(SQL::CreateTempIndexInfo, "INSERT INTO _Temp_IndexInfo VALUES (?, ?, ?, ?, ?, ?);"_s);
             if (!sql
@@ -806,14 +805,12 @@ bool SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate(const HashMap<st
 
         int result = statement->step();
         while (result == SQLITE_ROW) {
-            uint64_t id = statement->getColumnInt64(0);
-            uint64_t objectStoreID = statement->getColumnInt64(1);
+            uint64_t id = statement->columnInt64(0);
+            uint64_t objectStoreID = statement->columnInt64(1);
             uint64_t newID = indexIDMap.get({ objectStoreID, id });
-            Vector<uint8_t> keyBuffer;
-            statement->getColumnBlobAsVector(2, keyBuffer);
-            Vector<uint8_t> valueBuffer;
-            statement->getColumnBlobAsVector(3, valueBuffer);
-            uint64_t recordID = statement->getColumnInt64(4);
+            auto keyBuffer = statement->columnBlob(2);
+            auto valueBuffer = statement->columnBlob(3);
+            uint64_t recordID = statement->columnInt64(4);
 
             auto sql = cachedStatement(SQL::PutTempIndexRecord, "INSERT INTO _Temp_IndexRecords VALUES (?, ?, CAST(? AS TEXT), CAST(? AS TEXT), ?);"_s);
             if (!sql
@@ -915,19 +912,17 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
 
         int result = sql->step();
         while (result == SQLITE_ROW) {
-            Vector<uint8_t> keyBuffer;
+            auto keyBuffer = sql->columnBlob(0);
             IDBKeyData keyData;
-            sql->getColumnBlobAsVector(0, keyBuffer);
             if (!deserializeIDBKeyData(keyBuffer.data(), keyBuffer.size(), keyData)) {
                 LOG_ERROR("Unable to deserialize key data from database while getting all records");
                 return false;
             }
 
-            Vector<uint8_t> valueBuffer;
-            sql->getColumnBlobAsVector(1, valueBuffer);
+            auto valueBuffer = sql->columnBlob(1);
             auto value = ThreadSafeDataBuffer::create(WTFMove(valueBuffer));
 
-            uint64_t recordID = sql->getColumnInt64(2);
+            uint64_t recordID = sql->columnInt64(2);
             IDBError error = updateOneIndexForAddRecord(objectStoreInfo, info, keyData, value, recordID);
             if (!error.isNull())
                 return false;
@@ -984,7 +979,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     String databaseName;
     {
         auto sql = m_sqliteDB->prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';"_s);
-        databaseName = sql->getColumnText(0);
+        databaseName = sql->columnText(0);
         if (databaseName != m_identifier.databaseName()) {
             LOG_ERROR("Database name in the info database ('%s') does not match the expected name ('%s')", databaseName.utf8().data(), m_identifier.databaseName().utf8().data());
             return nullptr;
@@ -993,7 +988,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     uint64_t databaseVersion;
     {
         auto sql = m_sqliteDB->prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
-        String stringVersion = sql->getColumnText(0);
+        String stringVersion = sql->columnText(0);
         auto parsedVersion = parseInteger<uint64_t>(stringVersion);
         if (!parsedVersion) {
             LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8().data());
@@ -1017,19 +1012,17 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
         int result = sql->step();
         while (result == SQLITE_ROW) {
-            uint64_t objectStoreID = sql->getColumnInt64(0);
-            String objectStoreName = sql->getColumnText(1);
-
-            Vector<char> keyPathBuffer;
-            sql->getColumnBlobAsVector(2, keyPathBuffer);
+            uint64_t objectStoreID = sql->columnInt64(0);
+            String objectStoreName = sql->columnText(1);
+            auto keyPathBuffer = sql->columnBlob(2);
 
             Optional<IDBKeyPath> objectStoreKeyPath;
-            if (!deserializeIDBKeyPath(reinterpret_cast<const uint8_t*>(keyPathBuffer.data()), keyPathBuffer.size(), objectStoreKeyPath)) {
+            if (!deserializeIDBKeyPath(keyPathBuffer.data(), keyPathBuffer.size(), objectStoreKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
             }
 
-            bool autoIncrement = sql->getColumnInt(3);
+            bool autoIncrement = sql->columnInt(3);
 
             databaseInfo->addExistingObjectStore({ objectStoreID, objectStoreName, WTFMove(objectStoreKeyPath), autoIncrement });
 
@@ -1054,15 +1047,13 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
         int result = sql->step();
         while (result == SQLITE_ROW) {
-            uint64_t indexID = sql->getColumnInt64(0);
-            String indexName = sql->getColumnText(1);
-            uint64_t objectStoreID = sql->getColumnInt64(2);
-
-            Vector<char> keyPathBuffer;
-            sql->getColumnBlobAsVector(3, keyPathBuffer);
+            uint64_t indexID = sql->columnInt64(0);
+            String indexName = sql->columnText(1);
+            uint64_t objectStoreID = sql->columnInt64(2);
+            auto keyPathBuffer = sql->columnBlob(3);
 
             Optional<IDBKeyPath> indexKeyPath;
-            if (!deserializeIDBKeyPath(reinterpret_cast<const uint8_t*>(keyPathBuffer.data()), keyPathBuffer.size(), indexKeyPath)) {
+            if (!deserializeIDBKeyPath(keyPathBuffer.data(), keyPathBuffer.size(), indexKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
             }
@@ -1071,8 +1062,8 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
                 return nullptr;
             }
 
-            bool unique = sql->getColumnInt(4);
-            bool multiEntry = sql->getColumnInt(5);
+            bool unique = sql->columnInt(4);
+            bool multiEntry = sql->columnInt(5);
 
             auto objectStore = databaseInfo->infoForExistingObjectStore(objectStoreID);
             if (!objectStore) {
@@ -1157,10 +1148,10 @@ Optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersio
         LOG_ERROR("Could not prepare statement to get database name(%i) - %s", database.lastError(), database.lastErrorMsg());
         return WTF::nullopt;
     }
-    auto databaseName = namesql->getColumnText(0);
+    auto databaseName = namesql->columnText(0);
 
     auto versql = database.prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
-    String stringVersion = versql ? versql->getColumnText(0) : String();
+    String stringVersion = versql ? versql->columnText(0) : String();
     auto databaseVersion = parseInteger<uint64_t>(stringVersion);
     if (!databaseVersion) {
         LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8().data());
@@ -1905,7 +1896,7 @@ IDBError SQLiteIDBBackingStore::deleteUnusedBlobFileRecords(SQLiteIDBTransaction
 
         int result = sql->step();
         while (result == SQLITE_ROW) {
-            removedBlobFilenames.add(sql->getColumnText(0));
+            removedBlobFilenames.add(sql->columnText(0));
             result = sql->step();
         }
 
@@ -1972,10 +1963,8 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
             return IDBError { UnknownError, "Failed to delete record from object store"_s };
         }
 
-        recordID = sql->getColumnInt64(0);
-
-        Vector<uint8_t> valueBuffer;
-        sql->getColumnBlobAsVector(1, valueBuffer);
+        recordID = sql->columnInt64(0);
+        auto valueBuffer = sql->columnBlob(1);
         value = ThreadSafeDataBuffer::create(WTFMove(valueBuffer));
     }
 
@@ -2273,7 +2262,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
         }
 
         while (sqlResult == SQLITE_ROW) {
-            blobURLSet.add(sql->getColumnText(0));
+            blobURLSet.add(sql->columnText(0));
             sqlResult = sql->step();
         }
 
@@ -2299,7 +2288,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
 
         blobURLs.append(blobURL);
 
-        String fileName = sql->getColumnText(0);
+        String fileName = sql->columnText(0);
         blobFilePaths.append(FileSystem::pathByAppendingComponent(m_databaseDirectory, fileName));
     }
     return IDBError { };
@@ -2391,15 +2380,12 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
             return IDBError { UnknownError, "Error looking up record in object store by key range"_s };
         }
 
-        Vector<uint8_t> keyBuffer;
-        sql->getColumnBlobAsVector(0, keyBuffer);
-        keyResultBuffer = ThreadSafeDataBuffer::create(WTFMove(keyBuffer));
+        keyResultBuffer = ThreadSafeDataBuffer::create(sql->columnBlob(0));
 
         if (type == IDBGetRecordDataType::KeyAndValue) {
-            Vector<uint8_t> valueBuffer;
-            sql->getColumnBlobAsVector(1, valueBuffer);
+            auto valueBuffer = sql->columnBlob(1);
             valueResultBuffer = ThreadSafeDataBuffer::create(WTFMove(valueBuffer));
-            recordID = sql->getColumnInt64(2);
+            recordID = sql->columnInt64(2);
         }
     }
 
@@ -2514,9 +2500,8 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     uint32_t returnedResults = 0;
 
     while (sqlResult == SQLITE_ROW && returnedResults < targetResults) {
-        Vector<uint8_t> keyBuffer;
+        auto keyBuffer = sql->columnBlob(0);
         IDBKeyData keyData;
-        sql->getColumnBlobAsVector(0, keyBuffer);
         if (!deserializeIDBKeyData(keyBuffer.data(), keyBuffer.size(), keyData)) {
             LOG_ERROR("Unable to deserialize key data from database while getting all records");
             return IDBError { UnknownError, "Unable to deserialize key data while getting all records"_s };
@@ -2524,11 +2509,9 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
         result.addKey(WTFMove(keyData));
 
         if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values) {
-            Vector<uint8_t> valueBuffer;
-            sql->getColumnBlobAsVector(1, valueBuffer);
-            ThreadSafeDataBuffer valueResultBuffer = ThreadSafeDataBuffer::create(WTFMove(valueBuffer));
+            ThreadSafeDataBuffer valueResultBuffer = ThreadSafeDataBuffer::create(sql->columnBlob(1));
 
-            auto recordID = sql->getColumnInt64(2);
+            auto recordID = sql->columnInt64(2);
 
             ASSERT(recordID);
             Vector<String> blobURLs, blobFilePaths;
@@ -2674,8 +2657,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
         return IDBError { };
 
     IDBKeyData objectStoreKey;
-    Vector<uint8_t> keyVector;
-    sql->getColumnBlobAsVector(0, keyVector);
+    auto keyVector = sql->columnBlob(0);
 
     if (!deserializeIDBKeyData(keyVector.data(), keyVector.size(), objectStoreKey)) {
         LOG_ERROR("Unable to deserialize key looking up index record in database");
@@ -2687,10 +2669,8 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
         return IDBError { };
     }
 
-    Vector<uint8_t> valueVector;
-    sql->getColumnBlobAsVector(1, valueVector);
-
-    int64_t recordID = sql->getColumnInt64(2);
+    auto valueVector = sql->columnBlob(1);
+    int64_t recordID = sql->columnInt64(2);
     Vector<String> blobURLs, blobFilePaths;
     auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, blobFilePaths);
     ASSERT(blobURLs.size() == blobFilePaths.size());
@@ -2771,7 +2751,7 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
     if (statement->step() != SQLITE_ROW)
         return IDBError { UnknownError, "Unable to count records"_s };
 
-    outCount = statement->getColumnInt(0);
+    outCount = statement->columnInt(0);
     return IDBError { };
 }
 
@@ -2789,7 +2769,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue(int64_t objectStor
         return IDBError { UnknownError, "Error finding current key generator value in database"_s };
     }
 
-    int64_t value = sql->getColumnInt64(0);
+    int64_t value = sql->columnInt64(0);
     if (value < 0)
         return IDBError { ConstraintError, "Current key generator value from database is invalid" };
 
@@ -2986,7 +2966,7 @@ void SQLiteIDBBackingStore::deleteBackingStore()
             if (sql) {
                 int result = sql->step();
                 while (result == SQLITE_ROW) {
-                    blobFiles.append(sql->getColumnText(0));
+                    blobFiles.append(sql->columnText(0));
                     result = sql->step();
                 }
 

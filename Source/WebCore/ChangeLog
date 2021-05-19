@@ -1,3 +1,95 @@
+2021-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Drop "get" prefix from SQLiteStatement member functions as well as out-parameters
+        https://bugs.webkit.org/show_bug.cgi?id=225971
+
+        Reviewed by Darin Adler.
+
+        Drop "get" prefix from SQLiteStatement member functions as well as out-parameters to
+        modernize the code a bit and follow WebKit style.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidBlobTables):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addExistingIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameAndVersionFromFile):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteUnusedBlobFileRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::retrieveTextResultFromDatabase):
+        (WebCore::Database::performGetTableNames):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesNoLock):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::quotaNoLock):
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCacheGroup):
+        (WebCore::ApplicationCacheStorage::loadManifestHostHashes):
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateUsageForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache):
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion):
+        (WebCore::ApplicationCacheStorage::loadCache):
+        (WebCore::ApplicationCacheStorage::manifestURLs):
+        (WebCore::ApplicationCacheStorage::deleteCacheGroupRecord):
+        (WebCore::ApplicationCacheStorage::checkForDeletedResources):
+        (WebCore::ApplicationCacheStorage::flatFileAreaSize):
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::verifySchemaVersion):
+        (WebCore::CookieJarDB::checkDatabaseValidity):
+        (WebCore::CookieJarDB::searchCookies):
+        (WebCore::CookieJarDB::getAllCookies):
+        (WebCore::CookieJarDB::allDomains):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::useWALJournalMode):
+        (WebCore::SQLiteDatabase::maximumSize):
+        (WebCore::SQLiteDatabase::pageSize):
+        (WebCore::SQLiteDatabase::freeSpaceSize):
+        (WebCore::SQLiteDatabase::totalSize):
+        (WebCore::SQLiteDatabase::clearAllTables):
+        (WebCore::SQLiteDatabase::turnOnIncrementalAutoVacuum):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::columnName):
+        (WebCore::SQLiteStatement::columnValue):
+        (WebCore::SQLiteStatement::columnText):
+        (WebCore::SQLiteStatement::columnDouble):
+        (WebCore::SQLiteStatement::columnInt):
+        (WebCore::SQLiteStatement::columnInt64):
+        (WebCore::SQLiteStatement::columnBlobAsString):
+        (WebCore::SQLiteStatement::columnBlob):
+        * platform/sql/SQLiteStatement.h:
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::loadRecentSearches):
+        (WebCore::SearchPopupMenuDB::checkDatabaseValidity):
+        (WebCore::SearchPopupMenuDB::verifySchemaVersion):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::ensureValidRecordsTable):
+        (WebCore::RegistrationDatabase::importRecords):
+
 2021-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Pull ServicesOverlayController::Highlight out into a separate helper class

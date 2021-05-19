@@ -146,8 +146,8 @@ HashMap<String, String> LocalStorageDatabase::items() const
     HashMap<String, String> items;
     int result = query->step();
     while (result == SQLITE_ROW) {
-        String key = query->getColumnText(0);
-        String value = query->getColumnBlobAsString(1);
+        String key = query->columnText(0);
+        String value = query->columnBlobAsString(1);
         if (!key.isNull() && !value.isNull())
             items.add(WTFMove(key), WTFMove(value));
         result = query->step();
@@ -206,7 +206,7 @@ String LocalStorageDatabase::item(const String& key) const
 
     int result = query->step();
     if (result == SQLITE_ROW)
-        return query->getColumnBlobAsString(0);
+        return query->columnBlobAsString(0);
     if (result != SQLITE_DONE)
         LOG_ERROR("Error get item from ItemTable for local storage");
     return { };
@@ -313,7 +313,7 @@ bool LocalStorageDatabase::databaseIsEmpty() const
         return false;
     }
 
-    return !query->getColumnInt(0);
+    return !query->columnInt(0);
 }
 
 void LocalStorageDatabase::openIfExisting()

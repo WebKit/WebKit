@@ -117,7 +117,7 @@ void SearchPopupMenuDB::loadRecentSearches(const String& name, Vector<RecentSear
     m_loadSearchTermsForNameStatement->bindText(1, name);
     while (m_loadSearchTermsForNameStatement->step() == SQLITE_ROW) {
         // We are choosing not to use or store search times on Windows at this time, so for now it's OK to use a "distant past" time as a placeholder.
-        searches.append({ m_loadSearchTermsForNameStatement->getColumnText(0), -WallTime::infinity() });
+        searches.append({ m_loadSearchTermsForNameStatement->columnText(0), -WallTime::infinity() });
     }
     m_loadSearchTermsForNameStatement->reset();
 }
@@ -148,7 +148,7 @@ bool SearchPopupMenuDB::checkDatabaseValidity()
         return false;
     }
 
-    String resultText = integrity->getColumnText(0);
+    String resultText = integrity->columnText(0);
 
     if (resultText != "ok") {
         LOG_ERROR("Search autosave database integrity check failed - %s", resultText.ascii().data());
@@ -236,7 +236,7 @@ void SearchPopupMenuDB::closeDatabase()
 void SearchPopupMenuDB::verifySchemaVersion()
 {
     auto statement = m_database.prepareStatement("PRAGMA user_version"_s);
-    int version = statement ? statement->getColumnInt(0) : 0;
+    int version = statement ? statement->columnInt(0) : 0;
     if (version == schemaVersion)
         return;
 

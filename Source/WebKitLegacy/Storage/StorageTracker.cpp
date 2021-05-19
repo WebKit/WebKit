@@ -200,7 +200,7 @@ void StorageTracker::syncImportOriginIdentifiers()
             {
                 LockHolder lockOrigins(m_originSetMutex);
                 while ((result = statement->step()) == SQLITE_ROW)
-                    m_originSet.add(statement->getColumnText(0).isolatedCopy());
+                    m_originSet.add(statement->columnText(0).isolatedCopy());
             }
             
             if (result != SQLITE_DONE) {
@@ -412,15 +412,15 @@ void StorageTracker::syncDeleteAllOrigins()
     
     int result;
     while ((result = statement->step()) == SQLITE_ROW) {
-        if (!canDeleteOrigin(statement->getColumnText(0)))
+        if (!canDeleteOrigin(statement->columnText(0)))
             continue;
 
-        FileSystem::deleteFile(statement->getColumnText(1));
+        FileSystem::deleteFile(statement->columnText(1));
 
         {
             LockHolder locker(m_clientMutex);
             if (m_client)
-                m_client->dispatchDidModifyOrigin(statement->getColumnText(0));
+                m_client->dispatchDidModifyOrigin(statement->columnText(0));
         }
     }
     
@@ -626,7 +626,7 @@ String StorageTracker::databasePathForOrigin(const String& originIdentifier)
     if (result != SQLITE_ROW)
         return String();
 
-    return pathStatement->getColumnText(0);
+    return pathStatement->columnText(0);
 }
     
 uint64_t StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)

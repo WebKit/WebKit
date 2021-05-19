@@ -180,7 +180,7 @@ bool SQLiteStatement::isColumnDeclaredAsBlob(int col)
     return equalLettersIgnoringASCIICase(StringView(sqlite3_column_decltype(m_statement, col)), "blob");
 }
 
-String SQLiteStatement::getColumnName(int col)
+String SQLiteStatement::columnName(int col)
 {
     ASSERT(col >= 0);
     if (!hasStartedStepping() && step() != SQLITE_ROW)
@@ -190,7 +190,7 @@ String SQLiteStatement::getColumnName(int col)
     return String::fromUTF8(sqlite3_column_name(m_statement, col));
 }
 
-SQLValue SQLiteStatement::getColumnValue(int col)
+SQLValue SQLiteStatement::columnValue(int col)
 {
     ASSERT(col >= 0);
     if (!hasStartedStepping() && step() != SQLITE_ROW)
@@ -218,7 +218,7 @@ SQLValue SQLiteStatement::getColumnValue(int col)
     return nullptr;
 }
 
-String SQLiteStatement::getColumnText(int col)
+String SQLiteStatement::columnText(int col)
 {
     ASSERT(col >= 0);
     if (!hasStartedStepping() && step() != SQLITE_ROW)
@@ -228,7 +228,7 @@ String SQLiteStatement::getColumnText(int col)
     return String::fromUTF8(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col));
 }
     
-double SQLiteStatement::getColumnDouble(int col)
+double SQLiteStatement::columnDouble(int col)
 {
     ASSERT(col >= 0);
     if (!hasStartedStepping() && step() != SQLITE_ROW)
@@ -238,7 +238,7 @@ double SQLiteStatement::getColumnDouble(int col)
     return sqlite3_column_double(m_statement, col);
 }
 
-int SQLiteStatement::getColumnInt(int col)
+int SQLiteStatement::columnInt(int col)
 {
     ASSERT(col >= 0);
     if (!hasStartedStepping() && step() != SQLITE_ROW)
@@ -248,7 +248,7 @@ int SQLiteStatement::getColumnInt(int col)
     return sqlite3_column_int(m_statement, col);
 }
 
-int64_t SQLiteStatement::getColumnInt64(int col)
+int64_t SQLiteStatement::columnInt64(int col)
 {
     ASSERT(col >= 0);
     if (!hasStartedStepping() && step() != SQLITE_ROW)
@@ -258,7 +258,7 @@ int64_t SQLiteStatement::getColumnInt64(int col)
     return sqlite3_column_int64(m_statement, col);
 }
 
-String SQLiteStatement::getColumnBlobAsString(int col)
+String SQLiteStatement::columnBlobAsString(int col)
 {
     ASSERT(col >= 0);
 
@@ -280,56 +280,25 @@ String SQLiteStatement::getColumnBlobAsString(int col)
     return String(static_cast<const UChar*>(blob), size / sizeof(UChar));
 }
 
-void SQLiteStatement::getColumnBlobAsVector(int col, Vector<char>& result)
+Vector<uint8_t> SQLiteStatement::columnBlob(int col)
 {
     ASSERT(col >= 0);
 
-    if (!hasStartedStepping() && step() != SQLITE_ROW) {
-        result.clear();
-        return;
-    }
+    if (!hasStartedStepping() && step() != SQLITE_ROW)
+        return { };
 
-    if (columnCount() <= col) {
-        result.clear();
-        return;
-    }
+    if (columnCount() <= col)
+        return { };
 
     const void* blob = sqlite3_column_blob(m_statement, col);
-    if (!blob) {
-        result.clear();
-        return;
-    }
-        
-    int size = sqlite3_column_bytes(m_statement, col);
-    result.resize((size_t)size);
-    for (int i = 0; i < size; ++i)
-        result[i] = (static_cast<const unsigned char*>(blob))[i];
-}
+    if (!blob)
+        return { };
 
-void SQLiteStatement::getColumnBlobAsVector(int col, Vector<uint8_t>& result)
-{
-    ASSERT(col >= 0);
+    int blobSize = sqlite3_column_bytes(m_statement, col);
+    if (blobSize <= 0)
+        return { };
 
-    if (!hasStartedStepping() && step() != SQLITE_ROW) {
-        result.clear();
-        return;
-    }
-
-    if (columnCount() <= col) {
-        result.clear();
-        return;
-    }
-
-    const void* blob = sqlite3_column_blob(m_statement, col);
-    if (!blob) {
-        result.clear();
-        return;
-    }
-        
-    int size = sqlite3_column_bytes(m_statement, col);
-    result.resize((size_t)size);
-    for (int i = 0; i < size; ++i)
-        result[i] = (static_cast<const uint8_t*>(blob))[i];
+    return { reinterpret_cast<const uint8_t*>(blob), static_cast<size_t>(blobSize) };
 }
 
 bool SQLiteStatement::hasStartedStepping()

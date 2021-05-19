@@ -337,7 +337,7 @@ void StorageAreaSync::performImport()
 
     int result = query->step();
     while (result == SQLITE_ROW) {
-        itemMap.set(query->getColumnText(0), query->getColumnBlobAsString(1));
+        itemMap.set(query->columnText(0), query->columnBlobAsString(1));
         result = query->step();
     }
 
@@ -512,7 +512,7 @@ void StorageAreaSync::deleteEmptyDatabase()
             return -1;
         }
 
-        return query->getColumnInt(0);
+        return query->columnInt(0);
     }();
     if (count)
         return;

@@ -154,11 +154,11 @@ bool SQLStatement::execute(Database& db)
         auto& rows = resultSet->rows();
 
         for (int i = 0; i < columnCount; i++)
-            rows.addColumn(statement->getColumnName(i));
+            rows.addColumn(statement->columnName(i));
 
         do {
             for (int i = 0; i < columnCount; i++)
-                rows.addResult(statement->getColumnValue(i));
+                rows.addResult(statement->columnValue(i));
 
             result = statement->step();
         } while (result == SQLITE_ROW);

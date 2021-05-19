@@ -139,7 +139,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 
     int result = statement->step();
     if (result == SQLITE_ROW) {
-        resultString = statement->getColumnText(0);
+        resultString = statement->columnText(0);
         return true;
     }
     if (result == SQLITE_DONE) {
@@ -719,7 +719,7 @@ Vector<String> Database::performGetTableNames()
     Vector<String> tableNames;
     int result;
     while ((result = statement->step()) == SQLITE_ROW) {
-        String name = statement->getColumnText(0);
+        String name = statement->columnText(0);
         if (name != unqualifiedInfoTableName)
             tableNames.append(name);
     }

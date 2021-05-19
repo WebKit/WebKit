@@ -336,7 +336,7 @@ String DatabaseTracker::fullPathForDatabaseNoLock(const SecurityOriginData& orig
 
         int result = statement->step();
         if (result == SQLITE_ROW)
-            return SQLiteFileSystem::appendDatabaseFileNameToPath(originPath, statement->getColumnText(0));
+            return SQLiteFileSystem::appendDatabaseFileNameToPath(originPath, statement->columnText(0));
         if (!createIfNotExists)
             return String();
 
@@ -381,7 +381,7 @@ Vector<SecurityOriginData> DatabaseTracker::origins()
     Vector<SecurityOriginData> origins;
     int stepResult;
     while ((stepResult = statement->step()) == SQLITE_ROW)
-        origins.append(SecurityOriginData::fromDatabaseIdentifier(statement->getColumnText(0))->isolatedCopy());
+        origins.append(SecurityOriginData::fromDatabaseIdentifier(statement->columnText(0))->isolatedCopy());
     origins.shrinkToFit();
 
     if (stepResult != SQLITE_DONE)
@@ -406,7 +406,7 @@ Vector<String> DatabaseTracker::databaseNamesNoLock(const SecurityOriginData& or
     Vector<String> names;
     int result;
     while ((result = statement->step()) == SQLITE_ROW)
-        names.append(statement->getColumnText(0));
+        names.append(statement->columnText(0));
     names.shrinkToFit();
 
     if (result != SQLITE_DONE) {
@@ -454,8 +454,8 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
             LOG_ERROR("Error retrieving details for database %s in origin %s from tracker database", name.utf8().data(), originIdentifier.utf8().data());
             return DatabaseDetails();
         }
-        displayName = statement->getColumnText(0);
-        expectedUsage = statement->getColumnInt64(1);
+        displayName = statement->columnText(0);
+        expectedUsage = statement->columnInt64(1);
     }
 
     String path = fullPathForDatabase(origin, name, false);
@@ -485,7 +485,7 @@ void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const
 
         int result = statement->step();
         if (result == SQLITE_ROW)
-            guid = statement->getColumnInt64(0);
+            guid = statement->columnInt64(0);
 
         if (!guid) {
             if (result != SQLITE_DONE)
@@ -681,7 +681,7 @@ uint64_t DatabaseTracker::quotaNoLock(const SecurityOriginData& origin)
     statement->bindText(1, origin.databaseIdentifier());
 
     if (statement->step() == SQLITE_ROW)
-        quota = statement->getColumnInt64(0);
+        quota = statement->columnInt64(0);
 
     return quota;
 }
@@ -1205,7 +1205,7 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
                         statement->bindText(1, origin.databaseIdentifier());
                         statement->bindText(2, databaseName);
                         if (statement->step() == SQLITE_ROW)
-                            databaseFileName = statement->getColumnText(0);
+                            databaseFileName = statement->columnText(0);
                     }
                     
                     bool foundDeletedDatabase = false;

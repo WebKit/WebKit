@@ -200,7 +200,7 @@ void SQLiteDatabase::useWALJournalMode()
         auto walStatement = prepareStatement("PRAGMA journal_mode=WAL;"_s);
         if (walStatement && walStatement->step() == SQLITE_ROW) {
 #ifndef NDEBUG
-            String mode = walStatement->getColumnText(0);
+            String mode = walStatement->columnText(0);
             if (!equalLettersIgnoringASCIICase(mode, "wal"))
                 LOG_ERROR("journal_mode of database should be 'WAL', but is '%s'", mode.utf8().data());
 #endif
@@ -212,7 +212,7 @@ void SQLiteDatabase::useWALJournalMode()
         SQLiteTransactionInProgressAutoCounter transactionCounter;
         auto checkpointStatement = prepareStatement("PRAGMA wal_checkpoint(TRUNCATE)"_s);
         if (checkpointStatement && checkpointStatement->step() == SQLITE_ROW) {
-            if (checkpointStatement->getColumnInt(0))
+            if (checkpointStatement->columnInt(0))
                 LOG(SQLDatabase, "SQLite database checkpoint is blocked");
         } else
             LOG_ERROR("SQLite database failed to checkpoint: %s", lastErrorMsg());
@@ -275,7 +275,7 @@ int64_t SQLiteDatabase::maximumSize()
         LockHolder locker(m_authorizerLock);
         enableAuthorizer(false);
         auto statement = prepareStatement("PRAGMA max_page_count"_s);
-        maxPageCount = statement ? statement->getColumnInt64(0) : 0;
+        maxPageCount = statement ? statement->columnInt64(0) : 0;
         enableAuthorizer(true);
     }
 
@@ -312,7 +312,7 @@ int SQLiteDatabase::pageSize()
         enableAuthorizer(false);
         
         auto statement = prepareStatement("PRAGMA page_size"_s);
-        m_pageSize = statement ? statement->getColumnInt(0) : 0;
+        m_pageSize = statement ? statement->columnInt(0) : 0;
         
         enableAuthorizer(true);
     }
@@ -329,7 +329,7 @@ int64_t SQLiteDatabase::freeSpaceSize()
         enableAuthorizer(false);
         // Note: freelist_count was added in SQLite 3.4.1.
         auto statement = prepareStatement("PRAGMA freelist_count"_s);
-        freelistCount = statement ? statement->getColumnInt64(0) : 0;
+        freelistCount = statement ? statement->columnInt64(0) : 0;
         enableAuthorizer(true);
     }
 
@@ -344,7 +344,7 @@ int64_t SQLiteDatabase::totalSize()
         LockHolder locker(m_authorizerLock);
         enableAuthorizer(false);
         auto statement = prepareStatement("PRAGMA page_count"_s);
-        pageCount = statement ? statement->getColumnInt64(0) : 0;
+        pageCount = statement ? statement->columnInt64(0) : 0;
         enableAuthorizer(true);
     }
 
@@ -406,7 +406,7 @@ void SQLiteDatabase::clearAllTables()
     }
     Vector<String> tables;
     while (statement->step() == SQLITE_ROW)
-        tables.append(statement->getColumnText(0));
+        tables.append(statement->columnText(0));
     for (auto& table : tables) {
         if (!executeCommandSlow("DROP TABLE " + table))
             LOG(SQLDatabase, "Unable to drop table %s", table.ascii().data());
@@ -580,7 +580,7 @@ bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
 {
     int autoVacuumMode = 0;
     if (auto statement = prepareStatement("PRAGMA auto_vacuum"_s))
-        autoVacuumMode = statement->getColumnInt(0);
+        autoVacuumMode = statement->columnInt(0);
     int error = lastError();
 
     // Check if we got an error while trying to get the value of the auto_vacuum flag.

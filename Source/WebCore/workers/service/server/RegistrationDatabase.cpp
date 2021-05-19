@@ -295,7 +295,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
         if (sqliteResult != SQLITE_ROW)
             return "Error executing statement to fetch schema for the Records table.";
 
-        currentSchema = statement->getColumnText(1);
+        currentSchema = statement->columnText(1);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -504,18 +504,17 @@ String RegistrationDatabase::importRecords()
 
     for (; result == SQLITE_ROW; result = sql->step()) {
         RELEASE_LOG(ServiceWorker, "RegistrationDatabase::importRecords: Importing a registration from the database");
-        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql->getColumnText(0));
-        auto originURL = URL { URL(), sql->getColumnText(1) };
-        auto scopePath = sql->getColumnText(2);
+        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql->columnText(0));
+        auto originURL = URL { URL(), sql->columnText(1) };
+        auto scopePath = sql->columnText(2);
         auto scopeURL = URL { originURL, scopePath };
-        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql->getColumnText(3));
-        auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql->getColumnDouble(4));
-        auto updateViaCache = stringToUpdateViaCache(sql->getColumnText(5));
-        auto scriptURL = URL { URL(), sql->getColumnText(6) };
-        auto workerType = stringToWorkerType(sql->getColumnText(7));
+        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql->columnText(3));
+        auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql->columnDouble(4));
+        auto updateViaCache = stringToUpdateViaCache(sql->columnText(5));
+        auto scriptURL = URL { URL(), sql->columnText(6) };
+        auto workerType = stringToWorkerType(sql->columnText(7));
 
-        Vector<uint8_t> contentSecurityPolicyData;
-        sql->getColumnBlobAsVector(8, contentSecurityPolicyData);
+        auto contentSecurityPolicyData = sql->columnBlob(8);
         WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
         Optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
         if (contentSecurityPolicyData.size()) {
@@ -526,10 +525,9 @@ String RegistrationDatabase::importRecords()
             }
         }
 
-        auto referrerPolicy = sql->getColumnText(9);
+        auto referrerPolicy = sql->columnText(9);
 
-        Vector<uint8_t> scriptResourceMapData;
-        sql->getColumnBlobAsVector(10, scriptResourceMapData);
+        auto scriptResourceMapData = sql->columnBlob(10);
         HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
 
         WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapData.data(), scriptResourceMapData.size());
@@ -543,8 +541,7 @@ String RegistrationDatabase::importRecords()
             scriptResourceMap = populateScriptSourcesFromDisk(scriptStorage(), *key, WTFMove(*scriptResourceMapWithoutScripts));
         }
 
-        Vector<uint8_t> certificateInfoData;
-        sql->getColumnBlobAsVector(11, certificateInfoData);
+        auto certificateInfoData = sql->columnBlob(11);
         Optional<CertificateInfo> certificateInfo;
 
         WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoData.data(), certificateInfoData.size());
