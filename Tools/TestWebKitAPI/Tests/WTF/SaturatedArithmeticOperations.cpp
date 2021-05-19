@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2012, Google Inc. All rights reserved.
+ * Copyright (c) 2012 Google Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,77 +30,98 @@
  */
 
 #include "config.h"
-#include "limits.h"
+
+#include <limits.h>
 #include <wtf/SaturatedArithmetic.h>
 
 namespace TestWebKitAPI {
 
 TEST(WTF, SaturatedArithmeticAddition)
 {
-    ASSERT_EQ(saturatedAddition(0, 0), 0);
-    ASSERT_EQ(saturatedAddition(0, 1), 1);
-    ASSERT_EQ(saturatedAddition(0, 100), 100);
-    ASSERT_EQ(saturatedAddition(100, 50), 150);
+    EXPECT_EQ(0, saturatedSum<int32_t>(0, 0));
+    EXPECT_EQ(1, saturatedSum<int32_t>(0, 1));
+    EXPECT_EQ(100, saturatedSum<int32_t>(0, 100));
+    EXPECT_EQ(150, saturatedSum<int32_t>(100, 50));
 
-    ASSERT_EQ(saturatedAddition(0, -1), -1);
-    ASSERT_EQ(saturatedAddition(1, -1), 0);
-    ASSERT_EQ(saturatedAddition(100, -50), 50);
-    ASSERT_EQ(saturatedAddition(50, -100), -50);
+    EXPECT_EQ(-1, saturatedSum<int32_t>(0, -1));
+    EXPECT_EQ(0, saturatedSum<int32_t>(1, -1));
+    EXPECT_EQ(50, saturatedSum<int32_t>(100, -50));
+    EXPECT_EQ(-50, saturatedSum<int32_t>(50, -100));
 
-    ASSERT_EQ(saturatedAddition(INT_MAX - 1, 0), INT_MAX - 1);
-    ASSERT_EQ(saturatedAddition(INT_MAX - 1, 1), INT_MAX);
-    ASSERT_EQ(saturatedAddition(INT_MAX - 1, 2), INT_MAX);
-    ASSERT_EQ(saturatedAddition(0, INT_MAX - 1), INT_MAX - 1);
-    ASSERT_EQ(saturatedAddition(1, INT_MAX - 1), INT_MAX);
-    ASSERT_EQ(saturatedAddition(2, INT_MAX - 1), INT_MAX);
-    ASSERT_EQ(saturatedAddition(INT_MAX - 1, INT_MAX - 1), INT_MAX);
-    ASSERT_EQ(saturatedAddition(INT_MAX, INT_MAX), INT_MAX);
+    EXPECT_EQ(INT_MAX - 1, saturatedSum<int32_t>(INT_MAX - 1, 0));
+    EXPECT_EQ(INT_MAX, saturatedSum<int32_t>(INT_MAX - 1, 1));
+    EXPECT_EQ(INT_MAX, saturatedSum<int32_t>(INT_MAX - 1, 2));
+    EXPECT_EQ(INT_MAX - 1, saturatedSum<int32_t>(0, INT_MAX - 1));
+    EXPECT_EQ(INT_MAX, saturatedSum<int32_t>(1, INT_MAX - 1));
+    EXPECT_EQ(INT_MAX, saturatedSum<int32_t>(2, INT_MAX - 1));
+    EXPECT_EQ(INT_MAX, saturatedSum<int32_t>(INT_MAX - 1, INT_MAX - 1));
+    EXPECT_EQ(INT_MAX, saturatedSum<int32_t>(INT_MAX, INT_MAX));
 
-    ASSERT_EQ(saturatedAddition(INT_MIN, 0), INT_MIN);
-    ASSERT_EQ(saturatedAddition(INT_MIN + 1, 0), INT_MIN + 1);
-    ASSERT_EQ(saturatedAddition(INT_MIN + 1, 1), INT_MIN + 2);
-    ASSERT_EQ(saturatedAddition(INT_MIN + 1, 2), INT_MIN + 3);
-    ASSERT_EQ(saturatedAddition(INT_MIN + 1, -1), INT_MIN);
-    ASSERT_EQ(saturatedAddition(INT_MIN + 1, -2), INT_MIN);
-    ASSERT_EQ(saturatedAddition(0, INT_MIN + 1), INT_MIN + 1);
-    ASSERT_EQ(saturatedAddition(-1, INT_MIN + 1), INT_MIN);
-    ASSERT_EQ(saturatedAddition(-2, INT_MIN + 1), INT_MIN);
+    EXPECT_EQ(INT_MIN, saturatedSum<int32_t>(INT_MIN, 0));
+    EXPECT_EQ(INT_MIN + 1, saturatedSum<int32_t>(INT_MIN + 1, 0));
+    EXPECT_EQ(INT_MIN + 2, saturatedSum<int32_t>(INT_MIN + 1, 1));
+    EXPECT_EQ(INT_MIN + 3, saturatedSum<int32_t>(INT_MIN + 1, 2));
+    EXPECT_EQ(INT_MIN, saturatedSum<int32_t>(INT_MIN + 1, -1));
+    EXPECT_EQ(INT_MIN, saturatedSum<int32_t>(INT_MIN + 1, -2));
+    EXPECT_EQ(INT_MIN + 1, saturatedSum<int32_t>(0, INT_MIN + 1));
+    EXPECT_EQ(INT_MIN, saturatedSum<int32_t>(-1, INT_MIN + 1));
+    EXPECT_EQ(INT_MIN, saturatedSum<int32_t>(-2, INT_MIN + 1));
 
-    ASSERT_EQ(saturatedAddition(INT_MAX / 2, 10000), INT_MAX / 2 + 10000);
-    ASSERT_EQ(saturatedAddition(INT_MAX / 2 + 1, INT_MAX / 2 + 1), INT_MAX);
-    ASSERT_EQ(saturatedAddition(INT_MIN, INT_MAX), -1);
+    EXPECT_EQ(INT_MAX / 2 + 10000, saturatedSum<int32_t>(INT_MAX / 2, 10000));
+    EXPECT_EQ(INT_MAX, saturatedSum<int32_t>(INT_MAX / 2 + 1, INT_MAX / 2 + 1));
+    EXPECT_EQ(-1, saturatedSum<int32_t>(INT_MIN, INT_MAX));
+
+    EXPECT_EQ(0U, saturatedSum<uint32_t>(0U, 0U));
+    EXPECT_EQ(1U, saturatedSum<uint32_t>(0U, 1U));
+    EXPECT_EQ(100U, saturatedSum<uint32_t>(0U, 100U));
+    EXPECT_EQ(150U, saturatedSum<uint32_t>(100U, 50U));
+
+    EXPECT_EQ(UINT_MAX - 1, saturatedSum<uint32_t>(UINT_MAX - 1U, 0U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX - 1U, 1U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX - 1U, 2U));
+    EXPECT_EQ(UINT_MAX - 1, saturatedSum<uint32_t>(0U, UINT_MAX - 1U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(1U, UINT_MAX - 1U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(2U, UINT_MAX - 1U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX - 1U, UINT_MAX - 1U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX, UINT_MAX));
+
+    EXPECT_EQ(UINT_MAX / 2 + 10000, saturatedSum<uint32_t>(UINT_MAX / 2U, 10000U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX / 2U, UINT_MAX / 2U + 1U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX / 2U + 1U, UINT_MAX / 2U + 1U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX / 3U + 1U, UINT_MAX / 3U, UINT_MAX / 3U));
+    EXPECT_EQ(UINT_MAX, saturatedSum<uint32_t>(UINT_MAX / 3U + 1U, UINT_MAX / 3U + 1U, UINT_MAX / 3U + 1U));
 }
 
 TEST(WTF, SaturatedArithmeticSubtraction)
 {
-    ASSERT_EQ(saturatedSubtraction(0, 0), 0);
-    ASSERT_EQ(saturatedSubtraction(0, 1), -1);
-    ASSERT_EQ(saturatedSubtraction(0, 100), -100);
-    ASSERT_EQ(saturatedSubtraction(100, 50), 50);
+    EXPECT_EQ(0, saturatedDifference<int32_t>(0, 0));
+    EXPECT_EQ(-1, saturatedDifference<int32_t>(0, 1));
+    EXPECT_EQ(-100, saturatedDifference<int32_t>(0, 100));
+    EXPECT_EQ(50, saturatedDifference<int32_t>(100, 50));
     
-    ASSERT_EQ(saturatedSubtraction(0, -1), 1);
-    ASSERT_EQ(saturatedSubtraction(1, -1), 2);
-    ASSERT_EQ(saturatedSubtraction(100, -50), 150);
-    ASSERT_EQ(saturatedSubtraction(50, -100), 150);
+    EXPECT_EQ(1, saturatedDifference<int32_t>(0, -1));
+    EXPECT_EQ(2, saturatedDifference<int32_t>(1, -1));
+    EXPECT_EQ(150, saturatedDifference<int32_t>(100, -50));
+    EXPECT_EQ(150, saturatedDifference<int32_t>(50, -100));
 
-    ASSERT_EQ(saturatedSubtraction(INT_MAX, 0), INT_MAX);
-    ASSERT_EQ(saturatedSubtraction(INT_MAX, 1), INT_MAX - 1);
-    ASSERT_EQ(saturatedSubtraction(INT_MAX - 1, 0), INT_MAX - 1);
-    ASSERT_EQ(saturatedSubtraction(INT_MAX - 1, -1), INT_MAX);
-    ASSERT_EQ(saturatedSubtraction(INT_MAX - 1, -2), INT_MAX);
-    ASSERT_EQ(saturatedSubtraction(0, INT_MAX - 1), -INT_MAX + 1);
-    ASSERT_EQ(saturatedSubtraction(-1, INT_MAX - 1), -INT_MAX);
-    ASSERT_EQ(saturatedSubtraction(-2, INT_MAX - 1), -INT_MAX - 1);
-    ASSERT_EQ(saturatedSubtraction(-3, INT_MAX - 1), -INT_MAX - 1);
+    EXPECT_EQ(INT_MAX, saturatedDifference<int32_t>(INT_MAX, 0));
+    EXPECT_EQ(INT_MAX - 1, saturatedDifference<int32_t>(INT_MAX, 1));
+    EXPECT_EQ(INT_MAX - 1, saturatedDifference<int32_t>(INT_MAX - 1, 0));
+    EXPECT_EQ(INT_MAX, saturatedDifference<int32_t>(INT_MAX - 1, -1));
+    EXPECT_EQ(INT_MAX, saturatedDifference<int32_t>(INT_MAX - 1, -2));
+    EXPECT_EQ(-INT_MAX + 1, saturatedDifference<int32_t>(0, INT_MAX - 1));
+    EXPECT_EQ(-INT_MAX, saturatedDifference<int32_t>(-1, INT_MAX - 1));
+    EXPECT_EQ(-INT_MAX - 1, saturatedDifference<int32_t>(-2, INT_MAX - 1));
+    EXPECT_EQ(-INT_MAX - 1, saturatedDifference<int32_t>(-3, INT_MAX - 1));
 
-    ASSERT_EQ(saturatedSubtraction(INT_MIN, 0), INT_MIN);
-    ASSERT_EQ(saturatedSubtraction(INT_MIN + 1, 0), INT_MIN + 1);
-    ASSERT_EQ(saturatedSubtraction(INT_MIN + 1, 1), INT_MIN);
-    ASSERT_EQ(saturatedSubtraction(INT_MIN + 1, 2), INT_MIN);
+    EXPECT_EQ(INT_MIN, saturatedDifference<int32_t>(INT_MIN, 0));
+    EXPECT_EQ(INT_MIN + 1, saturatedDifference<int32_t>(INT_MIN + 1, 0));
+    EXPECT_EQ(INT_MIN, saturatedDifference<int32_t>(INT_MIN + 1, 1));
+    EXPECT_EQ(INT_MIN, saturatedDifference<int32_t>(INT_MIN + 1, 2));
 
-    ASSERT_EQ(saturatedSubtraction(INT_MIN, INT_MIN), 0);
-    ASSERT_EQ(saturatedSubtraction(INT_MAX, INT_MAX), 0);
-    ASSERT_EQ(saturatedSubtraction(INT_MAX, INT_MIN), INT_MAX);
+    EXPECT_EQ(0, saturatedDifference<int32_t>(INT_MIN, INT_MIN));
+    EXPECT_EQ(0, saturatedDifference<int32_t>(INT_MAX, INT_MAX));
+    EXPECT_EQ(INT_MAX, saturatedDifference<int32_t>(INT_MAX, INT_MIN));
 }
 
 } // namespace TestWebKitAPI

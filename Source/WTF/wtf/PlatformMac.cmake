@@ -41,6 +41,7 @@ list(APPEND WTF_PUBLIC_HEADERS
 
     spi/mac/MetadataSPI.h
 
+    text/cf/StringConcatenateCF.h
     text/cf/TextBreakIteratorCF.h
 )
 

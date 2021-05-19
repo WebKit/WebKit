@@ -212,7 +212,7 @@ static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, Str
 
     // Workaround for <http://bugzilla.gnome.org/show_bug.cgi?id=495668>: libxslt appends an extra line feed to the result.
     if (resultBuilder.length() > 0 && resultBuilder[resultBuilder.length() - 1] == '\n')
-        resultBuilder.resize(resultBuilder.length() - 1);
+        resultBuilder.shrink(resultBuilder.length() - 1);
 
     resultString = resultBuilder.toString();
 

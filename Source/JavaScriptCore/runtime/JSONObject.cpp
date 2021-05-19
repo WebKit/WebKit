@@ -575,7 +575,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             // This only occurs when get an undefined value or a symbol value for
             // an object property. In this case we don't want the separator and
             // property name that we already appended, so roll back.
-            builder.resize(rollBackPoint);
+            builder.shrink(rollBackPoint);
             break;
     }
 

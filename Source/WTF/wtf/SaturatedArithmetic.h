@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012, Google Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,7 +36,14 @@
 #include <stdlib.h>
 #include <wtf/Compiler.h>
 
-inline bool signedAddOverflows(int32_t a, int32_t b, int32_t& result)
+namespace WTF {
+
+// FIXME: Enhance this so it fails to compile calls where either of the arguments can be outside the range of the integral type instead of quietly converting.
+template<typename SignedIntegralType> std::enable_if_t<std::is_integral_v<SignedIntegralType> && std::is_signed_v<SignedIntegralType>, SignedIntegralType> saturatedSum(SignedIntegralType, SignedIntegralType);
+template<typename UnsignedIntegralType> constexpr std::enable_if_t<std::is_integral_v<UnsignedIntegralType> && !std::is_signed_v<UnsignedIntegralType>, UnsignedIntegralType> saturatedSum(UnsignedIntegralType, UnsignedIntegralType);
+template<typename IntegralType> IntegralType saturatedDifference(IntegralType, IntegralType);
+
+inline bool signedAddInt32Overflows(int32_t a, int32_t b, int32_t& result)
 {
 #if COMPILER_HAS_CLANG_BUILTIN(__builtin_sadd_overflow) && !(defined __clang_major__ && __clang_major__ < 7)
     return __builtin_sadd_overflow(a, b, &result);
@@ -52,7 +59,7 @@ inline bool signedAddOverflows(int32_t a, int32_t b, int32_t& result)
 #endif
 }
 
-inline int32_t saturatedAddition(int32_t a, int32_t b)
+template<> inline int32_t saturatedSum<int32_t>(int32_t a, int32_t b)
 {
     int32_t result;
 #if CPU(ARM_THUMB2)
@@ -62,13 +69,13 @@ inline int32_t saturatedAddition(int32_t a, int32_t b)
         : /* Nothing is clobbered. */
         );
 #else
-    if (signedAddOverflows(a, b, result))
+    if (signedAddInt32Overflows(a, b, result))
         result = std::numeric_limits<int32_t>::max() + (static_cast<uint32_t>(a) >> 31);
 #endif
     return result;
 }
 
-inline bool signedSubtractOverflows(int32_t a, int32_t b, int32_t& result)
+inline bool signedSubtractInt32Overflows(int32_t a, int32_t b, int32_t& result)
 {
 #if COMPILER_HAS_CLANG_BUILTIN(__builtin_ssub_overflow) && !(defined __clang_major__ && __clang_major__ < 7)
     return __builtin_ssub_overflow(a, b, &result);
@@ -84,7 +91,8 @@ inline bool signedSubtractOverflows(int32_t a, int32_t b, int32_t& result)
 #endif
 }
 
-inline int32_t saturatedSubtraction(int32_t a, int32_t b)
+// FIXME: Enhance this so it fails to compile calls where either of the arguments can be outside the range of int32_t instead of quietly converting.
+template<> inline int32_t saturatedDifference<int32_t>(int32_t a, int32_t b)
 {
     int32_t result;
 #if CPU(ARM_THUMB2)
@@ -94,8 +102,24 @@ inline int32_t saturatedSubtraction(int32_t a, int32_t b)
         : /* Nothing is clobbered. */
         );
 #else
-    if (signedSubtractOverflows(a, b, result))
+    if (signedSubtractInt32Overflows(a, b, result))
         result = std::numeric_limits<int32_t>::max() + (static_cast<uint32_t>(a) >> 31);
 #endif
     return result;
 }
+
+template<typename UnsignedIntegralType> constexpr std::enable_if_t<std::is_integral_v<UnsignedIntegralType> && !std::is_signed_v<UnsignedIntegralType>, UnsignedIntegralType> saturatedSum(UnsignedIntegralType a, UnsignedIntegralType b)
+{
+    auto sum = a + b;
+    return sum < a ? std::numeric_limits<UnsignedIntegralType>::max() : sum;
+}
+
+template<typename IntegralType, typename... ArgumentTypes> constexpr uint32_t saturatedSum(IntegralType value, ArgumentTypes... arguments)
+{
+    return saturatedSum<IntegralType>(value, saturatedSum<IntegralType>(arguments...));
+}
+
+}
+
+using WTF::saturatedSum;
+using WTF::saturatedDifference;

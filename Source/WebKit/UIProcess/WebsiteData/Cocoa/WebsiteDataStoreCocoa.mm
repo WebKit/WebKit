@@ -47,7 +47,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/text/StringBuilder.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIApplication.h>
@@ -115,15 +115,10 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
             firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     }
 
-    auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
-    if (manualPrevalentResource) {
-        URL url { URL(), manualPrevalentResource };
-        if (!url.isValid()) {
-            StringBuilder builder;
-            builder.appendLiteral("http://");
-            builder.append(manualPrevalentResource);
-            url = { URL(), builder.toString() };
-        }
+    if (auto manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"]) {
+        URL url { { }, manualPrevalentResource };
+        if (!url.isValid())
+            url = { { }, makeString("http://", manualPrevalentResource) };
         if (url.isValid())
             resourceLoadStatisticsManualPrevalentResource = WebCore::RegistrableDomain { url };
     }

@@ -1,3 +1,50 @@
+2021-05-18  Darin Adler  <darin@apple.com>
+
+        Move CFStringRef and NSString support from StringBuilder into StringConcatenateCF
+        https://bugs.webkit.org/show_bug.cgi?id=225839
+
+        Reviewed by Sam Weinig.
+
+        * Modules/airplay/WebMediaSessionManager.cpp:
+        (WebCore::mediaProducerStateString): Use StringBuilder exclusively instead of
+        mixing it with makeString. Also updated for StringBuilder::shrink name.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::stripTrailingNewline): Updated for StringBuilder::shrink name.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextColor const): Tweaked
+        coding style a bit.
+        (WebCore::appendCSS): Use variadic StringBuilder::append instead of many
+        separate calls.
+        (WebCore::CaptionUserPreferencesMediaAF::captionsDefaultFontCSS const):
+        Tweaked coding style a bit, and use variadic StrinBuilder::append calls
+        to reduce the number of calls and streamline the code.
+        (WebCore::CaptionUserPreferencesMediaAF::captionsStyleSheetOverride const):
+        Ditto. Also removed unnecessary checks that strings are empty before appending.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText):
+        Updated for StringBuilder::shrink name.
+
+        * platform/LayoutUnit.h: Updated for saturatedSum/Difference names.
+
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::cookiesForSession const): Tweaked codin
+        style a bit, and use variadic StrinBuilder::append calls to reduce the
+        number of calls and streamline the code.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter): Updated for saturatedSum name.
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueCounter): Ditto.
+
+        * svg/SVGPathStringBuilder.cpp:
+        (WebCore::SVGPathStringBuilder::result): Updated for StringBuilder::shrink name.
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageMediaState): Ditto.
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::saveResultToString): Ditto.
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         Update Base64 encoding/decoding to match more modern WebKit conventions

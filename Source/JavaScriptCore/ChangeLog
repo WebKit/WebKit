@@ -1,3 +1,20 @@
+2021-05-18  Darin Adler  <darin@apple.com>
+
+        Move CFStringRef and NSString support from StringBuilder into StringConcatenateCF
+        https://bugs.webkit.org/show_bug.cgi?id=225839
+
+        Reviewed by Sam Weinig.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage): Use StringBuilder::clear instead of
+        StringBuilder::resize; no advantage to the latter after calling StringBuilder::toString.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty): Update for name change of
+        StringBuilder::resize to StringBuilder::shrink.
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::stringRepresentation): Ditto.
+
 2021-05-19  Mark Lam  <mark.lam@apple.com>
 
         Speed up debug validation in CacheableIdentifier::createFromIdentifierOwnedByCodeBlock().

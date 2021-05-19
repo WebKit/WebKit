@@ -127,8 +127,7 @@ static String wkMediaCaptureStateString(_WKMediaCaptureStateDeprecated flags)
     if (string.isEmpty())
         string.append("_WKMediaCaptureStateDeprecatedNone");
     else
-        string.resize(string.length() - 2);
-
+        string.shrink(string.length() - 2);
     return string.toString();
 }
 

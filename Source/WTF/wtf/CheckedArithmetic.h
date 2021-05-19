@@ -95,31 +95,6 @@ public:
     constexpr bool hasOverflowed() const { return false; }
 };
 
-class ConditionalCrashOnOverflow {
-public:
-    void overflowed()
-    {
-        m_overflowed = true;
-        if (m_shouldCrashOnOverflow)
-            crash();
-    }
-
-    bool shouldCrashOnOverflow() const { return m_shouldCrashOnOverflow; }
-    void setShouldCrashOnOverflow(bool value) { m_shouldCrashOnOverflow = value; }
-
-    bool hasOverflowed() const { return m_overflowed; }
-    void clearOverflow() { m_overflowed = false; }
-
-    static NO_RETURN_DUE_TO_CRASH void crash()
-    {
-        CRASH();
-    }
-
-private:
-    bool m_overflowed { false };
-    bool m_shouldCrashOnOverflow { true };
-};
-
 class CrashOnOverflow {
 public:
     static NO_RETURN_DUE_TO_CRASH void overflowed()
@@ -249,11 +224,6 @@ template <typename Target, typename Source> static inline bool convertSafely(Sou
 
 template <typename T> struct RemoveChecked {
     typedef T CleanType;
-    static constexpr CleanType DefaultValue = 0;
-};
-
-template <typename T> struct RemoveChecked<Checked<T, ConditionalCrashOnOverflow>> {
-    using CleanType = typename RemoveChecked<T>::CleanType;
     static constexpr CleanType DefaultValue = 0;
 };
 
@@ -1069,7 +1039,6 @@ using WTF::CheckedUint32;
 using WTF::CheckedInt64;
 using WTF::CheckedUint64;
 using WTF::CheckedSize;
-using WTF::ConditionalCrashOnOverflow;
 using WTF::CrashOnOverflow;
 using WTF::RecordOverflow;
 using WTF::checkedSum;

@@ -21,6 +21,8 @@
 #import "config.h"
 #import <wtf/text/TextStream.h>
 
+#import <wtf/text/cf/StringConcatenateCF.h>
+
 namespace WTF {
 
 TextStream& TextStream::operator<<(id<NSObject> object)

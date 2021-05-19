@@ -1,3 +1,183 @@
+2021-05-18  Darin Adler  <darin@apple.com>
+
+        Move CFStringRef and NSString support from StringBuilder into StringConcatenateCF
+        https://bugs.webkit.org/show_bug.cgi?id=225839
+
+        Reviewed by Sam Weinig.
+
+        The new header makes CFStringRef and NSString work with string concatenation,
+        which means it now works with the variadic StringBuilder::append and makeString,
+        and still works with the single-argument StringBuilder::append. More efficient
+        that the old version because it does not allocate a temporary WTF::String for
+        the 16-bit character path.
+
+        Also made many other small improvements to the StringBuilder implementation.
+
+        * WTF.xcodeproj/project.pbxproj: Added StringConcatenateCF.h.
+
+        * wtf/CheckedArithmetic.h: Removed ConditionalCrashOnOverflow, which was only
+        here for use by StringBuilder, which does not use CheckedArithmetic any more.
+
+        * wtf/PlatformFTW.cmake: Added StringConcatenateCF.h..
+        * wtf/PlatformMac.cmake: Ditto.
+        * wtf/PlatformWin.cmake: Ditto.
+
+        * wtf/SaturatedArithmetic.h: Moved the contents of this file inside the
+        WTF namespace.
+        (WTF::signedAddInt32Overflows): Renamed this function. The type here is
+        important, and we are not doing anything to prevent type conversion or
+        create ambiguity, so it's good to be explicit in the function name.
+        (WTF::saturatedSum<int32_t>): Renamed this from saturatedAddition for
+        clarity. The function returns a sum, so that's a better name than calling
+        it "addition". Also, it's clearer to be explicit about the return type.
+        (WTF::signedSubtractInt32Overflows): Renamed. Same reason as above.
+        (WTF::saturatedDifference<int32_t>): Ditto.
+        (WTF::saturatedSum): Added. Does unsigned integer saturated addition.
+        This one can be written in a portable manner and still get really
+        efficient code on at least Intel and ARM64.
+        (WTF::saturatedSum): Added a function template that lets callers pass
+        larger number of arguments to saturatedSum, rather than exactly two.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::expandedCapacity): Renamed to use the term capacity rather than
+        length for the new required capacity.
+        (WTF::StringBuilder::didOverflow): Implement the new approach to
+        overflow, meaning we need to write the CRASH() here explicitly and
+        in the non-crashing mode, set m_length.
+        (WTF::StringBuilder::reifyString const): Changed the overflow check
+        into a RELEASE_ASSERT. This is now responsible for doing the check that
+        callers were doing earlier, so we want it in production builds. Also
+        simplified this since our m_length member is a simple integer now,
+        and removed the unused m_isReified.
+        (WTF::StringBuilder::shrink): Renamed this to shrink to match the
+        Vector::shrink function, since this has never supported making the
+        builder larger. Removed unnecessary overflow checks, since shrinking
+        cannot cause overflow.
+        (WTF::StringBuilder::allocateBuffer): Replaced two separate functions
+        with a single simpler function template. Removed extra overflow checks
+        because the StringImpl::tryCreateUninitialized function already does
+        the only overflow check we need. Also move to StringImpl::copyCharacters
+        for copying characters rather than using std::memcpy directly.
+        Removed code to set m_is8Bit and m_bufferCharacters.
+        (WTF::StringBuilder::reallocateBuffer): Replaced two separate
+        functions with a function template and a cover that calls the
+        appropriate instance of the template for places where we aren't
+        already in character-type-specific code paths. This version now
+        supports allocating a buffer for the first time in cases where
+        we have m_string and not m_buffer, which used to be handled at
+        the higher level. Removed code to set m_bufferCharacters.
+        (WTF::StringBuilder::reserveCapacity): Rewrote for simplicity.
+        By relying on the overflow checking inside reallocateBuffer and
+        allocateBuffer we no longer need checking of the passed-in value
+        at this level.
+        (WTF::StringBuilder::extendBufferForAppending): Removed the
+        version of this that takes additionalLength since it's
+        potentially confusing to have a family of functions that have the
+        same name and take the same type of argument, but interpret it
+        subtly differently. Streamlined the code using std::exchange.
+        This function now also includes the logic from the function named
+        extendBufferForAppendingWithoutOverflowCheck, which was subtly
+        misnamed since that was not the only semantic difference. Also
+        removed the ALWAYS_INLINE because the compiler will do the right
+        thing without such heavy handed advice.
+        (WTF::StringBuilder::extendBufferForAppendingSlowCase): Streamlined
+        this by using std::exchange and removed additional overflow checks
+        at this level since reallocateBuffer already does them. Also added
+        a check for the case where the new total length is 0, which would
+        not be handled correctly and efficiently by reallocateBuffer.
+        (WTF::StringBuilder::extendBufferForAppendingLChar): Renamed this
+        from extendBufferForAppending8, since it's now identical to calling
+        extendBufferForAppending<LChar>, except for inlining and linkage.
+        (WTF::StringBuilder::extendBufferForAppendingWithUpconvert):
+        Renamed this from extendBufferForAppending16. It is different from
+        the other extendBuffer functions because is supports upconverting
+        from LChar to UChar. Like the others it relies on allocateBuffer
+        for the overflow checking.
+        (WTF::StringBuilder::appendCharacters): Removed an unnecessary
+        assertion that the characters pointer is non-null; that will fail
+        in an obvious way without an assertion. Simplified the logic and
+        removed some invariant assertions that don't help us much. Changed
+        overflow checking by using saturatedSum to compute the new length.
+        In overflow cases, the new sum will be larger than the maximum
+        string length, but will fit in an unsigned, so we can pass it
+        down to lower levels and let functions like reallocateBuffer do
+        the actual overflow checking. Also use StringImpl::copyCharacters.
+        (WTF::StringBuilder::append): Removed the CFStringRef overload.
+        (WTF::StringBuilder::shouldShrinkToFit const): Rename this from
+        canShrink. Simplify the function a bit and remove the vague FIXME
+        that says "this should be tuned". That may be so, but the FIXME
+        is not really driving us to action.
+        (WTF::StringBuilder::shrinkToFit): Simplify by using the new
+        reallocateBuffer and std::exchange. Removed unneeded assertion
+        about overflow that doesn't help us maintain the invariant.
+        (WTF::StringBuilder::isAllASCII const): Was tempted to remove
+        this function, but for now just made it use the StringView
+        version for brevity.
+
+        * wtf/text/StringBuilder.h: Removed many unneeded includes, and
+        notably included SaturatedArithmetic.h instead of
+        CheckedArithmetic.h because we now use the former instead of the
+        latter. Changed the overflow checking implementation to work
+        more simply based on saturated addition rather than Checked.
+        This allowed us to get rid of dependency on our own unique mode
+        for Checked, called ConditionalCrashOnOverflow. Removed a
+        comment about making a templatized version of StringBuilder.
+        We can do it if we like, but does not seem urgent. Moved
+        fucntion bodies out of the class definition so it's easier to
+        see what's going on in the class. Since m_length is now an
+        ordinary integer, the check for overflowed simply checks to see
+        if the length is larger than the maximum string length. When we
+        encounter overflow that is not about length computation, we set
+        the length to the maximum integer to indicate the failure.
+        Deleted the append overloads for CFStringRef and NSString.
+        Removed m_bufferCharacters, m_is8Bit, and m_isReified.
+        (WTF::StringBuilder::StringBuilder): Simplified the constructor
+        since we only have to initialize the m_shouldCrashOnOverflow member.
+        (WTF::StringBuilder::clear): Fixed a mistake where this was not
+        resetting the m_isReified flag.
+        (WTF::StringBuilder::swap): Updated for changes in the data members.
+        (WTF::StringBuilder::operator StringView const): Moved out of line.
+        Made sure to call the length() function so we crash if this is
+        called after overflow.
+        (WTF::StringBuilder::append): Remove some of the unnecessary checks
+        and special cases in the various versions of append. Most of the
+        checking is done inside appendCharacters, with only a few exceptions.
+        (WTF::StringBuilder::appendSubstring): Moved out of the class
+        definition without making significant changes.
+        (WTF::StringBuilder::appendCharacter): Ditto.
+        (WTF::StringBuilder::toString): Greatly simplified this function
+        by relying on overflow checking in the reifyString function instead
+        of doing it here and removing unneeded invariant assertions.
+        (WTF::StringBuilder::toStringPreserveCapacity const): Ditto.
+        (WTF::StringBuilder::toAtomString const): Rewrote this to streamline,
+        removing explicit overflow checks.
+        (WTF::StringBuilder::length const): Moved out of the class
+        definition without making significant changes.
+        (WTF::StringBuilder::capacity const): Ditto.
+        (WTF::StringBuilder::operator[] const): Ditto.
+        (WTF::StringBuilder::characters const): Implemented this operation
+        in the function template. Now rather than having this call the
+        characters8 and characters16 functions, they can call it.
+        (WTF::StringBuilder::getBufferCharacters<LChar>): Deleted.
+        (WTF::StringBuilder::getBufferCharacters<UChar>): Deleted.
+        (WTF::StringBuilder::appendFromAdapters): Use saturatedSum to
+        compute the required length, which allows the extendBuffer
+        functions to do overflow checking without having to take special
+        checked integer types for arguments.
+        (WTF::StringBuilder::equal): Implement using StringView.
+
+        * wtf/text/StringBuilderJSON.cpp:
+        (WTF::StringBuilder::appendQuotedJSONString): Simplified the checked
+        arithmetic for computing the required capacity. Updated since we
+        removed m_bufferCharacters and changed the type of m_length.
+
+        * wtf/text/cf/StringConcatenateCF.h: Added. Specializes StringTypeAdapter for
+        both CFStringRef and NSString *. If CFStringGetCStringPtr works for Latin-1, then
+        does the 8-bit code path, otherwise the 16-bit.
+
+        * wtf/text/cocoa/TextStreamCocoa.mm: Include StringConcatenateCF.h, since it's
+        now needed to use CFStringRef with StringBuilder.
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         Update Base64 encoding/decoding to match more modern WebKit conventions

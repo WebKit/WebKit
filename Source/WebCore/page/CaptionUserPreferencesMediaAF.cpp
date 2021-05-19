@@ -48,6 +48,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/cf/StringConcatenateCF.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebCoreThreadRun.h"
@@ -308,38 +309,30 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
 {
     MACaptionAppearanceBehavior behavior;
-    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior));
-    Color textColor(color.get());
-    if (!textColor.isValid())
+    Color textColor = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior)).get();
+    if (!textColor.isValid()) {
         // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
         textColor = Color::white;
-    
+    }
     important = behavior == kMACaptionAppearanceBehaviorUseValue;
     CGFloat opacity = MACaptionAppearanceGetForegroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
     if (!important)
         important = behavior == kMACaptionAppearanceBehaviorUseValue;
     return textColor.colorWithAlpha(opacity);
 }
-    
+
 String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
 {
     bool important;
-    Color textColor = captionsTextColor(important);
-
+    auto textColor = captionsTextColor(important);
     if (!textColor.isValid())
         return emptyString();
-
     return colorPropertyCSS(CSSPropertyColor, textColor, important);
 }
 
 static void appendCSS(StringBuilder& builder, CSSPropertyID id, const String& value, bool important)
 {
-    builder.append(getPropertyNameString(id));
-    builder.append(':');
-    builder.append(value);
-    if (important)
-        builder.appendLiteral(" !important");
-    builder.append(';');
+    builder.append(getPropertyNameString(id), ':', value, important ? " !important;" : ";");
 }
     
 String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
@@ -379,7 +372,6 @@ bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, co
     // Since only half of the stroke is visible because the stroke is drawn before the fill, we double the stroke width here.
     strokeWidth = strokeWidthPt * 2;
     important = behavior == kMACaptionAppearanceBehaviorUseValue;
-    
     return true;
 }
 
@@ -418,41 +410,28 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
 {
     MACaptionAppearanceBehavior behavior;
     
-    RetainPtr<CTFontDescriptorRef> font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
+    auto font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
     if (!font)
         return emptyString();
 
-    RetainPtr<CFTypeRef> name = adoptCF(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute));
+    auto name = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute)));
     if (!name)
         return emptyString();
 
     StringBuilder builder;
-    
-    builder.append(getPropertyNameString(CSSPropertyFontFamily));
-    builder.appendLiteral(": \"");
-    builder.append(static_cast<CFStringRef>(name.get()));
-    builder.append('"');
-
-    auto cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)));
-
-    if (cascadeList) {
+    builder.append("font-family: \"", name.get(), '"');
+    if (auto cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)))) {
         for (CFIndex i = 0; i < CFArrayGetCount(cascadeList.get()); i++) {
             auto fontCascade = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i));
             if (!fontCascade)
                 continue;
-            auto fontCascadeName = adoptCF(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute));
+            auto fontCascadeName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute)));
             if (!fontCascadeName)
                 continue;
-            builder.append(", \"");
-            builder.append(static_cast<CFStringRef>(fontCascadeName.get()));
-            builder.append('"');
+            builder.append(", \"", fontCascadeName.get(), '"');
         }
     }
-    
-    if (behavior == kMACaptionAppearanceBehaviorUseValue)
-        builder.appendLiteral(" !important");
-    builder.append(';');
-    
+    builder.append(behavior == kMACaptionAppearanceBehaviorUseValue ? " !important;" : ";");
     return builder.toString();
 }
 
@@ -561,43 +540,18 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     if (!MediaAccessibilityLibrary())
         return CaptionUserPreferences::captionsStyleSheetOverride();
-    
+
     String captionsColor = captionsTextColorCSS();
     String edgeStyle = captionsTextEdgeCSS();
     String fontName = captionsDefaultFontCSS();
     String background = captionsBackgroundCSS();
-    if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
-        captionsOverrideStyleSheet.appendLiteral(" ::");
-        captionsOverrideStyleSheet.append(TextTrackCue::cueShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-        
-        if (!background.isEmpty())
-            captionsOverrideStyleSheet.append(background);
-        if (!captionsColor.isEmpty())
-            captionsOverrideStyleSheet.append(captionsColor);
-        if (!edgeStyle.isEmpty())
-            captionsOverrideStyleSheet.append(edgeStyle);
-        if (!fontName.isEmpty())
-            captionsOverrideStyleSheet.append(fontName);
-        
-        captionsOverrideStyleSheet.append('}');
-    }
-    
+    if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty())
+        captionsOverrideStyleSheet.append(" ::", TextTrackCue::cueShadowPseudoId(), '{', background, captionsColor, edgeStyle, fontName, '}');
+
     String windowColor = captionsWindowCSS();
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
-    if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
-        captionsOverrideStyleSheet.appendLiteral(" ::");
-        captionsOverrideStyleSheet.append(TextTrackCue::cueBackdropShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-        
-        if (!windowColor.isEmpty())
-            captionsOverrideStyleSheet.append(windowColor);
-        if (!windowCornerRadius.isEmpty()) {
-            captionsOverrideStyleSheet.append(windowCornerRadius);
-        }
-        
-        captionsOverrideStyleSheet.append('}');
-    }
+    if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty())
+        captionsOverrideStyleSheet.append(" ::", TextTrackCue::cueBackdropShadowPseudoId(), '{', windowColor, windowCornerRadius, '}');
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
     LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting style to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());

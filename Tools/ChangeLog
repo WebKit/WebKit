@@ -1,3 +1,63 @@
+2021-05-18  Darin Adler  <darin@apple.com>
+
+        Move CFStringRef and NSString support from StringBuilder into StringConcatenateCF
+        https://bugs.webkit.org/show_bug.cgi?id=225839
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/SaturatedArithmeticOperations.cpp: Updated
+        tests for changes to SaturatedArithmetic.h.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp: Updated tests for changes
+        to StringBuilder.
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::wkMediaCaptureStateString): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        Added include of StringConcatenateCF.h.
+        Added StringTypeAdapter for WKStringRef.
+        (WTR::styleDecToStr): Use ASCIILiteral instead of StringBuilder.
+        (WTR::string): Removed unneeded toWTFString since the WKStringRef
+        StringTypeAdapter takes care of it.
+        (WTR::string): Renamed from frameToStr. Use makeString.
+        (WTR::dumpResourceURL): Use append instead of appendLiteral.
+        (WTR::dumpFrameDescriptionSuitableForTestResult): Deleted.
+        (WTR::dumpLoadEvent): Use makeString.
+        (WTR::string): Renamed from a longer name. Return a String
+        instead of building in a StringBuilder. Use makeString.
+        (WTR::string): Ditto.
+        (WTR::dumpErrorDescriptionSuitableForTestResult): Removed
+        unneeded toWTFString.
+        (WTR::dumpFrameScrollPosition): Ditto.
+        (WTR::dumpDescendantFramesText): Ditto.
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive): Removed an
+        unneeded local variable.
+        (WTR::InjectedBundlePage::dump): Removed unneeded toWTFString.
+        (WTR::InjectedBundlePage::didReceiveTitleForFrame): Ditto.
+        (WTR::InjectedBundlePage::didFinishDocumentLoadForFrame):
+        Updated for functon name change.
+        (WTR::InjectedBundlePage::willSendRequestForFrame): Ditto.
+        Also use variadic append. Also use makeString.
+        (WTR::InjectedBundlePage::didReceiveResponseForResource): Ditto.
+        (WTR::InjectedBundlePage::didFinishLoadForResource): Ditto.
+        (WTR::InjectedBundlePage::didFailLoadForResource): Ditto.
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction): Ditto.
+        (WTR::InjectedBundlePage::decidePolicyForResponse): Ditto.
+        (WTR::InjectedBundlePage::willAddMessageToConsole): Ditto.
+        (WTR::InjectedBundlePage::willSetStatusbarText): Ditto.
+        (WTR::InjectedBundlePage::willRunJavaScriptPrompt): Ditto.
+        (WTR::InjectedBundlePage::didExceedDatabaseQuota): Ditto.
+        (WTR::InjectedBundlePage::shouldInsertNode): Ditto.
+        (WTR::InjectedBundlePage::shouldInsertText): Ditto.
+        (WTR::InjectedBundlePage::shouldDeleteRange): Ditto.
+        (WTR::InjectedBundlePage::shouldChangeSelectedRange): Ditto.
+        (WTR::InjectedBundlePage::shouldApplyStyle): Ditto.
+        (WTR::InjectedBundlePage::didBeginEditing): Ditto.
+        (WTR::InjectedBundlePage::didEndEditing): Ditto.
+        (WTR::InjectedBundlePage::didChange): Ditto.
+        (WTR::InjectedBundlePage::didChangeSelection): Ditto.
+        (WTR::InjectedBundlePage::dumpHistory): Ditto.
+
 2021-05-19  Aakash Jain  <aakash_jain@apple.com>
 
         Use Python 3 for running various scripts on build.webkit.org
