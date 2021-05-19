@@ -88,10 +88,10 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
         return nullptr;
     if (keyData.k.isNull())
         return nullptr;
-    Vector<uint8_t> octetSequence;
-    if (!base64URLDecode(keyData.k, octetSequence))
+    auto octetSequence = base64URLDecode(keyData.k);
+    if (!octetSequence)
         return nullptr;
-    if (!callback(octetSequence.size() * 8, keyData.alg))
+    if (!callback(octetSequence->size() * 8, keyData.alg))
         return nullptr;
     if (usages && !keyData.use.isNull() && keyData.use != "enc")
         return nullptr;
@@ -100,14 +100,14 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;
 
-    return adoptRef(new CryptoKeyAES(algorithm, WTFMove(octetSequence), extractable, usages));
+    return adoptRef(new CryptoKeyAES(algorithm, WTFMove(*octetSequence), extractable, usages));
 }
 
 JsonWebKey CryptoKeyAES::exportJwk() const
 {
     JsonWebKey result;
     result.kty = "oct";
-    result.k = base64URLEncode(m_key);
+    result.k = base64URLEncodeToString(m_key);
     result.key_ops = usages();
     result.ext = extractable();
     return result;

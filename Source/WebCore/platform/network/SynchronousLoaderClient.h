@@ -55,7 +55,7 @@ public:
 
     void setAllowStoredCredentials(bool allow) { m_allowStoredCredentials = allow; }
     const ResourceResponse& response() const { return m_response; }
-    Vector<char>& mutableData() { return m_data; }
+    Vector<uint8_t>& mutableData() { return m_data; }
     const ResourceError& error() const { return m_error; }
     SynchronousLoaderMessageQueue& messageQueue() { return m_messageQueue.get(); }
 
@@ -75,7 +75,7 @@ private:
 
     bool m_allowStoredCredentials { false };
     ResourceResponse m_response;
-    Vector<char> m_data;
+    Vector<uint8_t> m_data;
     ResourceError m_error;
     Ref<SynchronousLoaderMessageQueue> m_messageQueue;
 };

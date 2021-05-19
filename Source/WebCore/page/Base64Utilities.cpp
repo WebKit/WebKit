@@ -38,7 +38,7 @@ ExceptionOr<String> Base64Utilities::btoa(const String& stringToEncode)
     if (!stringToEncode.isAllLatin1())
         return Exception { InvalidCharacterError };
 
-    return base64Encode(stringToEncode.latin1());
+    return base64EncodeToString(stringToEncode.latin1());
 }
 
 ExceptionOr<String> Base64Utilities::atob(const String& encodedString)
@@ -46,11 +46,11 @@ ExceptionOr<String> Base64Utilities::atob(const String& encodedString)
     if (encodedString.isNull())
         return String();
 
-    Vector<char> out;
-    if (!base64Decode(encodedString, out, Base64ValidatePadding | Base64IgnoreSpacesAndNewLines | Base64DiscardVerticalTab))
+    auto decodedData = base64Decode(encodedString, { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
+    if (!decodedData)
         return Exception { InvalidCharacterError };
 
-    return String(out.data(), out.size());
+    return String(decodedData->data(), decodedData->size());
 }
 
 }

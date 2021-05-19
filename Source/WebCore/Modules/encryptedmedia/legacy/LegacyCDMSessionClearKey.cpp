@@ -169,13 +169,13 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
                 continue;
             }
 
-            Vector<uint8_t> keyData;
-            if (!base64Decode(rawKeyData, keyData) || keyData.isEmpty()) {
+            auto keyData = base64Decode(rawKeyData);
+            if (!keyData || keyData->isEmpty()) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: unable to base64 decode key", this);
                 continue;
             }
 
-            m_cachedKeys.set(keyId, WTFMove(keyData));
+            m_cachedKeys.set(keyId, WTFMove(*keyData));
             foundValidKey = true;
         }
 

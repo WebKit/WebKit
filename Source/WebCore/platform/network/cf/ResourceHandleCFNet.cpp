@@ -85,9 +85,7 @@ static HashMap<String, RetainPtr<CFDataRef>, ASCIICaseInsensitiveHash>& clientCe
 
 static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
-    String authenticationHeader = "Basic " + base64Encode(String(credential.user() + ":" + credential.password()).utf8());
-
-    request.setHTTPHeaderField(HTTPHeaderName::Authorization, authenticationHeader);
+    request.setHTTPHeaderField(HTTPHeaderName::Authorization, credential.serializationForBasicAuthorizationHeader());
 }
 
 ResourceHandleInternal::~ResourceHandleInternal()
@@ -524,7 +522,7 @@ static void emptyPerform(void*)
 {
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     LOG(Network, "ResourceHandle::platformLoadResourceSynchronously:%s sstoredCredentialsPolicy:%u", request.url().string().utf8().data(), static_cast<unsigned>(storedCredentialsPolicy));
 

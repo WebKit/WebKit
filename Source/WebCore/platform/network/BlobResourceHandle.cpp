@@ -73,7 +73,7 @@ namespace {
 
 class BlobResourceSynchronousLoader : public ResourceHandleClient {
 public:
-    BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&);
+    BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<uint8_t>&);
 
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, CompletionHandler<void()>&&) final;
     void didFail(ResourceHandle*, const ResourceError&) final;
@@ -85,10 +85,10 @@ public:
 private:
     ResourceError& m_error;
     ResourceResponse& m_response;
-    Vector<char>& m_data;
+    Vector<uint8_t>& m_data;
 };
 
-BlobResourceSynchronousLoader::BlobResourceSynchronousLoader(ResourceError& error, ResourceResponse& response, Vector<char>& data)
+BlobResourceSynchronousLoader::BlobResourceSynchronousLoader(ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
     : m_error(error)
     , m_response(response)
     , m_data(data)
@@ -122,7 +122,7 @@ void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* hand
 
     // Read all the data.
     m_data.resize(static_cast<size_t>(response.expectedContentLength()));
-    static_cast<BlobResourceHandle*>(handle)->readSync(m_data.data(), static_cast<int>(m_data.size()));
+    static_cast<BlobResourceHandle*>(handle)->readSync(reinterpret_cast<char*>(m_data.data()), static_cast<int>(m_data.size()));
     completionHandler();
 }
 
@@ -141,7 +141,7 @@ Ref<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, cons
     return adoptRef(*new BlobResourceHandle(blobData, request, client, true));
 }
 
-void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
         error = ResourceError(webKitBlobResourceDomain, static_cast<int>(Error::MethodNotAllowed), response.url(), "Request method must be GET");

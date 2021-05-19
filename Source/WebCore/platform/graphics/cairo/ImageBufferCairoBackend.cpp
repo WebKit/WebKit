@@ -130,10 +130,7 @@ String ImageBufferCairoBackend::toDataURL(const String& mimeType, Optional<doubl
     if (encodedImage.isEmpty())
         return "data:,";
 
-    Vector<char> base64Data;
-    base64Encode(encodedImage.data(), encodedImage.size(), base64Data);
-
-    return "data:" + mimeType + ";base64," + base64Data;
+    return makeString("data:", mimeType, ";base64,", base64Encoded(encodedImage.data(), encodedImage.size()));
 }
 
 Vector<uint8_t> ImageBufferCairoBackend::toData(const String& mimeType, Optional<double> quality) const

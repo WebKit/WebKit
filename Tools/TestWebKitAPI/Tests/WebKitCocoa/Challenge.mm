@@ -176,13 +176,10 @@ RetainPtr<SecIdentityRef> testIdentity2()
     "JAH2nxKGuqtAK2hWbACu61RT5gAqAv/hB9JYnc2OiQ2VmjYkOk2GEdIjn0xSgX7W"
     "mI/hHbxKMG3Rkv9q1Cx+WB/v1t8=");
 
-    Vector<uint8_t> privateKeyBytes;
-    base64Decode(pemEncodedPrivateKey, privateKeyBytes, WTF::Base64DecodeOptions::Base64Default);
+    auto privateKeyBytes = base64Decode(pemEncodedPrivateKey);
+    auto certificateBytes = base64Decode(pemEncodedCertificate);
 
-    Vector<uint8_t> certificateBytes;
-    base64Decode(pemEncodedCertificate, certificateBytes, WTF::Base64DecodeOptions::Base64Default);
-
-    return createTestIdentity(privateKeyBytes, certificateBytes);
+    return createTestIdentity(WTFMove(*privateKeyBytes), WTFMove(*certificateBytes));
 }
 
 static RetainPtr<NSURLCredential> credentialWithIdentity()

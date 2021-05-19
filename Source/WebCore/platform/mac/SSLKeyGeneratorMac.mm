@@ -219,7 +219,7 @@ static String signedPublicKeyAndChallengeString(unsigned keySize, const CString&
     if (SecAsn1EncodeItem(coder, &signedPublicKeyAndChallenge, signedPublicKeyAndChallengeTemplate, &encodedSignedPublicKeyAndChallenge) != noErr)
         return String();
 
-    return base64Encode(encodedSignedPublicKeyAndChallenge.Data, encodedSignedPublicKeyAndChallenge.Length);
+    return base64EncodeToString(encodedSignedPublicKeyAndChallenge.Data, encodedSignedPublicKeyAndChallenge.Length);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

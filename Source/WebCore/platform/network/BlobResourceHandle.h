@@ -48,7 +48,7 @@ class BlobResourceHandle final : public FileStreamClient, public ResourceHandle 
 public:
     static Ref<BlobResourceHandle> createAsync(BlobData*, const ResourceRequest&, ResourceHandleClient*);
 
-    static void loadResourceSynchronously(BlobData*, const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
+    static void loadResourceSynchronously(BlobData*, const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
 
     void start();
     int readSync(char*, int);

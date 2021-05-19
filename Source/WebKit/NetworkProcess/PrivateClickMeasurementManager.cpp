@@ -315,14 +315,15 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
         if (!weakThis)
             return;
 
-        Vector<uint8_t> publicKeyData;
-        WTF::base64URLDecode(publicKeyBase64URL, publicKeyData);
+        auto publicKeyData = base64URLDecode(publicKeyBase64URL);
+        if (!publicKeyData)
+            return;
 
         auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-        crypto->addBytes(publicKeyData.data(), publicKeyData.size());
+        crypto->addBytes(publicKeyData->data(), publicKeyData->size());
         auto publicKeyDataHash = crypto->computeHash();
 
-        auto keyID = WTF::base64URLEncode(publicKeyDataHash.data(), publicKeyDataHash.size());
+        auto keyID = base64URLEncodeToString(publicKeyDataHash.data(), publicKeyDataHash.size());
         if (keyID != attribution.sourceUnlinkableToken()->keyIDBase64URL)
             return;
 

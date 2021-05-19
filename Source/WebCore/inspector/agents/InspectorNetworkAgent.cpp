@@ -175,7 +175,7 @@ Ref<Protocol::Network::WebSocketFrame> buildWebSocketMessage(const WebSocketFram
     return Protocol::Network::WebSocketFrame::create()
         .setOpcode(frame.opCode)
         .setMask(frame.masked)
-        .setPayloadData(frame.opCode == 1 ? String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength) : base64Encode(frame.payload, frame.payloadLength))
+        .setPayloadData(frame.opCode == 1 ? String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength) : base64EncodeToString(frame.payload, frame.payloadLength))
         .setPayloadLength(frame.payloadLength)
         .release();
 }
@@ -586,7 +586,7 @@ void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char*
         // Often the data is text and we would have a decoder, but for non-text we won't have a decoder.
         // Sync XHRs may not have a cached resource, while non-sync XHRs usually transfer data over on completion.
         if (m_loadingXHRSynchronously && resourceData && !resourceData->hasBufferedData() && !resourceData->cachedResource())
-            m_resourcesData->setResourceContent(requestId, base64Encode(data, dataLength), true);
+            m_resourcesData->setResourceContent(requestId, base64EncodeToString(data, dataLength), true);
     }
 
     m_frontendDispatcher->dataReceived(requestId, timestamp(), dataLength, encodedDataLength);
@@ -1004,7 +1004,7 @@ Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedCertificate(
 
     WTF::Persistence::Encoder encoder;
     WTF::Persistence::Coder<WebCore::CertificateInfo>::encode(encoder, certificate.value());
-    return base64Encode(encoder.buffer(), encoder.bufferSize());
+    return base64EncodeToString(encoder.buffer(), encoder.bufferSize());
 }
 
 WebSocket* InspectorNetworkAgent::webSocketForRequestId(const Protocol::Network::RequestId& requestId)
@@ -1202,11 +1202,11 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const 
         request.setHTTPHeaderFields(WTFMove(explicitHeaders));
     }
     if (!!postData) {
-        Vector<uint8_t> buffer;
-        if (!base64Decode(postData, buffer))
+        auto buffer = base64Decode(postData);
+        if (!buffer)
             return makeUnexpected("Unable to decode given postData"_s);
 
-        request.setHTTPBody(FormData::create(buffer));
+        request.setHTTPBody(FormData::create(WTFMove(*buffer)));
     }
     // FIXME: figure out how to identify when a request has been overridden when we add this to the frontend.
     pendingRequest->continueWithRequest(request);
@@ -1242,11 +1242,11 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const
 
     RefPtr<SharedBuffer> overrideData;
     if (base64Encoded) {
-        Vector<uint8_t> buffer;
-        if (!base64Decode(content, buffer))
+        auto buffer = base64Decode(content);
+        if (!buffer)
             return makeUnexpected("Unable to decode given content"_s);
 
-        overrideData = SharedBuffer::create(WTFMove(buffer));
+        overrideData = SharedBuffer::create(WTFMove(*buffer));
     } else
         overrideData = SharedBuffer::create(content.utf8().data(), content.utf8().length());
 
@@ -1268,11 +1268,11 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
 
     RefPtr<SharedBuffer> data;
     if (base64Encoded) {
-        Vector<uint8_t> buffer;
-        if (!base64Decode(content, buffer))
+        auto buffer = base64Decode(content);
+        if (!buffer)
             return makeUnexpected("Unable to decode given content"_s);
 
-        data = SharedBuffer::create(WTFMove(buffer));
+        data = SharedBuffer::create(WTFMove(*buffer));
     } else
         data = SharedBuffer::create(content.utf8().data(), content.utf8().length());
 
@@ -1405,7 +1405,7 @@ bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, Stri
         }
 
         *base64Encoded = true;
-        *result = base64Encode(buffer->data(), buffer->size());
+        *result = base64EncodeToString(buffer->data(), buffer->size());
         return true;
     }
 }

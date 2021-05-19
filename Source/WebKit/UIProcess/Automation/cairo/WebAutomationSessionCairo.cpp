@@ -49,7 +49,7 @@ static Optional<String> base64EncodedPNGData(cairo_surface_t* surface)
     if (pngData.isEmpty())
         return WTF::nullopt;
 
-    return base64Encode(pngData);
+    return base64EncodeToString(pngData);
 }
 
 Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& handle)

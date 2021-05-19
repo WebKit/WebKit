@@ -1135,11 +1135,11 @@ RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebPageP
         return nullptr;
 
     if (!m_navigationState->m_navigationDelegateMethods.webCryptoMasterKeyForWebView) {
-        Vector<uint8_t> masterKey;
-        if (!getDefaultWebCryptoMasterKey(masterKey))
+        auto masterKey = defaultWebCryptoMasterKey();
+        if (!masterKey)
             return nullptr;
 
-        return API::Data::create(masterKey.data(), masterKey.size());
+        return API::Data::create(WTFMove(*masterKey));
     }
 
     auto navigationDelegate = m_navigationState->m_navigationDelegate.get();

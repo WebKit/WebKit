@@ -69,14 +69,15 @@ template<typename CharacterType> static Optional<ResourceCryptographicDigest> pa
     if (buffer.position() == beginHashValue)
         return WTF::nullopt;
 
-    Vector<uint8_t> digest;
     StringView hashValue(beginHashValue, buffer.position() - beginHashValue);
-    if (!base64Decode(hashValue, digest, Base64ValidatePadding)) {
-        if (!base64URLDecode(hashValue, digest))
-            return WTF::nullopt;
-    }
 
-    return ResourceCryptographicDigest { *algorithm, WTFMove(digest) };
+    if (auto digest = base64Decode(hashValue, Base64DecodeOptions::ValidatePadding))
+        return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };
+
+    if (auto digest = base64URLDecode(hashValue))
+        return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };
+
+    return WTF::nullopt;
 }
 
 Optional<ResourceCryptographicDigest> parseCryptographicDigest(StringParsingBuffer<UChar>& buffer)
@@ -124,13 +125,13 @@ Optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(Str
 
 Optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest& encodedDigest)
 {
-    Vector<uint8_t> digest;
-    if (!base64Decode(encodedDigest.digest, digest, Base64ValidatePadding)) {
-        if (!base64URLDecode(encodedDigest.digest, digest))
-            return WTF::nullopt;
-    }
+    if (auto digest = base64Decode(encodedDigest.digest, Base64DecodeOptions::ValidatePadding))
+        return ResourceCryptographicDigest { encodedDigest.algorithm, WTFMove(*digest) };
 
-    return ResourceCryptographicDigest { encodedDigest.algorithm, WTFMove(digest) };
+    if (auto digest = base64URLDecode(encodedDigest.digest))
+        return ResourceCryptographicDigest { encodedDigest.algorithm, WTFMove(*digest) };
+
+    return WTF::nullopt;
 }
 
 static PAL::CryptoDigest::Algorithm toCryptoDigestAlgorithm(ResourceCryptographicDigest::Algorithm algorithm)

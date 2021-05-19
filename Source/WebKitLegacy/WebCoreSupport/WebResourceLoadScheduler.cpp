@@ -107,7 +107,7 @@ void WebResourceLoadScheduler::loadResource(Frame& frame, CachedResource& resour
     });
 }
 
-void WebResourceLoadScheduler::loadResourceSynchronously(FrameLoader& frameLoader, unsigned long, const ResourceRequest& request, ClientCredentialPolicy, const FetchOptions& options, const HTTPHeaderMap&, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void WebResourceLoadScheduler::loadResourceSynchronously(FrameLoader& frameLoader, unsigned long, const ResourceRequest& request, ClientCredentialPolicy, const FetchOptions& options, const HTTPHeaderMap&, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     ResourceHandle::loadResourceSynchronously(frameLoader.networkingContext(), request, options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use, error, response, data);
 }

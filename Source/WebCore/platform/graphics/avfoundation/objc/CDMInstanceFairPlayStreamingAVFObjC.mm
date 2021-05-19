@@ -715,7 +715,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
         identifier = adoptNS([[NSString alloc] initWithData:initData->createNSData().get() encoding:NSUTF8StringEncoding]);
 #if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)
     else if (initDataType == InitDataRegistry::cencName()) {
-        String psshString = base64Encode(initData->data(), initData->size());
+        auto psshString = base64EncodeToString(initData->data(), initData->size());
         initializationData = [NSJSONSerialization dataWithJSONObject:@{ @"pssh": (NSString*)psshString } options:NSJSONWritingPrettyPrinted error:nil];
     }
 #endif
@@ -850,11 +850,11 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             if (!keyIDString)
                 return false;
 
-            Vector<uint8_t> keyIDVector;
-            if (!base64Decode(keyIDString, keyIDVector))
+            auto keyIDVector = base64Decode(keyIDString);
+            if (keyIDVector)
                 return false;
 
-            auto keyID = SharedBuffer::create(WTFMove(keyIDVector));
+            auto keyID = SharedBuffer::create(WTFMove(*keyIDVector));
             auto foundIndex = m_currentRequest.value().requests.findMatching([&] (auto& request) {
                 auto keyIDs = keyIDsForRequest(request.get());
                 return keyIDs.findMatching([&](const Ref<SharedBuffer>& id) {
@@ -885,10 +885,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
                 auto payloadString = payloadFindResults->value->asString();
                 if (!payloadString)
                     return false;
-                Vector<uint8_t> payloadVector;
-                if (!base64Decode(payloadString, payloadVector))
+                auto payloadVector = base64Decode(payloadString);
+                if (!payloadVector)
                     return false;
-                auto payloadData = SharedBuffer::create(WTFMove(payloadVector));
+                auto payloadData = SharedBuffer::create(WTFMove(*payloadVector));
                 [request processContentKeyResponse:[PAL::getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:payloadData->createNSData().get()]];
             }
             return true;
@@ -1195,8 +1195,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
             auto entry = JSON::Object::create();
             auto& keyID = requestData.first;
             auto& payload = requestData.second;
-            entry->setString("keyID", base64Encode(keyID->data(), keyID->size()));
-            entry->setString("payload", base64Encode(payload.get().bytes, payload.get().length));
+            entry->setString("keyID", base64EncodeToString(keyID->data(), keyID->size()));
+            entry->setString("payload", base64EncodeToString(payload.get().bytes, payload.get().length));
             requestJSON->pushObject(WTFMove(entry));
         }
         auto requestBuffer = utf8Buffer(requestJSON->toJSONString());

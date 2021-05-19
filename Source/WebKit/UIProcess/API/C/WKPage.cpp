@@ -2338,13 +2338,14 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             if (m_client.copyWebCryptoMasterKey)
                 return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo)));
 
-            Vector<uint8_t> masterKey;
 #if ENABLE(WEB_CRYPTO)
-            if (!getDefaultWebCryptoMasterKey(masterKey))
+            auto masterKey = defaultWebCryptoMasterKey();
+            if (!masterKey)
                 return nullptr;
+            return API::Data::create(WTFMove(*masterKey));
+#else
+            return API::Data::create(nullptr, 0);
 #endif
-
-            return API::Data::create(masterKey.data(), masterKey.size());
         }
 
         RefPtr<API::String> signedPublicKeyAndChallengeString(WebPageProxy& page, unsigned keySizeIndex, const RefPtr<API::String>& challengeString, const URL& url) override

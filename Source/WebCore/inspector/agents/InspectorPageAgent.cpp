@@ -113,7 +113,7 @@ bool InspectorPageAgent::sharedBufferContent(RefPtr<SharedBuffer>&& buffer, cons
 bool InspectorPageAgent::dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result)
 {
     if (withBase64Encode) {
-        *result = base64Encode(data, size);
+        *result = base64EncodeToString(data, size);
         return true;
     }
 
@@ -1102,7 +1102,7 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
         return makeUnexpected("Could not create web archive for main frame"_s);
 
     RetainPtr<CFDataRef> buffer = archive->rawDataRepresentation();
-    return base64Encode(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
+    return base64EncodeToString(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
 }
 #endif
 

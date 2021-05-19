@@ -197,10 +197,10 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 
     if (UNLIKELY((size != publicKeySize) && (size != privateKeySize)))
         return false;
-    jwk.x = WTF::base64URLEncode(result.data() + 1, keySizeInBytes);
-    jwk.y = WTF::base64URLEncode(result.data() + keySizeInBytes + 1, keySizeInBytes);
+    jwk.x = base64URLEncodeToString(result.data() + 1, keySizeInBytes);
+    jwk.y = base64URLEncodeToString(result.data() + keySizeInBytes + 1, keySizeInBytes);
     if (size > publicKeySize)
-        jwk.d = WTF::base64URLEncode(result.data() + publicKeySize, keySizeInBytes);
+        jwk.d = base64URLEncodeToString(result.data() + publicKeySize, keySizeInBytes);
     return true;
 }
 

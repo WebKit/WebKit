@@ -106,7 +106,7 @@ unsigned NetworkResourcesData::ResourceData::decodeDataToContent()
         m_content = m_decoder->decodeAndFlush(m_dataBuffer->data(), dataLength);
     } else {
         m_base64Encoded = true;
-        m_content = base64Encode(m_dataBuffer->data(), dataLength);
+        m_content = base64EncodeToString(m_dataBuffer->data(), dataLength);
     }
 
     m_dataBuffer = nullptr;

@@ -174,10 +174,10 @@ void RemoteWebInspectorUIProxy::platformSave(const String& suggestedURL, const S
         m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
 
         if (base64Encoded) {
-            Vector<char> out;
-            if (!base64Decode(contentCopy, out, Base64ValidatePadding))
+            auto decodedData = base64Decode(contentCopy, Base64DecodeOptions::ValidatePadding);
+            if (!decodedData)
                 return;
-            RetainPtr<NSData> dataContent = adoptNS([[NSData alloc] initWithBytes:out.data() length:out.size()]);
+            auto dataContent = adoptNS([[NSData alloc] initWithBytes:decodedData->data() length:decodedData->size()]);
             [dataContent writeToURL:actualURL atomically:YES];
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];

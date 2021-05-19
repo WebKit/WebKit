@@ -113,11 +113,11 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
         if (!keyID)
             continue;
 
-        Vector<char> sinfData;
-        if (!WTF::base64Decode(keyID, { sinfData }, WTF::Base64IgnoreSpacesAndNewLines))
+        auto sinfData = base64Decode(keyID, Base64DecodeOptions::IgnoreSpacesAndNewLines);
+        if (!sinfData)
             continue;
 
-        sinfs.uncheckedAppend(SharedBuffer::create(WTFMove(sinfData)));
+        sinfs.uncheckedAppend(SharedBuffer::create(WTFMove(*sinfData)));
     }
 
     return sinfs;

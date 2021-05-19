@@ -63,7 +63,7 @@ void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader, WebFrame& we
     result.iterator->value->startLoading();
 }
 
-void WebURLSchemeHandlerProxy::loadSynchronously(ResourceLoadIdentifier loadIdentifier, WebFrame& webFrame, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<char>& data)
+void WebURLSchemeHandlerProxy::loadSynchronously(ResourceLoadIdentifier loadIdentifier, WebFrame& webFrame, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<uint8_t>& data)
 {
     data.shrink(0);
     if (!m_webPage.sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request, webFrame.info() }), Messages::WebPageProxy::LoadSynchronousURLSchemeTask::Reply(response, error, data))) {

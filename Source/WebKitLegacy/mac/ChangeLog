@@ -1,3 +1,19 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::wrapCryptoKey const):
+        (WebChromeClient::unwrapCryptoKey const):
+        Update to use new Optional returning defaultWebCryptoMasterKey().
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::save):
+        Update to use new Optional returning base64Decode().
+
 2021-05-17  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] WebContent process should not pull audio session category from the GPU Process

@@ -34,10 +34,10 @@ bool PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(const Stri
 {
 #if HAVE(RSA_BSSA)
     {
-        Vector<uint8_t> serverPublicKeyData;
-        if (!base64URLDecode(serverPublicKeyBase64URL, serverPublicKeyData))
+        auto serverPublicKeyData = base64URLDecode(serverPublicKeyBase64URL);
+        if (!serverPublicKeyData)
             return false;
-        auto serverPublicKey = adoptNS([[NSData alloc] initWithBytes:serverPublicKeyData.data() length:serverPublicKeyData.size()]);
+        auto serverPublicKey = adoptNS([[NSData alloc] initWithBytes:serverPublicKeyData->data() length:serverPublicKeyData->size()]);
 
         // FIXME(222018): Check error.
         m_sourceUnlinkableToken.blinder = adoptNS([PAL::allocRSABSSATokenBlinderInstance() initWithPublicKey:serverPublicKey.get() error:nullptr]);
@@ -50,7 +50,7 @@ bool PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken(const Stri
     if (!m_sourceUnlinkableToken.waitingToken)
         return false;
 
-    m_sourceUnlinkableToken.valueBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.waitingToken blindedMessage].bytes, [m_sourceUnlinkableToken.waitingToken blindedMessage].length);
+    m_sourceUnlinkableToken.valueBase64URL = base64URLEncodeToString([m_sourceUnlinkableToken.waitingToken blindedMessage].bytes, [m_sourceUnlinkableToken.waitingToken blindedMessage].length);
     return true;
 #else
     UNUSED_PARAM(serverPublicKeyBase64URL);
@@ -65,10 +65,10 @@ bool PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& 
         return false;
 
     {
-        Vector<uint8_t> serverResponseData;
-        if (!base64URLDecode(serverResponseBase64URL, serverResponseData))
+        auto serverResponseData = base64URLDecode(serverResponseBase64URL);
+        if (!serverResponseData)
             return false;
-        auto serverResponse = adoptNS([[NSData alloc] initWithBytes:serverResponseData.data() length:serverResponseData.size()]);
+        auto serverResponse = adoptNS([[NSData alloc] initWithBytes:serverResponseData->data() length:serverResponseData->size()]);
 
         // FIXME(222018): Check error.
         m_sourceUnlinkableToken.readyToken = [m_sourceUnlinkableToken.waitingToken activateTokenWithServerResponse:serverResponse.get() error:nullptr];
@@ -77,9 +77,9 @@ bool PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& 
     }
 
     SourceSecretToken token;
-    token.tokenBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.readyToken tokenContent].bytes, [m_sourceUnlinkableToken.readyToken tokenContent].length);
-    token.keyIDBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.readyToken keyId].bytes, [m_sourceUnlinkableToken.readyToken keyId].length);
-    token.signatureBase64URL = WTF::base64URLEncode([m_sourceUnlinkableToken.readyToken signature].bytes, [m_sourceUnlinkableToken.readyToken signature].length);
+    token.tokenBase64URL = base64URLEncodeToString([m_sourceUnlinkableToken.readyToken tokenContent].bytes, [m_sourceUnlinkableToken.readyToken tokenContent].length);
+    token.keyIDBase64URL = base64URLEncodeToString([m_sourceUnlinkableToken.readyToken keyId].bytes, [m_sourceUnlinkableToken.readyToken keyId].length);
+    token.signatureBase64URL = base64URLEncodeToString([m_sourceUnlinkableToken.readyToken signature].bytes, [m_sourceUnlinkableToken.readyToken signature].length);
 
     m_sourceSecretToken = WTFMove(token);
     return true;

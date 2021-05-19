@@ -1,3 +1,15 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::loadResourceSynchronously):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+        Update to match new signature. char -> uint8_t.
+
 2021-05-17  Chris Dumez  <cdumez@apple.com>
 
         Avoid more String creations when preparing SQLite statements

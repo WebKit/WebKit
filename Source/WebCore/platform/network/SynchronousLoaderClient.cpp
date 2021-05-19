@@ -73,7 +73,7 @@ void SynchronousLoaderClient::didReceiveResponseAsync(ResourceHandle*, ResourceR
 
 void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, unsigned length, int /*encodedDataLength*/)
 {
-    m_data.append(data, length);
+    m_data.append(reinterpret_cast<const uint8_t*>(data), length);
 }
 
 void SynchronousLoaderClient::didFinishLoading(ResourceHandle* handle)

@@ -598,11 +598,11 @@ bool InspectorFrontendHost::showCertificate(const String& serializedCertificate)
     if (!m_client)
         return false;
 
-    Vector<uint8_t> data;
-    if (!base64Decode(serializedCertificate, data))
+    auto data = base64Decode(serializedCertificate);
+    if (!data)
         return false;
 
-    WTF::Persistence::Decoder decoder(data.data(), data.size());
+    WTF::Persistence::Decoder decoder(data->data(), data->size());
     Optional<CertificateInfo> certificateInfo;
     decoder >> certificateInfo;
     if (!certificateInfo)

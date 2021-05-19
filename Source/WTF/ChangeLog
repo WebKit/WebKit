@@ -1,3 +1,56 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        Bring base64 encoding/decoding up to more modern WebKit conventions by:
+        - Replace use of "out parameter + bool" with Optional return values.
+        - Using enum class for enumerations.
+        - Replacing SignedOrUnsignedCharVectorAdapter/ConstSignedOrUnsignedCharVectorAdapter
+          with appropriate function overloads.
+
+        Also adds a new StringTypeAdapter for inline base64 encoding data in either makeString()
+        or StringBuilder. To make this work, a few modifications were need to the base64Encode()
+        functions to support the fixed size writeTo() function.
+
+        First, the length of the encoded data is now computed up front depending on the policy.
+        This has been extracted into a new calculateBase64EncodedSize() function used by both
+        the adaptor and by base64Encode when passed a Vector. Previously, when encoding using
+        some policies, the size was an overestimate and the resulting Vector would be resized
+        down after encoding.
+
+        Second, base64EncodeInternal was made into a template function to allow for two new 
+        base64Encode functions, one of which has a UChar* destination. These are used by the
+        adaptor to write the encoded data.
+
+        One additional small change is that now a optional map type parameter has been added
+        to all the encoders to allow using either the default map or the URL one as defined 
+        in RFC 4648. This simplifies the implementation of the StringTypeAdapter and makes the
+        base64URLEncode/base64URLDecode functions into simple convenience functions that use
+        the right defaults for the generic encode/decode functions. 
+
+        * wtf/text/Base64.cpp:
+        (WTF::base64EncodeInternal):
+        (WTF::base64Encode):
+        (WTF::base64DecodeInternal):
+        (WTF::base64Decode):
+        (WTF::base64URLDecode):
+        (WTF::base64URLEncode): Deleted.
+        * wtf/text/Base64.h:
+        (WTF::base64Decode):
+        (WTF::base64Encode):
+        (WTF::base64URLEncode):
+        (WTF::isBase64OrBase64URLCharacter):
+        (WTF::calculateBase64EncodedSize):
+        (WTF::base64Encoded):
+        (WTF::base64URLEncoded):
+        (WTF::StringTypeAdapter<Base64Specification>::StringTypeAdapter):
+        (WTF::StringTypeAdapter<Base64Specification>::length const):
+        (WTF::StringTypeAdapter<Base64Specification>::is8Bit const):
+        (WTF::StringTypeAdapter<Base64Specification>::writeTo const):
+
 2021-05-18  Robin Morisset  <rmorisset@apple.com>
 
         Make AirAllocateRegistersByGraphColoring use less memory

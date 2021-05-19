@@ -344,7 +344,7 @@ void Connection::webSocketHandshake(CompletionHandler<void()>&& connectionHandle
             sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
             SHA1::Digest hash;
             sha1.computeHash(hash);
-            return base64Encode(hash.data(), SHA1::hashSize);
+            return base64EncodeToString(hash.data(), SHA1::hashSize);
         };
 
         connection.send(HTTPResponse(101, {

@@ -315,18 +315,13 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
 
 static String sandboxFilePath(const String& directoryPath, const CString& header)
 {
-    StringBuilder sandboxFile;
-    sandboxFile.append(directoryPath);
-    sandboxFile.append("/CompiledSandbox+");
-
     // Make the filename semi-unique based on the contents of the header.
+
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(header.data(), header.length());
-    Vector<uint8_t> hash = crypto->computeHash();
-    String readableHash = WTF::base64URLEncode(hash.data(), hash.size());
+    auto hash = crypto->computeHash();
 
-    sandboxFile.append(readableHash);
-    return sandboxFile.toString();
+    return makeString(directoryPath, "/CompiledSandbox+", base64URLEncoded(hash.data(), hash.size()));
 }
 
 static bool ensureSandboxCacheDirectory(const SandboxInfo& info)

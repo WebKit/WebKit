@@ -82,10 +82,8 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
 {
     HashSet<String> result;
     for (auto& credentialDescriptor : credentialDescriptors) {
-        if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal)
-            && credentialDescriptor.type == PublicKeyCredentialType::PublicKey
-            && credentialDescriptor.idVector.size() == credentialIdLength)
-            result.add(base64Encode(credentialDescriptor.idVector.data(), credentialDescriptor.idVector.size()));
+        if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal) && credentialDescriptor.type == PublicKeyCredentialType::PublicKey && credentialDescriptor.idVector.size() == credentialIdLength)
+            result.add(base64EncodeToString(credentialDescriptor.idVector.data(), credentialDescriptor.idVector.size()));
     }
     return result;
 }
@@ -241,7 +239,7 @@ void LocalAuthenticator::makeCredential()
         if (notFound != m_existingCredentials.findMatching([&excludeCredentialIds] (auto& credential) {
             auto* rawId = credential->rawId();
             ASSERT(rawId);
-            return excludeCredentialIds.contains(base64Encode(rawId->data(), rawId->byteLength()));
+            return excludeCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength()));
         })) {
             receiveException({ NotAllowedError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
             return;
@@ -518,7 +516,7 @@ void LocalAuthenticator::getAssertion()
         }
 
         auto* rawId = credential->rawId();
-        if (allowCredentialIds.contains(base64Encode(rawId->data(), rawId->byteLength())))
+        if (allowCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength())))
             assertionResponses.uncheckedAppend(credential.copyRef());
     }
     if (assertionResponses.isEmpty()) {

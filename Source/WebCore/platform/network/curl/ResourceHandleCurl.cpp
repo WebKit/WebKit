@@ -368,7 +368,7 @@ void ResourceHandle::restartRequestWithCredential(const ProtectionSpace& protect
     d->m_curlRequest->start();
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     ASSERT(isMainThread());
     ASSERT(!request.isEmpty());
@@ -562,9 +562,9 @@ void ResourceHandle::handleDataURL()
 
         // didReceiveResponse might cause the client to be deleted.
         if (client()) {
-            Vector<char> out;
-            if (base64Decode(data, out, Base64IgnoreSpacesAndNewLines) && out.size() > 0)
-                client()->didReceiveBuffer(this, SharedBuffer::create(out.data(), out.size()), originalSize);
+            auto decodedData = base64Decode(data, Base64DecodeOptions::IgnoreSpacesAndNewLines);
+            if (decodedData && decodedData->size() > 0)
+                client()->didReceiveBuffer(this, SharedBuffer::create(decodedData->data(), decodedData->size()), originalSize);
         }
     } else {
         TextEncoding encoding(charset);

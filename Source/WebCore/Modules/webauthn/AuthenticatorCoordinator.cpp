@@ -64,7 +64,7 @@ static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferS
         object->setString("type"_s, "webauthn.get"_s);
         break;
     }
-    object->setString("challenge"_s, WTF::base64URLEncode(challenge.data(), challenge.length()));
+    object->setString("challenge"_s, base64URLEncodeToString(challenge.data(), challenge.length()));
     object->setString("origin"_s, origin.toRawString());
 
     auto utf8JSONString = object->toJSONString().utf8();

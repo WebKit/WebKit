@@ -1,3 +1,294 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        - Updates to use new signatures for base64 encoding/decoding including
+          utilizing the string type adaptor and makeString.
+        - Replace out parameter based getDefaultWebCryptoMasterKey() with 
+          Optional<Vector<uint8_t>> defaultWebCryptoMasterKey().
+        - Update synchronous loading code path to use uint8_t* consistently for
+          data buffer representation.
+        - Replace out parameters in quotedPrintableEncode/quotedPrintableDecode
+          with Optional.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsKeyids):
+        Update to use new base64URLDecode.
+
+        (WebCore::sanitizeKeyids): 
+        Update to use new base64URLEncodeToString()
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::update): 
+        Update to use new base64Decode().
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::jsValueWithDataInContext):
+        (WebCore::jsValueWithAVMetadataItemInContext):
+        Update to use new base64EncodeToString(). Replace string concatentation
+        using operator+ with makeString().
+
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinatorInternal::produceClientDataJson):
+        Update to use new base64URLEncodeToString().
+
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::PublicKeyCredential):
+        Update to use new base64URLEncodeToString().
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::generateSecWebSocketKey):
+        (WebCore::WebSocketHandshake::getExpectedWebSocketAccept):
+        Update to use new base64URLEncodeToString().
+
+        * crypto/SerializedCryptoKeyWrap.h:
+        Change from outparameter based getDefaultWebCryptoMasterKey() to new
+        Optional<Vector<uint8_t>> defaultWebCryptoMasterKey().
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        Update to use new base64URLEncodeToString().
+
+        * crypto/gcrypt/SerializedCryptoKeyWrapGCrypt.cpp:
+        (WebCore::defaultWebCryptoMasterKey):
+        (WebCore::getDefaultWebCryptoMasterKey): Deleted.
+        Update for new defaultWebCryptoMasterKey() signature.
+
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::importJwk):
+        (WebCore::CryptoKeyAES::exportJwk const):
+        Update to use new base64URLDecode / base64URLEncodeToString().
+        
+        * crypto/keys/CryptoKeyEC.cpp:
+        (WebCore::CryptoKeyEC::importJwk):
+        Update to use new base64URLDecode.
+
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::importJwk):
+        (WebCore::CryptoKeyHMAC::exportJwk const):
+        Update to use new base64URLDecode / base64URLEncodeToString().
+
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::importJwk):
+        (WebCore::CryptoKeyRSA::exportJwk const):
+        Update to use new base64URLDecode / base64URLEncodeToString().
+
+        * crypto/mac/CryptoKeyECMac.cpp:
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        Update to use new base64URLEncodeToString().
+
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::createAndStoreMasterKey):
+        (WebCore::findMasterKey):
+        (WebCore::defaultWebCryptoMasterKey):
+        (WebCore::getDefaultWebCryptoMasterKey): Deleted.
+        Update for new defaultWebCryptoMasterKey() signature.
+
+        * crypto/openssl/SerializedCryptoKeyWrapOpenSSL.cpp:
+        (WebCore::defaultWebCryptoMasterKey):
+        (WebCore::getDefaultWebCryptoMasterKey): Deleted.
+        Update for new defaultWebCryptoMasterKey() signature.
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::convertToDataURL):
+        Update to use new base64EncodeToString().
+
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::createDigest):
+        Update to use new base64EncodeToString().
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::showCertificate):
+        Update to use new base64URLDecode / base64URLEncodeToString().
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        Update to use new base64EncodeToString().
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::computeContentSecurityPolicySHA256Hash):
+        Update to use new base64Decode / base64EncodeToString().
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::Inspector::buildWebSocketMessage):
+        (WebCore::InspectorNetworkAgent::didReceiveData):
+        (WebCore::InspectorNetworkAgent::getSerializedCertificate):
+        (WebCore::InspectorNetworkAgent::interceptWithRequest):
+        (WebCore::InspectorNetworkAgent::interceptWithResponse):
+        (WebCore::InspectorNetworkAgent::interceptRequestWithResponse):
+        (WebCore::InspectorNetworkAgent::cachedResourceContent):
+        Update to use new base64Decode / base64EncodeToString().
+
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::dataContent):
+        (WebCore::InspectorPageAgent::archive):
+        Update to use new base64EncodeToString().
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        Switch to using Vector<uint8_t> buffer to match new loadResourceSynchronously
+        signature.
+
+        * loader/LoaderStrategy.h:
+        Switch to using Vector<uint8_t> for the data buffer.
+
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::PrivateClickMeasurement::EphemeralSourceNonce::isValid const):
+        Update to use new base64URLDecode.
+
+        * loader/ResourceCryptographicDigest.cpp:
+        (WebCore::parseCryptographicDigestImpl):
+        (WebCore::decodeEncodedResourceCryptographicDigest):
+        Update to use new base64Decode.
+
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::generateMHTMLData):
+        Switch to using new base64Encode and new quotedPrintableEncode.
+
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::parseNextPart):
+        Switch to using new base64Decode and new quotedPrintableDecode.
+
+        * loader/cocoa/PrivateClickMeasurementCocoa.mm:
+        (WebCore::PrivateClickMeasurement::calculateAndUpdateSourceUnlinkableToken):
+        (WebCore::PrivateClickMeasurement::calculateAndUpdateSourceSecretToken):
+        Update to use new base64URLDecode / base64URLEncodeToString().
+
+        * page/Base64Utilities.cpp:
+        (WebCore::Base64Utilities::btoa):
+        (WebCore::Base64Utilities::atob):
+        Update to use new base64Decode / base64EncodeToString().
+    
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        Update to use new base64Decode.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+        * platform/SharedBuffer.h:
+        Add overload for append which allows passing in a uint8_t*.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::parseLicenseFormat):
+        (WebCore::extractKeyidsFromCencInitData):
+        (WebCore::extractKeyIdFromWebMInitData):
+        (WebCore::CDMInstanceSessionClearKey::removeSessionData):
+        Update to use new base64URLDecode / base64URLEncodeToString().
+
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::extractSinfData):
+        Update to use new base64Decode.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        Update to use new base64Decode / base64EncodeToString().
+
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        (WebCore::ImageBufferCairoBackend::toDataURL const):
+        Update to use new base64EncodeToString().
+
+        * platform/graphics/cg/ImageBufferUtilitiesCG.cpp:
+        (WebCore::dataURL):
+        Update to use new base64EncodeToString().
+
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createUniqueFontName):
+        Update to use new base64EncodeToString().
+
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::createUniqueFontName):
+        Update to use new base64EncodeToString().
+
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::signedPublicKeyAndChallengeString):
+        Update to use new base64EncodeToString().
+
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::loadBlobResourceSynchronously):
+        Switch to using Vector<uint8_t> buffer to match new loadResourceSynchronously
+        signature.
+
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/BlobResourceHandle.h:
+        (WebCore::BlobResourceHandle::loadResourceSynchronously):
+        Switch to using Vector<uint8_t> buffer to match new loadResourceSynchronously
+        signature.
+
+        * platform/network/CredentialBase.cpp:
+        * platform/network/CredentialBase.h:
+        (WebCore::CredentialBase::serializationForBasicAuthorizationHeader const):
+        Add helper to construct Basic auth header to replace duplicated logic in
+        call sites.
+
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::decodeBase64):
+        (WebCore::DataURLDecoder::decodeEscaped):
+        (WebCore::DataURLDecoder::decodeSynchronously):
+        * platform/network/DataURLDecoder.h:
+        Update to use new base64Decode.
+
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        Switch to using Vector<uint8_t> for the data buffer in the synchronous load.
+
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::didReceiveData):
+        * platform/network/SynchronousLoaderClient.h:
+        Switch to using Vector<uint8_t> buffer to match new loadResourceSynchronously
+        signature.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::applyBasicAuthorizationHeader):
+        Use new serializationForBasicAuthorizationHeader() helper.
+
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        Switch to using Vector<uint8_t> for the data buffer in the synchronous load.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::handleDataURL):
+        Switch to using Vector<uint8_t> for the data buffer in the synchronous load.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::applyBasicAuthorizationHeader):
+        Use new serializationForBasicAuthorizationHeader() helper.
+
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        Switch to using Vector<uint8_t> for the data buffer in the synchronous load.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        Switch to using Vector<uint8_t> for the data buffer in the synchronous load.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::HostTLSCertificateSet::computeCertificateHash):
+        Update to use new base64EncodeToString().
+
+        * platform/text/DecodeEscapeSequences.h:
+        (WebCore::decodeURLEscapeSequencesAsData):
+        Switch to returning Vector<uint8_t>.
+
+        * platform/text/QuotedPrintable.cpp:
+        * platform/text/QuotedPrintable.h:
+        (WebCore::lengthOfLineEndingAtIndex):
+        (WebCore::quotedPrintableEncode):
+        (WebCore::quotedPrintableDecode):
+        Replace uses of Vector<char> with Vector<uint8_t> and the out parameters
+        with Optional return values.
+
+        * platform/win/SSLKeyGeneratorWin.cpp:
+        (WebCore::signedPublicKeyAndChallengeString):
+        Update to use new base64EncodeToString().
+
+        * workers/service/server/SWScriptStorage.cpp:
+        (WebCore::SWScriptStorage::sha2Hash const):
+        Update to use new base64URLEncodeToString().
+
 2021-05-19  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] use a `dictionary ApplePayPaymentMethodModeDetails` instead of a raw `JSObject`

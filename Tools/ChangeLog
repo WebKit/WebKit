@@ -1,3 +1,32 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        Update to use updated base64 and defaultWebCryptoMasterKey() related
+        functions.
+
+        * TestWebKitAPI/TCPServer.cpp:
+        (TestWebKitAPI::TCPServer::startSecureConnection):
+        (TestWebKitAPI::TCPServer::testCertificate):
+        (TestWebKitAPI::TCPServer::testPrivateKey):
+        * TestWebKitAPI/Tests/WebCore/ISOBox.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/SerializedCryptoKeyWrap.mm:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (testIdentity2):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/SSLKeyGenerator.mm:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::Connection::webSocketHandshake):
+
 2021-05-19  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Deprecate webkitpy/tool/grammar.py

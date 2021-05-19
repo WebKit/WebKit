@@ -162,7 +162,7 @@ void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionRespo
     for (; itr != responses.end(); ++itr) {
         auto* rawId = itr->get().rawId();
         ASSERT(rawId);
-        auto rawIdBase64 = base64Encode(rawId->data(), rawId->byteLength());
+        auto rawIdBase64 = base64EncodeToString(rawId->data(), rawId->byteLength());
         if (rawIdBase64 == preferredCredentialIdBase64)
             break;
     }

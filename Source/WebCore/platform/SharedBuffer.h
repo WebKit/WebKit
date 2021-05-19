@@ -112,6 +112,7 @@ public:
 
     void append(const SharedBuffer&);
     void append(const char*, size_t);
+    void append(const uint8_t*, size_t);
     void append(Vector<char>&&);
 
     void clear();

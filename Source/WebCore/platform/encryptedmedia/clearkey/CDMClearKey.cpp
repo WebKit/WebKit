@@ -79,12 +79,15 @@ static Optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::Object
             if (!keyValue)
                 return false;
 
-            KeyIDType keyIDData;
-            Vector<uint8_t> keyHandleValueData;
-            if (!WTF::base64URLDecode(keyID, { keyIDData }) || !WTF::base64URLDecode(keyValue, { keyHandleValueData }))
+            auto keyIDData = base64URLDecode(keyID);
+            if (!keyIDData)
+                return false;
+        
+            auto keyHandleValueData = base64URLDecode(keyValue);
+            if (!keyHandleValueData)
                 return false;
 
-            decodedKeys.append(KeyHandle::create(CDMInstanceSession::KeyStatus::Usable, WTFMove(keyIDData), WTFMove(keyHandleValueData)));
+            decodedKeys.append(KeyHandle::create(CDMInstanceSession::KeyStatus::Usable, WTFMove(*keyIDData), WTFMove(*keyHandleValueData)));
             return true;
         });
     if (!validFormat)
@@ -215,8 +218,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     // "kids"
     // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
     for (unsigned i = 0; i < keyIdCount; i++) {
-        String keyId = WTF::base64URLEncode(&data[index], ClearKey::KeyIDSizeInBytes);
-        keyIdsArray->pushString(keyId);
+        keyIdsArray->pushString(base64URLEncodeToString(&data[index], ClearKey::KeyIDSizeInBytes));
         index += ClearKey::KeyIDSizeInBytes;
     }
 
@@ -243,8 +245,7 @@ static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initDa
     // The format is a JSON object containing the following members:
     // "kids"
     // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
-    String keyId = WTF::base64URLEncode(initData.data(), initData.size());
-    keyIdsArray->pushString(keyId);
+    keyIdsArray->pushString(base64URLEncodeToString(initData.data(), initData.size()));
 
     object->setArray("kids", WTFMove(keyIdsArray));
     CString jsonData = object->toJSONString().utf8();
@@ -587,7 +588,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
             auto array = JSON::Array::create();
             for (const auto& key : m_keyStore) {
                 ASSERT(key->id().size() <= std::numeric_limits<unsigned>::max());
-                array->pushString(WTF::base64URLEncode(key->id().data(), key->id().size()));
+                array->pushString(base64URLEncodeToString(key->id().data(), key->id().size()));
             }
             rootObject->setArray("kids", WTFMove(array));
         }

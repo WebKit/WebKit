@@ -212,10 +212,10 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     m_completed = true;
     
     if (isSync()) {
-        Vector<char> data;
+        Vector<uint8_t> data;
         if (m_syncData) {
             data.resize(m_syncData->size());
-            memcpy(data.data(), reinterpret_cast<const char*>(m_syncData->data()), m_syncData->size());
+            memcpy(data.data(), reinterpret_cast<const uint8_t*>(m_syncData->data()), m_syncData->size());
         }
 
         m_syncCompletionHandler(m_syncResponse, error, WTFMove(data));

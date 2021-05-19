@@ -60,12 +60,25 @@ public:
             memcpy(copiedBytes, bytes, size);
         }
 
-        return createWithoutCopying(copiedBytes, size, fastFreeBytes, nullptr);
+        return createWithoutCopying(copiedBytes, size, [] (unsigned char* bytes, const void*) {
+            if (bytes)
+                fastFree(static_cast<void*>(bytes));
+        }, nullptr);
     }
     
     static Ref<Data> create(const Vector<unsigned char>& buffer)
     {
         return create(buffer.data(), buffer.size());
+    }
+
+    static Ref<Data> create(Vector<unsigned char>&& buffer)
+    {
+        auto bufferSize = buffer.size();
+        auto bufferPointer = buffer.releaseBuffer().leakPtr();
+        return createWithoutCopying(bufferPointer, bufferSize, [] (unsigned char* bytes, const void*) {
+            if (bytes)
+                WTF::VectorMalloc::free(bytes);
+        }, nullptr);
     }
 
     static RefPtr<Data> create(const IPC::DataReference&);
@@ -94,12 +107,6 @@ private:
         , m_freeDataFunction(freeDataFunction)
         , m_context(context)
     {
-    }
-
-    static void fastFreeBytes(unsigned char* bytes, const void*)
-    {
-        if (bytes)
-            fastFree(static_cast<void*>(bytes));
     }
 
     const unsigned char* m_bytes { nullptr };

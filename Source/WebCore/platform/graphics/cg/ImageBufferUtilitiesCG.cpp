@@ -174,10 +174,7 @@ static RetainPtr<CFDataRef> cfData(const PixelBuffer& source, const String& mime
 
 String dataURL(CFDataRef data, const String& mimeType)
 {
-    Vector<char> base64Data;
-    base64Encode(CFDataGetBytePtr(data), CFDataGetLength(data), base64Data);
-
-    return "data:" + mimeType + ";base64," + base64Data;
+    return makeString("data:", mimeType, ";base64,", base64Encoded(CFDataGetBytePtr(data), CFDataGetLength(data)));
 }
 
 String dataURL(const PixelBuffer& source, const String& mimeType, Optional<double> quality)
