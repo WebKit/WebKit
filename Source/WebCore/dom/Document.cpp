@@ -7288,26 +7288,26 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             elementsToSetHover.append(element);
     }
 
-    if (!elementsToClearActive.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToClearActive)
-            element->setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
-    if (!elementsToSetActive.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToSetActive)
-            element->setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
-    if (!elementsToClearHover.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToClearHover)
-            element->setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
-    if (!elementsToSetHover.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToSetHover)
-            element->setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
+    auto changeState = [](auto& elements, auto pseudoClassType, auto&& setter) {
+        if (elements.isEmpty())
+            return;
+        Style::PseudoClassChangeInvalidation styleInvalidation { *elements.last(), pseudoClassType, Style::InvalidationScope::Descendants };
+        for (auto& element : elements)
+            setter(*element);
+    };
+
+    changeState(elementsToClearActive, CSSSelector::PseudoClassActive, [](auto& element) {
+        element.setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
+    changeState(elementsToSetActive, CSSSelector::PseudoClassActive, [](auto& element) {
+        element.setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
+    changeState(elementsToClearHover, CSSSelector::PseudoClassHover, [](auto& element) {
+        element.setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
+    changeState(elementsToSetHover, CSSSelector::PseudoClassHover, [](auto& element) {
+        element.setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
 }
 
 bool Document::haveStylesheetsLoaded() const
