@@ -2887,8 +2887,12 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
 {
     UnlinkedCodeBlock* unlinkedCode = m_unlinkedCode.get();
     size_t unlinkedIdentifiers = unlinkedCode->numberOfIdentifiers();
+#if ENABLE(DFG_JIT)
     size_t numberOfDFGIdentifiers = this->numberOfDFGIdentifiers();
     size_t numberOfIdentifiers = unlinkedIdentifiers + numberOfDFGIdentifiers;
+#else
+    size_t numberOfIdentifiers = unlinkedIdentifiers;
+#endif
 
     if (numberOfIdentifiers > 100) {
         if (m_cachedIdentifierUids.size() != numberOfIdentifiers) {
@@ -2900,6 +2904,7 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
                 const Identifier& identifier = unlinkedCode->identifier(index);
                 cachedIdentifierUids.add(identifier.impl());
             }
+#if ENABLE(DFG_JIT)
             if (numberOfDFGIdentifiers) {
                 ASSERT(JITCode::isOptimizingJIT(jitType()));
                 auto& dfgIdentifiers = m_jitCode->dfgCommon()->m_dfgIdentifiers;
@@ -2908,6 +2913,7 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
                     cachedIdentifierUids.add(identifier.impl());
                 }
             }
+#endif
             WTF::storeStoreFence();
             m_cachedIdentifierUids = WTFMove(cachedIdentifierUids);
         }
@@ -2919,6 +2925,7 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
         if (identifier.impl() == uid)
             return true;
     }
+#if ENABLE(DFG_JIT)
     ASSERT(JITCode::isOptimizingJIT(jitType()));
     auto& dfgIdentifiers = m_jitCode->dfgCommon()->m_dfgIdentifiers;
     for (unsigned index = 0; index < numberOfDFGIdentifiers; ++index) {
@@ -2926,6 +2933,7 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
         if (identifier.impl() == uid)
             return true;
     }
+#endif
     return false;
 }
 #endif

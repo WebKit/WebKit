@@ -1,5 +1,17 @@
 2021-05-19  Mark Lam  <mark.lam@apple.com>
 
+        Speed up debug validation in CacheableIdentifier::createFromIdentifierOwnedByCodeBlock().
+        https://bugs.webkit.org/show_bug.cgi?id=225948
+
+        Not reviewed.
+
+        Build fix after r277727.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hasIdentifier):
+
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
         Ripping out broken Baseline JIT rare case profiling.
         https://bugs.webkit.org/show_bug.cgi?id=225983
 
