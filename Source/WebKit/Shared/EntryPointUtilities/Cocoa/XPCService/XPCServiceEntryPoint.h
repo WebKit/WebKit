@@ -106,34 +106,34 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     InitializeWebKit2();
 
     if (!delegate.checkEntitlements())
-        CRASH();
+        exit(EXIT_FAILURE);
 
     AuxiliaryProcessInitializationParameters parameters;
     if (priorityBoostMessage)
         parameters.priorityBoostMessage = priorityBoostMessage;
 
     if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))
-        CRASH();
+        exit(EXIT_FAILURE);
 
     if (!delegate.getClientIdentifier(parameters.clientIdentifier))
-        CRASH();
+        exit(EXIT_FAILURE);
 
     // The host process may not have a bundle identifier (e.g. a command line app), so don't require one.
     delegate.getClientBundleIdentifier(parameters.clientBundleIdentifier);
 
     if (!delegate.getClientSDKVersion(parameters.clientSDKVersion))
-        CRASH();
+        exit(EXIT_FAILURE);
 
     WebCore::ProcessIdentifier processIdentifier;
     if (!delegate.getProcessIdentifier(processIdentifier))
-        CRASH();
+        exit(EXIT_FAILURE);
     parameters.processIdentifier = processIdentifier;
 
     if (!delegate.getClientProcessName(parameters.uiProcessName))
-        CRASH();
+        exit(EXIT_FAILURE);
 
     if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
-        CRASH();
+        exit(EXIT_FAILURE);
 
     // Set the task default voucher to the current value (as propagated by XPC).
     voucher_replace_default_voucher();

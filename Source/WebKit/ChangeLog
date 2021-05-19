@@ -1,3 +1,15 @@
+2021-05-18  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r277683): WebContent process crashing in unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=225955
+        rdar://78184041
+
+        Unreviewed partial revert.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        Revert the CRASH() part of r277683 because it is causing mysterious unit testing failures.
+
 2021-05-18  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Titlebar separator doesn't show when WKWebView is scrolled
