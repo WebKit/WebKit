@@ -214,8 +214,8 @@ namespace JSC {
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
 
-        void compileWithoutLinking(JITCompilationEffort);
-        CompilationResult link();
+        void compileAndLinkWithoutFinalizing(JITCompilationEffort);
+        CompilationResult finalizeOnMainThread();
 
         void doMainThreadPreparationBeforeCompile();
         
@@ -270,6 +270,7 @@ namespace JSC {
         void privateCompileMainPass();
         void privateCompileLinkPass();
         void privateCompileSlowCases();
+        void link();
         CompilationResult privateCompile(JITCompilationEffort);
         
         void privateCompileGetByVal(const ConcurrentJSLocker&, ByValInfo*, ReturnAddressPtr, JITArrayMode);
@@ -1044,6 +1045,7 @@ namespace JSC {
         RefPtr<Profiler::Compilation> m_compilation;
 
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
+        std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
 
         HashMap<const Instruction*, void*> m_instructionToMathIC;
         HashMap<const Instruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
@@ -1052,6 +1054,8 @@ namespace JSC {
         bool m_canBeOptimizedOrInlined;
         bool m_shouldEmitProfiling;
         BytecodeIndex m_loopOSREntryBytecodeIndex;
+
+        RefPtr<DirectJITCode> m_jitCode;
     };
 
 } // namespace JSC

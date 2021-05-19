@@ -672,7 +672,7 @@ void JIT::privateCompileSlowCases()
 #endif
 }
 
-void JIT::compileWithoutLinking(JITCompilationEffort effort)
+void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
     MonotonicTime before { };
     if (UNLIKELY(computeCompileTimes()))
@@ -846,14 +846,16 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         
         dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", m_linkBuffer->size(), " bytes in ", (after - before).milliseconds(), " ms.\n");
     }
+
+    link();
 }
 
-CompilationResult JIT::link()
+void JIT::link()
 {
     LinkBuffer& patchBuffer = *m_linkBuffer;
     
     if (patchBuffer.didFailToAllocate())
-        return CompilationFailed;
+        return;
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (auto& record : m_switches) {
@@ -889,12 +891,6 @@ CompilationResult JIT::link()
             break;
         }
         }
-    }
-
-    for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
-        HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
-        // FIXME: <rdar://problem/39433318>.
-        handler.nativeCode = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_labels[handler.target]);
     }
 
 #if ENABLE(EXTRA_CTI_THUNKS)
@@ -977,12 +973,11 @@ CompilationResult JIT::link()
         m_codeBlock->setJITCodeMap(jitCodeMapBuilder.finalize());
     }
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
-
     if (UNLIKELY(Options::dumpDisassembly())) {
         m_disassembler->dump(patchBuffer);
         patchBuffer.didAlreadyDisassemble();
     }
+
     if (UNLIKELY(m_compilation)) {
         if (Options::disassembleBaselineForProfiler())
             m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
@@ -990,25 +985,45 @@ CompilationResult JIT::link()
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        m_codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
+        m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer);
     
     CodeRef<JSEntryPtrTag> result = FINALIZE_CODE(
         patchBuffer, JSEntryPtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::BaselineJIT)).data());
     
-    m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
-        static_cast<double>(result.size()) /
-        static_cast<double>(m_codeBlock->instructionsSize()));
-
     {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
         m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
     }
-    m_codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(result, withArityCheck, JITType::BaselineJIT)));
+
+    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
+    m_jitCode = adoptRef(*new DirectJITCode(result, withArityCheck, JITType::BaselineJIT));
 
     if (JITInternal::verbose)
         dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start().untaggedPtr(), result.executableMemory()->end().untaggedPtr());
+}
+
+CompilationResult JIT::finalizeOnMainThread()
+{
+    RELEASE_ASSERT(!isCompilationThread());
+
+    if (!m_jitCode)
+        return CompilationFailed;
+
+    for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
+        HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
+        // FIXME: <rdar://problem/39433318>.
+        handler.nativeCode = m_codeBlock->jitCodeMap().find(BytecodeIndex(handler.target)).retagged<ExceptionHandlerPtrTag>();
+    }
+
+    if (m_pcToCodeOriginMap)
+        m_codeBlock->setPCToCodeOriginMap(WTFMove(m_pcToCodeOriginMap));
+
+    m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
+        static_cast<double>(m_jitCode->size()) /
+        static_cast<double>(m_codeBlock->instructionsSize()));
+
+    m_codeBlock->setJITCode(m_jitCode.releaseNonNull());
 
     return CompilationSuccessful;
 }
@@ -1016,8 +1031,8 @@ CompilationResult JIT::link()
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 {
     doMainThreadPreparationBeforeCompile();
-    compileWithoutLinking(effort);
-    return link();
+    compileAndLinkWithoutFinalizing(effort);
+    return finalizeOnMainThread();
 }
 
 void JIT::privateCompileExceptionHandlers()
