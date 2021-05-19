@@ -1,3 +1,11 @@
+2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update two baselines of inspector test that were failing.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/inspector/network/resource-sizes-network-expected.txt:
+        * platform/gtk/inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2021-05-18  Robert Jenner  <jenner@apple.com>
 
         Disable WebSQL in WebKitTestRunner

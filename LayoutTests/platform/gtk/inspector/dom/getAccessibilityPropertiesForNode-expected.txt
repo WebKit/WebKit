@@ -289,19 +289,25 @@ Total elements to be tested: 122.
     exists: true
     label:
     role: button
+    childNodeIds.length: 1
     focused: false
     required: false
     isPopUpButton: true
 
 <option>not selected</option>
-    exists: false
+    exists: true
     label:
-    role:
+    role: option
+    hidden: true
+    parentNodeId: exists
 
-<option selected="">FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
-    exists: false
+<option selected="">selected</option>
+    exists: true
     label:
-    role:
+    role: option
+    hidden: true
+    parentNodeId: exists
+    selected: true
 
 <img src="data:image/gif..." alt="x" style="display:none;">
     exists: false

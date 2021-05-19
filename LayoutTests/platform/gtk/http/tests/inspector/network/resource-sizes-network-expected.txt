@@ -7,141 +7,97 @@ PASS: statusCode should be 200.
 PASS: compressed should be false.
 PASS: responseSource should be Symbol(network).
 size: 2955
-requestBodyTransferSize: NaN
-responseBodyTransferSize: NaN
+requestBodyTransferSize: 0
+responseBodyTransferSize: 2955
 estimatedNetworkEncodedSize: 2955
-networkEncodedSize: NaN
+networkEncodedSize: 2955
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-FAIL: networkTotalTransferSize should be >= (encoded body size + headers).
-    Expected: greater than or equal to 2975
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: responseHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
 
--- Running test case: Resource.Size.Network.empty
+-- Running test case: Resource.Size.Network.text.empty
 PASS: statusCode should be 200.
 PASS: compressed should be false.
 PASS: responseSource should be Symbol(network).
-size: NaN
-requestBodyTransferSize: NaN
-responseBodyTransferSize: NaN
+size: 0
+requestBodyTransferSize: 0
+responseBodyTransferSize: 0
 estimatedNetworkEncodedSize: 0
-networkEncodedSize: NaN
+networkEncodedSize: 0
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-FAIL: networkTotalTransferSize should be >= (encoded body size + headers).
-    Expected: greater than or equal to 20
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: responseHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
 
 -- Running test case: Resource.Size.Network.text.gzipped
 PASS: statusCode should be 200.
 PASS: compressed should be true.
 PASS: responseSource should be Symbol(network).
 size: 2955
-requestBodyTransferSize: NaN
-responseBodyTransferSize: NaN
-estimatedNetworkEncodedSize: 2995
-networkEncodedSize: NaN
+requestBodyTransferSize: 0
+responseBodyTransferSize: 1229
+estimatedNetworkEncodedSize: 1229
+networkEncodedSize: 1229
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-FAIL: networkTotalTransferSize should be >= (encoded body size + headers).
-    Expected: greater than or equal to 1249
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: responseHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
 
 -- Running test case: Resource.Size.Network.text.gzipped.no-content-length
 PASS: statusCode should be 200.
 PASS: compressed should be true.
 PASS: responseSource should be Symbol(network).
 size: 2955
-requestBodyTransferSize: NaN
-responseBodyTransferSize: NaN
-estimatedNetworkEncodedSize: 2955
-networkEncodedSize: NaN
+requestBodyTransferSize: 0
+responseBodyTransferSize: 1241
+estimatedNetworkEncodedSize: 1241
+networkEncodedSize: 1241
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-FAIL: networkTotalTransferSize should be >= (encoded body size + headers).
-    Expected: greater than or equal to 1249
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: responseHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
 
 -- Running test case: Resource.Size.Network.image
 PASS: statusCode should be 200.
 PASS: compressed should be false.
 PASS: responseSource should be Symbol(network).
 size: 12940
-requestBodyTransferSize: NaN
-responseBodyTransferSize: NaN
+requestBodyTransferSize: 0
+responseBodyTransferSize: 12940
 estimatedNetworkEncodedSize: 12940
-networkEncodedSize: NaN
+networkEncodedSize: 12940
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-FAIL: networkTotalTransferSize should be >= (encoded body size + headers).
-    Expected: greater than or equal to 12960
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: responseHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
 
 -- Running test case: Resource.Size.Network.404
 PASS: statusCode should be 404.
 PASS: compressed should be false.
 PASS: responseSource should be Symbol(network).
 size: 512
-requestBodyTransferSize: NaN
-responseBodyTransferSize: NaN
+requestBodyTransferSize: 0
+responseBodyTransferSize: 512
 estimatedNetworkEncodedSize: 512
-networkEncodedSize: NaN
+networkEncodedSize: 512
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-FAIL: networkTotalTransferSize should be >= (encoded body size + headers).
-    Expected: greater than or equal to 532
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: responseHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
 
 -- Running test case: Resource.Size.Network.requestData
 PASS: statusCode should be 200.
 PASS: compressed should be false.
 PASS: responseSource should be Symbol(network).
 size: 28
-requestBodyTransferSize: NaN
-responseBodyTransferSize: NaN
+requestBodyTransferSize: 1027
+responseBodyTransferSize: 28
 estimatedNetworkEncodedSize: 28
-networkEncodedSize: NaN
+networkEncodedSize: 28
 PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
-FAIL: networkTotalTransferSize should be >= (encoded body size + headers).
-    Expected: greater than or equal to 48
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: responseHeadersTransferSize should be non-empty.
-    Expected: greater than 20
-    Actual: NaN
-FAIL: requestHeadersTransferSize should be > 1060 bytes.
-    Expected: greater than 1060
-    Actual: NaN
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be non-empty.
+PASS: responseHeadersTransferSize should be non-empty.
+PASS: requestHeadersTransferSize should be > 1060 bytes.
 

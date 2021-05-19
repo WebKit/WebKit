@@ -131,7 +131,6 @@ webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
 webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
-webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-embedded-objects.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-entry-and-password.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-formatted.html [ Failure ]
@@ -2076,8 +2075,6 @@ webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
-
-webkit.org/b/199872 [ Release ] http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
 webkit.org/b/201264 mathml/presentation/foreign-element-in-token.html [ Failure ]
