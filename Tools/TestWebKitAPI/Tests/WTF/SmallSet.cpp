@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <wtf/HashSet.h>
+#include <wtf/HashTraits.h>
 #include <wtf/SmallSet.h>
 #include <wtf/Vector.h>
 
@@ -66,7 +67,7 @@ void testSmallSetOfUnsigned(unsigned n)
     }
 
     unsigned count = 0;
-    HashSet<T> referenceSet;
+    HashSet<T, IntHash<T>, WTF::UnsignedWithZeroKeyHashTraits<T>> referenceSet;
     for (unsigned i : set) {
         referenceSet.add(i);
         ++count;
