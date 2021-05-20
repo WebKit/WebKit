@@ -114,7 +114,6 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, DOMWindow* wi
 // The following return a JSDOMWindow or nullptr.
 JSDOMWindow* toJSDOMWindow(Frame&, DOMWrapperWorld&);
 inline JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld& world) { return frame ? toJSDOMWindow(*frame, world) : nullptr; }
-WEBCORE_EXPORT JSDOMWindow* toJSDOMWindow(JSC::VM&, JSC::JSValue);
 
 // DOMWindow associated with global object of the "most-recently-entered author function or script
 // on the stack, or the author function or script that originally scheduled the currently-running callback."

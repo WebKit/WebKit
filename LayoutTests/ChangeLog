@@ -1,3 +1,17 @@
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        * fast/css-custom-paint/registerPaintBindings.html:
+        * http/tests/security/listener/*:
+        This is a progression: Blink and Gecko don't call event listeners belonging to destroyed frames.
+
+        * js/property-of-window-as-prototype-expected.txt: Removed.
+        * js/property-of-window-as-prototype.html: Removed.
+
 2021-05-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Flatpak SDK] Remove PHP packages

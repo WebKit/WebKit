@@ -249,16 +249,6 @@ void JSTestDefaultToJSON::destroy(JSC::JSCell* cell)
     thisObject->JSTestDefaultToJSON::~JSTestDefaultToJSON();
 }
 
-template<> inline JSTestDefaultToJSON* IDLAttribute<JSTestDefaultToJSON>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestDefaultToJSON*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestDefaultToJSON* IDLOperation<JSTestDefaultToJSON>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestDefaultToJSON*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

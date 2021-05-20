@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class JSWindowProxy;
-class JSRemoteDOMWindow;
 
 class WEBCORE_EXPORT JSRemoteDOMWindowBase : public JSDOMGlobalObject {
 public:
@@ -57,7 +56,5 @@ protected:
 private:
     RefPtr<RemoteDOMWindow> m_wrapped;
 };
-
-WEBCORE_EXPORT JSRemoteDOMWindow* toJSRemoteDOMWindow(JSC::VM&, JSC::JSValue);
 
 } // namespace WebCore

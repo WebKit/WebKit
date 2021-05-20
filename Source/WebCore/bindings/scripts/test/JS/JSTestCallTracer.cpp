@@ -206,16 +206,6 @@ void JSTestCallTracer::destroy(JSC::JSCell* cell)
     thisObject->JSTestCallTracer::~JSTestCallTracer();
 }
 
-template<> inline JSTestCallTracer* IDLAttribute<JSTestCallTracer>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestCallTracer*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestCallTracer* IDLOperation<JSTestCallTracer>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestCallTracer*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestCallTracerConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

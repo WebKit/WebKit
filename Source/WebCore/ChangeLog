@@ -1,5 +1,94 @@
 2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        This change introduces castThisValue<JSClass>, taking a step towards unification of |this|
+        value casting between IDLAttribute and IDLOperation. The helper uses compile-time inheritance
+        check to provide implicit |this| value for DOM global objects [1], replacing [ImplicitThis]
+        extended attribute, which was removed from the spec [2] a while ago.
+
+        IDLAttribute can't perform toThis() with ECMAMode::strict(), like IDLOperation now does,
+        because CustomValue getters are called with |this| value of JSGlobalObject type, which gets
+        tainted by JSScope::toThis(). #225397 will remove the need for toThis(), finally making |this|
+        value casting consistent between attributes and operations.
+
+        Also, this patch fixes `Object.create(window).location` to throw as per spec [1] by removing
+        prototype chain traversal from toJSDOMWindow(), which aligns WebKit with Blink and Gecko.
+
+        As DOM global objects are wrapped in proxies and require special casting, toJSDOMWindow() and
+        friends are merged into toJSDOMGlobalObject<JSClass>, which is aware of inheritance / JSProxy.
+        It replaces [CustomProxyToJSObject] extended attribute, which could be missed when adding new
+        DOM global objects, fixing worklets' global functions not to throw when called on `globalThis`.
+
+        This change reduces WebCore --release binary size by 0.2% (147 KB).
+
+        [1] https://heycam.github.io/webidl/#dfn-attribute-getter (step 1.1.2.3)
+        [2] https://github.com/heycam/webidl/pull/155
+
+        Tests: imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.js
+               imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html
+               fast/css-custom-paint/registerPaintBindings.html
+               http/tests/security/listener/*.html
+
+        * Headers.cmake:
+        * Modules/webaudio/AudioWorkletGlobalScope.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::IDLAttribute::set):
+        (WebCore::IDLAttribute::setPassingPropertyName):
+        (WebCore::IDLAttribute::get):
+        (WebCore::IDLAttribute::getPassingPropertyName):
+        * bindings/js/JSDOMCastThisValue.h: Added.
+        (WebCore::castThisValue):
+        * bindings/js/JSDOMCastedThisErrorBehavior.h: Removed.
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::toJSDOMGlobalObject):
+        * bindings/js/JSDOMOperation.h:
+        (WebCore::IDLOperation::cast):
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+        (WebCore::IDLOperation<JSDOMWindow>::cast): Deleted.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::cachedDocumentWrapper):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::jsEventTargetCast):
+        * bindings/js/JSEventTargetCustom.h:
+        (WebCore::IDLOperation<JSEventTarget>::call):
+        * bindings/js/JSRemoteDOMWindowBase.cpp:
+        (WebCore::toJSRemoteDOMWindow): Deleted.
+        * bindings/js/JSRemoteDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::toJSDedicatedWorkerGlobalScope): Deleted.
+        (WebCore::toJSWorkerGlobalScope): Deleted.
+        (WebCore::toJSServiceWorkerGlobalScope): Deleted.
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * bindings/js/JSWorkletGlobalScopeBase.cpp:
+        (WebCore::toJSWorkletGlobalScope): Deleted.
+        * bindings/js/JSWorkletGlobalScopeBase.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ShouldGenerateToJSDeclaration):
+        (IsAcceleratedDOMAttribute):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/JS/*: Updated.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::canAccessInspectedScriptState const):
+        * page/DOMWindow.idl:
+        * page/RemoteDOMWindow.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/WorkerGlobalScope.idl:
+        * workers/service/ServiceWorkerGlobalScope.idl:
+        * worklets/PaintWorkletGlobalScope.idl:
+        * worklets/WorkletGlobalScope.idl:
+
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Align internal methods of WindowProperties object with the spec
         https://bugs.webkit.org/show_bug.cgi?id=222918
 

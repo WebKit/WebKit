@@ -1,5 +1,21 @@
 2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.js: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.worker-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.worker.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/dummy-processor-globalthis.js: Added.
+
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Align internal methods of WindowProperties object with the spec
         https://bugs.webkit.org/show_bug.cgi?id=222918
 

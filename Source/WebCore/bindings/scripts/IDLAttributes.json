@@ -124,9 +124,6 @@
         "CustomPreventExtensions": {
             "contextsAllowed": ["interface"]
         },
-        "CustomProxyToJSObject": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomPushEventHandlerScope": {
             "contextsAllowed": ["interface"]
         },
@@ -249,9 +246,6 @@
             "values": ["*"]
         },
         "ImplementationLacksVTable": {
-            "contextsAllowed": ["interface"]
-        },
-        "ImplicitThis": {
             "contextsAllowed": ["interface"]
         },
         "InterfaceName": {

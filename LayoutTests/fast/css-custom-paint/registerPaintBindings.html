@@ -27,6 +27,13 @@ test(function() {
 }, 'test that registerPaint runs');
 
 test(function() {
+  globalThis.registerPaint('basic1-globalThis', class {
+    static get inputProperties() { return ["--test"]; }
+    paint() { }
+  });
+}, 'test that registerPaint runs (called on globalThis)');
+
+test(function() {
   registerPaint('basic2', class {
     paint() { }
   });

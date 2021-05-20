@@ -24,12 +24,10 @@
  */
 
 [
-    CustomProxyToJSObject,
     Global=(Worker,ServiceWorker),
     Exposed=ServiceWorker,
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
-    ImplicitThis,
     JSCustomMarkFunction,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,

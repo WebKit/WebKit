@@ -216,11 +216,6 @@ void JSExposedToWorkerAndWindow::destroy(JSC::JSCell* cell)
     thisObject->JSExposedToWorkerAndWindow::~JSExposedToWorkerAndWindow();
 }
 
-template<> inline JSExposedToWorkerAndWindow* IDLOperation<JSExposedToWorkerAndWindow>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSExposedToWorkerAndWindow*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

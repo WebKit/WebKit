@@ -24,10 +24,8 @@
 */
 
 [
-    CustomProxyToJSObject,
     Exposed=Worklet,
     JSLegacyParent=JSWorkletGlobalScopeBase,
-    ImplicitThis,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
     Global=Worklet,

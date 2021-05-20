@@ -154,16 +154,6 @@ void JSTestNamespaceObject::destroy(JSC::JSCell* cell)
     thisObject->JSTestNamespaceObject::~JSTestNamespaceObject();
 }
 
-template<> inline JSTestNamespaceObject* IDLAttribute<JSTestNamespaceObject>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestNamespaceObject*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestNamespaceObject* IDLOperation<JSTestNamespaceObject>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestNamespaceObject*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 static inline JSValue jsTestNamespaceObjectConstructor_namespaceAttributeGetter(JSGlobalObject& lexicalGlobalObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);

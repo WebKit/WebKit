@@ -277,16 +277,6 @@ void JSTestEnabledBySetting::destroy(JSC::JSCell* cell)
     thisObject->JSTestEnabledBySetting::~JSTestEnabledBySetting();
 }
 
-template<> inline JSTestEnabledBySetting* IDLAttribute<JSTestEnabledBySetting>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestEnabledBySetting*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestEnabledBySetting* IDLOperation<JSTestEnabledBySetting>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestEnabledBySetting*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySettingConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

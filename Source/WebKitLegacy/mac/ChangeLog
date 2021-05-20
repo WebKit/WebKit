@@ -1,3 +1,15 @@
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        Use inherits<T> instead of toJSDOMWindow() if the value is never a JSProxy.
+
+        * WebView/WebView.mm:
+        (+[WebView _reportException:inContext:]):
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         Update Base64 encoding/decoding to match more modern WebKit conventions

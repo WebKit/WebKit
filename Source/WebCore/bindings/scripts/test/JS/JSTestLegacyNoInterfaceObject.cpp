@@ -157,16 +157,6 @@ void JSTestLegacyNoInterfaceObject::destroy(JSC::JSCell* cell)
     thisObject->JSTestLegacyNoInterfaceObject::~JSTestLegacyNoInterfaceObject();
 }
 
-template<> inline JSTestLegacyNoInterfaceObject* IDLAttribute<JSTestLegacyNoInterfaceObject>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestLegacyNoInterfaceObject*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestLegacyNoInterfaceObject* IDLOperation<JSTestLegacyNoInterfaceObject>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestLegacyNoInterfaceObject*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 static inline JSValue jsTestLegacyNoInterfaceObject_readonlyStringAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestLegacyNoInterfaceObject& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);

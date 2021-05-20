@@ -268,11 +268,6 @@ void JSTestConditionallyReadWrite::destroy(JSC::JSCell* cell)
     thisObject->JSTestConditionallyReadWrite::~JSTestConditionallyReadWrite();
 }
 
-template<> inline JSTestConditionallyReadWrite* IDLAttribute<JSTestConditionallyReadWrite>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestConditionallyReadWrite*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

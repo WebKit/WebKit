@@ -29,7 +29,6 @@
     Conditional=CSS_PAINTING_API,
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
-    ImplicitThis,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
     Global=(Worklet,PaintWorklet),

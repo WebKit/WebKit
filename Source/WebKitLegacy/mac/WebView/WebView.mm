@@ -1336,7 +1336,7 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
     JSC::JSLockHolder lock(globalObject);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    if (!WebCore::toJSDOMWindow(globalObject->vm(), globalObject))
+    if (!globalObject->inherits<WebCore::JSDOMWindow>(globalObject->vm()))
         return;
 
     WebCore::reportException(globalObject, toJS(globalObject, exception));
