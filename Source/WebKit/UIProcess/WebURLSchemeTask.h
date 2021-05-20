@@ -30,6 +30,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/InstanceCounted.h>
 #include <wtf/RefCounted.h>
@@ -64,7 +65,7 @@ public:
     WebPageProxyIdentifier pageProxyID() const { ASSERT(RunLoop::isMain()); return m_pageProxyID; }
     WebCore::PageIdentifier webPageID() const { ASSERT(RunLoop::isMain()); return m_webPageID; }
     WebProcessProxy* process() { ASSERT(RunLoop::isMain()); return m_process.get(); }
-    const WebCore::ResourceRequest& request() const { ASSERT(RunLoop::isMain()); return m_request; }
+    WebCore::ResourceRequest request() const;
     API::FrameInfo& frameInfo() const { return m_frameInfo.get(); }
 
 #if PLATFORM(COCOA)
@@ -103,9 +104,9 @@ private:
     uint64_t m_identifier;
     WebPageProxyIdentifier m_pageProxyID;
     WebCore::PageIdentifier m_webPageID;
-    WebCore::ResourceRequest m_request;
+    WebCore::ResourceRequest m_request WTF_GUARDED_BY_LOCK(m_requestLock);
     Ref<API::FrameInfo> m_frameInfo;
-    mutable Lock m_requestLock;
+    mutable CheckedLock m_requestLock;
     bool m_stopped { false };
     bool m_responseSent { false };
     bool m_dataSent { false };

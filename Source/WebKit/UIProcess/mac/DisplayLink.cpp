@@ -89,7 +89,7 @@ void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink " << this << " for display display " << m_displayID << " add observer " << observerID << " fps " << preferredFramesPerSecond);
 
     {
-        auto locker = holdLock(m_observersLock);
+        Locker locker { m_observersLock };
         m_observers.ensure(&connection, [] {
             return ConnectionClientInfo { };
         }).iterator->value.observers.append({ observerID, preferredFramesPerSecond });
@@ -109,7 +109,7 @@ void DisplayLink::removeObserver(IPC::Connection& connection, DisplayLinkObserve
 {
     ASSERT(RunLoop::isMain());
 
-    auto locker = holdLock(m_observersLock);
+    Locker locker { m_observersLock };
 
     auto it = m_observers.find(&connection);
     if (it == m_observers.end())
@@ -135,7 +135,7 @@ void DisplayLink::removeObservers(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
-    auto locker = holdLock(m_observersLock);
+    Locker locker { m_observersLock };
     m_observers.remove(&connection);
 
     // We do not stop the display link right away when |m_observers| becomes empty. Instead, we
@@ -156,7 +156,7 @@ void DisplayLink::removeInfoForConnectionIfPossible(IPC::Connection& connection)
 
 void DisplayLink::incrementFullSpeedRequestClientCount(IPC::Connection& connection)
 {
-    auto locker = holdLock(m_observersLock);
+    Locker locker { m_observersLock };
 
     auto& connectionInfo = m_observers.ensure(&connection, [] {
         return ConnectionClientInfo { };
@@ -167,7 +167,7 @@ void DisplayLink::incrementFullSpeedRequestClientCount(IPC::Connection& connecti
 
 void DisplayLink::decrementFullSpeedRequestClientCount(IPC::Connection& connection)
 {
-    auto locker = holdLock(m_observersLock);
+    Locker locker { m_observersLock };
 
     auto it = m_observers.find(&connection);
     if (it == m_observers.end())
@@ -183,7 +183,7 @@ void DisplayLink::setPreferredFramesPerSecond(IPC::Connection& connection, Displ
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink " << this << " setPreferredFramesPerSecond - display " << m_displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
 
-    auto locker = holdLock(m_observersLock);
+    Locker locker { m_observersLock };
 
     auto it = m_observers.find(&connection);
     if (it == m_observers.end())
@@ -208,7 +208,7 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
 {
     ASSERT(!RunLoop::isMain());
 
-    auto locker = holdLock(m_observersLock);
+    Locker locker { m_observersLock };
 
     auto maxFramesPerSecond = [](const Vector<ObserverInfo>& observers) {
         Optional<WebCore::FramesPerSecond> observersMaxFramesPerSecond;

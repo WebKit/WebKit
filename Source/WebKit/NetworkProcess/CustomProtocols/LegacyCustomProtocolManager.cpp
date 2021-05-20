@@ -57,7 +57,7 @@ void LegacyCustomProtocolManager::initialize(const NetworkProcessCreationParamet
 
 LegacyCustomProtocolID LegacyCustomProtocolManager::addCustomProtocol(CustomProtocol&& customProtocol)
 {
-    LockHolder locker(m_customProtocolMapMutex);
+    Locker locker { m_customProtocolMapLock };
     auto customProtocolID = LegacyCustomProtocolID::generate();
     m_customProtocolMap.add(customProtocolID, WTFMove(customProtocol));
     return customProtocolID;
@@ -65,7 +65,7 @@ LegacyCustomProtocolID LegacyCustomProtocolManager::addCustomProtocol(CustomProt
 
 void LegacyCustomProtocolManager::removeCustomProtocol(LegacyCustomProtocolID customProtocolID)
 {
-    LockHolder locker(m_customProtocolMapMutex);
+    Locker locker { m_customProtocolMapLock };
     m_customProtocolMap.remove(customProtocolID);
 }
 

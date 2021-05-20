@@ -31,6 +31,8 @@
 #include "StorageManager.h"
 #include <WebCore/SecurityOriginData.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/WeakPtr.h>
 
 using WebCore::SecurityOriginData;
@@ -102,8 +104,8 @@ private:
         Suspended
     };
     State m_state { State::Running };
-    Lock m_stateLock;
-    Condition m_stateChangeCondition;
+    CheckedLock m_stateLock;
+    CheckedCondition m_stateChangeCondition;
 };
 
 } // namespace WebKit

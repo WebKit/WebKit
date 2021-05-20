@@ -89,7 +89,7 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
     m_pluginProcessConnections.append(pluginProcessConnection.copyRef());
 
     {
-        LockHolder locker(m_tokensAndConnectionsMutex);
+        Locker locker { m_tokensAndConnectionsLock };
         ASSERT(!m_tokensAndConnections.contains(pluginProcessToken));
 
         m_tokensAndConnections.set(pluginProcessToken, pluginProcessConnection->connection());
@@ -104,7 +104,7 @@ void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcess
     ASSERT(vectorIndex != notFound);
 
     {
-        LockHolder locker(m_tokensAndConnectionsMutex);
+        Locker locker { m_tokensAndConnectionsLock };
         ASSERT(m_tokensAndConnections.contains(pluginProcessConnection->pluginProcessToken()));
         
         m_tokensAndConnections.remove(pluginProcessConnection->pluginProcessToken());
@@ -115,7 +115,7 @@ void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcess
 
 void PluginProcessConnectionManager::pluginProcessCrashed(uint64_t pluginProcessToken)
 {
-    LockHolder locker(m_tokensAndConnectionsMutex);
+    Locker locker { m_tokensAndConnectionsLock };
     IPC::Connection* connection = m_tokensAndConnections.get(pluginProcessToken);
 
     // It's OK for connection to be null here; it will happen if this web process doesn't know

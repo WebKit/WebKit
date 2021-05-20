@@ -56,7 +56,7 @@ LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, change);
 
-        LockHolder holder(m_connectionsLock);
+        Locker locker { m_connectionsLock };
         for (auto& connection : m_connections) {
             RELEASE_ASSERT(xpc_get_type(connection.get()) == XPC_TYPE_CONNECTION);
             xpc_connection_send_message(connection.get(), message.get());
@@ -73,7 +73,7 @@ const char* LaunchServicesDatabaseObserver::supplementName()
 void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t> connection)
 {
     {
-        LockHolder holder(m_connectionsLock);
+        Locker locker { m_connectionsLock };
         m_connections.append(connection);
     }
 
@@ -132,7 +132,7 @@ void LaunchServicesDatabaseObserver::handleEvent(xpc_connection_t connection, xp
         if (event != XPC_ERROR_CONNECTION_INVALID && event != XPC_ERROR_TERMINATION_IMMINENT)
             return;
 
-        LockHolder holder(m_connectionsLock);
+        Locker locker { m_connectionsLock };
         for (size_t i = 0; i < m_connections.size(); i++) {
             if (m_connections[i].get() == connection) {
                 m_connections.remove(i);

@@ -49,7 +49,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
     auto hasRegisteredSchemes = [] (auto* legacyCustomProtocolManager) {
         if (!legacyCustomProtocolManager)
             return false;
-        LockHolder locker(legacyCustomProtocolManager->m_registeredSchemesMutex);
+        Locker locker { legacyCustomProtocolManager->m_registeredSchemesLock };
         return !legacyCustomProtocolManager->m_registeredSchemes.isEmpty();
     };
 
@@ -135,14 +135,14 @@ void LegacyCustomProtocolManager::registerProtocolClass(NSURLSessionConfiguratio
 void LegacyCustomProtocolManager::registerScheme(const String& scheme)
 {
     ASSERT(!scheme.isNull());
-    LockHolder locker(m_registeredSchemesMutex);
+    Locker locker { m_registeredSchemesLock };
     m_registeredSchemes.add(scheme);
 }
 
 void LegacyCustomProtocolManager::unregisterScheme(const String& scheme)
 {
     ASSERT(!scheme.isNull());
-    LockHolder locker(m_registeredSchemesMutex);
+    Locker locker { m_registeredSchemesLock };
     m_registeredSchemes.remove(scheme);
 }
 
@@ -151,7 +151,7 @@ bool LegacyCustomProtocolManager::supportsScheme(const String& scheme)
     if (scheme.isNull())
         return false;
 
-    LockHolder locker(m_registeredSchemesMutex);
+    Locker locker { m_registeredSchemesLock };
     return m_registeredSchemes.contains(scheme);
 }
 
@@ -232,7 +232,7 @@ void LegacyCustomProtocolManager::wasRedirectedToRequest(LegacyCustomProtocolID 
 
 RetainPtr<WKCustomProtocol> LegacyCustomProtocolManager::protocolForID(LegacyCustomProtocolID customProtocolID)
 {
-    LockHolder locker(m_customProtocolMapMutex);
+    Locker locker { m_customProtocolMapLock };
 
     CustomProtocolMap::const_iterator it = m_customProtocolMap.find(customProtocolID);
     if (it == m_customProtocolMap.end())

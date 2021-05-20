@@ -37,6 +37,7 @@
 #include <WebCore/PixelBufferConformerCV.h>
 #include <map>
 #include <webrtc/api/video/video_codec_type.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -122,7 +123,7 @@ public:
 private:
     LibWebRTCCodecs();
     void ensureGPUProcessConnectionAndDispatchToThread(Function<void()>&&);
-    void ensureGPUProcessConnectionOnMainThread(Locker<Lock>&);
+    void ensureGPUProcessConnectionOnMainThreadWithLock() WTF_REQUIRES_LOCK(m_connectionLock);
     void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(RTCDecoderIdentifier);
@@ -144,8 +145,8 @@ private:
 
     std::atomic<bool> m_needsGPUProcessConnection;
 
-    Lock m_connectionLock;
-    RefPtr<IPC::Connection> m_connection;
+    CheckedLock m_connectionLock;
+    RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
     Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
 
     Ref<WorkQueue> m_queue;

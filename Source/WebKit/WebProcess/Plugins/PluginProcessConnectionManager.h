@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginProcess.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -64,8 +65,8 @@ private:
 
     Vector<RefPtr<PluginProcessConnection>> m_pluginProcessConnections;
 
-    Lock m_tokensAndConnectionsMutex;
-    HashMap<uint64_t, RefPtr<IPC::Connection>> m_tokensAndConnections;
+    CheckedLock m_tokensAndConnectionsLock;
+    HashMap<uint64_t, RefPtr<IPC::Connection>> m_tokensAndConnections WTF_GUARDED_BY_LOCK(m_tokensAndConnectionsLock);
 };
 
 }

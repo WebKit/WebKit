@@ -1,3 +1,92 @@
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in WebKit2 code
+        https://bugs.webkit.org/show_bug.cgi?id=226001
+
+        Reviewed by Alex Christensen.
+
+        Use CheckedLock more in WebKit2 code to benefit from Clang Thread Safety Analysis.
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        (LegacyCustomProtocolManager::networkProcessCreated):
+        (WebKit::LegacyCustomProtocolManager::registerScheme):
+        (WebKit::LegacyCustomProtocolManager::unregisterScheme):
+        (WebKit::LegacyCustomProtocolManager::supportsScheme):
+        (WebKit::LegacyCustomProtocolManager::protocolForID):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp:
+        (WebKit::LegacyCustomProtocolManager::addCustomProtocol):
+        (WebKit::LegacyCustomProtocolManager::removeCustomProtocol):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addSessionStorageQuotaManager):
+        (WebKit::NetworkProcess::removeSessionStorageQuotaManager):
+        (WebKit::NetworkProcess::setSessionStorageQuotaManagerIDBRootPath):
+        (WebKit::NetworkProcess::resetQuota):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::suspend):
+        (WebKit::StorageManagerSet::resume):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.h:
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm:
+        (WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver):
+        (WebKit::LaunchServicesDatabaseObserver::startObserving):
+        (WebKit::LaunchServicesDatabaseObserver::handleEvent):
+        * Shared/BlockingResponseMap.h:
+        (BlockingResponseMap::waitForResponse):
+        (BlockingResponseMap::didReceiveResponse):
+        * Shared/Cocoa/XPCEndpointClient.h:
+        * Shared/Cocoa/XPCEndpointClient.mm:
+        (WebKit::XPCEndpointClient::setEndpoint):
+        (WebKit::XPCEndpointClient::connection):
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::request const):
+        (WebKit::WebURLSchemeTask::willPerformRedirection):
+        (WebKit::WebURLSchemeTask::didPerformRedirection):
+        (WebKit::WebURLSchemeTask::pageDestroyed):
+        (WebKit::WebURLSchemeTask::stop):
+        (WebKit::WebURLSchemeTask::nsRequest const):
+        * UIProcess/WebURLSchemeTask.h:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::removeObserver):
+        (WebKit::DisplayLink::removeObservers):
+        (WebKit::DisplayLink::incrementFullSpeedRequestClientCount):
+        (WebKit::DisplayLink::decrementFullSpeedRequestClientCount):
+        (WebKit::DisplayLink::setPreferredFramesPerSecond):
+        (WebKit::DisplayLink::notifyObserversDisplayWasRefreshed):
+        * UIProcess/mac/DisplayLink.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThread):
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionAndDispatchToThread):
+        (WebKit::LibWebRTCCodecs::createDecoder):
+        (WebKit::LibWebRTCCodecs::decodeFrame):
+        (WebKit::LibWebRTCCodecs::createEncoder):
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        (WebKit::LibWebRTCCodecs::setEncodeRates):
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionDidClose):
+        (WebKit::LibWebRTCCodecs::setLoggingLevel):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        (WebKit::PluginProcessConnectionManager::removePluginProcessConnection):
+        (WebKit::PluginProcessConnectionManager::pluginProcessCrashed):
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingTreeForPage):
+        (WebKit::EventDispatcher::removeScrollingTreeForPage):
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::takeQueuedTouchEventsForPage):
+        (WebKit::EventDispatcher::touchEvent):
+        (WebKit::EventDispatcher::dispatchTouchEvents):
+        (WebKit::EventDispatcher::notifyScrollingTreesDisplayWasRefreshed):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+        (WebKit::ViewUpdateDispatcher::dispatchVisibleContentRectUpdate):
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+
 2021-05-20  Per Arne  <pvollan@apple.com>
 
         The test fast/images/eps-as-image.html is a constant crash

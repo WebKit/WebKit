@@ -60,7 +60,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
 {
     bool updateListWasEmpty;
     {
-        LockHolder locker(&m_dataMutex);
+        Locker locker { m_latestUpdateLock };
         updateListWasEmpty = m_latestUpdate.isEmpty();
         auto iterator = m_latestUpdate.find(pageID);
         if (iterator == m_latestUpdate.end())
@@ -79,7 +79,7 @@ void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
     HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> update;
     {
-        LockHolder locker(&m_dataMutex);
+        Locker locker { m_latestUpdateLock };
         update = std::exchange(m_latestUpdate, { });
     }
 

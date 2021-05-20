@@ -28,7 +28,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessSupplement.h"
 #include "XPCEndpoint.h"
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -55,8 +55,8 @@ private:
     void initializeConnection(IPC::Connection*) final;
 
     RetainPtr<id> m_observer;
-    Vector<OSObjectPtr<xpc_connection_t>> m_connections;
-    Lock m_connectionsLock;
+    CheckedLock m_connectionsLock;
+    Vector<OSObjectPtr<xpc_connection_t>> m_connections WTF_GUARDED_BY_LOCK(m_connectionsLock);
 };
 
 }
