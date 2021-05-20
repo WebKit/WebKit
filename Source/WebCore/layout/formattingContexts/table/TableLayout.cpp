@@ -219,7 +219,10 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     }
 
     Vector<LayoutUnit> distributedSpaces(resolvedItems.size());
-    float spaceToDistribute = availableSpace - adjustabledSpace.value - ((resolvedItems.size() + 1) * SpanType::spacing(grid));
+    float spaceToDistribute = availableSpace;
+    // Top and bottom spacing are fixed.
+    spaceToDistribute -= 2 * SpanType::spacing(grid);
+    spaceToDistribute -= adjustabledSpace.value + ((resolvedItems.size() - 1) * SpanType::spacing(grid));
     // Essentially the remaining space to distribute should never be negative. LayoutUnit::epsilon() is required to compensate for LayoutUnit's low precision.
     ASSERT(spaceToDistribute >= -LayoutUnit::epsilon() * resolvedItems.size());
     // Distribute the extra space based on the resolved spaces.
