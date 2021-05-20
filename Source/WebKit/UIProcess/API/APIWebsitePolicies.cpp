@@ -71,6 +71,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setCustomHeaderFields(WTFMove(customHeaderFields));
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
+    policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
     policies->setMouseEventPolicy(m_mouseEventPolicy);
     return policies;
 }
