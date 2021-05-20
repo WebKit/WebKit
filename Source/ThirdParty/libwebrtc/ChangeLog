@@ -1,3 +1,30 @@
+2021-05-20  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r277332. rdar://problem/78264344
+
+    Improve usrsctp restart handling
+    https://bugs.webkit.org/show_bug.cgi?id=225638
+    <rdar://77582953>
+    
+    Reviewed by Alex Christensen.
+    
+    * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c:
+    (sctp_process_cookie_existing):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277332 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-11  Youenn Fablet  <youenn@apple.com>
+
+            Improve usrsctp restart handling
+            https://bugs.webkit.org/show_bug.cgi?id=225638
+            <rdar://77582953>
+
+            Reviewed by Alex Christensen.
+
+            * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c:
+            (sctp_process_cookie_existing):
+
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r275300. rdar://problem/76375624
