@@ -2271,3 +2271,5 @@ webkit.org/b/223645 [ BigSur ] media/video-played-ranges-1.html [ Pass Failure ]
 webkit.org/b/225804 imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html [ Pass Failure ]
 
 webkit.org/b/225882 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https.html [ Pass Failure ]
+
+webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]
