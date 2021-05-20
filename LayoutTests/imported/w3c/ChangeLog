@@ -1,3 +1,18 @@
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align internal methods of WindowProperties object with the spec
+        https://bugs.webkit.org/show_bug.cgi?id=222918
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/class-string-named-properties-object.window-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/class-string-named-properties-object.window.js:
+        * web-platform-tests/WebIDL/ecmascript-binding/window-named-properties-object-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/window-named-properties-object.html: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/window-named-properties-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/window-named-properties.html:
+
 2021-05-20  Felipe Erias  <felipeerias@igalia.com>
 
         [css-flexbox] Wrong height of an empty table inside an orthogonal flex parent

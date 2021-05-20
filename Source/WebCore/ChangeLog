@@ -1,3 +1,53 @@
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align internal methods of WindowProperties object with the spec
+        https://bugs.webkit.org/show_bug.cgi?id=222918
+
+        Reviewed by Sam Weinig.
+
+        This patch:
+
+        1. Implements [[PreventExtensions]], [[DefineOwnProperty]], and [[Delete]] methods that always fail [1],
+           ensuring [[Set]] with altered receiver is passed through, indexed properties are rejected as well,
+           and an exception is thrown if neccessary.
+
+           Adding a put() override would a) slow down global `var` creation and b) require factoring out most of
+           JSObject::putInlineSlow(). Instead, we prevent extensions on a structure while defining isExtensible()
+           override to cover that up.
+
+        2. Corrects property attributes reported by [[GetOwnProperty]] methods of cross-origin WindowProxy [2]
+           and WindowProperties, bringing these objects in compliance with invariants of internal methods [3].
+
+        3. Removes comments on cross-browser differences and priority order from [[GetOwnProperty]] because
+           it correctly implements the now detailed spec [4]. Browsing contexts precedence is covered by
+           wpt/html/browsers/the-window-object/named-access-on-the-window-object/named-objects.html test.
+
+        4. Asserts that WindowProperties [[Prototype]] is an object, as guaranteed by its [[SetPrototypeOf]].
+
+        This change fully implements the current spec, aligning WebKit with Blink and Gecko.
+
+        [1] https://heycam.github.io/webidl/#named-properties-object-defineownproperty
+        [2] https://html.spec.whatwg.org/multipage/window-object.html#windowproxy-getownproperty (step 6.2)
+        [3] https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods
+        [4] https://html.spec.whatwg.org/multipage/window-object.html#dom-window-nameditem (step 2)
+
+        Tests: imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/window-named-properties-object.html
+               imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html
+               imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/window-named-properties.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        * bindings/js/JSDOMWindowProperties.cpp:
+        (WebCore::jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter):
+        (WebCore::JSDOMWindowProperties::finishCreation):
+        (WebCore::JSDOMWindowProperties::getOwnPropertySlot):
+        (WebCore::JSDOMWindowProperties::deleteProperty):
+        (WebCore::JSDOMWindowProperties::deletePropertyByIndex):
+        (WebCore::JSDOMWindowProperties::preventExtensions):
+        (WebCore::JSDOMWindowProperties::isExtensible):
+        (WebCore::JSDOMWindowProperties::defineOwnProperty):
+        * bindings/js/JSDOMWindowProperties.h:
+
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
         WebAudioBufferList::setSampleCount() should early return if computeBufferSizes() fails

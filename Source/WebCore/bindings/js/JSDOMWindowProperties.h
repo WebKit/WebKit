@@ -46,7 +46,7 @@ public:
     static JSDOMWindowProperties* create(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
     {
         JSDOMWindowProperties* ptr = new (NotNull, JSC::allocateCell<JSDOMWindowProperties>(globalObject.vm().heap)) JSDOMWindowProperties(structure, globalObject);
-        ptr->finishCreation(globalObject.vm());
+        ptr->finishCreation(globalObject);
         return ptr;
     }
 
@@ -59,6 +59,11 @@ public:
 
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::JSGlobalObject*, unsigned propertyName, JSC::PropertySlot&);
+    static bool deleteProperty(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::DeletePropertySlot&);
+    static bool deletePropertyByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName);
+    static bool preventExtensions(JSC::JSObject*, JSC::JSGlobalObject*);
+    static bool isExtensible(JSC::JSObject*, JSC::JSGlobalObject*);
+    static bool defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);
 
 private:
     JSDOMWindowProperties(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
@@ -66,7 +71,7 @@ private:
     {
     }
 
-    void finishCreation(JSC::VM&);
+    void finishCreation(JSC::JSGlobalObject&);
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
 };
 

@@ -42,24 +42,18 @@ using namespace JSC;
 
 const ClassInfo JSDOMWindowProperties::s_info = { "WindowProperties", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProperties) };
 
+// https://html.spec.whatwg.org/multipage/window-object.html#dom-window-nameditem
 static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowProperties* thisObject, DOMWindow& window, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    // Check for child frames by name before built-in properties to match Mozilla. This does
-    // not match IE, but some sites end up naming frames things that conflict with window
-    // properties that are in Moz but not IE. Since we have some of these, we have to do it
-    // the Moz way.
     if (auto* frame = window.frame()) {
         if (auto* scopedChild = frame->tree().scopedChild(propertyNameToAtomString(propertyName))) {
-            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(lexicalGlobalObject, scopedChild->document()->domWindow()));
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), toJS(lexicalGlobalObject, scopedChild->document()->domWindow()));
             return true;
         }
     }
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, window, ThrowSecurityError))
         return false;
-
-    // FIXME: Search the whole frame hierarchy somewhere around here.
-    // We need to test the correct priority order.
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
     auto* document = window.document();
@@ -74,7 +68,7 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
                 namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), collection);
             } else
                 namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), htmlDocument.windowNamedItem(*atomicPropertyName));
-            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, namedItem);
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), namedItem);
             return true;
         }
     }
@@ -82,24 +76,26 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
     return false;
 }
 
-void JSDOMWindowProperties::finishCreation(VM& vm)
+void JSDOMWindowProperties::finishCreation(JSGlobalObject& globalObject)
 {
+    VM& vm = globalObject.vm();
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+    JSObject::preventExtensions(this, &globalObject);
 }
 
 bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = lexicalGlobalObject->vm();
     auto* thisObject = jsCast<JSDOMWindowProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
     if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
         return true;
-    JSValue proto = thisObject->getPrototypeDirect(lexicalGlobalObject->vm());
-    if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(lexicalGlobalObject, propertyName))
+    JSObject* proto = asObject(thisObject->getPrototypeDirect(vm));
+    if (proto->hasProperty(lexicalGlobalObject, propertyName))
         return false;
-
-    auto& vm = lexicalGlobalObject->vm();
 
     // FIXME: We should probably add support for JSRemoteDOMWindowBase too.
     auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(vm, thisObject->globalObject());
@@ -114,6 +110,32 @@ bool JSDOMWindowProperties::getOwnPropertySlotByIndex(JSObject* object, JSGlobal
 {
     VM& vm = lexicalGlobalObject->vm();
     return getOwnPropertySlot(object, lexicalGlobalObject, Identifier::from(vm, index), slot);
+}
+
+bool JSDOMWindowProperties::deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&)
+{
+    return false;
+}
+
+bool JSDOMWindowProperties::deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned)
+{
+    return false;
+}
+
+bool JSDOMWindowProperties::preventExtensions(JSObject*, JSGlobalObject*)
+{
+    return false;
+}
+
+bool JSDOMWindowProperties::isExtensible(JSObject*, JSGlobalObject*)
+{
+    return true;
+}
+
+bool JSDOMWindowProperties::defineOwnProperty(JSObject*, JSGlobalObject* lexicalGlobalObject, PropertyName, const PropertyDescriptor&, bool shouldThrow)
+{
+    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
+    return typeError(lexicalGlobalObject, scope, shouldThrow, "Defining a property on a WindowProperties object is not allowed."_s);
 }
 
 JSC::IsoSubspace* JSDOMWindowProperties::subspaceForImpl(JSC::VM& vm)
