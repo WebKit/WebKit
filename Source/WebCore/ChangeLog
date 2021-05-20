@@ -1,3 +1,21 @@
+2021-05-19  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Scrolling must be done after the layout when doing full page zoom
+        https://bugs.webkit.org/show_bug.cgi?id=225730
+
+        Reviewed by Simon Fraser.
+
+        Previously, the actual scroll was executed before the layout with the zoomed position.
+        It sometimes makes the scroll position exceed the page height, and cannot retain pageYOffset.
+        In the user experience perspective, the user may miss what they are looking at after zoom.
+
+        This patch makes the scroll happen after the layout, with the zoomed position.
+
+        Test: LayoutTests\fast\scrolling\page-y-offset-should-not-be-changed-after-zoom.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors): Makes the scroll happen after the layout.
+
 2021-05-19  Devin Rousso  <drousso@apple.com>
 
         Add a way to create `"wheel"` events from gesture/touch events

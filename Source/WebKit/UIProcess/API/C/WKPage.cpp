@@ -605,6 +605,8 @@ double WKPageGetPageZoomFactor(WKPageRef pageRef)
 void WKPageSetPageZoomFactor(WKPageRef pageRef, double zoomFactor)
 {
     CRASH_IF_SUSPENDED;
+    if (zoomFactor <= 0)
+        return;
     toImpl(pageRef)->setPageZoomFactor(zoomFactor);
 }
 
