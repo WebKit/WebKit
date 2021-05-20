@@ -43,6 +43,7 @@ class TestInput(object):
     """
     test = attr.ib(type=Test)
     timeout = attr.ib(default=None)  # type: Union[None, int, str]
+    is_slow = attr.ib(default=None)  # type: Optional[bool]
     needs_servers = attr.ib(default=None)  # type: Optional[bool]
     should_dump_jsconsolelog_in_stderr = attr.ib(default=None)  # type: Optional[bool]
     reference_files = attr.ib(default=None)  # type: Optional[List[Tuple[str str]]]

@@ -67,7 +67,7 @@ class TestRunResults(object):
         self.interrupted = False
         self.keyboard_interrupted = False
 
-    def add(self, test_result, expected, test_is_slow):
+    def add(self, test_result, expected):
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
         self.results_by_name[test_result.test_name] = test_result
         if test_result.is_other_crash:
@@ -91,7 +91,7 @@ class TestRunResults(object):
                 self.unexpected_crashes += 1
             elif test_result.type == test_expectations.TIMEOUT:
                 self.unexpected_timeouts += 1
-        if test_is_slow:
+        if test_result.test_input.is_slow:
             self.slow_tests.add(test_result.test_name)
 
     def change_result_to_failure(self, existing_result, new_result, existing_expected, new_expected):

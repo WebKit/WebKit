@@ -1,3 +1,57 @@
+2021-05-20  Sam Sneddon  <gsnedders@apple.com>
+
+        Store whether a test is slow on TestInput
+        https://bugs.webkit.org/show_bug.cgi?id=224563
+
+        Reviewed by Jonathan Bedard.
+
+        Additionally, notably, this makes a TestResult store a TestInput rather than a
+        test_name string. With that there, we then don't need to punch through multiple
+        layers to find out whether a test is slow or not. Note that replacing the
+        test_name with a Test or TestInput as part of removing the 1:1 relationship
+        between files and tests.
+
+        With this done, we don't have to pass around a test_is_slow_fn, as we can directly
+        look at the result to determine whether or not it is slow.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__): Remove test_is_slow_fn argument
+        (LayoutTestRunner._mark_interrupted_tests_as_skipped): Remove test_is_slow argument
+        (LayoutTestRunner._update_summary_with_result): Remove test_is_slow argument
+        (Worker._run_test_in_another_thread): Remove test_is_slow argument
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests._runner): Remove test_is_slow_fn argument
+        (LayoutTestRunnerTests.test_update_summary_with_result): TestResult arg rename
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager): Improve docstring
+        (Manager.__init__): Tidy up reading tests-options.json
+        (Manager._test_input_for_file): Set is_slow
+        (Manager.run): Remove test_is_slow_fn argument
+        (Manager._look_for_new_crash_logs): Remove test_is_slow_fn/test_is_slow argument
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__): Store TestInput object
+        (SingleTestRunner._test_name): Replacement getter
+        (SingleTestRunner._should_run_pixel_test): Replacement getter
+        (SingleTestRunner._should_dump_jsconsolelog_in_stderr): Replacement getter
+        (SingleTestRunner._reference_files): Replacement getter
+        (SingleTestRunner._timeout): Replacement getter
+        (SingleTestRunner._compare_output): Pass TestInput to TestResult
+        (SingleTestRunner._run_reftest): Pass TestInput to TestResult
+        (SingleTestRunner._compare_output_with_reference): Pass TestInput to TestResult
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput): Add is_slow boolean
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.__init__): Rename test_name -> test_input, construct TestInput if we must
+        (TestResult.test_name): Replacement getter
+        * Scripts/webkitpy/layout_tests/models/test_results_unittest.py:
+        (TestResultsTest.test_pickle_roundtrip): TestResult arg rename
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.add): Remove test_is_slow argument, look at TestResult
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (summarized_results): Remove test_is_slow argument
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_tests_options): Add a test that test-options.json works
+
 2021-05-19  Devin Rousso  <drousso@apple.com>
 
         Add a way to create `"wheel"` events from gesture/touch events

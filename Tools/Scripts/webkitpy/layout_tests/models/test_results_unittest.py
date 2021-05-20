@@ -44,7 +44,7 @@ class TestResultsTest(unittest.TestCase):
         self.assertEqual(result.test_run_time, 0)
 
     def test_pickle_roundtrip(self):
-        result = TestResult(test_name='foo', failures=[], test_run_time=1.1)
+        result = TestResult('foo', failures=[], test_run_time=1.1)
         s = pickle.dumps(result)  # multiprocessing uses the default protocol version
         new_result = pickle.loads(s)
         self.assertIsInstance(new_result, TestResult)

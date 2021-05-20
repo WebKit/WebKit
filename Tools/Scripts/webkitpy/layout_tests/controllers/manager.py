@@ -65,8 +65,13 @@ TestExpectations = test_expectations.TestExpectations
 
 
 class Manager(object):
-    """A class for managing running a series of tests on a series of layout
-    test files."""
+    """Test execution manager
+
+    This class has the main entry points for run-webkit-tests; the ..run_webkit_tests module almost
+    exclusively just handles CLI options. It orchestrates collecting the tests (through
+    LayoutTestFinder), running them (LayoutTestRunner), and then displaying the results
+    (TestResultWriter/Printer).
+    """
 
     def __init__(self, port, options, printer):
         """Initialize test runner data structures.
@@ -77,17 +82,23 @@ class Manager(object):
           printer: a Printer object to record updates to.
         """
         self._port = port
-        self._filesystem = port.host.filesystem
+        fs = port.host.filesystem
+        self._filesystem = fs
         self._options = options
         self._printer = printer
         self._expectations = OrderedDict()
-        self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
         self._runner = None
 
-        test_options_json_path = self._port.path_from_webkit_base(self.LAYOUT_TESTS_DIRECTORY, "tests-options.json")
-        self._tests_options = json.loads(self._filesystem.read_text_file(test_options_json_path)) if self._filesystem.exists(test_options_json_path) else {}
+        self._tests_options = {}
+        test_options_json_path = fs.join(self._port.layout_tests_dir(), "tests-options.json")
+        if fs.exists(test_options_json_path):
+            with fs.open_binary_file_for_reading(test_options_json_path) as fd:
+                try:
+                    self._tests_options = json.load(fd)
+                except (ValueError, IOError):
+                    pass
 
     def _collect_tests(self,
                        paths,  # type: List[str]
@@ -214,12 +225,13 @@ class Manager(object):
         return tests_to_run
 
     def _test_input_for_file(self, test_file, device_type):
+        test_is_slow = self._test_is_slow(test_file.test_path, device_type=device_type)
         reference_files = self._port.reference_files(
             test_file.test_path, device_type=device_type
         )
         timeout = (
             self._options.slow_time_out_ms
-            if self._test_is_slow(test_file.test_path, device_type=device_type)
+            if test_is_slow
             else self._options.time_out_ms
         )
         should_dump_jsconsolelog_in_stderr = (
@@ -243,6 +255,7 @@ class Manager(object):
         return TestInput(
             test_file,
             timeout=timeout,
+            is_slow=test_is_slow,
             needs_servers=test_file.needs_any_server,
             should_dump_jsconsolelog_in_stderr=should_dump_jsconsolelog_in_stderr,
             reference_files=reference_files,
@@ -353,7 +366,7 @@ class Manager(object):
         needs_http = any(test.needs_http_server for tests in itervalues(tests_to_run_by_device) for test in tests)
         needs_web_platform_test_server = any(test.needs_wpt_server for tests in itervalues(tests_to_run_by_device) for test in tests)
         needs_websockets = any(test.needs_websocket_server for tests in itervalues(tests_to_run_by_device) for test in tests)
-        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
+        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory,
                                         needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
 
         initial_results = None
@@ -365,7 +378,6 @@ class Manager(object):
         uploads = []
 
         for device_type in device_type_list:
-            self._runner._test_is_slow = lambda test_file: self._test_is_slow(test_file, device_type=device_type)
             self._options.child_processes = min(self._port.max_child_processes(device_type=device_type), int(child_processes_option_value or self._port.default_child_processes(device_type=device_type)))
 
             _log.info('')
@@ -399,7 +411,7 @@ class Manager(object):
             for skipped_test in set(aggregate_tests_to_skip):
                 skipped_result = test_results.TestResult(skipped_test.test_path)
                 skipped_result.type = test_expectations.SKIP
-                skipped_results.add(skipped_result, expected=True, test_is_slow=self._test_is_slow(skipped_test.test_path, device_type=device_type))
+                skipped_results.add(skipped_result, expected=True)
             temp_initial_results = temp_initial_results.merge(skipped_results)
 
             if self._options.report_urls:
@@ -601,7 +613,7 @@ class Manager(object):
                     result = test_results.TestResult(test)
                     result.type = test_expectations.CRASH
                     result.is_other_crash = True
-                    run_results.add(result, expected=False, test_is_slow=False)
+                    run_results.add(result, expected=False)
                     _log.debug("Adding results for other crash: " + str(test))
 
     def _clobber_old_results(self):
