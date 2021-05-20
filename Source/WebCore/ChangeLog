@@ -1,3 +1,16 @@
+2021-05-20  Jer Noble  <jer.noble@apple.com>
+
+        CRASH: Null-pointer deref in MediaSessionManagerCocoa::setNowPlayingInfo()
+        https://bugs.webkit.org/show_bug.cgi?id=225999
+        <rdar://78232970>
+
+        Reviewed by Eric Carlson.
+
+        Null-check `nowPlayingInfo.artwork->imageData` before dereferencing.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo):
+
 2021-05-20  Youenn Fablet  <youenn@apple.com>
 
         <video> rendered inside <template> shows black for webcam stream (Safari 14.0.3 only)
