@@ -176,17 +176,19 @@ void AudioSourceProviderAVFObjC::destroyMixIfNeeded()
     if (!m_avAudioMix)
         return;
     ASSERT(m_tapStorage);
-    auto locker = holdLock(m_tapStorage->lock);
-    if (m_avPlayerItem)
-        [m_avPlayerItem setAudioMix:nil];
-    [m_avAudioMix setInputParameters:@[ ]];
-    m_avAudioMix.clear();
-    m_tap.clear();
-    m_tapStorage->_this = nullptr;
+    {
+        auto locker = holdLock(m_tapStorage->lock);
+        if (m_avPlayerItem)
+            [m_avPlayerItem setAudioMix:nil];
+        [m_avAudioMix setInputParameters:@[ ]];
+        m_avAudioMix.clear();
+        m_tap.clear();
+        m_tapStorage->_this = nullptr;
+        // Call unprepare, since Tap cannot call it after clear.
+        unprepare();
+        m_weakFactory.revokeAll();
+    }
     m_tapStorage = nullptr;
-    // Call unprepare, since Tap cannot call it after clear.
-    unprepare();
-    m_weakFactory.revokeAll();
 }
 
 void AudioSourceProviderAVFObjC::createMixIfNeeded()
