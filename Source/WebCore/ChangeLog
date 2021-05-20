@@ -1,5 +1,36 @@
 2021-05-20  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r277784. rdar://problem/78264934
+
+    CRASH: Null-pointer deref in MediaSessionManagerCocoa::setNowPlayingInfo()
+    https://bugs.webkit.org/show_bug.cgi?id=225999
+    <rdar://78232970>
+    
+    Reviewed by Eric Carlson.
+    
+    Null-check `nowPlayingInfo.artwork->imageData` before dereferencing.
+    
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277784 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-20  Jer Noble  <jer.noble@apple.com>
+
+            CRASH: Null-pointer deref in MediaSessionManagerCocoa::setNowPlayingInfo()
+            https://bugs.webkit.org/show_bug.cgi?id=225999
+            <rdar://78232970>
+
+            Reviewed by Eric Carlson.
+
+            Null-check `nowPlayingInfo.artwork->imageData` before dereferencing.
+
+            * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+            (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo):
+
+2021-05-20  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r277726. rdar://problem/78260457
 
     [Mac] MSE-based video pauses when put in background; PiP context menu disabled
