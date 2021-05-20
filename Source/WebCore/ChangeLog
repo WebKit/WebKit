@@ -1,5 +1,16 @@
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
+        [Hardening] Use CheckedArithmetics in WebAudioBufferList constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226029
+        <rdar://78222665>
+
+        Reviewed by Eric Carlson.
+
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::WebAudioBufferList):
+
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
         Use CheckedLock more in WebCore
         https://bugs.webkit.org/show_bug.cgi?id=226026
 

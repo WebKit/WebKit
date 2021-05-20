@@ -42,10 +42,9 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     // with a custom size, and initialize the struct manually.
     uint32_t bufferCount = format.numberOfChannelStreams();
 
-    uint64_t bufferListSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * std::max(1U, bufferCount));
-    ASSERT(bufferListSize <= SIZE_MAX);
-
-    m_listBufferSize = static_cast<size_t>(bufferListSize);
+    CheckedSize bufferListSize = offsetof(AudioBufferList, mBuffers);
+    bufferListSize += (sizeof(AudioBuffer) * std::max(1U, bufferCount));
+    m_listBufferSize = bufferListSize.unsafeGet();
     m_canonicalList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
     memset(m_canonicalList.get(), 0, m_listBufferSize);
     m_canonicalList->mNumberBuffers = bufferCount;
