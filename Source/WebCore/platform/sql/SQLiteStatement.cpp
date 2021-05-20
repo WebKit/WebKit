@@ -282,6 +282,12 @@ String SQLiteStatement::columnBlobAsString(int col)
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)
 {
+    auto blobView = columnBlobView(col);
+    return { blobView.data(), blobView.size() };
+}
+
+auto SQLiteStatement::columnBlobView(int col) -> BlobView
+{
     ASSERT(col >= 0);
 
     if (!hasStartedStepping() && step() != SQLITE_ROW)

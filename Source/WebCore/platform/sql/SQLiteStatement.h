@@ -72,6 +72,24 @@ public:
     WEBCORE_EXPORT String columnBlobAsString(int col);
     WEBCORE_EXPORT Vector<uint8_t> columnBlob(int col);
 
+    class BlobView {
+    public:
+        BlobView() = default;
+        BlobView(const uint8_t* data, size_t size)
+            : m_data(data)
+            , m_size(size)
+        { }
+
+        const uint8_t* data() { return m_data; }
+        size_t size() { return m_size; }
+
+    private:
+        const uint8_t* m_data { nullptr };
+        const size_t m_size { 0 };
+    };
+    // The returned BlobView stays valid until the next step() / reset() or destruction of the statement.
+    BlobView columnBlobView(int col);
+
     SQLiteDatabase& database() { return m_database; }
     
 private:

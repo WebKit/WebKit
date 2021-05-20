@@ -1,3 +1,35 @@
+2021-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Introduce SQLiteStatement::columnBlobView()
+        https://bugs.webkit.org/show_bug.cgi?id=225988
+
+        Reviewed by Alex Christensen.
+
+        Introduce SQLiteStatement::columnBlobView() to get a "view" to the blob instead
+        of copying the data. This is more efficient for call sites that do not need to
+        hold on the the Blob data.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addExistingIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::columnBlob):
+        (WebCore::SQLiteStatement::columnBlobView):
+        * platform/sql/SQLiteStatement.h:
+        (WebCore::SQLiteStatement::BlobView::BlobView):
+        (WebCore::SQLiteStatement::BlobView::data):
+        (WebCore::SQLiteStatement::BlobView::size):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+
 2021-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Add support for Navigation Timing Level 2

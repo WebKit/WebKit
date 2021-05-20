@@ -554,15 +554,15 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
     record.rowID = statement->columnInt64(0);
     ASSERT(record.rowID);
-    auto keyData = statement->columnBlob(1);
+    auto keyDataView = statement->columnBlobView(1);
 
-    if (!deserializeIDBKeyData(keyData.data(), keyData.size(), record.record.key)) {
+    if (!deserializeIDBKeyData(keyDataView.data(), keyDataView.size(), record.record.key)) {
         LOG_ERROR("Unable to deserialize key data from database while advancing cursor");
         markAsErrored(record);
         return FetchResult::Failure;
     }
 
-    keyData = statement->columnBlob(2);
+    auto keyData = statement->columnBlob(2);
 
     // The primaryKey of an ObjectStore cursor is the same as its key.
     if (m_indexID == IDBIndexInfo::InvalidId) {

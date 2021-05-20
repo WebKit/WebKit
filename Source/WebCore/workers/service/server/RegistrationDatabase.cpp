@@ -514,10 +514,10 @@ String RegistrationDatabase::importRecords()
         auto scriptURL = URL { URL(), sql->columnText(6) };
         auto workerType = stringToWorkerType(sql->columnText(7));
 
-        auto contentSecurityPolicyData = sql->columnBlob(8);
-        WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
         Optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
-        if (contentSecurityPolicyData.size()) {
+        auto contentSecurityPolicyDataView = sql->columnBlobView(8);
+        if (contentSecurityPolicyDataView.size()) {
+            WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataView.data(), contentSecurityPolicyDataView.size());
             cspDecoder >> contentSecurityPolicy;
             if (!contentSecurityPolicy) {
                 RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode contentSecurityPolicy");
@@ -527,11 +527,10 @@ String RegistrationDatabase::importRecords()
 
         auto referrerPolicy = sql->columnText(9);
 
-        auto scriptResourceMapData = sql->columnBlob(10);
         HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
-
-        WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapData.data(), scriptResourceMapData.size());
-        if (scriptResourceMapData.size()) {
+        auto scriptResourceMapDataView = sql->columnBlobView(10);
+        if (scriptResourceMapDataView.size()) {
+            WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataView.data(), scriptResourceMapDataView.size());
             Optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
             scriptResourceMapDecoder >> scriptResourceMapWithoutScripts;
             if (!scriptResourceMapWithoutScripts) {
@@ -541,10 +540,10 @@ String RegistrationDatabase::importRecords()
             scriptResourceMap = populateScriptSourcesFromDisk(scriptStorage(), *key, WTFMove(*scriptResourceMapWithoutScripts));
         }
 
-        auto certificateInfoData = sql->columnBlob(11);
+        auto certificateInfoDataView = sql->columnBlobView(11);
         Optional<CertificateInfo> certificateInfo;
 
-        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoData.data(), certificateInfoData.size());
+        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataView.data(), certificateInfoDataView.size());
         certificateInfoDecoder >> certificateInfo;
         if (!certificateInfo) {
             RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode certificateInfo");
