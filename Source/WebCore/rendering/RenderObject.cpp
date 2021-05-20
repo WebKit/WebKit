@@ -968,7 +968,7 @@ void RenderObject::repaintSlowRepaintObject() const
 
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
 {
-    return snappedIntRect(absoluteClippedOverflowRect());
+    return snappedIntRect(absoluteClippedOverflowRectForRepaint());
 }
     
 LayoutRect RenderObject::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
@@ -978,15 +978,15 @@ LayoutRect RenderObject::rectWithOutlineForRepaint(const RenderLayerModelObject*
     return r;
 }
 
-LayoutRect RenderObject::clippedOverflowRectForRepaint(const RenderLayerModelObject*) const
+LayoutRect RenderObject::clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const
 {
     ASSERT_NOT_REACHED();
     return LayoutRect();
 }
 
-LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderObject::computeRect(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    return *computeVisibleRectInContainer(rect, repaintContainer, visibleRectContextForRepaint());
+    return *computeVisibleRectInContainer(rect, repaintContainer, context);
 }
 
 FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect& rect, const RenderLayerModelObject* repaintContainer) const
@@ -1974,7 +1974,7 @@ static Vector<FloatRect> absoluteRectsForRangeInText(const SimpleRange& range, T
     auto textQuads = renderer->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(RenderObject::BoundingRectBehavior::UseSelectionHeight), behavior.contains(RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
 
     if (behavior.contains(RenderObject::BoundingRectBehavior::RespectClipping)) {
-        auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRect();
+        auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRectForRepaint();
         Vector<FloatRect> clippedRects;
         clippedRects.reserveInitialCapacity(textQuads.size());
         for (auto& quad : textQuads) {

@@ -197,7 +197,7 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
         auto renderer = nodeMarkers.key->renderer();
         FloatRect overflowClipRect;
         if (renderer)
-            overflowClipRect = renderer->absoluteClippedOverflowRect();
+            overflowClipRect = renderer->absoluteClippedOverflowRectForRepaint();
         for (auto& marker : *nodeMarkers.value) {
             if (marker.type() != type)
                 continue;

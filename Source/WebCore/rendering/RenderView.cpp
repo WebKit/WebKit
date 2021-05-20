@@ -754,7 +754,7 @@ void RenderView::updateVisibleViewportRect(const IntRect& visibleRect)
     resumePausedImageAnimationsIfNeeded(visibleRect);
 
     for (auto* renderer : m_visibleInViewportRenderers) {
-        auto state = visibleRect.intersects(enclosingIntRect(renderer->absoluteClippedOverflowRect())) ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+        auto state = visibleRect.intersects(enclosingIntRect(renderer->absoluteClippedOverflowRectForRepaint())) ? VisibleInViewportState::Yes : VisibleInViewportState::No;
         renderer->setVisibleInViewportState(state);
     }
 }

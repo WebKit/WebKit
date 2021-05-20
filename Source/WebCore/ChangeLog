@@ -1,3 +1,79 @@
+2021-05-20  Chris Lord  <clord@igalia.com>
+
+        Allow passing a VisibleRectContext when calculating the clipped overflow rect
+        https://bugs.webkit.org/show_bug.cgi?id=226007
+
+        Reviewed by Simon Fraser.
+
+        Refactor rendering classes to allow specifying a VisibleRectContext
+        when calculating the clipped overflow rect.
+
+        No new tests, this is just a small refactor.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isOffScreen const):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        * page/SpatialNavigation.cpp:
+        (WebCore::hasOffscreenRect):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clippedOverflowRect const):
+        * rendering/RenderBox.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::mayCauseRepaintInsideViewport const):
+        (WebCore::RenderElement::isVisibleInDocumentRect const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRect const):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::pixelSnappedAbsoluteClippedOverflowRect const):
+        (WebCore::RenderObject::clippedOverflowRect const):
+        (WebCore::RenderObject::computeRect const):
+        (WebCore::absoluteRectsForRangeInText):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absoluteClippedOverflowRectForRepaint const):
+        (WebCore::RenderObject::clippedOverflowRectForRepaint const):
+        (WebCore::RenderObject::outlineBoundsForRepaint const):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect const):
+        (WebCore::RenderObject::computeRectForRepaint const):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::clippedOverflowRect const):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRect const):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRect const):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        (WebCore::RenderTableRow::clippedOverflowRect const):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRect const):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateVisibleViewportRect):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::clippedOverflowRect const):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::clippedOverflowRect const):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::clippedOverflowRect const):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::clippedOverflowRect const):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRect const):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+
 2021-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Add null checks in FrameSelection::selectFrameElementInParentIfFullySelected

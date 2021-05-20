@@ -123,7 +123,7 @@ bool RenderTableCol::canHaveChildren() const
     return isTableColumnGroup();
 }
 
-LayoutRect RenderTableCol::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderTableCol::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     // For now, just repaint the whole table.
     // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
@@ -133,7 +133,7 @@ LayoutRect RenderTableCol::clippedOverflowRectForRepaint(const RenderLayerModelO
     RenderTable* parentTable = table();
     if (!parentTable)
         return LayoutRect();
-    return parentTable->clippedOverflowRectForRepaint(repaintContainer);
+    return parentTable->clippedOverflowRect(repaintContainer, context);
 }
 
 void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)

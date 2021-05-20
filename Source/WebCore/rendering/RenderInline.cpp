@@ -849,7 +849,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFr
     return rect;
 }
 
-LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderInline::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     // Only first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || style().styleType() == PseudoId::FirstLetter || hasSelfPaintingLayer());
@@ -892,9 +892,9 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
         return repaintRect;
 
     if (containingBlock->hasOverflowClip())
-        containingBlock->applyCachedClipAndScrollPosition(repaintRect, repaintContainer, visibleRectContextForRepaint());
+        containingBlock->applyCachedClipAndScrollPosition(repaintRect, repaintContainer, context);
 
-    repaintRect = containingBlock->computeRectForRepaint(repaintRect, repaintContainer);
+    repaintRect = containingBlock->computeRect(repaintRect, repaintContainer, context);
 
     if (outlineSize) {
         for (auto& child : childrenOfType<RenderElement>(*this))
