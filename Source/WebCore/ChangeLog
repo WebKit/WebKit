@@ -1,3 +1,40 @@
+2021-05-20  Peng Liu  <peng.liu6@apple.com>
+
+        AirPlay icon of the Vimeo.com video player is missing
+        https://bugs.webkit.org/show_bug.cgi?id=226004
+
+        Reviewed by Eric Carlson.
+
+        With the optimizations in r276883, an `HTMLMediaElement` will activate its
+        `MediaSession` just before creating its `MediaPlayer` inside `prepareForLoad()`
+        or `loadNextSourceChild()`, and will deactivate its `MediaSession` after tearing
+        down its `MediaPlayer` inside `mediaLoadingFailed()`.
+
+        However, with these changes, when a new `HTMLMediaElement` is created and an
+        event handler of "webkitplaybacktargetavailabilitychanged" is added to the element,
+        the element's `MediaSession` might be inactive when function
+        `MediaSessionManageriOS::configureWireLessTargetMonitoring()` runs, so its
+        `MediaSession` won't monitor wireless routes, and no "webkitplaybacktargetavailabilitychanged"
+        will be fired thereafter.
+
+        This patch fixes this issue by activating an `HTMLMediaElement`'s `MediaSession`
+        when adding the first event handler to "webkitplaybacktargetavailabilitychanged" event.
+        It also keeps the `MediaSession` active if there is event handler to
+        "webkitplaybacktargetavailabilitychanged" after tearing down the `HTMLMediaElement`'s
+        `MediaPlayer` (in `HTMLMediaElement::mediaLoadingFailed()`).
+
+        We can improve the fix by refactoring the way to activate/deactivate
+        an `HTMLMediaElement`'s `MediaSession`.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::loadNextSourceChild):
+        (WebCore::HTMLMediaElement::mediaLoadingFailed):
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        Replace two `mediaSession().setActive(true);` in `prepareForLoad()`
+        and `loadNextSourceChild()` with one in `createMediaPlayer()`.
+
 2021-05-20  Jer Noble  <jer.noble@apple.com>
 
         CRASH: Null-pointer deref in MediaSessionManagerCocoa::setNowPlayingInfo()

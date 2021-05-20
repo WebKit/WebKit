@@ -1137,7 +1137,6 @@ void HTMLMediaElement::prepareForLoad()
     if (!document().hasBrowsingContext())
         return;
 
-    mediaSession().setActive(true);
     createMediaPlayer();
 
     // 2 - Let pending tasks be a list of all tasks from the media element's media element event task source in one of the task queues.
@@ -1423,8 +1422,6 @@ void HTMLMediaElement::loadNextSourceChild()
         waitForSourceChange();
         return;
     }
-
-    mediaSession().setActive(true);
 
     // Recreate the media player for the new url
     createMediaPlayer();
@@ -2231,7 +2228,12 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
     logMediaLoadRequest(document().page(), String(), convertEnumerationToString(error), false);
 
     mediaSession().clientCharacteristicsChanged();
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (!m_hasPlaybackTargetAvailabilityListeners)
+        mediaSession().setActive(false);
+#else
     mediaSession().setActive(false);
+#endif
 }
 
 void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
@@ -5863,6 +5865,7 @@ bool HTMLMediaElement::addEventListener(const AtomString& eventType, Ref<EventLi
 
     if (isFirstAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = true;
+        mediaSession().setActive(true);
         mediaSession().setHasPlaybackTargetAvailabilityListeners(true);
     }
 
@@ -6618,6 +6621,8 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
 void HTMLMediaElement::createMediaPlayer()
 {
     INFO_LOG(LOGIDENTIFIER);
+
+    mediaSession().setActive(true);
 
 #if ENABLE(WEB_AUDIO)
     auto protectedAudioSourceNode = makeRefPtr(m_audioSourceNode);
