@@ -52,6 +52,7 @@ public:
 
     // Messages to the SW host process
     virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const String& userAgent) = 0;
+    virtual void updateAppBoundValue(ServiceWorkerIdentifier, LastNavigationWasAppBound) = 0;
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;

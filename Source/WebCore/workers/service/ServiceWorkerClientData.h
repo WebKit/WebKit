@@ -37,11 +37,14 @@ namespace WebCore {
 class SWClientConnection;
 class ScriptExecutionContext;
 
+enum class LastNavigationWasAppBound : bool { No, Yes };
+
 struct ServiceWorkerClientData {
     ServiceWorkerClientIdentifier identifier;
     ServiceWorkerClientType type;
     ServiceWorkerClientFrameType frameType;
     URL url;
+    LastNavigationWasAppBound lastNavigationWasAppBound;
 
     ServiceWorkerClientData isolatedCopy() const;
 
@@ -54,7 +57,7 @@ struct ServiceWorkerClientData {
 template<class Encoder>
 void ServiceWorkerClientData::encode(Encoder& encoder) const
 {
-    encoder << identifier << type << frameType << url;
+    encoder << identifier << type << frameType << url << lastNavigationWasAppBound;
 }
 
 template<class Decoder>
@@ -80,7 +83,12 @@ Optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decod
     if (!url)
         return WTF::nullopt;
 
-    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url) } };
+    Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
+    decoder >> lastNavigationWasAppBound;
+    if (!lastNavigationWasAppBound)
+        return WTF::nullopt;
+
+    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*lastNavigationWasAppBound) } };
 }
 
 using ServiceWorkerClientsMatchAllCallback = WTF::CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;

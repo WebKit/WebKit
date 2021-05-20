@@ -217,6 +217,8 @@ public:
 
     static constexpr Seconds defaultTerminationDelay = 10_s;
 
+    LastNavigationWasAppBound clientIsAppBoundForRegistrableDomain(const RegistrableDomain&);
+
 private:
     void validateRegistrationDomain(WebCore::RegistrableDomain, CompletionHandler<void(bool)>&&);
 
@@ -241,6 +243,8 @@ private:
     void performGetOriginsWithRegistrationsCallbacks();
 
     void contextConnectionCreated(SWServerToContextConnection&);
+
+    void updateAppBoundValueForWorkers(const ClientOrigin&, LastNavigationWasAppBound);
 
     HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
     HashMap<ServiceWorkerRegistrationKey, WeakPtr<SWServerRegistration>> m_scopeToRegistrationMap;

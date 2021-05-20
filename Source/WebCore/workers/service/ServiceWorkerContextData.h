@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+enum class LastNavigationWasAppBound : bool;
+
 struct ServiceWorkerContextData {
     struct ImportedScript {
         ScriptBuffer script;
@@ -87,6 +89,7 @@ struct ServiceWorkerContextData {
     URL scriptURL;
     WorkerType workerType;
     bool loadedFromDisk;
+    Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
     HashMap<URL, ImportedScript> scriptResourceMap;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -99,7 +102,7 @@ template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
     encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy
-        << scriptURL << workerType << loadedFromDisk << scriptResourceMap << certificateInfo;
+        << scriptURL << workerType << loadedFromDisk << lastNavigationWasAppBound << scriptResourceMap << certificateInfo;
 }
 
 template<class Decoder>
@@ -144,6 +147,10 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(loadedFromDisk))
         return WTF::nullopt;
 
+    Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
+    if (!decoder.decode(lastNavigationWasAppBound))
+        return WTF::nullopt;
+
     HashMap<URL, ImportedScript> scriptResourceMap;
     if (!decoder.decode(scriptResourceMap))
         return WTF::nullopt;
@@ -164,6 +171,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
         WTFMove(scriptURL),
         workerType,
         loadedFromDisk,
+        WTFMove(lastNavigationWasAppBound),
         WTFMove(scriptResourceMap)
     }};
 }

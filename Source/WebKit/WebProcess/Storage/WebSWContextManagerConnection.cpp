@@ -135,6 +135,12 @@ void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesS
     setShouldUseShortTimeout(store.getBoolValueForKey(WebPreferencesKey::shouldUseServiceWorkerShortTimeoutKey()));
 }
 
+void WebSWContextManagerConnection::updateAppBoundValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppBound lastNavigationWasAppBound)
+{
+    if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
+        serviceWorkerThreadProxy->setLastNavigationWasAppBound(lastNavigationWasAppBound == WebCore::LastNavigationWasAppBound::Yes);
+}
+
 void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextData&& data, String&& userAgent)
 {
     auto pageConfiguration = pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());

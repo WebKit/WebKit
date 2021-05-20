@@ -1,3 +1,54 @@
+2021-05-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Mark ServiceWorkerThreadProxy with a default app-bound value
+        https://bugs.webkit.org/show_bug.cgi?id=223201
+        <rdar://problem/77664416>
+
+        Reviewed by Youenn Fablet.
+
+        Service worker loads have their own document loader, so they don't
+        always get properly marked as app-bound based on the main frame
+        navigation. Prior fixes handled some fetch events, synthetic
+        responses, and soft updates. But we need to set a default value when
+        we install the service worker.
+
+        We had to pick a best-effort heuristic to do this. If any client for
+        the worker is app-bound, then all loads with that worker will be
+        marked app-bound.
+
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::lastNavigationWasAppBound):
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.idl:
+        * workers/WorkerRunLoop.h:
+        To test this, I added a new API to ServiceWorkerInternals to get the
+        worker's app bound value.
+
+        * workers/service/ServiceWorkerClientData.cpp:
+        (WebCore::ServiceWorkerClientData::isolatedCopy const):
+        (WebCore::ServiceWorkerClientData::from):
+        * workers/service/ServiceWorkerClientData.h:
+        (WebCore::ServiceWorkerClientData::encode const):
+        (WebCore::ServiceWorkerClientData::decode):
+        Store the main navigation app-bound value when we register a client.
+
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::encode const):
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        (WebCore::ServiceWorkerThreadProxy::lastNavigationWasAppBound):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::updateWorker):
+        (WebCore::SWServer::clientIsAppBoundForRegistrableDomain):
+        Best-effort heuristic to mark a load as app bound if any client for
+        that origin was registered as app-bound.
+
 2021-05-20  Sam Weinig  <weinig@apple.com>
 
         Fix inverted ASSERT in sampleColor.

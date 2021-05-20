@@ -60,12 +60,12 @@ namespace WebCore {
 
         void postTask(ScriptExecutionContext::Task&&);
         void postTaskAndTerminate(ScriptExecutionContext::Task&&);
-        void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode);
+        WEBCORE_EXPORT void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode);
         void postDebuggerTask(ScriptExecutionContext::Task&&);
 
         unsigned long createUniqueId() { return ++m_uniqueId; }
 
-        static String defaultMode();
+        WEBCORE_EXPORT static String defaultMode();
         class Task {
             WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;
         public:

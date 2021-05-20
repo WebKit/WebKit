@@ -40,4 +40,6 @@
     readonly attribute boolean isThrottleable;
 
     readonly attribute long processIdentifier;
+
+    Promise<boolean> lastNavigationWasAppBound();
 };

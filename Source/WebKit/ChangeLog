@@ -1,3 +1,23 @@
+2021-05-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Mark ServiceWorkerThreadProxy with a default app-bound value
+        https://bugs.webkit.org/show_bug.cgi?id=223201
+        <rdar://problem/77664416>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::controlClient):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::updateAppBoundValue):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updateAppBoundValue):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2021-05-20  Eric Carlson  <eric.carlson@apple.com>
 
         Allow GPU process log channels to be configured
