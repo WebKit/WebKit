@@ -132,11 +132,13 @@ bool RemoteRenderingBackend::applyMediaItem(DisplayList::ItemHandle item, Graphi
         return false;
 
     auto& mediaItem = item.get<DisplayList::PaintFrameForMedia>();
-    auto player = m_gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaItem.identifier());
-    if (!player)
-        return true;
-
-    context.paintFrameForMedia(*player, mediaItem.destination());
+    callOnMainRunLoopAndWait([&, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, mediaPlayerIdentifier = mediaItem.identifier()] {
+        auto player = gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaPlayerIdentifier);
+        if (!player)
+            return;
+        // It is currently not safe to call paintFrameForMedia() off the main thread.
+        context.paintFrameForMedia(*player, mediaItem.destination());
+    });
     return true;
 }
 

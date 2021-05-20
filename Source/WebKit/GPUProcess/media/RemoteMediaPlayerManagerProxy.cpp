@@ -61,8 +61,6 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_gpuConnectionToWebProcess);
-
-    auto locker = holdLock(m_proxiesLock);
     ASSERT(!m_proxies.contains(identifier));
 
     auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration));
@@ -72,11 +70,10 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
 void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
-    {
-        auto locker = holdLock(m_proxiesLock);
-        if (auto proxy = m_proxies.take(identifier))
-            proxy->invalidate();
-    }
+
+    if (auto proxy = m_proxies.take(identifier))
+        proxy->invalidate();
+
     if (m_gpuConnectionToWebProcess && allowsExitUnderMemoryPressure())
         m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
@@ -173,10 +170,9 @@ bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection&
     return false;
 }
 
-// May get called on a background thread.
 RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayerIdentifier& identifier)
 {
-    auto locker = holdLock(m_proxiesLock);
+    ASSERT(RunLoop::isMain());
     auto results = m_proxies.find(identifier);
     if (results != m_proxies.end())
         return results->value->mediaPlayer();

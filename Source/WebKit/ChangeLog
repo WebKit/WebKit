@@ -1,3 +1,27 @@
+2021-05-19  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] It is not safe to call GraphicsContext::paintFrameForMedia() off the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=225996
+
+        Reviewed by Simon Fraser.
+
+        It is not safe to call GraphicsContext::paintFrameForMedia() off the main thread because it
+        relies on the MediaPlayer / MediaPlayerPrivate objects, which are main-thread object. Making
+        this function thread-safe would be a significant amount of work. As a result, I am simply
+        calling callOnMainThreadAndWait() in RemoteRenderingBackend::applyMediaItem(). Note that this
+        code path is only used when painting a video to a canvas.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::applyMediaItem):
+        Make sure we call paintFrameForMedia() on the main thread.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::deleteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::mediaPlayer):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        Drop lock that is no longer needed now that mediaPlayer() is always called on the main thread.
+
 2021-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Add support for Navigation Timing Level 2
