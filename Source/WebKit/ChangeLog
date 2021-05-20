@@ -1,3 +1,39 @@
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=226021
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock more in IPC::Connection. This is heavily multithreaded code and
+        it would benefit significantly from Clang Thread Safety Analysis.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::enqueueMatchingMessagesToMessageReceiveQueue):
+        (IPC::Connection::addMessageReceiveQueue):
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::addThreadMessageReceiver):
+        (IPC::Connection::removeMessageReceiveQueue):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::pushPendingSyncRequestID):
+        (IPC::Connection::popPendingSyncRequestID):
+        (IPC::Connection::waitForSyncReply):
+        (IPC::Connection::processIncomingSyncReply):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::installIncomingSyncMessageCallback):
+        (IPC::Connection::uninstallIncomingSyncMessageCallback):
+        (IPC::Connection::hasIncomingSyncMessage):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::sendOutgoingMessages):
+        (IPC::Connection::enqueueIncomingMessage):
+        (IPC::Connection::dispatchMessage):
+        (IPC::Connection::dispatchOneIncomingMessage):
+        (IPC::Connection::dispatchIncomingMessages):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::WTF_GUARDED_BY_LOCK):
+
 2021-05-20  Geoffrey Garen  <ggaren@apple.com>
 
         GraphicsLayer::setName() causes heap fragmentation

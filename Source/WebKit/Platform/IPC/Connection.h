@@ -39,7 +39,6 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
@@ -334,7 +333,7 @@ private:
     void popPendingSyncRequestID(SyncRequestID);
     std::unique_ptr<Decoder> waitForSyncReply(SyncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
-    void enqueueMatchingMessagesToMessageReceiveQueue(Locker<Lock>& incomingMessagesLocker, MessageReceiveQueue&, ReceiverName, uint64_t destinationID);
+    void enqueueMatchingMessagesToMessageReceiveQueue(MessageReceiveQueue&, ReceiverName, uint64_t destinationID) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
 
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);
@@ -355,7 +354,7 @@ private:
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.
-    void enqueueIncomingMessage(std::unique_ptr<Decoder>);
+    void enqueueIncomingMessage(std::unique_ptr<Decoder>) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
     size_t incomingMessagesDispatchingBatchSize() const;
 
     void willSendSyncMessage(OptionSet<SendSyncOption>);
@@ -405,33 +404,33 @@ private:
     bool m_didReceiveInvalidMessage { false };
 
     // Incoming messages.
-    Lock m_incomingMessagesMutex;
-    Deque<std::unique_ptr<Decoder>> m_incomingMessages;
+    CheckedLock m_incomingMessagesLock;
+    Deque<std::unique_ptr<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     std::unique_ptr<MessagesThrottler> m_incomingMessagesThrottler;
-    MessageReceiveQueueMap m_receiveQueues;
+    MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
     // Outgoing messages.
-    Lock m_outgoingMessagesMutex;
-    Deque<UniqueRef<Encoder>> m_outgoingMessages;
+    CheckedLock m_outgoingMessagesLock;
+    Deque<UniqueRef<Encoder>> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
 
     CheckedCondition m_waitForMessageCondition;
-    CheckedLock m_waitForMessageMutex;
+    CheckedLock m_waitForMessageLock;
 
     struct WaitForMessageState;
-    WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageMutex) { nullptr }; // NOLINT
+    WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { nullptr }; // NOLINT
 
     class SyncMessageState;
 
-    Lock m_syncReplyStateMutex;
-    bool m_shouldWaitForSyncReplies { true };
-    bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageMutex) { true };
+    CheckedLock m_syncReplyStateLock;
+    bool m_shouldWaitForSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock) { true };
+    bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { true };
     struct PendingSyncReply;
-    Vector<PendingSyncReply> m_pendingSyncReplies;
+    Vector<PendingSyncReply> m_pendingSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock);
 
-    Lock m_incomingSyncMessageCallbackMutex;
-    HashMap<uint64_t, WTF::Function<void()>> m_incomingSyncMessageCallbacks;
-    RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue;
-    uint64_t m_nextIncomingSyncMessageCallbackID { 0 };
+    CheckedLock m_incomingSyncMessageCallbackLock;
+    HashMap<uint64_t, WTF::Function<void()>> m_incomingSyncMessageCallbacks WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
+    RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
+    uint64_t m_nextIncomingSyncMessageCallbackID WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock) { 0 };
 
 #if ENABLE(IPC_TESTING_API)
     Vector<WeakPtr<MessageObserver>> m_messageObservers;
