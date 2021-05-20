@@ -1,3 +1,18 @@
+2021-05-20  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Wrong height of an empty table inside an orthogonal flex parent
+        https://bugs.webkit.org/show_bug.cgi?id=225339
+
+        Reviewed by Sergio Villar Senin.
+        
+        Add a test for an empty table inside a flexbox container, where the logical heights of both elements
+        are orthogonal to each other (the table has vertical writing mode and the flexbox uses row direction).
+        
+        This is a flipped version of table-as-item-specified-height.html.
+
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-width-vertical-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-width-vertical.html: Added.
+
 2021-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Add support for Navigation Timing Level 2

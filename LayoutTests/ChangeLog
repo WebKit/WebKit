@@ -1,3 +1,12 @@
+2021-05-20  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Wrong height of an empty table inside an orthogonal flex parent
+        https://bugs.webkit.org/show_bug.cgi?id=225339
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations: Remove one WPT test that now passes.
+
 2021-05-19  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Scrolling must be done after the layout when doing full page zoom

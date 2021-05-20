@@ -3911,7 +3911,6 @@ webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-ite
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2.html [ ImageOnlyFailure ]
-webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-specified-height.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-min-height-1.html [ ImageOnlyFailure ]
 
 # SVGs as flex items.
