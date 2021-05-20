@@ -31,19 +31,18 @@
 #include "FrameView.h"
 #include "HTMLDocumentParser.h"
 #include "Page.h"
-
-// defaultParserTimeLimit is the seconds the parser will run in one write() call
-// before yielding. Inline <script> execution can cause it to exceed the limit.
-// FIXME: We would like this value to be 0.2.
-static const double defaultParserTimeLimit = 0.500;
+#include "ScriptElement.h"
 
 namespace WebCore {
 
-static double parserTimeLimit(Page* page)
+static Seconds parserTimeLimit(Page* page)
 {
+    // Always yield after exceeding this.
+    constexpr auto defaultParserTimeLimit = 500_ms;
+
     // We're using the poorly named customHTMLTokenizerTimeDelay setting.
     if (page && page->hasCustomHTMLTokenizerTimeDelay())
-        return page->customHTMLTokenizerTimeDelay();
+        return Seconds(page->customHTMLTokenizerTimeDelay());
     return defaultParserTimeLimit;
 }
 
@@ -65,11 +64,6 @@ ActiveParserSession::~ActiveParserSession()
 PumpSession::PumpSession(unsigned& nestingLevel, Document* document)
     : NestingLevelIncrementer(nestingLevel)
     , ActiveParserSession(document)
-    // Setting processedTokens to INT_MAX causes us to check for yields
-    // after any token during any parse where yielding is allowed.
-    // At that time we'll initialize startTime.
-    , processedTokens(INT_MAX)
-    , didSeeScript(false)
 {
 }
 
@@ -77,7 +71,7 @@ PumpSession::~PumpSession() = default;
 
 HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
     : m_parser(parser)
-    , m_parserTimeLimit(Seconds(parserTimeLimit(m_parser.document()->page())))
+    , m_parserTimeLimit(parserTimeLimit(m_parser.document()->page()))
     , m_continueNextChunkTimer(*this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
 #if ASSERT_ENABLED
@@ -104,18 +98,45 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
     m_parser.resumeParsingAfterYield();
 }
 
-bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(PumpSession& session)
+bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(const ScriptElement* scriptElement, PumpSession& session)
 {
     // If we've never painted before and a layout is pending, yield prior to running
     // scripts to give the page a chance to paint earlier.
     RefPtr<Document> document = m_parser.document();
-    bool needsFirstPaint = document->view() && !document->view()->hasEverPainted();
+
     session.didSeeScript = true;
+
+    if (!document->body())
+        return false;
+
+    if (!document->haveStylesheetsLoaded())
+        return false;
 
     if (UNLIKELY(m_documentHasActiveParserYieldTokens))
         return true;
 
-    return needsFirstPaint && document->isLayoutTimerActive();
+    auto elapsedTime = MonotonicTime::now() - session.startTime;
+
+    constexpr auto elapsedTimeLimit = 16_ms;
+    // Require at least some new parsed content before yielding.
+    constexpr auto tokenLimit = 256;
+    // Don't yield on very short inline scripts. This is an imperfect way to try to guess the execution cost.
+    constexpr auto inlineScriptLengthLimit = 1024;
+
+    if (elapsedTime < elapsedTimeLimit)
+        return false;
+    if (session.processedTokens < tokenLimit)
+        return false;
+
+    if (scriptElement) {
+        // Async and deferred scripts are not executed by the parser.
+        if (scriptElement->hasAsyncAttribute() || scriptElement->hasDeferAttribute())
+            return false;
+        if (!scriptElement->hasSourceAttribute() && scriptElement->scriptContent().length() < inlineScriptLengthLimit)
+            return false;
+    }
+
+    return true;
 }
 
 void HTMLParserScheduler::scheduleForResume()

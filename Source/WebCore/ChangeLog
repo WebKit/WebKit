@@ -1,3 +1,41 @@
+2021-05-20  Antti Koivisto  <antti@apple.com>
+
+        HTML parser should yield more aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=224609
+        rdar://73458064
+
+        Reviewed by Darin Adler.
+
+        During page loading we may spend substantial amount of time in individual invocations of
+        the HTML parser. This can be a problem since it blocks rendering updates and so visual
+        page load progression.
+
+        Most of this time is not actually spend parsing, it rather goes into synchronous script
+        execution and DOM work triggered by scripts. This patch adds a more effective mechanism
+        where we may decide to yield the parser before executing a script.
+
+        * dom/ScriptElement.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizerLoop):
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::parserTimeLimit):
+        (WebCore::PumpSession::PumpSession):
+        (WebCore::HTMLParserScheduler::HTMLParserScheduler):
+        (WebCore::HTMLParserScheduler::shouldYieldBeforeExecutingScript):
+
+        Consider yielding before script execution after 16ms has elapsed and at least 256 tokens have been parsed.
+        Only yield for synchronous scripts.
+        Don't yield on very short inline scripts (this is an imperfect way to try to guess the execution cost).
+
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::shouldYieldBeforeToken):
+        (WebCore::HTMLParserScheduler::checkForYield):
+
+        Don't reset the token count, instead track the last yield check point.
+
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::scriptToProcess const):
+
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Use CheckedArithmetics in WebAudioBufferList constructor
