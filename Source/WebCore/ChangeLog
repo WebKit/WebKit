@@ -1,3 +1,18 @@
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        WebAudioBufferList::setSampleCount() should early return if computeBufferSizes() fails
+        https://bugs.webkit.org/show_bug.cgi?id=226028
+        rdar://78222414
+
+        Reviewed by Eric Carlson.
+
+        If computeBufferSizes() fails (returns WTF::nullopt), we now early return on release
+        builds, without modifying the WebAudioBufferList's internal state in any way. In
+        Debug, we would still hit the assertion.
+
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::setSampleCount):
+
 2021-05-20  Antti Koivisto  <antti@apple.com>
 
         HTML parser should yield more aggressively
