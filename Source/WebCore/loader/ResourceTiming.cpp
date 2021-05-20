@@ -62,9 +62,9 @@ ResourceTiming ResourceTiming::fromCache(const URL& url, const String& initiator
     return ResourceTiming(url, initiator, loadTiming, response, securityOrigin);
 }
 
-ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
+ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
 {
-    return ResourceTiming(resource.resourceRequest().url(), initiator, loadTiming, networkLoadMetrics, resource.response(), securityOrigin);
+    return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, resource.response(), securityOrigin);
 }
 
 ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
@@ -97,10 +97,10 @@ void ResourceTiming::initServerTiming(const ResourceResponse& response)
         m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));
 }
 
-Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming()
+Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming() const
 {
     return WTF::map(m_serverTiming, [] (auto& entry) {
-        return PerformanceServerTiming::create(WTFMove(entry.name), entry.duration, WTFMove(entry.description));
+        return PerformanceServerTiming::create(String(entry.name), entry.duration, String(entry.description));
     });
 }
 

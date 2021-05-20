@@ -6,6 +6,5 @@ This test validates the values of the window.performance.getEntriesByType("navig
 
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'frame_performance.getEntriesByType("navigation")[0].type')
-
+FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'frame_performance.getEntriesByType("navigation")[0].type')
 

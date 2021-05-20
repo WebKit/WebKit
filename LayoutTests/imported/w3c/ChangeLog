@@ -1,3 +1,129 @@
+2021-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add support for Navigation Timing Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=184363
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/navigation-timing/META.yml: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_image_document-expected.txt: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_image_document.html: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_media_document-expected.txt: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_media_document.html: Added.
+        * web-platform-tests/navigation-timing/idlharness.window.js:
+        * web-platform-tests/navigation-timing/nav2_test_attributes_exist-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_attributes_exist.html: Added.
+        This test fails because we have not implemented transferSize, encodedBodySize, and decodedBodySize as noted in PerformanceResourceTiming.idl
+        * web-platform-tests/navigation-timing/nav2_test_attributes_values-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_attributes_values.html: Added.
+        This test fails because we have not implemented transferSize, encodedBodySize, and decodedBodySize as noted in PerformanceResourceTiming.idl
+        * web-platform-tests/navigation-timing/nav2_test_document_open-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_document_open.html:
+        * web-platform-tests/navigation-timing/nav2_test_document_replaced-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_document_replaced.html:
+        * web-platform-tests/navigation-timing/nav2_test_frame_removed-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessible_from_the_start-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessible_from_the_start.html:
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessors-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessors.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_iframe-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_iframe.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_within_document-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigate_within_document.html:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_backforward-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_backforward.html:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_navigate-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_navigate.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_reload-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_reload.html:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_final_original_origin-expected.txt: Added.
+        This test fails because our test infrastructure doesn't support loading from www.localhost.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_final_original_origin.html: Copied from LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in.html.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in-expected.txt:
+        This test fails because our test infrastructure doesn't support loading from www.localhost.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in.html:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_none-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_none.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server-expected.txt:
+        This test failure needs further investigation.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server.html:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_xserver-expected.txt:
+        This test fails because our test infrastructure doesn't support loading from www.localhost.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_xserver.html:
+        * web-platform-tests/navigation-timing/nav2_test_unique_nav_instances-expected.txt: Added.
+        This test failure needs further investigation.
+        * web-platform-tests/navigation-timing/nav2_test_unique_nav_instances.html: Added.
+        * web-platform-tests/navigation-timing/po-navigation-expected.txt: Added.
+        * web-platform-tests/navigation-timing/po-navigation.html: Added.
+        * web-platform-tests/navigation-timing/resources/webperftestharness.js:
+        (test_namespace):
+        (test_attribute_exists):
+        (test_enum):
+        * web-platform-tests/navigation-timing/secure-connection-start-reuse.https-expected.txt: Added.
+        * web-platform-tests/navigation-timing/secure-connection-start-reuse.https.html: Added.
+        * web-platform-tests/navigation-timing/secure_connection_start_non_zero.https-expected.txt:
+        This test has been marked as flaky.  It needs to be fixed to not rely on no initial connection reuse.
+        * web-platform-tests/navigation-timing/supported_navigation_type.any-expected.txt:
+        * web-platform-tests/navigation-timing/supported_navigation_type.any.worker-expected.txt:
+        * web-platform-tests/navigation-timing/test_document_onload-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_document_onload.html: Added.
+        This test failure needs further investigation.
+        * web-platform-tests/navigation-timing/unload-event-same-origin-check-expected.txt:
+        * web-platform-tests/navigation-timing/unload-event-same-origin-check.html:
+        * web-platform-tests/performance-timeline/META.yml: Added.
+        * web-platform-tests/performance-timeline/buffered-flag-after-timeout.any.js: Added.
+        (async_test.t.t.step_timeout):
+        * web-platform-tests/performance-timeline/buffered-flag-observer.any.js: Added.
+        * web-platform-tests/performance-timeline/get-invalid-entries-expected.txt: Added.
+        * web-platform-tests/performance-timeline/get-invalid-entries.html: Added.
+        * web-platform-tests/performance-timeline/idlharness.any.js: Added.
+        (async idl_array):
+        * web-platform-tests/performance-timeline/multiple-buffered-flag-observers.any.js: Added.
+        (promise_test):
+        * web-platform-tests/performance-timeline/not-clonable-expected.txt: Added.
+        * web-platform-tests/performance-timeline/not-clonable.html: Added.
+        * web-platform-tests/performance-timeline/observer-buffered-false.any.js: Added.
+        (async_test.t.t.step_timeout):
+        * web-platform-tests/performance-timeline/performanceentry-tojson.any.js: Added.
+        (test):
+        * web-platform-tests/performance-timeline/po-callback-mutate.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-disconnect-removes-observed-types.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-disconnect.any.js: Added.
+        (async_test):
+        (test):
+        * web-platform-tests/performance-timeline/po-entries-sort.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-getentries.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-mark-measure.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-observe-expected.txt: Added.
+        * web-platform-tests/performance-timeline/po-observe-repeated-type.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-observe.html: Added.
+        * web-platform-tests/performance-timeline/po-resource-expected.txt: Added.
+        * web-platform-tests/performance-timeline/po-resource.html: Added.
+        * web-platform-tests/performance-timeline/po-takeRecords.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/resources/postmessage-entry.html: Added.
+        * web-platform-tests/performance-timeline/resources/worker-invalid-entries.js: Added.
+        * web-platform-tests/performance-timeline/resources/worker-with-performance-observer.js: Added.
+        (catch):
+        * web-platform-tests/performance-timeline/supportedEntryTypes.any-expected.txt:
+        This test failure needs further investigation.  It's a bindings generation problem I've unsuccessfully looked into before.
+        * web-platform-tests/performance-timeline/supportedEntryTypes.any.js:
+        (test):
+        * web-platform-tests/performance-timeline/supportedEntryTypes.any.worker-expected.txt:
+        * web-platform-tests/performance-timeline/webtiming-resolution.any.js: Added.
+        (testTimeResolution):
+        (timeByUserTiming):
+        * web-platform-tests/performance-timeline/worker-with-performance-observer-expected.txt: Added.
+        * web-platform-tests/performance-timeline/worker-with-performance-observer.html: Added.
+        * web-platform-tests/service-workers/service-worker/navigation-timing.https-expected.txt:
+        This existing test failure needs more investigation.  We are probably close to a fix after this patch.
+
 2021-05-19  Rob Buis  <rbuis@igalia.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=225964

@@ -39,6 +39,7 @@
 #include "CurlRequest.h"
 #include "HTTPParsers.h"
 #include "Logging.h"
+#include "NetworkLoadMetrics.h"
 #include "NetworkStorageSession.h"
 #include "ResourceHandleInternal.h"
 #include "SameSiteInfo.h"
@@ -582,7 +583,7 @@ void ResourceHandle::handleDataURL()
     }
 
     if (client())
-        client()->didFinishLoading(this);
+        client()->didFinishLoading(this, { });
 }
 
 } // namespace WebCore

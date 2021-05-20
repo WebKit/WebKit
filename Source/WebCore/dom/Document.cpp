@@ -1386,13 +1386,13 @@ void Document::setReadyState(ReadyState readyState)
         if (!m_documentTiming.domLoading)
             m_documentTiming.domLoading = MonotonicTime::now();
         break;
-    case Interactive:
-        if (!m_documentTiming.domInteractive)
-            m_documentTiming.domInteractive = MonotonicTime::now();
-        break;
     case Complete:
         if (!m_documentTiming.domComplete)
             m_documentTiming.domComplete = MonotonicTime::now();
+        FALLTHROUGH;
+    case Interactive:
+        if (!m_documentTiming.domInteractive)
+            m_documentTiming.domInteractive = MonotonicTime::now();
         break;
     }
 

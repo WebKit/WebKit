@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'timing[navTiming2Attributes[i]]')
 Description
 
 This test validates window.performance.getEntriesByType("navigation") remains constant when a document is replaced using document.open.
@@ -9,6 +8,5 @@ The test passes if all of the checks to performance.getEntriesByType("navigation
 
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'timing[navTiming2Attributes[i]]')
-
+PASS Navigation Timing 2 WPT
 

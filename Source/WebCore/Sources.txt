@@ -1735,6 +1735,7 @@ page/PerformanceMark.cpp
 page/PerformanceMeasure.cpp
 page/PerformanceMonitor.cpp
 page/PerformanceNavigation.cpp
+page/PerformanceNavigationTiming.cpp
 page/PerformanceObserver.cpp
 page/PerformanceObserverEntryList.cpp
 page/PerformanceResourceTiming.cpp
@@ -3358,6 +3359,7 @@ JSPerformanceMarkOptions.cpp
 JSPerformanceMeasure.cpp
 JSPerformanceMeasureOptions.cpp
 JSPerformanceNavigation.cpp
+JSPerformanceNavigationTiming.cpp
 JSPerformanceObserver.cpp
 JSPerformanceObserverCallback.cpp
 JSPerformanceObserverEntryList.cpp

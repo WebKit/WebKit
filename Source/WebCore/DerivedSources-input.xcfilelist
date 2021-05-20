@@ -1203,6 +1203,7 @@ $(PROJECT_DIR)/page/PerformanceMarkOptions.idl
 $(PROJECT_DIR)/page/PerformanceMeasure.idl
 $(PROJECT_DIR)/page/PerformanceMeasureOptions.idl
 $(PROJECT_DIR)/page/PerformanceNavigation.idl
+$(PROJECT_DIR)/page/PerformanceNavigationTiming.idl
 $(PROJECT_DIR)/page/PerformanceObserver.idl
 $(PROJECT_DIR)/page/PerformanceObserverCallback.idl
 $(PROJECT_DIR)/page/PerformanceObserverEntryList.idl

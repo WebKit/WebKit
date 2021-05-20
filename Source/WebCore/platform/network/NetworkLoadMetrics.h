@@ -200,7 +200,7 @@ public:
 };
 
 #if PLATFORM(COCOA)
-Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *, NSURLResponse *);
+Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *);
 WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskTransactionMetrics *incompleteMetrics);
 #endif
 

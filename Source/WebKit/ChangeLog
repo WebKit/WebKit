@@ -1,3 +1,14 @@
+2021-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add support for Navigation Timing Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=184363
+
+        Reviewed by Ryosuke Niwa.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        Mark reused TLS connections in complete metrics like I did in incomplete metrics in r277493.
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         Remove ImageBuffer::toBGRA() and replace its uses with the more general ImageBuffer::getPixelBuffer()

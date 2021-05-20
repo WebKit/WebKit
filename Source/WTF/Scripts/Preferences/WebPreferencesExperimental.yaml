@@ -782,6 +782,18 @@ PerElementSpeakerSelectionEnabled:
     WebCore:
       default: false
 
+PerformanceNavigationTimingAPIEnabled:
+  type: bool
+  humanReadableName: "PerformanceNavigationTiming"
+  humanReadableDescription: "Enable PerformanceNavigationTiming API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
   humanReadableName: "Private Click Measurement Debug Mode"

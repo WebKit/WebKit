@@ -48,14 +48,10 @@ private:
     PerformanceMeasure(const String& name, double startTime, double endTime, Ref<SerializedScriptValue>&& detail);
     ~PerformanceMeasure();
 
-    Type type() const final { return Type::Measure; }
+    Type performanceEntryType() const final { return Type::Measure; }
     ASCIILiteral entryType() const final { return "measure"_s; }
 
     Ref<SerializedScriptValue> m_serializedDetail;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceMeasure)
-    static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isMeasure(); }
-SPECIALIZE_TYPE_TRAITS_END()

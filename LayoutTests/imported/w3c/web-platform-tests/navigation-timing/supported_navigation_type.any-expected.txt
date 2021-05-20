@@ -1,3 +1,4 @@
 
-FAIL supportedEntryTypes contains 'navigation'. assert_true: There should be an entry 'navigation' in PerformanceObserver.supportedEntryTypes expected true got false
+PASS supportedEntryTypes contains 'navigation'.
+PASS 'navigation' entries should be observable.
 

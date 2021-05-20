@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'newNavTiming.type')
 Description
 
 This test validates the value of window.performance.getEntriesByType("navigation")[0].(type/unloadEventEnd/unloadEventStart) with a reloaded navigation.
@@ -10,6 +9,5 @@ The window.performance.getEntriesByType("navigation").unloadEventStart > 0 after
 The window.performance.getEntriesByType("navigation").unloadEventEnd > 0 after reload
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'newNavTiming.type')
-
+PASS Navigation Timing 2 WPT
 

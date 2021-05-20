@@ -41,15 +41,15 @@ class ResourceTiming {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static ResourceTiming fromCache(const URL&, const String& initiator, const LoadTiming&, const ResourceResponse&, const SecurityOrigin&);
-    static ResourceTiming fromLoad(CachedResource&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
+    static ResourceTiming fromLoad(CachedResource&, const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
     static ResourceTiming fromSynchronousLoad(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
 
-    URL url() const { return m_url; }
-    String initiator() const { return m_initiator; }
-    LoadTiming loadTiming() const { return m_loadTiming; }
-    NetworkLoadMetrics networkLoadMetrics() const { return m_networkLoadMetrics; }
+    const URL& url() const { return m_url; }
+    const String& initiator() const { return m_initiator; }
+    const LoadTiming& loadTiming() const { return m_loadTiming; }
+    const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
     bool allowTimingDetails() const { return m_allowTimingDetails; }
-    Vector<Ref<PerformanceServerTiming>> populateServerTiming();
+    Vector<Ref<PerformanceServerTiming>> populateServerTiming() const;
     ResourceTiming isolatedCopy() const;
 
     void overrideInitiatorName(const String& name) { m_initiator = name; }

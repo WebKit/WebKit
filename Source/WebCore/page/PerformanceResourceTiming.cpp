@@ -81,12 +81,9 @@ Ref<PerformanceResourceTiming> PerformanceResourceTiming::create(MonotonicTime t
 
 PerformanceResourceTiming::PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&& resourceTiming)
     : PerformanceEntry(resourceTiming.url().string(), entryStartTime(timeOrigin, resourceTiming), entryEndTime(timeOrigin, resourceTiming))
-    , m_initiatorType(resourceTiming.initiator())
     , m_timeOrigin(timeOrigin)
-    , m_loadTiming(resourceTiming.loadTiming())
-    , m_networkLoadMetrics(resourceTiming.networkLoadMetrics())
-    , m_shouldReportDetails(resourceTiming.allowTimingDetails())
-    , m_serverTiming(resourceTiming.populateServerTiming())
+    , m_resourceTiming(WTFMove(resourceTiming))
+    , m_serverTiming(m_resourceTiming.populateServerTiming())
 {
 }
 
@@ -94,7 +91,7 @@ PerformanceResourceTiming::~PerformanceResourceTiming() = default;
 
 const String& PerformanceResourceTiming::nextHopProtocol() const
 {
-    return m_networkLoadMetrics.protocol;
+    return m_resourceTiming.networkLoadMetrics().protocol;
 }
 
 double PerformanceResourceTiming::workerStart() const
@@ -105,140 +102,140 @@ double PerformanceResourceTiming::workerStart() const
 
 double PerformanceResourceTiming::redirectStart() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
-    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.redirectStart());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.loadTiming().redirectStart());
 }
 
 double PerformanceResourceTiming::redirectEnd() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
-    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.redirectEnd());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.loadTiming().redirectEnd());
 }
 
 double PerformanceResourceTiming::fetchStart() const
 {
     // fetchStart is a required property.
-    ASSERT(m_loadTiming.fetchStart());
+    ASSERT(m_resourceTiming.loadTiming().fetchStart());
 
-    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.fetchStart());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.loadTiming().fetchStart());
 }
 
 double PerformanceResourceTiming::domainLookupStart() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
-    if (m_networkLoadMetrics.domainLookupStart <= 0_ms)
+    if (m_resourceTiming.networkLoadMetrics().domainLookupStart <= 0_ms)
         return fetchStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.domainLookupStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().domainLookupStart);
 }
 
 double PerformanceResourceTiming::domainLookupEnd() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
-    if (m_networkLoadMetrics.domainLookupEnd <= 0_ms)
+    if (m_resourceTiming.networkLoadMetrics().domainLookupEnd <= 0_ms)
         return domainLookupStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.domainLookupEnd);
+    return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().domainLookupEnd);
 }
 
 double PerformanceResourceTiming::connectStart() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
-    if (m_networkLoadMetrics.connectStart <= 0_ms)
+    if (m_resourceTiming.networkLoadMetrics().connectStart <= 0_ms)
         return domainLookupEnd();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.connectStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().connectStart);
 }
 
 double PerformanceResourceTiming::connectEnd() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
-    if (m_networkLoadMetrics.connectEnd <= 0_ms)
+    if (m_resourceTiming.networkLoadMetrics().connectEnd <= 0_ms)
         return connectStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.connectEnd);
+    return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().connectEnd);
 }
 
 double PerformanceResourceTiming::secureConnectionStart() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
-    if (m_networkLoadMetrics.secureConnectionStart == reusedTLSConnectionSentinel)
+    if (m_resourceTiming.networkLoadMetrics().secureConnectionStart == reusedTLSConnectionSentinel)
         return fetchStart();
 
-    if (m_networkLoadMetrics.secureConnectionStart <= 0_ms)
+    if (m_resourceTiming.networkLoadMetrics().secureConnectionStart <= 0_ms)
         return 0.0;
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.secureConnectionStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().secureConnectionStart);
 }
 
 double PerformanceResourceTiming::requestStart() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
     // requestStart is 0 when a network request is not made.
-    if (m_networkLoadMetrics.requestStart <= 0_ms)
+    if (m_resourceTiming.networkLoadMetrics().requestStart <= 0_ms)
         return connectEnd();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.requestStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().requestStart);
 }
 
 double PerformanceResourceTiming::responseStart() const
 {
-    if (!m_shouldReportDetails)
+    if (!m_resourceTiming.allowTimingDetails())
         return 0.0;
 
     // responseStart is 0 when a network request is not made.
-    if (m_networkLoadMetrics.responseStart <= 0_ms)
+    if (m_resourceTiming.networkLoadMetrics().responseStart <= 0_ms)
         return requestStart();
 
-    return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.responseStart);
+    return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().responseStart);
 }
 
 double PerformanceResourceTiming::responseEnd() const
 {
     // responseEnd is a required property.
-    ASSERT(m_networkLoadMetrics.isComplete() || m_loadTiming.responseEnd());
+    ASSERT(m_resourceTiming.networkLoadMetrics().isComplete() || m_resourceTiming.loadTiming().responseEnd());
 
-    if (m_networkLoadMetrics.isComplete()) {
+    if (m_resourceTiming.networkLoadMetrics().isComplete()) {
         // responseEnd is 0 when a network request is not made.
         // This should mean all other properties are empty.
-        if (m_networkLoadMetrics.responseEnd <= 0_ms) {
-            ASSERT(m_networkLoadMetrics.responseStart <= 0_ms);
-            ASSERT(m_networkLoadMetrics.requestStart <= 0_ms);
-            ASSERT(m_networkLoadMetrics.requestStart <= 0_ms);
-            ASSERT(m_networkLoadMetrics.secureConnectionStart <= 0_ms);
-            ASSERT(m_networkLoadMetrics.connectEnd <= 0_ms);
-            ASSERT(m_networkLoadMetrics.connectStart <= 0_ms);
-            ASSERT(m_networkLoadMetrics.domainLookupEnd <= 0_ms);
-            ASSERT(m_networkLoadMetrics.domainLookupStart <= 0_ms);
-            return fetchStart();
+        if (m_resourceTiming.networkLoadMetrics().responseEnd <= 0_ms) {
+            ASSERT(m_resourceTiming.networkLoadMetrics().responseStart <= 0_ms);
+            ASSERT(m_resourceTiming.networkLoadMetrics().requestStart <= 0_ms);
+            ASSERT(m_resourceTiming.networkLoadMetrics().requestStart <= 0_ms);
+            ASSERT(m_resourceTiming.networkLoadMetrics().secureConnectionStart <= 0_ms);
+            ASSERT(m_resourceTiming.networkLoadMetrics().connectEnd <= 0_ms);
+            ASSERT(m_resourceTiming.networkLoadMetrics().connectStart <= 0_ms);
+            ASSERT(m_resourceTiming.networkLoadMetrics().domainLookupEnd <= 0_ms);
+            ASSERT(m_resourceTiming.networkLoadMetrics().domainLookupStart <= 0_ms);
+            return responseStart();
         }
 
-        return networkLoadTimeToDOMHighResTimeStamp(m_networkLoadMetrics.responseEnd);
+        return networkLoadTimeToDOMHighResTimeStamp(m_resourceTiming.networkLoadMetrics().responseEnd);
     }
 
-    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_loadTiming.responseEnd());
+    return monotonicTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.loadTiming().responseEnd());
 }
 
 double PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp(Seconds delta) const
 {
     ASSERT(delta);
-    Seconds final = (m_loadTiming.fetchStart() + delta) - m_timeOrigin;
+    Seconds final = (m_resourceTiming.loadTiming().fetchStart() + delta) - m_timeOrigin;
     return Performance::reduceTimeResolution(final).milliseconds();
 }
 

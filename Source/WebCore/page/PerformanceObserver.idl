@@ -33,8 +33,9 @@
 ] interface PerformanceObserver {
     [CallWith=ScriptExecutionContext] constructor(PerformanceObserverCallback callback);
 
-    undefined observe(PerformanceObserverInit options);
+    undefined observe(optional PerformanceObserverInit options);
     undefined disconnect();
+    sequence<PerformanceEntry> takeRecords();
     [CallWith=ScriptExecutionContext] static readonly attribute FrozenArray<DOMString> supportedEntryTypes;
 };
 

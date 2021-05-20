@@ -74,7 +74,7 @@ private:
         pingLoadComplete({ }, response);
     }
     void didReceiveBuffer(WebCore::ResourceHandle*, Ref<WebCore::SharedBuffer>&&, int) final { pingLoadComplete(); }
-    void didFinishLoading(WebCore::ResourceHandle*) final { pingLoadComplete(); }
+    void didFinishLoading(WebCore::ResourceHandle*, const WebCore::NetworkLoadMetrics&) final { pingLoadComplete(); }
     void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError& error) final { pingLoadComplete(error); }
     bool shouldUseCredentialStorage(WebCore::ResourceHandle*) final { return m_shouldUseCredentialStorage; }
     void timeoutTimerFired() { pingLoadComplete(WebCore::ResourceError { String(), 0, m_currentRequest.url(), "Load timed out"_s, WebCore::ResourceError::Type::Timeout }); }

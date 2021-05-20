@@ -64,7 +64,7 @@ Vector<RefPtr<PerformanceEntry>> PerformanceObserverEntryList::getEntriesByName(
     for (auto& entry : m_entries) {
         if (!name.isNull() && entry->name() != name)
             continue;
-        if (type && entry->type() != *type)
+        if (type && entry->performanceEntryType() != *type)
             continue;
         entries.append(entry.copyRef());
     }

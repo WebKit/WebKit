@@ -76,7 +76,7 @@ void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, 
     m_data.append(reinterpret_cast<const uint8_t*>(data), length);
 }
 
-void SynchronousLoaderClient::didFinishLoading(ResourceHandle* handle)
+void SynchronousLoaderClient::didFinishLoading(ResourceHandle* handle, const NetworkLoadMetrics&)
 {
     m_messageQueue->kill();
 #if PLATFORM(COCOA)

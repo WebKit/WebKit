@@ -1,3 +1,159 @@
+2021-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add support for Navigation Timing Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=184363
+
+        Reviewed by Ryosuke Niwa.
+
+        This is basically just a new shape for exposing the same data as window.performance.navigation, but with a shape that fits better into the rest of the
+        performance timeline measurements that have been added to the web platform since performance.navigation.
+
+        I noted that exposing transfer size is problematic, and some of the tests for reading transfer size still fail.
+        There are still a few relatively minor test failures to fix in future patches.  Each one is annotated in the LayoutTests ChangeLogs.
+
+        Tests: imported/w3c/web-platform-tests/navigation-timing/dom_interactive_image_document.html
+               imported/w3c/web-platform-tests/navigation-timing/dom_interactive_media_document.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_exist.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_instance_accessors.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_navigate_iframe.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_navigation_type_navigate.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_final_original_origin.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_none.html
+               imported/w3c/web-platform-tests/navigation-timing/nav2_test_unique_nav_instances.html
+               imported/w3c/web-platform-tests/navigation-timing/po-navigation.html
+               imported/w3c/web-platform-tests/navigation-timing/secure-connection-start-reuse.https.html
+               imported/w3c/web-platform-tests/navigation-timing/test_document_onload.html
+               imported/w3c/web-platform-tests/performance-timeline/get-invalid-entries.html
+               imported/w3c/web-platform-tests/performance-timeline/not-clonable.html
+               imported/w3c/web-platform-tests/performance-timeline/po-observe.html
+               imported/w3c/web-platform-tests/performance-timeline/po-resource.html
+               imported/w3c/web-platform-tests/performance-timeline/worker-with-performance-observer.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * dom/Document.cpp:
+        (WebCore::Document::setReadyState):
+        Sometimes the ready state jumps right to Complete without hitting Interactive along the way.
+        When this happens, we want to mark both m_documentTiming.domComplete and m_documentTiming.domInteractive.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::notifyFinished):
+        Call addNavigationTiming in notifyFinished to create the navigation timing object when we are done navigating
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didFinishLoading):
+        * loader/ResourceLoader.h:
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::fromLoad):
+        Add a URL parameter.  Sometimes we need to use the request's URL and sometimes the response's.  Different specs written at different times.
+        (WebCore::ResourceTiming::populateServerTiming const):
+        (WebCore::ResourceTiming::populateServerTiming): Deleted.
+        * loader/ResourceTiming.h:
+        (WebCore::ResourceTiming::url const):
+        (WebCore::ResourceTiming::initiator const):
+        (WebCore::ResourceTiming::loadTiming const):
+        (WebCore::ResourceTiming::networkLoadMetrics const):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::reportResourceTiming):
+        * page/Performance.cpp:
+        (WebCore::Performance::getEntries const):
+        (WebCore::Performance::getEntriesByType const):
+        (WebCore::Performance::getEntriesByName const):
+        (WebCore::Performance::appendBufferedEntriesByType const):
+        (WebCore::Performance::addNavigationTiming):
+        (WebCore::Performance::registerPerformanceObserver):
+        (WebCore::Performance::queueEntry):
+        (WebCore::Performance::scheduleTaskIfNeeded):
+        * page/Performance.h:
+        * page/PerformanceEntry.h:
+        (WebCore::PerformanceEntry::startTime const):
+        (WebCore::PerformanceEntry::duration const):
+        (WebCore::PerformanceEntry::isResource const): Deleted.
+        (WebCore::PerformanceEntry::isMark const): Deleted.
+        (WebCore::PerformanceEntry::isMeasure const): Deleted.
+        (WebCore::PerformanceEntry::isPaint const): Deleted.
+        * page/PerformanceMark.h:
+        (isType): Deleted.
+        SPECIALIZE_TYPE_TRAITS_BEGIN/END doesn't work well with PerformanceNavigationTiming which inherits from PerformanceResourceTiming which both have distinct types.
+        is<PerformanceResourceTiming> doesn't give us the info we need.  I replaced that with "switch (entry->performanceEntryType())" in the one place it's used, and it works like a charm.
+        Also renamed type to performanceEntryType so it doesn't conflict with PerformanceNavigationTiming::type, which is specified in the idl.
+        * page/PerformanceMeasure.h:
+        (isType): Deleted.
+        * page/PerformanceNavigationTiming.cpp: Added.
+        (WebCore::toPerformanceNavigationTimingNavigationType):
+        (WebCore::PerformanceNavigationTiming::PerformanceNavigationTiming):
+        (WebCore::PerformanceNavigationTiming::millisecondsSinceOrigin const):
+        (WebCore::PerformanceNavigationTiming::sameOriginCheckFails const):
+        (WebCore::PerformanceNavigationTiming::unloadEventStart const):
+        (WebCore::PerformanceNavigationTiming::unloadEventEnd const):
+        (WebCore::PerformanceNavigationTiming::domInteractive const):
+        (WebCore::PerformanceNavigationTiming::domContentLoadedEventStart const):
+        (WebCore::PerformanceNavigationTiming::domContentLoadedEventEnd const):
+        (WebCore::PerformanceNavigationTiming::domComplete const):
+        (WebCore::PerformanceNavigationTiming::loadEventStart const):
+        (WebCore::PerformanceNavigationTiming::loadEventEnd const):
+        (WebCore::PerformanceNavigationTiming::type const):
+        (WebCore::PerformanceNavigationTiming::redirectCount const):
+        (WebCore::PerformanceNavigationTiming::startTime const):
+        (WebCore::PerformanceNavigationTiming::duration const):
+        * page/PerformanceNavigationTiming.h: Added.
+        * page/PerformanceNavigationTiming.idl: Copied from Source/WebCore/page/PerformanceObserver.idl.
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::takeRecords):
+        (WebCore::PerformanceObserver::disconnect):
+        (WebCore::PerformanceObserver::deliver):
+        (WebCore::PerformanceObserver::supportedEntryTypes):
+        * page/PerformanceObserver.h:
+        * page/PerformanceObserver.idl:
+        * page/PerformanceObserverEntryList.cpp:
+        (WebCore::PerformanceObserverEntryList::getEntriesByName const):
+        * page/PerformancePaintTiming.h:
+        (isType): Deleted.
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::nextHopProtocol const):
+        (WebCore::PerformanceResourceTiming::redirectStart const):
+        (WebCore::PerformanceResourceTiming::redirectEnd const):
+        (WebCore::PerformanceResourceTiming::fetchStart const):
+        (WebCore::PerformanceResourceTiming::domainLookupStart const):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd const):
+        (WebCore::PerformanceResourceTiming::connectStart const):
+        (WebCore::PerformanceResourceTiming::connectEnd const):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart const):
+        (WebCore::PerformanceResourceTiming::requestStart const):
+        (WebCore::PerformanceResourceTiming::responseStart const):
+        (WebCore::PerformanceResourceTiming::responseEnd const):
+        (WebCore::PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp const):
+        * page/PerformanceResourceTiming.h:
+        (WebCore::PerformanceResourceTiming::initiatorType const):
+        (isType): Deleted.
+        * page/PerformanceResourceTiming.idl:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::doNotifyFinish):
+        * platform/network/NetworkLoadMetrics.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didFinishLoading):
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::didFinishLoading):
+        * platform/network/SynchronousLoaderClient.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading):
+        Pass metrics including the response end time from NSURLConnection so we don't assert in WebKitLegacy.
+        * platform/network/cocoa/NetworkLoadMetrics.mm:
+        (WebCore::copyTimingData):
+        Use currentRequest instead of passing in the response so we can call it from didFinishLoading, where we don't have a response stored anywhere.
+        We're just looking for whether it's http or https, so the currentRequest (which is the request after all the redirects) fits our purpose.
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::handleDataURL):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connectionDidFinishLoading:]):
+
 2021-05-19  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] Video playback pauses when switching apps (video enters picture-in-picture from fullscreen)

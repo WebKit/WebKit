@@ -790,7 +790,10 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         networkLoadMetrics.domainLookupStart = Seconds(domainLookupStartInterval);
         networkLoadMetrics.domainLookupEnd = Seconds(domainLookupEndInterval);
         networkLoadMetrics.connectStart = Seconds(connectStartInterval);
-        networkLoadMetrics.secureConnectionStart = Seconds(secureConnectionStartInterval);
+        if (m.reusedConnection && [m.response.URL.scheme isEqualToString:@"https"])
+            networkLoadMetrics.secureConnectionStart = WebCore::reusedTLSConnectionSentinel;
+        else
+            networkLoadMetrics.secureConnectionStart = Seconds(secureConnectionStartInterval);
         networkLoadMetrics.connectEnd = Seconds(connectEndInterval);
         networkLoadMetrics.requestStart = Seconds(requestStartInterval);
         networkLoadMetrics.responseStart = Seconds(responseStartInterval);

@@ -4,5 +4,5 @@ Description
 This test validates that PerformanceNavigationTiming::type()'s default value is navigate
 
 
-FAIL Navigation Timing 2 WPT undefined is not an object (evaluating 'pnt.type')
+PASS Navigation Timing 2 WPT
 

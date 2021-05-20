@@ -67,7 +67,7 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskTransactionMetrics *incom
     );
 }
 
-Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, NSURLResponse *response)
+Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection)
 {
     NSDictionary *timingData = [connection _timingData];
     if (!timingData)
@@ -89,7 +89,7 @@ Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, NSURLRespons
         timingValue(timingData, @"_kCFNTimingDataRequestStart"),
         timingValue(timingData, @"_kCFNTimingDataResponseStart"),
         timingValue(timingData, @"_kCFNTimingDataConnectionReused"),
-        response.URL.scheme
+        connection.currentRequest.URL.scheme
     );
 }
     

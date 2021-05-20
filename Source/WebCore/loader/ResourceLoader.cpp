@@ -733,10 +733,9 @@ void ResourceLoader::didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&& buffe
     didReceiveBuffer(WTFMove(buffer), encodedDataLength, DataPayloadBytes);
 }
 
-void ResourceLoader::didFinishLoading(ResourceHandle*)
+void ResourceLoader::didFinishLoading(ResourceHandle*, const NetworkLoadMetrics& metrics)
 {
-    NetworkLoadMetrics emptyMetrics;
-    didFinishLoading(emptyMetrics);
+    didFinishLoading(metrics);
 }
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)

@@ -1,0 +1,8 @@
+Description
+
+This tests that a media document has positive-value domInteractive.
+
+
+
+PASS Test domInteractive on media document
+

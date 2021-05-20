@@ -36,7 +36,7 @@ window.jsTestIsAsync = true;
     document.body.innerText = 'TEXT2';
     await waitForFCP();
     shouldBeTrue('didReceiveFirstContentfulPaint');
-    shouldBe('performance.getEntries().length', "1");
+    shouldBe('performance.getEntries().length', "2");
     shouldBe('performance.getEntriesByName("first-contentful-paint").length', "1");
     shouldBe('performance.getEntriesByName("first-contentful-paint", "paint").length', "1");
     shouldBe('performance.getEntriesByType("paint").length', "1");
