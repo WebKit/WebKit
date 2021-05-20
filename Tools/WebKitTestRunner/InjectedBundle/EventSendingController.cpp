@@ -618,6 +618,34 @@ void EventSendingController::cancelTouchPoint(int index)
 
 #endif
 
+#if ENABLE(MAC_GESTURE_EVENTS)
+
+void EventSendingController::scaleGestureStart(double scale)
+{
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "ScaleGestureStart");
+    setValue(body, "Scale", scale);
+    postSynchronousPageMessage("EventSender", body);
+}
+
+void EventSendingController::scaleGestureChange(double scale)
+{
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "ScaleGestureChange");
+    setValue(body, "Scale", scale);
+    postSynchronousPageMessage("EventSender", body);
+}
+
+void EventSendingController::scaleGestureEnd(double scale)
+{
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "ScaleGestureEnd");
+    setValue(body, "Scale", scale);
+    postSynchronousPageMessage("EventSender", body);
+}
+
+#endif // ENABLE(MAC_GESTURE_EVENTS)
+
 // Object Creation
 
 void EventSendingController::makeWindowObject(JSContextRef context)

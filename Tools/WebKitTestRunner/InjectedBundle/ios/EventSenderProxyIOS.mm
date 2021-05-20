@@ -39,7 +39,7 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
 {
     UNUSED_PARAM(m_testController);
     UNUSED_PARAM(m_leftMouseButtonDown);
-    UNUSED_PARAM(eventNumber);
+    UNUSED_PARAM(m_eventNumber);
 }
 
 EventSenderProxy::~EventSenderProxy() = default;

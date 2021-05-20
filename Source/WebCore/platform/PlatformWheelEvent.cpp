@@ -26,9 +26,62 @@
 #include "config.h"
 #include "PlatformWheelEvent.h"
 
+#include "Scrollbar.h"
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(MAC_GESTURE_EVENTS)
+#include "PlatformGestureEventMac.h"
+#endif
+
 namespace WebCore {
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+
+PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEvent& platformGestureEvent, double deltaY)
+{
+    // This tries to match as much of the behavior of `WebKit::WebEventFactory::createWebWheelEvent` as
+    // possible assuming `-[NSEvent hasPreciseScrollingDeltas]` and no `-[NSEvent _scrollCount]`.
+
+    double deltaX = 0;
+    double wheelTicksX = 0;
+    double wheelTicksY = deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
+    bool shiftKey = platformGestureEvent.modifiers().contains(PlatformEvent::Modifier::ShiftKey);
+    bool ctrlKey = true;
+    bool altKey = platformGestureEvent.modifiers().contains(PlatformEvent::Modifier::AltKey);
+    bool metaKey = platformGestureEvent.modifiers().contains(PlatformEvent::Modifier::MetaKey);
+    PlatformWheelEvent platformWheelEvent(platformGestureEvent.pos(), platformGestureEvent.globalPosition(), deltaX, deltaY, wheelTicksX, wheelTicksY, ScrollByPixelWheelEvent, shiftKey, ctrlKey, altKey, metaKey);
+
+    // PlatformEvent
+    platformWheelEvent.m_timestamp = platformGestureEvent.timestamp();
+
+    // PlatformWheelEvent
+    platformWheelEvent.m_hasPreciseScrollingDeltas = true;
+
+#if ENABLE(KINETIC_SCROLLING)
+    switch (platformGestureEvent.type()) {
+    case PlatformEvent::GestureStart:
+        platformWheelEvent.m_phase = PlatformWheelEventPhase::Began;
+        break;
+    case PlatformEvent::GestureChange:
+        platformWheelEvent.m_phase = PlatformWheelEventPhase::Changed;
+        break;
+    case PlatformEvent::GestureEnd:
+        platformWheelEvent.m_phase = PlatformWheelEventPhase::Ended;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+#endif // ENABLE(KINETIC_SCROLLING)
+
+#if PLATFORM(COCOA)
+    platformWheelEvent.m_unacceleratedScrollingDeltaY = deltaY;
+#endif // PLATFORM(COCOA)
+
+    return platformWheelEvent;
+}
+
+#endif // ENABLE(MAC_GESTURE_EVENTS)
 
 #if ENABLE(KINETIC_SCROLLING)
 

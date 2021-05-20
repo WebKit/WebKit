@@ -21,7 +21,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+PERL = perl
 RUBY = ruby
+
+ifneq ($(SDKROOT),)
+    SDK_FLAGS = -isysroot $(SDKROOT)
+endif
+
+ifeq ($(USE_LLVM_TARGET_TRIPLES_FOR_CLANG),YES)
+    WK_CURRENT_ARCH = $(word 1, $(ARCHS))
+    TARGET_TRIPLE_FLAGS = -target $(WK_CURRENT_ARCH)-$(LLVM_TARGET_TRIPLE_VENDOR)-$(LLVM_TARGET_TRIPLE_OS_VERSION)$(LLVM_TARGET_TRIPLE_SUFFIX)
+endif
+
+FRAMEWORK_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | $(PERL) -e 'print "-F " . join(" -F ", split(" ", <>));')
+HEADER_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | $(PERL) -e 'print "-I" . join(" -I", split(" ", <>));')
+FEATURE_AND_PLATFORM_DEFINES := $(shell $(CC) -std=gnu++1z -x c++ -E -P -dM $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | $(PERL) -ne "print if s/\#define ((HAVE_|USE_|ENABLE_|WTF_PLATFORM_)\w+) 1/\1/")
+
+# FIXME: This should list Platform.h and all the things it includes. Could do that by using the -MD flag in the CC line above.
+FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(DumpRenderTree)/DerivedSources.make
 
 UISCRIPTCONTEXT_DIR = $(DumpRenderTree)/../TestRunnerShared/UIScriptContext/Bindings
 DUMPRENDERTREE_PREFERENCES_TEMPLATES_DIR = $(DumpRenderTree)/Scripts/PreferencesTemplates
@@ -46,9 +63,9 @@ IDL_ATTRIBUTES_FILE = $(WebCoreScripts)/IDLAttributes.json
 
 .PHONY : all
 
-JS%.h JS%.cpp : %.idl $(SCRIPTS) $(IDL_ATTRIBUTES_FILE)
+JS%.h JS%.cpp : %.idl $(SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	@echo Generating bindings for $*...
-	@perl -I $(WebCoreScripts) -I $(UISCRIPTCONTEXT_DIR) -I $(DumpRenderTree)/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "" --include $(UISCRIPTCONTEXT_DIR) --outputDir . --generator DumpRenderTree --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
+	$(PERL) -I $(WebCoreScripts) -I $(UISCRIPTCONTEXT_DIR) -I $(DumpRenderTree)/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES)" --include $(UISCRIPTCONTEXT_DIR) --outputDir . --generator DumpRenderTree --idlAttributesFile $(IDL_ATTRIBUTES_FILE) $<
 
 all : \
     $(UICONTEXT_INTERFACES:%=JS%.h) \

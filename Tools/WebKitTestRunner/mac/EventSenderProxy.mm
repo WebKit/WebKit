@@ -37,6 +37,7 @@
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
+#import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSApplication (Details)
@@ -54,6 +55,7 @@
     NSPoint _eventSender_location;
     NSInteger _eventSender_stage;
     float _eventSender_pressure;
+    CGFloat _eventSender_magnification;
     CGFloat _eventSender_stageTransition;
     NSEventPhase _eventSender_phase;
     NSEventPhase _eventSender_momentumPhase;
@@ -65,40 +67,42 @@
 }
 
 - (id)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure stageTransition:(float)stageTransition phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window;
+- (id)initMagnifyEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation magnification:(CGFloat)magnification phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window;
 - (NSTimeInterval)timestamp;
 @end
+
+static CGSGesturePhase EventSenderCGGesturePhaseFromNSEventPhase(NSEventPhase phase)
+{
+    switch (phase) {
+    case NSEventPhaseMayBegin:
+        return kCGSGesturePhaseMayBegin;
+
+    case NSEventPhaseBegan:
+        return kCGSGesturePhaseBegan;
+
+    case NSEventPhaseChanged:
+        return kCGSGesturePhaseChanged;
+
+    case NSEventPhaseCancelled:
+        return kCGSGesturePhaseCancelled;
+
+    case NSEventPhaseEnded:
+        return kCGSGesturePhaseEnded;
+
+    case NSEventPhaseNone:
+    default:
+        return kCGSGesturePhaseNone;
+    }
+}
 
 @implementation EventSenderSyntheticEvent
 
 - (instancetype)initPressureEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation stage:(NSInteger)stage pressure:(float)pressure stageTransition:(float)stageTransition phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window
 {
-    CGSGesturePhase gesturePhase;
-    switch (phase) {
-    case NSEventPhaseMayBegin:
-        gesturePhase = kCGSGesturePhaseMayBegin;
-        break;
-    case NSEventPhaseBegan:
-        gesturePhase = kCGSGesturePhaseBegan;
-        break;
-    case NSEventPhaseChanged:
-        gesturePhase = kCGSGesturePhaseChanged;
-        break;
-    case NSEventPhaseCancelled:
-        gesturePhase = kCGSGesturePhaseCancelled;
-        break;
-    case NSEventPhaseEnded:
-        gesturePhase = kCGSGesturePhaseEnded;
-        break;
-    case NSEventPhaseNone:
-    default:
-        gesturePhase = kCGSGesturePhaseNone;
-        break;
-    }
-
     auto cgEvent = adoptCF(CGEventCreate(nullptr));
     CGEventSetType(cgEvent.get(), (CGEventType)kCGSEventGesture);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureHIDType, 32);
-    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGesturePhase, gesturePhase);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureHIDType, kIOHIDEventTypeForce);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGesturePhase, EventSenderCGGesturePhaseFromNSEventPhase(phase));
     CGEventSetDoubleValueField(cgEvent.get(), kCGEventStagePressure, pressure);
     CGEventSetDoubleValueField(cgEvent.get(), kCGEventTransitionProgress, pressure);
     CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureStage, stageTransition);
@@ -119,6 +123,29 @@
     _eventSender_eventNumber = eventNumber;
     _eventSender_window = window;
     _eventSender_type = NSEventTypePressure;
+
+    return self;
+}
+
+- (id)initMagnifyEventAtLocation:(NSPoint)location globalLocation:(NSPoint)globalLocation magnification:(CGFloat)magnification phase:(NSEventPhase)phase time:(NSTimeInterval)time eventNumber:(NSInteger)eventNumber window:(NSWindow *)window
+{
+    auto cgEvent = adoptCF(CGEventCreate(nullptr));
+    CGEventSetType(cgEvent.get(), (CGEventType)kCGSEventGesture);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGestureHIDType, kIOHIDEventTypeZoom);
+    CGEventSetIntegerValueField(cgEvent.get(), kCGEventGesturePhase, EventSenderCGGesturePhaseFromNSEventPhase(phase));
+    CGEventSetDoubleValueField(cgEvent.get(), kCGEventGestureZoomValue, magnification);
+
+    if (!(self = [super _initWithCGEvent:cgEvent.get() eventRef:nullptr]))
+        return nil;
+
+    _eventSender_location = location;
+    _eventSender_locationInWindow = globalLocation;
+    _eventSender_magnification = magnification;
+    _eventSender_phase = phase;
+    _eventSender_timestamp = time;
+    _eventSender_eventNumber = eventNumber;
+    _eventSender_window = window;
+    _eventSender_type = NSEventTypeMagnify;
 
     return self;
 }
@@ -161,6 +188,11 @@
 - (float)pressure
 {
     return _eventSender_pressure;
+}
+
+- (CGFloat)magnification
+{
+    return _eventSender_magnification;
 }
 
 - (NSEventPhase)phase
@@ -308,7 +340,7 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
                                        timestamp:absoluteTimeForEventTime(currentEventTime())
                                     windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                                          context:[NSGraphicsContext currentContext] 
-                                     eventNumber:++eventNumber 
+                                     eventNumber:++m_eventNumber 
                                       clickCount:m_clickCount 
                                         pressure:0.0];
 
@@ -334,7 +366,7 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
                                        timestamp:absoluteTimeForEventTime(currentEventTime())
                                     windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                                          context:[NSGraphicsContext currentContext] 
-                                     eventNumber:++eventNumber 
+                                     eventNumber:++m_eventNumber 
                                       clickCount:m_clickCount 
                                         pressure:0.0];
 
@@ -366,7 +398,7 @@ void EventSenderProxy::sendMouseDownToStartPressureEvents()
         timestamp:absoluteTimeForEventTime(currentEventTime())
         windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
         context:[NSGraphicsContext currentContext]
-        eventNumber:++eventNumber
+        eventNumber:++m_eventNumber
         clickCount:m_clickCount
         pressure:0.0];
 
@@ -390,7 +422,7 @@ RetainPtr<NSEvent> EventSenderProxy::beginPressureEvent(int stage)
         stageTransition:0
         phase:NSEventPhaseBegan
         time:absoluteTimeForEventTime(currentEventTime())
-        eventNumber:++eventNumber
+        eventNumber:++m_eventNumber
         window:[m_testController->mainWebView()->platformView() window]]);
 
     return event;
@@ -405,7 +437,7 @@ RetainPtr<NSEvent> EventSenderProxy::pressureChangeEvent(int stage, float pressu
         stageTransition:direction == PressureChangeDirection::Increasing ? 0.5 : -0.5
         phase:NSEventPhaseChanged
         time:absoluteTimeForEventTime(currentEventTime())
-        eventNumber:++eventNumber
+        eventNumber:++m_eventNumber
         window:[m_testController->mainWebView()->platformView() window]]);
 
     return event;
@@ -430,7 +462,7 @@ void EventSenderProxy::mouseForceClick()
         timestamp:absoluteTimeForEventTime(currentEventTime())
         windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
         context:[NSGraphicsContext currentContext]
-        eventNumber:++eventNumber
+        eventNumber:++m_eventNumber
         clickCount:m_clickCount
         pressure:0.0];
 
@@ -466,7 +498,7 @@ void EventSenderProxy::startAndCancelMouseForceClick()
         timestamp:absoluteTimeForEventTime(currentEventTime())
         windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
         context:[NSGraphicsContext currentContext]
-        eventNumber:++eventNumber
+        eventNumber:++m_eventNumber
         clickCount:m_clickCount
         pressure:0.0];
 
@@ -567,7 +599,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
                                        timestamp:absoluteTimeForEventTime(currentEventTime())
                                     windowNumber:view.window.windowNumber
                                          context:[NSGraphicsContext currentContext] 
-                                     eventNumber:++eventNumber 
+                                     eventNumber:++m_eventNumber 
                                       clickCount:(m_leftMouseButtonDown ? m_clickCount : 0) 
                                         pressure:0];
 
@@ -871,5 +903,78 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
         WTFLogAlways("mouseScrollByWithWheelAndMomentumPhases failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
     }
 }
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+
+void EventSenderProxy::scaleGestureStart(double scale)
+{
+    auto* mainWebView = m_testController->mainWebView();
+    NSView *platformView = mainWebView->platformView();
+
+    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
+        globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
+        magnification:scale
+        phase:NSEventPhaseBegan
+        time:absoluteTimeForEventTime(currentEventTime())
+        eventNumber:++m_eventNumber
+        window:platformView.window]);
+
+    if (NSView *targetView = [platformView hitTest:[event locationInWindow]]) {
+        [NSApp _setCurrentEvent:event.get()];
+        [targetView magnifyWithEvent:event.get()];
+        [NSApp _setCurrentEvent:nil];
+    } else {
+        NSPoint windowLocation = [event locationInWindow];
+        WTFLogAlways("gestureStart failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
+    }
+}
+
+void EventSenderProxy::scaleGestureChange(double scale)
+{
+    auto* mainWebView = m_testController->mainWebView();
+    NSView *platformView = mainWebView->platformView();
+
+    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
+        globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
+        magnification:scale
+        phase:NSEventPhaseChanged
+        time:absoluteTimeForEventTime(currentEventTime())
+        eventNumber:++m_eventNumber
+        window:platformView.window]);
+
+    if (NSView *targetView = [platformView hitTest:[event locationInWindow]]) {
+        [NSApp _setCurrentEvent:event.get()];
+        [targetView magnifyWithEvent:event.get()];
+        [NSApp _setCurrentEvent:nil];
+    } else {
+        NSPoint windowLocation = [event locationInWindow];
+        WTFLogAlways("gestureStart failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
+    }
+}
+
+void EventSenderProxy::scaleGestureEnd(double scale)
+{
+    auto* mainWebView = m_testController->mainWebView();
+    NSView *platformView = mainWebView->platformView();
+
+    auto event = adoptNS([[EventSenderSyntheticEvent alloc] initMagnifyEventAtLocation:NSMakePoint(m_position.x, m_position.y)
+        globalLocation:([mainWebView->platformWindow() convertRectToScreen:NSMakeRect(m_position.x, m_position.y, 1, 1)].origin)
+        magnification:scale
+        phase:NSEventPhaseEnded
+        time:absoluteTimeForEventTime(currentEventTime())
+        eventNumber:++m_eventNumber
+        window:platformView.window]);
+
+    if (NSView *targetView = [platformView hitTest:[event locationInWindow]]) {
+        [NSApp _setCurrentEvent:event.get()];
+        [targetView magnifyWithEvent:event.get()];
+        [NSApp _setCurrentEvent:nil];
+    } else {
+        NSPoint windowLocation = [event locationInWindow];
+        WTFLogAlways("gestureStart failed to find the target view at %f,%f\n", windowLocation.x, windowLocation.y);
+    }
+}
+
+#endif // ENABLE(MAC_GESTURE_EVENTS)
 
 } // namespace WTR

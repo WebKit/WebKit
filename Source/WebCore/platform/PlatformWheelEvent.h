@@ -36,6 +36,8 @@ class TextStream;
 
 namespace WebCore {
 
+class PlatformGestureEvent;
+
 enum class WheelEventProcessingSteps : uint8_t {
     ScrollingThread                             = 1 << 0,
     MainThreadForScrolling                      = 1 << 1,
@@ -105,6 +107,10 @@ public:
         , m_wheelTicksY(wheelTicksY)
     {
     }
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    static PlatformWheelEvent createFromGesture(const PlatformGestureEvent&, double deltaY);
+#endif
 
     PlatformWheelEvent copySwappingDirection() const
     {

@@ -1,3 +1,48 @@
+2021-05-19  Devin Rousso  <drousso@apple.com>
+
+        Add a way to create `"wheel"` events from gesture/touch events
+        https://bugs.webkit.org/show_bug.cgi?id=225788
+        <rdar://problem/76714308>
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::scaleGestureStart): Added.
+        (WTR::EventSendingController::scaleGestureChange): Added.
+        (WTR::EventSendingController::scaleGestureEnd): Added.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (EventSenderCGGesturePhaseFromNSEventPhase):
+        (-[EventSenderSyntheticEvent initPressureEventAtLocation:globalLocation:stage:pressure:stageTransition:phase:time:eventNumber:window:]):
+        (-[EventSenderSyntheticEvent initMagnifyEventAtLocation:globalLocation:magnification:phase:time:eventNumber:window:]): Added.
+        (-[EventSenderSyntheticEvent magnification]): Added.
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::sendMouseDownToStartPressureEvents):
+        (WTR::EventSenderProxy::beginPressureEvent):
+        (WTR::EventSenderProxy::pressureChangeEvent):
+        (WTR::EventSenderProxy::mouseForceClick):
+        (WTR::EventSenderProxy::startAndCancelMouseForceClick):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::scaleGestureStart): Added.
+        (WTR::EventSenderProxy::scaleGestureChange): Added.
+        (WTR::EventSenderProxy::scaleGestureEnd): Added.
+        Allow tests to synthesize scale (a.k.a. magnify) gesture events.
+
+        * WebKitTestRunner/InjectedBundle/ios/EventSenderProxyIOS.mm:
+        (WTR::EventSenderProxy::EventSenderProxy):
+        Drive-by: Rename `eventNumber` to `m_eventNumber` since it's a member variable.
+
+        * DumpRenderTree/Scripts/generate-derived-sources.sh:
+        * DumpRenderTree/DerivedSources.make:
+        * WebKitTestRunner/Scripts/generate-derived-sources.sh:
+        * WebKitTestRunner/DerivedSources.make:
+        Make sure to pass all feature flags when generating JS files from IDL files.
+
 2021-05-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, try to fix the internal build after r277740

@@ -1777,6 +1777,27 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
             return completionHandler(nullptr);
         }
 #endif
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+        if (WKStringIsEqualToUTF8CString(subMessageName, "ScaleGestureStart")) {
+            auto scale = doubleValue(dictionary, "Scale");
+            m_eventSenderProxy->scaleGestureStart(scale);
+            return completionHandler(nullptr);
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "ScaleGestureChange")) {
+            auto scale = doubleValue(dictionary, "Scale");
+            m_eventSenderProxy->scaleGestureChange(scale);
+            return completionHandler(nullptr);
+        }
+
+        if (WKStringIsEqualToUTF8CString(subMessageName, "ScaleGestureEnd")) {
+            auto scale = doubleValue(dictionary, "Scale");
+            m_eventSenderProxy->scaleGestureEnd(scale);
+            return completionHandler(nullptr);
+        }
+#endif // ENABLE(MAC_GESTURE_EVENTS)
+
         ASSERT_NOT_REACHED();
     }
 
