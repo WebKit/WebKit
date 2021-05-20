@@ -1,3 +1,15 @@
+2021-05-20  Per Arne  <pvollan@apple.com>
+
+        [iOS] Add missing method in sandbox IOKit filter
+        https://bugs.webkit.org/show_bug.cgi?id=225975
+        <rdar://78212330>
+
+        Reviewed by Brent Fulgham.
+
+        Add missing method in IOSurfaceRootUserClient filter on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
         Use CheckedLock more in WebKit2 code
