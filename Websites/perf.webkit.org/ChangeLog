@@ -1,3 +1,13 @@
+2021-05-20  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Need to use default git pull to remove the fake svn commit when syncing with SVN
+        https://bugs.webkit.org/show_bug.cgi?id=226039
+
+        Reviewed by Jonathan Bedard.
+
+        * tools/sync-commits.py:
+        (GitRepository._fetch_remote):
+
 2021-05-18  Zhifei Fang  <zhifei_fang@apple.com>
 
         Clean up git svn mapping when git pull
