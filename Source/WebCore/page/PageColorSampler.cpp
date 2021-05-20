@@ -108,7 +108,7 @@ static Optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
     if (!pixelBuffer)
         return WTF::nullopt;
 
-    ASSERT(pixelBuffer->data().length() <= 4);
+    ASSERT(pixelBuffer->data().length() >= 4);
 
     auto snapshotData = pixelBuffer->data().data();
     return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });

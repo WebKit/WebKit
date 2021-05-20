@@ -1,3 +1,12 @@
+2021-05-20  Sam Weinig  <weinig@apple.com>
+
+        Fix inverted ASSERT in sampleColor.
+
+        Rubber-stamped by Tim Horton.
+
+        * page/PageColorSampler.cpp:
+        (WebCore::sampleColor):
+
 2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
