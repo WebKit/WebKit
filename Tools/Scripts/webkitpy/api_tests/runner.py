@@ -29,12 +29,15 @@ from webkitcorepy import TaskPool
 
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.port.server_process import ServerProcess, _log as server_process_logger
-from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
 
 
-def setup_shard(port=None):
+def setup_shard(port=None, devices=None):
+    if devices and getattr(port, 'DEVICE_MANAGER', None):
+        port.DEVICE_MANAGER.AVAILABLE_DEVICES = devices.get('available_devices', [])
+        port.DEVICE_MANAGER.INITIALIZED_DEVICES = devices.get('initialized_devices', None)
+
     return _Worker.setup(port=port)
 
 
@@ -85,9 +88,9 @@ class Runner(object):
     def command_for_port(port, args):
         if (port.get_option('force')):
             args.append('--gtest_also_run_disabled_tests=1')
-        if 'simulator' in port.port_name:
-            assert SimulatedDeviceManager.INITIALIZED_DEVICES
-            return ['/usr/bin/xcrun', 'simctl', 'spawn', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid] + args
+        if getattr(port, 'DEVICE_MANAGER', None):
+            assert port.DEVICE_MANAGER.INITIALIZED_DEVICES
+            return ['/usr/bin/xcrun', 'simctl', 'spawn', port.DEVICE_MANAGER.INITIALIZED_DEVICES[0].udid] + args
         elif 'device' in port.port_name:
             raise RuntimeError('Running api tests on {} is not supported'.format(port.port_name))
         elif port.host.platform.is_win():
@@ -120,10 +123,16 @@ class Runner(object):
             Runner.instance = self
             self._num_workers = min(num_workers, len(shards))
 
+            devices = None
+            if getattr(self.port, 'DEVICE_MANAGER', None):
+                devices = dict(
+                    available_devices=self.port.DEVICE_MANAGER.AVAILABLE_DEVICES,
+                    initialized_devices=self.port.DEVICE_MANAGER.INITIALIZED_DEVICES,
+                )
+
             with TaskPool(
                 workers=self._num_workers,
-                setup=setup_shard, setupkwargs=dict(port=self.port),
-                teardown=teardown_shard,
+                setup=setup_shard, setupkwargs=dict(port=self.port, devices=devices), teardown=teardown_shard,
             ) as pool:
                 for name, tests in iteritems(shards):
                     pool.do(run_shard, name, *tests)
