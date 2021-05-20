@@ -1,3 +1,18 @@
+2021-05-20  Youenn Fablet  <youenn@apple.com>
+
+        Enable VCP for H264 baseline
+        https://bugs.webkit.org/show_bug.cgi?id=224043
+
+        Reviewed by Eric Carlson.
+
+        Enable VCP for baseline past BigSur/iOS14.
+        Add macros and introduce _useBaseline in addition to _useVCP for that purpose.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH264 configureCompressionSession]):
+
 2021-05-11  Youenn Fablet  <youenn@apple.com>
 
         Improve usrsctp restart handling
