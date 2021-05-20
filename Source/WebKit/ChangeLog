@@ -1,3 +1,16 @@
+2021-05-20  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r277505): Crash under WTF::Detail::CallableWrapper<WebKit::WebPageProxy::setUnderPageBackgroundColorOverride(WebCore::Color&&)::$_10, void>::call
+        https://bugs.webkit.org/show_bug.cgi?id=225979
+        <rdar://problem/78130098>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setUnderPageBackgroundColorOverride):
+        Semi-speculative fix by checking the weakly-held `PageClient` before attempting to use it.
+        Dissasembly suggests this as the cause as the invalid access occurs early in the lambda.
+
 2021-05-20  Dean Jackson  <dino@apple.com>
 
         Configure fullscreen view after it has transitioned

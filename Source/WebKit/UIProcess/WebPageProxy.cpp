@@ -1954,7 +1954,8 @@ void WebPageProxy::setUnderPageBackgroundColorOverride(Color&& newUnderPageBackg
 
         m_hasPendingUnderPageBackgroundColorOverrideToDispatch = false;
 
-        didChangeBackgroundColor();
+        if (m_pageClient)
+            m_pageClient->didChangeBackgroundColor();
 
         if (hasRunningProcess())
             send(Messages::WebPage::SetUnderPageBackgroundColorOverride(m_underPageBackgroundColorOverride));
