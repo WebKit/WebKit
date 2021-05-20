@@ -1,3 +1,28 @@
+2021-05-19  Jean-Yves Avenard  <jya@apple.com>
+
+        VP9 powerEfficient detection is broken in STP124
+        https://bugs.webkit.org/show_bug.cgi?id=225910
+        rdar://78144486
+
+        Reviewed by Darin Adler.
+
+        Change r273564 made an assumption that the first point of entry in the
+        media stack is when a PlatformMediaSessionManager is created and move
+        the initialization of some video codecs there.
+        However, this isn't always the case. Media Capabilities JS API can cause
+        queries to be made to the media engine without creating a media element.
+        We are unfortunately unable to properly write a test that would prevent
+        this regression to happen again as this is hardware dependent.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::MediaSessionManagerCocoa):
+        (WebCore::MediaSessionManagerCocoa::EnsureCodecsRegistered): Add method, use C++17 static
+        initializer which avoids any ambiguity in regards to thread-safety.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+
 2021-05-19  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Scrolling must be done after the layout when doing full page zoom

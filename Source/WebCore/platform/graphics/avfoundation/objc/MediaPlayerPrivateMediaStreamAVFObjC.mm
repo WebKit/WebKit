@@ -32,6 +32,7 @@
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "LocalSampleBufferDisplayLayer.h"
+#import "MediaSessionManagerCocoa.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
 #import "VideoLayerManagerObjC.h"
@@ -174,6 +175,12 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaStreamAVFObjC final : public MediaPlayerFactory {
+public:
+    MediaPlayerFactoryMediaStreamAVFObjC()
+    {
+        MediaSessionManagerCocoa::ensureCodecsRegistered();
+    }
+
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream; };
 

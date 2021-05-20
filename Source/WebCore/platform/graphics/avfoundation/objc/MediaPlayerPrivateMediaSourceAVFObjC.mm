@@ -34,6 +34,7 @@
 #import "CDMSessionAVStreamSession.h"
 #import "GraphicsContext.h"
 #import "Logging.h"
+#import "MediaSessionManagerCocoa.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
@@ -199,6 +200,12 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+public:
+    MediaPlayerFactoryMediaSourceAVFObjC()
+    {
+        MediaSessionManagerCocoa::ensureCodecsRegistered();
+    }
+
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE; };
 

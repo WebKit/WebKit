@@ -59,14 +59,23 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 MediaSessionManagerCocoa::MediaSessionManagerCocoa()
     : m_nowPlayingManager(platformStrategies()->mediaStrategy().createNowPlayingManager())
 {
+    ensureCodecsRegistered();
+}
+
+void MediaSessionManagerCocoa::ensureCodecsRegistered()
+{
+    static bool sInitDone = []() {
 #if ENABLE(VP9)
-    if (shouldEnableVP9Decoder())
-        registerSupplementalVP9Decoder();
-    if (shouldEnableVP8Decoder())
-        registerWebKitVP8Decoder();
-    if (shouldEnableVP9SWDecoder())
-        registerWebKitVP9Decoder();
+        if (shouldEnableVP9Decoder())
+            registerSupplementalVP9Decoder();
+        if (shouldEnableVP8Decoder())
+            registerWebKitVP8Decoder();
+        if (shouldEnableVP9SWDecoder())
+            registerWebKitVP9Decoder();
 #endif
+        return true;
+    }();
+    UNUSED_VARIABLE(sInitDone);
 }
 
 void MediaSessionManagerCocoa::updateSessionState()

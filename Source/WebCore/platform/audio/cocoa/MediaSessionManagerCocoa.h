@@ -63,6 +63,8 @@ public:
 
     static WEBCORE_EXPORT void updateMediaUsage(PlatformMediaSession&);
 
+    static void ensureCodecsRegistered();
+
 protected:
     void scheduleSessionStatusUpdate() final;
     void updateNowPlayingInfo();
