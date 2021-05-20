@@ -1,3 +1,15 @@
+2021-05-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Remove PHP packages
+        https://bugs.webkit.org/show_bug.cgi?id=226037
+
+        Reviewed by Philippe Normand.
+
+        Remove the PHP package from the SDK now that the layout tests do not use PHP.
+
+        * elements/test-infra.bst: Remove php.bst from the element list.
+        * elements/test-infra/php.bst: Removed.
+
 2021-05-13  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Update WPEBackend-fdo to 1.8.4

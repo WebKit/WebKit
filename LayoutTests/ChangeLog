@@ -1,3 +1,14 @@
+2021-05-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Remove PHP packages
+        https://bugs.webkit.org/show_bug.cgi?id=226037
+
+        Reviewed by Philippe Normand.
+
+        Remove the PHP package from the SDK now that the layout tests do not use PHP.
+
+        * http/conf/flatpak-httpd.conf: Remove usage of mod_php7.
+
 2021-05-20  Youenn Fablet  <youenn@apple.com>
 
         <video> rendered inside <template> shows black for webcam stream (Safari 14.0.3 only)
