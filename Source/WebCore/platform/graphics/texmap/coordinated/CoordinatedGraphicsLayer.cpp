@@ -959,7 +959,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                             m_backdropLayer = adoptRef(*new CoordinatedGraphicsLayer(Type::Normal, client()));
                             m_backdropLayer->setAnchorPoint(FloatPoint3D());
                             m_backdropLayer->setMasksToBounds(true);
-                            m_backdropLayer->setName("backdrop");
+                            m_backdropLayer->setName(MAKE_STATIC_STRING_IMPL("backdrop"));
                             if (m_coordinator)
                                 m_coordinator->attachLayer(m_backdropLayer.get());
                         }

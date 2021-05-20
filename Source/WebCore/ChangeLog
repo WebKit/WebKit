@@ -1,3 +1,44 @@
+2021-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        GraphicsLayer::setName() causes heap fragmentation
+        https://bugs.webkit.org/show_bug.cgi?id=225838
+
+        Reviewed by Simon Fraser.
+
+        Profiling for heap fragmentation shows that GraphicsLayer::setName() is
+        a top contributor. Worth about 5MB maximum on GMail.
+
+        Use MAKE_STATIC_STRING_IMPL for our constant layer names so we end up
+        with only one copy and no heap allocation in the many cases that are
+        compile-time constants.
+
+        * display/compositing/DisplayLayerController.cpp:
+        (WebCore::Display::LayerController::setupRootLayerHierarchy):
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::createRootLayersIfNeeded):
+        (WebCore::PageOverlayController::installPageOverlay):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+        (WebCore::GraphicsLayerCA::setContentsToModel):
+        (WebCore::GraphicsLayerCA::updateBackdropFilters):
+        (WebCore::GraphicsLayerCA::updateContentsImage):
+        (WebCore::GraphicsLayerCA::updateClippingStrategy):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        * platform/graphics/ca/TileCoverageMap.cpp:
+        (WebCore::TileCoverageMap::TileCoverageMap):
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::initialize):
+        (WebCore::CACFLayerTreeHost::updateDebugInfoLayer):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
 2021-05-20  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] should not include `TextTrack` when sorting `TextTrackList` if it doesn't have a desired `TextTrack::Kind` when `CaptionDisplayMode::Manual`

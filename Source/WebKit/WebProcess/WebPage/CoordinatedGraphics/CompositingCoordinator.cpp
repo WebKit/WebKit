@@ -61,7 +61,7 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
 
     m_rootLayer = GraphicsLayer::create(this, *this);
 #ifndef NDEBUG
-    m_rootLayer->setName("CompositingCoordinator root layer");
+    m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("CompositingCoordinator root layer"));
 #endif
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(m_page.size());

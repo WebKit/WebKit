@@ -1,3 +1,28 @@
+2021-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        GraphicsLayer::setName() causes heap fragmentation
+        https://bugs.webkit.org/show_bug.cgi?id=225838
+
+        Reviewed by Simon Fraser.
+
+        Profiling for heap fragmentation shows that GraphicsLayer::setName() is
+        a top contributor. Worth about 5MB maximum on GMail.
+
+        Use MAKE_STATIC_STRING_IMPL for our constant layer names so we end up
+        with only one copy and no heap allocation in the many cases that are
+        compile-time constants.
+
+        * WebProcess/Inspector/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::showPaintRect):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::LayerTreeHost):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::LayerTreeHost):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+
 2021-05-20  Per Arne  <pvollan@apple.com>
 
         [iOS] Add missing method in sandbox IOKit filter
