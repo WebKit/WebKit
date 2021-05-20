@@ -1,3 +1,18 @@
+2021-05-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Allow access to the 'DiskImageURL' IOKit property
+        https://bugs.webkit.org/show_bug.cgi?id=226033
+        <rdar://problem/78199855>
+
+        Reviewed by Per Arne Vollan.
+
+        Access to certain disk image types is affected by the ability to read the DiskImageURL IOKit property. Since file
+        URLs may reference such locations (and indeed, telemetry shows that this is happening) we should grant this property
+        access to avoid users encountering file access errors when attempting to load content backed by relevant disk images.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-05-20  Tim Horton  <timothy_horton@apple.com>
 
         Move off UIKit IPI in WKMouseGestureRecognizer
