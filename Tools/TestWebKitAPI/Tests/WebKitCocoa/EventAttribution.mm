@@ -159,7 +159,7 @@ TEST(EventAttribution, FraudPrevention)
     auto spkiData = adoptCF(SecKeyCopySubjectPublicKeyInfo(secKey.get()));
     auto *nsSpkiData = (__bridge NSData *)spkiData.get();
 
-    auto keyData = base64URLEncodeToVector(nsSpkiData.bytes, nsSpkiData.length);
+    auto keyData = base64URLEncodeToString(nsSpkiData.bytes, nsSpkiData.length);
 
     // The server.
     HTTPServer server([&done, connectionCount = 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {
