@@ -1,3 +1,20 @@
+2021-05-20  Tim Horton  <timothy_horton@apple.com>
+
+        Move off UIKit IPI in WKMouseGestureRecognizer
+        https://bugs.webkit.org/show_bug.cgi?id=226030
+        rdar://78266173
+
+        Reviewed by Devin Rousso and Wenson Hsieh.
+
+        Use UIGestureRecognizerDelegate instead of IPI.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        (-[WKContentView gestureRecognizer:shouldReceivePress:]):
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer _shouldReceiveTouch:forEvent:recognizerView:]): Deleted.
+        (-[WKMouseGestureRecognizer _shouldReceivePress:]): Deleted.
+
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
         Use CheckedLock more in IPC::Connection

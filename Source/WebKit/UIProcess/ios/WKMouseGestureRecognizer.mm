@@ -109,16 +109,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     _currentTouch = nil;
 }
 
-- (BOOL)_shouldReceiveTouch:(UITouch *)touch forEvent:(UIEvent *)event recognizerView:(UIView *)recognizerView
-{
-    return touch == _currentTouch;
-}
-
-- (BOOL)_shouldReceivePress:(UIPress *)press
-{
-    return NO;
-}
-
 - (std::unique_ptr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(WebKit::WebEvent::Type)type wasCancelled:(BOOL)cancelled
 {
     auto modifiers = webEventModifiersForUIKeyModifierFlags(self.modifierFlags);
