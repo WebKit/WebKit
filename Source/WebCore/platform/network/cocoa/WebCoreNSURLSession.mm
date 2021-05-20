@@ -32,6 +32,7 @@
 #import "SubresourceLoader.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CheckedLock.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -572,19 +573,19 @@ public:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
 
 private:
-    Lock m_taskLock;
-    WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task;
+    CheckedLock m_taskLock;
+    WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task WTF_GUARDED_BY_LOCK(m_taskLock);
 };
 
 void WebCoreNSURLSessionDataTaskClient::clearTask()
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     m_task = nullptr;
 }
 
 void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -594,7 +595,7 @@ void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource
 void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
     auto protectedThis = makeRef(*this);
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return completionHandler(ShouldContinuePolicyCheck::No);
 
@@ -603,7 +604,7 @@ void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& 
 
 bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResource& resource, const ResourceResponse& response)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return false;
 
@@ -612,7 +613,7 @@ bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResourc
 
 void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const char* data, int length)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -621,7 +622,7 @@ void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& reso
 
 void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -634,7 +635,7 @@ void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& 
 
 void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaResource& resource, const ResourceError& error)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -643,7 +644,7 @@ void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaRe
 
 void WebCoreNSURLSessionDataTaskClient::loadFailed(PlatformMediaResource& resource, const ResourceError& error)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 
@@ -652,7 +653,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFailed(PlatformMediaResource& resour
 
 void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& resource, const NetworkLoadMetrics& metrics)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!m_task)
         return;
 

@@ -89,7 +89,7 @@ SubimageCacheWithTimer::SubimageCacheWithTimer()
 
 void SubimageCacheWithTimer::pruneCacheTimerFired()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     prune();
     if (m_cache.isEmpty()) {
         ASSERT(m_imageCounts.isEmpty());
@@ -116,7 +116,7 @@ void SubimageCacheWithTimer::prune()
 
 RetainPtr<CGImageRef> SubimageCacheWithTimer::subimage(CGImageRef image, const FloatRect& rect)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     if (!m_timer.isActive())
         m_timer.startRepeating(subimageCachePruneDelay);
 
@@ -137,7 +137,7 @@ RetainPtr<CGImageRef> SubimageCacheWithTimer::subimage(CGImageRef image, const F
 
 void SubimageCacheWithTimer::clearImageAndSubimages(CGImageRef image)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     if (m_imageCounts.contains(image)) {
         Vector<SubimageCacheEntry> toBeRemoved;
         for (const auto& entry : m_cache) {
@@ -154,7 +154,7 @@ void SubimageCacheWithTimer::clearImageAndSubimages(CGImageRef image)
 
 void SubimageCacheWithTimer::clearAll()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_imageCounts.clear();
     m_cache.clear();
 }

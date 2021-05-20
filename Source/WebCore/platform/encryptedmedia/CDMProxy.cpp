@@ -242,9 +242,15 @@ void CDMProxy::updateKeyStore(const KeyStore& newKeyStore)
     m_keysCondition.notifyAll();
 }
 
+const CDMInstanceProxy* CDMProxy::instance() const
+{
+    Locker locker { m_instanceLock };
+    return m_instance;
+}
+
 void CDMProxy::setInstance(CDMInstanceProxy* instance)
 {
-    auto locker = holdLock(m_instanceMutex);
+    Locker locker { m_instanceLock };
     m_instance = instance;
 }
 
@@ -257,7 +263,7 @@ RefPtr<KeyHandle> CDMProxy::keyHandle(const KeyIDType& keyID) const
 
 void CDMProxy::startedWaitingForKey() const
 {
-    auto locker = holdLock(m_instanceMutex);
+    Locker locker { m_instanceLock };
     LOG(EME, "EME - CDMProxy - started waiting for a key");
     ASSERT(m_instance);
     m_instance->startedWaitingForKey();
@@ -265,7 +271,7 @@ void CDMProxy::startedWaitingForKey() const
 
 void CDMProxy::stoppedWaitingForKey() const
 {
-    auto locker = holdLock(m_instanceMutex);
+    Locker locker { m_instanceLock };
     LOG(EME, "EME - CDMProxy - stopped waiting for a key");
     ASSERT(m_instance);
     m_instance->stoppedWaitingForKey();

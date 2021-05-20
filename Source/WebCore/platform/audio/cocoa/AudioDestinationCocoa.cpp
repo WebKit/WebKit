@@ -192,7 +192,7 @@ static void assignAudioBuffersToBus(AudioBuffer* buffers, AudioBus& bus, UInt32 
 
 bool AudioDestinationCocoa::hasEnoughFrames(UInt32 numberOfFrames) const
 {
-    return m_fifo->length() >= numberOfFrames;
+    return fifoSize >= numberOfFrames;
 }
 
 // Pulls on our provider to get rendered audio stream.
@@ -216,7 +216,7 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
     size_t framesToRender;
 
     {
-        auto locker = holdLock(m_fifoLock);
+        Locker locker { m_fifoLock };
         framesToRender = m_fifo->pull(m_outputBus.ptr(), numberOfFrames);
     }
 
@@ -252,7 +252,7 @@ void AudioDestinationCocoa::renderOnRenderingThead(size_t framesToRender)
         else
             callRenderCallback(nullptr, m_renderBus.ptr(), AudioUtilities::renderQuantumSize, m_outputTimestamp);
 
-        auto locker = holdLock(m_fifoLock);
+        Locker locker { m_fifoLock };
         m_fifo->push(m_renderBus.ptr());
     }
 }

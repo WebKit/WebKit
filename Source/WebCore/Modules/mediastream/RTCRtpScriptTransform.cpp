@@ -83,7 +83,7 @@ void RTCRtpScriptTransform::setTransformer(RTCRtpScriptTransformer& transformer)
 {
     ASSERT(!isMainThread());
     {
-        auto locker = holdLock(m_transformerLock);
+        Locker locker { m_transformerLock };
         ASSERT(!m_isTransformerInitialized);
         m_isTransformerInitialized = true;
         m_transformer = makeWeakPtr(transformer);
@@ -119,7 +119,7 @@ void RTCRtpScriptTransform::initializeTransformer(RTCRtpTransformBackend& backen
 
 bool RTCRtpScriptTransform::setupTransformer(Ref<RTCRtpTransformBackend>&& backend)
 {
-    auto locker = holdLock(m_transformerLock);
+    Locker locker { m_transformerLock };
     if (!m_isTransformerInitialized)
         return false;
 
@@ -134,7 +134,7 @@ void RTCRtpScriptTransform::clear(RTCRtpScriptTransformer::ClearCallback clearCa
 {
     m_isAttached = false;
 
-    auto locker = holdLock(m_transformerLock);
+    Locker locker { m_transformerLock };
     m_isTransformerInitialized = false;
     m_worker->postTaskToWorkerGlobalScope([transformer = WTFMove(m_transformer), clearCallback](auto&) mutable {
         if (transformer)

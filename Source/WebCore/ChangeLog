@@ -1,3 +1,208 @@
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=226026
+
+        Reviewed by Geoffrey Garen.
+
+        Use CheckedLock more in WebCore to benefit from Clang Thread Safety Analysis.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::deleteIndex):
+        (WebCore::IDBObjectStore::rollbackForVersionChangeAbort):
+        (WebCore::IDBObjectStore::visitReferencedIndexes const):
+        (WebCore::IDBObjectStore::renameReferencedIndex):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::internalAbort):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::renameObjectStore):
+        (WebCore::IDBTransaction::renameIndex):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::visitReferencedObjectStores const):
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase):
+        (WebCore::IDBClient::IDBConnectionProxy::completeOpenDBRequest):
+        (WebCore::IDBClient::IDBConnectionProxy::saveOperation):
+        (WebCore::IDBClient::IDBConnectionProxy::completeOperation):
+        (WebCore::IDBClient::IDBConnectionProxy::fireVersionChangeEvent):
+        (WebCore::IDBClient::IDBConnectionProxy::notifyOpenDBRequestBlocked):
+        (WebCore::IDBClient::IDBConnectionProxy::establishTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didStartTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::commitTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didCommitTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::abortTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didAbortTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::didCloseFromServer):
+        (WebCore::IDBClient::IDBConnectionProxy::connectionToServerLost):
+        (WebCore::IDBClient::IDBConnectionProxy::scheduleMainThreadTasks):
+        (WebCore::IDBClient::IDBConnectionProxy::handleMainThreadTasks):
+        (WebCore::IDBClient::IDBConnectionProxy::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBClient::IDBConnectionProxy::didGetAllDatabaseNamesAndVersions):
+        (WebCore::IDBClient::IDBConnectionProxy::registerDatabaseConnection):
+        (WebCore::IDBClient::IDBConnectionProxy::unregisterDatabaseConnection):
+        (WebCore::IDBClient::IDBConnectionProxy::forgetActiveOperations):
+        (WebCore::IDBClient::IDBConnectionProxy::forgetTransaction):
+        (WebCore::IDBClient::IDBConnectionProxy::forgetActivityForCurrentThread):
+        (WebCore::IDBClient::IDBConnectionProxy::setContextSuspended):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/mediastream/RTCRtpSFrameTransformer.cpp:
+        (WebCore::RTCRtpSFrameTransformer::setEncryptionKey):
+        (WebCore::RTCRtpSFrameTransformer::decryptFrame):
+        (WebCore::RTCRtpSFrameTransformer::encryptFrame):
+        * Modules/mediastream/RTCRtpSFrameTransformer.h:
+        * Modules/mediastream/RTCRtpScriptTransform.cpp:
+        (WebCore::RTCRtpScriptTransform::setTransformer):
+        (WebCore::RTCRtpScriptTransform::setupTransformer):
+        (WebCore::RTCRtpScriptTransform::clear):
+        * Modules/mediastream/RTCRtpScriptTransform.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::setClient):
+        (WebCore::LibWebRTCDataChannelHandler::checkState):
+        (WebCore::LibWebRTCDataChannelHandler::OnMessage):
+        (WebCore::LibWebRTCDataChannelHandler::OnBufferedAmountChange):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp:
+        (WebCore::LibWebRTCRtpTransformBackend::setInputCallback):
+        (WebCore::LibWebRTCRtpTransformBackend::setOutputCallback):
+        (WebCore::LibWebRTCRtpTransformBackend::processTransformedFrame):
+        (WebCore::LibWebRTCRtpTransformBackend::Transform):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.h:
+        * inspector/agents/WebHeapAgent.cpp:
+        (WebCore::SendGarbageCollectionEventsTask::addGarbageCollection):
+        (WebCore::SendGarbageCollectionEventsTask::reset):
+        (WebCore::SendGarbageCollectionEventsTask::timerFired):
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::addObserver):
+        (WebCore::ResourceUsageThread::removeObserver):
+        (WebCore::ResourceUsageThread::waitUntilObservers):
+        (WebCore::ResourceUsageThread::notifyObservers):
+        * page/ResourceUsageThread.h:
+        * page/WheelEventTestMonitor.cpp:
+        (WebCore::WheelEventTestMonitor::clearAllTestDeferrals):
+        (WebCore::WheelEventTestMonitor::setTestCallbackAndStartMonitoring):
+        (WebCore::WheelEventTestMonitor::deferForReason):
+        (WebCore::WheelEventTestMonitor::removeDeferralForReason):
+        (WebCore::WheelEventTestMonitor::receivedWheelEvent):
+        (WebCore::WheelEventTestMonitor::checkShouldFireCallbacks):
+        * page/WheelEventTestMonitor.h:
+        (WebCore::WheelEventTestMonitor::WTF_GUARDED_BY_LOCK):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::computeWheelProcessingSteps):
+        (WebCore::ScrollingTree::determineWheelEventProcessing):
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::mainFrameScrollPosition const):
+        (WebCore::ScrollingTree::setMainFrameScrollPosition):
+        (WebCore::ScrollingTree::setGestureState):
+        (WebCore::ScrollingTree::gestureState):
+        (WebCore::ScrollingTree::eventTrackingTypeForPoint):
+        (WebCore::ScrollingTree::isRubberBandInProgressForNode):
+        (WebCore::ScrollingTree::setRubberBandingInProgressForNode):
+        (WebCore::ScrollingTree::isUserScrollInProgressForNode):
+        (WebCore::ScrollingTree::setUserScrollInProgressForNode):
+        (WebCore::ScrollingTree::clearNodesWithUserScrollInProgress):
+        (WebCore::ScrollingTree::isScrollSnapInProgressForNode):
+        (WebCore::ScrollingTree::setNodeScrollSnapInProgress):
+        (WebCore::ScrollingTree::setMainFramePinnedState):
+        (WebCore::ScrollingTree::setMainFrameCanRubberBand):
+        (WebCore::ScrollingTree::mainFrameCanRubberBandInDirection):
+        (WebCore::ScrollingTree::addPendingScrollUpdate):
+        (WebCore::ScrollingTree::takePendingScrollUpdates):
+        (WebCore::ScrollingTree::setScrollPinningBehavior):
+        (WebCore::ScrollingTree::scrollPinningBehavior):
+        (WebCore::ScrollingTree::willWheelEventStartSwipeGesture):
+        (WebCore::ScrollingTree::windowScreenDidChange):
+        (WebCore::ScrollingTree::displayID):
+        (WebCore::ScrollingTree::hasProcessedWheelEventsRecently):
+        (WebCore::ScrollingTree::willProcessWheelEvent):
+        (WebCore::ScrollingTree::nominalFramesPerSecond):
+        (WebCore::ScrollingTree::scrollingTreeAsText):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeLatchingController.cpp:
+        (WebCore::ScrollingTreeLatchingController::receivedWheelEvent):
+        (WebCore::ScrollingTreeLatchingController::latchingDataForEvent const):
+        (WebCore::ScrollingTreeLatchingController::latchedNodeID const):
+        (WebCore::ScrollingTreeLatchingController::latchedNodeAndSteps const):
+        (WebCore::ScrollingTreeLatchingController::nodeDidHandleEvent):
+        (WebCore::ScrollingTreeLatchingController::nodeWasRemoved):
+        (WebCore::ScrollingTreeLatchingController::clearLatchedNode):
+        * page/scrolling/ScrollingTreeLatchingController.h:
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::loadAsynchronously):
+        (WebCore::HRTFDatabaseLoader::waitForLoaderThreadCompletion):
+        * platform/audio/HRTFDatabaseLoader.h:
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::hasEnoughFrames const):
+        (WebCore::AudioDestinationCocoa::render):
+        (WebCore::AudioDestinationCocoa::renderOnRenderingThead):
+        * platform/audio/cocoa/AudioDestinationCocoa.h:
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::CDMProxy::instance const):
+        (WebCore::CDMProxy::setInstance):
+        (WebCore::CDMProxy::startedWaitingForKey const):
+        (WebCore::CDMProxy::stoppedWaitingForKey const):
+        * platform/encryptedmedia/CDMProxy.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::setDelayCallbacks const):
+        (WebCore::MediaPlayerPrivateAVFoundation::clearMainThreadPendingFlag):
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample):
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::takeSurface):
+        (WebCore::IOSurfacePool::addSurface):
+        (WebCore::IOSurfacePool::setPoolSize):
+        (WebCore::IOSurfacePool::collectionTimerFired):
+        (WebCore::IOSurfacePool::discardAllSurfaces):
+        * platform/graphics/cg/IOSurfacePool.h:
+        (WebCore::IOSurfacePool::WTF_GUARDED_BY_LOCK):
+        * platform/graphics/cg/SubimageCacheWithTimer.cpp:
+        (WebCore::SubimageCacheWithTimer::pruneCacheTimerFired):
+        (WebCore::SubimageCacheWithTimer::subimage):
+        (WebCore::SubimageCacheWithTimer::clearImageAndSubimages):
+        (WebCore::SubimageCacheWithTimer::clearAll):
+        * platform/graphics/cg/SubimageCacheWithTimer.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+        (WebCore::FontDatabase::clear):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (WebCore::WebCoreNSURLSessionDataTaskClient::clearTask):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataSent):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::responseReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::shouldCacheResponse):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::dataReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::redirectReceived):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::loadFailed):
+        (WebCore::WebCoreNSURLSessionDataTaskClient::loadFinished):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate detachHandle]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willCacheResponse:]):
+        * storage/StorageQuotaManager.cpp:
+        (WebCore::StorageQuotaManager::requestSpaceOnBackgroundThread):
+        (WebCore::StorageQuotaManager::resetQuotaUpdatedBasedOnUsageForTesting):
+        (WebCore::StorageQuotaManager::resetQuotaForTesting):
+        * storage/StorageQuotaManager.h:
+        (WebCore::StorageQuotaManager::WTF_GUARDED_BY_LOCK):
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::scheduleExecutionTermination):
+        (WebCore::WorkerOrWorkletScriptController::isTerminatingExecution const):
+        * workers/WorkerOrWorkletScriptController.h:
+        (WebCore::WorkerOrWorkletScriptController::WTF_GUARDED_BY_LOCK):
+
 2021-05-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] ItemHandle::safeCopy is not actually safe, does no bounds-checking

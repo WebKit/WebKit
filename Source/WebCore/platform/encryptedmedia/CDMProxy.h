@@ -35,6 +35,7 @@
 #include "MediaPlayerPrivate.h"
 #include "SharedBuffer.h"
 #include <wtf/BoxPtr.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Condition.h>
 
 #if ENABLE(THUNDER)
@@ -167,11 +168,11 @@ protected:
     Optional<KeyHandleValueVariant> getOrWaitForKeyValue(const KeyIDType&, WeakPtr<CDMProxyDecryptionClient>&&) const;
     void startedWaitingForKey() const;
     void stoppedWaitingForKey() const;
-    const CDMInstanceProxy* instance() const { return m_instance; }
+    const CDMInstanceProxy* instance() const;
 
 private:
-    mutable Lock m_instanceMutex;
-    CDMInstanceProxy* m_instance;
+    mutable CheckedLock m_instanceLock;
+    CDMInstanceProxy* m_instance WTF_GUARDED_BY_LOCK(m_instanceLock);
 
     mutable Lock m_keysMutex;
     mutable Condition m_keysCondition;

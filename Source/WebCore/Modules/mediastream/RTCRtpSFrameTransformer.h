@@ -29,7 +29,7 @@
 
 #include "ExceptionOr.h"
 #include "RTCRtpTransformBackend.h"
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -65,7 +65,7 @@ private:
     ExceptionOr<Vector<uint8_t>> encryptFrame(const uint8_t*, size_t);
 
     enum class ShouldUpdateKeys { No, Yes };
-    ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes);
+    ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, Optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes) WTF_REQUIRES_LOCK(m_keyLock);
 
     ExceptionOr<Vector<uint8_t>> computeSaltKey(const Vector<uint8_t>&);
     ExceptionOr<Vector<uint8_t>> computeAuthenticationKey(const Vector<uint8_t>&);
@@ -76,7 +76,7 @@ private:
     Vector<uint8_t> computeEncryptedDataSignature(const Vector<uint8_t>& nonce, const uint8_t* header, size_t headerSize, const uint8_t* data, size_t dataSize, const Vector<uint8_t>& key);
     void updateAuthenticationSize();
 
-    Lock m_keyLock;
+    CheckedLock m_keyLock;
     bool m_hasKey { false };
     Vector<uint8_t> m_authenticationKey;
     Vector<uint8_t> m_encryptionKey;
@@ -86,7 +86,7 @@ private:
         uint64_t keyId { 0 };
         Vector<uint8_t> keyData;
     };
-    Vector<IdentifiedKey> m_keys;
+    Vector<IdentifiedKey> m_keys WTF_GUARDED_BY_LOCK(m_keyLock);
 
     bool m_isEncrypting { false };
     uint64_t m_authenticationSize { 10 };

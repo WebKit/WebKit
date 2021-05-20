@@ -28,6 +28,7 @@
 
 #include "InstrumentingAgents.h"
 #include "WebConsoleAgent.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -50,9 +51,9 @@ private:
     void timerFired();
 
     WebHeapAgent& m_agent;
-    Vector<GarbageCollectionData> m_collections;
+    CheckedLock m_collectionsLock;
+    Vector<GarbageCollectionData> m_collections WTF_GUARDED_BY_LOCK(m_collectionsLock);
     RunLoop::Timer<SendGarbageCollectionEventsTask> m_timer;
-    Lock m_mutex;
 };
 
 SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(WebHeapAgent& agent)
@@ -64,7 +65,7 @@ SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(WebHeapAgent& a
 void SendGarbageCollectionEventsTask::addGarbageCollection(GarbageCollectionData&& collection)
 {
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_collectionsLock };
         m_collections.append(WTFMove(collection));
     }
 
@@ -75,7 +76,7 @@ void SendGarbageCollectionEventsTask::addGarbageCollection(GarbageCollectionData
 void SendGarbageCollectionEventsTask::reset()
 {
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_collectionsLock };
         m_collections.clear();
     }
 
@@ -87,7 +88,7 @@ void SendGarbageCollectionEventsTask::timerFired()
     Vector<GarbageCollectionData> collectionsToSend;
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_collectionsLock };
         m_collections.swap(collectionsToSend);
     }
 

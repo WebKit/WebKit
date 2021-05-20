@@ -37,6 +37,7 @@
 #include "ScrollingTreeGestureState.h"
 #include "ScrollingTreeLatchingController.h"
 #include "WheelEventTestMonitor.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
@@ -248,7 +249,7 @@ public:
 protected:
     WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);
 
-    FloatPoint mainFrameScrollPosition() const;
+    FloatPoint mainFrameScrollPosition() const WTF_REQUIRES_LOCK(m_treeStateLock);
     void setMainFrameScrollPosition(FloatPoint);
 
     void setGestureState(Optional<WheelScrollGestureState>);
@@ -273,6 +274,8 @@ private:
 #if ENABLE(WHEEL_EVENT_REGIONS)
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
 #endif
+
+    OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&) WTF_REQUIRES_LOCK(m_treeStateLock);
 
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
     
@@ -300,8 +303,8 @@ private:
         HashSet<ScrollingNodeID> nodesWithActiveUserScrolls;
     };
     
-    Lock m_treeStateMutex;
-    TreeState m_treeState;
+    CheckedLock m_treeStateLock;
+    TreeState m_treeState WTF_GUARDED_BY_LOCK(m_treeStateLock);
 
     struct SwipeState {
         ScrollPinningBehavior scrollPinningBehavior { DoNotPin };
@@ -314,14 +317,14 @@ private:
         RectEdges<bool> mainFramePinnedState { true, true, true, true };
     };
 
-    Lock m_swipeStateMutex;
-    SwipeState m_swipeState;
+    CheckedLock m_swipeStateLock;
+    SwipeState m_swipeState WTF_GUARDED_BY_LOCK(m_swipeStateLock);
 
-    Lock m_pendingScrollUpdatesLock;
-    Vector<ScrollUpdate> m_pendingScrollUpdates;
+    CheckedLock m_pendingScrollUpdatesLock;
+    Vector<ScrollUpdate> m_pendingScrollUpdates WTF_GUARDED_BY_LOCK(m_pendingScrollUpdatesLock);
 
-    Lock m_lastWheelEventTimeMutex;
-    MonotonicTime m_lastWheelEventTime;
+    CheckedLock m_lastWheelEventTimeLock;
+    MonotonicTime m_lastWheelEventTime WTF_GUARDED_BY_LOCK(m_lastWheelEventTimeLock);
 
 protected:
     bool m_allowLatching { true };

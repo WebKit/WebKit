@@ -56,8 +56,6 @@ namespace WebCore {
 
 MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* player)
     : m_player(player)
-    , m_queuedNotifications()
-    , m_queueMutex()
     , m_networkState(MediaPlayer::NetworkState::Empty)
     , m_readyState(MediaPlayer::ReadyState::HaveNothing)
     , m_preload(MediaPlayer::Preload::Auto)
@@ -710,7 +708,7 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 
 void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay) const
 {
-    LockHolder lock(m_queueMutex);
+    Locker locker { m_queuedNotificationsLock };
     if (delay)
         ++m_delayCallbacks;
     else {
@@ -727,7 +725,7 @@ void MediaPlayerPrivateAVFoundation::mainThreadCallback()
 
 void MediaPlayerPrivateAVFoundation::clearMainThreadPendingFlag()
 {
-    LockHolder lock(m_queueMutex);
+    Locker locker { m_queuedNotificationsLock };
     m_mainThreadCallPending = false;
 }
 
@@ -743,32 +741,32 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
 
 void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification&& notification)
 {
-    m_queueMutex.lock();
+    {
+        Locker locker { m_queuedNotificationsLock };
 
-    // It is important to always process the properties in the order that we are notified,
-    // so always go through the queue because notifications happen on different threads.
-    m_queuedNotifications.append(WTFMove(notification));
+        // It is important to always process the properties in the order that we are notified,
+        // so always go through the queue because notifications happen on different threads.
+        m_queuedNotifications.append(WTFMove(notification));
 
 #if OS(WINDOWS)
-    bool delayDispatch = true;
+        bool delayDispatch = true;
 #else
-    bool delayDispatch = m_delayCallbacks || !isMainThread();
+        bool delayDispatch = m_delayCallbacks || !isMainThread();
 #endif
-    if (delayDispatch && !m_mainThreadCallPending) {
-        m_mainThreadCallPending = true;
+        if (delayDispatch && !m_mainThreadCallPending) {
+            m_mainThreadCallPending = true;
 
-        callOnMainThread([weakThis = makeWeakPtr(*this)] {
-            if (!weakThis)
-                return;
+            callOnMainThread([weakThis = makeWeakPtr(*this)] {
+                if (!weakThis)
+                    return;
 
-            weakThis->mainThreadCallback();
-        });
+                weakThis->mainThreadCallback();
+            });
+        }
+
+        if (delayDispatch)
+            return;
     }
-
-    m_queueMutex.unlock();
-
-    if (delayDispatch)
-        return;
 
     dispatchNotification();
 }
@@ -779,7 +777,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
 
     Notification notification;
     {
-        LockHolder lock(m_queueMutex);
+        Locker locker { m_queuedNotificationsLock };
         
         if (m_queuedNotifications.isEmpty())
             return;

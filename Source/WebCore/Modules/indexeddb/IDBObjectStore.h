@@ -30,6 +30,7 @@
 #include "IDBCursorDirection.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStoreInfo.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/IsoMalloc.h>
 
 namespace JSC {
@@ -133,9 +134,9 @@ private:
 
     bool m_deleted { false };
 
-    mutable Lock m_referencedIndexLock;
-    HashMap<String, std::unique_ptr<IDBIndex>> m_referencedIndexes;
-    HashMap<uint64_t, std::unique_ptr<IDBIndex>> m_deletedIndexes;
+    mutable CheckedLock m_referencedIndexLock;
+    HashMap<String, std::unique_ptr<IDBIndex>> m_referencedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
+    HashMap<uint64_t, std::unique_ptr<IDBIndex>> m_deletedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
 };
 
 } // namespace WebCore

@@ -279,7 +279,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
 {
     if (!isMainThread()) {
         {
-            auto locker = holdLock(m_currentVideoSampleLock);
+            Locker locker { m_currentVideoSampleLock };
             m_currentVideoSample = &sample;
         }
         callOnMainThread([weakThis = makeWeakPtr(this), hasChangedOrientation]() mutable {
@@ -291,7 +291,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
 
             RefPtr<MediaSample> sample;
             {
-                auto locker = holdLock(weakThis->m_currentVideoSampleLock);
+                Locker locker { weakThis->m_currentVideoSampleLock };
                 sample = WTFMove(weakThis->m_currentVideoSample);
             }
             if (!sample)

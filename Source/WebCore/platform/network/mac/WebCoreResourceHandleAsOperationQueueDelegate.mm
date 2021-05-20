@@ -98,7 +98,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
 
 - (void)detachHandle
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
 
     m_handle = nullptr;
 
@@ -156,7 +156,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
     [self callFunctionOnMainThread:WTFMove(work)];
     m_semaphore.wait();
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
     if (!m_handle)
         return nil;
 
@@ -214,7 +214,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self callFunctionOnMainThread:WTFMove(work)];
     m_semaphore.wait();
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
     if (!m_handle)
         return NO;
 
@@ -385,7 +385,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self callFunctionOnMainThread:WTFMove(work)];
     m_semaphore.wait();
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
     if (!m_handle)
         return nil;
 

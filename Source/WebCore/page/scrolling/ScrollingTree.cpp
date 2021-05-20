@@ -63,10 +63,46 @@ ScrollingTree::ScrollingTree()
 
 ScrollingTree::~ScrollingTree() = default;
 
+OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(const PlatformWheelEvent& wheelEvent)
+{
+    if (!m_rootNode)
+        return { WheelEventProcessingSteps::ScrollingThread };
+
+    FloatPoint position = wheelEvent.position();
+    position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+
+    if (!m_treeState.eventTrackingRegions.isEmpty()) {
+        const EventNames& names = eventNames();
+        IntPoint roundedPosition = roundedIntPoint(position);
+
+        // Event regions are affected by page scale, so no need to map through scale.
+        bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(names.wheelEvent, roundedPosition) == TrackingType::Synchronous
+            || m_treeState.eventTrackingRegions.trackingTypeForPoint(names.mousewheelEvent, roundedPosition) == TrackingType::Synchronous;
+        LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::determineWheelEventProcessing: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
+
+        if (isSynchronousDispatchRegion)
+            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+    }
+
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
+    if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
+        if (m_treeState.gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
+            return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+
+        return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+    }
+
+    if (eventListenerTypes.contains(EventListenerRegionType::Wheel))
+        return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+#endif
+    return { WheelEventProcessingSteps::ScrollingThread };
+}
+
 OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessing(const PlatformWheelEvent& wheelEvent)
 {
     // This method is invoked by the event handling thread
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
 
     auto latchedNodeAndSteps = m_latchingController.latchingDataForEvent(wheelEvent, m_allowLatching);
     if (latchedNodeAndSteps) {
@@ -76,40 +112,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
     if (wheelEvent.isGestureStart() || wheelEvent.isNonGestureEvent())
         m_treeState.gestureState = WTF::nullopt;
 
-    auto processingSteps = [&]() -> OptionSet<WheelEventProcessingSteps> {
-        if (!m_rootNode)
-            return { WheelEventProcessingSteps::ScrollingThread };
-
-        FloatPoint position = wheelEvent.position();
-        position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
-
-        if (!m_treeState.eventTrackingRegions.isEmpty()) {
-            const EventNames& names = eventNames();
-            IntPoint roundedPosition = roundedIntPoint(position);
-
-            // Event regions are affected by page scale, so no need to map through scale.
-            bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(names.wheelEvent, roundedPosition) == TrackingType::Synchronous
-                || m_treeState.eventTrackingRegions.trackingTypeForPoint(names.mousewheelEvent, roundedPosition) == TrackingType::Synchronous;
-            LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::determineWheelEventProcessing: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
-
-            if (isSynchronousDispatchRegion)
-                return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
-        }
-
-#if ENABLE(WHEEL_EVENT_REGIONS)
-        auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
-        if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
-            if (m_treeState.gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
-                return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
-
-            return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
-        }
-
-        if (eventListenerTypes.contains(EventListenerRegionType::Wheel))
-            return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
-#endif
-        return { WheelEventProcessingSteps::ScrollingThread };
-    }();
+    auto processingSteps = computeWheelProcessingSteps(wheelEvent);
 
     m_latchingController.receivedWheelEvent(wheelEvent, processingSteps, m_allowLatching);
 
@@ -161,7 +164,10 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         }
 
         FloatPoint position = wheelEvent.position();
-        position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+        {
+            Locker locker { m_treeStateLock };
+            position.move(m_rootNode->viewToContentsOffset(m_treeState.mainFrameScrollPosition));
+        }
         auto node = scrollingNodeForPoint(position);
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
@@ -274,7 +280,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrollingPerformanceTestingEnabled)
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::IsMonitoringWheelEvents))) {
-        LockHolder lock(m_treeStateMutex);
+        Locker locker { m_treeStateLock };
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
             m_treeState.mainFrameScrollPosition = { };
@@ -482,31 +488,31 @@ void ScrollingTree::clearLatchedNode()
 
 FloatPoint ScrollingTree::mainFrameScrollPosition() const
 {
-    ASSERT(m_treeStateMutex.isLocked());
+    ASSERT(m_treeStateLock.isLocked());
     return m_treeState.mainFrameScrollPosition;
 }
 
 void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)
 {
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     m_treeState.mainFrameScrollPosition = position;
 }
 
 void ScrollingTree::setGestureState(Optional<WheelScrollGestureState> gestureState)
 {
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     m_treeState.gestureState = gestureState;
 }
 
 Optional<WheelScrollGestureState> ScrollingTree::gestureState()
 {
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     return m_treeState.gestureState;
 }
 
 TrackingType ScrollingTree::eventTrackingTypeForPoint(const AtomString& eventName, IntPoint p)
 {
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     return m_treeState.eventTrackingRegions.trackingTypeForPoint(eventName, p);
 }
 
@@ -516,13 +522,13 @@ bool ScrollingTree::isRubberBandInProgressForNode(ScrollingNodeID nodeID)
     if (!nodeID)
         return false;
 
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     return m_treeState.nodesWithActiveRubberBanding.contains(nodeID);
 }
 
 void ScrollingTree::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
 {
-    LockHolder locker(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     if (isRubberBanding)
         m_treeState.nodesWithActiveRubberBanding.add(nodeID);
     else
@@ -535,14 +541,14 @@ bool ScrollingTree::isUserScrollInProgressForNode(ScrollingNodeID nodeID)
     if (!nodeID)
         return false;
 
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     return m_treeState.nodesWithActiveUserScrolls.contains(nodeID);
 }
     
 void ScrollingTree::setUserScrollInProgressForNode(ScrollingNodeID nodeID, bool isScrolling)
 {
     ASSERT(nodeID);
-    LockHolder locker(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     if (isScrolling)
         m_treeState.nodesWithActiveUserScrolls.add(nodeID);
     else
@@ -551,7 +557,7 @@ void ScrollingTree::setUserScrollInProgressForNode(ScrollingNodeID nodeID, bool 
 
 void ScrollingTree::clearNodesWithUserScrollInProgress()
 {
-    LockHolder locker(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     m_treeState.nodesWithActiveUserScrolls.clear();
 }
 
@@ -561,14 +567,14 @@ bool ScrollingTree::isScrollSnapInProgressForNode(ScrollingNodeID nodeID)
     if (!nodeID)
         return false;
 
-    LockHolder lock(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     return m_treeState.nodesWithActiveScrollSnap.contains(nodeID);
 }
     
 void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isScrollSnapping)
 {
     ASSERT(nodeID);
-    LockHolder locker(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     if (isScrollSnapping)
         m_treeState.nodesWithActiveScrollSnap.add(nodeID);
     else
@@ -577,21 +583,21 @@ void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isS
 
 void ScrollingTree::setMainFramePinnedState(RectEdges<bool> edgePinningState)
 {
-    LockHolder locker(m_swipeStateMutex);
+    Locker locker { m_swipeStateLock };
 
     m_swipeState.mainFramePinnedState = edgePinningState;
 }
 
 void ScrollingTree::setMainFrameCanRubberBand(RectEdges<bool> canRubberBand)
 {
-    LockHolder locker(m_swipeStateMutex);
+    Locker locker { m_swipeStateLock };
 
     m_swipeState.canRubberBand = canRubberBand;
 }
 
 bool ScrollingTree::mainFrameCanRubberBandInDirection(ScrollDirection direction)
 {
-    LockHolder locker(m_swipeStateMutex);
+    Locker locker { m_swipeStateLock };
 
     switch (direction) {
     case ScrollUp: return m_swipeState.canRubberBand.top();
@@ -605,7 +611,7 @@ bool ScrollingTree::mainFrameCanRubberBandInDirection(ScrollDirection direction)
 
 void ScrollingTree::addPendingScrollUpdate(ScrollUpdate&& update)
 {
-    auto locker = holdLock(m_pendingScrollUpdatesLock);
+    Locker locker { m_pendingScrollUpdatesLock };
     for (auto& existingUpdate : m_pendingScrollUpdates) {
         if (existingUpdate.canMerge(update)) {
             existingUpdate.merge(WTFMove(update));
@@ -618,21 +624,21 @@ void ScrollingTree::addPendingScrollUpdate(ScrollUpdate&& update)
 
 Vector<ScrollingTree::ScrollUpdate> ScrollingTree::takePendingScrollUpdates()
 {
-    auto locker = holdLock(m_pendingScrollUpdatesLock);
+    Locker locker { m_pendingScrollUpdatesLock };
     return std::exchange(m_pendingScrollUpdates, { });
 }
 
 // Can be called from the main thread.
 void ScrollingTree::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
-    LockHolder locker(m_swipeStateMutex);
+    Locker locker { m_swipeStateLock };
     
     m_swipeState.scrollPinningBehavior = pinning;
 }
 
 ScrollPinningBehavior ScrollingTree::scrollPinningBehavior()
 {
-    LockHolder lock(m_swipeStateMutex);
+    Locker locker { m_swipeStateLock };
     
     return m_swipeState.scrollPinningBehavior;
 }
@@ -642,7 +648,7 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
     if (wheelEvent.phase() != PlatformWheelEventPhase::Began)
         return false;
 
-    LockHolder lock(m_swipeStateMutex);
+    Locker locker { m_swipeStateLock };
 
     if (wheelEvent.deltaX() > 0 && m_swipeState.mainFramePinnedState.left() && !m_swipeState.canRubberBand.left())
         return true;
@@ -669,20 +675,20 @@ void ScrollingTree::scrollBySimulatingWheelEventForTesting(ScrollingNodeID nodeI
 
 void ScrollingTree::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPerSecond> nominalFramesPerSecond)
 {
-    LockHolder locker(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     m_treeState.displayID = displayID;
     m_treeState.nominalFramesPerSecond = nominalFramesPerSecond;
 }
 
 PlatformDisplayID ScrollingTree::displayID()
 {
-    LockHolder locker(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     return m_treeState.displayID;
 }
 
 bool ScrollingTree::hasProcessedWheelEventsRecently()
 {
-    LockHolder locker(m_lastWheelEventTimeMutex);
+    Locker locker { m_lastWheelEventTimeLock };
     constexpr auto activityInterval = 50_ms; // Duration of a few frames so that we stay active for sequence of wheel events.
     
     return (MonotonicTime::now() - m_lastWheelEventTime) < activityInterval;
@@ -690,13 +696,13 @@ bool ScrollingTree::hasProcessedWheelEventsRecently()
 
 void ScrollingTree::willProcessWheelEvent()
 {
-    LockHolder locker(m_lastWheelEventTimeMutex);
+    Locker locker { m_lastWheelEventTimeLock };
     m_lastWheelEventTime = MonotonicTime::now();
 }
 
 Optional<unsigned> ScrollingTree::nominalFramesPerSecond()
 {
-    LockHolder locker(m_treeStateMutex);
+    Locker locker { m_treeStateLock };
     return m_treeState.nominalFramesPerSecond;
 }
 
@@ -708,7 +714,7 @@ String ScrollingTree::scrollingTreeAsText(ScrollingStateTreeAsTextBehavior behav
         TextStream::GroupScope scope(ts);
         ts << "scrolling tree";
 
-        LockHolder locker(m_treeStateMutex);
+        Locker locker { m_treeStateLock };
 
         if (auto latchedNodeID = m_latchingController.latchedNodeID())
             ts.dumpProperty("latched node", latchedNodeID.value());

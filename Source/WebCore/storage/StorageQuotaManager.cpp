@@ -73,7 +73,7 @@ StorageQuotaManager::Decision StorageQuotaManager::requestSpaceOnBackgroundThrea
 {
     ASSERT(!isMainThread());
 
-    LockHolder locker(m_quotaCountDownLock);
+    Locker locker { m_quotaCountDownLock };
 
     if (tryGrantRequest(spaceRequested))
         return Decision::Grant;
@@ -131,7 +131,7 @@ void StorageQuotaManager::updateQuotaBasedOnUsage()
 
 void StorageQuotaManager::resetQuotaUpdatedBasedOnUsageForTesting()
 {
-    LockHolder locker(m_quotaCountDownLock);
+    Locker locker { m_quotaCountDownLock };
     m_quota = m_initialQuota;
     m_quotaCountDown = 0;
     m_quotaUpdatedBasedOnUsage = false;
@@ -139,7 +139,7 @@ void StorageQuotaManager::resetQuotaUpdatedBasedOnUsageForTesting()
 
 void StorageQuotaManager::resetQuotaForTesting()
 {
-    LockHolder locker(m_quotaCountDownLock);
+    Locker locker { m_quotaCountDownLock };
     m_quota = m_initialQuota;
     m_quotaCountDown = 0;
 }

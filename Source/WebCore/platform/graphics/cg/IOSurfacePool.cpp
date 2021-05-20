@@ -104,7 +104,7 @@ void IOSurfacePool::didUseSurfaceOfSize(IntSize size)
 
 std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, CGColorSpaceRef colorSpace, IOSurface::Format format)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     CachedSurfaceMap::iterator mapIter = m_cachedSurfaces.find(size);
 
     if (mapIter == m_cachedSurfaces.end()) {
@@ -170,7 +170,7 @@ bool IOSurfacePool::shouldCacheSurface(const IOSurface& surface) const
 
 void IOSurfacePool::addSurface(std::unique_ptr<IOSurface> surface)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     if (!shouldCacheSurface(*surface))
         return;
 
@@ -203,7 +203,7 @@ void IOSurfacePool::insertSurfaceIntoPool(std::unique_ptr<IOSurface> surface)
 
 void IOSurfacePool::setPoolSize(size_t poolSizeInBytes)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_maximumBytesCached = poolSizeInBytes;
     evict(0);
 }
@@ -306,7 +306,7 @@ bool IOSurfacePool::markOlderSurfacesPurgeable()
 
 void IOSurfacePool::collectionTimerFired()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     collectInUseSurfaces();
     bool markedAllSurfaces = markOlderSurfacesPurgeable();
 
@@ -325,7 +325,7 @@ void IOSurfacePool::scheduleCollectionTimer()
 
 void IOSurfacePool::discardAllSurfaces()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     discardAllSurfacesInternal();
 }
 

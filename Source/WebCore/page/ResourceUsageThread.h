@@ -30,7 +30,8 @@
 #include "ResourceUsageData.h"
 #include <array>
 #include <functional>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -69,7 +70,7 @@ private:
     void waitUntilObservers();
     void notifyObservers(ResourceUsageData&&);
 
-    void recomputeCollectionMode();
+    void recomputeCollectionMode() WTF_REQUIRES_LOCK(m_observersLock);
 
     void createThreadIfNeeded();
     NO_RETURN void threadBody();
@@ -79,9 +80,9 @@ private:
     void platformCollectMemoryData(JSC::VM*, ResourceUsageData&);
 
     RefPtr<Thread> m_thread;
-    Lock m_lock;
-    Condition m_condition;
-    HashMap<void*, std::pair<ResourceUsageCollectionMode, std::function<void (const ResourceUsageData&)>>> m_observers;
+    CheckedLock m_observersLock;
+    CheckedCondition m_condition;
+    HashMap<void*, std::pair<ResourceUsageCollectionMode, std::function<void(const ResourceUsageData&)>>> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
     ResourceUsageCollectionMode m_collectionMode { None };
 
     // Platforms may need to access some data from the common VM.

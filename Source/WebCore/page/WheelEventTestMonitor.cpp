@@ -49,7 +49,7 @@ WheelEventTestMonitor::WheelEventTestMonitor(Page& page)
 
 void WheelEventTestMonitor::clearAllTestDeferrals()
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
 
     ASSERT(isMainThread());
     m_deferCompletionReasons.clear();
@@ -62,6 +62,8 @@ void WheelEventTestMonitor::clearAllTestDeferrals()
 
 void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEndOrCancel, bool expectMomentumEnd, WTF::Function<void()>&& functionCallback)
 {
+    Locker locker { m_lock };
+
     ASSERT(isMainThread());
     m_completionCallback = WTFMove(functionCallback);
 #if ENABLE(KINETIC_SCROLLING)
@@ -79,7 +81,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
 
 void WheelEventTestMonitor::deferForReason(ScrollableAreaIdentifier identifier, DeferReason reason)
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
 
     m_deferCompletionReasons.ensure(identifier, [] {
         return OptionSet<DeferReason>();
@@ -92,7 +94,7 @@ void WheelEventTestMonitor::deferForReason(ScrollableAreaIdentifier identifier, 
 
 void WheelEventTestMonitor::removeDeferralForReason(ScrollableAreaIdentifier identifier, DeferReason reason)
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
 
     auto it = m_deferCompletionReasons.find(identifier);
     if (it == m_deferCompletionReasons.end()) {
@@ -112,6 +114,8 @@ void WheelEventTestMonitor::removeDeferralForReason(ScrollableAreaIdentifier ide
 void WheelEventTestMonitor::receivedWheelEvent(const PlatformWheelEvent& event)
 {
 #if ENABLE(KINETIC_SCROLLING)
+    Locker locker { m_lock };
+
     if (event.phase() == PlatformWheelEventPhase::Ended || event.phase() == PlatformWheelEventPhase::Cancelled)
         m_receivedWheelEndOrCancel = true;
 
@@ -132,7 +136,7 @@ void WheelEventTestMonitor::checkShouldFireCallbacks()
 {
     ASSERT(isMainThread());
     {
-        LockHolder lock(m_mutex);
+        Locker locker { m_lock };
 
         if (!m_deferCompletionReasons.isEmpty()) {
             LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::checkShouldFireCallbacks - scrolling still active, reasons " << m_deferCompletionReasons);
