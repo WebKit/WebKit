@@ -887,7 +887,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/CISupport/clean-build', '--platform=ios-11', '--release'],
+                        command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-11', '--release'],
                         )
             + 0,
         )
@@ -900,7 +900,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/CISupport/clean-build', '--platform=ios-simulator-11', '--debug'],
+                        command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-simulator-11', '--debug'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
@@ -2869,7 +2869,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'archive'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'archive'],
                         )
             + 0,
         )
@@ -2883,7 +2883,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'archive'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'archive'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
@@ -3065,7 +3065,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'extract'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'extract'],
                         )
             + 0,
         )
@@ -3079,7 +3079,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'extract'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'extract'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,

@@ -2030,7 +2030,7 @@ class CleanBuild(shell.Compile):
     name = 'delete-WebKitBuild-directory'
     description = ['deleting WebKitBuild directory']
     descriptionDone = ['Deleted WebKitBuild directory']
-    command = ['python', 'Tools/CISupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]
+    command = ['python3', 'Tools/CISupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]
 
 
 class KillOldProcesses(shell.Compile):
@@ -2058,7 +2058,7 @@ class TriggerCrashLogSubmission(shell.Compile):
     name = 'trigger-crash-log-submission'
     description = ['triggering crash log submission']
     descriptionDone = ['Triggered crash log submission']
-    command = ['python', 'Tools/CISupport/trigger-crash-log-submission']
+    command = ['python3', 'Tools/CISupport/trigger-crash-log-submission']
 
     def __init__(self, **kwargs):
         super(TriggerCrashLogSubmission, self).__init__(timeout=60, logEnviron=False, **kwargs)
@@ -2073,7 +2073,7 @@ class WaitForCrashCollection(shell.Compile):
     name = 'wait-for-crash-collection'
     description = ['waiting-for-crash-collection-to-quiesce']
     descriptionDone = ['Crash collection has quiesced']
-    command = ['python', 'Tools/CISupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
+    command = ['python3', 'Tools/CISupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
 
     def __init__(self, **kwargs):
         super(WaitForCrashCollection, self).__init__(timeout=6 * 60, logEnviron=False, **kwargs)
@@ -2627,7 +2627,7 @@ class RunWebKit1Tests(RunWebKitTests):
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/CISupport/built-product-archive',
+    command = ['python3', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'archive']
     name = 'archive-built-product'
     description = ['archiving built product']
@@ -2747,7 +2747,7 @@ class DownloadBuiltProductFromMaster(transfer.FileDownload):
 
 
 class ExtractBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/CISupport/built-product-archive',
+    command = ['python3', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'extract']
     name = 'extract-built-product'
     description = ['extracting built product']
