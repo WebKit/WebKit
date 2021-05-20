@@ -608,11 +608,43 @@ static void buildDisplayStringForTrackBase(StringBuilder& displayName, const Tra
     } else {
         String languageAndLocale = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, trackLanguageIdentifier.createCFString().get())).get();
         if (!languageAndLocale.isEmpty())
-            displayName.append(languageAndLocale);
+            label = languageAndLocale;
         else if (!language.isEmpty())
-            displayName.append(language);
+            label = language;
         else
-            displayName.append(localeIdentifier.get());
+            label = localeIdentifier.get();
+
+        if (track.type() == TrackBase::TextTrack) {
+            auto& textTrack = downcast<TextTrack>(track);
+            switch (textTrack.kind()) {
+            case TextTrack::Kind::Subtitles:
+                // Subtitle text tracks are only shown in a dedicated "Subtitle" grouping, meaning
+                // it would look odd to add the same title as a suffix (e.g. "English Subtitles").
+                break;
+
+            case TextTrack::Kind::Captions:
+                label = captionsTextTrackWithoutLabelMenuItemText(label);
+                break;
+
+            case TextTrack::Kind::Descriptions:
+                label = descriptionsTextTrackWithoutLabelMenuItemText(label);
+                break;
+
+            case TextTrack::Kind::Chapters:
+                label = chaptersTextTrackWithoutLabelMenuItemText(label);
+                break;
+
+            case TextTrack::Kind::Metadata:
+                label = metadataTextTrackWithoutLabelMenuItemText(label);
+                break;
+
+            case TextTrack::Kind::Forced:
+                label = forcedTrackMenuItemText(label);
+                break;
+            }
+        }
+
+        displayName.append(label);
     }
 }
 
