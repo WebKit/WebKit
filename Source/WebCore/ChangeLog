@@ -1,3 +1,14 @@
+2021-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        Add null checks in FrameSelection::selectFrameElementInParentIfFullySelected
+        https://bugs.webkit.org/show_bug.cgi?id=225973
+        <rdar://78200977>
+
+        Reviewed by Katherine Cheney.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected):
+
 2021-05-20  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] add a suffix based on `TextTrack::Kind` when generating display names for `TrackBase`

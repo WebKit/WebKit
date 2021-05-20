@@ -1922,7 +1922,13 @@ bool FrameSelection::contains(const LayoutPoint& point) const
 void FrameSelection::selectFrameElementInParentIfFullySelected()
 {
     // Find the parent frame; if there is none, then we have nothing to do.
-    auto parent = makeRefPtr(m_document->frame()->tree().parent());
+    auto document = makeRefPtr(m_document.get());
+    if (!document)
+        return;
+    auto frame = makeRefPtr(document->frame());
+    if (!frame)
+        return;
+    auto parent = makeRefPtr(frame->tree().parent());
     if (!parent)
         return;
     Page* page = m_document->page();
