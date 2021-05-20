@@ -1264,15 +1264,14 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
     // so we want to draw through CJK characters (on a character-by-character basis).
     // FIXME: The CSS spec says this should instead be done by the user-agent stylesheet using the lang= attribute.
     UChar32 baseCharacter;
-    auto offsetInString = glyphBuffer.stringOffsetAt(index);
-
-    GlyphBufferStringOffset textRunLength = textRun.length();
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(offsetInString < textRunLength);
+    auto offsetInString = glyphBuffer.checkedStringOffsetAt(index, textRun.length());
+    if (!offsetInString)
+        return GlyphUnderlineType::SkipDescenders;
     
     if (textRun.is8Bit())
-        baseCharacter = textRun.characters8()[offsetInString];
+        baseCharacter = textRun.characters8()[offsetInString.value()];
     else
-        U16_GET(textRun.characters16(), 0, offsetInString, textRunLength, baseCharacter);
+        U16_GET(textRun.characters16(), 0, static_cast<unsigned>(offsetInString.value()), textRun.length(), baseCharacter);
     
     // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
     // Instead, we can use the "Unicode allocation block" for the character.

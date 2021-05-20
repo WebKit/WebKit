@@ -115,7 +115,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
     }
 
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i) {
-        auto characterIndex = glyphBuffer.stringOffsetAt(i);
+        auto characterIndex = glyphBuffer.uncheckedStringOffsetAt(i);
         auto iterator = std::lower_bound(charactersTreatedAsSpace.begin(), charactersTreatedAsSpace.end(), characterIndex, [](const OriginalAdvancesForCharacterTreatedAsSpace& l, GlyphBufferStringOffset r) -> bool {
             return l.stringOffset < r;
         });
@@ -395,9 +395,11 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
     Vector<Optional<GlyphIndexRange>> characterIndexToGlyphIndexRange(m_run.length(), WTF::nullopt);
     Vector<float> advanceWidths(m_run.length(), 0);
     for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); ++i) {
-        auto stringOffset = glyphBuffer.stringOffsetAt(i);
-        advanceWidths[stringOffset] += width(glyphBuffer.advanceAt(i));
-        auto& glyphIndexRange = characterIndexToGlyphIndexRange[stringOffset];
+        auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run.length());
+        if (!stringOffset)
+            continue;
+        advanceWidths[stringOffset.value()] += width(glyphBuffer.advanceAt(i));
+        auto& glyphIndexRange = characterIndexToGlyphIndexRange[stringOffset.value()];
         if (glyphIndexRange)
             glyphIndexRange->trailingGlyphIndex = i;
         else
@@ -409,9 +411,8 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
         for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); ++i) {
             // All characters' advances get stretched, except apparently tab characters...
             // This doesn't make much sense, because even tab characters get letter-spacing...
-            auto stringOffset = glyphBuffer.stringOffsetAt(i);
-            auto character = m_run[stringOffset];
-            if (character == tabCharacter)
+            auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run.length());
+            if (stringOffset && m_run[stringOffset.value()] == tabCharacter)
                 continue;
 
             auto currentAdvance = width(glyphBuffer.advanceAt(i));
