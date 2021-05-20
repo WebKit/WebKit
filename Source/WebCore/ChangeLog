@@ -1,3 +1,30 @@
+2021-05-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] ItemHandle::safeCopy is not actually safe, does no bounds-checking
+        https://bugs.webkit.org/show_bug.cgi?id=226022
+        rdar://78181677
+
+        Reviewed by Chris Dumez.
+
+        Currently, it's possible for DisplayList iteration to trigger out-of-bounds access when decoding inline display
+        list items; this patch adds hardening to prevent this. See below for more details.
+
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+
+        Add an `ItemType` argument to `safeCopy`, and use this `ItemType` instead of assuming that the item type of the
+        `ItemHandle` we're copying from hasn't changed since we've validated it.
+
+        (WebCore::DisplayList::ItemHandle::safeCopy const):
+        * platform/graphics/displaylists/DisplayListItemBuffer.h:
+        * platform/graphics/displaylists/DisplayListIterator.cpp:
+        (WebCore::DisplayList::DisplayList::Iterator::updateCurrentItem):
+
+        Verify that the remaining item buffer capacity is at least as large as `paddedSizeOfTypeAndItem`, such that we
+        won't go out of bounds when attempting to read from the item handle in `safeCopy`.
+
+        * platform/graphics/displaylists/InMemoryDisplayList.cpp:
+        (WebCore::DisplayList::InMemoryDisplayList::ReadingClient::decodeItem):
+
 2021-05-20  Chris Lord  <clord@igalia.com>
 
         Allow passing a VisibleRectContext when calculating the clipped overflow rect

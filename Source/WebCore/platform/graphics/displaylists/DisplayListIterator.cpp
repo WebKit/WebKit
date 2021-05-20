@@ -81,7 +81,12 @@ void DisplayList::Iterator::updateCurrentItem()
     auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
     m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
     if (isInlineItem(itemType)) {
-        if (UNLIKELY(!ItemHandle { m_cursor }.safeCopy({ m_currentBufferForItem }))) {
+        if (UNLIKELY(static_cast<uint64_t>(m_currentEndOfBuffer - m_cursor) < paddedSizeOfTypeAndItem)) {
+            m_isValid = false;
+            return;
+        }
+
+        if (UNLIKELY(!ItemHandle { m_cursor }.safeCopy(itemType, { m_currentBufferForItem }))) {
             m_isValid = false;
             return;
         }

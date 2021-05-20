@@ -44,10 +44,9 @@ void InMemoryDisplayList::WritingClient::encodeItemInline(const DisplayListItem&
 Optional<ItemHandle> WARN_UNUSED_RETURN InMemoryDisplayList::ReadingClient::decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation)
 {
     const ItemHandle dataHandle { const_cast<uint8_t*>(data) };
-    ASSERT_UNUSED(type, dataHandle.type() == type);
     ASSERT_UNUSED(dataLength, dataLength >= paddedSizeOfTypeAndItemInBytes(dataHandle.type()));
     ItemHandle result { handleLocation };
-    if (dataHandle.safeCopy(result))
+    if (dataHandle.safeCopy(type, result))
         return result;
     return WTF::nullopt;
 }

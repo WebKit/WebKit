@@ -466,9 +466,9 @@ static inline bool copyInto(uint8_t* destinationWithOffset, const ItemHandle& it
     return copyInto(destinationWithOffset, itemHandle.get<Item>());
 }
 
-bool ItemHandle::safeCopy(ItemHandle destination) const
+bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
 {
-    auto itemType = type();
+    ASSERT(itemType == type());
     destination.data[0] = static_cast<uint8_t>(itemType);
     auto itemOffset = destination.data + sizeof(uint64_t);
     switch (itemType) {
