@@ -63,6 +63,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcessMessages.h"
+#include <WebCore/Logging.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NowPlayingManager.h>
 #include <wtf/Language.h>
@@ -277,6 +278,27 @@ void GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage(WebPa
     m_visibilityPropagationContexts.remove(key);
 }
 #endif
+
+void GPUConnectionToWebProcess::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+{
+#if !RELEASE_LOG_DISABLED
+    if  (auto* channel = WebCore::getLogChannel(channelName)) {
+        channel->state = state;
+        channel->level = level;
+    }
+
+    auto* channel = getLogChannel(channelName);
+    if  (!channel)
+        return;
+
+    channel->state = state;
+    channel->level = level;
+#else
+    UNUSED_PARAM(channelName);
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(level);
+#endif
+}
 
 bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 {

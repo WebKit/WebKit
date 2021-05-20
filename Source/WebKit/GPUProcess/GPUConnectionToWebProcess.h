@@ -201,6 +201,7 @@ private:
     void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void setMediaOverridesForTesting(MediaOverridesForTesting);
     void setUserPreferredLanguages(const Vector<String>&);
+    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) final;

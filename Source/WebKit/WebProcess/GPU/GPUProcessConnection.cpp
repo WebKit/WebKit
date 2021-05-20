@@ -245,6 +245,11 @@ void GPUProcessConnection::destroyVisibilityPropagationContextForPage(WebPage& p
 }
 #endif
 
+void GPUProcessConnection::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+{
+    connection().send(Messages::GPUConnectionToWebProcess::ConfigureLoggingChannel(channelName, state, level), { });
+}
+
 #if ENABLE(VP9)
 void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder)
 {

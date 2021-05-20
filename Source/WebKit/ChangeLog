@@ -1,3 +1,26 @@
+2021-05-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow GPU process log channels to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=226036
+        <rdar://problem/78271211>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::configureLoggingChannel): Configure WebCore and
+        WebKit logging channels because classes used in the GPU process use both.
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::configureLoggingChannel): Send configureLoggingChannel
+        message to the GPU process.
+        * WebProcess/GPU/GPUProcessConnection.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::configureLoggingChannel): Send configureLoggingChannel to the 
+        GPU process connection, if there is one.
+
 2021-05-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Adopt "com.apple.QuartzCore.webkit-limited-types" entitlement

@@ -85,6 +85,8 @@ public:
     void destroyVisibilityPropagationContextForPage(WebPage&);
 #endif
 
+    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+
     class Client : public CanMakeWeakPtr<Client> {
     public:
         virtual ~Client() = default;

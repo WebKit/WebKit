@@ -7263,6 +7263,11 @@ bool WebPage::usesEphemeralSession() const
 
 void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+        gpuProcessConnection->configureLoggingChannel(channelName, state, level);
+#endif
+
     send(Messages::WebPageProxy::ConfigureLoggingChannel(channelName, state, level));
 }
 
