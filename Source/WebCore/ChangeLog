@@ -1,3 +1,22 @@
+2021-05-20  Youenn Fablet  <youenn@apple.com>
+
+        <video> rendered inside <template> shows black for webcam stream (Safari 14.0.3 only)
+        https://bugs.webkit.org/show_bug.cgi?id=222115
+        <rdar://problem/74546659>
+
+        Reviewed by Eric Carlson.
+
+        Update element visibility if changing of document. Add internals API to test this.
+
+        Test: fast/media/template-hidden.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didMoveToNewDocument):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isMediaElementHidden):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-05-20  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Available space distribution should account for the top and bottom table spacing

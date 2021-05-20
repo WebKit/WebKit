@@ -4967,6 +4967,13 @@ bool Internals::privatePlayerMuted(const HTMLMediaElement&)
 
 #endif
 
+#if ENABLE(VIDEO)
+bool Internals::isMediaElementHidden(const HTMLMediaElement& media)
+{
+    return media.elementIsHidden();
+}
+#endif
+
 ExceptionOr<void> Internals::setIsPlayingToBluetoothOverride(Optional<bool> isPlaying)
 {
 #if ENABLE(ROUTING_ARBITRATION)

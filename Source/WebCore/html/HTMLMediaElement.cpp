@@ -674,6 +674,7 @@ void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& new
 
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     updateShouldAutoplay();
+    visibilityStateChanged();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
