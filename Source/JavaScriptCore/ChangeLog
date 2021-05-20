@@ -1,3 +1,15 @@
+2021-05-20  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        $vm should have a function for checking if ASan is enabled similar to $vm.assertEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=226019
+
+        Reviewed by Mark Lam.
+
+        Add method $vm.asanEnabled(), which parallels $vm.assertEnabled(), and allows checking at
+        runtime whether the current JavaScriptCore build is instrumented with AddressSanitizer.
+
+        * tools/JSDollarVM.cpp:
+
 2021-05-19  Mark Lam  <mark.lam@apple.com>
 
         AbstractSlotVisitor::containsOpaqueRoot() should only declare didFindOpaqueRoot if the root is actually found.

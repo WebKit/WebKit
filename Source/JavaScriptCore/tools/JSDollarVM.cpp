@@ -1984,6 +1984,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionSetUserPreferredLanguages);
 static JSC_DECLARE_HOST_FUNCTION(functionICUVersion);
 static JSC_DECLARE_HOST_FUNCTION(functionICUHeaderVersion);
 static JSC_DECLARE_HOST_FUNCTION(functionAssertEnabled);
+static JSC_DECLARE_HOST_FUNCTION(functionAsanEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionIsMemoryLimited);
 static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
@@ -3527,6 +3528,12 @@ JSC_DEFINE_HOST_FUNCTION(functionAssertEnabled, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsBoolean(ASSERT_ENABLED));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionAsanEnabled, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(ASAN_ENABLED));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionIsMemoryLimited, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -3718,6 +3725,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "icuHeaderVersion", functionICUHeaderVersion, 0);
 
     addFunction(vm, "assertEnabled", functionAssertEnabled, 0);
+    addFunction(vm, "asanEnabled", functionAsanEnabled, 0);
 
     addFunction(vm, "isMemoryLimited", functionIsMemoryLimited, 0);
     addFunction(vm, "useJIT", functionUseJIT, 0);
