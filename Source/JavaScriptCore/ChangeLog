@@ -1,5 +1,56 @@
 2021-05-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r277613. rdar://problem/78264256
+
+    REGRESSION (r271119): Object methods defined with shorthand notation cannot access "caller" in non-strict mode
+    https://bugs.webkit.org/show_bug.cgi?id=225277
+    
+    Reviewed by Darin Adler.
+    
+    JSTests:
+    
+    * stress/caller-and-arguments-properties-for-functions-that-dont-have-them.js: Now covers #157461 and #157863.
+    * stress/function-caller-cross-realm-via-call-apply.js: Added, coverage for #34553.
+    * stress/function-hidden-as-caller.js: Also adds test case for #102276.
+    
+    Source/JavaScriptCore:
+    
+    This patch loosens `function.caller` to allow non-strict getters, setters, arrow functions,
+    and ES6 methods to be returned as callers, fixing web compatibility.
+    
+    The intent of r230662 is preserved: generator / async functions are never exposed. There is
+    no good way to acquire wrapper function from the internal body one, nor from its arguments.
+    Also, this behavior is on standards track [1] (seems to be considered desirable).
+    
+    [1]: https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#get-functionprototypecaller (step 14)
+    
+    * runtime/JSFunction.cpp:
+    (JSC::JSC_DEFINE_CUSTOM_GETTER):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277613 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+            REGRESSION (r271119): Object methods defined with shorthand notation cannot access "caller" in non-strict mode
+            https://bugs.webkit.org/show_bug.cgi?id=225277
+
+            Reviewed by Darin Adler.
+
+            This patch loosens `function.caller` to allow non-strict getters, setters, arrow functions,
+            and ES6 methods to be returned as callers, fixing web compatibility.
+
+            The intent of r230662 is preserved: generator / async functions are never exposed. There is
+            no good way to acquire wrapper function from the internal body one, nor from its arguments.
+            Also, this behavior is on standards track [1] (seems to be considered desirable).
+
+            [1]: https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#get-functionprototypecaller (step 14)
+
+            * runtime/JSFunction.cpp:
+            (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
+2021-05-20  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r277477. rdar://problem/78264390
 
     [REGRESSION: r271876] Web Inspector: [Cocoa] Remote inspection crashes when using WEB_THREAD
