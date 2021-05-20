@@ -1,5 +1,20 @@
 2021-05-19  Mark Lam  <mark.lam@apple.com>
 
+        AbstractSlotVisitor::containsOpaqueRoot() should only declare didFindOpaqueRoot if the root is actually found.
+        https://bugs.webkit.org/show_bug.cgi?id=226000
+        rdar://78208014
+
+        Reviewed by Robin Morisset.
+
+        It was erroneously calling didFindOpaqueRoot() all the time even when the root is
+        not found.  This only affects the GC verifier tool.  It has no effect on production
+        code.
+
+        * heap/AbstractSlotVisitorInlines.h:
+        (JSC::AbstractSlotVisitor::containsOpaqueRoot const):
+
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
         Speed up debug validation in CacheableIdentifier::createFromIdentifierOwnedByCodeBlock().
         https://bugs.webkit.org/show_bug.cgi?id=225948
 
