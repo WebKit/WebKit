@@ -1,5 +1,24 @@
 2021-05-20  Peng Liu  <peng.liu6@apple.com>
 
+        AirPlay icon of the Vimeo.com video player is missing after reloading the page
+        https://bugs.webkit.org/show_bug.cgi?id=226005
+
+        Reviewed by Eric Carlson.
+
+        Some sites, e.g., vimeo.com, depends on the "webkitplaybacktargetavailabilitychanged"
+        event to setup the player related to AirPlay feature properly. When we reload a
+        page including media element(s), the element's media session will be constructed
+        with `m_hasPlaybackTargets` be `true`, so no "webkitplaybacktargetavailabilitychanged"
+        event will be fired.
+
+        This patch ensures that an `HTMLMediaElement` always fires that event when we
+        reload the page.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::MediaElementSession):
+
+2021-05-20  Peng Liu  <peng.liu6@apple.com>
+
         AirPlay icon of the Vimeo.com video player is missing
         https://bugs.webkit.org/show_bug.cgi?id=226004
 
