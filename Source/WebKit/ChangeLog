@@ -1,3 +1,19 @@
+2021-05-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Adopt "com.apple.QuartzCore.webkit-limited-types" entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=226044
+        <rdar://problem/60549120>
+
+        Reviewed by Per Arne Vollan.
+
+        WebKit should adopt the "com.apple.QuartzCore.webkit-limited-types" entitlement as a further hardening measure to help
+        QuartzCore limit the features accessible from the WebContent and GPU Process. WebKit only needs a subset of the
+        features of QuartzCore, and this entitlement allows the framework to block certain code paths.
+
+        Tested by existing rendering test cases.
+
+        * Scripts/process-entitlements.sh:
+
 2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
