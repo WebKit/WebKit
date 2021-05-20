@@ -213,6 +213,8 @@ private:
 {
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInspector.class, self))
         return;
+    
+    _inspector->~WebInspectorUIProxy();
 
     [super dealloc];
 }

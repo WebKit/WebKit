@@ -1,3 +1,32 @@
+2021-05-20  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r277518. rdar://problem/78260425
+
+    Web Inspector: `_WKInspector` leaks `WebInspectorUIProxy`
+    https://bugs.webkit.org/show_bug.cgi?id=225815
+    
+    Reviewed by Tim Horton.
+    
+    Add a missing call in `_WKInspector`'s destructor to destruct the `WebInspectorUIProxy` in API object storage.
+    
+    * UIProcess/API/Cocoa/_WKInspector.mm:
+    (-[_WKInspector dealloc]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277518 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-14  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: `_WKInspector` leaks `WebInspectorUIProxy`
+            https://bugs.webkit.org/show_bug.cgi?id=225815
+
+            Reviewed by Tim Horton.
+
+            Add a missing call in `_WKInspector`'s destructor to destruct the `WebInspectorUIProxy` in API object storage.
+
+            * UIProcess/API/Cocoa/_WKInspector.mm:
+            (-[_WKInspector dealloc]):
+
 2021-05-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r277665. rdar://problem/78224090
