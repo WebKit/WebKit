@@ -59,6 +59,7 @@ private:
     String sanitizeValue(const String&) const final;
     void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
+    void attributeChanged(const QualifiedName&) final;
     void handleDOMActivateEvent(Event&) final;
     void detach() final;
     void elementDidBlur() final;

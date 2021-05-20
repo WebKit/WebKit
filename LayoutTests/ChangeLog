@@ -1,3 +1,14 @@
+2021-05-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        Value of a color input does not update visually when using setAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=166930
+        <rdar://problem/29983218>
+
+        Reviewed by Simon Fraser.
+
+        * fast/forms/color/color-input-set-attribute-value-expected.html: Added.
+        * fast/forms/color/color-input-set-attribute-value.html: Added.
+
 2021-05-20  Felipe Erias  <felipeerias@igalia.com>
 
         [css-flexbox] Wrong height of an empty table inside an orthogonal flex parent

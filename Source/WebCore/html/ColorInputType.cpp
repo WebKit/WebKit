@@ -165,6 +165,14 @@ void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldE
         m_chooser->setSelectedColor(valueAsColor());
 }
 
+void ColorInputType::attributeChanged(const QualifiedName& name)
+{
+    if (name == valueAttr)
+        updateColorSwatch();
+
+    InputType::attributeChanged(name);
+}
+
 void ColorInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());
