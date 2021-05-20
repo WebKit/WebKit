@@ -1,3 +1,9 @@
+2021-05-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Unreviewed contributor name update.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-05-20  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Forward booted simulators to children processes
