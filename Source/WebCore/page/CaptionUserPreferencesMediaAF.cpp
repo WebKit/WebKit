@@ -746,6 +746,9 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
+        if (!kinds.contains(track->kind()))
+            continue;
+
         String language = displayNameForLanguageLocale(track->validBCP47Language());
 
         if (displayMode == Manual) {
@@ -753,9 +756,6 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
             tracksForMenu.append(track);
             continue;
         }
-
-        if (!kinds.contains(track->kind()))
-            continue;
 
         if (requestingCaptionsOrDescriptionsOrSubtitles) {
             if (track->containsOnlyForcedSubtitles()) {
