@@ -334,7 +334,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Ends any active command encoder
     void endEncoding(bool forceSaveRenderPassContent);
 
-    void flushCommandBufer();
+    void flushCommandBuffer(mtl::CommandBufferFinishOperation operation);
     void present(const gl::Context *context, id<CAMetalDrawable> presentationDrawable);
     angle::Result finishCommandBuffer();
 

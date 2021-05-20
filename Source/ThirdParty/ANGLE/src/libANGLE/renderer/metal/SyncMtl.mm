@@ -73,7 +73,7 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
     }
     if (flushCommands)
     {
-        contextMtl->flushCommandBufer();
+        contextMtl->flushCommandBuffer(mtl::WaitUntilScheduled);
     }
 
     if (timeout == 0)

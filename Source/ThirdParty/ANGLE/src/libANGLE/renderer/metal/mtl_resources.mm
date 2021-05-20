@@ -557,7 +557,7 @@ void Texture::replaceRegion(ContextMtl *context,
     // NOTE(hqle): what if multiple contexts on multiple threads are using this texture?
     if (this->isBeingUsedByGPU(context))
     {
-        context->flushCommandBufer();
+        context->flushCommandBuffer(mtl::NoWait);
     }
 
     cmdQueue.ensureResourceReadyForCPU(this);
@@ -592,7 +592,7 @@ void Texture::getBytes(ContextMtl *context,
     // NOTE(hqle): what if multiple contexts on multiple threads are using this texture?
     if (this->isBeingUsedByGPU(context))
     {
-        context->flushCommandBufer();
+        context->flushCommandBuffer(mtl::NoWait);
     }
 
     cmdQueue.ensureResourceReadyForCPU(this);
@@ -1008,7 +1008,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
 
         if (this->isBeingUsedByGPU(context))
         {
-            context->flushCommandBufer();
+            context->flushCommandBuffer(mtl::NoWait);
         }
 
         cmdQueue.ensureResourceReadyForCPU(this);

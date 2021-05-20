@@ -32,6 +32,13 @@ namespace rx
 namespace mtl
 {
 
+enum CommandBufferFinishOperation
+{
+    NoWait,
+    WaitUntilScheduled,
+    WaitUntilFinished
+};
+
 class CommandBuffer;
 class CommandEncoder;
 class RenderCommandEncoder;
@@ -91,6 +98,7 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     mutable std::mutex mLock;
 };
 
+
 class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
 {
   public:
@@ -103,9 +111,9 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     // Return true if command buffer can be encoded into. Return false if it has been committed
     // and hasn't been restarted.
     bool valid() const;
-    void commit();
-    // wait for committed command buffer to finish.
-    void finish();
+    void commit(CommandBufferFinishOperation operation = NoWait);
+    
+
 
     void present(id<CAMetalDrawable> presentationDrawable);
 

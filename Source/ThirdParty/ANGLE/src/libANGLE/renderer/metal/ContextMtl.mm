@@ -224,7 +224,7 @@ angle::Result ContextMtl::ensureIncompleteTexturesCreated(const gl::Context *con
 // Flush and finish.
 angle::Result ContextMtl::flush(const gl::Context *context)
 {
-    flushCommandBufer();
+    flushCommandBuffer(mtl::WaitUntilScheduled);
     return angle::Result::Continue;
 }
 angle::Result ContextMtl::finish(const gl::Context *context)
@@ -1219,7 +1219,7 @@ angle::Result ContextMtl::onMakeCurrent(const gl::Context *context)
 }
 angle::Result ContextMtl::onUnMakeCurrent(const gl::Context *context)
 {
-    flushCommandBufer();
+    flushCommandBuffer(mtl::WaitUntilScheduled);
     return angle::Result::Continue;
 }
 
@@ -1604,7 +1604,7 @@ void ContextMtl::endEncoding(bool forceSaveRenderPassContent)
     }
 }
 
-void ContextMtl::flushCommandBufer()
+void ContextMtl::flushCommandBuffer(mtl::CommandBufferFinishOperation operation)
 {
     mProvokingVertexHelper.commitPreconditionCommandBuffer(this);
     if (!mCmdBuffer.valid())
@@ -1613,7 +1613,7 @@ void ContextMtl::flushCommandBufer()
     }
 
     endEncoding(true);
-    mCmdBuffer.commit();
+    mCmdBuffer.commit(operation);
 }
 
 void ContextMtl::present(const gl::Context *context, id<CAMetalDrawable> presentationDrawable)
@@ -1634,10 +1634,7 @@ void ContextMtl::present(const gl::Context *context, id<CAMetalDrawable> present
 
 angle::Result ContextMtl::finishCommandBuffer()
 {
-    flushCommandBufer();
-
-    mCmdBuffer.finish();
-
+    flushCommandBuffer(mtl::WaitUntilFinished);
     return angle::Result::Continue;
 }
 
