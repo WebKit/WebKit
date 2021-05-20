@@ -7694,7 +7694,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
         }
         if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
             return true;
-#if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(COCOA) && ENABLE(VIDEO_PRESENTATION_MODE)
         if (((m_videoFullscreenMode == VideoFullscreenModeStandard) || m_videoFullscreenStandby) && supportsPictureInPicture() && isPlaying())
             return true;
 #endif

@@ -1,3 +1,16 @@
+2021-05-19  Peng Liu  <peng.liu6@apple.com>
+
+        [iOS] Video playback pauses when switching apps (video enters picture-in-picture from fullscreen)
+        https://bugs.webkit.org/show_bug.cgi?id=225981
+
+        Reviewed by Jer Noble.
+
+        Similar to Mac, on iOS devices, we should not pause a video playback
+        when the video enters picture-in-picture from fullscreen.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction const):
+
 2021-05-19  Sam Weinig  <weinig@apple.com>
 
         Remove ImageBuffer::toBGRA() and replace its uses with the more general ImageBuffer::getPixelBuffer()
