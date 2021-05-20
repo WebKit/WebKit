@@ -1,3 +1,15 @@
+2021-05-20  Per Arne  <pvollan@apple.com>
+
+        The test fast/images/eps-as-image.html is a constant crash
+        https://bugs.webkit.org/show_bug.cgi?id=225989
+        <rdar://77354349>
+
+        Reviewed by Maciej Stachowiak.
+
+        This is caused by an incorrect sandbox rule. A related service is referred to as an XPC service, but it should be a global name.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-05-19  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Scrolling must be done after the layout when doing full page zoom
