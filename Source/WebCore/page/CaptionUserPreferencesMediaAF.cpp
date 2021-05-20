@@ -49,6 +49,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/cf/StringConcatenateCF.h>
+#include <wtf/unicode/Collator.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebCoreThreadRun.h"
@@ -681,13 +682,15 @@ static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>
     String bLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(b->validBCP47Language()));
 
     // Tracks in the user's preferred language are always at the top of the menu.
-    bool aIsPreferredLanguage = !codePointCompare(aLanguageDisplayName, preferredLanguageDisplayName);
-    bool bIsPreferredLanguage = !codePointCompare(bLanguageDisplayName, preferredLanguageDisplayName);
+    bool aIsPreferredLanguage = aLanguageDisplayName == preferredLanguageDisplayName;
+    bool bIsPreferredLanguage = bLanguageDisplayName == preferredLanguageDisplayName;
     if (aIsPreferredLanguage != bIsPreferredLanguage)
         return aIsPreferredLanguage;
 
+    Collator collator;
+
     // Tracks not in the user's preferred language sort first by language ...
-    if (auto languageDisplayNameComparison = codePointCompare(aLanguageDisplayName, bLanguageDisplayName))
+    if (auto languageDisplayNameComparison = collator.collate(aLanguageDisplayName, bLanguageDisplayName))
         return languageDisplayNameComparison < 0;
 
     // ... but when tracks have the same language, main program content sorts next highest ...
@@ -703,7 +706,7 @@ static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>
         return aIsCC;
 
     // ... and tracks of the same type and language sort by the menu item text.
-    if (auto trackDisplayComparison = codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())))
+    if (auto trackDisplayComparison = collator.collate(trackDisplayName(a.get()), trackDisplayName(b.get())))
         return trackDisplayComparison < 0;
 
     // ... and if the menu item text is the same, compare the unique IDs
@@ -721,10 +724,11 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu
         String language = displayNameForLanguageLocale(track->validBCP47Language());
         tracksForMenu.append(track);
     }
-    
-    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [](auto& a, auto& b) {
-        auto trackDisplayComparison = codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get()));
-        if (trackDisplayComparison)
+
+    Collator collator;
+
+    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [&] (auto& a, auto& b) {
+        if (auto trackDisplayComparison = collator.collate(trackDisplayName(a.get()), trackDisplayName(b.get())))
             return trackDisplayComparison < 0;
 
         return a->uniqueId() < b->uniqueId();
