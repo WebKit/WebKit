@@ -1,3 +1,34 @@
+2021-05-20  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r277477. rdar://problem/78264390
+
+    [REGRESSION: r271876] Web Inspector: [Cocoa] Remote inspection crashes when using WEB_THREAD
+    https://bugs.webkit.org/show_bug.cgi?id=225794
+    
+    Reviewed by Devin Rousso.
+    
+    For WEB_THREAD, move `callback` in `dispatchAsyncOnTarget` to `block` scope to ensure it is available for the
+    lifetime of the block.
+    
+    * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+    (Inspector::RemoteConnectionToTarget::dispatchAsyncOnTarget):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277477 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-13  Patrick Angle  <pangle@apple.com>
+
+            [REGRESSION: r271876] Web Inspector: [Cocoa] Remote inspection crashes when using WEB_THREAD
+            https://bugs.webkit.org/show_bug.cgi?id=225794
+
+            Reviewed by Devin Rousso.
+
+            For WEB_THREAD, move `callback` in `dispatchAsyncOnTarget` to `block` scope to ensure it is available for the
+            lifetime of the block.
+
+            * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+            (Inspector::RemoteConnectionToTarget::dispatchAsyncOnTarget):
+
 2021-04-27  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276609. rdar://problem/77211512
