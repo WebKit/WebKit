@@ -1,3 +1,16 @@
+2021-05-20  Dean Jackson  <dino@apple.com>
+
+        Configure fullscreen view after it has transitioned
+        https://bugs.webkit.org/show_bug.cgi?id=226031
+        <rdar://problem/78277029>
+
+        Reviewed by Tim Horton.
+
+        Call an internal configuration method after the fullscreen transition.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+
 2021-05-20  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Allow access to the 'DiskImageURL' IOKit property
