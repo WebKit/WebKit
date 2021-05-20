@@ -3,6 +3,7 @@
  * Copyright (C) 2020 Igalia S.L.
  * Author: Thibault Saunier <tsaunier@igalia.com>
  * Author: Alejandro G. Castro <alex@igalia.com>
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +28,7 @@
 
 #include "MediaSampleGStreamer.h"
 #include "MockRealtimeMediaSourceCenter.h"
+#include "PixelBuffer.h"
 
 namespace WebCore {
 
@@ -65,7 +67,11 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     if (!imageBuffer)
         return;
 
-    auto sample = MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), captureSize(), size(), frameRate());
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB }, { { }, imageBuffer->logicalSize() });
+    if (!pixelBuffer)
+        return;
+
+    auto sample = MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer), size(), frameRate());
     sample->offsetTimestampsBy(MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds()));
     dispatchMediaSampleToObservers(sample.get());
 }

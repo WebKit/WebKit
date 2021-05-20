@@ -165,13 +165,6 @@ protected:
         return m_remoteRenderingBackendProxy->getDataForImageBuffer(mimeType, quality, m_renderingResourceIdentifier);
     }
 
-    Vector<uint8_t> toBGRAData() const override
-    {
-        if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return { };
-
-        return m_remoteRenderingBackendProxy->getBGRADataForImageBuffer(m_renderingResourceIdentifier);
-    }
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::BackingStoreCopy::CopyBackingStore) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))

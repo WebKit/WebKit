@@ -306,12 +306,6 @@ Vector<uint8_t> ImageBufferDirect2DBackend::toData(const String& mimeType, Optio
     return { };
 }
 
-Vector<uint8_t> ImageBufferDirect2DBackend::toBGRAData() const
-{
-    notImplemented();
-    return { };
-}
-
 Optional<PixelBuffer> ImageBufferDirect2DBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     notImplemented();

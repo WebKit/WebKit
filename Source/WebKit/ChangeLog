@@ -1,3 +1,30 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Remove ImageBuffer::toBGRA() and replace its uses with the more general ImageBuffer::getPixelBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=225976
+
+        Reviewed by Said Abou-Hallawa.
+
+        Remove ImageBuffer::toBGRA().
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getBGRADataForImageBuffer): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::toBGRAData const): Deleted.
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::toBGRAData const): Deleted.
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::getBGRADataForImageBuffer): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::toBGRAData const): Deleted.
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+
 2021-05-19  Chris Dumez  <cdumez@apple.com>
 
         Simplify and make InjectedBundle::initialize() more robust

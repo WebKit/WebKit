@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2016 Metrological Group B.V.
  * Copyright (C) 2016, 2017, 2018 Igalia S.L
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +30,8 @@
 
 namespace WebCore {
 
+class PixelBuffer;
+
 class MediaSampleGStreamer : public MediaSample {
 public:
     static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId)
@@ -37,7 +40,7 @@ public:
     }
 
     static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomString& trackId);
-    static Ref<MediaSampleGStreamer> createImageSample(Vector<uint8_t>&&, const IntSize& originalSize, const IntSize& destinationSize = { }, double frameRate = 1);
+    static Ref<MediaSampleGStreamer> createImageSample(PixelBuffer&&, const IntSize& destinationSize = { }, double frameRate = 1);
 
     void extendToTheBeginning();
     MediaTime presentationTime() const override { return m_pts; }

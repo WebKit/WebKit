@@ -219,15 +219,6 @@ Vector<uint8_t> RemoteRenderingBackendProxy::getDataForImageBuffer(const String&
     return data;
 }
 
-Vector<uint8_t> RemoteRenderingBackendProxy::getBGRADataForImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    sendDeferredWakeupMessageIfNeeded();
-
-    Vector<uint8_t> data;
-    sendSync(Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer(renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer::Reply(data), renderingBackendIdentifier(), 1_s);
-    return data;
-}
-
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
     sendDeferredWakeupMessageIfNeeded();

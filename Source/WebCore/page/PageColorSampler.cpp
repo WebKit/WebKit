@@ -41,6 +41,7 @@
 #include "IntSize.h"
 #include "Node.h"
 #include "Page.h"
+#include "PixelBuffer.h"
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "RenderObject.h"
@@ -103,7 +104,13 @@ static Optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
     if (!snapshot)
         return WTF::nullopt;
 
-    auto snapshotData = snapshot->toBGRAData();
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB }, { { }, snapshot->logicalSize() });
+    if (!pixelBuffer)
+        return WTF::nullopt;
+
+    ASSERT(pixelBuffer->data().length() <= 4);
+
+    auto snapshotData = pixelBuffer->data().data();
     return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });
 }
 

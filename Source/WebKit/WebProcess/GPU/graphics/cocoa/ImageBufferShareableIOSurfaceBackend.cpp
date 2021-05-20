@@ -114,12 +114,6 @@ Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toData(const String&, Opti
     return { };
 }
 
-Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toBGRAData() const
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
 Optional<PixelBuffer> ImageBufferShareableIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&) const
 {
     RELEASE_ASSERT_NOT_REACHED();

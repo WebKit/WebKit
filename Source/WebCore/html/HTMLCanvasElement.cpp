@@ -813,18 +813,27 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
 
 RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 {
+#if PLATFORM(COCOA) || USE(GSTREAMER)
     auto* imageBuffer = buffer();
     if (!imageBuffer)
         return nullptr;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
+    makeRenderingResultsAvailable();
+
+    // FIXME: This can likely be optimized quite a bit, especially in the cases where
+    // the ImageBuffer is backed by GPU memory already and/or is in the GPU process by
+    // specializing toMediaSample() in ImageBufferBackend to not use getPixelBuffer().
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB }, { { }, imageBuffer->logicalSize() });
+    if (!pixelBuffer)
+        return nullptr;
+
 #if PLATFORM(COCOA)
-    makeRenderingResultsAvailable();
-    return MediaSampleAVFObjC::createImageSample(imageBuffer->toBGRAData(), width(), height());
+    return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer));
 #elif USE(GSTREAMER)
-    makeRenderingResultsAvailable();
-    return MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), size());
+    return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
+#endif
 #else
     return nullptr;
 #endif

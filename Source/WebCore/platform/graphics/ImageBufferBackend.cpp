@@ -92,28 +92,6 @@ void ImageBufferBackend::convertToLuminanceMask()
     putPixelBuffer(*pixelBuffer, logicalRect(), IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-Vector<uint8_t> ImageBufferBackend::toBGRAData(void* data) const
-{
-    Vector<uint8_t> result(4 * logicalSize().area().unsafeGet());
-
-    PixelBufferFormat sourceFormat { AlphaPremultiplication::Premultiplied, pixelFormat(), DestinationColorSpace::SRGB };
-    PixelBufferFormat destinationFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB };
-
-    ConstPixelBufferConversionView source;
-    source.format = sourceFormat;
-    source.bytesPerRow = bytesPerRow();
-    source.rows = reinterpret_cast<const uint8_t*>(data);
-    
-    PixelBufferConversionView destination;
-    destination.format = destinationFormat;
-    destination.bytesPerRow = logicalSize().width() * 4;
-    destination.rows = result.data();
-
-    convertImagePixels(source, destination, logicalSize());
-
-    return result;
-}
-
 Optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data) const
 {
     ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));

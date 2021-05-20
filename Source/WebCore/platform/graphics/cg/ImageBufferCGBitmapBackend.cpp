@@ -154,11 +154,6 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
     return nullptr;
 }
 
-Vector<uint8_t> ImageBufferCGBitmapBackend::toBGRAData() const
-{
-    return ImageBufferBackend::toBGRAData(m_data);
-}
-
 Optional<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data);

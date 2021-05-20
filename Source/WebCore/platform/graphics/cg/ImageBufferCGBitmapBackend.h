@@ -49,8 +49,6 @@ public:
 
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
 
-    Vector<uint8_t> toBGRAData() const override;
-
     Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 

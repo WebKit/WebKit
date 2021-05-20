@@ -99,12 +99,6 @@ RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage(We
     return nullptr;
 }
 
-Vector<uint8_t> CGDisplayListImageBufferBackend::toBGRAData() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
 Optional<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntRect&) const
 {
     ASSERT_NOT_REACHED();

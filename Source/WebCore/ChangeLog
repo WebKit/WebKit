@@ -1,3 +1,59 @@
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Remove ImageBuffer::toBGRA() and replace its uses with the more general ImageBuffer::getPixelBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=225976
+
+        Reviewed by Said Abou-Hallawa.
+
+        Removes ImageBuffer::toBGRA() and replaces it with the more verbose (but also more clear)
+        ImageBuffer::getPixelBuffer(). There were only two users of toBGRA(), MediaSample creation
+        from a <canvas> and PageColorSampler. For MediaSample, we likely should not be doing
+        readback this way, and should instead try to keep the data in the GPU process / on the GPU
+        when possible / necessary.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toMediaSample):
+        Update calls to pass imageBuffer and share call to makeRenderingResultsAvailable().
+
+        * page/PageColorSampler.cpp:
+        (WebCore::sampleColor):
+        Update ot use getPixelBuffer().
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::createImageSample):
+        Update MediaSampleAVFObjC to use getPixelBuffer directly().
+
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::createImageSample):
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+        (WebCore::MediaSampleGStreamer::createImageSample):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockRealtimeVideoSourceGStreamer::updateSampleBuffer):
+        Update MediaSampleGStreamer to use getPixelBuffer directly().
+
+        * platform/MediaSample.h:
+        Use #pragma once.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::toBGRAData const): Deleted.
+        * platform/graphics/ImageBufferBackend.h:
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoSurfaceBackend::toBGRAData const): Deleted.
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.h:
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::toBGRAData const): Deleted.
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::toBGRAData const): Deleted.
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/win/ImageBufferDirect2DBackend.cpp:
+        (WebCore::ImageBufferDirect2DBackend::toBGRAData const): Deleted.
+        * platform/graphics/win/ImageBufferDirect2DBackend.h:
+        Remove toBGRA().
+
 2021-05-19  Cameron McCormack  <heycam@apple.com>
 
         Remove unused GraphicsContextImpl constructor arguments

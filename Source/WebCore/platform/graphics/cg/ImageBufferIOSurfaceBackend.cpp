@@ -177,12 +177,6 @@ RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::copyCGImageForEncoding(CFStri
     return ImageBufferCGBackend::copyCGImageForEncoding(destinationUTI, preserveResolution);
 }
 
-Vector<uint8_t> ImageBufferIOSurfaceBackend::toBGRAData() const
-{
-    IOSurface::Locker lock(*m_surface);
-    return ImageBufferBackend::toBGRAData(lock.surfaceBaseAddress());
-}
-
 Optional<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     IOSurface::Locker lock(*m_surface);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,14 @@
 
 namespace WebCore {
 
+class PixelBuffer;
+
 class WEBCORE_EXPORT MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, uint64_t trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
-    static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned width, unsigned height);
+    static RefPtr<MediaSampleAVFObjC> createImageSample(PixelBuffer&&);
 
     WEBCORE_EXPORT static void setAsDisplayImmediately(MediaSample&);
     static RetainPtr<CMSampleBufferRef> cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef);

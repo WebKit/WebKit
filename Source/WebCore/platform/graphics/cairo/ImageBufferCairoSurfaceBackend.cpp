@@ -103,23 +103,6 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::cairoSurfaceCoerceToImage() 
     return copyNativeImage(copyBehavior);
 }
 
-Vector<uint8_t> ImageBufferCairoSurfaceBackend::toBGRAData() const
-{
-    auto nativeImage = cairoSurfaceCoerceToImage();
-    auto surface = nativeImage ? nativeImage->platformImage() : nullptr;
-    cairo_surface_flush(surface.get());
-
-    Vector<uint8_t> imageData;
-    if (cairo_surface_status(surface.get()))
-        return imageData;
-
-    auto pixels = cairo_image_surface_get_data(surface.get());
-    imageData.append(pixels, cairo_image_surface_get_stride(surface.get()) *
-        cairo_image_surface_get_height(surface.get()));
-
-    return imageData;
-}
-
 Optional<PixelBuffer> ImageBufferCairoSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, cairo_image_surface_get_data(m_surface.get()));

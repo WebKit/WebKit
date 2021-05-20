@@ -59,7 +59,6 @@ public:
     void drawPattern(WebCore::GraphicsContext&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, const WebCore::ImagePaintingOptions&) override;
     String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution) const override;
     Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
-    Vector<uint8_t> toBGRAData() const override;
     Optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const override;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 

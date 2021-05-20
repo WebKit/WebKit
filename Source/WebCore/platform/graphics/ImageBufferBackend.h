@@ -106,7 +106,6 @@ public:
 
     virtual String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const = 0;
-    virtual Vector<uint8_t> toBGRAData() const = 0;
 
     virtual Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
@@ -146,8 +145,6 @@ protected:
 
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
     IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };
-
-    WEBCORE_EXPORT Vector<uint8_t> toBGRAData(void* data) const;
 
     WEBCORE_EXPORT Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, void* data) const;
     WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);

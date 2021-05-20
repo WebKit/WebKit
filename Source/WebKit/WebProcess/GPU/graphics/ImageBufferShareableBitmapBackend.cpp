@@ -158,11 +158,6 @@ RefPtr<Image> ImageBufferShareableBitmapBackend::copyImage(BackingStoreCopy, Pre
     return m_bitmap->createImage();
 }
 
-Vector<uint8_t> ImageBufferShareableBitmapBackend::toBGRAData() const
-{
-    return ImageBufferBackend::toBGRAData(m_bitmap->data());
-}
-
 Optional<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_bitmap->data());

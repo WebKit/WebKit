@@ -404,16 +404,6 @@ void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, Optio
     completionHandler(WTFMove(data));
 }
 
-void RemoteRenderingBackend::getBGRADataForImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-
-    Vector<uint8_t> data;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
-        data = imageBuffer->toBGRAData();
-    completionHandler(WTFMove(data));
-}
-
 void RemoteRenderingBackend::getShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier identifier, WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());

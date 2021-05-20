@@ -221,15 +221,6 @@ protected:
         return { };
     }
 
-    Vector<uint8_t> toBGRAData() const override
-    {
-        if (auto* backend = ensureBackendCreated()) {
-            const_cast<ConcreteImageBuffer&>(*this).flushContext();
-            return backend->toBGRAData();
-        }
-        return { };
-    }
-
     Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const override
     {
         if (auto* backend = ensureBackendCreated()) {
