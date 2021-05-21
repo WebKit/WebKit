@@ -109,6 +109,7 @@ struct ServiceWorkerContextData;
 
 namespace WebKit {
 
+class AudioMediaStreamTrackRendererInternalUnitManager;
 class EventDispatcher;
 class GamepadData;
 class GPUProcessConnection;
@@ -244,6 +245,9 @@ public:
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     LibWebRTCCodecs& libWebRTCCodecs();
+#endif
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    AudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactory& legacyCDMFactory();
@@ -639,6 +643,9 @@ private:
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
+#endif
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
 #endif
 

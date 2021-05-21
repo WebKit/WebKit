@@ -1,3 +1,25 @@
+2021-05-21  Youenn Fablet  <youenn@apple.com>
+
+        Implement a remote Internal Unit in GPUProcess for audio MediaStreamTrack rendering
+        https://bugs.webkit.org/show_bug.cgi?id=225603
+        <rdar://problem/78114391>
+
+        Reviewed by Eric Carlson.
+
+        Fixed the case where we were calling start even though a source was already being played.
+        This is more consistent since we are doing those checks for stop.
+        Reduce the code where we lock sources to the minimum.
+
+        In case we want to lock the sources copy in audio thread and we fail, continue rendering audio instead of dropping everything.
+        Add some main thread assertions in AudioMediaStreamTrackRendererUnit methods.
+
+        Manually tested.
+
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp:
+        (WebCore::AudioMediaStreamTrackRendererUnit::addSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::removeSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::render):
+
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
         Fix locking in PlatformCALayer

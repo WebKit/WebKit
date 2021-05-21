@@ -82,29 +82,37 @@ void AudioMediaStreamTrackRendererUnit::setAudioOutputDevice(const String& devic
 void AudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& source)
 {
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::addSource");
+    ASSERT(isMainThread());
+
+    ASSERT(!m_sources.contains(source.get()));
+    bool shouldStart = m_sources.isEmpty();
+    m_sources.add(WTFMove(source));
 
     {
         auto locker = holdLock(m_sourcesLock);
-        ASSERT(!m_sources.contains(source.get()));
-        m_sources.add(WTFMove(source));
         m_sourcesCopy = copyToVector(m_sources);
         m_shouldUpdateRenderSources = true;
     }
-    start();
+
+    if (shouldStart)
+        start();
 }
 
 void AudioMediaStreamTrackRendererUnit::removeSource(AudioSampleDataSource& source)
 {
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::removeSource");
+    ASSERT(isMainThread());
 
-    bool shouldStop = false;
+    bool shouldStop = !m_sources.isEmpty();
+    m_sources.remove(source);
+    shouldStop &= m_sources.isEmpty();
+
     {
         auto locker = holdLock(m_sourcesLock);
-        m_sources.remove(source);
-        shouldStop = m_sources.isEmpty();
         m_sourcesCopy = copyToVector(m_sources);
         m_shouldUpdateRenderSources = true;
     }
+
     if (shouldStop)
         stop();
 }
@@ -112,17 +120,22 @@ void AudioMediaStreamTrackRendererUnit::removeSource(AudioSampleDataSource& sour
 void AudioMediaStreamTrackRendererUnit::start()
 {
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::start");
+    ASSERT(isMainThread());
+
     m_internalUnit->start();
 }
 
 void AudioMediaStreamTrackRendererUnit::stop()
 {
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::stop");
+    ASSERT(isMainThread());
+
     m_internalUnit->stop();
 }
 
 void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(const CAAudioStreamDescription*)>&& callback)
 {
+    ASSERT(isMainThread());
     m_internalUnit->retrieveFormatDescription(WTFMove(callback));
 }
 
@@ -133,12 +146,10 @@ void AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferLi
 
     ASSERT(!isMainThread());
     if (m_shouldUpdateRenderSources) {
-        auto locker = tryHoldLock(m_sourcesLock);
-        if (!locker)
-            return;
-
-        m_renderSources = WTFMove(m_sourcesCopy);
-        m_shouldUpdateRenderSources = false;
+        if (auto locker = tryHoldLock(m_sourcesLock)) {
+            m_renderSources = WTFMove(m_sourcesCopy);
+            m_shouldUpdateRenderSources = false;
+        }
     }
 
     if (m_renderSources.isEmpty()) {

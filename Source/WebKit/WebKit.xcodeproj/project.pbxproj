@@ -3821,6 +3821,12 @@
 		41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegister.cpp; sourceTree = "<group>"; };
 		41B7ED70206965900087D853 /* NetworkMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkMDNSRegister.h; sourceTree = "<group>"; };
 		41B7ED71206965900087D853 /* NetworkMDNSRegister.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkMDNSRegister.messages.in; sourceTree = "<group>"; };
+		41C3B88526444AAB004ED4DE /* AudioMediaStreamTrackRendererInternalUnitManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRendererInternalUnitManager.h; sourceTree = "<group>"; };
+		41C3B88626444AAC004ED4DE /* AudioMediaStreamTrackRendererInternalUnitManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioMediaStreamTrackRendererInternalUnitManager.cpp; sourceTree = "<group>"; };
+		41C3B88726444AD3004ED4DE /* AudioMediaStreamTrackRendererInternalUnitIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioMediaStreamTrackRendererInternalUnitIdentifier.h; sourceTree = "<group>"; };
+		41C3B89026493B7B004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioMediaStreamTrackRendererInternalUnitManager.h; sourceTree = "<group>"; };
+		41C3B89126493B7B004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp; sourceTree = "<group>"; };
+		41C3B89426493B7C004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in; sourceTree = "<group>"; };
 		41C5378F21F1362D008B1FAD /* _WKWebsiteDataStoreDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataStoreDelegate.h; sourceTree = "<group>"; };
 		41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCache.cpp; sourceTree = "<group>"; };
 		41CB840325CABF7C0010E2B1 /* MediaRecorderPrivate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaRecorderPrivate.mm; sourceTree = "<group>"; };
@@ -8421,6 +8427,9 @@
 				41FCD6AE23CCC26100C62567 /* AudioMediaStreamTrackRenderer.cpp */,
 				41FCD6AD23CCC26000C62567 /* AudioMediaStreamTrackRenderer.h */,
 				41FCD6AF23CCC26100C62567 /* AudioMediaStreamTrackRendererIdentifier.h */,
+				41C3B88726444AD3004ED4DE /* AudioMediaStreamTrackRendererInternalUnitIdentifier.h */,
+				41C3B88626444AAC004ED4DE /* AudioMediaStreamTrackRendererInternalUnitManager.cpp */,
+				41C3B88526444AAB004ED4DE /* AudioMediaStreamTrackRendererInternalUnitManager.h */,
 				4172198A23B6128200AE5686 /* LibWebRTCCodecs.cpp */,
 				4172198923B6128200AE5686 /* LibWebRTCCodecs.h */,
 				4172198D23B62C7C00AE5686 /* LibWebRTCCodecs.messages.in */,
@@ -8452,6 +8461,9 @@
 				41D6455423CCB92200486E0E /* RemoteAudioMediaStreamTrackRenderer.cpp */,
 				41D6455323CCB92100486E0E /* RemoteAudioMediaStreamTrackRenderer.h */,
 				41D6455223CCB92100486E0E /* RemoteAudioMediaStreamTrackRenderer.messages.in */,
+				41C3B89126493B7B004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp */,
+				41C3B89026493B7B004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.h */,
+				41C3B89426493B7C004ED4DE /* RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in */,
 				41D6455623CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.cpp */,
 				41D6455723CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.h */,
 				41D6455523CCB96900486E0E /* RemoteAudioMediaStreamTrackRendererManager.messages.in */,

@@ -1,3 +1,83 @@
+2021-05-21  Youenn Fablet  <youenn@apple.com>
+
+        Implement a remote Internal Unit in GPUProcess for audio MediaStreamTrack rendering
+        https://bugs.webkit.org/show_bug.cgi?id=225603
+
+        Reviewed by Eric Carlson.
+
+        Implement an InternalUnit by creating a ring buffer that gets written on WebProcess and read on GPUProcess by an audio unit.
+        In the previous implementation, each audio track was sent to GPUProcess that was doing the mixing.
+        Sending was done by sending IPC message for each audio sample, which was also processing inefficient.
+
+        We are now creating an Audio Unit in GPUProcess and similarly to WebAudio asking WebProcess to render audio in a buffer that will be actually rendered by the audio unit.
+        The mixing happens in WebProcess so only one buffer is shared between GPUProcess and WebProcess, and no IPC message is sent for each chunk.
+
+        The potential downside is that the mixing is done with fixed chunk size instead of chunk size requested by the audio unit.
+        This might trigger some latency or some overhead if the fixed chunk size is too far from what the audio unit is asking.
+
+        In case of GPUProcess crash, we keep the same format description but we delay recreation of the unit if the unit is stopped.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::audioMediaStreamTrackRendererInternalUnitManager):
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRenderer::start):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp: Added.
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::RemoteAudioMediaStreamTrackRendererInternalUnitManager):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::~RemoteAudioMediaStreamTrackRendererInternalUnitManager):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::createUnit):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::startUnit):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::stopUnit):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::setAudioOutputDevice):
+        (WebKit::renderCallback):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::Unit):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::~Unit):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::stop):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::setAudioOutputDevice):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::render):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.h: Added.
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in: Added.
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        (WebKit::AudioMediaStreamTrackRenderer::start):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.h:
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitIdentifier.h: Added.
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp: Added.
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::add):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::remove):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::createRemoteInternalUnit):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::gpuProcessConnectionClosed):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::Proxy):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::~Proxy):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::createRemoteUnit):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::initialize):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::stop):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::setAudioOutputDevice):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::retrieveFormatDescription):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::stopThread):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::startThread):
+        (WebKit::AudioMediaStreamTrackRendererInternalUnitManager::Proxy::restartIfNeeded):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.h: Added.
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.messages.in: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::audioMediaStreamTrackRendererInternalUnitManager):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::setupCaptureProcesses):
+
 2021-05-20  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         WKRemoteObjectRegistry  _invokeMethod needs to check for nil completionHandlers

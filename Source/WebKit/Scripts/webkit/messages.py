@@ -307,6 +307,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::WebSocketIdentifier',
         'WebKit::ActivityStateChangeID',
         'WebKit::AudioMediaStreamTrackRendererIdentifier',
+        'WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier',
         'WebKit::ContentWorldIdentifier',
         'WebKit::DisplayLinkObserverID',
         'WebKit::DownloadID',

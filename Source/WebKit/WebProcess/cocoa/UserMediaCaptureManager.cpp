@@ -28,13 +28,14 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
-#include "AudioMediaStreamTrackRenderer.h"
+#include "AudioMediaStreamTrackRendererInternalUnitManager.h"
 #include "GPUProcessConnection.h"
 #include "RemoteRealtimeAudioSource.h"
 #include "RemoteRealtimeVideoSource.h"
 #include "UserMediaCaptureManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/AudioMediaStreamTrackRendererUnit.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
@@ -77,8 +78,11 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
     m_audioFactory.setShouldCaptureInGPUProcess(shouldCaptureAudioInGPUProcess);
     m_videoFactory.setShouldCaptureInGPUProcess(shouldCaptureVideoInGPUProcess);
 
-    if (shouldCaptureAudioInGPUProcess)
-        AudioMediaStreamTrackRenderer::setCreator(WebKit::AudioMediaStreamTrackRenderer::create);
+    if (shouldCaptureAudioInGPUProcess) {
+        WebCore::AudioMediaStreamTrackRendererUnit::setCreateInternalUnitFunction([](auto&& renderCallback) {
+            return WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().createRemoteInternalUnit(WTFMove(renderCallback));
+        });
+    }
 
     if (shouldCaptureAudioInUIProcess || shouldCaptureAudioInGPUProcess)
         RealtimeMediaSourceCenter::singleton().setAudioCaptureFactory(m_audioFactory);

@@ -29,6 +29,7 @@
 #include "APIFrameHandle.h"
 #include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
+#include "AudioMediaStreamTrackRendererInternalUnitManager.h"
 #include "AuthenticationManager.h"
 #include "AuxiliaryProcessMessages.h"
 #include "DrawingArea.h"
@@ -1262,6 +1263,11 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
     ASSERT_UNUSED(connection, m_gpuProcessConnection == &connection);
 
     m_gpuProcessConnection = nullptr;
+
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    if (m_audioMediaStreamTrackRendererInternalUnitManager)
+        m_audioMediaStreamTrackRendererInternalUnitManager->gpuProcessConnectionClosed();
+#endif
 }
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -1270,6 +1276,15 @@ LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
     if (!m_libWebRTCCodecs)
         m_libWebRTCCodecs = LibWebRTCCodecs::create();
     return *m_libWebRTCCodecs;
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTrackRendererInternalUnitManager()
+{
+    if (!m_audioMediaStreamTrackRendererInternalUnitManager)
+        m_audioMediaStreamTrackRendererInternalUnitManager = makeUnique<AudioMediaStreamTrackRendererInternalUnitManager>();
+    return *m_audioMediaStreamTrackRendererInternalUnitManager;
 }
 #endif
 
