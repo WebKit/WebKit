@@ -1,3 +1,17 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Adopt CheckedLock in StorageAreaSync
+        https://bugs.webkit.org/show_bug.cgi?id=226099
+
+        Reviewed by Sam Weinig.
+
+        Adopt CheckedLock in StorageAreaSync to benefit from Clang Thread Safety Analysis.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::markImported):
+        (WebKit::StorageAreaSync::blockUntilImportComplete):
+        * Storage/StorageAreaSync.h:
+
 2021-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Add support for Navigation Timing Level 2

@@ -27,7 +27,8 @@
 
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/Timer.h>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
@@ -96,9 +97,9 @@ private:
 
     bool m_syncCloseDatabase;
 
-    mutable Lock m_importLock;
-    Condition m_importCondition;
-    bool m_importComplete;
+    mutable CheckedLock m_importLock;
+    CheckedCondition m_importCondition;
+    bool m_importComplete WTF_GUARDED_BY_LOCK(m_importLock);
     void markImported();
     void migrateItemTableIfNeeded();
 };

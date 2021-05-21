@@ -354,7 +354,7 @@ void StorageAreaSync::performImport()
 
 void StorageAreaSync::markImported()
 {
-    LockHolder locker(m_importLock);
+    Locker locker { m_importLock };
     m_importComplete = true;
     m_importCondition.notifyOne();
 }
@@ -374,7 +374,7 @@ void StorageAreaSync::blockUntilImportComplete()
     if (!m_storageArea)
         return;
 
-    LockHolder locker(m_importLock);
+    Locker locker { m_importLock };
     while (!m_importComplete)
         m_importCondition.wait(m_importLock);
     m_storageArea = nullptr;
