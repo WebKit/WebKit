@@ -1,3 +1,18 @@
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Plumb element bounds when presenting QLPreviewController for image extraction
+        https://bugs.webkit.org/show_bug.cgi?id=226085
+        rdar://76020349
+
+        Reviewed by Tim Horton.
+
+        Include the previewed element's bounding rect when presenting QuickLook for image extraction. See the bug for
+        more details.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant handleElementActionWithType:element:needsInteraction:]):
+
 2021-05-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late-ish May 2021 edition
