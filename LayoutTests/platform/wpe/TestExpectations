@@ -708,9 +708,6 @@ webkit.org/b/225379 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_req
 webkit.org/b/225379 [ Debug ] imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Crash ]
 
 # Test failing since async scrolling was activated in WPE.
-webkit.org/b/224596 fast/spatial-navigation/snav-clipped-overflowed-content.html [ Failure ]
-webkit.org/b/224596 fast/spatial-navigation/snav-only-clipped-overflow-content.html [ Failure ]
-webkit.org/b/224596 fast/spatial-navigation/snav-simple-content-overflow.html [ Failure ]
 webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on-parent.html [ ImageOnlyFailure ]
 webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html [ ImageOnlyFailure ]
 webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
