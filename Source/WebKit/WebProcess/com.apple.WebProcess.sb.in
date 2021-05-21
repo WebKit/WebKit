@@ -1027,6 +1027,7 @@
     (home-subpath "/Library/Preferences/com.apple.universalaccess.plist")
     (home-subpath "/Library/Preferences/edu.mit.Kerberos.plist")
     (home-subpath "/Library/Preferences/pbs.plist")
+    (home-regex "/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
 )
 #endif
 

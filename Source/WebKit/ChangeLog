@@ -1,3 +1,19 @@
+2021-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] REGRESSION(Sandbox): Font smoothing within Safari doesn't seem to respect AppleFontSmoothing
+        https://bugs.webkit.org/show_bug.cgi?id=226066
+        <rdar://problem/72795817>
+
+        Reviewed by Per Arne Vollan.
+
+        We accidentally blocked access to the relevant defaults database.
+
+        It turns out this is untestable. I can't use the actual functionality without actually setting the preference
+        for the whole user (and all their apps). And, I can't use sandbox_check() to make sure the file is readable
+        because it's in the user's home directory, so the path to check will be different for every user.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Plumb element bounds when presenting QLPreviewController for image extraction
