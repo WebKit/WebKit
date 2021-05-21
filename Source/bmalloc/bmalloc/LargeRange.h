@@ -37,8 +37,10 @@ public:
         : Range()
         , m_startPhysicalSize(0)
         , m_totalPhysicalSize(0)
+#if !BUSE(PARTIAL_SCAVENGE)
         , m_isEligible(true)
         , m_usedSinceLastScavenge(false)
+#endif
     {
     }
 
@@ -46,13 +48,25 @@ public:
         : Range(other)
         , m_startPhysicalSize(startPhysicalSize)
         , m_totalPhysicalSize(totalPhysicalSize)
+#if !BUSE(PARTIAL_SCAVENGE)
         , m_isEligible(true)
         , m_usedSinceLastScavenge(false)
+#endif
     {
         BASSERT(this->size() >= this->totalPhysicalSize());
         BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
     }
 
+#if BUSE(PARTIAL_SCAVENGE)
+    LargeRange(void* begin, size_t size, size_t startPhysicalSize, size_t totalPhysicalSize)
+        : Range(begin, size)
+        , m_startPhysicalSize(startPhysicalSize)
+        , m_totalPhysicalSize(totalPhysicalSize)
+    {
+        BASSERT(this->size() >= this->totalPhysicalSize());
+        BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
+    }
+#else
     LargeRange(void* begin, size_t size, size_t startPhysicalSize, size_t totalPhysicalSize, bool usedSinceLastScavenge = false)
         : Range(begin, size)
         , m_startPhysicalSize(startPhysicalSize)
@@ -63,6 +77,7 @@ public:
         BASSERT(this->size() >= this->totalPhysicalSize());
         BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
     }
+#endif
 
     // Returns a lower bound on physical size at the start of the range. Ranges that
     // span non-physical fragments use this number to remember the physical size of
@@ -89,9 +104,11 @@ public:
     void setEligible(bool eligible) { m_isEligible = eligible; }
     bool isEligibile() const { return m_isEligible; }
 
+#if !BUSE(PARTIAL_SCAVENGE)
     bool usedSinceLastScavenge() const { return m_usedSinceLastScavenge; }
     void clearUsedSinceLastScavenge() { m_usedSinceLastScavenge = false; }
     void setUsedSinceLastScavenge() { m_usedSinceLastScavenge = true; }
+#endif
 
     bool operator<(const void* other) const { return begin() < other; }
     bool operator<(const LargeRange& other) const { return begin() < other.begin(); }
@@ -99,8 +116,12 @@ public:
 private:
     size_t m_startPhysicalSize;
     size_t m_totalPhysicalSize;
+#if BUSE(PARTIAL_SCAVENGE)
+    bool m_isEligible { true };
+#else
     unsigned m_isEligible: 1;
     unsigned m_usedSinceLastScavenge: 1;
+#endif
 };
 
 inline bool canMerge(const LargeRange& a, const LargeRange& b)
@@ -123,14 +144,18 @@ inline bool canMerge(const LargeRange& a, const LargeRange& b)
 inline LargeRange merge(const LargeRange& a, const LargeRange& b)
 {
     const LargeRange& left = std::min(a, b);
+#if !BUSE(PARTIAL_SCAVENGE)
     bool mergedUsedSinceLastScavenge = a.usedSinceLastScavenge() || b.usedSinceLastScavenge();
+#endif
     if (left.size() == left.startPhysicalSize()) {
         return LargeRange(
             left.begin(),
             a.size() + b.size(),
             a.startPhysicalSize() + b.startPhysicalSize(),
             a.totalPhysicalSize() + b.totalPhysicalSize()
+#if !BUSE(PARTIAL_SCAVENGE)
             , mergedUsedSinceLastScavenge
+#endif
         );
         
     }
@@ -140,7 +165,9 @@ inline LargeRange merge(const LargeRange& a, const LargeRange& b)
         a.size() + b.size(),
         left.startPhysicalSize(),
         a.totalPhysicalSize() + b.totalPhysicalSize()
+#if !BUSE(PARTIAL_SCAVENGE)
         , mergedUsedSinceLastScavenge
+#endif
     );
 }
 
