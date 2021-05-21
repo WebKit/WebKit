@@ -1,3 +1,32 @@
+2021-05-21  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r277791. rdar://problem/78313265
+
+    [iOS] Add missing method in sandbox IOKit filter
+    https://bugs.webkit.org/show_bug.cgi?id=225975
+    <rdar://78212330>
+    
+    Reviewed by Brent Fulgham.
+    
+    Add missing method in IOSurfaceRootUserClient filter on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277791 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-20  Per Arne  <pvollan@apple.com>
+
+            [iOS] Add missing method in sandbox IOKit filter
+            https://bugs.webkit.org/show_bug.cgi?id=225975
+            <rdar://78212330>
+
+            Reviewed by Brent Fulgham.
+
+            Add missing method in IOSurfaceRootUserClient filter on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-05-19  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r277665. rdar://problem/78213427
