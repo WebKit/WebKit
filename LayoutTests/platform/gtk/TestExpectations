@@ -1224,9 +1224,6 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/197507 imported/blink/compositing/repaint/end-of-opacity-transition.html [ Timeout Pass ]
 webkit.org/b/197507 imported/blink/css3/calc/transition-asan-crash.html [ Timeout Pass ]
 
-webkit.org/b/175662 inspector/canvas/recording-2d-frameCount.html [ Failure ]
-webkit.org/b/175662 inspector/canvas/recording-2d-full.html [ Failure ]
-webkit.org/b/175662 inspector/canvas/recording-2d-memoryLimit.html [ Failure ]
 
 webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
 
@@ -2053,7 +2050,6 @@ webkit.org/b/206000 compositing/clipping/border-radius-async-overflow-non-stacki
 
 webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 
-webkit.org/b/195712 inspector/canvas/recording-html-2d.html [ Failure ]
 
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure ]
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-002.html [ Failure ]
@@ -2119,7 +2115,6 @@ webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/
 
 webkit.org/b/223980 editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
 
-webkit.org/b/223981 inspector/canvas/recording-2d-saves.html [ Failure ]
 
 webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-missing-varyings.html [ Failure ]
 webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]

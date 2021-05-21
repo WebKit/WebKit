@@ -1,3 +1,15 @@
+2021-05-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        Set CanvasImageSmoothing.imageSmoothingQuality value to 'low' as default
+        https://bugs.webkit.org/show_bug.cgi?id=225952
+
+        Reviewed by Sam Weinig.
+
+        Defined by spec:
+        https://html.spec.whatwg.org/multipage/canvas.html#canvasimagesmoothing
+
+        * platform/gtk/TestExpectations:
+
 2021-05-21  Jonathan Bedard  <jbedard@apple.com>
 
         [LayoutTests] Delete unused LayoutTests/svg resources

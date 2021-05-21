@@ -82,11 +82,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext2DBase);
 
-#if USE(CG)
 static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
-#else
-static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Medium;
-#endif
 
 const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
 const char* const CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif";

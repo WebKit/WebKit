@@ -1,3 +1,19 @@
+2021-05-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        Set CanvasImageSmoothing.imageSmoothingQuality value to 'low' as default
+        https://bugs.webkit.org/show_bug.cgi?id=225952
+
+        Reviewed by Sam Weinig.
+
+        Covered by existing tests:
+          - inspector/canvas/recording-2d-frameCount.html
+          - inspector/canvas/recording-2d-full.html
+          - inspector/canvas/recording-2d-memoryLimit.html
+          - inspector/canvas/recording-2d-saves.html
+          - inspector/canvas/recording-html-2d.html
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Adopt CheckedLock in ScrollingTree and fix threading bug
