@@ -1,3 +1,29 @@
+2021-05-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] GPU Process should recognize that pathForProcessContainer() might fail and handle it gracefully
+        https://bugs.webkit.org/show_bug.cgi?id=226086
+        <rdar://problem/78288016>
+
+        Reviewed by Tim Horton.
+
+        The GPU Process implementation of gpuProcessCachesDirectory does not recognize that WebKit often runs without
+        a container (e.g., as part of a daemon process). In such cases, the GPU process will attempt to create a
+        cache directory someplace outside of its sandbox and fail, preventing caching from happening.
+
+        We need to use the same logic we use in the WebContent process to address this use case.
+
+        To avoid making this mistake again, let's consolidate the logic in one method, and use it in the multiple places
+        that have this same code.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::cacheDirectoryInContainerOrHomeDirectory): Added.
+        (WebKit::WebProcessPool::cookieStorageDirectory): Use the new 'cacheDirectoryInContainerOrHomeDirectory' method.
+        (WebKit::WebProcessPool::networkingCachesDirectory): Ditto.
+        (WebKit::WebProcessPool::webContentCachesDirectory): Ditto.
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::gpuProcessCachesDirectory): Ditto.
+        * UIProcess/WebProcessPool.h:
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Replace more static Locks with CheckedLocks in WebKit / WebKitLegacy
