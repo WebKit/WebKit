@@ -36,7 +36,8 @@
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
 
@@ -85,8 +86,9 @@ public:
     void waitForDidFlushOnSecondaryThread(WebCore::DisplayList::FlushIdentifier targetFlushIdentifier)
     {
         ASSERT(!isMainRunLoop());
-        auto locker = holdLock(m_receivedFlushIdentifierLock);
+        Locker locker { m_receivedFlushIdentifierLock };
         m_receivedFlushIdentifierChangedCondition.wait(m_receivedFlushIdentifierLock, [&] {
+            assertIsHeld(m_receivedFlushIdentifierLock);
             return m_receivedFlushIdentifier == targetFlushIdentifier;
         });
 
@@ -110,11 +112,18 @@ protected:
 
     WebCore::RenderingMode renderingMode() const override { return BaseDisplayListImageBuffer::renderingMode(); }
 
-    bool hasPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
+    // It is safe to access m_receivedFlushIdentifier from the main thread without locking since it
+    // only gets modified on the main thread.
+    bool hasPendingFlush() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+    {
+        ASSERT(isMainRunLoop());
+        return m_sentFlushIdentifier != m_receivedFlushIdentifier;
+    }
 
     void didFlush(WebCore::DisplayList::FlushIdentifier flushIdentifier) override
     {
-        auto locker = holdLock(m_receivedFlushIdentifierLock);
+        ASSERT(isMainRunLoop());
+        Locker locker { m_receivedFlushIdentifierLock };
         m_receivedFlushIdentifier = flushIdentifier;
         m_receivedFlushIdentifierChangedCondition.notifyAll();
     }
@@ -332,9 +341,9 @@ protected:
     }
 
     WebCore::DisplayList::FlushIdentifier m_sentFlushIdentifier;
-    Lock m_receivedFlushIdentifierLock;
-    Condition m_receivedFlushIdentifierChangedCondition;
-    WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier;
+    CheckedLock m_receivedFlushIdentifierLock;
+    CheckedCondition m_receivedFlushIdentifierChangedCondition;
+    WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 };
 

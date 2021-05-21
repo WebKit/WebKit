@@ -1,5 +1,20 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Adopt CheckedLock in RemoteImageBufferProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226098
+
+        Reviewed by Tim Horton.
+
+        Adopt CheckedLock in RemoteImageBufferProxy to benefit from Clang Thread Safety Analysis.
+        I had to use WTF_IGNORES_THREAD_SAFETY_ANALYSIS on one of the getter where we weren't
+        locking. My understanding is that the code is currently safe without the lock in this
+        case and I added a comment and assertions to clarify that.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushOnSecondaryThread):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Adopt CheckedLock in NetworkCache::Storage::TraverseOperation
         https://bugs.webkit.org/show_bug.cgi?id=226101
 
