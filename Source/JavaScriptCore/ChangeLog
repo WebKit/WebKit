@@ -1,3 +1,29 @@
+2021-05-20  Saam Barati  <sbarati@apple.com>
+
+        Make polymorphic calls play nice with Data Call ICs
+        https://bugs.webkit.org/show_bug.cgi?id=225793
+
+        Reviewed by Robin Morisset.
+
+        This patch makes it so that Polymorphic stubs don't repatch when using
+        Data Call ICs. We add a branch to the Data IC fast path to see if we're
+        polymorphic. If we are, then we either call or tail call the polymorphic
+        stub, depending on the CallLinkInfo's call type. This patch also changes
+        the polymorphic stub to handle being called instead of jumped to, since that
+        will now happen for Data ICs of non tail calls.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setMonomorphicCallee):
+        (JSC::CallLinkInfo::callee):
+        (JSC::CallLinkInfo::visitWeak):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::revertCallToStub):
+        (JSC::CallLinkInfo::setStub):
+        (JSC::CallLinkInfo::emitFirstInstructionForDataIC): Deleted.
+        * bytecode/CallLinkInfo.h:
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+
 2021-05-20  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         $vm should have a function for checking if ASan is enabled similar to $vm.assertEnabled

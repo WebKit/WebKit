@@ -173,7 +173,6 @@ public:
     };
 
 private:
-    void emitFirstInstructionForDataIC(CCallHelpers&, GPRReg callLinkInfoGPR);
     MacroAssembler::JumpList emitFastPathImpl(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
 public:
     MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC) WARN_UNUSED_RETURN;

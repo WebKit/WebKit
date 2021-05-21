@@ -1456,6 +1456,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     
     GPRReg calleeGPR = callLinkInfo.calleeGPR();
 
+    bool isDataIC = callLinkInfo.isDataIC();
     CCallHelpers stubJit(callerCodeBlock);
 
     std::unique_ptr<CallFrameShuffler> frameShuffler;
@@ -1538,16 +1539,25 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
                 CCallHelpers::TrustedImm32(1),
                 CCallHelpers::Address(fastCountsBaseGPR, caseIndex * sizeof(uint32_t)));
         }
+
+        bool needsDoneJump = false;
         if (frameShuffler) {
             CallFrameShuffler(stubJit, frameShuffler->snapshot()).prepareForTailCall();
             calls[caseIndex].call = stubJit.nearTailCall();
         } else if (callLinkInfo.isTailCall()) {
             stubJit.prepareForTailCallSlow();
             calls[caseIndex].call = stubJit.nearTailCall();
-        } else
-            calls[caseIndex].call = stubJit.nearCall();
+        } else {
+            if (isDataIC)
+                calls[caseIndex].call = stubJit.nearTailCall();
+            else {
+                calls[caseIndex].call = stubJit.nearCall();
+                needsDoneJump = true;
+            }
+        }
         calls[caseIndex].codePtr = codePtr;
-        done.append(stubJit.jump());
+        if (needsDoneJump)
+            done.append(stubJit.jump());
     }
     
     slowPath.link(&stubJit);
@@ -1571,6 +1581,12 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     }
     stubJit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
     stubJit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT2);
+    if (isDataIC && !callLinkInfo.isTailCall()) {
+        // We were called from the fast path, get rid of any remnants of that
+        // which may exist. This really only matters for x86, which adjusts
+        // SP for calls.
+        stubJit.preserveReturnAddressAfterCall(GPRInfo::regT4);
+    }
     stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
     
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
@@ -1594,7 +1610,9 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         patchBuffer.link(callToCodePtr.call, FunctionPtr<JSEntryPtrTag>(callToCodePtr.codePtr));
 #endif
     }
-    patchBuffer.link(done, callLinkInfo.doneLocation());
+
+    if (!done.empty())
+        patchBuffer.link(done, callLinkInfo.doneLocation());
     patchBuffer.link(slow, CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(linkPolymorphicCallThunkGenerator).code()));
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
