@@ -1,3 +1,22 @@
+2021-05-21  Mark Lam  <mark.lam@apple.com>
+
+        Introducing JITThunks::preinitializeCTIThunks().
+        https://bugs.webkit.org/show_bug.cgi?id=226105
+
+        Reviewed by Geoffrey Garen.
+
+        We're basically renaming JITThunks::preinitializeExtraCTIThunks() to
+        JITThunks::preinitializeCTIThunks() and making it not conditional on
+        #if ENABLE(EXTRA_CTI_THUNKS).  Some thunks need to be initialized independent of
+        #if ENABLE(EXTRA_CTI_THUNKS).
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeCTIThunks):
+        (JSC::JITThunks::preinitializeExtraCTIThunks): Deleted.
+        * jit/JITThunks.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2021-05-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late-ish May 2021 edition

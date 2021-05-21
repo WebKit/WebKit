@@ -568,9 +568,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-        jitStubs->preinitializeExtraCTIThunks(*this);
-#endif
+        jitStubs->preinitializeCTIThunks(*this);
     }
 #endif // ENABLE(JIT)
 

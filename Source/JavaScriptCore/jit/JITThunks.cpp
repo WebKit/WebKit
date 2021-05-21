@@ -258,13 +258,12 @@ NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction funct
     return hostFunctionStub(vm, function, callHostFunctionAsConstructor, generator, intrinsic, nullptr, name);
 }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-
-void JITThunks::preinitializeExtraCTIThunks(VM& vm)
+void JITThunks::preinitializeCTIThunks(VM& vm)
 {
     if (!Options::useJIT())
         return;
 
+#if ENABLE(EXTRA_CTI_THUNKS)
     // These 4 should always be initialized first in the following order because
     // the other thunk generators rely on these already being initialized.
     ctiStub(vm, handleExceptionGenerator);
@@ -377,12 +376,12 @@ void JITThunks::preinitializeExtraCTIThunks(VM& vm)
     ctiStub(vm, JIT::op_enter_handlerGenerator);
     ctiStub(vm, JIT::op_ret_handlerGenerator);
     ctiStub(vm, JIT::op_throw_handlerGenerator);
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
     ctiStub(vm, linkCallThunkGenerator);
     ctiStub(vm, arityFixupGenerator);
 }
 
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 } // namespace JSC
 

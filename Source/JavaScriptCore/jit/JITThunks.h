@@ -53,9 +53,7 @@ public:
     JITThunks();
     ~JITThunks() final;
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-    void preinitializeExtraCTIThunks(VM&);
-#endif
+    void preinitializeCTIThunks(VM&);
 
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
