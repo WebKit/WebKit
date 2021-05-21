@@ -161,6 +161,8 @@ static Optional<Vector<uint8_t>> decodeBase64(const DecodeTask& task, Mode mode)
         // Didn't work, try unescaping and decoding as base64.
         return base64Decode(decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Vector<uint8_t> decodeEscaped(const DecodeTask& task)

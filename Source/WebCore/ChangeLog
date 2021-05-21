@@ -1,3 +1,13 @@
+2021-05-21  Eleni Maria Stea  <estea@igalia.com>
+
+        Fixed unreached end of function compiler warning in DataURLDecoder.
+        https://bugs.webkit.org/show_bug.cgi?id=226079
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::decodeBase64):
+
 2021-05-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late-ish May 2021 edition
