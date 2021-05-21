@@ -1,5 +1,25 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Adopt CheckedLock in MediaFormatReader and fix threading bug
+        https://bugs.webkit.org/show_bug.cgi?id=226100
+
+        Reviewed by Darin Adler.
+
+        Adopt CheckedLock in MediaFormatReader and fix threading bug found by Clang Thread Safety
+        Analysis. In particular, parseByteSource() was failing to grab the lock before updating
+        m_parseTracksStatus in one of its branches.
+
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::parseByteSource):
+        (WebKit::MediaFormatReader::didParseTracks):
+        (WebKit::MediaFormatReader::didProvideMediaData):
+        (WebKit::MediaFormatReader::finishParsing):
+        (WebKit::MediaFormatReader::copyProperty):
+        (WebKit::MediaFormatReader::copyTrackArray):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.h:
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         [Cocoa] Unable to upload files that are stored in the cloud (without a local copy)
         https://bugs.webkit.org/show_bug.cgi?id=226090
         <rdar://77775887>

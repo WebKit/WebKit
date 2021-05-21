@@ -29,8 +29,8 @@
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SourceBufferPrivateClient.h>
-#include <wtf/Condition.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Logger.h>
 
 DECLARE_CORE_MEDIA_TRAITS(FormatReader);
@@ -78,12 +78,12 @@ private:
     
     const void* logIdentifier() const { return m_logIdentifier; }
 
-    RetainPtr<MTPluginByteSourceRef> m_byteSource;
-    Condition m_parseTracksCondition;
-    Lock m_parseTracksLock;
-    MediaTime m_duration;
-    Optional<OSStatus> m_parseTracksStatus;
-    Vector<Ref<MediaTrackReader>> m_trackReaders;
+    RetainPtr<MTPluginByteSourceRef> m_byteSource WTF_GUARDED_BY_LOCK(m_parseTracksLock);
+    CheckedCondition m_parseTracksCondition;
+    CheckedLock m_parseTracksLock;
+    MediaTime m_duration WTF_GUARDED_BY_LOCK(m_parseTracksLock);
+    Optional<OSStatus> m_parseTracksStatus WTF_GUARDED_BY_LOCK(m_parseTracksLock);
+    Vector<Ref<MediaTrackReader>> m_trackReaders WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
 };
