@@ -189,7 +189,7 @@ class ContributionAreas(object):
     def _split_camelcase(self, name, transform=lambda x: x):
         result = []
         while name and len(name):
-            m = re.match('^([A-Z][a-z0-9]+)|([A-Z0-9]+(?=([A-Z][a-z0-9]|\.|$)))', name)
+            m = re.match(r'^([A-Z][a-z0-9]+)|([A-Z0-9]+(?=([A-Z][a-z0-9]|\.|$)))', name)
             if m:
                 result.append(transform(m.group(0)))
                 name = name[m.end():]

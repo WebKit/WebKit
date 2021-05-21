@@ -554,7 +554,7 @@ class PrintBaselines(Command):
                         help='display the baselines for *all* tests'),
         ] + platform_options(use_globs=True)
         Command.__init__(self, options=options)
-        self._platform_regexp = re.compile('platform/([^\/]+)/(.+)')
+        self._platform_regexp = re.compile(r'platform/([^\/]+)/(.+)')
 
     def execute(self, options, args, tool):
         if not args and not options.all:
@@ -609,7 +609,7 @@ class FindResolvedBugs(Command):
         ids = set()
         inputfile = tool.filesystem.open_text_file_for_reading(filename)
         for line in inputfile:
-            result = re.search("(https://bugs\.webkit\.org/show_bug\.cgi\?id=|webkit\.org/b/)([0-9]+)", line)
+            result = re.search(r"(https://bugs\.webkit\.org/show_bug\.cgi\?id=|webkit\.org/b/)([0-9]+)", line)
             if result:
                 ids.add(result.group(2))
         inputfile.close()

@@ -188,8 +188,8 @@ class BugzillaQueries(object):
 
     def _parse_attachment_ids_request_query(self, page, since=None):
         # Formats
-        digits = re.compile("\d+")
-        attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
+        digits = re.compile(r"\d+")
+        attachment_href = re.compile(r"attachment.cgi\?id=\d+&action=review")
         # if no date is given, return all ids
         if not since:
             attachment_links = SoupStrainer("a", href=attachment_href)
@@ -197,7 +197,7 @@ class BugzillaQueries(object):
                 for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
 
         # Parse the main table only
-        date_format = re.compile("\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
+        date_format = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
         mtab = SoupStrainer("table", {"class": "requests"})
         soup = BeautifulSoup(page, parseOnlyThese=mtab)
         patch_ids = []
@@ -505,7 +505,7 @@ class Bugzilla(object):
         if not title:
             _log.warning("This attachment does not exist (or you don't have permissions to view it).")
             return None
-        match = re.search("show_bug.cgi\?id=(?P<bug_id>\d+)", str(title))
+        match = re.search(r"show_bug.cgi\?id=(?P<bug_id>\d+)", str(title))
         if not match:
             _log.warning("Unable to parse bug id from attachment")
             return None
@@ -640,7 +640,7 @@ class Bugzilla(object):
     @staticmethod
     def _parse_attachment_id_from_add_patch_to_bug_response(response_html):
         response_html = string_utils.decode(response_html, target_type=str)
-        match = re.search('<title>Attachment (?P<attachment_id>\d+) added to Bug \d+</title>', response_html)
+        match = re.search(r'<title>Attachment (?P<attachment_id>\d+) added to Bug \d+</title>', response_html)
         if match:
             return match.group('attachment_id')
         _log.warning('Unable to parse attachment id')
@@ -684,7 +684,7 @@ class Bugzilla(object):
     # FIXME: There has to be a more concise way to write this method.
     def _check_create_bug_response(self, response_html):
         response_html = string_utils.decode(response_html, target_type=str)
-        match = re.search('<title>Bug (?P<bug_id>\d+) Submitted[^<]*</title>', response_html)
+        match = re.search(r'<title>Bug (?P<bug_id>\d+) Submitted[^<]*</title>', response_html)
         if match:
             return match.group('bug_id')
 

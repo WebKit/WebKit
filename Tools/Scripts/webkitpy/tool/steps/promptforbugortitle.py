@@ -63,7 +63,7 @@ class PromptForBugOrTitle(AbstractStep):
                 pass
 
             if parsed_url and re.match("bugs.webkit.org", parsed_url.netloc):
-                    match = re.match("id=(?P<bug_id>\d+)", parsed_url.query)
+                    match = re.match(r"id=(?P<bug_id>\d+)", parsed_url.query)
                     if match:
                         state["bug_id"] = int(match.group("bug_id"))
                         return

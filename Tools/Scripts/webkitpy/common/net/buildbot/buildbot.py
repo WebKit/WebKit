@@ -345,7 +345,7 @@ class BuildBot(object):
 
         builder["activity"] = activity_lines[0]  # normally "building" or "idle"
         # The middle lines document how long left for any current builds.
-        match = re.match("(?P<pending_builds>\d) pending", activity_lines[-1])
+        match = re.match(r"(?P<pending_builds>\d) pending", activity_lines[-1])
         builder["pending_builds"] = int(match.group("pending_builds")) if match else 0
 
     def _parse_builder_status_from_row(self, status_row):

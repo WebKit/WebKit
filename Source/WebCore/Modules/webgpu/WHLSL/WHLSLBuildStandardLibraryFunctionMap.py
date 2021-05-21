@@ -26,7 +26,7 @@
 import sys
 import re
 
-regularExpression = re.compile("/\* Functions named (.*) \*/")
+regularExpression = re.compile(r"/\* Functions named (.*) \*/")
 
 infile = open(sys.argv[1], "r")
 contents = infile.read()

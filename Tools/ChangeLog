@@ -1,3 +1,142 @@
+2021-05-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+        https://bugs.webkit.org/show_bug.cgi?id=226018
+
+        Reviewed by Jonathan Bedard.
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+
+        * CISupport/build-webkit-org/loadConfig.py:
+        (getTagsForBuilder):
+        * CISupport/build-webkit-org/steps.py:
+        (RunGLibAPITests.commandComplete):
+        (RunWebDriverTests.commandComplete):
+        * CISupport/ews-app/ews/common/bugzilla.py:
+        (BugzillaBeautifulSoup._parse_attachment_ids_request_query):
+        * CISupport/ews-app/ews/common/buildbot.py:
+        (Buildbot._get_display_name_from_builder_name):
+        * CISupport/ews-build/loadConfig.py:
+        (getTagsForBuilder):
+        * CISupport/ews-build/steps.py:
+        (CleanUpGitIndexLock.start):
+        (FindModifiedLayoutTests):
+        (BuildLogLineObserver.__init__):
+        (PushCommitToWebKitRepo):
+        * CISupport/ews-build/steps_unittest.py:
+        * Scripts/ic-stats.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn):
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (parse_bug_id_from_changelog):
+        (ChangeLogEntry):
+        (update_with_unreviewed_message):
+        (set_reviewer):
+        * Scripts/webkitpy/common/checkout/diff_parser.py:
+        (git_diff_to_svn_diff):
+        * Scripts/webkitpy/common/checkout/diff_test_data.py:
+        * Scripts/webkitpy/common/checkout/scm/commitmessage.py:
+        (_first_non_empty_line_after_index):
+        (CommitMessage.description):
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.commit_success_regexp):
+        (Git.timestamp_of_revision):
+        (Git.git_commit_from_svn_revision):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.strip_r_from_svn_revision):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.commit_success_regexp):
+        (SVN.revisions_changing_file):
+        * Scripts/webkitpy/common/checksvnconfigfile.py:
+        (check):
+        * Scripts/webkitpy/common/config/contributionareas.py:
+        (ContributionAreas._split_camelcase):
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/common/find_files_unittest.py:
+        (TestWinNormalize.assert_filesystem_normalizes):
+        * Scripts/webkitpy/common/net/bugzilla/bug.py:
+        (Bug.commit_revision):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries._parse_attachment_ids_request_query):
+        (Bugzilla._parse_bug_id_from_attachment_page):
+        (Bugzilla._parse_attachment_id_from_add_patch_to_bug_response):
+        (Bugzilla._check_create_bug_response):
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot._parse_current_build_cell):
+        * Scripts/webkitpy/common/net/credentials.py:
+        (Credentials._parse_security_tool_output):
+        * Scripts/webkitpy/common/net/resultsjsonparser_unittest.py:
+        (ParsedJSONResultsTest):
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.get_timestamp_from_log):
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.available_sdks):
+        * Scripts/webkitpy/common/system/user.py:
+        (User._wait_on_list_response):
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py:
+        (WatchListParser._rule_definitions_as_set):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        (TestExpectationParser._parse_modifiers):
+        (TestExpectationParser._tokenize_line):
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+        * Scripts/webkitpy/port/base.py:
+        (Port._natural_sort_key):
+        * Scripts/webkitpy/port/driver.py:
+        (DriverOutput):
+        (Driver._check_for_driver_timeout):
+        (Driver._check_for_driver_crash_or_unresponsiveness):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer._read):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.write_registry_value):
+        * Scripts/webkitpy/pytest.ini:
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher._should_skip_file_path):
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        (ChangeLogChecker.check_entry):
+        * Scripts/webkitpy/style/checkers/cmake.py:
+        (CMakeChecker._process_line):
+        (CMakeChecker._check_no_space_cmds):
+        (CMakeChecker._check_one_space_cmds):
+        (CMakeChecker._check_non_lowercase_cmd):
+        (CMakeChecker._check_list_order):
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (FileInfo.repository_name):
+        (check_for_non_standard_constructs):
+        (check_spacing):
+        (check_language):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        * Scripts/webkitpy/style/checkers/jstest.py:
+        (map_functions_to_dict):
+        (strip_trailing_blank_lines_and_comments):
+        * Scripts/webkitpy/style/checkers/messagesin.py:
+        (MessagesInChecker.check_WTF_prefix):
+        * Scripts/webkitpy/style/patchreader.py:
+        (PatchReader.check):
+        * Scripts/webkitpy/test/runner.py:
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (FakeLoader.__init__):
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py:
+        (AnalyzeChangeLog._enumerate_changelogs):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintBaselines.__init__):
+        (FindResolvedBugs.execute):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (MarkBugFixed._determine_bug_id_and_svn_revision):
+        * Scripts/webkitpy/tool/steps/promptforbugortitle.py:
+        (PromptForBugOrTitle.run):
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.__init__):
+        (_W3CTestConverter.read_webkit_prefixed_css_property_list):
+        (_W3CTestConverter.legacy_read_webkit_prefixed_css_property_list):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.support_files):
+        * lldb/lldb_dump_class_layout.py:
+        (LLDBDebuggerInstance._get_first_file_architecture):
+
 2021-05-20  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         WKRemoteObjectRegistry  _invokeMethod needs to check for nil completionHandlers

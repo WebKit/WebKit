@@ -614,7 +614,7 @@ class CheckerDispatcher(object):
         return os.path.splitext(file_path)[1].lstrip(".")
 
     def _should_skip_file_path(self, file_path, skip_array_entry):
-        match = re.search("\s*png$", file_path)
+        match = re.search(r"\s*png$", file_path)
         if match:
             return False
         if isinstance(skip_array_entry, str):

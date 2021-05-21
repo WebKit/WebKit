@@ -1,3 +1,16 @@
+2021-05-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+        https://bugs.webkit.org/show_bug.cgi?id=226018
+
+        Reviewed by Jonathan Bedard.
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+
+        * JetStream2/RAMification.py:
+        * JetStream2/RexBench/FlightPlanner/convert-nfdc.py:
+        * RexBench/FlightPlanner/convert-nfdc.py:
+
 2021-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [MotionMark] Temporarily remove the focus test

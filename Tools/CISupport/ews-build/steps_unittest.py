@@ -951,7 +951,7 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=120,
                         logEnviron=False,
-                        command=['del', '.git\index.lock'],
+                        command=['del', r'.git\index.lock'],
                         )
             + 0,
         )
@@ -3338,7 +3338,7 @@ Failed
     TestWTF.WTF_Expected.Unexpected
         **FAIL** WTF_Expected.Unexpected
 
-        Tools\TestWebKitAPI\Tests\WTF\Expected.cpp:96
+        Tools\\TestWebKitAPI\\Tests\\WTF\\Expected.cpp:96
         Value of: s1
           Actual: oops
         Expected: s0

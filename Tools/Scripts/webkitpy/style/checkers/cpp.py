@@ -685,7 +685,7 @@ class FileInfo:
         return os.path.abspath(self._filename).replace('\\', '/')
 
     def repository_name(self):
-        """Full name after removing the local path to the repository.
+        r"""Full name after removing the local path to the repository.
 
         If we have a real absolute path name here we can try to do something smart:
         detecting the root of the checkout and truncating /path/to/checkout from
@@ -1425,7 +1425,7 @@ regex_for_lambdas_and_blocks.__last_error = None
 
 def check_for_non_standard_constructs(clean_lines, line_number,
                                       class_state, error):
-    """Logs an error if we see certain non-ANSI constructs ignored by gcc-2.
+    r"""Logs an error if we see certain non-ANSI constructs ignored by gcc-2.
 
     Complain about several constructs which gcc-2 accepts, but which are
     not standard C++.  Warning about these in lint is one way to ease the
@@ -2211,7 +2211,7 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
                   'Should have spaces around = in property synthesis.')
 
     # Don't try to do spacing checks for operator methods
-    line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/)\(', 'operator\(', line)
+    line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/)\(', r'operator\(', line)
     # Don't try to do spacing checks for #include, #import, #if, or #elif statements at
     # minimum because it messes up checks for spacing around /
     if match(r'\s*#\s*(?:include|import|if|elif)', line):
@@ -3863,7 +3863,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
                   'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create {framework}SoftLink.{{cpp,mm}} instead.'.format(framework=framework_name))
 
         frameworks_with_soft_links = ['CoreMedia', 'CoreVideo', 'DataDetectorsCore', 'LocalAuthentication', 'MediaAccessibility', 'MediaRemote', 'PassKit', 'QuickLook', 'UIKit', 'VideoToolbox']
-        if framework_name in frameworks_with_soft_links and not re.compile('^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK_FOR_(HEADER|SOURCE)(_WITH_EXPORT)?\({}\)'.format(framework_name)).search(line):
+        if framework_name in frameworks_with_soft_links and not re.compile(r'^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK_FOR_(HEADER|SOURCE)(_WITH_EXPORT)?\({}\)'.format(framework_name)).search(line):
             error(line_number, 'softlink/framework', 5,
                   'Use {framework}SoftLink.{{cpp,h,mm}} to soft-link to {framework}.framework.'.format(framework=framework_name))
 

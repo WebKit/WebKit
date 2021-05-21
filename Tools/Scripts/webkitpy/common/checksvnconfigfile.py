@@ -43,8 +43,8 @@ def check(host, fs):
     except IOError:
         return (True, True, True)
 
-    errorcode_autoprop = not re.search("^\s*enable-auto-props\s*=\s*yes", config_file, re.MULTILINE)
-    errorcode_png = not re.search("^\s*\*\.png\s*=\s*svn:mime-type=image/png", config_file, re.MULTILINE)
+    errorcode_autoprop = not re.search(r"^\s*enable-auto-props\s*=\s*yes", config_file, re.MULTILINE)
+    errorcode_png = not re.search(r"^\s*\*\.png\s*=\s*svn:mime-type=image/png", config_file, re.MULTILINE)
 
     return (False, errorcode_autoprop, errorcode_png)
 

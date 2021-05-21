@@ -3123,7 +3123,7 @@ class CleansedLinesTest(unittest.TestCase):
         self.assertEqual('', collapse('\\012'))            # '\012' (char)
         self.assertEqual('', collapse('\\xfF0'))           # '\xfF0' (char)
         self.assertEqual('', collapse('\\n'))              # '\n' (char)
-        self.assertEqual('\#', collapse('\\#'))            # '\#' (bad)
+        self.assertEqual(r'\#', collapse('\\#'))            # '\#' (bad)
 
         self.assertEqual('StringReplace(body, "", "");',
                           collapse('StringReplace(body, "\\\\", "\\\\\\\\");'))

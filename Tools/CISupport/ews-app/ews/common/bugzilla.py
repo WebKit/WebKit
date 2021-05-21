@@ -270,8 +270,8 @@ class BugzillaBeautifulSoup():
 
     def _parse_attachment_ids_request_query(self, page, since=None):
         # Formats
-        digits = re.compile("\d+")
-        attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
+        digits = re.compile(r"\d+")
+        attachment_href = re.compile(r"attachment.cgi\?id=\d+&action=review")
         # if no date is given, return all ids
         if not since:
             attachment_links = SoupStrainer("a", href=attachment_href)
@@ -279,7 +279,7 @@ class BugzillaBeautifulSoup():
                 for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
 
         # Parse the main table only
-        date_format = re.compile("\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
+        date_format = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
         mtab = SoupStrainer("table", {"class": "requests"})
         soup = BeautifulSoup(page, parseOnlyThese=mtab)
         patch_ids = []

@@ -888,22 +888,22 @@ class RunGLibAPITests(shell.Test):
         messages = []
         self.statusLine = []
 
-        foundItems = re.findall("Unexpected failures \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected failures \((\d+)\)", logText)
         if foundItems:
             failedTests = int(foundItems[0])
             messages.append("%d failures" % failedTests)
 
-        foundItems = re.findall("Unexpected crashes \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected crashes \((\d+)\)", logText)
         if foundItems:
             crashedTests = int(foundItems[0])
             messages.append("%d crashes" % crashedTests)
 
-        foundItems = re.findall("Unexpected timeouts \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected timeouts \((\d+)\)", logText)
         if foundItems:
             timedOutTests = int(foundItems[0])
             messages.append("%d timeouts" % timedOutTests)
 
-        foundItems = re.findall("Unexpected passes \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected passes \((\d+)\)", logText)
         if foundItems:
             newPassTests = int(foundItems[0])
             messages.append("%d new passes" % newPassTests)
@@ -961,10 +961,10 @@ class RunWebDriverTests(shell.Test):
 
         self.failuresCount = 0
         self.newPassesCount = 0
-        foundItems = re.findall("^Unexpected .+ \((\d+)\)", logText, re.MULTILINE)
+        foundItems = re.findall(r"^Unexpected .+ \((\d+)\)", logText, re.MULTILINE)
         if foundItems:
             self.failuresCount = int(foundItems[0])
-        foundItems = re.findall("^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
+        foundItems = re.findall(r"^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
         if foundItems:
             self.newPassesCount = int(foundItems[0])
 

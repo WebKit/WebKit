@@ -398,7 +398,7 @@ class LLDBDebuggerInstance:
             lldb.SBDebugger.Destroy(self.debugger)
 
     def _get_first_file_architecture(self):
-        p = re.compile('shared library +(\w+)$')
+        p = re.compile(r'shared library +(\w+)$')
         file_result = subprocess.check_output(["file", self.binary_path], encoding='UTF-8').split('\n')
         arches = []
         for line in file_result:

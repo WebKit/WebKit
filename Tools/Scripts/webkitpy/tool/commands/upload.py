@@ -406,7 +406,7 @@ class MarkBugFixed(Command):
             bug_id = parse_bug_id_from_changelog(commit_log)
 
         if not svn_revision:
-            match = re.search("^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)
+            match = re.search(r"^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)
             if match:
                 svn_revision = match.group('svn_revision')
 

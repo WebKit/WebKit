@@ -68,7 +68,7 @@ class PatchReader(object):
             _log.debug('Found %s new or modified lines in: %s' % (len(line_numbers), path))
 
             if not line_numbers:
-                match = re.search("\s*png$", path)
+                match = re.search(r"\s*png$", path)
                 if match and fs.exists(path):
                     if call_only_once:
                         self._text_file_reader.process_file(file_path=path, line_numbers=None)

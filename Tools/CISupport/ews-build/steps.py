@@ -140,7 +140,7 @@ class CleanUpGitIndexLock(shell.ShellCommand):
     def start(self):
         platform = self.getProperty('platform', '*')
         if platform == 'wincairo':
-            self.command = ['del', '.git\index.lock']
+            self.command = ['del', r'.git\index.lock']
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
@@ -479,7 +479,7 @@ class CheckPatchRelevance(AnalyzePatch):
 
 class FindModifiedLayoutTests(AnalyzePatch):
     name = 'find-modified-layout-tests'
-    RE_LAYOUT_TEST = b'^(\+\+\+).*(LayoutTests.*\.html)'
+    RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
 
@@ -1492,7 +1492,7 @@ class BuildLogLineObserver(logobserver.LogLineObserver, object):
         self.searchString = searchString
         self.includeRelatedLines = includeRelatedLines
         self.error_context_buffer = []
-        self.whitespace_re = re.compile('^[\s]*$')
+        self.whitespace_re = re.compile(r'^[\s]*$')
         super(BuildLogLineObserver, self).__init__()
 
     def outLineReceived(self, line):
@@ -3301,7 +3301,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
     name = 'push-commit-to-webkit-repo'
     descriptionDone = ['Pushed commit to WebKit repository']
     command = ['git', 'svn', 'dcommit', '--rmdir']
-    commit_success_regexp = '^Committed r(?P<svn_revision>\d+)$'
+    commit_success_regexp = r'^Committed r(?P<svn_revision>\d+)$'
     haltOnFailure = False
     MAX_RETRY = 2
 

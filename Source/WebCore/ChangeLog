@@ -1,3 +1,16 @@
+2021-05-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+        https://bugs.webkit.org/show_bug.cgi?id=226018
+
+        Reviewed by Jonathan Bedard.
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+
+        No new tests.
+
+        * Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py:
+
 2021-05-21  Youenn Fablet  <youenn@apple.com>
 
         Implement a remote Internal Unit in GPUProcess for audio MediaStreamTrack rendering

@@ -101,7 +101,7 @@ class User(object):
 
                 try:
                     indices = []
-                    for value in re.split("\s*,\s*", response):
+                    for value in re.split(r"\s*,\s*", response):
                         parts = value.split('-')
                         if len(parts) == 2:
                             indices += range(int(parts[0]) - 1, int(parts[1]))

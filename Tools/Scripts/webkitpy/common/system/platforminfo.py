@@ -213,7 +213,7 @@ class PlatformInfo(object):
         if not self.xcode_sdk_version('macosx'):
             return []
 
-        XCODE_SDK_REGEX = re.compile('\-sdk (?P<sdk>\D+)\d+\.\d+(?P<specifier>\D*)')
+        XCODE_SDK_REGEX = re.compile(r'\-sdk (?P<sdk>\D+)\d+\.\d+(?P<specifier>\D*)')
         output = self._executive.run_command(['xcodebuild', '-showsdks'], return_stderr=False)
 
         sdks = list()

@@ -42,7 +42,7 @@ class MessagesInChecker(object):
         self.check_WTF_prefix(lines)
 
     def check_WTF_prefix(self, lines):
-        comment = re.compile('^\s*#')
+        comment = re.compile(r'^\s*#')
         for line_number, line in enumerate(lines):
             if not comment.match(line) and 'WTF::' in line:
                 self.handle_style_error(line_number + 1,

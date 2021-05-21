@@ -46,7 +46,7 @@ contribution_guidelines = "https://webkit.org/coding/contributing.html"
 
 bug_server_domain = "webkit.org"
 bug_server_host = "bugs." + bug_server_domain
-_bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
+_bug_server_regex = "https?://%s/" % re.sub(r'\.', '\\.', bug_server_host)
 bug_server_url = "https://%s/" % bug_server_host
 bug_url_long = _bug_server_regex + r"show_bug\.cgi\?id=(?P<bug_id>\d+)(&ctype=xml|&excludefield=attachmentdata)*"
 bug_url_short = r"https?\://%s/b/(?P<bug_id>\d+)" % bug_server_domain

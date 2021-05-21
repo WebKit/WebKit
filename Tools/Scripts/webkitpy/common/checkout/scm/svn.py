@@ -144,7 +144,7 @@ class SVN(SCM, SVNRepository):
 
     @staticmethod
     def commit_success_regexp():
-        return "^Committed revision (?P<svn_revision>\d+)\.$"
+        return r"^Committed revision (?P<svn_revision>\d+)\.$"
 
     def _run_svn(self, args, **kwargs):
         return self.run([self.executable_name] + args, **kwargs)
@@ -258,7 +258,7 @@ class SVN(SCM, SVNRepository):
         except ScriptError:
             return []
         for line in log_output.splitlines():
-            match = re.search('^r(?P<revision>\d+) ', line)
+            match = re.search(r'^r(?P<revision>\d+) ', line)
             if not match:
                 continue
             revisions.append(int(match.group('revision')))

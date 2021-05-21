@@ -28,7 +28,7 @@ import unittest
 
 from webkitpy.common import message_pool
 
-_test_description = re.compile("(\w+) \(([\w.]+)\)")
+_test_description = re.compile(r"(\w+) \(([\w.]+)\)")
 
 
 def unit_test_name(test):

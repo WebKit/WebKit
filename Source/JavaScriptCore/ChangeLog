@@ -1,3 +1,14 @@
+2021-05-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+        https://bugs.webkit.org/show_bug.cgi?id=226018
+
+        Reviewed by Jonathan Bedard.
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+
 2021-05-20  Saam Barati  <sbarati@apple.com>
 
         [ Catalina Release JSC] A large number of JSC test appear to be flaky failing

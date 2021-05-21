@@ -1,3 +1,14 @@
+2021-05-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+        https://bugs.webkit.org/show_bug.cgi?id=226018
+
+        Reviewed by Jonathan Bedard.
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+
+        * JetStream2.0/RexBench/FlightPlanner/convert-nfdc.py:
+
 2021-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [MotionMark] Apply r277406 to Websites/browserbench.org/MotionMark1.2

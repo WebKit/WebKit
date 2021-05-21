@@ -33,7 +33,7 @@ import re
 def _first_non_empty_line_after_index(lines, index=0):
     first_non_empty_line = index
     for line in lines[index:]:
-        if re.match("^\s*$", line):
+        if re.match(r"^\s*$", line):
             first_non_empty_line += 1
         else:
             break
@@ -55,7 +55,7 @@ class CommitMessage:
         if lstrip:
             line = line.lstrip()
         if strip_url:
-            line = re.sub("^(\s*)<.+> ", "\1", line)
+            line = re.sub(r"^(\s*)<.+> ", "\1", line)
         return line
 
     def message(self):

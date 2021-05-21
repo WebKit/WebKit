@@ -77,7 +77,7 @@ class FakeLoader(object):
         self._results = {}
         for test_name, result, msg in self.triples:
             self._tests.append(test_name)
-            m = re.match("(\w+) \(([\w.]+)\)", test_name)
+            m = re.match(r"(\w+) \(([\w.]+)\)", test_name)
             self._results['%s.%s' % (m.group(2), m.group(1))] = tuple([test_name, result, msg])
 
     def top_suite(self):
