@@ -30,6 +30,7 @@
 
 #include "BlockFormattingGeometry.h"
 #include "LayoutState.h"
+#include "TableWrapperBlockFormattingContext.h"
 
 namespace WebCore {
 namespace Layout {

@@ -37,6 +37,7 @@ namespace WebKit {
 class NetworkLoad;
 class NetworkLoadParameters;
 class NetworkProcess;
+class NetworkSession;
 
 class PreconnectTask final : public NetworkLoadClient {
 public:

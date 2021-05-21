@@ -31,7 +31,7 @@
 #pragma once
 
 #include "WebSocketDeflater.h"
-#include <wtf/text/WTFString.h>
+#include "WebSocketExtensionProcessor.h"
 
 namespace WebCore {
 

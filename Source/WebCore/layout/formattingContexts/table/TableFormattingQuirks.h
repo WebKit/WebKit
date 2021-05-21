@@ -32,6 +32,8 @@
 namespace WebCore {
 namespace Layout {
 
+class TableFormattingContext;
+
 class TableFormattingQuirks : public FormattingQuirks {
 public:
     TableFormattingQuirks(const TableFormattingContext&);

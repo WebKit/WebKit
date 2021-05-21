@@ -1,3 +1,12 @@
+2021-05-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late-ish May 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=225990
+
+        Unreviewed non-unified build fixes.
+
+        * jit/CCallHelpers.cpp: Add missing LinkBuffer.h header.
+
 2021-05-21  Sam Sneddon  <gsnedders@apple.com>
 
         Fix Python 3.6+ DeprecationWarnings about unknown escapes

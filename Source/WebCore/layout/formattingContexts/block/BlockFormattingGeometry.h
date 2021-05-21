@@ -32,6 +32,8 @@
 namespace WebCore {
 namespace Layout {
 
+class BlockFormattingContext;
+
 // This class implements positioning and sizing for boxes participating in a block formatting context.
 class BlockFormattingGeometry : public FormattingGeometry {
 public:

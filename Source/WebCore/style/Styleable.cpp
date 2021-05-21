@@ -42,6 +42,7 @@
 #include "RenderStyle.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 

@@ -31,6 +31,7 @@
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
 #include "LayoutState.h"
+#include "TableFormattingContext.h"
 
 namespace WebCore {
 namespace Layout {

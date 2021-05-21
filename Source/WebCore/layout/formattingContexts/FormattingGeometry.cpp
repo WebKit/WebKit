@@ -32,6 +32,7 @@
 #include "FlexFormattingState.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
+#include "FormattingQuirks.h"
 #include "InlineFormattingState.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"

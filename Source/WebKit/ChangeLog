@@ -1,3 +1,17 @@
+2021-05-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late-ish May 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=225990
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/PreconnectTask.h: Add missing forward declaration for NetworkSession.
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h: Add missing wtf/HashMap.h header,
+        remove unneeded wtf/RefCounted.h header.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode): Add missing WebCore:: namespace prefix to
+        usage of WebCore::MediaProducer::MutedStateFlags.
+
 2021-05-21  Youenn Fablet  <youenn@apple.com>
 
         Implement a remote Internal Unit in GPUProcess for audio MediaStreamTrack rendering

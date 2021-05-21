@@ -39,6 +39,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <pal/SessionID.h>
 
 namespace WebCore {
 using namespace JSC;

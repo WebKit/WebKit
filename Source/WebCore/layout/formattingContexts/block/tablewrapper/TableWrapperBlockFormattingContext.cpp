@@ -30,6 +30,7 @@
 
 #include "BlockFormattingGeometry.h"
 #include "BlockFormattingState.h"
+#include "BlockMarginCollapse.h"
 #include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"

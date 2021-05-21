@@ -34,6 +34,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
 #include "FontCache.h"
+#include "FontCustomPlatformData.h"
 #include "FontFaceSet.h"
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"

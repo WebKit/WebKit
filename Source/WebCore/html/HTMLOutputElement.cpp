@@ -70,7 +70,7 @@ bool HTMLOutputElement::supportsFocus() const
 
 void HTMLOutputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == forAttr && m_forTokens)
+    if (name == HTMLNames::forAttr && m_forTokens)
         m_forTokens->associatedAttributeValueChanged(value);
     HTMLFormControlElement::parseAttribute(name, value);
 }
@@ -108,7 +108,7 @@ void HTMLOutputElement::setDefaultValue(const String& value)
 DOMTokenList& HTMLOutputElement::htmlFor()
 {
     if (!m_forTokens)
-        m_forTokens = makeUnique<DOMTokenList>(*this, forAttr);
+        m_forTokens = makeUnique<DOMTokenList>(*this, HTMLNames::forAttr);
     return *m_forTokens;
 }
 

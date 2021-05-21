@@ -30,6 +30,7 @@
 #include "OfflineAudioDestinationNode.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 

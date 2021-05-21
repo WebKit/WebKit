@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/SQLiteDatabase.h>
-#include <wtf/RefCounted.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 class SQLiteStatementAutoResetScope;

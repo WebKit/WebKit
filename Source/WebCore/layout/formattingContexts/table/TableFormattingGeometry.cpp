@@ -33,8 +33,8 @@
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutInitialContainingBlock.h"
+#include "TableFormattingContext.h"
 #include "TableFormattingQuirks.h"
-#include "TableFormattingState.h"
 
 namespace WebCore {
 namespace Layout {

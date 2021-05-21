@@ -1,3 +1,85 @@
+2021-05-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late-ish May 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=225990
+
+        Unreviewed non-unified build fixes.
+
+        No new tests needed.
+
+        * Modules/indexeddb/server/MemoryObjectStore.cpp: Add missing pal/SessioID.h header.
+        * Modules/webaudio/OfflineAudioContext.cpp: Add missing OfflineAudioCompletionEvent.h header.
+        * Modules/webaudio/OfflineAudioContext.h: Add missing wtf/UniqueRef.h header.
+        * Modules/websockets/WebSocketDeflateFramer.h: Add missing WebSocketExtensionProcessor.h
+        header, remove wtf/text/WTFString.h as it is already included by the former.
+        * bindings/js/JSDOMConvertEnumeration.h: Add missing JSDOMGlobalObject.h header.
+        * contentextensions/DFANode.cpp: Add missing wtf/HashMap.h header.
+        * html/HTMLFrameElement.cpp: Add missing HTMLParserIdioms.h header.
+        * html/HTMLHRElement.cpp: Ditto.
+        * html/HTMLIFrameElement.cpp: Ditto.
+        * html/HTMLLIElement.cpp: Ditto.
+        * html/HTMLMetaElement.cpp: Add missing HTMLParserIdioms.h, Frame.h, and FrameView.h headers.
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::parseAttribute): Add missing HTMLNames:: namespace prefix in
+        usage of HTMLNames::forAttr.
+        (WebCore::HTMLOutputElement::htmlFor): Ditto.
+        * html/OffscreenCanvas.cpp: Add missing RuntimeEnabledFeatures.h header.
+        * layout/formattingContexts/FormattingGeometry.cpp: Add missing FormattingQuirks.h header.
+        * layout/formattingContexts/FormattingQuirks.cpp: Add missing FormattingGeometry.h header.
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp: Add missing
+        BlockFormattingContext.h, BlockFormattingQuirks.h, and BlockMarginCollapse.h headers;
+        remove unneeded BlockFormattingState.h and FormattingContext.h headers.
+        * layout/formattingContexts/block/BlockFormattingGeometry.h: Add missing forward
+        declaration for BlockFormattingContext.
+        * layout/formattingContexts/block/BlockFormattingQuirks.cpp: Add missing
+        BlockFormattingContext.h and BlockMarginCollapse.h headers, remove unneeded
+        BlockFormattingState.h header.
+        * layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp: Add missing
+        BlockFormattingContext.h and BlockFormattingQuirks.h headers, remove unneeded
+        BlockFormattingState.h header.
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        Add missing BlockMarginCollapse.h header.
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp:
+        Add missing TableWrapperBlockFormattingContext.h header.
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.h:
+        Add missing forward declaration for TableWrapperBlockFormattingContext.
+        * layout/formattingContexts/flex/FlexFormattingGeometry.cpp: Add missing
+        FlexFormattingContext.h header, remove unneeded FlexFormattingState.h and
+        FormattingContext.h headers.
+        * layout/formattingContexts/flex/FlexFormattingGeometry.h: Add missing forward declaration
+        for FlexFormattingContext.
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp: Add missing
+        InlineFormattingContext.h header, remove unneeded InlineLineBox.h header.
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h: Add missing InlineLineBox.h
+        and InlineLineBuilder.h headers, add missing forward declaration for
+        InlineFormattingContext.
+        * layout/formattingContexts/inline/InlineFormattingQuirks.cpp: Add missing
+        InlineFormattingContext.h header.
+        * layout/formattingContexts/inline/InlineFormattingQuirks.h: Add missing InlineLineBox.h
+        header, add missing forward declaration for InlineFormattingContext.
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp: Add missing
+        InlineFormattingQuirks.h header.
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp: Add missing
+        TableFormattingContext.h header, remove unneeded TableFormattingState.h header.
+        * layout/formattingContexts/table/TableFormattingGeometry.h: Add missing TableGrid.h
+        header, add missing forward declaration for TableFormattingContext.
+        * layout/formattingContexts/table/TableFormattingQuirks.cpp: Add missing
+        TableFormattingContext.h header.
+        * layout/formattingContexts/table/TableFormattingQuirks.h: Add missing forward declaration
+        for TableFormattingContext.
+        * layout/formattingContexts/table/TableLayout.cpp: Add missing TableFormattingGeometry.h
+        header.
+        * page/FrameViewLayoutContext.cpp: Add missing StyleScope.h header.
+        * page/ImageOverlayController.h: Add missing LayoutRect.h header.
+        * page/PageConfiguration.h: Add missing wtf/HashSet.h header.
+        * platform/network/soup/SoupNetworkSession.cpp: Add missing wtf/text/StringHash.h header.
+        * style/StyleScopeRuleSets.cpp: Add missing StyleScope.h header.
+        * style/Styleable.cpp: Ditto.
+        * svg/SVGDocumentExtensions.cpp: Add missing SVGUseElement.h header.
+        * svg/SVGDocumentExtensions.h: Add missing wtf/WeakHashSet.h header, add missing
+        forward declaration for SVGUseElement.
+        * workers/WorkerGlobalScope.cpp: Add missing FontCustomPlatformData.h header.
+
 2021-05-21  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] fast/canvas/canvas-conic-gradient-angle.html is failing since added in r277547

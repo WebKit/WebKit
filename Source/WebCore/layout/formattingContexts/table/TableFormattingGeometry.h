@@ -28,9 +28,12 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingGeometry.h"
+#include "TableGrid.h"
 
 namespace WebCore {
 namespace Layout {
+
+class TableFormattingContext;
 
 class TableFormattingGeometry : public FormattingGeometry {
 public:

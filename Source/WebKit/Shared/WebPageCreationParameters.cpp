@@ -276,7 +276,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.mediaVolume))
         return WTF::nullopt;
 
-    Optional<MediaProducer::MutedStateFlags> mutedStateFlags;
+    Optional<WebCore::MediaProducer::MutedStateFlags> mutedStateFlags;
     decoder >> mutedStateFlags;
     if (!mutedStateFlags)
         return WTF::nullopt;

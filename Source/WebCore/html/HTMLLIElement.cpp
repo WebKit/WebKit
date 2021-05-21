@@ -29,6 +29,7 @@
 #include "ElementAncestorIterator.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLUListElement.h"
 #include "RenderListItem.h"
 #include <wtf/IsoMallocInlines.h>

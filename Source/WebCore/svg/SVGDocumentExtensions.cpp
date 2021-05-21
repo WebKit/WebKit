@@ -34,6 +34,7 @@
 #include "SVGResourcesCache.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
+#include "SVGUseElement.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include <wtf/text/AtomString.h>

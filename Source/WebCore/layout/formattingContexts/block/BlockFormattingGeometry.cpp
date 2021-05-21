@@ -28,8 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "BlockFormattingState.h"
-#include "FormattingContext.h"
+#include "BlockFormattingContext.h"
+#include "BlockFormattingQuirks.h"
+#include "BlockMarginCollapse.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"

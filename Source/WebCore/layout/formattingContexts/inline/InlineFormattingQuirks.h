@@ -28,9 +28,12 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingQuirks.h"
+#include "InlineLineBox.h"
 
 namespace WebCore {
 namespace Layout {
+
+class InlineFormattingContext;
 
 class InlineFormattingQuirks : public FormattingQuirks {
 public:

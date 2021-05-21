@@ -30,6 +30,7 @@
 
 #include "FloatingContext.h"
 #include "InlineFormattingContext.h"
+#include "InlineFormattingQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutState.h"

@@ -29,6 +29,7 @@
 #include "DOMTokenList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "LazyLoadFrameObserver.h"
 #include "RenderIFrame.h"
 #include "ScriptController.h"

@@ -28,8 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FlexFormattingState.h"
-#include "FormattingContext.h"
+#include "FlexFormattingContext.h"
 #include "LayoutContext.h"
 
 namespace WebCore {

@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "LinkBuffer.h"
 #include "ShadowChicken.h"
 
 namespace JSC {

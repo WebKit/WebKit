@@ -32,6 +32,8 @@
 namespace WebCore {
 namespace Layout {
 
+class FlexFormattingContext;
+
 // This class implements positioning and sizing for flex items.
 class FlexFormattingGeometry : public FormattingGeometry {
 public:

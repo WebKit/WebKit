@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 

@@ -30,6 +30,7 @@
 
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
+#include "TableFormattingGeometry.h"
 
 namespace WebCore {
 namespace Layout {

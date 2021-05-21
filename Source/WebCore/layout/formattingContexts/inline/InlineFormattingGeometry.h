@@ -28,9 +28,13 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingGeometry.h"
+#include "InlineLineBox.h"
+#include "InlineLineBuilder.h"
 
 namespace WebCore {
 namespace Layout {
+
+class InlineFormattingContext;
 
 class InlineFormattingGeometry : public FormattingGeometry {
 public:
