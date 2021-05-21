@@ -1,3 +1,18 @@
+2021-05-20  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        WKRemoteObjectRegistry  _invokeMethod needs to check for nil completionHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=225941
+
+        Reviewed by Ryosuke Niwa.
+
+        Add an IPC test with a nil (really malformed) completion handler
+        that makes sure the invocation is not performed.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        (-[IPCTestingAPIDelegate sayHello:completionHandler:]):
+        (-[IPCTestingAPIDelegate sayHelloWasCalled]):
+        (TEST):
+
 2021-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r277606.

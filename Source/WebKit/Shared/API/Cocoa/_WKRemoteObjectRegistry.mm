@@ -253,85 +253,90 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
         NSLog(@"Exception caught during decoding of message: %@", exception);
     }
 
-    if (auto* replyInfo = remoteObjectInvocation.replyInfo()) {
-        NSMethodSignature *methodSignature = invocation.methodSignature;
+    NSMethodSignature *methodSignature = invocation.methodSignature;
+    auto* replyInfo = remoteObjectInvocation.replyInfo();
 
-        // Look for the block argument.
-        for (NSUInteger i = 0, count = methodSignature.numberOfArguments; i < count; ++i) {
-            const char *type = [methodSignature getArgumentTypeAtIndex:i];
+    // Look for the block argument (if any).
+    for (NSUInteger i = 0, count = methodSignature.numberOfArguments; i < count; ++i) {
+        const char *type = [methodSignature getArgumentTypeAtIndex:i];
 
-            if (strcmp(type, "@?"))
-                continue;
+        if (strcmp(type, "@?"))
+            continue;
 
-            // We found the block.
-            String wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()]._typeString.UTF8String;
-            String expectedBlockSignature = replyBlockSignature([interface protocol], invocation.selector, i);
-
-            if (expectedBlockSignature.isNull()) {
-                NSLog(@"_invokeMethod: Failed to validate reply block signature: could not find local signature");
-                ASSERT_NOT_REACHED();
-                continue;
-            }
-
-            if (!blockSignaturesAreCompatible(wireBlockSignature, expectedBlockSignature)) {
-                NSLog(@"_invokeMethod: Failed to validate reply block signature: %s != %s", wireBlockSignature.utf8().data(), expectedBlockSignature.utf8().data());
-                ASSERT_NOT_REACHED();
-                continue;
-            }
-
-            RetainPtr<_WKRemoteObjectRegistry> remoteObjectRegistry = self;
-            uint64_t replyID = replyInfo->replyID;
-
-            class ReplyBlockCallChecker : public WTF::ThreadSafeRefCounted<ReplyBlockCallChecker> {
-            public:
-                static Ref<ReplyBlockCallChecker> create(_WKRemoteObjectRegistry *registry, uint64_t replyID) { return adoptRef(*new ReplyBlockCallChecker(registry, replyID)); }
-
-                ~ReplyBlockCallChecker()
-                {
-                    if (m_didCallReplyBlock)
-                        return;
-
-                    // FIXME: Instead of not sending anything when the remote object registry is null, we should
-                    // keep track of all reply block checkers and invalidate them (sending the unused reply message) in
-                    // -[_WKRemoteObjectRegistry _invalidate].
-                    if (!m_remoteObjectRegistry->_remoteObjectRegistry)
-                        return;
-
-                    m_remoteObjectRegistry->_remoteObjectRegistry->sendUnusedReply(m_replyID);
-                }
-
-                void didCallReplyBlock() { m_didCallReplyBlock = true; }
-
-            private:
-                ReplyBlockCallChecker(_WKRemoteObjectRegistry *registry, uint64_t replyID)
-                    : m_remoteObjectRegistry(registry)
-                    , m_replyID(replyID)
-                {
-                }
-
-                RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
-                uint64_t m_replyID = 0;
-                bool m_didCallReplyBlock = false;
-            };
-
-            RefPtr<ReplyBlockCallChecker> checker = ReplyBlockCallChecker::create(self, replyID);
-            id replyBlock = __NSMakeSpecialForwardingCaptureBlock(wireBlockSignature.utf8().data(), [interface, remoteObjectRegistry, replyID, checker](NSInvocation *invocation) {
-                auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
-                [encoder encodeObject:invocation forKey:invocationKey];
-
-                if (remoteObjectRegistry->_remoteObjectRegistry)
-                    remoteObjectRegistry->_remoteObjectRegistry->sendReplyBlock(replyID, WebKit::UserData([encoder rootObjectDictionary]));
-                checker->didCallReplyBlock();
-            });
-
-            [invocation setArgument:&replyBlock atIndex:i];
-
-            // Make sure that the block won't be destroyed before the invocation.
-            objc_setAssociatedObject(invocation, replyBlockKey, replyBlock, OBJC_ASSOCIATION_RETAIN);
-            [replyBlock release];
-
-            break;
+        // We found the block.
+        // If the wire had no block signature but we expect one, we drop the message.
+        if (!replyInfo) {
+            NSLog(@"_invokeMethod: Expected reply block, but none provided");
+            return;
         }
+
+        String wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()]._typeString.UTF8String;
+        String expectedBlockSignature = replyBlockSignature([interface protocol], invocation.selector, i);
+
+        if (expectedBlockSignature.isNull()) {
+            NSLog(@"_invokeMethod: Failed to validate reply block signature: could not find local signature");
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        if (!blockSignaturesAreCompatible(wireBlockSignature, expectedBlockSignature)) {
+            NSLog(@"_invokeMethod: Failed to validate reply block signature: %s != %s", wireBlockSignature.utf8().data(), expectedBlockSignature.utf8().data());
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        RetainPtr<_WKRemoteObjectRegistry> remoteObjectRegistry = self;
+        uint64_t replyID = replyInfo->replyID;
+
+        class ReplyBlockCallChecker : public WTF::ThreadSafeRefCounted<ReplyBlockCallChecker> {
+        public:
+            static Ref<ReplyBlockCallChecker> create(_WKRemoteObjectRegistry *registry, uint64_t replyID) { return adoptRef(*new ReplyBlockCallChecker(registry, replyID)); }
+
+            ~ReplyBlockCallChecker()
+            {
+                if (m_didCallReplyBlock)
+                    return;
+
+                // FIXME: Instead of not sending anything when the remote object registry is null, we should
+                // keep track of all reply block checkers and invalidate them (sending the unused reply message) in
+                // -[_WKRemoteObjectRegistry _invalidate].
+                if (!m_remoteObjectRegistry->_remoteObjectRegistry)
+                    return;
+
+                m_remoteObjectRegistry->_remoteObjectRegistry->sendUnusedReply(m_replyID);
+            }
+
+            void didCallReplyBlock() { m_didCallReplyBlock = true; }
+
+        private:
+            ReplyBlockCallChecker(_WKRemoteObjectRegistry *registry, uint64_t replyID)
+                : m_remoteObjectRegistry(registry)
+                , m_replyID(replyID)
+            {
+            }
+
+            RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
+            uint64_t m_replyID = 0;
+            bool m_didCallReplyBlock = false;
+        };
+
+        RefPtr<ReplyBlockCallChecker> checker = ReplyBlockCallChecker::create(self, replyID);
+        id replyBlock = __NSMakeSpecialForwardingCaptureBlock(wireBlockSignature.utf8().data(), [interface, remoteObjectRegistry, replyID, checker](NSInvocation *invocation) {
+            auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
+            [encoder encodeObject:invocation forKey:invocationKey];
+
+            if (remoteObjectRegistry->_remoteObjectRegistry)
+                remoteObjectRegistry->_remoteObjectRegistry->sendReplyBlock(replyID, WebKit::UserData([encoder rootObjectDictionary]));
+            checker->didCallReplyBlock();
+        });
+
+        [invocation setArgument:&replyBlock atIndex:i];
+
+        // Make sure that the block won't be destroyed before the invocation.
+        objc_setAssociatedObject(invocation, replyBlockKey, replyBlock, OBJC_ASSOCIATION_RETAIN);
+        [replyBlock release];
+
+        break;
     }
 
     invocation.target = interfaceAndObject.first.get();

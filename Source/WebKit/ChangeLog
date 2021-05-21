@@ -1,3 +1,18 @@
+2021-05-20  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        WKRemoteObjectRegistry  _invokeMethod needs to check for nil completionHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=225941
+
+        Reviewed by Ryosuke Niwa.
+
+        _invokeMethod's argument-checking loop needs to be run
+        even if replyInfo is nil, as otherwise we can perform an invocation
+        if a method signature specifies a completion handler even though
+        none is provided.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+
 2021-05-20  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] <select> options are unnecessarily truncated
