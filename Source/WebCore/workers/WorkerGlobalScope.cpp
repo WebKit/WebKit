@@ -57,16 +57,15 @@
 #include "WorkerScriptLoader.h"
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 using namespace Inspector;
 
-static Lock allWorkerGlobalScopeIdentifiersLock;
-static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers(LockHolder& holder)
+static CheckedLock allWorkerGlobalScopeIdentifiersLock;
+static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers() WTF_REQUIRES_LOCK(allWorkerGlobalScopeIdentifiersLock)
 {
-    UNUSED_PARAM(holder);
-
     static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;
     ASSERT(allWorkerGlobalScopeIdentifiersLock.isLocked());
     return identifiers;
@@ -91,8 +90,8 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_credentials(params.credentials)
 {
     {
-        auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
-        allWorkerGlobalScopeIdentifiers(locker).add(contextIdentifier());
+        Locker locker { allWorkerGlobalScopeIdentifiersLock };
+        allWorkerGlobalScopeIdentifiers().add(contextIdentifier());
     }
 
     if (m_topOrigin->hasUniversalAccess())
@@ -111,8 +110,8 @@ WorkerGlobalScope::~WorkerGlobalScope()
     removeFromContextsMap();
 
     {
-        auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
-        allWorkerGlobalScopeIdentifiers(locker).remove(contextIdentifier());
+        Locker locker { allWorkerGlobalScopeIdentifiersLock };
+        allWorkerGlobalScopeIdentifiers().remove(contextIdentifier());
     }
 
     m_performance = nullptr;
@@ -587,8 +586,8 @@ void WorkerGlobalScope::deleteJSCodeAndGC(Synchronous synchronous)
 
 void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
 {
-    auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
-    for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers(locker)) {
+    Locker locker { allWorkerGlobalScopeIdentifiersLock };
+    for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers()) {
         postTaskTo(globalScopeIdentifier, [synchronous](auto& context) {
             downcast<WorkerGlobalScope>(context).releaseMemory(synchronous);
         });

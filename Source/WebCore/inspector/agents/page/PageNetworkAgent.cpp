@@ -65,11 +65,11 @@ Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loa
     return { };
 }
 
-Vector<WebSocket*> PageNetworkAgent::activeWebSockets(const LockHolder& lock)
+Vector<WebSocket*> PageNetworkAgent::activeWebSockets()
 {
     Vector<WebSocket*> webSockets;
 
-    for (auto* webSocket : WebSocket::allActiveWebSockets(lock)) {
+    for (auto* webSocket : WebSocket::allActiveWebSockets()) {
         auto channel = webSocket->channel();
         if (!channel)
             continue;

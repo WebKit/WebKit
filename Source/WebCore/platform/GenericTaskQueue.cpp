@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+CheckedLock TaskDispatcher<Timer>::s_sharedLock;
+
 TaskDispatcher<Timer>::TaskDispatcher()
 {
 }
@@ -39,7 +41,7 @@ TaskDispatcher<Timer>::TaskDispatcher()
 void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
 {
     {
-        auto locker = holdLock(sharedLock());
+        Locker locker { s_sharedLock };
         m_pendingTasks.append(WTFMove(function));
         pendingDispatchers().append(makeWeakPtr(*this));
     }
@@ -57,12 +59,6 @@ Timer& TaskDispatcher<Timer>::sharedTimer()
     return timer.get();
 }
 
-Lock& TaskDispatcher<Timer>::sharedLock()
-{
-    static Lock lock;
-    return lock;
-}
-
 void TaskDispatcher<Timer>::sharedTimerFired()
 {
     ASSERT(!sharedTimer().isActive());
@@ -71,8 +67,8 @@ void TaskDispatcher<Timer>::sharedTimerFired()
     // queued by the JS events handlers that are executed in the loop below.
     Deque<WeakPtr<TaskDispatcher<Timer>>> queuedDispatchers;
     {
-        auto locker = holdLock(sharedLock());
-        queuedDispatchers = WTFMove(pendingDispatchers());
+        Locker locker { s_sharedLock };
+        queuedDispatchers = std::exchange(pendingDispatchers(), { });
     }
     while (!queuedDispatchers.isEmpty()) {
         WeakPtr<TaskDispatcher<Timer>> dispatcher = queuedDispatchers.takeFirst();
@@ -85,21 +81,15 @@ void TaskDispatcher<Timer>::sharedTimerFired()
 
 Deque<WeakPtr<TaskDispatcher<Timer>>>& TaskDispatcher<Timer>::pendingDispatchers()
 {
-    static LazyNeverDestroyed<Deque<WeakPtr<TaskDispatcher<Timer>>>> dispatchers;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        dispatchers.construct();
-    });
-
+    static NeverDestroyed<Deque<WeakPtr<TaskDispatcher<Timer>>>> dispatchers;
     return dispatchers.get();
 }
 
 void TaskDispatcher<Timer>::dispatchOneTask()
 {
-    WTF::Function<void()> task;
+    Function<void()> task;
     {
-        auto locker = holdLock(sharedLock());
+        Locker locker { s_sharedLock };
         ASSERT(!m_pendingTasks.isEmpty());
         task = m_pendingTasks.takeFirst();
     }

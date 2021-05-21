@@ -45,16 +45,17 @@
 
 namespace WebCore {
 
-HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances(const LockHolder&)
+CheckedLock WebGLProgram::s_instancesLock;
+
+HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances()
 {
     static NeverDestroyed<HashMap<WebGLProgram*, WebGLRenderingContextBase*>> instances;
     return instances;
 }
 
-Lock& WebGLProgram::instancesMutex()
+CheckedLock& WebGLProgram::instancesLock()
 {
-    static Lock mutex;
-    return mutex;
+    return s_instancesLock;
 }
 
 Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& ctx)
@@ -69,8 +70,8 @@ WebGLProgram::WebGLProgram(WebGLRenderingContextBase& ctx)
     ASSERT(scriptExecutionContext());
 
     {
-        LockHolder lock(instancesMutex());
-        instances(lock).add(this, &ctx);
+        Locker locker { instancesLock() };
+        instances().add(this, &ctx);
     }
 
     setObject(ctx.graphicsContextGL()->createProgram());
@@ -81,9 +82,9 @@ WebGLProgram::~WebGLProgram()
     InspectorInstrumentation::willDestroyWebGLProgram(*this);
 
     {
-        LockHolder lock(instancesMutex());
-        ASSERT(instances(lock).contains(this));
-        instances(lock).remove(this);
+        Locker locker { instancesLock() };
+        ASSERT(instances().contains(this));
+        instances().remove(this);
     }
 
     if (!hasGroupOrContext())

@@ -40,10 +40,11 @@
 
 namespace WebCore {
 
-Lock& WorkerOrWorkletThread::workerOrWorkletThreadsLock()
+CheckedLock WorkerOrWorkletThread::s_workerOrWorkletThreadsLock;
+
+CheckedLock& WorkerOrWorkletThread::workerOrWorkletThreadsLock()
 {
-    static Lock mutex;
-    return mutex;
+    return s_workerOrWorkletThreadsLock;
 }
 
 HashSet<WorkerOrWorkletThread*>& WorkerOrWorkletThread::workerOrWorkletThreads()
@@ -56,13 +57,13 @@ HashSet<WorkerOrWorkletThread*>& WorkerOrWorkletThread::workerOrWorkletThreads()
 WorkerOrWorkletThread::WorkerOrWorkletThread(const String& identifier)
     : m_identifier(identifier)
 {
-    auto locker = holdLock(workerOrWorkletThreadsLock());
+    Locker locker { workerOrWorkletThreadsLock() };
     workerOrWorkletThreads().add(this);
 }
 
 WorkerOrWorkletThread::~WorkerOrWorkletThread()
 {
-    auto locker = holdLock(workerOrWorkletThreadsLock());
+    Locker locker { workerOrWorkletThreadsLock() };
     ASSERT(workerOrWorkletThreads().contains(this));
     workerOrWorkletThreads().remove(this);
 }
@@ -269,7 +270,7 @@ void WorkerOrWorkletThread::resume()
 
 void WorkerOrWorkletThread::releaseFastMallocFreeMemoryInAllThreads()
 {
-    auto locker = holdLock(workerOrWorkletThreadsLock());
+    Locker locker { workerOrWorkletThreadsLock() };
     for (auto* workerOrWorkletThread : workerOrWorkletThreads()) {
         workerOrWorkletThread->runLoop().postTask([] (ScriptExecutionContext&) {
             WTF::releaseFastMallocFreeMemory();

@@ -170,8 +170,8 @@ HTMLCanvasElement* InspectorCanvas::canvasElement() const
         [&] (std::reference_wrapper<WebGPUDevice> deviceWrapper) -> HTMLCanvasElement* {
             auto& device = deviceWrapper.get();
             {
-                LockHolder lock(CanvasRenderingContext::instancesMutex());
-                for (auto* canvasRenderingContext : CanvasRenderingContext::instances(lock)) {
+                Locker locker { CanvasRenderingContext::instancesLock() };
+                for (auto* canvasRenderingContext : CanvasRenderingContext::instances()) {
                     if (auto* canvasElement = canvasIfContextMatchesDevice(*canvasRenderingContext, device))
                         return canvasElement;
                 }
@@ -271,8 +271,8 @@ HashSet<Element*> InspectorCanvas::clientNodes() const
 
             HashSet<Element*> canvasElementClients;
             {
-                LockHolder lock(CanvasRenderingContext::instancesMutex());
-                for (auto* canvasRenderingContext : CanvasRenderingContext::instances(lock)) {
+                Locker locker { CanvasRenderingContext::instancesLock() };
+                for (auto* canvasRenderingContext : CanvasRenderingContext::instances()) {
                     if (auto* canvasElement = canvasIfContextMatchesDevice(*canvasRenderingContext, device))
                         canvasElementClients.add(canvasElement);
                 }

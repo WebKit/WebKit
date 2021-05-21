@@ -41,6 +41,8 @@
 
 namespace WTF {
 
+CheckedLock Thread::s_allThreadsLock;
+
 static Optional<size_t> stackSize(ThreadType threadType)
 {
     // Return the stack size for the created thread based on its type.
@@ -91,7 +93,7 @@ public:
 #endif
 };
 
-HashSet<Thread*>& Thread::allThreads(const LockHolder&)
+HashSet<Thread*>& Thread::allThreads()
 {
     static LazyNeverDestroyed<HashSet<Thread*>> allThreads;
     static std::once_flag onceKey;
@@ -101,10 +103,9 @@ HashSet<Thread*>& Thread::allThreads(const LockHolder&)
     return allThreads;
 }
 
-Lock& Thread::allThreadsMutex()
+CheckedLock& Thread::allThreadsLock()
 {
-    static Lock mutex;
-    return mutex;
+    return s_allThreadsLock;
 }
 
 const char* Thread::normalizeThreadName(const char* threadName)
@@ -218,9 +219,9 @@ Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint, Thre
     // called Thread::didExit to unregister itself from allThreads. Registering such a thread will register a stale thread pointer to allThreads, which will not be removed
     // even after Thread is destroyed. Register a thread only when it has not unregistered itself from allThreads yet.
     {
-        auto locker = holdLock(allThreadsMutex());
+        Locker locker { allThreadsLock() };
         if (!thread->m_didUnregisterFromAllThreads)
-            allThreads(locker).add(thread.ptr());
+            allThreads().add(thread.ptr());
     }
 
     ASSERT(!thread->stack().isEmpty());
@@ -244,8 +245,8 @@ static bool shouldRemoveThreadFromThreadGroup()
 void Thread::didExit()
 {
     {
-        auto locker = holdLock(allThreadsMutex());
-        allThreads(locker).remove(this);
+        Locker locker { allThreadsLock() };
+        allThreads().remove(this);
         m_didUnregisterFromAllThreads = true;
     }
 

@@ -66,13 +66,13 @@ public:
 
 private:
     static Timer& sharedTimer();
-    static WTF::Lock& sharedLock();
     static void sharedTimerFired();
-    static Deque<WeakPtr<TaskDispatcher<Timer>>>& pendingDispatchers();
+    static Deque<WeakPtr<TaskDispatcher<Timer>>>& pendingDispatchers() WTF_REQUIRES_LOCK(s_sharedLock);
 
     void dispatchOneTask();
 
-    Deque<Function<void()>> m_pendingTasks;
+    static CheckedLock s_sharedLock;
+    Deque<Function<void()>> m_pendingTasks WTF_GUARDED_BY_LOCK(s_sharedLock);
 };
 
 template <typename T>

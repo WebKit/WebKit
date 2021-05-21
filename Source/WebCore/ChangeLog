@@ -1,3 +1,170 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace more static Locks with CheckedLocks in WTF / WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=226040
+
+        Reviewed by Darin Adler.
+
+        Replace more static Locks with CheckedLocks so that we can benefit from Clang Thread Safety Analysis.
+
+        * Modules/indexeddb/server/IDBSerializationContext.cpp:
+        (WebCore::IDBServer::IDBSerializationContext::getOrCreateForCurrentThread):
+        (WebCore::IDBServer::IDBSerializationContext::~IDBSerializationContext):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::RTCDataChannel::detach):
+        (WebCore::RTCDataChannel::removeFromDataChannelLocalMapIfNeeded):
+        (WebCore::RTCDataChannel::handlerFromIdentifier):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::Database::Database):
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::closeDatabase):
+        (WebCore::Database::getCachedVersion const):
+        (WebCore::Database::setCachedVersion):
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::instancesLock):
+        (WebCore::WebGPUDevice::~WebGPUDevice):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUPipeline.cpp:
+        (WebCore::WebGPUPipeline::instancesLock):
+        (WebCore::WebGPUPipeline::WebGPUPipeline):
+        (WebCore::WebGPUPipeline::~WebGPUPipeline):
+        * Modules/webgpu/WebGPUPipeline.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::~WebSocket):
+        (WebCore::WebSocket::allActiveWebSocketsLock):
+        * Modules/websockets/WebSocket.h:
+        * bridge/objc/WebScriptObject.mm:
+        (WebCore::getJSWrapper):
+        (WebCore::addJSWrapper):
+        (WebCore::removeJSWrapper):
+        (WebCore::removeJSWrapperIfRetainCountOne):
+        * crypto/CryptoAlgorithmRegistry.cpp:
+        (WebCore::CryptoAlgorithmRegistry::singleton):
+        (WebCore::CryptoAlgorithmRegistry::identifier):
+        (WebCore::CryptoAlgorithmRegistry::name):
+        (WebCore::CryptoAlgorithmRegistry::create):
+        (WebCore::CryptoAlgorithmRegistry::registerAlgorithm):
+        * crypto/CryptoAlgorithmRegistry.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::deref const):
+        (WebCore::MessagePort::isExistingMessagePortLocallyReachable):
+        (WebCore::MessagePort::notifyMessageAvailable):
+        (WebCore::MessagePort::MessagePort):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::contextIdentifier const):
+        (WebCore::ScriptExecutionContext::removeFromContextsMap):
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::postTaskTo):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::instancesLock):
+        (WebCore::CanvasRenderingContext::CanvasRenderingContext):
+        (WebCore::CanvasRenderingContext::~CanvasRenderingContext):
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::instancesLock):
+        (WebCore::WebGLProgram::WebGLProgram):
+        (WebCore::WebGLProgram::~WebGLProgram):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::~WebGLRenderingContextBase):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::canvasElement const):
+        (WebCore:: const):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::enable):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::enable):
+        (WebCore::InspectorNetworkAgent::webSocketForRequestId):
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        * inspector/agents/page/PageNetworkAgent.h:
+        * inspector/agents/worker/WorkerNetworkAgent.cpp:
+        * inspector/agents/worker/WorkerNetworkAgent.h:
+        * page/SecurityPolicy.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::SecurityPolicy::isAccessAllowed):
+        (WebCore::SecurityPolicy::addOriginAccessAllowlistEntry):
+        (WebCore::SecurityPolicy::removeOriginAccessAllowlistEntry):
+        (WebCore::SecurityPolicy::resetOriginAccessAllowlists):
+        (WebCore::SecurityPolicy::allowAccessTo):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        (WebCore::TaskDispatcher<Timer>::sharedTimerFired):
+        (WebCore::TaskDispatcher<Timer>::pendingDispatchers):
+        (WebCore::TaskDispatcher<Timer>::dispatchOneTask):
+        * platform/GenericTaskQueue.h:
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::allBuiltinSchemes):
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsLocal):
+        (WebCore::LegacySchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler):
+        (WebCore::LegacySchemeRegistry::schemeIsHandledBySchemeHandler):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsLocal):
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsNoAccess):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess):
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsDisplayIsolated):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated):
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsSecure):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsSecure):
+        (WebCore::LegacySchemeRegistry::canDisplayOnlyIfCanRequest):
+        (WebCore::LegacySchemeRegistry::registerAsCanDisplayOnlyIfCanRequest):
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy):
+        (WebCore::LegacySchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy):
+        (WebCore::LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy):
+        (WebCore::LegacySchemeRegistry::registerURLSchemeAsCachePartitioned):
+        (WebCore::LegacySchemeRegistry::shouldPartitionCacheForURLScheme):
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::FFTFrame::fftSetupForSize):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::installedMediaEngines):
+        (WebCore::MediaPlayer::resetMediaEngines):
+        * platform/ios/QuickLook.mm:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::removeQLPreviewConverterForURL):
+        (WebCore::addQLPreviewConverterWithFileForURL):
+        * platform/ios/WebSQLiteDatabaseTrackerClient.mm:
+        (WTF_REQUIRES_LOCK):
+        (+[WebDatabaseTransactionBackgroundTaskController startBackgroundTask]):
+        (+[WebDatabaseTransactionBackgroundTaskController endBackgroundTask]):
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::UTIFromMIMEType):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::WTF_GUARDED_BY_LOCK):
+        (WebCore::SQLiteDatabase::setIsDatabaseOpeningForbidden):
+        (WebCore::SQLiteDatabase::open):
+        * platform/sql/SQLiteDatabaseTracker.cpp:
+        (WebCore::SQLiteDatabaseTracker::WTF_GUARDED_BY_LOCK):
+        (WebCore::SQLiteDatabaseTracker::setClient):
+        (WebCore::SQLiteDatabaseTracker::incrementTransactionInProgressCount):
+        (WebCore::SQLiteDatabaseTracker::decrementTransactionInProgressCount):
+        (WebCore::SQLiteDatabaseTracker::hasTransactionInProgress):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::newTextCodec):
+        (WebCore::atomCanonicalTextEncodingName):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::releaseMemoryInWorkers):
+        * workers/WorkerOrWorkletThread.cpp:
+        (WebCore::WorkerOrWorkletThread::workerOrWorkletThreadsLock):
+        (WebCore::WorkerOrWorkletThread::WorkerOrWorkletThread):
+        (WebCore::WorkerOrWorkletThread::~WorkerOrWorkletThread):
+        (WebCore::WorkerOrWorkletThread::releaseFastMallocFreeMemoryInAllThreads):
+        * workers/WorkerOrWorkletThread.h:
+
 2021-05-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         ASSERTION FAILED: m_imageBufferResult->colorSpace() == m_resultColorSpace in FilterEffect::copyPremultipliedResult

@@ -826,9 +826,9 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::enable()
     m_instrumentingAgents.setEnabledNetworkAgent(this);
 
     {
-        LockHolder lock(WebSocket::allActiveWebSocketsMutex());
+        Locker locker { WebSocket::allActiveWebSocketsLock() };
 
-        for (auto* webSocket : activeWebSockets(lock)) {
+        for (auto* webSocket : activeWebSockets()) {
             if (!is<Document>(webSocket->scriptExecutionContext()))
                 continue;
 
@@ -1009,9 +1009,9 @@ Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedCertificate(
 
 WebSocket* InspectorNetworkAgent::webSocketForRequestId(const Protocol::Network::RequestId& requestId)
 {
-    LockHolder lock(WebSocket::allActiveWebSocketsMutex());
+    Locker locker { WebSocket::allActiveWebSocketsLock() };
 
-    for (auto* webSocket : activeWebSockets(lock)) {
+    for (auto* webSocket : activeWebSockets()) {
         if (IdentifiersFactory::requestId(webSocket->channel()->progressIdentifier()) == requestId)
             return webSocket;
     }

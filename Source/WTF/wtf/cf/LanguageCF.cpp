@@ -30,7 +30,7 @@
 #include <mutex>
 #include <unicode/uloc.h>
 #include <wtf/Assertions.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cf/CFBundleSPI.h>
@@ -38,7 +38,7 @@
 
 namespace WTF {
 
-static Lock preferredLanguagesMutex;
+static CheckedLock preferredLanguagesLock;
 
 #if PLATFORM(MAC)
 static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
@@ -47,7 +47,7 @@ static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStrin
 }
 #endif
 
-static Vector<String>& preferredLanguages()
+static Vector<String>& preferredLanguages() WTF_REQUIRES_LOCK(preferredLanguagesLock)
 {
     static LazyNeverDestroyed<Vector<String>> languages;
     static std::once_flag onceKey;
@@ -91,7 +91,7 @@ static String httpStyleLanguageCode(CFStringRef language)
 void platformLanguageDidChange()
 {
     {
-        auto locker = holdLock(preferredLanguagesMutex);
+        Locker locker { preferredLanguagesLock };
         preferredLanguages().clear();
     }
 }
@@ -108,7 +108,7 @@ void listenForLanguageChangeNotifications()
 
 Vector<String> platformUserPreferredLanguages()
 {
-    auto locker = holdLock(preferredLanguagesMutex);
+    Locker locker { preferredLanguagesLock };
     Vector<String>& userPreferredLanguages = preferredLanguages();
 
     if (userPreferredLanguages.isEmpty()) {

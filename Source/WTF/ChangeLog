@@ -1,5 +1,36 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Replace more static Locks with CheckedLocks in WTF / WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=226040
+
+        Reviewed by Darin Adler.
+
+        Replace more static Locks with CheckedLocks so that we can benefit from Clang Thread Safety Analysis.
+
+        * wtf/Threading.cpp:
+        (WTF::Thread::allThreadsLock):
+        (WTF::Thread::create):
+        (WTF::Thread::didExit):
+        * wtf/Threading.h:
+        * wtf/URL.cpp:
+        (WTF::WTF_REQUIRES_LOCK):
+        (WTF::registerDefaultPortForProtocolForTesting):
+        (WTF::clearDefaultPortForProtocolMapForTesting):
+        (WTF::defaultPortForProtocol):
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::WTF_REQUIRES_LOCK):
+        (WTF::platformLanguageDidChange):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::invalidate):
+        (WTF::StringView::adoptUnderlyingString):
+        (WTF::StringView::setUnderlyingString):
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Use CheckedLock more in cases where we try-lock
         https://bugs.webkit.org/show_bug.cgi?id=226056
 

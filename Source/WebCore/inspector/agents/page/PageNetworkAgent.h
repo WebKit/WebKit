@@ -41,7 +41,7 @@ public:
 private:
     Inspector::Protocol::Network::LoaderId loaderIdentifier(DocumentLoader*);
     Inspector::Protocol::Network::FrameId frameIdentifier(DocumentLoader*);
-    Vector<WebSocket*> activeWebSockets(const LockHolder&);
+    Vector<WebSocket*> activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock());
     void setResourceCachingDisabledInternal(bool);
     ScriptExecutionContext* scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
     bool shouldForceBufferingNetworkResourceData() const { return false; }

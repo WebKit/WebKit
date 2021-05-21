@@ -31,6 +31,7 @@
 #import "WebBackgroundTaskController.h"
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
+#import <wtf/CheckedLock.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -84,16 +85,16 @@ void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(PAL::HysteresisState stat
 
 }
 
-static Lock transactionBackgroundTaskIdentifierLock;
+static CheckedLock transactionBackgroundTaskIdentifierLock;
 
-static NSUInteger transactionBackgroundTaskIdentifier;
+static NSUInteger transactionBackgroundTaskIdentifier WTF_GUARDED_BY_LOCK(transactionBackgroundTaskIdentifierLock);
 
-static void setTransactionBackgroundTaskIdentifier(NSUInteger identifier)
+static void setTransactionBackgroundTaskIdentifier(NSUInteger identifier) WTF_REQUIRES_LOCK(transactionBackgroundTaskIdentifierLock)
 {
     transactionBackgroundTaskIdentifier = identifier;
 }
 
-static NSUInteger getTransactionBackgroundTaskIdentifier()
+static NSUInteger getTransactionBackgroundTaskIdentifier() WTF_REQUIRES_LOCK(transactionBackgroundTaskIdentifierLock)
 {
     static dispatch_once_t pred;
     dispatch_once(&pred, ^ {
@@ -107,7 +108,7 @@ static NSUInteger getTransactionBackgroundTaskIdentifier()
 
 + (void)startBackgroundTask
 {
-    auto locker = holdLock(transactionBackgroundTaskIdentifierLock);
+    Locker locker { transactionBackgroundTaskIdentifierLock };
 
     // If there's already an existing background task going on, there's no need to start a new one.
     WebBackgroundTaskController *backgroundTaskController = [WebBackgroundTaskController sharedController];
@@ -122,7 +123,7 @@ static NSUInteger getTransactionBackgroundTaskIdentifier()
 
 + (void)endBackgroundTask
 {
-    auto locker = holdLock(transactionBackgroundTaskIdentifierLock);
+    Locker locker { transactionBackgroundTaskIdentifierLock };
 
     // It is possible that we were unable to start the background task when the first transaction began.
     // Don't try to end the task in that case.

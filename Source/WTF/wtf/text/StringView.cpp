@@ -30,8 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unicode/ubrk.h>
 #include <unicode/unorm2.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/Optional.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -360,15 +360,11 @@ StringView::UnderlyingString::UnderlyingString(const StringImpl& string)
 {
 }
 
-static Lock underlyingStringsMutex;
+static CheckedLock underlyingStringsLock;
 
-static HashMap<const StringImpl*, StringView::UnderlyingString*>& underlyingStrings()
+static HashMap<const StringImpl*, StringView::UnderlyingString*>& underlyingStrings() WTF_REQUIRES_LOCK(underlyingStringsLock)
 {
-    static LazyNeverDestroyed<HashMap<const StringImpl*, StringView::UnderlyingString*>> map;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        map.construct();
-    });
+    static NeverDestroyed<HashMap<const StringImpl*, StringView::UnderlyingString*>> map;
     return map;
 }
 
@@ -376,7 +372,7 @@ void StringView::invalidate(const StringImpl& stringToBeDestroyed)
 {
     UnderlyingString* underlyingString;
     {
-        auto locker = holdLock(underlyingStringsMutex);
+        Locker locker { underlyingStringsLock };
         underlyingString = underlyingStrings().take(&stringToBeDestroyed);
         if (!underlyingString)
             return;
@@ -393,7 +389,7 @@ bool StringView::underlyingStringIsValid() const
 void StringView::adoptUnderlyingString(UnderlyingString* underlyingString)
 {
     if (m_underlyingString) {
-        auto locker = holdLock(underlyingStringsMutex);
+        Locker locker { underlyingStringsLock };
         if (!--m_underlyingString->refCount) {
             if (m_underlyingString->isValid) {
                 underlyingStrings().remove(&m_underlyingString->string);
@@ -410,7 +406,7 @@ void StringView::setUnderlyingString(const StringImpl* string)
     if (!string)
         underlyingString = nullptr;
     else {
-        auto locker = holdLock(underlyingStringsMutex);
+        Locker locker { underlyingStringsLock };
         auto result = underlyingStrings().add(string, nullptr);
         if (result.isNewEntry)
             result.iterator->value = new UnderlyingString(*string);
@@ -425,7 +421,7 @@ void StringView::setUnderlyingString(const StringView& otherString)
 {
     UnderlyingString* underlyingString = otherString.m_underlyingString;
     if (underlyingString) {
-        // It's safe to inc the refCount here without locking underlyingStringsMutex
+        // It's safe to inc the refCount here without locking underlyingStringsLock
         // because UnderlyingString::refCount is a std::atomic_uint, and we're
         // guaranteed that the StringView we're copying it from will at least
         // have 1 ref on it, thereby keeping it alive regardless of what other

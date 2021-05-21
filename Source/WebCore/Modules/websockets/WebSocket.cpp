@@ -76,6 +76,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebSocket);
 
+CheckedLock WebSocket::s_allActiveWebSocketsLock;
+
 const size_t maxReasonSizeInBytes = 123;
 
 static inline bool isValidProtocolCharacter(UChar character)
@@ -146,17 +148,15 @@ WebSocket::WebSocket(ScriptExecutionContext& context)
     , m_extensions(emptyString())
     , m_resumeTimer(*this, &WebSocket::resumeTimerFired)
 {
-    LockHolder lock(allActiveWebSocketsMutex());
-
-    allActiveWebSockets(lock).add(this);
+    Locker locker { allActiveWebSocketsLock() };
+    allActiveWebSockets().add(this);
 }
 
 WebSocket::~WebSocket()
 {
     {
-        LockHolder lock(allActiveWebSocketsMutex());
-
-        allActiveWebSockets(lock).remove(this);
+        Locker locker { allActiveWebSocketsLock() };
+        allActiveWebSockets().remove(this);
     }
 
     if (m_channel)
@@ -188,16 +188,15 @@ ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, c
     return create(context, url, Vector<String> { 1, protocol });
 }
 
-HashSet<WebSocket*>& WebSocket::allActiveWebSockets(const LockHolder&)
+HashSet<WebSocket*>& WebSocket::allActiveWebSockets()
 {
     static NeverDestroyed<HashSet<WebSocket*>> activeWebSockets;
     return activeWebSockets;
 }
 
-Lock& WebSocket::allActiveWebSocketsMutex()
+CheckedLock& WebSocket::allActiveWebSocketsLock()
 {
-    static Lock mutex;
-    return mutex;
+    return s_allActiveWebSocketsLock;
 }
 
 ExceptionOr<void> WebSocket::connect(const String& url)

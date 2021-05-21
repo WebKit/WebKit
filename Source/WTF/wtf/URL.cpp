@@ -30,6 +30,7 @@
 #include "URLParser.h"
 #include <stdio.h>
 #include <unicode/uidna.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
@@ -267,16 +268,16 @@ static void assertProtocolIsGood(StringView protocol)
 
 #endif
 
-static Lock defaultPortForProtocolMapForTestingLock;
+static CheckedLock defaultPortForProtocolMapForTestingLock;
 
 using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
-static DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMapForTesting()
+static DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
 {
     static DefaultPortForProtocolMapForTesting* defaultPortForProtocolMap;
     return defaultPortForProtocolMap;
 }
 
-static DefaultPortForProtocolMapForTesting& ensureDefaultPortForProtocolMapForTesting()
+static DefaultPortForProtocolMapForTesting& ensureDefaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)
 {
     DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMap = defaultPortForProtocolMapForTesting();
     if (!defaultPortForProtocolMap)
@@ -286,25 +287,26 @@ static DefaultPortForProtocolMapForTesting& ensureDefaultPortForProtocolMapForTe
 
 void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol)
 {
-    auto locker = holdLock(defaultPortForProtocolMapForTestingLock);
+    Locker locker { defaultPortForProtocolMapForTestingLock };
     ensureDefaultPortForProtocolMapForTesting().add(protocol, port);
 }
 
 void clearDefaultPortForProtocolMapForTesting()
 {
-    auto locker = holdLock(defaultPortForProtocolMapForTestingLock);
+    Locker locker { defaultPortForProtocolMapForTestingLock };
     if (auto* map = defaultPortForProtocolMapForTesting())
         map->clear();
 }
 
 Optional<uint16_t> defaultPortForProtocol(StringView protocol)
 {
-    if (auto* overrideMap = defaultPortForProtocolMapForTesting()) {
-        auto locker = holdLock(defaultPortForProtocolMapForTestingLock);
-        ASSERT(overrideMap); // No need to null check again here since overrideMap cannot become null after being non-null.
-        auto iterator = overrideMap->find(protocol.toStringWithoutCopying());
-        if (iterator != overrideMap->end())
-            return iterator->value;
+    {
+        Locker locker { defaultPortForProtocolMapForTestingLock };
+        if (auto* overrideMap = defaultPortForProtocolMapForTesting()) {
+            auto iterator = overrideMap->find(protocol.toStringWithoutCopying());
+            if (iterator != overrideMap->end())
+                return iterator->value;
+        }
     }
     return URLParser::defaultPortForProtocol(protocol);
 }

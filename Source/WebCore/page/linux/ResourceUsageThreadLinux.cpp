@@ -233,8 +233,8 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     HashSet<pid_t> knownWebKitThreads;
     {
-        auto locker = holdLock(Thread::allThreadsMutex());
-        for (auto* thread : Thread::allThreads(locker)) {
+        Locker locker { Thread::allThreadsLock() };
+        for (auto* thread : Thread::allThreads()) {
             if (auto id = thread->id())
                 knownWebKitThreads.add(id);
         }
@@ -242,7 +242,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     HashMap<pid_t, String> knownWorkerThreads;
     {
-        auto locker = holdLock(WorkerOrWorkletThread::workerOrWorkletThreadsLock());
+        Locker locker { WorkerOrWorkletThread::workerOrWorkletThreadsLock() };
         for (auto* thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.
             if (!thread->thread())

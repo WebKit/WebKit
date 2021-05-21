@@ -30,8 +30,8 @@
 #include "ContextDestructionObserver.h"
 #include "GPUObjectBase.h"
 #include "WebGPUShaderModule.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
-#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -43,8 +43,8 @@ class WebGPUPipeline : public GPUObjectBase, public ContextDestructionObserver {
 public:
     virtual ~WebGPUPipeline();
 
-    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances(const LockHolder&);
-    static Lock& instancesMutex();
+    static HashMap<WebGPUPipeline*, WebGPUDevice*>& instances() WTF_REQUIRES_LOCK(instancesLock());
+    static CheckedLock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     virtual bool isRenderPipeline() const { return false; }
     virtual bool isComputePipeline() const { return false; }
@@ -63,6 +63,9 @@ public:
 
 protected:
     WebGPUPipeline(WebGPUDevice&, GPUErrorScopes&);
+
+private:
+    static CheckedLock s_instancesLock;
 };
 
 } // namespace WebCore

@@ -29,14 +29,15 @@
 #include "DOMWrapperWorld.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSObjectInlines.h>
+#include <wtf/CheckedLock.h>
 
 namespace WebCore {
 
 namespace IDBServer {
 
-static Lock serializationContextMapMutex;
+static CheckedLock serializationContextMapLock;
 
-static HashMap<Thread*, IDBSerializationContext*>& serializationContextMap(Locker<Lock>&)
+static HashMap<Thread*, IDBSerializationContext*>& serializationContextMap() WTF_REQUIRES_LOCK(serializationContextMapLock)
 {
     static NeverDestroyed<HashMap<Thread*, IDBSerializationContext*>> map;
     return map;
@@ -45,8 +46,8 @@ static HashMap<Thread*, IDBSerializationContext*>& serializationContextMap(Locke
 Ref<IDBSerializationContext> IDBSerializationContext::getOrCreateForCurrentThread()
 {
     auto& thread = Thread::current();
-    Locker<Lock> locker(serializationContextMapMutex);
-    auto[iter, isNewEntry] = serializationContextMap(locker).add(&thread, nullptr);
+    Locker locker { serializationContextMapLock };
+    auto[iter, isNewEntry] = serializationContextMap().add(&thread, nullptr);
     if (isNewEntry) {
         Ref<IDBSerializationContext> protectedContext = adoptRef(*new IDBSerializationContext(thread));
         iter->value = protectedContext.ptr();
@@ -58,15 +59,15 @@ Ref<IDBSerializationContext> IDBSerializationContext::getOrCreateForCurrentThrea
 
 IDBSerializationContext::~IDBSerializationContext()
 {
-    Locker<Lock> locker(serializationContextMapMutex);
-    ASSERT(this == serializationContextMap(locker).get(&m_thread));
+    Locker locker { serializationContextMapLock };
+    ASSERT(this == serializationContextMap().get(&m_thread));
 
     if (m_vm) {
         JSC::JSLockHolder lock(*m_vm);
         m_globalObject.clear();
         m_vm = nullptr;
     }
-    serializationContextMap(locker).remove(&m_thread);
+    serializationContextMap().remove(&m_thread);
 }
 
 void IDBSerializationContext::initializeVM()

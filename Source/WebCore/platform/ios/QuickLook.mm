@@ -29,11 +29,13 @@
 #if USE(QUICK_LOOK)
 
 #import "ResourceRequest.h"
-#import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/cocoa/NSFileManagerSPI.h>
+#import <wtf/CheckedLock.h>
 #import <wtf/FileSystem.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
+
+#import <pal/ios/QuickLookSoftLink.h>
 
 namespace WebCore {
 
@@ -45,9 +47,9 @@ NSSet *QLPreviewGetSupportedMIMETypesSet()
     return set.get().get();
 }
 
-static Lock qlPreviewConverterDictionaryLock;
+static CheckedLock qlPreviewConverterDictionaryLock;
 
-static NSMutableDictionary *QLPreviewConverterDictionary()
+static NSMutableDictionary *QLPreviewConverterDictionary() WTF_REQUIRES_LOCK(qlPreviewConverterDictionaryLock)
 {
     static NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     return dictionary;
@@ -61,7 +63,7 @@ static NSMutableDictionary *QLContentDictionary()
 
 void removeQLPreviewConverterForURL(NSURL *url)
 {
-    auto locker = holdLock(qlPreviewConverterDictionaryLock);
+    Locker locker { qlPreviewConverterDictionaryLock };
     [QLPreviewConverterDictionary() removeObjectForKey:url];
     [QLContentDictionary() removeObjectForKey:url];
 }
@@ -70,7 +72,7 @@ static void addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSStri
 {
     ASSERT(url);
     ASSERT(converter);
-    auto locker = holdLock(qlPreviewConverterDictionaryLock);
+    Locker locker { qlPreviewConverterDictionaryLock };
     [QLPreviewConverterDictionary() setObject:converter forKey:url];
     [QLContentDictionary() setObject:(fileName ? fileName : @"") forKey:url];
 }

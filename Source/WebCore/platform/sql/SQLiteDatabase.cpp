@@ -36,6 +36,7 @@
 #include <mutex>
 #include <sqlite3.h>
 #include <thread>
+#include <wtf/CheckedLock.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
@@ -71,12 +72,12 @@ static void initializeSQLiteIfNecessary()
     });
 }
 
-static bool isDatabaseOpeningForbidden = false;
-static Lock isDatabaseOpeningForbiddenMutex;
+static CheckedLock isDatabaseOpeningForbiddenLock;
+static bool isDatabaseOpeningForbidden WTF_GUARDED_BY_LOCK(isDatabaseOpeningForbiddenLock) { false };
 
 void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)
 {
-    auto locker = holdLock(isDatabaseOpeningForbiddenMutex);
+    Locker locker { isDatabaseOpeningForbiddenLock };
     isDatabaseOpeningForbidden = isForbidden;
 }
 
@@ -94,7 +95,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     close();
 
     {
-        auto locker = holdLock(isDatabaseOpeningForbiddenMutex);
+        Locker locker { isDatabaseOpeningForbiddenLock };
         if (isDatabaseOpeningForbidden) {
             m_openErrorMessage = "opening database is forbidden";
             return false;

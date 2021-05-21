@@ -53,6 +53,7 @@
 #include "SecurityOrigin.h"
 #include "VoidCallback.h"
 #include "WindowEventLoop.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -152,16 +153,15 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 }
 
 // FIXME: move all guid-related functions to a DatabaseVersionTracker class.
-static Lock guidMutex;
+static CheckedLock guidLock;
 
-static HashMap<DatabaseGUID, String>& guidToVersionMap()
+static HashMap<DatabaseGUID, String>& guidToVersionMap() WTF_REQUIRES_LOCK(guidLock)
 {
     static NeverDestroyed<HashMap<DatabaseGUID, String>> map;
     return map;
 }
 
-// NOTE: Caller must lock guidMutex().
-static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVersion)
+static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVersion) WTF_REQUIRES_LOCK(guidLock)
 {
     // Note: It is not safe to put an empty string into the guidToVersionMap() map.
     // That's because the map is cross-thread, but empty strings are per-thread.
@@ -173,13 +173,13 @@ static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVers
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-static HashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap()
+static HashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap() WTF_REQUIRES_LOCK(guidLock)
 {
     static NeverDestroyed<HashMap<DatabaseGUID, HashSet<Database*>>> map;
     return map;
 }
 
-static inline DatabaseGUID guidForOriginAndName(const String& origin, const String& name)
+static inline DatabaseGUID guidForOriginAndName(const String& origin, const String& name) WTF_REQUIRES_LOCK(guidLock)
 {
     static NeverDestroyed<HashMap<String, DatabaseGUID>> map;
     return map.get().ensure(makeString(origin, '/', name), [] {
@@ -201,7 +201,7 @@ Database::Database(DatabaseContext& context, const String& name, const String& e
     , m_databaseAuthorizer(DatabaseAuthorizer::create(unqualifiedInfoTableName))
 {
     {
-        auto locker = holdLock(guidMutex);
+        Locker locker { guidLock };
 
         m_guid = guidForOriginAndName(securityOrigin().securityOrigin()->toString(), name);
         guidToDatabaseMap().ensure(m_guid, [] {
@@ -348,7 +348,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 
     String currentVersion;
     {
-        auto locker = holdLock(guidMutex);
+        Locker locker { guidLock };
 
         auto entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
@@ -437,7 +437,7 @@ void Database::closeDatabase()
     DatabaseTracker::singleton().removeOpenDatabase(*this);
 
     {
-        auto locker = holdLock(guidMutex);
+        Locker locker { guidLock };
 
         auto it = guidToDatabaseMap().find(m_guid);
         ASSERT(it != guidToDatabaseMap().end());
@@ -495,14 +495,14 @@ void Database::setExpectedVersion(const String& version)
 
 String Database::getCachedVersion() const
 {
-    auto locker = holdLock(guidMutex);
+    Locker locker { guidLock };
 
     return guidToVersionMap().get(m_guid).isolatedCopy();
 }
 
 void Database::setCachedVersion(const String& actualVersion)
 {
-    auto locker = holdLock(guidMutex);
+    Locker locker { guidLock };
 
     updateGUIDVersionMap(m_guid, actualVersion);
 }

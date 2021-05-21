@@ -37,6 +37,7 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -252,8 +253,8 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
     queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(event));
 }
 
-static Lock s_rtcDataChannelLocalMapLock;
-static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap()
+static CheckedLock s_rtcDataChannelLocalMapLock;
+static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap() WTF_REQUIRES_LOCK(s_rtcDataChannelLocalMapLock)
 {
     ASSERT(s_rtcDataChannelLocalMapLock.isHeld());
     static LazyNeverDestroyed<HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>> map;
@@ -279,7 +280,7 @@ std::unique_ptr<DetachedRTCDataChannel> RTCDataChannel::detach()
     m_isDetached = true;
     m_readyState = RTCDataChannelState::Closed;
 
-    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
+    Locker locker { s_rtcDataChannelLocalMapLock };
     rtcDataChannelLocalMap().add(identifier().channelIdentifier, WTFMove(m_handler));
 
     return makeUnique<DetachedRTCDataChannel>(identifier(), label().isolatedCopy(), options(), state);
@@ -290,13 +291,13 @@ void RTCDataChannel::removeFromDataChannelLocalMapIfNeeded()
     if (!m_isDetached)
         return;
 
-    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
+    Locker locker { s_rtcDataChannelLocalMapLock };
     rtcDataChannelLocalMap().remove(identifier().channelIdentifier);
 }
 
 std::unique_ptr<RTCDataChannelHandler> RTCDataChannel::handlerFromIdentifier(RTCDataChannelLocalIdentifier channelIdentifier)
 {
-    auto locker = holdLock(s_rtcDataChannelLocalMapLock);
+    Locker locker { s_rtcDataChannelLocalMapLock };
     return rtcDataChannelLocalMap().take(channelIdentifier);
 }
 
