@@ -74,8 +74,8 @@ public:
     public:
         RTCDecoderIdentifier identifier;
         Type type;
-        void* decodedImageCallback { nullptr };
-        Lock decodedImageCallbackLock;
+        void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
+        CheckedLock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
     };
@@ -100,8 +100,8 @@ public:
         webrtc::VideoCodecType codecType { webrtc::kVideoCodecGeneric };
         Vector<std::pair<String, String>> parameters;
         Optional<EncoderInitializationData> initializationData;
-        void* encodedImageCallback { nullptr };
-        Lock encodedImageCallbackLock;
+        void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
+        CheckedLock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
     };
 

@@ -160,7 +160,7 @@ void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
     }
 
     {
-        auto locker = holdLock(m_callbackLock);
+        Locker locker { m_callbackLock };
         if (m_callback)
             m_callback->isPlayingDidChange();
     }

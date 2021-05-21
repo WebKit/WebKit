@@ -1,3 +1,21 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in cases where we try-lock
+        https://bugs.webkit.org/show_bug.cgi?id=226056
+
+        Reviewed by Alex Christensen.
+
+        Use CheckedLock more in cases where we try-lock to benefit from Clang
+        Thread Safety Analysis.
+
+        * wtf/Logger.cpp:
+        * wtf/Logger.h:
+        (WTF::Logger::addObserver):
+        (WTF::Logger::removeObserver):
+        (WTF::Logger::log):
+        (WTF::Logger::logVerbose):
+        (WTF::Logger::WTF_RETURNS_LOCK):
+
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
         Use CheckedLock more in WTF

@@ -1,3 +1,36 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in cases where we try-lock
+        https://bugs.webkit.org/show_bug.cgi?id=226056
+
+        Reviewed by Alex Christensen.
+
+        Use CheckedLock more in cases where we try-lock to benefit from Clang
+        Thread Safety Analysis.
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::setValueAtTime):
+        (WebCore::AudioParamTimeline::linearRampToValueAtTime):
+        (WebCore::AudioParamTimeline::exponentialRampToValueAtTime):
+        (WebCore::AudioParamTimeline::setTargetAtTime):
+        (WebCore::AudioParamTimeline::setValueCurveAtTime):
+        (WebCore::AudioParamTimeline::cancelScheduledValues):
+        (WebCore::AudioParamTimeline::cancelAndHoldAtTime):
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        (WebCore::AudioParamTimeline::valuesForFrameRange):
+        (WebCore::AudioParamTimeline::hasValues const):
+        * Modules/webaudio/AudioParamTimeline.h:
+        * platform/audio/AudioDestination.h:
+        (WebCore::AudioDestination::WTF_GUARDED_BY_LOCK):
+        (WebCore::AudioDestination::AudioDestination):
+        (WebCore::AudioDestination::clearCallback):
+        (WebCore::AudioDestination::callRenderCallback):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp:
+        (WebCore::AudioMediaStreamTrackRendererUnit::addSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::removeSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::render):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.h:
+
 2021-05-21  Per Arne  <pvollan@apple.com>
 
         Accessibility caption styles does not always reflect the selection

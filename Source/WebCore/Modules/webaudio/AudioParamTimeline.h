@@ -30,7 +30,7 @@
 
 #include "AudioContext.h"
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -189,9 +189,9 @@ private:
         const int eventIndex;
     };
 
-    void removeCancelledEvents(size_t firstEventToRemove);
-    ExceptionOr<void> insertEvent(ParamEvent&&);
-    float valuesForFrameRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate);
+    void removeCancelledEvents(size_t firstEventToRemove) WTF_REQUIRES_LOCK(m_eventsLock);
+    ExceptionOr<void> insertEvent(ParamEvent&&) WTF_REQUIRES_LOCK(m_eventsLock);
+    float valuesForFrameRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, float* values, unsigned numberOfValues, double sampleRate, double controlRate) WTF_REQUIRES_LOCK(m_eventsLock);
     float linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, const float* curveData, size_t curveLength);
@@ -200,14 +200,14 @@ private:
 
     void processLinearRamp(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
     void processExponentialRamp(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
-    void processCancelValues(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
+    void processCancelValues(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex) WTF_REQUIRES_LOCK(m_eventsLock);
     void processSetTarget(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
     void processSetValueCurve(const AutomationState&, float* values, size_t& currentFrame, float& value, unsigned& writeIndex);
-    void processSetTargetFollowedByRamp(int eventIndex, ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value);
+    void processSetTargetFollowedByRamp(int eventIndex, ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value) WTF_REQUIRES_LOCK(m_eventsLock);
 
-    Vector<ParamEvent> m_events;
+    Vector<ParamEvent> m_events WTF_GUARDED_BY_LOCK(m_eventsLock);
 
-    mutable Lock m_eventsLock;
+    mutable CheckedLock m_eventsLock;
 };
 
 } // namespace WebCore

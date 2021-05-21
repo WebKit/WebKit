@@ -270,7 +270,12 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
 
 int32_t LibWebRTCCodecs::releaseDecoder(Decoder& decoder)
 {
-    ASSERT(!decoder.decodedImageCallback);
+#if ASSERT_ENABLED
+    {
+        Locker locker { decoder.decodedImageCallbackLock };
+        ASSERT(!decoder.decodedImageCallback);
+    }
+#endif
     ensureGPUProcessConnectionAndDispatchToThread([this, decoderIdentifier = decoder.identifier] {
         ASSERT(m_decoders.contains(decoderIdentifier));
         if (auto decoder = m_decoders.take(decoderIdentifier)) {
@@ -298,7 +303,7 @@ int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, uint32_t timeStamp, const
 
 void LibWebRTCCodecs::registerDecodeFrameCallback(Decoder& decoder, void* decodedImageCallback)
 {
-    LockHolder holder(decoder.decodedImageCallbackLock);
+    Locker locker { decoder.decodedImageCallbackLock };
     decoder.decodedImageCallback = decodedImageCallback;
 }
 
@@ -319,9 +324,10 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
     if (!decoder)
         return;
 
-    auto locker = tryHoldLock(decoder->decodedImageCallbackLock);
-    if (!locker)
+    if (!decoder->decodedImageCallbackLock.tryLock())
         return;
+
+    Locker locker { AdoptLockTag { }, decoder->decodedImageCallbackLock };
 
     if (!decoder->decodedImageCallback)
         return;
@@ -393,7 +399,12 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
 
 int32_t LibWebRTCCodecs::releaseEncoder(Encoder& encoder)
 {
-    ASSERT(!encoder.encodedImageCallback);
+#if ASSERT_ENABLED
+    {
+        Locker locker { encoder.encodedImageCallbackLock };
+        ASSERT(!encoder.encodedImageCallback);
+    }
+#endif
     ensureGPUProcessConnectionAndDispatchToThread([this, encoderIdentifier = encoder.identifier] {
         ASSERT(m_encoders.contains(encoderIdentifier));
         auto encoder = m_encoders.take(encoderIdentifier);
@@ -454,7 +465,7 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
 
 void LibWebRTCCodecs::registerEncodeFrameCallback(Encoder& encoder, void* encodedImageCallback)
 {
-    LockHolder holder(encoder.encodedImageCallbackLock);
+    Locker locker { encoder.encodedImageCallbackLock };
 
     encoder.encodedImageCallback = encodedImageCallback;
 }
@@ -481,9 +492,10 @@ void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::Da
     if (!encoder)
         return;
 
-    auto locker = tryHoldLock(encoder->encodedImageCallbackLock);
-    if (!locker)
+    if (!encoder->encodedImageCallbackLock.tryLock())
         return;
+
+    Locker locker { AdoptLockTag { }, encoder->encodedImageCallbackLock };
 
     if (!encoder->encodedImageCallback)
         return;

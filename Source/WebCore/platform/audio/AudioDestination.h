@@ -32,6 +32,7 @@
 #include "AudioBus.h"
 #include "AudioIOCallback.h"
 #include <memory>
+#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -77,30 +78,32 @@ public:
 protected:
     explicit AudioDestination(AudioIOCallback&);
 
-    Lock m_callbackLock;
-    AudioIOCallback* m_callback { nullptr };
+    CheckedLock m_callbackLock;
+    AudioIOCallback* m_callback WTF_GUARDED_BY_LOCK(m_callbackLock) { nullptr };
 };
 
 inline AudioDestination::AudioDestination(AudioIOCallback& callback)
 {
-    auto locker = holdLock(m_callbackLock);
+    Locker locker { m_callbackLock };
     m_callback = &callback;
 }
 
 inline void AudioDestination::clearCallback()
 {
-    auto locker = holdLock(m_callbackLock);
+    Locker locker { m_callbackLock };
     m_callback = nullptr;
 }
 
 inline void AudioDestination::callRenderCallback(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess, const AudioIOPosition& outputPosition)
 {
-    auto locker = tryHoldLock(m_callbackLock);
-    if (!locker || !m_callback) {
-        destinationBus->zero();
-        return;
+    if (m_callbackLock.tryLock()) {
+        Locker locker { AdoptLockTag { }, m_callbackLock };
+        if (m_callback) {
+            m_callback->render(sourceBus, destinationBus, framesToProcess, outputPosition);
+            return;
+        }
     }
-    m_callback->render(sourceBus, destinationBus, framesToProcess, outputPosition);
+    destinationBus->zero();
 }
 
 } // namespace WebCore

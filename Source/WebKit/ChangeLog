@@ -1,3 +1,24 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in cases where we try-lock
+        https://bugs.webkit.org/show_bug.cgi?id=226056
+
+        Reviewed by Alex Christensen.
+
+        Use CheckedLock more in cases where we try-lock to benefit from Clang
+        Thread Safety Analysis.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::releaseDecoder):
+        (WebKit::LibWebRTCCodecs::registerDecodeFrameCallback):
+        (WebKit::LibWebRTCCodecs::completedDecoding):
+        (WebKit::LibWebRTCCodecs::releaseEncoder):
+        (WebKit::LibWebRTCCodecs::registerEncodeFrameCallback):
+        (WebKit::LibWebRTCCodecs::completedEncoding):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        (WebKit::LibWebRTCCodecs::Decoder::WTF_GUARDED_BY_LOCK):
+        (WebKit::LibWebRTCCodecs::Encoder::WTF_GUARDED_BY_LOCK):
+
 2021-05-21  Per Arne  <pvollan@apple.com>
 
         Accessibility caption styles does not always reflect the selection

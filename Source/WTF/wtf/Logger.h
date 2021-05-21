@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -112,7 +112,7 @@ struct ConsoleLogValue<Argument, false> {
     }
 };
 
-WTF_EXPORT_PRIVATE extern Lock loggerObserverLock;
+WTF_EXPORT_PRIVATE extern CheckedLock loggerObserverLock;
 
 class Logger : public ThreadSafeRefCounted<Logger> {
     WTF_MAKE_NONCOPYABLE(Logger);
@@ -285,12 +285,12 @@ public:
 
     static inline void addObserver(Observer& observer)
     {
-        auto lock = holdLock(observerLock());
+        Locker locker { observerLock() };
         observers().append(observer);
     }
     static inline void removeObserver(Observer& observer)
     {
-        auto lock = holdLock(observerLock());
+        Locker locker { observerLock() };
         observers().removeFirstMatching([&observer](auto anObserver) {
             return &anObserver.get() == &observer;
         });
@@ -322,10 +322,10 @@ private:
         if (channel.state == WTFLogChannelState::Off || level > channel.level)
             return;
 
-        auto lock = tryHoldLock(observerLock());
-        if (!lock)
+        if (!observerLock().tryLock())
             return;
 
+        Locker locker { AdoptLockTag { }, observerLock() };
         for (Observer& observer : observers())
             observer.didLogMessage(channel, level, { ConsoleLogValue<Argument>::toValue(arguments)... });
     }
@@ -353,17 +353,17 @@ private:
         if (channel.state == WTFLogChannelState::Off || level > channel.level)
             return;
 
-        auto lock = tryHoldLock(observerLock());
-        if (!lock)
+        if (!observerLock().tryLock())
             return;
 
+        Locker locker { AdoptLockTag { }, observerLock() };
         for (Observer& observer : observers())
             observer.didLogMessage(channel, level, { ConsoleLogValue<Argument>::toValue(arguments)... });
     }
 
-    WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& observers();
+    WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& observers() WTF_REQUIRES_LOCK(observerLock());
 
-    static Lock& observerLock()
+    static CheckedLock& observerLock() WTF_RETURNS_LOCK(loggerObserverLock)
     {
         return loggerObserverLock;
     }
