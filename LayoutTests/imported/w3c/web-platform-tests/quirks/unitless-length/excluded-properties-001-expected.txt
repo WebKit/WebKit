@@ -10,10 +10,10 @@ PASS Property column-gap does not support quirky length
 PASS Property column-rule-width does not support quirky length
 PASS Property column-width does not support quirky length
 PASS Property flex-basis does not support quirky length
-FAIL Property grid-auto-columns does not support quirky length assert_equals: expected "567px" but got "1234px"
-FAIL Property grid-auto-rows does not support quirky length assert_equals: expected "567px" but got "1234px"
-FAIL Property grid-template-columns does not support quirky length assert_equals: expected "567px" but got "1234px"
-FAIL Property grid-template-rows does not support quirky length assert_equals: expected "567px" but got "1234px"
+PASS Property grid-auto-columns does not support quirky length
+PASS Property grid-auto-rows does not support quirky length
+PASS Property grid-template-columns does not support quirky length
+PASS Property grid-template-rows does not support quirky length
 PASS Property inline-size does not support quirky length
 PASS Property inset does not support quirky length
 PASS Property inset-block does not support quirky length
