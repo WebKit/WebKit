@@ -1,5 +1,46 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Adopt CheckedLock in ScrollingTree and fix threading bug
+        https://bugs.webkit.org/show_bug.cgi?id=226109
+
+        Reviewed by Darin Adler.
+
+        Adopt CheckedLock in ScrollingTree and fix threading bug found by Clang Thread Safety
+        Analysis. In particular, ThreadedScrollingTree::willStartRenderingUpdate() was failing
+        to grab the lock before updating m_state. m_state definitely get modified from several
+        threads so synchronization is important.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::traverseScrollingTree):
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::applyLayerPositions):
+        (WebCore::ScrollingTree::applyLayerPositionsInternal):
+        (WebCore::ScrollingTree::scrollBySimulatingWheelEventForTesting):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::WTF_RETURNS_LOCK):
+        (WebCore::ScrollingTree::WTF_REQUIRES_LOCK):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::ThreadedScrollingTree):
+        (WebCore::ThreadedScrollingTree::handleWheelEventAfterMainThread):
+        (WebCore::ThreadedScrollingTree::wheelEventWasProcessedByMainThread):
+        (WebCore::ThreadedScrollingTree::willSendEventToMainThread):
+        (WebCore::ThreadedScrollingTree::waitForEventToBeProcessedByMainThread):
+        (WebCore::ThreadedScrollingTree::invalidate):
+        (WebCore::ThreadedScrollingTree::willStartRenderingUpdate):
+        (WebCore::ThreadedScrollingTree::waitForRenderingUpdateCompletionOrTimeout):
+        (WebCore::ThreadedScrollingTree::didCompleteRenderingUpdate):
+        (WebCore::ThreadedScrollingTree::scheduleDelayedRenderingUpdateDetectionTimer):
+        (WebCore::ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired):
+        (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+        * page/scrolling/ThreadedScrollingTree.h:
+        (WebCore::ThreadedScrollingTree::WTF_RETURNS_LOCK):
+        (WebCore::ThreadedScrollingTree::WTF_GUARDED_BY_LOCK):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::createTimer):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Adopt CheckedLock in AudioMediaStreamTrackRendererUnit
         https://bugs.webkit.org/show_bug.cgi?id=226095
 

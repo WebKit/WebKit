@@ -217,7 +217,7 @@ public:
     virtual void willSendEventToMainThread(const PlatformWheelEvent&) { }
     virtual void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&) { };
 
-    Lock& treeMutex() { return m_treeMutex; }
+    CheckedLock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
     void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
@@ -257,18 +257,18 @@ protected:
 
     Optional<FramesPerSecond> nominalFramesPerSecond();
 
-    void applyLayerPositionsInternal();
-    void removeAllNodes();
+    void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
+    void removeAllNodes() WTF_REQUIRES_LOCK(m_treeLock);
 
-    Lock m_treeMutex; // Protects the scrolling tree.
+    CheckedLock m_treeLock; // Protects the scrolling tree.
 
 private:
-    void updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&);
-    virtual void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) { }
+    void updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&) WTF_REQUIRES_LOCK(m_treeLock);
+    virtual void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) WTF_REQUIRES_LOCK(m_treeLock) { }
 
-    void applyLayerPositionsRecursive(ScrollingTreeNode&);
+    void applyLayerPositionsRecursive(ScrollingTreeNode&) WTF_REQUIRES_LOCK(m_treeLock);
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
-    void traverseScrollingTreeRecursive(ScrollingTreeNode&, const VisitorFunction&);
+    void traverseScrollingTreeRecursive(ScrollingTreeNode&, const VisitorFunction&) WTF_REQUIRES_LOCK(m_treeLock);
 
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
 #if ENABLE(WHEEL_EVENT_REGIONS)

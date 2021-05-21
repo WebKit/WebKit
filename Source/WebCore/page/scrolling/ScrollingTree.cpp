@@ -125,7 +125,7 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
 {
     LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree " << this << " handleWheelEvent " << wheelEvent);
 
-    LockHolder locker(m_treeMutex);
+    Locker locker { m_treeLock };
 
     if (isMonitoringWheelEvents())
         receivedWheelEvent(wheelEvent);
@@ -224,7 +224,7 @@ OptionSet<EventListenerRegionType> ScrollingTree::eventListenerRegionTypesForPoi
 
 void ScrollingTree::traverseScrollingTree(VisitorFunction&& visitorFunction)
 {
-    LockHolder locker(m_treeMutex);
+    Locker locker { m_treeLock };
     if (!m_rootNode)
         return;
 
@@ -265,7 +265,7 @@ void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoi
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scrollingStateTree)
 {
     SetForScope<bool> inCommitTreeState(m_inCommitTreeState, true);
-    LockHolder locker(m_treeMutex);
+    Locker locker { m_treeLock };
 
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
 
@@ -417,14 +417,14 @@ void ScrollingTree::applyLayerPositionsAfterCommit()
 void ScrollingTree::applyLayerPositions()
 {
     ASSERT(isMainThread());
-    LockHolder locker(m_treeMutex);
+    Locker locker { m_treeLock };
 
     applyLayerPositionsInternal();
 }
 
 void ScrollingTree::applyLayerPositionsInternal()
 {
-    ASSERT(m_treeMutex.isLocked());
+    ASSERT(m_treeLock.isLocked());
     if (!m_rootNode)
         return;
 
@@ -664,7 +664,7 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
 
 void ScrollingTree::scrollBySimulatingWheelEventForTesting(ScrollingNodeID nodeID, FloatSize delta)
 {
-    LockHolder locker(m_treeMutex);
+    Locker locker { m_treeLock };
 
     auto* node = nodeForID(nodeID);
     if (!is<ScrollingTreeScrollingNode>(node))

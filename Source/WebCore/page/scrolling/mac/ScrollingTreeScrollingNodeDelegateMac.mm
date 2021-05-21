@@ -220,7 +220,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDeltaOnAxis(float s
 std::unique_ptr<ScrollControllerTimer> ScrollingTreeScrollingNodeDelegateMac::createTimer(Function<void()>&& function)
 {
     return WTF::makeUnique<ScrollControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = makeRef(scrollingNode())] {
-        LockHolder locker(protectedNode->scrollingTree().treeMutex());
+        Locker locker { protectedNode->scrollingTree().treeLock() };
         function();
     });
 }
