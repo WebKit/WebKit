@@ -1425,10 +1425,9 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 
     if (!m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk) {
         auto host = m_document->topDocument().url().host();
-        m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = equalLettersIgnoringASCIICase(host, "trailers.apple.com");
-
         auto domain = RegistrableDomain(m_document->topDocument().url());
-        m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk || domain == "espn.com"_s;
+
+        m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = equalLettersIgnoringASCIICase(host, "trailers.apple.com") || domain == "espn.com"_s;
     }
 
     return *m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;

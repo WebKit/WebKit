@@ -1,3 +1,16 @@
+2021-05-21  Peng Liu  <peng.liu6@apple.com>
+
+        Video player enters a bad state after trying to enter picture-in-picture on YouTube.com videos
+        https://bugs.webkit.org/show_bug.cgi?id=226042
+
+        Reviewed by Daniel Bates.
+
+        The quirk `shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull` was
+        always true. This patch fixes that.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk const):
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Replace more static Locks with CheckedLocks in WTF / WebCore
