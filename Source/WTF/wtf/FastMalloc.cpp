@@ -39,8 +39,8 @@
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 #include <wtf/Atomics.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackShot.h>
@@ -376,8 +376,8 @@ private:
         }
     };
 
-    HashMap<void*, std::unique_ptr<MallocSiteData>> m_addressMallocSiteData;
-    Lock m_mutex;
+    CheckedLock m_lock;
+    HashMap<void*, std::unique_ptr<MallocSiteData>> m_addressMallocSiteData WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 MallocCallTracker& MallocCallTracker::singleton()
@@ -408,7 +408,7 @@ void MallocCallTracker::recordMalloc(void* address, size_t allocationSize)
     const size_t stackSize = 10;
     auto siteData = std::make_unique<MallocSiteData>(stackSize, allocationSize);
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_lock };
     auto addResult = m_addressMallocSiteData.add(address, WTFMove(siteData));
     UNUSED_PARAM(addResult);
 }
@@ -417,7 +417,7 @@ void MallocCallTracker::recordRealloc(void* oldAddress, void* newAddress, size_t
 {
     AvoidRecordingScope avoidRecording;
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_lock };
 
     auto it = m_addressMallocSiteData.find(oldAddress);
     if (it == m_addressMallocSiteData.end()) {
@@ -438,7 +438,7 @@ void MallocCallTracker::recordFree(void* address)
 {
     AvoidRecordingScope avoidRecording;
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_lock };
     bool removed = m_addressMallocSiteData.remove(address);
     UNUSED_PARAM(removed);
 }
@@ -448,7 +448,7 @@ void MallocCallTracker::dumpStats()
     AvoidRecordingScope avoidRecording;
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_lock };
 
         // Build a hash of stack to address vector
         struct MallocSiteTotals {

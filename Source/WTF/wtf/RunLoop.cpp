@@ -114,7 +114,7 @@ void RunLoop::performWork()
     bool didSuspendFunctions = false;
 
     {
-        auto locker = holdLock(m_nextIterationLock);
+        Locker locker { m_nextIterationLock };
 
         // If the RunLoop re-enters or re-schedules, we're expected to execute all functions in order.
         while (!m_currentIteration.isEmpty())
@@ -146,7 +146,7 @@ void RunLoop::dispatch(Function<void ()>&& function)
     bool needsWakeup = false;
 
     {
-        auto locker = holdLock(m_nextIterationLock);
+        Locker locker { m_nextIterationLock };
         needsWakeup = m_nextIteration.isEmpty();
         m_nextIteration.append(WTFMove(function));
     }
@@ -180,7 +180,7 @@ void RunLoop::threadWillExit()
 {
     m_currentIteration.clear();
     {
-        auto locker = holdLock(m_nextIterationLock);
+        Locker locker { m_nextIterationLock };
         m_nextIteration.clear();
     }
 }

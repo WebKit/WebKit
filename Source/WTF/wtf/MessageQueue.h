@@ -31,9 +31,9 @@
 
 #include <limits>
 #include <wtf/Assertions.h>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
-#include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 
@@ -78,10 +78,10 @@ namespace WTF {
         bool isEmpty();
 
     private:
-        mutable Lock m_mutex;
-        Condition m_condition;
-        Deque<std::unique_ptr<DataType>> m_queue;
-        bool m_killed;
+        mutable CheckedLock m_lock;
+        CheckedCondition m_condition;
+        Deque<std::unique_ptr<DataType>> m_queue WTF_GUARDED_BY_LOCK(m_lock);
+        bool m_killed WTF_GUARDED_BY_LOCK(m_lock);
     };
 
     template<typename DataType>
@@ -92,7 +92,7 @@ namespace WTF {
     template<typename DataType>
     inline void MessageQueue<DataType>::append(std::unique_ptr<DataType> message)
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         m_queue.append(WTFMove(message));
         m_condition.notifyOne();
     }
@@ -100,7 +100,7 @@ namespace WTF {
     template<typename DataType>
     inline void MessageQueue<DataType>::appendAndKill(std::unique_ptr<DataType> message)
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         m_queue.append(WTFMove(message));
         m_killed = true;
         m_condition.notifyAll();
@@ -110,7 +110,7 @@ namespace WTF {
     template<typename DataType>
     inline bool MessageQueue<DataType>::appendAndCheckEmpty(std::unique_ptr<DataType> message)
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         bool wasEmpty = m_queue.isEmpty();
         m_queue.append(WTFMove(message));
         m_condition.notifyOne();
@@ -120,7 +120,7 @@ namespace WTF {
     template<typename DataType>
     inline void MessageQueue<DataType>::prepend(std::unique_ptr<DataType> message)
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         m_queue.prepend(WTFMove(message));
         m_condition.notifyOne();
     }
@@ -138,7 +138,7 @@ namespace WTF {
     template<typename Predicate>
     inline auto MessageQueue<DataType>::waitForMessageFilteredWithTimeout(MessageQueueWaitResult& result, Predicate&& predicate, Seconds relativeTimeout) -> std::unique_ptr<DataType>
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         bool timedOut = false;
 
         MonotonicTime absoluteTimeout = MonotonicTime::now() + relativeTimeout;
@@ -151,7 +151,7 @@ namespace WTF {
             if (found != m_queue.end())
                 break;
 
-            timedOut = !m_condition.waitUntil(m_mutex, absoluteTimeout);
+            timedOut = !m_condition.waitUntil(m_lock, absoluteTimeout);
         }
 
         ASSERT(!timedOut || absoluteTimeout != MonotonicTime::infinity());
@@ -176,7 +176,7 @@ namespace WTF {
     template<typename DataType>
     inline auto MessageQueue<DataType>::tryGetMessage() -> std::unique_ptr<DataType>
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         if (m_killed)
             return nullptr;
         if (m_queue.isEmpty())
@@ -188,7 +188,7 @@ namespace WTF {
     template<typename DataType>
     inline auto MessageQueue<DataType>::takeAllMessages() -> Deque<std::unique_ptr<DataType>>
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         if (m_killed)
             return { };
         return WTFMove(m_queue);
@@ -197,7 +197,7 @@ namespace WTF {
     template<typename DataType>
     inline auto MessageQueue<DataType>::tryGetMessageIgnoringKilled() -> std::unique_ptr<DataType>
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         if (m_queue.isEmpty())
             return nullptr;
 
@@ -208,7 +208,7 @@ namespace WTF {
     template<typename Predicate>
     inline void MessageQueue<DataType>::removeIf(Predicate&& predicate)
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         while (true) {
             auto found = m_queue.findIf([&predicate](const std::unique_ptr<DataType>& ptr) -> bool {
                 ASSERT(ptr);
@@ -225,7 +225,7 @@ namespace WTF {
     template<typename DataType>
     inline bool MessageQueue<DataType>::isEmpty()
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         if (m_killed)
             return true;
         return m_queue.isEmpty();
@@ -234,7 +234,7 @@ namespace WTF {
     template<typename DataType>
     inline void MessageQueue<DataType>::kill()
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         m_killed = true;
         m_condition.notifyAll();
     }
@@ -242,7 +242,7 @@ namespace WTF {
     template<typename DataType>
     inline bool MessageQueue<DataType>::killed() const
     {
-        LockHolder lock(m_mutex);
+        Locker lock { m_lock };
         return m_killed;
     }
 } // namespace WTF

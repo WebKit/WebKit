@@ -30,8 +30,8 @@
 
 #if ENABLE(THREADING_GENERIC)
 
-#include <wtf/Condition.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 
@@ -65,12 +65,12 @@ public:
         }
 
     private:
+        mutable CheckedLock m_lock;
+        CheckedCondition m_threadCondition;
+
         RefPtr<Thread> m_thread;
         bool m_running { false };
-        ParallelEnvironment* m_parent { nullptr };
-
-        mutable Lock m_mutex;
-        Condition m_threadCondition;
+        ParallelEnvironment* m_parent WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
 
         ThreadFunction m_threadFunction { nullptr };
         void* m_parameters { nullptr };

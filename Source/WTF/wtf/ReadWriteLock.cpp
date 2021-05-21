@@ -32,7 +32,7 @@ namespace WTF {
 
 void ReadWriteLock::readLock()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     while (m_isWriteLocked || m_numWaitingWriters)
         m_cond.wait(m_lock);
     m_numReaders++;
@@ -40,7 +40,7 @@ void ReadWriteLock::readLock()
 
 void ReadWriteLock::readUnlock()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_numReaders--;
     if (!m_numReaders)
         m_cond.notifyAll();
@@ -48,7 +48,7 @@ void ReadWriteLock::readUnlock()
 
 void ReadWriteLock::writeLock()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     while (m_isWriteLocked || m_numReaders) {
         m_numWaitingWriters++;
         m_cond.wait(m_lock);
@@ -59,7 +59,7 @@ void ReadWriteLock::writeLock()
 
 void ReadWriteLock::writeUnlock()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_isWriteLocked = false;
     m_cond.notifyAll();
 }

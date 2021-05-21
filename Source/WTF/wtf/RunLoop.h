@@ -28,6 +28,7 @@
 #pragma once
 
 #include <functional>
+#include <wtf/CheckedLock.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -216,8 +217,8 @@ private:
 
     Deque<Function<void()>> m_currentIteration;
 
-    Lock m_nextIterationLock;
-    Deque<Function<void()>> m_nextIteration;
+    CheckedLock m_nextIterationLock;
+    Deque<Function<void()>> m_nextIteration WTF_GUARDED_BY_LOCK(m_nextIterationLock);
 
     bool m_isFunctionDispatchSuspended { false };
     bool m_hasSuspendedFunctions { false };

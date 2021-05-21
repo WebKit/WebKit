@@ -1,5 +1,61 @@
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
+        Use CheckedLock more in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=226045
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock more in WTF to benefit from Clang Thread Safety Analysis.
+
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::append):
+        (WTF::CrossThreadQueue<DataType>::waitForMessage):
+        (WTF::CrossThreadQueue<DataType>::tryGetMessage):
+        (WTF::CrossThreadQueue<DataType>::kill):
+        (WTF::CrossThreadQueue<DataType>::isKilled const):
+        (WTF::CrossThreadQueue<DataType>::isEmpty const):
+        * wtf/CrossThreadTaskHandler.cpp:
+        (WTF::CrossThreadTaskHandler::postTaskReply):
+        (WTF::CrossThreadTaskHandler::handleTaskRepliesOnMainThread):
+        * wtf/CrossThreadTaskHandler.h:
+        (WTF::CrossThreadTaskHandler::WTF_GUARDED_BY_LOCK):
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/FastMalloc.cpp:
+        (WTF::MallocCallTracker::recordMalloc):
+        (WTF::MallocCallTracker::recordRealloc):
+        (WTF::MallocCallTracker::recordFree):
+        (WTF::MallocCallTracker::dumpStats):
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue<DataType>::append):
+        (WTF::MessageQueue<DataType>::appendAndKill):
+        (WTF::MessageQueue<DataType>::appendAndCheckEmpty):
+        (WTF::MessageQueue<DataType>::prepend):
+        (WTF::MessageQueue<DataType>::waitForMessageFilteredWithTimeout):
+        (WTF::MessageQueue<DataType>::tryGetMessage):
+        (WTF::MessageQueue<DataType>::takeAllMessages):
+        (WTF::MessageQueue<DataType>::tryGetMessageIgnoringKilled):
+        (WTF::MessageQueue<DataType>::removeIf):
+        (WTF::MessageQueue<DataType>::isEmpty):
+        (WTF::MessageQueue<DataType>::kill):
+        (WTF::MessageQueue<DataType>::killed const):
+        * wtf/OSLogPrintStream.cpp:
+        (WTF::OSLogPrintStream::vprintf):
+        * wtf/OSLogPrintStream.h:
+        * wtf/ParallelJobsGeneric.h:
+        (WTF::ParallelEnvironment::ThreadPrivate::WTF_GUARDED_BY_LOCK):
+        * wtf/ParallelVectorIterator.h:
+        (WTF::ParallelVectorIterator::iterate):
+        (WTF::ParallelVectorIterator::WTF_GUARDED_BY_LOCK):
+        * wtf/ReadWriteLock.cpp:
+        (WTF::ReadWriteLock::readLock):
+        (WTF::ReadWriteLock::readUnlock):
+        (WTF::ReadWriteLock::writeLock):
+        (WTF::ReadWriteLock::writeUnlock):
+        * wtf/ReadWriteLock.h:
+        (WTF::ReadWriteLock::WTF_GUARDED_BY_LOCK):
+
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
         Add missing locks in Language.cpp
         https://bugs.webkit.org/show_bug.cgi?id=226059
 

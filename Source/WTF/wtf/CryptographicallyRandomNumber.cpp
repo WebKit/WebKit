@@ -31,7 +31,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 
 #include <mutex>
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OSRandomSource.h>
 
@@ -59,14 +59,14 @@ public:
 
 private:
     inline void addRandomData(unsigned char *data, int length);
-    void stir();
-    void stirIfNeeded();
+    void stir() WTF_REQUIRES_LOCK(m_lock);
+    void stirIfNeeded() WTF_REQUIRES_LOCK(m_lock);
     inline uint8_t getByte();
     inline uint32_t getWord();
 
+    CheckedLock m_lock;
     ARC4Stream m_stream;
     int m_count;
-    Lock m_mutex;
 };
 
 ARC4Stream::ARC4Stream()
@@ -138,7 +138,7 @@ uint32_t ARC4RandomNumberGenerator::getWord()
 
 uint32_t ARC4RandomNumberGenerator::randomNumber()
 {
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_lock };
 
     m_count -= 4;
     stirIfNeeded();
@@ -147,7 +147,7 @@ uint32_t ARC4RandomNumberGenerator::randomNumber()
 
 void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
 {
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_lock };
 
     unsigned char* result = reinterpret_cast<unsigned char*>(buffer);
     stirIfNeeded();
