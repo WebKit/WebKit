@@ -1,3 +1,17 @@
+2021-05-21  Chris Lord  <clord@igalia.com>
+
+        [GTK] REGRESSION: Broken scrolling on element.io with async scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=222265
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix transform order for layer clipping in TextureMapperLayer.
+
+        No new tests.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildren):
+
 2021-05-21  Rob Buis  <rbuis@igalia.com>
 
         Detect invalid InlinePathData in FillInlinePath
