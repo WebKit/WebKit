@@ -1,5 +1,30 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Replace more static Locks with CheckedLocks in WebKit / WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=226093
+
+        Reviewed by Darin Adler.
+
+        Replace more static Locks with CheckedLocks so that we can benefit from Clang Thread Safety Analysis.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+        (WebKit::WebResourceLoadStatisticsStore::resume):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::WTF_REQUIRES_LOCK):
+        (IPC::addAsyncReplyHandler):
+        (IPC::clearAsyncReplyHandlers):
+        (IPC::CompletionHandler<void):
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::streamWithIdentifier):
+        (WebKit::WebSocketStream::networkProcessCrashed):
+        (WebKit::WebSocketStream::WebSocketStream):
+        (WebKit::WebSocketStream::~WebSocketStream):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Use CheckedLock more in cases where we try-lock
         https://bugs.webkit.org/show_bug.cgi?id=226056
 

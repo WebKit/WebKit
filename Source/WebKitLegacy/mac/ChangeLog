@@ -1,3 +1,17 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace more static Locks with CheckedLocks in WebKit / WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=226093
+
+        Reviewed by Darin Adler.
+
+        Replace more static Locks with CheckedLocks so that we can benefit from Clang Thread Safety Analysis.
+
+        * DOM/DOMInternal.mm:
+        (getDOMWrapper):
+        (addDOMWrapper):
+        (removeDOMWrapper):
+
 2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes

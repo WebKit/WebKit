@@ -274,15 +274,10 @@ static HashMap<IPC::Connection::UniqueID, Connection*>& allConnections()
     return map;
 }
 
-static Lock& asyncReplyHandlerMapLock()
+static CheckedLock asyncReplyHandlerMapLock;
+static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap() WTF_REQUIRES_LOCK(asyncReplyHandlerMapLock)
 {
-    static Lock lock;
-    return lock;
-}
-
-static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap(const LockHolder&)
-{
-    ASSERT(asyncReplyHandlerMapLock().isHeld());
+    ASSERT(asyncReplyHandlerMapLock.isHeld());
     static NeverDestroyed<HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>> map;
     return map.get();
 }
@@ -1219,8 +1214,8 @@ uint64_t nextAsyncReplyHandlerID()
 
 void addAsyncReplyHandler(Connection& connection, uint64_t identifier, CompletionHandler<void(Decoder*)>&& completionHandler)
 {
-    LockHolder locker(asyncReplyHandlerMapLock());
-    auto result = asyncReplyHandlerMap(locker).ensure(reinterpret_cast<uintptr_t>(&connection), [] {
+    Locker locker { asyncReplyHandlerMapLock };
+    auto result = asyncReplyHandlerMap().ensure(reinterpret_cast<uintptr_t>(&connection), [] {
         return HashMap<uint64_t, CompletionHandler<void(Decoder*)>>();
     }).iterator->value.add(identifier, WTFMove(completionHandler));
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -1230,8 +1225,8 @@ void clearAsyncReplyHandlers(const Connection& connection)
 {
     HashMap<uint64_t, CompletionHandler<void(Decoder*)>> map;
     {
-        LockHolder locker(asyncReplyHandlerMapLock());
-        map = asyncReplyHandlerMap(locker).take(reinterpret_cast<uintptr_t>(&connection));
+        Locker locker { asyncReplyHandlerMapLock };
+        map = asyncReplyHandlerMap().take(reinterpret_cast<uintptr_t>(&connection));
     }
 
     for (auto& handler : map.values()) {
@@ -1242,8 +1237,8 @@ void clearAsyncReplyHandlers(const Connection& connection)
 
 CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, uint64_t identifier)
 {
-    LockHolder locker(asyncReplyHandlerMapLock());
-    auto& map = asyncReplyHandlerMap(locker);
+    Locker locker { asyncReplyHandlerMapLock };
+    auto& map = asyncReplyHandlerMap();
     auto iterator = map.find(reinterpret_cast<uintptr_t>(&connection));
     if (iterator != map.end()) {
         if (!iterator->value.isValidKey(identifier)) {

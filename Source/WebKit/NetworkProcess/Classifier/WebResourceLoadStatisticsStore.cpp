@@ -60,8 +60,8 @@ namespace WebKit {
 using namespace WebCore;
 
 WebResourceLoadStatisticsStore::State WebResourceLoadStatisticsStore::suspendedState { WebResourceLoadStatisticsStore::State::Running };
-Lock WebResourceLoadStatisticsStore::suspendedStateLock;
-Condition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
+CheckedLock WebResourceLoadStatisticsStore::suspendedStateLock;
+CheckedCondition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
 
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
 {
@@ -349,7 +349,13 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
             return;
         }
 
-        ASSERT(suspendedState != State::Suspended);
+#if ASSERT_ENABLED
+        {
+            Locker stateLocker { suspendedStateLock };
+            ASSERT(suspendedState != State::Suspended);
+        }
+#endif
+
         m_statisticsStore->mergeStatistics(WTFMove(statistics));
         postTaskReply(WTFMove(completionHandler));
         // We can cancel any pending request to process statistics since we're doing it synchronously below.
@@ -1444,7 +1450,7 @@ void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<
 void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& completionHandler)
 {
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
-    Locker<Lock> stateLocker(suspendedStateLock);
+    Locker stateLocker { suspendedStateLock };
     if (suspendedState != State::Running)
         return;
     suspendedState = State::WillSuspend;
@@ -1454,7 +1460,7 @@ void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& complet
         for (auto& databaseStore : ResourceLoadStatisticsDatabaseStore::allStores())
             databaseStore->interrupt();
         
-        Locker<Lock> stateLocker(suspendedStateLock);
+        Locker stateLocker { suspendedStateLock };
         ASSERT(suspendedState != State::Suspended);
 
         if (suspendedState != State::WillSuspend) {
@@ -1473,7 +1479,7 @@ void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& complet
 
 void WebResourceLoadStatisticsStore::resume()
 {
-    Locker<Lock> stateLocker(suspendedStateLock);
+    Locker stateLocker { suspendedStateLock };
     auto previousState = suspendedState;
     suspendedState = State::Running;
     if (previousState == State::Suspended)
