@@ -1,3 +1,40 @@
+2021-05-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Update AudioSession buffer size handling
+        https://bugs.webkit.org/show_bug.cgi?id=225927
+        rdar://76920375
+
+        Reviewed by Jer Noble.
+
+        Previously we only set the audio session buffer size when there was an active
+        MediaSession. This meant that when no audio was being played or captured, the buffer
+        size would be left at whatever size was appropriate for the last MediaSession
+        stopped. This was especially bad when the last MediaSession played WebAudio
+        or captured audio because those require a smaller buffer size than the default,
+        and was made even worse when using the GPU process because it may live for much
+        longer than the last web process that played audio. Fix this by using the low power
+        buffer size when playing audio or when there is no MediaSession at all.
+        
+        Add AudioBufferSize API test.
+
+        * Modules/webaudio/AudioContext.h:
+        Make mediaType() return `None` if the context is suspended or stopped so the media
+        session manager won't set the buffer size for WebAudio.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::updateSessionState): Always use "low power"
+        buffer size when there is no WebAudio or audio capture.
+        (WebCore::MediaSessionManagerCocoa::addSession): Cache supported hardware buffer sizes.
+        (WebCore::MediaSessionManagerCocoa::audioOutputDeviceChanged): Update cached buffer
+        sizes.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::currentAudioBufferSize const): Expose current audio session buffer
+        size for testing.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Use CheckedLock more in cases where we try-lock

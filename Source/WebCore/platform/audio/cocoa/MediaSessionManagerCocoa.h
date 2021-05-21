@@ -117,6 +117,9 @@ private:
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;
+
+    AudioHardwareListener::BufferSizeRange m_supportedAudioHardwareBufferSizes;
+    size_t m_defaultBufferSize;
 };
 
 }

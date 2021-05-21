@@ -894,6 +894,7 @@ enum TreeType {
     readonly attribute boolean supportsAudioSession;
     DOMString audioSessionCategory();
     double preferredAudioBufferSize();
+    double currentAudioBufferSize();
     boolean audioSessionActive();
 
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);

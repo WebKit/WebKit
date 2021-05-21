@@ -5439,6 +5439,15 @@ double Internals::preferredAudioBufferSize() const
     return 0;
 }
 
+double Internals::currentAudioBufferSize() const
+{
+#if USE(AUDIO_SESSION)
+    return AudioSession::sharedSession().bufferSize();
+#endif
+    return 0;
+}
+
+
 bool Internals::audioSessionActive() const
 {
 #if USE(AUDIO_SESSION)

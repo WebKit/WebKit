@@ -120,7 +120,7 @@ private:
     void pageMutedStateDidChange() final;
 
     // PlatformMediaSessionClient
-    PlatformMediaSession::MediaType mediaType() const final { return isSuspended() ? PlatformMediaSession::MediaType::None : PlatformMediaSession::MediaType::WebAudio; }
+    PlatformMediaSession::MediaType mediaType() const final { return isSuspended() || isStopped() ? PlatformMediaSession::MediaType::None : PlatformMediaSession::MediaType::WebAudio; }
     PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::WebAudio; }
     void mayResumePlayback(bool shouldResume) final;
     void suspendPlayback() final;

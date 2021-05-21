@@ -845,6 +845,7 @@ public:
     bool supportsAudioSession() const;
     String audioSessionCategory() const;
     double preferredAudioBufferSize() const;
+    double currentAudioBufferSize() const;
     bool audioSessionActive() const;
 
     void storeRegistrationsOnDisk(DOMPromiseDeferred<void>&&);

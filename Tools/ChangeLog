@@ -1,3 +1,21 @@
+2021-05-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Update AudioSession buffer size handling
+        https://bugs.webkit.org/show_bug.cgi?id=225927
+        rdar://76920375
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        * TestWebKitAPI/Tests/WebKit/audio-buffer-size.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/AudioBufferSize.mm: Added.
+        (TestWebKitAPI::waitForBufferSizeChange):
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm:
+        (TEST_F):
+
 2021-05-21  Sam Sneddon  <gsnedders@apple.com>
 
         Fix Python 3.6+ DeprecationWarnings about unknown escapes
