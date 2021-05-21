@@ -1,3 +1,25 @@
+2021-05-21  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Fix use after move bug in WebXRSession
+        https://bugs.webkit.org/show_bug.cgi?id=226074
+
+        Reviewed by Sergio Villar Senin.
+
+        This patch fixes FrameData usage after move in WebXRSession, a regression from bug 226074.
+        It also removes an unneeded FrameData copy into WebXRFrame.
+
+        Tested by WebXR WPT.
+
+        * Modules/webxr/WebXRFrame.cpp: Use frameData from session instead of holding an extra copy
+        (WebCore::WebXRFrame::populatePose):
+        (WebCore::WebXRFrame::getViewerPose):
+        * Modules/webxr/WebXRFrame.h: Remove setFrameData and m_data.
+        (WebCore::WebXRFrame::setTime):
+        * Modules/webxr/WebXRSession.cpp: Fix usage after move.
+        (WebCore::WebXRSession::onFrame):
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::FrameData::copy const): Add missing members in the copy function.
+
 2021-05-21  Eleni Maria Stea  <estea@igalia.com>
 
         Function paintRenderingResultsToCanvas expects a reference, not a

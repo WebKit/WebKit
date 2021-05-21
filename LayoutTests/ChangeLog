@@ -1,3 +1,14 @@
+2021-05-21  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Fix use after move bug in WebXRSession
+        https://bugs.webkit.org/show_bug.cgi?id=226074
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXR test expectations.
+
+        * platform/wpe/TestExpectations:
+
 2021-05-21  Jonathan Bedard  <jbedard@apple.com>
 
         [LayoutTests] Delete unused imported/blink resources

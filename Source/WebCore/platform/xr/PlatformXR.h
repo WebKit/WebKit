@@ -506,6 +506,7 @@ inline Device::FrameData Device::FrameData::copy() const
     frameData.floorTransform = floorTransform;
     frameData.stageParameters = stageParameters;
     frameData.views = views;
+    frameData.inputSources = inputSources;
     return frameData;
 }
 
