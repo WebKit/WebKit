@@ -32,9 +32,9 @@
 #include "NetworkCacheFileSystem.h"
 #include "NetworkCacheIOChannel.h"
 #include <mutex>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/FileSystem.h>
-#include <wtf/Lock.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
@@ -162,9 +162,9 @@ public:
     const OptionSet<TraverseFlag> flags;
     const TraverseHandler handler;
 
-    Lock activeMutex;
-    Condition activeCondition;
-    unsigned activeCount { 0 };
+    CheckedLock activeLock;
+    CheckedCondition activeCondition;
+    unsigned activeCount WTF_GUARDED_BY_LOCK(activeLock) { 0 };
 };
 
 static String makeCachePath(const String& baseCachePath)
@@ -984,7 +984,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
             if (traverseOperation.flags & TraverseFlag::ShareCount)
                 bodyShareCount = m_blobStorage.shareCount(blobPathForRecordPath(recordPath));
 
-            std::unique_lock<Lock> lock(traverseOperation.activeMutex);
+            Locker lock { traverseOperation.activeLock };
             ++traverseOperation.activeCount;
 
             auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
@@ -1008,20 +1008,22 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
                     traverseOperation.handler(&record, info);
                 }
 
-                auto locker = holdLock(traverseOperation.activeMutex);
+                Locker locker { traverseOperation.activeLock };
                 --traverseOperation.activeCount;
                 traverseOperation.activeCondition.notifyOne();
             });
 
             static const unsigned maximumParallelReadCount = 5;
-            traverseOperation.activeCondition.wait(lock, [&traverseOperation] {
+            traverseOperation.activeCondition.wait(traverseOperation.activeLock, [&traverseOperation] {
+                assertIsHeld(traverseOperation.activeLock);
                 return traverseOperation.activeCount <= maximumParallelReadCount;
             });
         });
         {
             // Wait for all reads to finish.
-            std::unique_lock<Lock> lock(traverseOperation.activeMutex);
-            traverseOperation.activeCondition.wait(lock, [&traverseOperation] {
+            Locker locker { traverseOperation.activeLock };
+            traverseOperation.activeCondition.wait(traverseOperation.activeLock, [&traverseOperation] {
+                assertIsHeld(traverseOperation.activeLock);
                 return !traverseOperation.activeCount;
             });
         }
