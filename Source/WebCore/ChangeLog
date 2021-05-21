@@ -1,5 +1,16 @@
 2021-05-21  Eleni Maria Stea  <estea@igalia.com>
 
+        Function paintRenderingResultsToCanvas expects a reference, not a
+        pointer. Fixed the compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=226073
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp:
+        (Nicosia::GCGLLayer::swapBuffersIfNeeded):
+
+2021-05-21  Eleni Maria Stea  <estea@igalia.com>
+
         Fixed unreached end of function compiler warning in DataURLDecoder.
         https://bugs.webkit.org/show_bug.cgi?id=226079
 
