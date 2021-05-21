@@ -1,3 +1,14 @@
+2021-05-21  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Unskip type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=226011
+
+        Unreviewed gardening.
+
+        Appears to no longer be flaky.
+
+        * stress/type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value.js:
+
 2021-05-20  Saam Barati  <sbarati@apple.com>
 
         [ Catalina Release JSC] A large number of JSC test appear to be flaky failing
