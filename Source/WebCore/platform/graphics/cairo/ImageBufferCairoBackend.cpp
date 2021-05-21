@@ -99,6 +99,8 @@ void ImageBufferCairoBackend::transformColorSpace(DestinationColorSpace srcColor
         || (destColorSpace != DestinationColorSpace::LinearSRGB && destColorSpace != DestinationColorSpace::SRGB))
         return;
 
+    m_parameters.colorSpace = destColorSpace;
+
     if (destColorSpace == DestinationColorSpace::LinearSRGB) {
         static const std::array<uint8_t, 256> linearRgbLUT = [] {
             std::array<uint8_t, 256> array;

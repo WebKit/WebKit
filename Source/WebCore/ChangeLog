@@ -1,3 +1,40 @@
+2021-05-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        ASSERTION FAILED: m_imageBufferResult->colorSpace() == m_resultColorSpace in FilterEffect::copyPremultipliedResult
+        https://bugs.webkit.org/show_bug.cgi?id=225907
+
+        Reviewed by Said Abou-Hallawa.
+
+        FilterEffect::copyPremultipliedResult has the assertion ensuring
+        m_imageBufferResult->colorSpace() matches m_resultColorSpace.
+        However, it happened to fail in !USE(CG) ports.
+
+        FilterEffect::transformResultColorSpace does nothing if USE(CG),
+        but it calls ImageBuffer::transformColorSpace otherwise.
+
+        ImageBuffer::colorSpace() and ImageBufferBackend::colorSpace()
+        returned the old color space after ImageBuffer::transformColorSpace.
+        They should return the new color space.
+
+        After fixing the above problem, an assertion in
+        WebCore::convertImagePixels was going to fail. It asserts no color
+        space conversion happens.
+
+        FEColorMatrix, FEDropShadow and
+        ImageBufferBackend::convertToLuminanceMask were explicitly
+        specifying DestinationColorSpace::SRGB to getPixelBuffer. They
+        shouldn't convert the color space.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::convertToLuminanceMask):
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        (WebCore::ImageBufferCairoBackend::transformColorSpace):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::platformApplySoftware):
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::platformApplySoftware):
+
 2021-05-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Update AudioSession buffer size handling

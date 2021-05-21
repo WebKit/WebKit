@@ -70,7 +70,7 @@ void ImageBufferBackend::drawConsuming(GraphicsContext& destinationContext, cons
 
 void ImageBufferBackend::convertToLuminanceMask()
 {
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace() };
     auto pixelBuffer = getPixelBuffer(format, logicalRect());
     if (!pixelBuffer)
         return;

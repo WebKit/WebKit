@@ -200,6 +200,7 @@ protected:
         if (auto* backend = ensureBackendCreated()) {
             flushDrawingContext();
             backend->transformColorSpace(srcColorSpace, destColorSpace);
+            m_parameters.colorSpace = destColorSpace;
         }
     }
 
