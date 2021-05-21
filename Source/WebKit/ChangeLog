@@ -1,3 +1,17 @@
+2021-05-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] <select> options are unnecessarily truncated
+        https://bugs.webkit.org/show_bug.cgi?id=226048
+        <rdar://problem/76008154>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker createMenu]):
+
+        UIMenu's currently limit action titles to two lines. Use SPI to remove
+        the limit and avoid unnecessary truncation.
+
 2021-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r277606.
