@@ -52,6 +52,12 @@ TEST(WKWebView, LoadSimulatedRequestUsingResponseHTMLString)
 
     [webView loadSimulatedRequest:loadRequest responseHTMLString:htmlString];
     [delegate waitForDidFinishNavigation];
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME(223658): Remove this once adopters have moved to the final API.
+    [webView loadSimulatedRequest:loadRequest withResponseHTMLString:htmlString];
+ALLOW_DEPRECATED_DECLARATIONS_END
+    [delegate waitForDidFinishNavigation];
 }
 
 TEST(WKWebView, LoadSimulatedRequestUsingResponseData)
@@ -67,6 +73,12 @@ TEST(WKWebView, LoadSimulatedRequestUsingResponseData)
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:exampleURL MIMEType:@"text/HTML" expectedContentLength:[data length] textEncodingName:@"UTF-8"]);
 
     [webView loadSimulatedRequest:loadRequest response:response.get() responseData:data];
+    [delegate waitForDidFinishNavigation];
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME(223658): Remove this once adopters have moved to the final API.
+    [webView loadSimulatedRequest:loadRequest withResponse:response.get() responseData:data];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [delegate waitForDidFinishNavigation];
 }
 

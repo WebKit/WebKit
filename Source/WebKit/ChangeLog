@@ -1,3 +1,16 @@
+2021-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r277606.
+        rdar://78283324
+
+        Need to wait for more projects to migrate to new API.
+
+        Reverted changeset:
+
+        "[Cocoa] Remove prototype loadSimulatedRequest methods"
+        https://bugs.webkit.org/show_bug.cgi?id=223658
+        https://commits.webkit.org/r277606
+
 2021-05-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Mark ServiceWorkerThreadProxy with a default app-bound value
