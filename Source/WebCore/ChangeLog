@@ -1,3 +1,22 @@
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Add missing lock in AXIsolatedTree::treeForID()
+        https://bugs.webkit.org/show_bug.cgi?id=226060
+        <rdar://problem/78287227>
+
+        Reviewed by Alex Christensen.
+
+        Add missing lock in AXIsolatedTree::treeForID(). This was found via Clang Thread Safety
+        Analysis. This was the only call site that was failing to grab the s_cacheLock before
+        calling treeIDCache().
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::treeForID):
+        (WebCore::AXIsolatedTree::create):
+        (WebCore::AXIsolatedTree::removeTreeForPageID):
+        (WebCore::AXIsolatedTree::treeForPageID):
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
 2021-05-20  Chris Lord  <clord@igalia.com>
 
         [WPE] Spatial navigation tests fail with async overflow scrolling enabled

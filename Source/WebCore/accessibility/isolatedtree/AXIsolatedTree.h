@@ -29,6 +29,7 @@
 
 #include "AccessibilityObjectInterface.h"
 #include "PageIdentifier.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -373,8 +374,9 @@ private:
     AXIsolatedTree(AXObjectCache*);
     void clear();
 
-    static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache();
-    static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache();
+    static CheckedLock s_cacheLock;
+    static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache() WTF_REQUIRES_LOCK(s_cacheLock);
+    static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
     // Call on main thread
     Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper);

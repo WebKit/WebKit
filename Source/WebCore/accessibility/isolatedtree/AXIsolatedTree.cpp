@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static Lock s_cacheLock;
+CheckedLock AXIsolatedTree::s_cacheLock;
 
 static unsigned newTreeID()
 {
@@ -84,6 +84,7 @@ void AXIsolatedTree::clear()
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
 {
     AXTRACE("AXIsolatedTree::treeForID");
+    Locker locker { s_cacheLock };
     return treeIDCache().get(treeID);
 }
 
@@ -107,7 +108,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
     // Now that the tree is ready to take client requests, add it to the tree
     // maps so that it can be found.
     auto pageID = axObjectCache->pageID();
-    LockHolder locker(s_cacheLock);
+    Locker locker { s_cacheLock };
     ASSERT(!treePageCache().contains(*pageID));
     treePageCache().set(*pageID, tree.copyRef());
     treeIDCache().set(tree->treeID(), tree.copyRef());
@@ -119,7 +120,7 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 {
     AXTRACE("AXIsolatedTree::removeTreeForPageID");
     ASSERT(isMainThread());
-    LockHolder locker(s_cacheLock);
+    Locker locker { s_cacheLock };
 
     if (auto tree = treePageCache().take(pageID)) {
         tree->clear();
@@ -129,7 +130,7 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 {
-    LockHolder locker(s_cacheLock);
+    Locker locker { s_cacheLock };
 
     if (auto tree = treePageCache().get(pageID))
         return makeRefPtr(tree);
