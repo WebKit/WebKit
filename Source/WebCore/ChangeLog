@@ -1,3 +1,45 @@
+2021-05-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        FrameLoader::loadURL, FrameLoader::loadPostRequest not attributing requests as app bound
+        https://bugs.webkit.org/show_bug.cgi?id=225923
+        <rdar://problem/78160933>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/in-app-browser-privacy/app-bound-attribution-load-url.html
+               http/tests/in-app-browser-privacy/app-bound-attribution-ping-load.html
+               http/tests/in-app-browser-privacy/app-bound-attribution-post-request.html
+
+        Update FrameLoader::addExtraFieldsToRequest to add the app-bound
+        value to a request, like for loadURL, loadPostRequest, or ping loads.
+        Change the name to reflect this use case, which updates the request
+        but does not add any extra header fields.
+
+        Other cases are already covered in WebLoaderStrategy::loadResource.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        The main navigation uses the old document loader, so we don't want to
+        set the app-bound value based on that. The request should have the
+        correct value already from the UIProcess.
+        (WebCore::FrameLoader::updateRequestAndAddExtraFields):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        We can remove setting the app bound value here now that we set the value in
+        addExtraFieldsToRequest.
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Deleted.
+        * loader/FrameLoader.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
 2021-05-21  Youenn Fablet  <youenn@apple.com>
 
         Add some logging for the 'FetchEvent is destroyed' case

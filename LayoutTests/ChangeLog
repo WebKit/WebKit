@@ -1,3 +1,23 @@
+2021-05-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        FrameLoader::loadURL, FrameLoader::loadPostRequest not attributing requests as app bound
+        https://bugs.webkit.org/show_bug.cgi?id=225923
+        <rdar://problem/78160933>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/in-app-browser-privacy/app-bound-attribution-load-url-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-load-url.html: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-ping-load-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-ping-load.html: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-post-request-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-post-request.html: Added.
+        * http/tests/in-app-browser-privacy/resources/post.py: Added.
+        * http/tests/navigation/resources/check-ping-app-bound-data.py: Added.
+        * platform/ios-wk2/TestExpectations:
+        These tests rely on internal additions, so I will skip it here and
+        unskip in the future.
+
 2021-05-21  Imanol Fernandez  <ifernandez@igalia.com>
 
         Fix use after move bug in WebXRSession

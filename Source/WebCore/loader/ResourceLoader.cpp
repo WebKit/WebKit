@@ -156,7 +156,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
     }
 
     // The various plug-in implementations call directly to ResourceLoader::load() instead of piping requests
-    // through FrameLoader. As a result, they miss the FrameLoader::addExtraFieldsToRequest() step which sets
+    // through FrameLoader. As a result, they miss the FrameLoader::updateRequestAndAddExtraFields() step which sets
     // up the 1st party for cookies URL and Same-Site info. Until plug-in implementations can be reigned in
     // to pipe through that method, we need to make sure there is always both a 1st party for cookies set and
     // Same-Site info. See <https://bugs.webkit.org/show_bug.cgi?id=26391>.
