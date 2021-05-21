@@ -1,5 +1,23 @@
 2021-05-20  Chris Dumez  <cdumez@apple.com>
 
+        Fix locking in PlatformCALayer
+        https://bugs.webkit.org/show_bug.cgi?id=226062
+
+        Reviewed by Tim Horton.
+
+        Fix locking issue in PlatformCALayer found by Clang Thread Safety Analysis.
+        We were locking before querying layerToPlatformLayerMap(), but failing to
+        do so when adding or removing from layerToPlatformLayerMap().
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::WTF_REQUIRES_LOCK):
+        (WebCore::PlatformCALayer::platformCALayerForLayer):
+        (WebCore::PlatformCALayerCocoa::commonInit):
+        (WebCore::PlatformCALayerCocoa::~PlatformCALayerCocoa):
+        (WebCore::layerToPlatformLayerMap): Deleted.
+
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
         Add missing lock in AXIsolatedTree::treeForID()
         https://bugs.webkit.org/show_bug.cgi?id=226060
         <rdar://problem/78287227>
