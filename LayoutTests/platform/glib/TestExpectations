@@ -268,6 +268,10 @@ imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-rep
 # CSS color. Passing after WPT re-import in r277077.
 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ Pass ]
 
+# Conic gradient. Marked as failure in root expectations
+webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ Pass ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2413,9 +2417,6 @@ webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-r
 
 # Failing since r277493.
 webkit.org/b/225904 imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html [ Failure ]
-
-# Failing since added in r277547.
-webkit.org/b/225916 fast/canvas/canvas-conic-gradient-angle.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 

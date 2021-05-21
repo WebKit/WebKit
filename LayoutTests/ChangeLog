@@ -1,3 +1,12 @@
+2021-05-21  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] fast/canvas/canvas-conic-gradient-angle.html is failing since added in r277547
+        https://bugs.webkit.org/show_bug.cgi?id=225916
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/glib/TestExpectations: Unskip and mark as passing to override root dir.
+
 2021-05-21  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC][Quirks] Use box-sizing: border-box when computing cell height
