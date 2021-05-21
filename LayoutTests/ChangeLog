@@ -1,3 +1,95 @@
+2021-05-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Delete unused LayoutTests/svg resources
+        https://bugs.webkit.org/show_bug.cgi?id=226057
+        <rdar://problem/78284735>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * svg/W3C-SVG-1.1/resources/SVG-1.1-monolithic-fixed.dtd: Removed.
+        * svg/W3C-SVG-1.1/resources/SVGImageTest.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/animation-extRef-image1.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/animation-extRef-image2.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/animation-extRef-image3.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/bullet-small.png: Removed.
+        * svg/W3C-SVG-1.1/resources/bullet-white.png: Removed.
+        * svg/W3C-SVG-1.1/resources/bullet.png: Removed.
+        * svg/W3C-SVG-1.1/resources/bumpMap.png: Removed.
+        * svg/W3C-SVG-1.1/resources/coords-units-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/coords-units-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/diagarrow.png: Removed.
+        * svg/W3C-SVG-1.1/resources/fillChangeColor.ICM: Removed.
+        * svg/W3C-SVG-1.1/resources/filters-composite-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/gam030b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam045b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam056b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam100b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam200b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/greentopbutton.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/image1.png: Removed.
+        * svg/W3C-SVG-1.1/resources/image1_b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/image2_b.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/image2_b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/leftarrow.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-1st.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-2nd.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-3rd.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-4th.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-start.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-03-f-1st.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-03-f-start.png: Removed.
+        * svg/W3C-SVG-1.1/resources/makealpha.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/myimage.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_bullet.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_down.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_downleft.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_downright.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_frame.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_left.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_noframe.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_right.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_svg.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_up.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_upleft.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_upright.png: Removed.
+        * svg/W3C-SVG-1.1/resources/old-name-2-new-name1.html: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-02-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-02-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-03-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-04-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-04-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/plant.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/rects_b.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/rightarrow.png: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-b.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-b.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/struct-frag-01-B.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/struct-image-02.png: Removed.
+        * svg/W3C-SVG-1.1/resources/svgRef4.css: Removed.
+        * svg/W3C-SVG-1.1/resources/svgRef4.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-align-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-align-03-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-tref-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-ws-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/toc-sv.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/toc-svcmp.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/uparrow.png: Removed.
+        * svg/as-image/resources/circle-nosize.svg: Removed.
+        * svg/custom/resources/object-sizing-height-50p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-50p-height-50p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-50p-height-75p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-50p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-75p-height-50p.svg: Removed.
+        * svg/dom/SVGScriptElement/resources/script-load2.js: Removed.
+        * svg/dom/SVGScriptElement/resources/script-load3.js: Removed.
+        * svg/dom/SVGScriptElement/resources/script-load4.js: Removed.
+
 2021-05-21  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
