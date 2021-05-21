@@ -1,5 +1,22 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        [Cocoa] Unable to upload files that are stored in the cloud (without a local copy)
+        https://bugs.webkit.org/show_bug.cgi?id=226090
+        <rdar://77775887>
+
+        Reviewed by Darin Adler.
+
+        Add FileSystem API to allow/disallow the materializing of dataless files stored
+        in the cloud, at process or thread level.
+
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::toIOPolicyScope):
+        (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+        (WTF::FileSystemImpl::allowsMaterializingDatalessFiles):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Replace more static Locks with CheckedLocks in WTF / WebCore
         https://bugs.webkit.org/show_bug.cgi?id=226040
 

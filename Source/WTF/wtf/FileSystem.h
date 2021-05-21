@@ -196,6 +196,11 @@ WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix);
+
+// Allow reading cloud files with no local copy.
+enum class PolicyScope : uint8_t { Process, Thread };
+WTF_EXPORT_PRIVATE bool setAllowsMaterializingDatalessFiles(bool, PolicyScope);
+WTF_EXPORT_PRIVATE Optional<bool> allowsMaterializingDatalessFiles(PolicyScope);
 #endif
 
 WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
