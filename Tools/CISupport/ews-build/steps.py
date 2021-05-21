@@ -369,7 +369,7 @@ class AnalyzePatch(buildstep.BuildStep):
         log.addStdout(message)
 
     def getResultSummary(self):
-        if self.results == FAILURE:
+        if self.results in [FAILURE, SKIPPED]:
             return {'step': 'Patch doesn\'t have relevant changes'}
         if self.results == SUCCESS:
             return {'step': 'Patch contains relevant changes'}
@@ -483,6 +483,10 @@ class FindModifiedLayoutTests(AnalyzePatch):
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
 
+    def __init__(self, skipBuildIfNoResult=True):
+        self.skipBuildIfNoResult = skipBuildIfNoResult
+        buildstep.BuildStep.__init__(self)
+
     def find_test_names_from_patch(self, patch):
         tests = []
         for line in patch.splitlines():
@@ -511,9 +515,10 @@ class FindModifiedLayoutTests(AnalyzePatch):
             return None
 
         self._addToLog('stdio', 'This patch does not modify any layout tests')
-        self.finished(FAILURE)
-        self.build.results = SKIPPED
-        self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+        self.finished(SKIPPED)
+        if self.skipBuildIfNoResult:
+            self.build.results = SKIPPED
+            self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
         return None
 
 
@@ -2288,12 +2293,15 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     name = 'run-layout-tests-in-stress-mode'
     suffix = 'stress-mode'
     EXIT_AFTER_FAILURES = '10'
-    NUM_ITERATIONS = 100
+
+    def __init__(self, num_iterations=100):
+        self.num_iterations = num_iterations
+        super(RunWebKitTestsInStressMode, self).__init__()
 
     def setLayoutTestCommand(self):
         RunWebKitTests.setLayoutTestCommand(self)
 
-        self.setCommand(self.command + ['--iterations', self.NUM_ITERATIONS])
+        self.setCommand(self.command + ['--iterations', self.num_iterations])
         modified_tests = self.getProperty('modified_tests')
         if modified_tests:
             self.setCommand(self.command + modified_tests)
@@ -2313,6 +2321,9 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
                 ExtractTestResults(identifier=self.suffix),
             ])
         return rc
+
+    def doStepIf(self, step):
+        return self.getProperty('modified_tests', False)
 
 
 class RunWebKitTestsInStressGuardmallocMode(RunWebKitTestsInStressMode):

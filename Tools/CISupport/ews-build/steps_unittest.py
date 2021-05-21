@@ -1934,6 +1934,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -1943,7 +1944,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
         )
@@ -1954,6 +1955,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -1963,7 +1965,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
@@ -1992,6 +1994,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2001,7 +2004,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
         )
@@ -2012,6 +2015,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2021,7 +2025,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
@@ -2822,7 +2826,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         for dir_name in dir_names:
             FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/{}/test-name.html'.format(dir_name).encode('utf-8')
-            self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
             rc = self.runStep()
             self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
@@ -2832,7 +2836,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         suffixes = ['-expected', '-expected-mismatch', '-ref', '-notref']
         for suffix in suffixes:
             FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/http/tests/events/device-motion-{}.html'.format(suffix).encode('utf-8')
-            self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
             rc = self.runStep()
             self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
@@ -2840,7 +2844,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_ignore_non_layout_test_in_html_directory(self):
         self.setupStep(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/html/test.txt'.encode('utf-8')
-        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+        self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
@@ -2848,7 +2852,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_non_relevant_patch(self):
         self.setupStep(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: b'Sample patch which does not modify any layout test'
-        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+        self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
         return rc

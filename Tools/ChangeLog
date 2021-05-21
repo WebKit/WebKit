@@ -1,3 +1,22 @@
+2021-05-21  Aakash Jain  <aakash_jain@apple.com>
+
+        Run layout tests in stress mode for 10 iterations on regular EWS layout-test queues
+        https://bugs.webkit.org/show_bug.cgi?id=226097
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/factories.py:
+        * CISupport/ews-build/factories_unittest.py:
+        * CISupport/ews-build/steps.py:
+        (AnalyzePatch.getResultSummary):
+        (FindModifiedLayoutTests.__init__):
+        (FindModifiedLayoutTests.start):
+        (RunWebKitTestsInStressMode):
+        (RunWebKitTestsInStressMode.__init__):
+        (RunWebKitTestsInStressMode.setLayoutTestCommand):
+        (RunWebKitTestsInStressMode.doStepIf):
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-05-21  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Update AudioSession buffer size handling
