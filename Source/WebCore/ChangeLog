@@ -1,3 +1,18 @@
+2021-05-21  Rob Buis  <rbuis@igalia.com>
+
+        Detect invalid InlinePathData in FillInlinePath
+        https://bugs.webkit.org/show_bug.cgi?id=225693
+
+        Reviewed by Ryosuke Niwa.
+
+        Detect invalid InlinePathData in FillInlinePath.
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::InlinePathDataStorage::InlinePathDataStorage):
+        (WebCore::DisplayList::InlinePathDataStorage::isValid const):
+        (WebCore::DisplayList::FillInlinePath::FillInlinePath):
+        (WebCore::DisplayList::FillInlinePath::path const): Deleted.
+
 2021-05-21  Sam Sneddon  <gsnedders@apple.com>
 
         Fix Python 3.6+ DeprecationWarnings about unknown escapes
