@@ -1,3 +1,16 @@
+2021-05-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Expand IOKit method filters to cover items encountered during testing
+        https://bugs.webkit.org/show_bug.cgi?id=226106
+        <rdar://problem/78327511>
+
+        Reviewed by Per Arne Vollan.
+
+        Allow additional IOKit methods based on testing results and the method values we hit during normal operations.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Adopt CheckedLock in RemoteImageBufferProxy
