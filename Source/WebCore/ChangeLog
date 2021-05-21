@@ -1,3 +1,27 @@
+2021-05-21  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
+        https://bugs.webkit.org/show_bug.cgi?id=226069
+        <rdar://78004793>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac-bigsur/media/media-source/media-vorbis-partial.html
+
+        When parsing samples from a WebM file, the samples emitted by the parser can be very short in
+        duration, which is ineffecient both in storage costs in our SampleMap, as well as in decoding
+        CPU costs, as each sample must be fed into the decoder separately. So the parser will group
+        together these small samples into a larger "meta sample" with a duration no shorter than 2s.
+
+        However, at the end of a file, no more sample data will be appended, up to 2s of audio data
+        will not be emitted from the parser.
+
+        At the end of an append, always flush audio track data to ensure that all parsed samples are
+        emitted, regardless of their collective duration.
+
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::appendData):
+
 2021-05-21  Kate Cheney  <katherine_cheney@apple.com>
 
         FrameLoader::loadURL, FrameLoader::loadPostRequest not attributing requests as app bound

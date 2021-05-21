@@ -1,3 +1,16 @@
+2021-05-21  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
+        https://bugs.webkit.org/show_bug.cgi?id=226069
+        <rdar://78004793>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-bigsur/media/media-source/content/test-vorbis-manifest.json: Added.
+        * platform/mac-bigsur/media/media-source/content/test-vorbis.webm: Added.
+        * platform/mac-bigsur/media/media-source/media-vorbis-partial-expected.txt: Added.
+        * platform/mac-bigsur/media/media-source/media-vorbis-partial.html: Added.
+
 2021-05-21  Kate Cheney  <katherine_cheney@apple.com>
 
         FrameLoader::loadURL, FrameLoader::loadPostRequest not attributing requests as app bound
