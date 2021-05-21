@@ -30,6 +30,7 @@
 
 #include "JIT.h"
 #include "VMInlines.h"
+#include <wtf/CompilationThread.h>
 
 namespace JSC {
 
@@ -148,8 +149,19 @@ private:
         return WorkResult::Continue;
     }
 
+    void threadDidStart() final
+    {
+        m_compilationScope = makeUnique<CompilationScope>();
+    }
+    
+    void threadIsStopping(const AbstractLocker&) final
+    {
+        m_compilationScope = nullptr;
+    }
+
     JITWorklist& m_worklist;
     Plans m_myPlans;
+    std::unique_ptr<CompilationScope> m_compilationScope;
 };
 
 JITWorklist::JITWorklist()

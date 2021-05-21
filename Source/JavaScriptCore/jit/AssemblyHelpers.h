@@ -1828,6 +1828,7 @@ public:
         functor(TypeofType::Undefined, true);
     }
     
+    Call emitUnlinkedVirtualCall(JSGlobalObject*, CallLinkInfo*);
     void emitVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
     
     void makeSpaceOnStackForCCall();

@@ -476,7 +476,6 @@ void LinkBuffer::performFinalization()
         task->run(*this);
 
 #ifndef NDEBUG
-    ASSERT(m_isJumpIsland || !isCompilationThread());
     ASSERT(!m_completed);
     ASSERT(isValid());
     m_completed = true;

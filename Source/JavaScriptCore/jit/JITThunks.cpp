@@ -314,6 +314,14 @@ void JITThunks::preinitializeExtraCTIThunks(VM& vm)
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(create_async_generator);
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(new_generator);
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(pow);
+    INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(mod);
+
+    ctiSlowPathFunctionStub(vm, iterator_open_try_fast_narrow);
+    ctiSlowPathFunctionStub(vm, iterator_open_try_fast_wide16);
+    ctiSlowPathFunctionStub(vm, iterator_open_try_fast_wide32);
+    ctiSlowPathFunctionStub(vm, iterator_next_try_fast_narrow);
+    ctiSlowPathFunctionStub(vm, iterator_next_try_fast_wide16);
+    ctiSlowPathFunctionStub(vm, iterator_next_try_fast_wide32);
 
     // From the BaselineJIT DEFINE_SLOWCASE_SLOW_OP list:
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(unsigned);
@@ -369,6 +377,9 @@ void JITThunks::preinitializeExtraCTIThunks(VM& vm)
     ctiStub(vm, JIT::op_enter_handlerGenerator);
     ctiStub(vm, JIT::op_ret_handlerGenerator);
     ctiStub(vm, JIT::op_throw_handlerGenerator);
+
+    ctiStub(vm, linkCallThunkGenerator);
+    ctiStub(vm, arityFixupGenerator);
 }
 
 #endif // ENABLE(EXTRA_CTI_THUNKS)

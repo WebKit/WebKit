@@ -643,11 +643,16 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 #endif
 }
 
-void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
+AssemblyHelpers::Call AssemblyHelpers::emitUnlinkedVirtualCall(JSGlobalObject* globalObject, CallLinkInfo* info)
 {
     move(TrustedImmPtr(info), GPRInfo::regT2);
     move(TrustedImmPtr(globalObject), GPRInfo::regT3);
-    Call call = nearCall();
+    return nearCall();
+}
+
+void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
+{
+    Call call = emitUnlinkedVirtualCall(globalObject, info);
     addLinkTask(
         [=, &vm] (LinkBuffer& linkBuffer) {
             MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, *info);

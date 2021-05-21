@@ -977,11 +977,6 @@ void JIT::link()
         patchBuffer, JSEntryPtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::BaselineJIT)).data());
     
-    {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
-    }
-
     MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
     m_jitCode = adoptRef(*new DirectJITCode(result, withArityCheck, JITType::BaselineJIT));
 
@@ -995,6 +990,20 @@ CompilationResult JIT::finalizeOnMainThread()
 
     if (!m_jitCode)
         return CompilationFailed;
+
+    for (auto pair : m_virtualCalls) {
+        auto callLocation = m_linkBuffer->locationOfNearCall<JITThunkPtrTag>(pair.first);
+
+        CallLinkInfo& info = pair.second;
+        MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(*m_vm, info);
+        info.setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, *m_vm));
+        MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
+    }
+
+    {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
+    }
 
     for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
         HandlerInfo& handler = m_codeBlock->exceptionHandler(i);

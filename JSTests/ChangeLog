@@ -1,3 +1,13 @@
+2021-05-20  Saam Barati  <sbarati@apple.com>
+
+        [ Catalina Release JSC] A large number of JSC test appear to be flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=225998
+        <rdar://problem/78235001>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dont-link-virtual-calls-on-compiler-thread.js: Added.
+
 2021-05-19  Robin Morisset  <rmorisset@apple.com>
 
         Fix typo in AirUseCounts

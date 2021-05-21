@@ -1,5 +1,42 @@
 2021-05-20  Saam Barati  <sbarati@apple.com>
 
+        [ Catalina Release JSC] A large number of JSC test appear to be flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=225998
+        <rdar://problem/78235001>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is fixing some fallout from moving JIT::link() to a background
+        thread:
+        1. We can't shrink the CodeBlock's constant pool on a background thread
+        since we read from it without grabbing a lock on the main thread (when
+        reading things off the stack in slow path calls).
+        2. We can't create GCAwareJITStubRoutines on the compilation thread, since
+        creating a GCAwareJITStubRoutines adds to a global hash table inside Heap. This
+        means that we have to do that step of emitting virtual calls for eval when
+        we're finalizing code on the main thread.
+        
+        This patch also makes it so that a baseline JIT compilation thread is
+        correctly marked as such.
+
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::add):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitUnlinkedVirtualCall):
+        (JSC::AssemblyHelpers::emitVirtualCall):
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        (JSC::JIT::finalizeOnMainThread):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITWorklist.cpp:
+
+2021-05-20  Saam Barati  <sbarati@apple.com>
+
         Make polymorphic calls play nice with Data Call ICs
         https://bugs.webkit.org/show_bug.cgi?id=225793
 
