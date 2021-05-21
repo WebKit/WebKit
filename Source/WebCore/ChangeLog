@@ -1,3 +1,13 @@
+2021-05-21  Youenn Fablet  <youenn@apple.com>
+
+        Add some logging for the 'FetchEvent is destroyed' case
+        https://bugs.webkit.org/show_bug.cgi?id=226071
+
+        Reviewed by Kate Cheney.
+
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::~FetchEvent):
+
 2021-05-21  Imanol Fernandez  <ifernandez@igalia.com>
 
         Fix use after move bug in WebXRSession
