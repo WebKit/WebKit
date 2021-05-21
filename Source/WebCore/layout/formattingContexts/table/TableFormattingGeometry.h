@@ -36,7 +36,7 @@ class TableFormattingGeometry : public FormattingGeometry {
 public:
     TableFormattingGeometry(const TableFormattingContext&, const TableGrid&);
 
-    LayoutUnit cellHeigh(const ContainerBox&) const;
+    LayoutUnit cellBoxContentHeight(const ContainerBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
     Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox);
     IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);

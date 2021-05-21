@@ -45,10 +45,9 @@ TableFormattingGeometry::TableFormattingGeometry(const TableFormattingContext& t
 {
 }
 
-LayoutUnit TableFormattingGeometry::cellHeigh(const ContainerBox& cellBox) const
+LayoutUnit TableFormattingGeometry::cellBoxContentHeight(const ContainerBox& cellBox) const
 {
     ASSERT(cellBox.isInFlow());
-    auto contentHeight = LayoutUnit { };
     if (layoutState().inQuirksMode() && TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(cellBox)) {
         ASSERT(cellBox.firstInFlowChild());
         auto formattingContext = this->formattingContext();
@@ -59,10 +58,9 @@ LayoutUnit TableFormattingGeometry::cellHeigh(const ContainerBox& cellBox) const
 
         auto top = firstInFlowChild.style().hasMarginBeforeQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
         auto bottom = lastInFlowChild.style().hasMarginAfterQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();
-        contentHeight = bottom - top;
-    } else
-        contentHeight = contentHeightForFormattingContextRoot(cellBox);
-    return std::max(computedHeight(cellBox).valueOr(0_lu), contentHeight);
+        return bottom - top;
+    }
+    return contentHeightForFormattingContextRoot(cellBox);
 }
 
 Edges TableFormattingGeometry::computedCellBorder(const TableGrid::Cell& cell) const

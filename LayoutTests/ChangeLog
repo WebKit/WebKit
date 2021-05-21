@@ -1,3 +1,13 @@
+2021-05-21  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC][Quirks] Use box-sizing: border-box when computing cell height
+        https://bugs.webkit.org/show_bug.cgi?id=226063
+
+        Reviewed by Simon Fraser.
+
+        * fast/layoutformattingcontext/table-simple-quirk-td-height-with-padding-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-quirk-td-height-with-padding.html: Added.
+
 2021-05-20  Chris Lord  <clord@igalia.com>
 
         [WPE] Spatial navigation tests fail with async overflow scrolling enabled

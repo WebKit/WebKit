@@ -270,12 +270,13 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
+    auto geometry = this->geometry();
     auto& grid = formattingState().tableGrid();
     auto& cellBox = cell.box();
     auto& cellBoxGeometry = formattingState().boxGeometry(cellBox);
 
-    cellBoxGeometry.setBorder(geometry().computedCellBorder(cell));
-    cellBoxGeometry.setPadding(geometry().computedPadding(cellBox, availableHorizontalSpace));
+    cellBoxGeometry.setBorder(geometry.computedCellBorder(cell));
+    cellBoxGeometry.setPadding(geometry.computedPadding(cellBox, availableHorizontalSpace));
     // Internal table elements do not have margins.
     cellBoxGeometry.setHorizontalMargin({ });
     cellBoxGeometry.setVerticalMargin({ });
@@ -292,7 +293,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     cellBoxGeometry.setContentBoxWidth(availableSpaceForContent);
 
     if (cellBox.hasInFlowOrFloatingChild()) {
-        auto constraintsForCellContent = geometry().constraintsForInFlowContent(cellBox);
+        auto constraintsForCellContent = geometry.constraintsForInFlowContent(cellBox);
         constraintsForCellContent.vertical.logicalHeight = usedCellHeight;
         auto invalidationState = InvalidationState { };
         // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell
@@ -301,7 +302,14 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
         floatingStateForCellContent.clear();
         LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, constraintsForCellContent);
     }
-    cellBoxGeometry.setContentBoxHeight(geometry().cellHeigh(cellBox));
+    auto contentBoxHeight = geometry.cellBoxContentHeight(cellBox);
+    if (auto computedHeight = geometry.computedHeight(cellBox)) {
+        auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox.style().boxSizing() == BoxSizing::BorderBox;
+        if (heightUsesBorderBox)
+            *computedHeight -= cellBoxGeometry.verticalMarginBorderAndPadding();
+        contentBoxHeight = std::max(contentBoxHeight, *computedHeight);
+    }
+    cellBoxGeometry.setContentBoxHeight(contentBoxHeight);
 }
 
 IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
