@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRendererInternalUnit.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/UniqueRef.h>
@@ -64,12 +65,13 @@ private:
     void stop();
 
     void createAudioUnitIfNeeded();
+    void updateRenderSourcesIfNecessary();
 
     HashSet<Ref<AudioSampleDataSource>> m_sources;
-    Vector<Ref<AudioSampleDataSource>> m_sourcesCopy;
+    Vector<Ref<AudioSampleDataSource>> m_pendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock);
     Vector<Ref<AudioSampleDataSource>> m_renderSources;
-    bool m_shouldUpdateRenderSources { false };
-    Lock m_sourcesLock;
+    bool m_hasPendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock) { false };
+    CheckedLock m_pendingRenderSourcesLock;
     UniqueRef<AudioMediaStreamTrackRendererInternalUnit> m_internalUnit;
 };
 

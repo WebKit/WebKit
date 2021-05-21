@@ -89,9 +89,9 @@ void AudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& s
     m_sources.add(WTFMove(source));
 
     {
-        auto locker = holdLock(m_sourcesLock);
-        m_sourcesCopy = copyToVector(m_sources);
-        m_shouldUpdateRenderSources = true;
+        Locker locker { m_pendingRenderSourcesLock };
+        m_pendingRenderSources = copyToVector(m_sources);
+        m_hasPendingRenderSources = true;
     }
 
     if (shouldStart)
@@ -108,9 +108,9 @@ void AudioMediaStreamTrackRendererUnit::removeSource(AudioSampleDataSource& sour
     shouldStop &= m_sources.isEmpty();
 
     {
-        auto locker = holdLock(m_sourcesLock);
-        m_sourcesCopy = copyToVector(m_sources);
-        m_shouldUpdateRenderSources = true;
+        Locker locker { m_pendingRenderSourcesLock };
+        m_pendingRenderSources = copyToVector(m_sources);
+        m_hasPendingRenderSources = true;
     }
 
     if (shouldStop)
@@ -139,18 +139,27 @@ void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHand
     m_internalUnit->retrieveFormatDescription(WTFMove(callback));
 }
 
+void AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary()
+{
+    if (!m_pendingRenderSourcesLock.tryLock())
+        return;
+
+    Locker locker { AdoptLockTag { }, m_pendingRenderSourcesLock };
+    if (!m_hasPendingRenderSources)
+        return;
+
+    m_renderSources = WTFMove(m_pendingRenderSources);
+    m_hasPendingRenderSources = false;
+}
+
 void AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferList& ioData, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags& actionFlags)
 {
     // For performance reasons, we forbid heap allocations while doing rendering on the audio thread.
     ForbidMallocUseForCurrentThreadScope forbidMallocUse;
 
     ASSERT(!isMainThread());
-    if (m_shouldUpdateRenderSources) {
-        if (auto locker = tryHoldLock(m_sourcesLock)) {
-            m_renderSources = WTFMove(m_sourcesCopy);
-            m_shouldUpdateRenderSources = false;
-        }
-    }
+
+    updateRenderSourcesIfNecessary();
 
     if (m_renderSources.isEmpty()) {
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;

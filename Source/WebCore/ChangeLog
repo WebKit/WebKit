@@ -1,5 +1,26 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Adopt CheckedLock in AudioMediaStreamTrackRendererUnit
+        https://bugs.webkit.org/show_bug.cgi?id=226095
+
+        Reviewed by Eric Carlson.
+
+        Adopt CheckedLock in AudioMediaStreamTrackRendererUnit to benefit from Clang Thread Safety
+        Analysis. Also rename variables for clarity and fixes a bug where we failed to grab the
+        lock before checking m_shouldUpdateRenderSources on the render thread (even though the
+        variable gets updated on the main thread).
+
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp:
+        (WebCore::AudioMediaStreamTrackRendererUnit::addSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::removeSource):
+        (WebCore::AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary):
+        (WebCore::AudioMediaStreamTrackRendererUnit::render):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.h:
+        (WebCore::AudioMediaStreamTrackRendererUnit::WTF_GUARDED_BY_LOCK):
+        (): Deleted.
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Adopt CheckedLock / CheckedCondition in CDMProxy
         https://bugs.webkit.org/show_bug.cgi?id=226103
 
