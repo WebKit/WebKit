@@ -1491,7 +1491,14 @@ void GenMetalTraverser::emitSingleConstant(const TConstantUnion *const constUnio
 
         case TBasicType::EbtFloat:
         {
-            mOut << constUnion->getFConst() << "f";
+            if (ANGLE_UNLIKELY(isnan(constUnion->getFConst())))
+            {
+                mOut << "NAN";
+            }
+            else
+            {
+                mOut << constUnion->getFConst() << "f";
+            }
         }
         break;
 

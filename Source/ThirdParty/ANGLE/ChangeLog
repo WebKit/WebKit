@@ -1,5 +1,18 @@
 2021-05-20  Kyle Piddington  <kpiddington@apple.com>
 
+        [Metal ANGLE] Handle NAN constant folding correctly
+        https://bugs.webkit.org/show_bug.cgi?id=226052
+
+        NAN values (0.0f/0.0f) were being handled incorrectly. MSL was being emitted as lowercase 'nanf', instead of NAN
+        Check for an unlikely NAN case, and emit correct MSL
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitSingleConstant):
+
+2021-05-20  Kyle Piddington  <kpiddington@apple.com>
+
         Red flashes zooming on Google Maps when using external monitor on multi-gpu systems
         https://bugs.webkit.org/show_bug.cgi?id=225956
         <rdar://77024179>        
