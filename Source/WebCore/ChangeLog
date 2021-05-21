@@ -1,3 +1,20 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Adopt CheckedLock / CheckedCondition in CDMProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226103
+
+        Reviewed by Darin Adler.
+
+        Adopt CheckedLock / CheckedCondition in CDMProxy to benefit from Clang Thread Safety
+        Analysis.
+
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::CDMProxy::updateKeyStore):
+        (WebCore::CDMProxy::keyHandle const):
+        (WebCore::CDMProxy::tryWaitForKeyHandle const):
+        (WebCore::CDMProxy::keyAvailable const):
+        * platform/encryptedmedia/CDMProxy.h:
+
 2021-05-21  Peng Liu  <peng.liu6@apple.com>
 
         Video player enters a bad state after trying to enter picture-in-picture on YouTube.com videos
