@@ -1,3 +1,25 @@
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Add missing locks in Language.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=226059
+
+        Reviewed by Alex Christensen.
+
+        Add missing locks in Language.cpp. This was found via Clang Thread Safety Analysis.
+        Some of the overrideUserPreferredLanguages() call sites were failing to grab the
+        lock first.
+
+        Also use NeverDestroyed in preferredLanguagesOverride() instead of LazyNeverDestroyed
+        with std::call_once. All call sites are already grabbing a lock so there is no need
+        for extra synchronization.
+
+        * wtf/Language.cpp:
+        (WTF::WTF_REQUIRES_LOCK):
+        (WTF::userPreferredLanguagesOverride):
+        (WTF::overrideUserPreferredLanguages):
+        (WTF::userPreferredLanguages):
+        (WTF::preferredLanguagesOverride): Deleted.
+
 2021-05-19  Alex Christensen  <achristensen@webkit.org>
 
         Add support for Navigation Timing Level 2
