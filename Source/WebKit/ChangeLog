@@ -1,3 +1,18 @@
+2021-05-21  Per Arne  <pvollan@apple.com>
+
+        Accessibility caption styles does not always reflect the selection
+        https://bugs.webkit.org/show_bug.cgi?id=226084
+        <rdar://75426845>
+
+        Reviewed by Chris Fleizach.
+
+        This is caused by a race between pushing the caption preference value to the WebContent process and receiving the notification in that process.
+        This patch addresses this by reposting the notification after having set the preference value in the WebContent process.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::captionProfilePreferenceKey):
+        (WebKit::dispatchSimulatedNotificationsForPreferenceChange):
+
 2021-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] REGRESSION(Sandbox): Font smoothing within Safari doesn't seem to respect AppleFontSmoothing

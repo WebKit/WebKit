@@ -1,3 +1,16 @@
+2021-05-21  Per Arne  <pvollan@apple.com>
+
+        Accessibility caption styles does not always reflect the selection
+        https://bugs.webkit.org/show_bug.cgi?id=226084
+        <rdar://75426845>
+
+        Reviewed by Chris Fleizach.
+
+        Export a soft linked constant.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cf/MediaAccessibilitySoftLink.cpp:
+
 2021-05-21  Rob Buis  <rbuis@igalia.com>
 
         grid track size should reject unitless length

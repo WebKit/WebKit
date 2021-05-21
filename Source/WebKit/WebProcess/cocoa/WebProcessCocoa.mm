@@ -145,6 +145,7 @@
 #import <os/state_private.h>
 #endif
 
+#import <WebCore/MediaAccessibilitySoftLink.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
@@ -1073,6 +1074,12 @@ static const WTF::String& reduceMotionPreferenceKey()
 }
 #endif
 
+static const WTF::String& captionProfilePreferenceKey()
+{
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("MACaptionActiveProfile"));
+    return key;
+}
+
 static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
 {
 #if USE(APPKIT)
@@ -1094,6 +1101,10 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
         CFNotificationCenterPostNotification(notificationCenter, kAXInterfaceReduceMotionStatusDidChangeNotification, nullptr, nullptr, true);
     }
 #endif
+    if (key == captionProfilePreferenceKey()) {
+        auto notificationCenter = CFNotificationCenterGetLocalCenter();
+        CFNotificationCenterPostNotification(notificationCenter, kMAXCaptionAppearanceSettingsChangedNotification, nullptr, nullptr, true);
+    }
 }
 
 static void setPreferenceValue(const String& domain, const String& key, id value)
