@@ -648,7 +648,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
 template<typename Op>
-void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStrictEqType type)
+void JIT::compileOpStrictEq(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
@@ -693,7 +693,7 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStri
     addSlowCase(branchIfCell(regT2));
 
     done.link(this);
-    if (type == CompileOpStrictEqType::NStrictEq)
+    if constexpr (std::is_same<Op, OpNstricteq>::value)
         xor64(TrustedImm64(1), regT5);
     boxBoolean(regT5, JSValueRegs { regT5 });
     emitPutVirtualRegister(dst, regT5);
@@ -712,7 +712,7 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStri
     addSlowCase(branchIfNumber(regT1));
     rightOK.link(this);
 
-    if (type == CompileOpStrictEqType::StrictEq)
+    if constexpr (std::is_same<Op, OpStricteq>::value)
         compare64(Equal, regT1, regT0, regT0);
     else
         compare64(NotEqual, regT1, regT0, regT0);
@@ -724,16 +724,16 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStri
 
 void JIT::emit_op_stricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEq<OpStricteq>(currentInstruction, CompileOpStrictEqType::StrictEq);
+    compileOpStrictEq<OpStricteq>(currentInstruction);
 }
 
 void JIT::emit_op_nstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEq<OpNstricteq>(currentInstruction, CompileOpStrictEqType::NStrictEq);
+    compileOpStrictEq<OpNstricteq>(currentInstruction);
 }
 
 template<typename Op>
-void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOpStrictEqType type)
+void JIT::compileOpStrictEqJump(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -767,7 +767,7 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
     addSlowCase(branch64(AboveOrEqual, regT3, regT5));
 
     Jump areEqual = branch64(Equal, regT0, regT1);
-    if (type == CompileOpStrictEqType::StrictEq)
+    if constexpr (std::is_same<Op, OpJstricteq>::value)
         addJump(areEqual, target);
 
     move(regT0, regT2);
@@ -776,7 +776,7 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
     // FIXME: we could do something more precise: unless there is a BigInt32, we only need to do the slow path if both are strings
     addSlowCase(branchIfCell(regT2));
 
-    if (type == CompileOpStrictEqType::NStrictEq) {
+    if constexpr (std::is_same<Op, OpJnstricteq>::value) {
         addJump(jump(), target);
         areEqual.link(this);
     }
@@ -794,7 +794,7 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
     Jump rightOK = branchIfInt32(regT1);
     addSlowCase(branchIfNumber(regT1));
     rightOK.link(this);
-    if (type == CompileOpStrictEqType::StrictEq)
+    if constexpr (std::is_same<Op, OpJstricteq>::value)
         addJump(branch64(Equal, regT1, regT0), target);
     else
         addJump(branch64(NotEqual, regT1, regT0), target);
@@ -803,12 +803,12 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
 
 void JIT::emit_op_jstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEqJump<OpJstricteq>(currentInstruction, CompileOpStrictEqType::StrictEq);
+    compileOpStrictEqJump<OpJstricteq>(currentInstruction);
 }
 
 void JIT::emit_op_jnstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEqJump<OpJnstricteq>(currentInstruction, CompileOpStrictEqType::NStrictEq);
+    compileOpStrictEqJump<OpJnstricteq>(currentInstruction);
 }
 
 void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

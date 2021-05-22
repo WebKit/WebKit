@@ -353,11 +353,8 @@ namespace JSC {
         template<typename Op>
         void emitPutCallResult(const Op&);
 
-        enum class CompileOpStrictEqType { StrictEq, NStrictEq };
-        template<typename Op>
-        void compileOpStrictEq(const Instruction*, CompileOpStrictEqType);
-        template<typename Op>
-        void compileOpStrictEqJump(const Instruction*, CompileOpStrictEqType);
+        template<typename Op> void compileOpStrictEq(const Instruction*);
+        template<typename Op> void compileOpStrictEqJump(const Instruction*);
         enum class CompileOpEqType { Eq, NEq };
         void compileOpEqJumpSlow(Vector<SlowCaseEntry>::iterator&, CompileOpEqType, int jumpTarget);
         bool isOperandConstantDouble(VirtualRegister);

@@ -1,5 +1,32 @@
 2021-05-21  Mark Lam  <mark.lam@apple.com>
 
+        Remove the unnecessary use of CompileOpStrictEqType.
+        https://bugs.webkit.org/show_bug.cgi?id=226121
+
+        Reviewed by Saam Barati and Robin Morisset.
+
+        We're already emitting template code.  Might as well make the relevant condition
+        checks a build time check on the opcode type the template is specializing on
+        instead of a runtime check on a passed in CompileOpStrictEqType.
+
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+
+2021-05-21  Mark Lam  <mark.lam@apple.com>
+
         Introducing JITThunks::preinitializeCTIThunks().
         https://bugs.webkit.org/show_bug.cgi?id=226105
 

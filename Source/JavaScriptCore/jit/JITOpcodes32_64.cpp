@@ -677,7 +677,7 @@ void JIT::emitSlow_op_jneq(const Instruction* currentInstruction, Vector<SlowCas
 }
 
 template <typename Op>
-void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStrictEqType type)
+void JIT::compileOpStrictEq(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
@@ -698,7 +698,7 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStri
     firstIsObject.link(this);
 
     // Simply compare the payloads.
-    if (type == CompileOpStrictEqType::StrictEq)
+    if constexpr (std::is_same<Op, OpStricteq>::value)
         compare32(Equal, regT0, regT2, regT0);
     else
         compare32(NotEqual, regT0, regT2, regT0);
@@ -708,16 +708,16 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStri
 
 void JIT::emit_op_stricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEq<OpStricteq>(currentInstruction, CompileOpStrictEqType::StrictEq);
+    compileOpStrictEq<OpStricteq>(currentInstruction);
 }
 
 void JIT::emit_op_nstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEq<OpNstricteq>(currentInstruction, CompileOpStrictEqType::NStrictEq);
+    compileOpStrictEq<OpNstricteq>(currentInstruction);
 }
 
 template<typename Op>
-void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOpStrictEqType type)
+void JIT::compileOpStrictEqJump(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -738,7 +738,7 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
     firstIsObject.link(this);
 
     // Simply compare the payloads.
-    if (type == CompileOpStrictEqType::StrictEq)
+    if constexpr (std::is_same<Op, OpJstricteq>::value)
         addJump(branch32(Equal, regT0, regT2), target);
     else
         addJump(branch32(NotEqual, regT0, regT2), target);
@@ -746,12 +746,12 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
 
 void JIT::emit_op_jstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEqJump<OpJstricteq>(currentInstruction, CompileOpStrictEqType::StrictEq);
+    compileOpStrictEqJump<OpJstricteq>(currentInstruction);
 }
 
 void JIT::emit_op_jnstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEqJump<OpJnstricteq>(currentInstruction, CompileOpStrictEqType::NStrictEq);
+    compileOpStrictEqJump<OpJnstricteq>(currentInstruction);
 }
 
 void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
