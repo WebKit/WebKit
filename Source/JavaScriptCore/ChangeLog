@@ -1,3 +1,222 @@
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::deletePrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        * API/JSValue.mm:
+        (handerForStructTag):
+        * API/tests/testapi.cpp:
+        (testCAPIViaCpp):
+        * assembler/testmasm.cpp:
+        (JSC::run):
+        * b3/air/testair.cpp:
+        * b3/testb3_1.cpp:
+        (run):
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::setSlow):
+        (JSC::DirectEvalCodeCache::clear):
+        (JSC::DirectEvalCodeCache::visitAggregateImpl):
+        * bytecode/SuperSampler.cpp:
+        (JSC::initializeSuperSampler):
+        (JSC::resetSuperSamplerState):
+        (JSC::printSuperSamplerState):
+        (JSC::enableSuperSampler):
+        (JSC::disableSuperSampler):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::codeBlockForVMTrapPC):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::~Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::isActiveForVM const):
+        (JSC::DFG::Worklist::enqueue):
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::removeNonCompilingPlansForVM):
+        (JSC::DFG::Worklist::queueLength):
+        (JSC::DFG::Worklist::dump const):
+        (JSC::DFG::Worklist::setNumberOfThreads):
+        * dfg/DFGWorklistInlines.h:
+        (JSC::DFG::Worklist::iterateCodeBlocksForGC):
+        * disassembler/Disassembler.cpp:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::addBlock):
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterateCurrentlyExecuting):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::add):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::waitForCollector):
+        (JSC::Heap::requestCollection):
+        (JSC::Heap::notifyIsSafeToCollect):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didReachTermination):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        (Inspector::InspectorScriptProfilerAgent::stopSamplingWhenDisconnecting):
+        * inspector/remote/RemoteConnectionToTarget.cpp:
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::registerTarget):
+        (Inspector::RemoteInspector::unregisterTarget):
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateClientCapabilities):
+        (Inspector::RemoteInspector::setClient):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupCompleted):
+        (Inspector::RemoteInspector::stop):
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteTargetHandleRunSourceGlobal):
+        (Inspector::RemoteTargetQueueTaskOnGlobalQueue):
+        (Inspector::RemoteTargetHandleRunSourceWithInfo):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::queueTaskOnPrivateRunLoop):
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::setParentProcessInformation):
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedProxyApplicationSetupMessage):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::close):
+        (Inspector::RemoteInspectorXPCConnection::closeFromMessage):
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::setupConnection):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::receivedGetTargetListMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedCloseMessage):
+        (Inspector::RemoteInspector::setup):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::didReceive):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::didClose):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::setup):
+        (Inspector::RemoteInspector::setupInspectorClient):
+        (Inspector::RemoteInspector::frontendDidClose):
+        (Inspector::RemoteInspector::sendMessageToBackend):
+        (Inspector::RemoteInspector::startAutomationSession):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet):
+        (Inspector::RemoteInspectorSocketEndpoint::isListening):
+        (Inspector::RemoteInspectorSocketEndpoint::workerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::createClient):
+        (Inspector::RemoteInspectorSocketEndpoint::disconnect):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateClient):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateListener):
+        (Inspector::RemoteInspectorSocketEndpoint::getPort const):
+        (Inspector::RemoteInspectorSocketEndpoint::recvIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::sendIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::send):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::addToCommittedByteCount):
+        (JSC::CLoopStack::committedByteCount):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+        * jit/ICStats.cpp:
+        (JSC::ICStats::ICStats):
+        (JSC::ICStats::~ICStats):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::existingCTIStub):
+        (JSC::JITThunks::ctiSlowPathFunctionStub):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::compileInThread):
+        (JSC::JITWorklist::Plan::isFinishedCompiling):
+        (JSC::JITWorklist::JITWorklist):
+        (JSC::JITWorklist::completeAllForVM):
+        (JSC::JITWorklist::poll):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::finalizePlans):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::getID):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        (JSC::Profiler::Database::notifyDestruction):
+        (JSC::Profiler::Database::addCompilation):
+        (JSC::Profiler::Database::logEvent):
+        (JSC::Profiler::Database::addDatabaseToAtExit):
+        (JSC::Profiler::Database::removeDatabaseFromAtExit):
+        (JSC::Profiler::Database::removeFirstAtExitDatabase):
+        * profiler/ProfilerUID.cpp:
+        (JSC::Profiler::UID::create):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::scheduleWorkSoon):
+        (JSC::DeferredWorkTimer::didResumeScriptExecutionOwner):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::timerLoop):
+        (JSC::SamplingProfiler::shutdown):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::noticeJSLockAcquisition):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::registerForReportAtExit):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::willDestroyVM):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::isValidExecutableMemory):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::ThreadCountHolder):
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::~ThreadCountHolder):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::addCompletionTask):
+        (JSC::Wasm::Plan::waitForCompletion):
+        (JSC::Wasm::Plan::tryRemoveContextAndCancelIfLast):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::signatureFor):
+        (JSC::Wasm::SignatureInformation::tryCleanup):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::enqueue):
+        (JSC::Wasm::Worklist::completePlanSynchronously):
+        (JSC::Wasm::Worklist::stopAllPlansForContext):
+        (JSC::Wasm::Worklist::Worklist):
+        (JSC::Wasm::Worklist::~Worklist):
+
 2021-05-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277913.

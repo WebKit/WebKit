@@ -56,7 +56,7 @@ RemoteInspector::RemoteInspector()
 
 void RemoteInspector::start()
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     if (m_enabled)
         return;
@@ -142,7 +142,7 @@ const SocketConnection::MessageHandlers& RemoteInspector::messageHandlers()
 
 void RemoteInspector::setupConnection(Ref<SocketConnection>&& connection)
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     ASSERT(!m_socketConnection);
     m_socketConnection = WTFMove(connection);
@@ -211,7 +211,7 @@ void RemoteInspector::pushListingsSoon()
     m_pushScheduled = true;
 
     RunLoop::current().dispatch([this] {
-        LockHolder lock(m_mutex);
+        Locker locker { m_mutex };
         if (m_pushScheduled)
             pushListingsNow();
     });
@@ -229,7 +229,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 
 void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
     if (!m_socketConnection)
         return;
 
@@ -238,7 +238,7 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
 
 void RemoteInspector::receivedGetTargetListMessage()
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
     pushListingsNow();
 }
 
@@ -251,7 +251,7 @@ void RemoteInspector::receivedDataMessage(TargetID targetIdentifier, const char*
 {
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
-        LockHolder lock(m_mutex);
+        Locker locker { m_mutex };
         connectionToTarget = m_targetConnectionMap.get(targetIdentifier);
         if (!connectionToTarget)
             return;
@@ -263,7 +263,7 @@ void RemoteInspector::receivedCloseMessage(TargetID targetIdentifier)
 {
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
-        LockHolder lock(m_mutex);
+        Locker locker { m_mutex };
         RemoteControllableTarget* target = m_targetMap.get(targetIdentifier);
         if (!target)
             return;
@@ -280,7 +280,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
 {
     RemoteControllableTarget* target;
     {
-        LockHolder lock(m_mutex);
+        Locker locker { m_mutex };
         target = m_targetMap.get(targetIdentifier);
         if (!target)
             return;
@@ -293,7 +293,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
         return;
     }
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
     m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
 
     updateHasActiveDebugSession();

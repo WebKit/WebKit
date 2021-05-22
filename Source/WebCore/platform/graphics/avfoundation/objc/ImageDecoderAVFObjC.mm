@@ -97,7 +97,7 @@
 
 - (void)setExpectedContentSize:(long long)expectedContentSize
 {
-    LockHolder holder { _dataLock };
+    Locker locker { _dataLock };
     _expectedContentSize = expectedContentSize;
 
     [self fulfillPendingRequests];
@@ -105,7 +105,7 @@
 
 - (void)updateData:(NSData *)data complete:(BOOL)complete
 {
-    LockHolder holder { _dataLock };
+    Locker locker { _dataLock };
     _data = data;
     _complete = complete;
 
@@ -190,7 +190,7 @@
 
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
 {
-    LockHolder holder { _dataLock };
+    Locker locker { _dataLock };
 
     UNUSED_PARAM(resourceLoader);
 
@@ -206,7 +206,7 @@
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
 {
-    LockHolder holder { _dataLock };
+    Locker locker { _dataLock };
 
     UNUSED_PARAM(resourceLoader);
     _requests.removeAll(loadingRequest);
@@ -437,7 +437,7 @@ void ImageDecoderAVFObjC::setTrack(AVAssetTrack *track)
         return;
     m_track = track;
 
-    LockHolder holder { m_sampleGeneratorLock };
+    Locker locker { m_sampleGeneratorLock };
     m_sampleData.clear();
     m_size.reset();
     m_cursor = m_sampleData.decodeOrder().end();
@@ -561,7 +561,7 @@ unsigned ImageDecoderAVFObjC::frameBytesAtIndex(size_t index, SubsamplingLevel s
 
 PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
-    LockHolder holder { m_sampleGeneratorLock };
+    Locker locker { m_sampleGeneratorLock };
 
     auto* sampleData = sampleAtIndex(index);
     if (!sampleData)

@@ -144,7 +144,7 @@ void Watchdog::startTimer(Seconds timeLimit)
     // via willDestroyVM() before it goes away.
     RefPtr<Watchdog> protectedThis = this;
     m_timerQueue->dispatchAfter(timeLimit, [this, protectedThis] {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         if (m_vm)
             m_vm->notifyNeedWatchdogCheck();
     });
@@ -159,7 +159,7 @@ void Watchdog::stopTimer()
 
 void Watchdog::willDestroyVM(VM* vm)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     ASSERT_UNUSED(vm, m_vm == vm);
     m_vm = nullptr;
 }

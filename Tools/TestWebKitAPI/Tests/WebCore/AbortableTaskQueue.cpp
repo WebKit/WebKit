@@ -147,7 +147,7 @@ public:
 
         void waitMyTurn()
         {
-            LockHolder lock(m_scheduler.m_mutex);
+            Locker locker { m_scheduler.m_mutex };
             m_scheduler.m_currentThreadChanged.wait(m_scheduler.m_mutex, [this]() {
                 return m_scheduler.m_currentThread == m_thisThread;
             });
@@ -155,7 +155,7 @@ public:
 
         void yieldToThread(ThreadEnum nextThread)
         {
-            LockHolder lock(m_scheduler.m_mutex);
+            Locker locker { m_scheduler.m_mutex };
             m_scheduler.m_currentThread = nextThread;
             m_scheduler.m_currentThreadChanged.notifyAll();
         }

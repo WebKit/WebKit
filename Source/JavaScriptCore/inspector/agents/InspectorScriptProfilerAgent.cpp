@@ -78,7 +78,7 @@ Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::startTracking(Option
         VM& vm = m_environment.debugger().vm();
         SamplingProfiler& samplingProfiler = vm.ensureSamplingProfiler(stopwatch);
 
-        LockHolder locker(samplingProfiler.getLock());
+        Locker locker { samplingProfiler.getLock() };
         samplingProfiler.setStopWatch(locker, stopwatch);
         samplingProfiler.noticeCurrentThreadAsJSCExecutionThread(locker);
         samplingProfiler.start(locker);
@@ -217,7 +217,7 @@ void InspectorScriptProfilerAgent::trackingComplete()
         SamplingProfiler* samplingProfiler = vm.samplingProfiler();
         RELEASE_ASSERT(samplingProfiler);
 
-        LockHolder locker(samplingProfiler->getLock());
+        Locker locker { samplingProfiler->getLock() };
         samplingProfiler->pause(locker);
         Vector<SamplingProfiler::StackTrace> stackTraces = samplingProfiler->releaseStackTraces(locker);
         locker.unlockEarly();
@@ -244,7 +244,7 @@ void InspectorScriptProfilerAgent::stopSamplingWhenDisconnecting()
     JSLockHolder lock(vm);
     SamplingProfiler* samplingProfiler = vm.samplingProfiler();
     RELEASE_ASSERT(samplingProfiler);
-    LockHolder locker(samplingProfiler->getLock());
+    Locker locker { samplingProfiler->getLock() };
     samplingProfiler->pause(locker);
     samplingProfiler->clearData(locker);
 

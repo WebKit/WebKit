@@ -324,7 +324,7 @@ void SamplingProfiler::timerLoop()
     while (true) {
         Seconds stackTraceProcessingTime = 0_s;
         {
-            LockHolder locker(m_lock);
+            Locker locker { m_lock };
             if (UNLIKELY(m_isShutDown))
                 return;
 
@@ -671,13 +671,13 @@ template void SamplingProfiler::visit(SlotVisitor&);
 
 void SamplingProfiler::shutdown()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     m_isShutDown = true;
 }
 
 void SamplingProfiler::start()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     start(locker);
 }
 
@@ -703,19 +703,19 @@ void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread(const AbstractLoc
 
 void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     noticeCurrentThreadAsJSCExecutionThread(locker);
 }
 
 void SamplingProfiler::noticeJSLockAcquisition()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     noticeCurrentThreadAsJSCExecutionThread(locker);
 }
 
 void SamplingProfiler::noticeVMEntry()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     ASSERT(m_vm.entryScope);
     noticeCurrentThreadAsJSCExecutionThread(locker);
     m_lastTime = m_stopwatch->elapsedTime();
@@ -991,7 +991,7 @@ void SamplingProfiler::registerForReportAtExit()
     static Lock registrationLock;
     static HashSet<RefPtr<SamplingProfiler>>* profilesToReport;
 
-    LockHolder holder(registrationLock);
+    Locker locker { registrationLock };
 
     if (!profilesToReport) {
         profilesToReport = new HashSet<RefPtr<SamplingProfiler>>();

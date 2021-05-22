@@ -84,7 +84,7 @@ void TextureMapperGCGLPlatformLayer::swapBuffersIfNeeded()
     TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context.m_attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
 
     {
-        LockHolder holder(m_platformLayerProxy->lock());
+        Locker locker { m_platformLayerProxy->lock() };
         m_platformLayerProxy->pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
     }
 

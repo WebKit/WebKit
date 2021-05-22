@@ -77,14 +77,14 @@ public:
     
     void enqueue(std::unique_ptr<DisassemblyTask> task)
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         m_queue.append(WTFMove(task));
         m_condition.notifyAll();
     }
     
     void waitUntilEmpty()
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         while (!m_queue.isEmpty() || m_working)
             m_condition.wait(m_lock);
     }
@@ -95,7 +95,7 @@ private:
         for (;;) {
             std::unique_ptr<DisassemblyTask> task;
             {
-                LockHolder locker(m_lock);
+                Locker locker { m_lock };
                 m_working = false;
                 m_condition.notifyAll();
                 while (m_queue.isEmpty())

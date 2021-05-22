@@ -1058,7 +1058,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
         buffer = bitwise_cast<uint8_t*>(malloc(bufferSize));
         flushQueue.construct(WorkQueue::create("jsc.dumpJITMemory.queue", WorkQueue::Type::Serial, WorkQueue::QOS::Background));
         std::atexit([] {
-            LockHolder locker(dumpJITMemoryLock);
+            Locker locker { dumpJITMemoryLock };
             flush(locker);
             close(fd);
             fd = -1;
@@ -1071,7 +1071,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
 
         needsToFlush = true;
         flushQueue.get()->dispatchAfter(Seconds(Options::dumpJITMemoryFlushInterval()), [] {
-            LockHolder locker(dumpJITMemoryLock);
+            Locker locker { dumpJITMemoryLock };
             if (!needsToFlush)
                 return;
             flush(locker);
@@ -1086,7 +1086,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
         enqueueFlush(locker);
     };
 
-    LockHolder locker(dumpJITMemoryLock);
+    Locker locker { dumpJITMemoryLock };
     uint64_t time = mach_absolute_time();
     uint64_t dst64 = bitwise_cast<uintptr_t>(dst);
     uint64_t size64 = size;

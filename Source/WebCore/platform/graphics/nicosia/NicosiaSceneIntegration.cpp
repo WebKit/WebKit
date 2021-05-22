@@ -47,20 +47,20 @@ SceneIntegration::~SceneIntegration()
 
 void SceneIntegration::setClient(Client& client)
 {
-    LockHolder locker(m_client.lock);
+    Locker locker { m_client.lock };
     m_client.object = &client;
 }
 
 void SceneIntegration::invalidate()
 {
-    LockHolder locker(m_client.lock);
+    Locker locker { m_client.lock };
     m_client.scene = nullptr;
     m_client.object = nullptr;
 }
 
 void SceneIntegration::requestUpdate()
 {
-    LockHolder locker(m_client.lock);
+    Locker locker { m_client.lock };
     if (m_client.object)
         m_client.object->requestUpdate();
 }

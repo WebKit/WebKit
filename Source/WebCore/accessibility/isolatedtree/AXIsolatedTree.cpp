@@ -75,7 +75,7 @@ void AXIsolatedTree::clear()
     ASSERT(isMainThread());
     m_axObjectCache = nullptr;
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(m_rootNode->objectID());
     m_rootNode = nullptr;
     m_nodeMap.clear();
@@ -188,7 +188,7 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axPar
         return;
 
     auto object = createSubtree(axObject, axParent ? axParent->objectID() : InvalidAXID, attachWrapper);
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     if (!axParent)
         setRootNode(object.ptr());
     else if (axParent->objectID() != InvalidAXID) // Need to check for the objectID of axParent again because it may have been detached while traversing the tree.
@@ -224,7 +224,7 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
     }
 
     {
-        LockHolder locker { m_changeLogLock };
+        Locker locker { m_changeLogLock };
         m_pendingAppends.append(WTFMove(nodeChange));
         updateChildrenIDs(object->objectID(), WTFMove(childrenIDs));
     }
@@ -245,7 +245,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     auto newObject = AXIsolatedObject::create(axObject, this, parentID);
     newObject->m_childrenIDs = axObject.childrenIDs();
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     // Remove the old object and set the new one to be updated on the AX thread.
     m_pendingNodeRemovals.append(axID);
     m_pendingAppends.append({ newObject, axObject.wrapper() });
@@ -271,7 +271,7 @@ void AXIsolatedTree::updateNodeProperty(const AXCoreObject& axObject, AXProperty
         return;
     }
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
 }
 
@@ -349,7 +349,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 
     if (updatedChild || removals.size()) {
         // Make the children IDs of the isolated object to be the same as the AXObject's.
-        LockHolder locker { m_changeLogLock };
+        Locker locker { m_changeLogLock };
         updateChildrenIDs(axAncestor->objectID(), WTFMove(axChildrenIDs));
     } else {
         // Nothing was updated. As a last resort, update the subtree.
@@ -362,7 +362,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
     AXTRACE("AXIsolatedTree::focusedNode");
     // Apply pending changes in case focus has changed and hasn't been updated.
     applyPendingChanges();
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     AXLOG(makeString("focusedNodeID ", m_focusedNodeID));
     AXLOG("focused node:");
     AXLOG(nodeForID(m_focusedNodeID));
@@ -372,7 +372,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
 RefPtr<AXIsolatedObject> AXIsolatedTree::rootNode()
 {
     AXTRACE("AXIsolatedTree::rootNode");
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     return m_rootNode;
 }
 
@@ -393,7 +393,7 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     AXLOG(makeString("axID ", axID));
     ASSERT(isMainThread());
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingFocusedNodeID = axID;
 
     AXPropertyMap propertyMap;
@@ -408,7 +408,7 @@ void AXIsolatedTree::removeNode(AXID axID)
     ASSERT(isMainThread());
 
     m_nodeMap.remove(axID);
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingNodeRemovals.append(axID);
 }
 
@@ -431,7 +431,7 @@ void AXIsolatedTree::removeSubtree(AXID axID)
         }
     }
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(axID);
 }
 
@@ -443,7 +443,7 @@ void AXIsolatedTree::applyPendingChanges()
     if (m_usedOnAXThread && isMainThread())
         return;
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
 
     if (m_pendingFocusedNodeID != m_focusedNodeID) {
         AXLOG(makeString("focusedNodeID ", m_focusedNodeID, " pendingFocusedNodeID ", m_pendingFocusedNodeID));

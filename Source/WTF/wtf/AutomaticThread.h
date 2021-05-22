@@ -38,7 +38,7 @@ namespace WTF {
 //
 //     for (;;) {
 //         {
-//             LockHolder locker(m_lock);
+//             Locker locker { m_lock };
 //             for (;;) {
 //  [1]            stuff that could break, return, or fall through;
 //                 m_condition.wait(m_lock);
@@ -142,7 +142,7 @@ protected:
     // {
     //     for (;;) {
     //         {
-    //             LockHolder locker(m_lock);
+    //             Locker locker { m_lock };
     //             for (;;) {
     //                 PollResult result = poll();
     //                 if (result == PollResult::Work)

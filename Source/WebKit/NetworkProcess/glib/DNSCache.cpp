@@ -64,7 +64,7 @@ DNSCache::DNSCacheMap& DNSCache::mapForType(Type type)
 
 Optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const CString& host, Type type)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     auto& map = mapForType(type);
     auto it = map.find(host);
     if (it == map.end())
@@ -81,7 +81,7 @@ Optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const CString& host, Ty
 
 void DNSCache::update(const CString& host, Vector<GRefPtr<GInetAddress>>&& addressList, Type type)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     auto& map = mapForType(type);
     CachedResponse response = { WTFMove(addressList), MonotonicTime::now() + expireInterval };
     auto addResult = map.set(host, WTFMove(response));
@@ -119,7 +119,7 @@ void DNSCache::pruneResponsesInMap(DNSCacheMap& map)
 
 void DNSCache::removeExpiredResponsesFired()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     removeExpiredResponsesInMap(m_dnsMap);
 #if GLIB_CHECK_VERSION(2, 59, 0)
     removeExpiredResponsesInMap(m_ipv4Map);
@@ -129,7 +129,7 @@ void DNSCache::removeExpiredResponsesFired()
 
 void DNSCache::clear()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     m_dnsMap.clear();
 #if GLIB_CHECK_VERSION(2, 59, 0)
     m_ipv4Map.clear();

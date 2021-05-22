@@ -1,3 +1,81 @@
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::m_closeCallback):
+        (WebKit::WebIDBServer::getOrigins):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::renameOrigin):
+        (WebKit::WebIDBServer::openDatabase):
+        (WebKit::WebIDBServer::deleteDatabase):
+        (WebKit::WebIDBServer::abortTransaction):
+        (WebKit::WebIDBServer::commitTransaction):
+        (WebKit::WebIDBServer::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBServer::createObjectStore):
+        (WebKit::WebIDBServer::deleteObjectStore):
+        (WebKit::WebIDBServer::renameObjectStore):
+        (WebKit::WebIDBServer::clearObjectStore):
+        (WebKit::WebIDBServer::createIndex):
+        (WebKit::WebIDBServer::deleteIndex):
+        (WebKit::WebIDBServer::renameIndex):
+        (WebKit::WebIDBServer::putOrAdd):
+        (WebKit::WebIDBServer::getRecord):
+        (WebKit::WebIDBServer::getAllRecords):
+        (WebKit::WebIDBServer::getCount):
+        (WebKit::WebIDBServer::deleteRecord):
+        (WebKit::WebIDBServer::openCursor):
+        (WebKit::WebIDBServer::iterateCursor):
+        (WebKit::WebIDBServer::establishTransaction):
+        (WebKit::WebIDBServer::databaseConnectionPendingClose):
+        (WebKit::WebIDBServer::databaseConnectionClosed):
+        (WebKit::WebIDBServer::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBServer::didFireVersionChangeEvent):
+        (WebKit::WebIDBServer::openDBRequestCancelled):
+        (WebKit::WebIDBServer::getAllDatabaseNamesAndVersions):
+        (WebKit::WebIDBServer::addConnection):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::close):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::writeSizeFile):
+        (WebKit::CacheStorage::Engine::readSizeFile):
+        (WebKit::CacheStorage::Engine::clearAllCachesFromDisk):
+        (WebKit::CacheStorage::Engine::deleteNonEmptyDirectoryOnBackgroundThread):
+        * NetworkProcess/glib/DNSCache.cpp:
+        (WebKit::DNSCache::lookup):
+        (WebKit::DNSCache::update):
+        (WebKit::DNSCache::removeExpiredResponsesFired):
+        (WebKit::DNSCache::clear):
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::suspend):
+        (WebKit::CompositingRunLoop::resume):
+        (WebKit::CompositingRunLoop::scheduleUpdate):
+        (WebKit::CompositingRunLoop::stopUpdates):
+        (WebKit::CompositingRunLoop::updateTimerFired):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::m_displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::setScaleFactor):
+        (WebKit::ThreadedCompositor::setScrollPosition):
+        (WebKit::ThreadedCompositor::setViewportSize):
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        (WebKit::ThreadedCompositor::sceneUpdateFinished):
+        (WebKit::ThreadedCompositor::updateSceneState):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::populatePageURLToIconURLMap):
+        (WebKit::IconDatabase::clearLoadedIconsTimerFired):
+        (WebKit::IconDatabase::checkIconURLAndSetPageURLIfNeeded):
+        (WebKit::IconDatabase::loadIconForPageURL):
+        (WebKit::IconDatabase::iconURLForPageURL):
+        (WebKit::IconDatabase::setIconForPageURL):
+        (WebKit::IconDatabase::clear):
+
 2021-05-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277913.

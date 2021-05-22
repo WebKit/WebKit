@@ -58,7 +58,7 @@ public:
         ScriptExecutionContext* scriptExecutionContextPtr;
         T* callback;
         {
-            LockHolder locker(m_mutex);
+            Locker locker { m_mutex };
             if (!m_callback) {
                 ASSERT(!m_scriptExecutionContext);
                 return;
@@ -83,7 +83,7 @@ public:
 
     RefPtr<T> unwrap()
     {
-        LockHolder locker(m_mutex);
+        Locker locker { m_mutex };
         ASSERT(!m_callback || m_scriptExecutionContext->isContextThread());
         m_scriptExecutionContext = nullptr;
         return WTFMove(m_callback);

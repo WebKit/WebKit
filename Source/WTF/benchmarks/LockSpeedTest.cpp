@@ -108,7 +108,7 @@ struct Benchmark {
                             }
                             myNumIterations++;
                         }
-                        LockHolder locker(numIterationsLock);
+                        Locker locker { numIterationsLock };
                         numIterations += myNumIterations;
                     });
             }

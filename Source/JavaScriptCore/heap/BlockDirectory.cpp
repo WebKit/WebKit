@@ -134,7 +134,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
             ASSERT(m_bits.numBits() == oldCapacity);
             ASSERT(m_blocks.capacity() > oldCapacity);
             
-            LockHolder locker(m_bitvectorLock);
+            Locker locker { m_bitvectorLock };
             subspace()->didResizeBits(m_blocks.capacity());
             m_bits.resize(m_blocks.capacity());
         }
