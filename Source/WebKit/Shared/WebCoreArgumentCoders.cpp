@@ -2840,32 +2840,6 @@ bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, Se
 
 #endif
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
-void ArgumentCoder<ScrollOffsetRange<float>>::encode(Encoder& encoder, const ScrollOffsetRange<float>& range)
-{
-    encoder << range.start;
-    encoder << range.end;
-}
-
-auto ArgumentCoder<ScrollOffsetRange<float>>::decode(Decoder& decoder) -> Optional<WebCore::ScrollOffsetRange<float>>
-{
-    WebCore::ScrollOffsetRange<float> range;
-    float start;
-    if (!decoder.decode(start))
-        return WTF::nullopt;
-
-    float end;
-    if (!decoder.decode(end))
-        return WTF::nullopt;
-
-    range.start = start;
-    range.end = end;
-    return range;
-}
-
-#endif
-
 void ArgumentCoder<MediaSelectionOption>::encode(Encoder& encoder, const MediaSelectionOption& option)
 {
     encoder << option.displayName;
@@ -3145,9 +3119,9 @@ void ArgumentCoder<Ref<WebCore::ImageData>>::encode(Encoder& encoder, const Ref<
 {
     encoder << imageData->size();
 
-    auto rawData = imageData->data();
-    encoder << static_cast<uint64_t>(rawData->byteLength());
-    encoder.encodeFixedLengthData(rawData->data(), rawData->byteLength(), 1);
+    auto& rawData = imageData->data();
+    encoder << static_cast<uint64_t>(rawData.byteLength());
+    encoder.encodeFixedLengthData(rawData.data(), rawData.byteLength(), 1);
 }
 
 template

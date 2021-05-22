@@ -35,6 +35,7 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DisplayListReplayer.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
@@ -151,6 +152,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
 
+        ASSERT(WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
         return m_remoteRenderingBackendProxy->getDataURLForImageBuffer(mimeType, quality, preserveResolution, m_renderingResourceIdentifier);
     }
 
@@ -159,6 +161,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
 
+        ASSERT(WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
         return m_remoteRenderingBackendProxy->getDataForImageBuffer(mimeType, quality, m_renderingResourceIdentifier);
     }
 
@@ -197,9 +200,9 @@ protected:
             return nullptr;
 
         auto imageData = WebCore::ImageData::create(srcRect.size());
-        if (!imageData || !imageData->data())
+        if (!imageData)
             return nullptr;
-        size_t dataSize = imageData->data()->byteLength();
+        size_t dataSize = imageData->data().byteLength();
 
         IPC::Timeout timeout = 5_s;
         SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize, timeout);
@@ -211,9 +214,9 @@ protected:
         mutableThis.flushDrawingContextAsync();
 
         if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete(timeout))
-            memcpy(imageData->data()->data(), sharedMemory->data(), dataSize);
+            memcpy(imageData->data().data(), sharedMemory->data(), dataSize);
         else
-            memset(imageData->data()->data(), 0, dataSize);
+            memset(imageData->data().data(), 0, dataSize);
         return imageData;
     }
 
@@ -319,105 +322,15 @@ protected:
         return { };
     }
 
-    RefPtr<WebCore::SharedBuffer> encodeItemOutOfLine(WebCore::DisplayList::ItemHandle item) const final
+    RefPtr<WebCore::SharedBuffer> encodeItemOutOfLine(const WebCore::DisplayList::DisplayListItem& item) const final
     {
-        /* This needs to match (1) isInlineItem() in DisplayListItemType.cpp, (2) RemoteRenderingBackend::decodeItem(),
-         * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes.
-         * See the comment at the top of DisplayListItems.h for why. */
-
-        switch (item.type()) {
-        case WebCore::DisplayList::ItemType::ClipOutToPath:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipOutToPath>(item.get<WebCore::DisplayList::ClipOutToPath>());
-        case WebCore::DisplayList::ItemType::ClipPath:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::ClipPath>(item.get<WebCore::DisplayList::ClipPath>());
-        case WebCore::DisplayList::ItemType::DrawFocusRingPath:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawFocusRingPath>(item.get<WebCore::DisplayList::DrawFocusRingPath>());
-        case WebCore::DisplayList::ItemType::DrawFocusRingRects:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawFocusRingRects>(item.get<WebCore::DisplayList::DrawFocusRingRects>());
-        case WebCore::DisplayList::ItemType::DrawGlyphs:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawGlyphs>(item.get<WebCore::DisplayList::DrawGlyphs>());
-        case WebCore::DisplayList::ItemType::DrawLinesForText:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawLinesForText>(item.get<WebCore::DisplayList::DrawLinesForText>());
-        case WebCore::DisplayList::ItemType::DrawPath:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::DrawPath>(item.get<WebCore::DisplayList::DrawPath>());
-        case WebCore::DisplayList::ItemType::FillCompositedRect:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillCompositedRect>(item.get<WebCore::DisplayList::FillCompositedRect>());
-        case WebCore::DisplayList::ItemType::FillPath:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillPath>(item.get<WebCore::DisplayList::FillPath>());
-        case WebCore::DisplayList::ItemType::FillRectWithColor:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRectWithColor>(item.get<WebCore::DisplayList::FillRectWithColor>());
-        case WebCore::DisplayList::ItemType::FillRectWithGradient:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRectWithGradient>(item.get<WebCore::DisplayList::FillRectWithGradient>());
-        case WebCore::DisplayList::ItemType::FillRectWithRoundedHole:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRectWithRoundedHole>(item.get<WebCore::DisplayList::FillRectWithRoundedHole>());
-        case WebCore::DisplayList::ItemType::FillRoundedRect:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::FillRoundedRect>(item.get<WebCore::DisplayList::FillRoundedRect>());
-        case WebCore::DisplayList::ItemType::PutImageData:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::PutImageData>(item.get<WebCore::DisplayList::PutImageData>());
-        case WebCore::DisplayList::ItemType::SetLineDash:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::SetLineDash>(item.get<WebCore::DisplayList::SetLineDash>());
-        case WebCore::DisplayList::ItemType::SetState:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::SetState>(item.get<WebCore::DisplayList::SetState>());
-        case WebCore::DisplayList::ItemType::StrokePath:
-            return IPC::Encoder::encodeSingleObject<WebCore::DisplayList::StrokePath>(item.get<WebCore::DisplayList::StrokePath>());
-        case WebCore::DisplayList::ItemType::ApplyDeviceScaleFactor:
-#if USE(CG)
-        case WebCore::DisplayList::ItemType::ApplyFillPattern:
-        case WebCore::DisplayList::ItemType::ApplyStrokePattern:
-#endif
-        case WebCore::DisplayList::ItemType::BeginTransparencyLayer:
-        case WebCore::DisplayList::ItemType::ClearRect:
-        case WebCore::DisplayList::ItemType::ClearShadow:
-        case WebCore::DisplayList::ItemType::Clip:
-        case WebCore::DisplayList::ItemType::ClipOut:
-        case WebCore::DisplayList::ItemType::ClipToImageBuffer:
-        case WebCore::DisplayList::ItemType::BeginClipToDrawingCommands:
-        case WebCore::DisplayList::ItemType::EndClipToDrawingCommands:
-        case WebCore::DisplayList::ItemType::ConcatenateCTM:
-        case WebCore::DisplayList::ItemType::DrawDotsForDocumentMarker:
-        case WebCore::DisplayList::ItemType::DrawEllipse:
-        case WebCore::DisplayList::ItemType::DrawImageBuffer:
-        case WebCore::DisplayList::ItemType::DrawNativeImage:
-        case WebCore::DisplayList::ItemType::DrawPattern:
-        case WebCore::DisplayList::ItemType::DrawLine:
-        case WebCore::DisplayList::ItemType::DrawRect:
-        case WebCore::DisplayList::ItemType::EndTransparencyLayer:
-        case WebCore::DisplayList::ItemType::FillEllipse:
-#if ENABLE(INLINE_PATH_DATA)
-        case WebCore::DisplayList::ItemType::FillInlinePath:
-#endif
-        case WebCore::DisplayList::ItemType::FillRect:
-        case WebCore::DisplayList::ItemType::FlushContext:
-        case WebCore::DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
-        case WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer:
-#if ENABLE(VIDEO)
-        case WebCore::DisplayList::ItemType::PaintFrameForMedia:
-#endif
-        case WebCore::DisplayList::ItemType::Restore:
-        case WebCore::DisplayList::ItemType::Rotate:
-        case WebCore::DisplayList::ItemType::Save:
-        case WebCore::DisplayList::ItemType::Scale:
-        case WebCore::DisplayList::ItemType::SetCTM:
-        case WebCore::DisplayList::ItemType::SetInlineFillColor:
-        case WebCore::DisplayList::ItemType::SetInlineFillGradient:
-        case WebCore::DisplayList::ItemType::SetInlineStrokeColor:
-        case WebCore::DisplayList::ItemType::SetLineCap:
-        case WebCore::DisplayList::ItemType::SetLineJoin:
-        case WebCore::DisplayList::ItemType::SetMiterLimit:
-        case WebCore::DisplayList::ItemType::SetStrokeThickness:
-        case WebCore::DisplayList::ItemType::StrokeEllipse:
-#if ENABLE(INLINE_PATH_DATA)
-        case WebCore::DisplayList::ItemType::StrokeInlinePath:
-#endif
-        case WebCore::DisplayList::ItemType::StrokeRect:
-        case WebCore::DisplayList::ItemType::StrokeLine:
-        case WebCore::DisplayList::ItemType::Translate:
+        return WTF::visit([](const auto& displayListItem) -> RefPtr<WebCore::SharedBuffer> {
+            using DisplayListItemType = typename WTF::RemoveCVAndReference<decltype(displayListItem)>::type;
+            if constexpr (!DisplayListItemType::isInlineItem)
+                return IPC::Encoder::encodeSingleObject<DisplayListItemType>(displayListItem);
             RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return nullptr;
-        }
+        }, item);
     }
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() override

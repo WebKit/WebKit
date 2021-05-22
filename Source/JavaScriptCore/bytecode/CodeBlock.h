@@ -434,9 +434,7 @@ public:
     JITType jitType() const
     {
         JITCode* jitCode = m_jitCode.get();
-        WTF::loadLoadFence();
         JITType result = JITCode::jitTypeFor(jitCode);
-        WTF::loadLoadFence(); // This probably isn't needed. Oh well, paranoia is good.
         return result;
     }
 
@@ -499,7 +497,6 @@ public:
 
     unsigned numberOfArgumentValueProfiles()
     {
-        ASSERT(m_numParameters >= 0);
         ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters) || !Options::useJIT());
         return m_argumentValueProfiles.size();
     }

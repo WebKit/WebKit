@@ -41,7 +41,10 @@ from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.user import User
 
 with OutputCapture():
-    import keyring
+    try:
+        import keyring
+    except ImportError:
+        keyring = None
 
 _log = logging.getLogger(__name__)
 

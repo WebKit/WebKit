@@ -27,5 +27,5 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface ChannelSplitterNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional ChannelSplitterOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional ChannelSplitterOptions options);
 };

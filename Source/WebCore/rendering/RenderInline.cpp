@@ -570,7 +570,7 @@ private:
 bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset)
 {
     ASSERT(result.isRectBasedTest() && !alwaysCreateLineBoxes());
-    if (!visibleToHitTesting())
+    if (!visibleToHitTesting(request))
         return false;
 
     HitTestLocation tmpLocation(locationInContainer, -toLayoutSize(accumulatedOffset));

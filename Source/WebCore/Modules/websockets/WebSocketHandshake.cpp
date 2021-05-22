@@ -55,6 +55,7 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -377,10 +378,8 @@ static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
     if (dotPosition == notFound)
         return false;
 
-    StringView majorVersionView = httpStatusLine.substring(preambleLength, dotPosition - preambleLength);
-    bool isValid;
-    int majorVersion = majorVersionView.toIntStrict(isValid);
-    if (!isValid)
+    auto majorVersion = parseInteger<int>(httpStatusLine.substring(preambleLength, dotPosition - preambleLength));
+    if (!majorVersion)
         return false;
 
     unsigned minorVersionLength;
@@ -389,11 +388,11 @@ static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
         if (!isASCIIDigit(httpStatusLine[dotPosition + minorVersionLength]))
             break;
     }
-    int minorVersion = (httpStatusLine.substring(dotPosition + 1, minorVersionLength)).toIntStrict(isValid);
-    if (!isValid)
+    auto minorVersion = parseInteger<int>(httpStatusLine.substring(dotPosition + 1, minorVersionLength));
+    if (!minorVersion)
         return false;
 
-    return (majorVersion >= 1 && minorVersion >= 1) || majorVersion >= 2;
+    return (*majorVersion >= 1 && *minorVersion >= 1) || *majorVersion >= 2;
 }
 
 // Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
@@ -461,16 +460,14 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
     StringView statusCodeString(reinterpret_cast<const LChar*>(space1 + 1), space2 - space1 - 1);
     if (statusCodeString.length() != 3) // Status code must consist of three digits.
         return lineLength;
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 3; ++i) {
         if (!isASCIIDigit(statusCodeString[i])) {
             m_failureReason = makeString("Invalid status code: ", statusCodeString);
             return lineLength;
         }
+    }
 
-    bool ok = false;
-    statusCode = statusCodeString.toIntStrict(ok);
-    ASSERT(ok);
-
+    statusCode = parseInteger<int>(statusCodeString).value();
     statusText = String(space2 + 1, end - space2 - 3); // Exclude "\r\n".
     return lineLength;
 }

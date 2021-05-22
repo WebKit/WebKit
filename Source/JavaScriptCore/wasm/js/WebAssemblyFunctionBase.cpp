@@ -37,8 +37,9 @@ namespace JSC {
 
 const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunctionBase) };
 
-WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure)
+WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, WasmToWasmImportableFunction importableFunction)
     : Base(vm, executable, globalObject, structure)
+    , m_importableFunction(importableFunction)
 { }
 
 template<typename Visitor>

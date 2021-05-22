@@ -63,6 +63,7 @@
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKitLegacy/DOMHTMLInputElement.h>
 #import <wtf/Assertions.h>
+#import <wtf/FixedVector.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -89,7 +90,7 @@ using JSC::Yarr::RegularExpression;
 
 @implementation WebHTMLRepresentation
 
-static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseInsensitiveHash>& set)
+static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensitiveHash>& set)
 {
     auto vector = copyToVectorOf<NSString *>(set);
     return adoptNS([[NSArray alloc] initWithObjects:vector.data() count:vector.size()]);
@@ -104,25 +105,25 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 
 + (NSArray *)supportedMediaMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedMediaMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedMediaMIMETypes = createNSArray(MIMETypeRegistry::supportedMediaMIMETypes());
     return staticSupportedMediaMIMETypes.get().get();
 }
 
 + (NSArray *)supportedNonImageMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedNonImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedNonImageMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedNonImageMIMETypes = createNSArray(MIMETypeRegistry::supportedNonImageMIMETypes());
     return staticSupportedNonImageMIMETypes.get().get();
 }
 
 + (NSArray *)supportedImageMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedImageMIMETypes = newArrayWithStrings(MIMETypeRegistry::supportedImageMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticSupportedImageMIMETypes = createNSArray(MIMETypeRegistry::supportedImageMIMETypes());
     return staticSupportedImageMIMETypes.get().get();
 }
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    static NeverDestroyed<RetainPtr<NSArray>> staticUnsupportedTextMIMETypes = newArrayWithStrings(MIMETypeRegistry::unsupportedTextMIMETypes());
+    static NeverDestroyed<RetainPtr<NSArray>> staticUnsupportedTextMIMETypes = createNSArray(MIMETypeRegistry::unsupportedTextMIMETypes());
     return staticUnsupportedTextMIMETypes.get().get();
 }
 

@@ -59,7 +59,7 @@ SVGTextPathElement::~SVGTextPathElement()
 
 void SVGTextPathElement::clearResourceReferences()
 {
-    document().accessSVGExtensions().removeAllTargetReferencesForElement(*this);
+    removeElementReference();
 }
 
 void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -149,11 +149,8 @@ void SVGTextPathElement::buildPendingResource()
             document().accessSVGExtensions().addPendingResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (target.element->hasTagName(SVGNames::pathTag)) {
-        // Register us with the target in the dependencies map. Any change of hrefElement
-        // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions().addElementReferencingTarget(*this, downcast<SVGElement>(*target.element));
-    }
+    } else if (target.element->hasTagName(SVGNames::pathTag))
+        downcast<SVGElement>(*target.element).addReferencingElement(*this);
 }
 
 Node::InsertedIntoAncestorResult SVGTextPathElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

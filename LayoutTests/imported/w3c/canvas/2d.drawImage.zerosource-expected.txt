@@ -1,8 +1,0 @@
-2d.drawImage.zerosource
-drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR
-Spec references: 2d.drawImage.zerosource
-Actual output:
-Expected output:
-
-Passed
-

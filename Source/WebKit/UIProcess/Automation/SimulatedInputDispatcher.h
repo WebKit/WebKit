@@ -31,10 +31,8 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Optional.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>

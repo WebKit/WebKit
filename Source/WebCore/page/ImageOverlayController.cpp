@@ -32,7 +32,6 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "FrameSelection.h"
-#include "GapRects.h"
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
 #include "IntRect.h"
@@ -46,12 +45,14 @@
 
 namespace WebCore {
 
+class FloatQuad;
+
 ImageOverlayController::ImageOverlayController(Page& page)
     : m_page(makeWeakPtr(page))
 {
 }
 
-void ImageOverlayController::selectionRectsDidChange(Frame& frame, const Vector<LayoutRect>& rects)
+void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<FloatQuad>& quads)
 {
     if (!m_page || !m_page->chrome().client().needsImageOverlayControllerForSelectionPainting())
         return;
@@ -60,7 +61,7 @@ void ImageOverlayController::selectionRectsDidChange(Frame& frame, const Vector<
         return;
 
     auto overlayHostRenderer = ([&] () -> RenderElement* {
-        if (rects.isEmpty())
+        if (quads.isEmpty())
             return nullptr;
 
         auto selectedRange = frame.selection().selection().range();
@@ -84,7 +85,8 @@ void ImageOverlayController::selectionRectsDidChange(Frame& frame, const Vector<
         return;
     }
 
-    m_overlaySelectionRects = rects;
+    m_overlaySelectionQuads = quads;
+    m_selectionOverlayBounds = overlayHostRenderer->absoluteBoundingBoxRect();
     m_selectionBackgroundColor = overlayHostRenderer->selectionBackgroundColor();
     m_currentOverlayDocument = makeWeakPtr(overlayHostRenderer->document());
 
@@ -116,7 +118,8 @@ PageOverlay& ImageOverlayController::installPageOverlayIfNeeded()
 
 void ImageOverlayController::uninstallPageOverlayIfNeeded()
 {
-    m_overlaySelectionRects.clear();
+    m_selectionOverlayBounds = { };
+    m_overlaySelectionQuads.clear();
     m_selectionBackgroundColor = Color::transparentBlack;
     m_currentOverlayDocument = nullptr;
 
@@ -142,9 +145,23 @@ void ImageOverlayController::drawRect(PageOverlay& pageOverlay, GraphicsContext&
 
     GraphicsContextStateSaver stateSaver(context);
     context.clearRect(dirtyRect);
+
+    if (m_overlaySelectionQuads.isEmpty())
+        return;
+
+    Path coalescedSelectionPath;
+    for (auto& quad : m_overlaySelectionQuads) {
+        coalescedSelectionPath.moveTo(quad.p1());
+        coalescedSelectionPath.addLineTo(quad.p2());
+        coalescedSelectionPath.addLineTo(quad.p3());
+        coalescedSelectionPath.addLineTo(quad.p4());
+        coalescedSelectionPath.addLineTo(quad.p1());
+        coalescedSelectionPath.closeSubpath();
+    }
+
     context.setFillColor(m_selectionBackgroundColor);
-    for (auto& rect : m_overlaySelectionRects)
-        context.fillRect(rect);
+    context.clip(m_selectionOverlayBounds);
+    context.fillPath(coalescedSelectionPath);
 }
 
 } // namespace WebCore

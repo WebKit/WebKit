@@ -98,16 +98,17 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/inspector/agents/page"
     "${WEBCORE_DIR}/inspector/agents/worker"
     "${WEBCORE_DIR}/layout"
-    "${WEBCORE_DIR}/layout/blockformatting"
-    "${WEBCORE_DIR}/layout/blockformatting/tablewrapper"
-    "${WEBCORE_DIR}/layout/flexformatting"
+    "${WEBCORE_DIR}/layout/formattingContexts"
+    "${WEBCORE_DIR}/layout/formattingContexts/block"
+    "${WEBCORE_DIR}/layout/formattingContexts/block/tablewrapper"
+    "${WEBCORE_DIR}/layout/formattingContexts/flex"
     "${WEBCORE_DIR}/layout/floats"
-    "${WEBCORE_DIR}/layout/inlineformatting"
-    "${WEBCORE_DIR}/layout/inlineformatting/text"
+    "${WEBCORE_DIR}/layout/formattingContexts/inline"
+    "${WEBCORE_DIR}/layout/formattingContexts/inline/text"
     "${WEBCORE_DIR}/layout/integration"
     "${WEBCORE_DIR}/layout/invalidation"
     "${WEBCORE_DIR}/layout/layouttree"
-    "${WEBCORE_DIR}/layout/tableformatting"
+    "${WEBCORE_DIR}/layout/formattingContexts/table"
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/appcache"
     "${WEBCORE_DIR}/loader/archive"
@@ -1055,6 +1056,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasRect.idl
     html/canvas/CanvasRenderingContext2D.idl
+    html/canvas/CanvasRenderingContext2DSettings.idl
     html/canvas/CanvasShadowStyles.idl
     html/canvas/CanvasState.idl
     html/canvas/CanvasText.idl
@@ -1069,6 +1071,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/OffscreenCanvasRenderingContext2D.idl
     html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
+    html/canvas/PredefinedColorSpace.idl
 
     html/track/AudioTrack.idl
     html/track/AudioTrackList.idl

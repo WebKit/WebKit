@@ -277,12 +277,16 @@ WI.View = class View extends WI.Object
         let isInitialLayout = !this._didInitialLayout;
 
         if (isInitialLayout) {
+            console.assert(WI.setReentrantCheck(this, "initialLayout"), "ERROR: calling `initialLayout` while already in it", this);
             this.initialLayout();
             this._didInitialLayout = true;
         }
 
-        if (this._layoutReason === WI.View.LayoutReason.Resize || isInitialLayout)
+        if (this._layoutReason === WI.View.LayoutReason.Resize || isInitialLayout) {
+            console.assert(WI.setReentrantCheck(this, "sizeDidChange"), "ERROR: calling `sizeDidChange` while already in it", this);
             this.sizeDidChange();
+            console.assert(WI.clearReentrantCheck(this, "sizeDidChange"), "ERROR: missing return from `sizeDidChange`", this);
+        }
 
         let savedLayoutReason = this._layoutReason;
         if (isInitialLayout) {
@@ -290,7 +294,9 @@ WI.View = class View extends WI.Object
             this._setLayoutReason();
         }
 
+        console.assert(WI.setReentrantCheck(this, "layout"), "ERROR: calling `layout` while already in it", this);
         this.layout();
+        console.assert(WI.clearReentrantCheck(this, "layout"), "ERROR: missing return from `layout`", this);
 
         // Ensure that the initial layout override doesn't affects to subviews.
         this._layoutReason = savedLayoutReason;
@@ -305,7 +311,9 @@ WI.View = class View extends WI.Object
 
         this._layoutReason = null;
 
+        console.assert(WI.setReentrantCheck(this, "didLayoutSubtree"), "ERROR: calling `didLayoutSubtree` while already in it", this);
         this.didLayoutSubtree();
+        console.assert(WI.clearReentrantCheck(this, "didLayoutSubtree"), "ERROR: missing return from `didLayoutSubtree`", this);
     }
 
     _setLayoutReason(layoutReason)

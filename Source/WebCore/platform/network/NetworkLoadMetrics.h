@@ -33,6 +33,18 @@
 #include <wtf/persistence/PersistentCoder.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/NetworkLoadMetricsAdditions.h>
+#else
+#define NETWORK_LOAD_METRICS_ADDITIONS_1
+#define NETWORK_LOAD_METRICS_ADDITIONS_2
+#define NETWORK_LOAD_METRICS_ADDITIONS_3
+#define NETWORK_LOAD_METRICS_ADDITIONS_4
+#define NETWORK_LOAD_METRICS_ADDITIONS_5
+#define NETWORK_LOAD_METRICS_ADDITIONS_6
+#define NETWORK_LOAD_METRICS_ADDITIONS_7
+#endif
+
 #if PLATFORM(COCOA)
 OBJC_CLASS NSDictionary;
 #endif
@@ -45,6 +57,8 @@ enum class NetworkLoadPriority : uint8_t {
     High,
     Unknown,
 };
+
+NETWORK_LOAD_METRICS_ADDITIONS_1;
 
 class NetworkLoadMetricsWithoutNonTimingData {
     WTF_MAKE_FAST_ALLOCATED(NetworkLoadMetricsWithoutNonTimingData);
@@ -111,6 +125,7 @@ public:
         copy.tlsProtocol = tlsProtocol.isolatedCopy();
         copy.tlsCipher = tlsCipher.isolatedCopy();
         copy.priority = priority;
+        NETWORK_LOAD_METRICS_ADDITIONS_2;
         copy.requestHeaders = requestHeaders.isolatedCopy();
 
         copy.requestHeaderBytesSent = requestHeaderBytesSent;
@@ -145,6 +160,7 @@ public:
             && tlsProtocol == other.tlsProtocol
             && tlsCipher == other.tlsCipher
             && priority == other.priority
+            NETWORK_LOAD_METRICS_ADDITIONS_3
             && requestHeaders == other.requestHeaders
             && requestHeaderBytesSent == other.requestHeaderBytesSent
             && requestBodyBytesSent == other.requestBodyBytesSent
@@ -168,6 +184,7 @@ public:
     String tlsCipher;
 
     NetworkLoadPriority priority { NetworkLoadPriority::Unknown };
+    NETWORK_LOAD_METRICS_ADDITIONS_4;
 
     HTTPHeaderMap requestHeaders;
 
@@ -185,6 +202,8 @@ WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSDictionary *timingData);
 template<class Encoder>
 void NetworkLoadMetrics::encode(Encoder& encoder) const
 {
+    static_assert(Encoder::isIPCEncoder, "NetworkLoadMetrics should not be stored by the WTF::Persistence::Encoder");
+
     encoder << fetchStart;
     encoder << domainLookupStart;
     encoder << domainLookupEnd;
@@ -206,6 +225,7 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << tlsProtocol;
     encoder << tlsCipher;
     encoder << priority;
+    NETWORK_LOAD_METRICS_ADDITIONS_5;
     encoder << requestHeaders;
     encoder << requestHeaderBytesSent;
     encoder << requestBodyBytesSent;
@@ -217,6 +237,8 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
 template<class Decoder>
 bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
 {
+    static_assert(Decoder::isIPCDecoder, "NetworkLoadMetrics should not be stored by the WTF::Persistence::Encoder");
+
     return decoder.decode(metrics.fetchStart)
         && decoder.decode(metrics.domainLookupStart)
         && decoder.decode(metrics.domainLookupEnd)
@@ -238,6 +260,7 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
         && decoder.decode(metrics.tlsProtocol)
         && decoder.decode(metrics.tlsCipher)
         && decoder.decode(metrics.priority)
+        NETWORK_LOAD_METRICS_ADDITIONS_6
         && decoder.decode(metrics.requestHeaders)
         && decoder.decode(metrics.requestHeaderBytesSent)
         && decoder.decode(metrics.requestBodyBytesSent)
@@ -248,21 +271,4 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
 
 } // namespace WebCore
 
-// NetworkLoadMetrics should not be stored by the WTF::Persistence::Decoder.
-namespace WTF {
-namespace Persistence {
-
-template<> struct Coder<Optional<WebCore::NetworkLoadPriority>> {
-    static NO_RETURN_DUE_TO_ASSERT void encode(Encoder&, const Optional<WebCore::NetworkLoadPriority>&)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    static bool decode(Decoder&, Optional<WebCore::NetworkLoadPriority>&)
-    {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-};
-
-}} // namespace WTF::Persistence
+NETWORK_LOAD_METRICS_ADDITIONS_7

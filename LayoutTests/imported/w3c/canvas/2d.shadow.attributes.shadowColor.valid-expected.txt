@@ -1,4 +1,0 @@
-2d.shadow.attributes.shadowColor.valid
-Spec references: 2d.shadow.color.get 2d.shadow.color.set
-Actual output:
-Passed

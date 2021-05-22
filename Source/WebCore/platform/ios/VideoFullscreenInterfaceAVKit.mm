@@ -926,7 +926,7 @@ void VideoFullscreenInterfaceAVKit::applicationDidBecomeActive()
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::applicationDidBecomeActive(%p)", this);
 }
 
-void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const IntRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+void VideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::setupFullscreen(%p)", this);
@@ -956,7 +956,7 @@ void VideoFullscreenInterfaceAVKit::enterFullscreen()
     doEnterFullscreen();
 }
 
-bool VideoFullscreenInterfaceAVKit::exitFullscreen(const IntRect& finalRect)
+bool VideoFullscreenInterfaceAVKit::exitFullscreen(const FloatRect& finalRect)
 {
     m_watchdogTimer.stop();
 
@@ -1066,7 +1066,7 @@ void VideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     }
 }
 
-void VideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, const IntRect& inlineRect)
+void VideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, const FloatRect& inlineRect)
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::preparedToReturnToInline(%p) - visible(%s)", this, boolString(visible));
     setInlineRect(inlineRect, visible);
@@ -1301,7 +1301,7 @@ void VideoFullscreenInterfaceAVKit::setHasVideoContentLayer(bool value)
         doExitFullscreen();
 }
 
-void VideoFullscreenInterfaceAVKit::setInlineRect(const IntRect& inlineRect, bool visible)
+void VideoFullscreenInterfaceAVKit::setInlineRect(const FloatRect& inlineRect, bool visible)
 {
     m_inlineRect = inlineRect;
     m_inlineIsVisible = visible;

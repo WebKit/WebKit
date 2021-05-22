@@ -397,15 +397,16 @@ void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 void FETurbulence::platformApplySoftware()
 {
     auto* resultImage = createUnmultipliedImageResult();
-    auto* pixelArray = resultImage ? resultImage->data() : nullptr;
-    if (!pixelArray)
+    if (!resultImage)
         return;
+
+    auto& pixelArray = resultImage->data();
 
     IntSize resultSize(absolutePaintRect().size());
     resultSize.scale(filter().filterScale());
 
     if (resultSize.isEmpty()) {
-        pixelArray->zeroFill();
+        pixelArray.zeroFill();
         return;
     }
 
@@ -440,7 +441,7 @@ void FETurbulence::platformApplySoftware()
             for (unsigned i = 0; i < numJobs; ++i) {
                 FillRegionParameters& params = parallelJobs.parameter(i);
                 params.filter = this;
-                params.pixelArray = pixelArray;
+                params.pixelArray = &pixelArray;
                 params.paintingData = &paintingData;
                 params.stitchData = stitchData;
                 params.startY = startY;
@@ -456,7 +457,7 @@ void FETurbulence::platformApplySoftware()
     }
 
     // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
-    fillRegion(*pixelArray, paintingData, stitchData, 0, height);
+    fillRegion(pixelArray, paintingData, stitchData, 0, height);
 }
 
 static TextStream& operator<<(TextStream& ts, TurbulenceType type)

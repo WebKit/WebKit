@@ -1,7 +1,0 @@
-2d.shadow.canvas.transparent.2
-Shadows are not drawn for transparent parts of canvases
-Spec references: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed

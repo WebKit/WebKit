@@ -46,6 +46,7 @@
 #include "ThreadableLoader.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -183,13 +184,13 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
         return false;
     }
 
-    // If we have a charset, the only allowed value is UTF-8 (case-insensitive).
+    // The specification states we should always decode as UTF-8. If there is a provided charset and it is not UTF-8, then log a warning
+    // message but keep going anyway.
     auto& charset = response.textEncodingName();
     if (!charset.isEmpty() && !equalLettersIgnoringASCIICase(charset, "utf-8")) {
-        auto message = makeString("EventSource's response has a charset (\"", charset, "\") that is not UTF-8. Aborting the connection.");
+        auto message = makeString("EventSource's response has a charset (\"", charset, "\") that is not UTF-8. The response will be decoded as UTF-8.");
         // FIXME: Console message would be better with a source code location; where would we get that?
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, WTFMove(message));
-        return false;
     }
 
     return true;
@@ -383,12 +384,10 @@ void EventSource::parseEventStreamLine(unsigned position, Optional<unsigned> fie
         if (!valueLength)
             m_reconnectDelay = defaultReconnectDelay;
         else {
-            // FIXME: Do we really want to ignore trailing garbage here? Should we be using the strict version instead?
-            // FIXME: If we can't parse the value, should we leave m_reconnectDelay alone or set it to defaultReconnectDelay?
-            bool ok;
-            auto reconnectDelay = charactersToUInt64(&m_receiveBuffer[position], valueLength, &ok);
-            if (ok)
-                m_reconnectDelay = reconnectDelay;
+            // FIXME: Do we really want to ignore trailing junk here?
+            // FIXME: When we can't parse the value, should we really leave m_reconnectDelay alone? Shouldn't we set it to defaultReconnectDelay?
+            if (auto reconnectDelay = parseIntegerAllowingTrailingJunk<uint64_t>({ &m_receiveBuffer[position], valueLength }))
+                m_reconnectDelay = *reconnectDelay;
         }
     }
 }

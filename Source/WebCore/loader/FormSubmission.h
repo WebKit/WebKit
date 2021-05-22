@@ -40,6 +40,7 @@ namespace WebCore {
 class Event;
 class FormData;
 class FrameLoadRequest;
+class HTMLFormControlElement;
 
 class FormSubmission : public RefCounted<FormSubmission>, public CanMakeWeakPtr<FormSubmission> {
 public:
@@ -75,7 +76,7 @@ public:
         String m_acceptCharset;
     };
 
-    static Ref<FormSubmission> create(HTMLFormElement&, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
+    static Ref<FormSubmission> create(HTMLFormElement&, HTMLFormControlElement* overrideSubmitter, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
     URL requestURL() const;

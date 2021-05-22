@@ -105,15 +105,7 @@ void JSWebAssemblyTable::set(uint32_t index, JSValue value)
     m_table->set(index, value);
 }
 
-void JSWebAssemblyTable::set(uint32_t index, WebAssemblyFunction* function)
-{
-    RELEASE_ASSERT(index < length());
-    RELEASE_ASSERT(m_table->asFuncrefTable());
-    auto& subThis = *static_cast<Wasm::FuncRefTable*>(&m_table.get());
-    subThis.setFunction(index, function, function->importableFunction(), &function->instance()->instance());
-}
-
-void JSWebAssemblyTable::set(uint32_t index, WebAssemblyWrapperFunction* function)
+void JSWebAssemblyTable::set(uint32_t index, WebAssemblyFunctionBase* function)
 {
     RELEASE_ASSERT(index < length());
     RELEASE_ASSERT(m_table->asFuncrefTable());

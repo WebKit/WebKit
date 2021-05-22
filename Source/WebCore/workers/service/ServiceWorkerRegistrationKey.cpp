@@ -30,6 +30,7 @@
 
 #include "SecurityOrigin.h"
 #include <wtf/URLHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -107,20 +108,9 @@ Optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabas
 
     // If there's a gap between third and second, we expect to have a port to decode
     if (third - second > 1) {
-        bool ok;
-        unsigned port;
-        if (key.is8Bit())
-            port = charactersToUIntStrict(key.characters8() + second + 1, third - second - 1 , &ok);
-        else
-            port = charactersToUIntStrict(key.characters16() + second + 1, third - second - 1, &ok);
-
-        if (!ok)
+        shortPort = parseInteger<uint16_t>(StringView { key }.substring(second + 1, third - second - 1));
+        if (!shortPort)
             return WTF::nullopt;
-
-        if (port > std::numeric_limits<uint16_t>::max())
-            return WTF::nullopt;
-
-        shortPort = static_cast<uint16_t>(port);
     }
 
     auto scope = URL { URL(), key.substring(third + 1) };

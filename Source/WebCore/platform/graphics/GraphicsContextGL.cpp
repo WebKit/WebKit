@@ -779,7 +779,7 @@ bool GraphicsContextGL::extractImageData(ImageData* imageData, DataFormat source
         return false;
     data.resize(packedSize);
 
-    if (!packPixels(imageData->data()->data(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
+    if (!packPixels(imageData->data().data(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
         return false;
 
     return true;

@@ -34,15 +34,7 @@
 
 namespace WTF {
 
-#if RELEASE_LOG_DISABLED
-WTFLogChannel LogMemoryPressure = { WTFLogChannelState::On, "MemoryPressure", WTFLogLevel::Error };
-#endif
-#if USE(OS_LOG) && !RELEASE_LOG_DISABLED
-WTFLogChannel LogMemoryPressure = { WTFLogChannelState::On, "MemoryPressure", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
-#endif
-#if USE(JOURNALD) && !RELEASE_LOG_DISABLED
-WTFLogChannel LogMemoryPressure = { WTFLogChannelState::On, "MemoryPressure", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM };
-#endif
+DEFINE_LOG_CHANNEL(MemoryPressure, LOG_CHANNEL_WEBKIT_SUBSYSTEM);
 
 WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
 
@@ -51,6 +43,9 @@ MemoryPressureHandler& MemoryPressureHandler::singleton()
     static LazyNeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
+        WTFLogChannel* channels[] = { &LogMemoryPressure };
+        WTFInitializeLogChannelStatesFromString(channels, 1, "");
+
         memoryPressureHandler.construct();
     });
     return memoryPressureHandler;

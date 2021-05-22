@@ -1,5 +1,0 @@
-2d.path.isPointInPath.basic.1
-isPointInPath() detects whether the point is inside the path
-Spec references: 2d.path.isPointInPath
-Actual output:
-Passed

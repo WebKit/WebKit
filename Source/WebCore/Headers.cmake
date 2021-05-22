@@ -51,6 +51,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/highlight/AppHighlight.h
     Modules/highlight/Highlight.h
     Modules/highlight/HighlightRegister.h
+    Modules/highlight/HighlightVisibility.h
 
     Modules/indexeddb/IDBActiveDOMObject.h
     Modules/indexeddb/IDBDatabaseIdentifier.h
@@ -574,7 +575,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/FrameSelection.h
     editing/HTMLInterchange.h
     editing/InlineRunAndOffset.h
-    editing/SelectionRectGatherer.h
+    editing/SelectionGeometryGatherer.h
     editing/SerializedAttachmentData.h
     editing/SmartReplace.h
     editing/SpellChecker.h
@@ -754,7 +755,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
-    layout/inlineformatting/InlineRect.h
+    layout/formattingContexts/inline/InlineRect.h
 
     layout/integration/LayoutIntegrationInlineContent.h
     layout/integration/LayoutIntegrationLine.h
@@ -944,6 +945,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/SuspendableTimer.h
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
+    page/TranslationContextMenuInfo.h
     page/UserContentController.h
     page/UserContentProvider.h
     page/UserContentTypes.h
@@ -1286,6 +1288,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Path.h
     platform/graphics/PathUtilities.h
     platform/graphics/Pattern.h
+    platform/graphics/PixelBuffer.h
+    platform/graphics/PixelFormat.h
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformImage.h
     platform/graphics/PlatformImageBuffer.h
@@ -1631,6 +1635,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/StyleChange.h
     style/StyleScope.h
+    style/StyleScopeOrdinal.h
     style/StyleUpdate.h
     style/StyleValidity.h
     style/Styleable.h

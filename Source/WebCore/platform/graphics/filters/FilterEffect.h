@@ -241,7 +241,13 @@ private:
     // Should the effect clip to its primitive region, or expand to use the combined region of its inputs.
     bool m_clipsToBounds { true };
 
-    DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::LinearSRGB };
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    static constexpr auto defaultOperatingColorSpace = DestinationColorSpace::LinearSRGB;
+#else
+    static constexpr auto defaultOperatingColorSpace = DestinationColorSpace::SRGB;
+#endif
+
+    DestinationColorSpace m_operatingColorSpace { defaultOperatingColorSpace };
     DestinationColorSpace m_resultColorSpace { DestinationColorSpace::SRGB };
     
     const Type m_filterEffectClassType;

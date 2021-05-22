@@ -1142,27 +1142,6 @@ svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 # SVG
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
 
-# Canvas tests that fail:
-webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.path.rect.winding.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.middle.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.top.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.end.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.other.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
-
-# Canvas tests that have stderr:
-canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
-
 # HTTP tests that time out:
 http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
 http/tests/local/blob/send-hybrid-blob.html
@@ -3129,20 +3108,6 @@ fast/scrolling/ios/body-overflow-hidden.html [ Pass ImageOnlyFailure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=175736
 fast/canvas/canvas-currentColor.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.shape1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.inside1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.outside2.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.outside3.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.touch1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.touch3.html [ Failure ]
 
 # These tests fail with tiny (0.01%) image diffs with accelerated drawing enabled.
 accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
@@ -3282,6 +3247,7 @@ webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-012.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-013.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-021.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-004.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-005.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-012.html [ Skip ]

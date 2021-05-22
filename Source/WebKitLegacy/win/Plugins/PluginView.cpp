@@ -74,6 +74,7 @@
 #include <WebCore/npruntime_impl.h>
 #include <WebCore/runtime_root.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -1071,7 +1072,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
                 String contentLength = headerFields.get(HTTPHeaderName::ContentLength);
 
                 if (!contentLength.isNull())
-                    dataLength = std::min(contentLength.toInt(), (int)dataLength);
+                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).valueOr(0), dataLength);
                 headerFields.remove(HTTPHeaderName::ContentLength);
 
                 postData += location;

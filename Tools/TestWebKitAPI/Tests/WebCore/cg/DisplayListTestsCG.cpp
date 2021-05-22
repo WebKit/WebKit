@@ -69,7 +69,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     }
 
     {
-        auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated);
+        auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
         ImageBufferHashMap imageBufferMap;
         imageBufferMap.set(imageBufferIdentifier, imageBuffer.releaseNonNull());
 
@@ -100,7 +100,7 @@ private:
         return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
     }
 
-    RefPtr<SharedBuffer> encodeItemOutOfLine(ItemHandle) const final
+    RefPtr<SharedBuffer> encodeItemOutOfLine(const DisplayListItem&) const final
     {
         return SharedBuffer::create();
     }

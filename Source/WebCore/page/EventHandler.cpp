@@ -436,8 +436,11 @@ static inline bool dispatchSelectStart(Node* node)
 
 static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 {
-    if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(&targetNode))
-        return rootUserSelectAll;
+    if (HTMLElement::isInsideImageOverlay(targetNode))
+        return nullptr;
+
+    if (auto rootUserSelectAll = makeRefPtr(Position::rootUserSelectAllForNode(&targetNode)))
+        return rootUserSelectAll.get();
 
     if (targetNode.shouldSelectOnMouseDown())
         return &targetNode;
@@ -447,13 +450,13 @@ static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 
 static VisibleSelection expandSelectionToRespectSelectOnMouseDown(Node& targetNode, const VisibleSelection& selection)
 {
-    Node* nodeToSelect = nodeToSelectOnMouseDownForNode(targetNode);
+    auto nodeToSelect = makeRefPtr(nodeToSelectOnMouseDownForNode(targetNode));
     if (!nodeToSelect)
         return selection;
 
     VisibleSelection newSelection(selection);
-    newSelection.setBase(positionBeforeNode(nodeToSelect).upstream(CanCrossEditingBoundary));
-    newSelection.setExtent(positionAfterNode(nodeToSelect).downstream(CanCrossEditingBoundary));
+    newSelection.setBase(positionBeforeNode(nodeToSelect.get()).upstream(CanCrossEditingBoundary));
+    newSelection.setExtent(positionAfterNode(nodeToSelect.get()).downstream(CanCrossEditingBoundary));
 
     return newSelection;
 }
@@ -1770,6 +1773,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     m_frame.selection().setCaretBlinkingSuspended(true);
 
     bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
+    if (auto page = m_frame.page(); page && swallowEvent)
+        page->chrome().client().didHandleOrPreventMouseDownOrMouseUpEvent();
     m_capturesDragging = !swallowEvent || mouseEvent.scrollbar();
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
@@ -1832,6 +1837,8 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     m_clickCount = platformMouseEvent.clickCount();
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
+    if (auto page = m_frame.page(); page && swallowMouseUpEvent)
+        page->chrome().client().didHandleOrPreventMouseDownOrMouseUpEvent();
 
     bool swallowClickEvent = platformMouseEvent.button() != RightButton && mouseEvent.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
 
@@ -2136,6 +2143,8 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
         return true;
 
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
+    if (auto page = m_frame.page(); page && swallowMouseUpEvent)
+        page->chrome().client().didHandleOrPreventMouseDownOrMouseUpEvent();
 
     bool contextMenuEvent = platformMouseEvent.button() == RightButton;
 
@@ -3543,16 +3552,15 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         keydown->preventDefault();
     keydown->setTarget(element);
 
-    auto shouldMatchFocusVisible = [initialKeyEvent, keydown](const Element& element) {
-        if (!element.focused())
-            return false;
-
+    auto setHasFocusVisibleIfNeeded = [initialKeyEvent, keydown](Element& element) {
         // If the user interacts with the page via the keyboard, the currently focused element should match :focus-visible.
         // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
-        return keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
+        bool userHasInteractedViaKeyword = keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
+
+        if (element.focused() && userHasInteractedViaKeyword)
+            element.setHasFocusVisible(true);
     };
-    // FIXME: This is wrong for text form controls and contenteditable elements (https://webkit.org/b/225075).
-    element->setHasFocusVisible(shouldMatchFocusVisible(*element));
+    setHasFocusVisibleIfNeeded(*element);
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
         element->dispatchEvent(keydown);
@@ -3599,12 +3607,10 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     // Focus may have changed during keydown handling, so refetch element.
     // But if we are dispatching a fake backward compatibility keypress, then we pretend that the keypress happened on the original element.
     if (!keydownResult) {
-        element->setHasFocusVisible(false);
         element = eventTargetElementForDocument(m_frame.document());
         if (!element)
             return false;
-        // FIXME: This is wrong for text form controls and contenteditable elements (https://webkit.org/b/225075).
-        element->setHasFocusVisible(shouldMatchFocusVisible(*element));
+        setHasFocusVisibleIfNeeded(*element);
     }
 
     PlatformKeyboardEvent keyPressEvent = initialKeyEvent;

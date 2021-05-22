@@ -2282,6 +2282,83 @@ private:
     RenderingResourceIdentifier m_identifier;
 };
 
+using DisplayListItem = Variant
+    < ApplyDeviceScaleFactor
+    , BeginClipToDrawingCommands
+    , BeginTransparencyLayer
+    , ClearRect
+    , ClearShadow
+    , Clip
+    , ClipOut
+    , ClipOutToPath
+    , ClipPath
+    , ClipToImageBuffer
+    , ConcatenateCTM
+    , DrawDotsForDocumentMarker
+    , DrawEllipse
+    , DrawFocusRingPath
+    , DrawFocusRingRects
+    , DrawGlyphs
+    , DrawImageBuffer
+    , DrawLine
+    , DrawLinesForText
+    , DrawNativeImage
+    , DrawPath
+    , DrawPattern
+    , DrawRect
+    , EndClipToDrawingCommands
+    , EndTransparencyLayer
+    , FillCompositedRect
+    , FillEllipse
+    , FillPath
+    , FillRect
+    , FillRectWithColor
+    , FillRectWithGradient
+    , FillRectWithRoundedHole
+    , FillRoundedRect
+    , FlushContext
+    , GetImageData
+    , MetaCommandChangeDestinationImageBuffer
+    , MetaCommandChangeItemBuffer
+    , PutImageData
+    , Restore
+    , Rotate
+    , Save
+    , Scale
+    , SetCTM
+    , SetInlineFillColor
+    , SetInlineFillGradient
+    , SetInlineStrokeColor
+    , SetLineCap
+    , SetLineDash
+    , SetLineJoin
+    , SetMiterLimit
+    , SetState
+    , SetStrokeThickness
+    , StrokeEllipse
+    , StrokeLine
+    , StrokePath
+    , StrokeRect
+    , Translate
+
+#if ENABLE(INLINE_PATH_DATA)
+    , FillInlinePath
+    , StrokeInlinePath
+#endif
+
+#if ENABLE(VIDEO)
+    , PaintFrameForMedia
+#endif
+
+#if USE(CG)
+    , ApplyFillPattern
+    , ApplyStrokePattern
+#endif
+>;
+
+size_t paddedSizeOfTypeAndItemInBytes(const DisplayListItem&);
+ItemType displayListItemType(const DisplayListItem&);
+
 TextStream& operator<<(TextStream&, ItemHandle);
 
 } // namespace DisplayList
@@ -2363,6 +2440,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
 #endif
     WebCore::DisplayList::ItemType::ApplyDeviceScaleFactor
     >;
+
 };
 
 } // namespace WTF

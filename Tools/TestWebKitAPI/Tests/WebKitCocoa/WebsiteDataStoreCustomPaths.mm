@@ -395,13 +395,14 @@ TEST(WebKit, AlternativeServicesDefaultDirectoryCreation)
 {
     NSURL *defaultDirectory = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/AlternativeServices" stringByExpandingTildeInPath] isDirectory:YES];
     [[NSFileManager defaultManager] removeItemAtURL:defaultDirectory error:nil];
-    
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
+
     auto webView1 = adoptNS([[TestWKWebView alloc] init]);
     [webView1 synchronouslyLoadHTMLString:@"start auxiliary processes" baseURL:nil];
 
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
-    
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+    // We always create the path, even if HTTP/3 is turned off.
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
 
 #if PLATFORM(MAC)
     NSString *key = @"ExperimentalHTTP3Enabled";

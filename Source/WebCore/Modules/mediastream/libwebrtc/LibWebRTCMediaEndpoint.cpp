@@ -430,9 +430,9 @@ void LibWebRTCMediaEndpoint::removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpRec
 }
 
 template<typename T>
-ExceptionOr<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::createTransceiverBackends(T&& trackOrKind, const RTCRtpTransceiverInit& init, LibWebRTCRtpSenderBackend::Source&& source)
+ExceptionOr<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::createTransceiverBackends(T&& trackOrKind, webrtc::RtpTransceiverInit&& init, LibWebRTCRtpSenderBackend::Source&& source)
 {
-    auto result = m_backend->AddTransceiver(WTFMove(trackOrKind), fromRtpTransceiverInit(init));
+    auto result = m_backend->AddTransceiver(WTFMove(trackOrKind), WTFMove(init));
     if (!result.ok())
         return toException(result.error());
 
@@ -443,7 +443,7 @@ ExceptionOr<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::createTran
 ExceptionOr<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init)
 {
     auto type = trackKind == "audio" ? cricket::MediaType::MEDIA_TYPE_AUDIO : cricket::MediaType::MEDIA_TYPE_VIDEO;
-    return createTransceiverBackends(type, init, nullptr);
+    return createTransceiverBackends(type, fromRtpTransceiverInit(init, type), nullptr);
 }
 
 std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>> LibWebRTCMediaEndpoint::createSourceAndRTCTrack(MediaStreamTrack& track)
@@ -472,8 +472,9 @@ std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStr
 
 ExceptionOr<LibWebRTCMediaEndpoint::Backends> LibWebRTCMediaEndpoint::addTransceiver(MediaStreamTrack& track, const RTCRtpTransceiverInit& init)
 {
+    auto type = track.source().type() == RealtimeMediaSource::Type::Audio ? cricket::MediaType::MEDIA_TYPE_AUDIO : cricket::MediaType::MEDIA_TYPE_VIDEO;
     auto sourceAndTrack = createSourceAndRTCTrack(track);
-    return createTransceiverBackends(WTFMove(sourceAndTrack.second), init, WTFMove(sourceAndTrack.first));
+    return createTransceiverBackends(WTFMove(sourceAndTrack.second), fromRtpTransceiverInit(init, type), WTFMove(sourceAndTrack.first));
 }
 
 void LibWebRTCMediaEndpoint::setSenderSourceFromTrack(LibWebRTCRtpSenderBackend& sender, MediaStreamTrack& track)

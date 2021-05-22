@@ -79,6 +79,7 @@ messages -> WebPageProxy {
     DidChangePageCount(unsigned pageCount)
     ThemeColorChanged(WebCore::Color themeColor)
     PageExtendedBackgroundColorDidChange(WebCore::Color backgroundColor)
+    SampledPageTopColorChanged(WebCore::Color sampledPageTopColor)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     DidFailToInitializePlugin(String mimeType, String frameURLString, String pageURLString)
     DidBlockInsecurePluginVersion(String mimeType, String pluginURLString, String frameURLString, String pageURLString, bool replacementObscured)
@@ -169,6 +170,7 @@ messages -> WebPageProxy {
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect, enum:uint8_t WebCore::RouteSharingPolicy policy, String routingContextUID)
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
+    DidNotHandleTapAsMeaningfulClickAtPoint(WebCore::IntPoint point)
     DidCompleteSyntheticClick()
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
     HandleSmartMagnificationInformationForPotentialTap(uint64_t requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel)
@@ -226,7 +228,7 @@ messages -> WebPageProxy {
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
-    HandleContextMenuTranslation(String text, WebCore::IntRect boundsInView, WebCore::IntPoint locationInView)
+    HandleContextMenuTranslation(struct WebCore::TranslationContextMenuInfo info)
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -460,7 +462,7 @@ messages -> WebPageProxy {
     ContentFilterDidBlockLoadForFrame(WebCore::ContentFilterUnblockHandler unblockHandler, WebCore::FrameIdentifier frameID)
 #endif
 
-    IsPlayingMediaDidChange(unsigned state, uint64_t sourceElementID)
+    IsPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags state, uint64_t sourceElementID)
     HandleAutoplayEvent(enum:uint8_t WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 
 #if PLATFORM(MAC)
@@ -479,7 +481,7 @@ messages -> WebPageProxy {
     AddPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
     RemovePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
     ShowPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FloatRect pickerLocation, bool hasVideo)
-    PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, unsigned mediaState)
+    PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::MediaProducer::MediaStateFlags mediaState)
     SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
     SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContext::MockState pickerState)
     MockMediaPlaybackTargetPickerDismissPopup()

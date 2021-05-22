@@ -1,3 +1,148 @@
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Remove the one use of String::toInt from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=225568
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMHTMLInputElement.mm:
+        (-[DOMHTMLInputElement setSize:]): Use -[NSString intValue] instead of WTF::String::toInt.
+        Both functions ignore leading spaces, and both ignore trailing junk, so there is no
+        significant change in behavior.
+
+2021-05-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Set the -isSourceEditable property when presenting webpage translation popup
+        https://bugs.webkit.org/show_bug.cgi?id=225515
+        <rdar://problem/77658040>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::handleTranslation):
+        * WebView/WebView.mm:
+        (-[WebView _handleContextMenuTranslation:]):
+        (-[WebView _handleContextMenuTranslation:selectionBounds:menuLocation:]): Deleted.
+        * WebView/WebViewInternal.h:
+
+2021-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused references to PageGroup from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=225359
+
+        Reviewed by Sihui Liu.
+
+        * History/WebHistory.mm:
+        * History/WebHistoryInternal.h:
+        * Storage/WebStorageManager.mm:
+        * WebView/WebView.mm:
+
+2021-05-03  Devin Rousso  <drousso@apple.com>
+
+        [macCatalyst] "Enter Full Screen" button in media controls disappears
+        https://bugs.webkit.org/show_bug.cgi?id=225210
+        <rdar://problem/77010150>
+
+        Reviewed by Eric Carlson.
+
+        In order for the "Enter Full Screen" media controls button to stay visible the `<video>`
+        must return `true` for `HTMLMediaElement::webkitSupportsFullscreen`, which calls into
+       `MediaPlayerPrivate::supportsFullscreen`. On macOS and iOS, this will always return `true`
+        because of `ENABLE(FULLSCREEN_API)`, but on macCatalyst that's not enabled, so we instead
+        use `DeprecatedGlobalSettings::avKitEnabled`, but this is only set in the WebProcess (and
+        WK1). With the GPUProcess enabled, this value is not set, so the `RemoteMediaPlayerProxy`
+        will instead get `false`.
+
+        This patch removes `DeprecatedGlobalSettings::avKitEnabled` since it's enabled on WK1 and
+        non-GPUProcess WK2, and the related iOS-only SPI appears to not be used anywhere internally,
+        instead having callsites just check `HAVE(AVKIT)`.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::supportsVideoFullscreen):
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences avKitEnabled]): Deleted.
+        (-[WebPreferences setAVKitEnabled:]): Deleted.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
+2021-05-03  Sam Weinig  <weinig@apple.com>
+
+        Remove default parameter values for color space and pixel format from ImageBuffer::create to make it clear everwhere we are explicitly requesting SRGB/BGRA8 buffers
+        https://bugs.webkit.org/show_bug.cgi?id=225288
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::imageForCurrentSharingServicePickerItem):
+        Pass arguments explicitly that were previously default values.
+
+2021-04-29  Darin Adler  <darin@apple.com>
+
+        Extend SortedArrayMap further to work on case-folded strings, use in MIMETypeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=224968
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (createNSArray): Renamed from newArrayWithStrings so this overloads the createNSArray
+        function from VectorCocoa.h so we can use the two interchangably and handle both FixedVector
+        and HashSet with the smae code.
+        (+[WebHTMLRepresentation supportedMediaMIMETypes]): Updated for name change.
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]): Ditto.
+        (+[WebHTMLRepresentation supportedImageMIMETypes]): Ditto.
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]): Ditto.
+
+2021-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove support for NPAPI plugins in WebView
+        https://bugs.webkit.org/show_bug.cgi?id=224449
+
+        Reviewed by Geoffrey Garen.
+
+        In r275912 I turned off all plugin support in WebView after looking into use of NP_Initialize, the entry point for NPAPI plugins.
+        That was too aggressive, as we found some use of the older WebKit plugin entry point, plugInViewWithArguments, and reverted in r276652.
+        This cuts out only support for NPAPI plugins for now.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+
+2021-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=225130
+
+        Reviewed by Eric Carlson.
+
+        Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags now that
+        these features have shipped. It also doesn't make sense to disable them given
+        that the prefixed WebAudio API is no longer exposed and there is no feature flag
+        to turn the legacy prefixed API back on.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences modernUnprefixedWebAudioEnabled]): Deleted.
+        (-[WebPreferences setModernUnprefixedWebAudioEnabled:]): Deleted.
+        (-[WebPreferences audioWorkletEnabled]): Deleted.
+        (-[WebPreferences setAudioWorkletEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
+2021-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost
+        https://bugs.webkit.org/show_bug.cgi?id=225057
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
 2021-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r275912.

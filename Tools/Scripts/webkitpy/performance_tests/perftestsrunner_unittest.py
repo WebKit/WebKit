@@ -174,11 +174,6 @@ class MainTest(unittest.TestCase):
         self.assertEqual(options.test_runner_count, 5)
         self.assertEqual(options.no_timeout, True)
 
-    def test_parse_deprecated_args(self):
-        # FIXME: remove this test and the corresponding parameter after all instances of this deprecated parameter have been removed
-        options, _ = PerfTestsRunner._parse_args(['--slave-config-json-path=a/source1.json'])
-        self.assertEqual(options.worker_config_json_path, 'a/source1.json')
-
     def test_upload_json(self):
         runner, port = self.create_runner()
         port.host.filesystem.files['/mock-checkout/some.json'] = 'some content'

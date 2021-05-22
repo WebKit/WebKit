@@ -30,6 +30,7 @@
 #include "CommandResult.h"
 #include "SessionHost.h"
 #include <wtf/RunLoop.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebDriver {
@@ -118,21 +119,20 @@ int WebDriverService::run(int argc, char** argv)
         auto position = targetString.reverseFind(":"_s);
         if (position != notFound) {
             m_targetAddress = targetString.left(position);
-            m_targetPort = targetString.substring(position + 1).toUInt(nullptr);
+            m_targetPort = parseIntegerAllowingTrailingJunk<uint16_t>(StringView { targetString }.substring(position + 1)).valueOr(0);
         }
     }
 #endif
 
-    bool ok;
-    unsigned port = portString.toUInt(&ok);
-    if (!ok) {
-        fprintf(stderr, "Invalid port %s provided\n", portString.ascii().data());
+    auto port = parseInteger<uint16_t>(portString);
+    if (!port) {
+        fprintf(stderr, "Invalid port %s provided\n", portString.utf8().data());
         return EXIT_FAILURE;
     }
 
     WTF::initializeMainThread();
 
-    if (!m_server.listen(host, port))
+    if (!m_server.listen(host, *port))
         return EXIT_FAILURE;
 
     RunLoop::run();

@@ -176,6 +176,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 
     [copiedConfiguration setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore()];
     [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs()];
+    [copiedConfiguration _setAppHighlightsEnabled:options.appHighlightsEnabled()];
 
     configureContentMode(copiedConfiguration.get(), options);
 

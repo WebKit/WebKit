@@ -110,7 +110,7 @@ static SelectionContext collectSelectionData(const RenderRange& selection, bool 
 SelectionRangeData::SelectionRangeData(RenderView& view)
     : m_renderView(view)
 #if ENABLE(SERVICE_CONTROLS)
-    , m_selectionRectGatherer(view)
+    , m_selectionGeometryGatherer(view)
 #endif
 {
 }
@@ -126,7 +126,7 @@ void SelectionRangeData::set(const RenderRange& selection, RepaintMode blockRepa
 #if ENABLE(SERVICE_CONTROLS)
     // Clear the current rects and create a notifier for the new rects we are about to gather.
     // The Notifier updates the Editor when it goes out of scope and is destroyed.
-    auto rectNotifier = m_selectionRectGatherer.clearAndCreateNotifier();
+    auto notifier = m_selectionGeometryGatherer.clearAndCreateNotifier();
 #endif
     m_selectionWasCaret = isCaret;
     apply(selection, blockRepaintMode);
@@ -256,10 +256,10 @@ void SelectionRangeData::apply(const RenderRange& newSelection, RepaintMode bloc
         if (isValidRendererForSelection(*currentRenderer, m_renderRange)) {
             std::unique_ptr<RenderSelectionInfo> selectionInfo = makeUnique<RenderSelectionInfo>(*currentRenderer, true);
 #if ENABLE(SERVICE_CONTROLS)
-            for (auto& rect : selectionInfo->collectedSelectionRects())
-                m_selectionRectGatherer.addRect(selectionInfo->repaintContainer(), rect);
+            for (auto& quad : selectionInfo->collectedSelectionQuads())
+                m_selectionGeometryGatherer.addQuad(selectionInfo->repaintContainer(), quad);
             if (!currentRenderer->isTextOrLineBreak())
-                m_selectionRectGatherer.setTextOnly(false);
+                m_selectionGeometryGatherer.setTextOnly(false);
 #endif
             newSelectedRenderers.set(currentRenderer, WTFMove(selectionInfo));
             auto* containingBlock = currentRenderer->containingBlock();
@@ -270,7 +270,7 @@ void SelectionRangeData::apply(const RenderRange& newSelection, RepaintMode bloc
                 blockInfo = makeUnique<RenderBlockSelectionInfo>(*containingBlock);
                 containingBlock = containingBlock->containingBlock();
 #if ENABLE(SERVICE_CONTROLS)
-                m_selectionRectGatherer.addGapRects(blockInfo->repaintContainer(), blockInfo->rects());
+                m_selectionGeometryGatherer.addGapRects(blockInfo->repaintContainer(), blockInfo->rects());
 #endif
             }
         }

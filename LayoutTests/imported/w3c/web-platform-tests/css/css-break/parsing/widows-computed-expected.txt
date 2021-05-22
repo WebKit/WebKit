@@ -1,0 +1,5 @@
+
+PASS Property widows value '1'
+PASS Property widows value '234'
+PASS Property widows value 'calc(1 + 234)'
+

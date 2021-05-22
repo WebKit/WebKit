@@ -147,9 +147,8 @@ void HTMLMarqueeElement::setScrollDelay(unsigned scrollDelay)
     
 int HTMLMarqueeElement::loop() const
 {
-    bool ok;
-    int loopValue = attributeWithoutSynchronization(loopAttr).toInt(&ok);
-    return ok && loopValue > 0 ? loopValue : -1;
+    int loopValue = getIntegralAttribute(loopAttr);
+    return loopValue > 0 ? loopValue : -1;
 }
     
 ExceptionOr<void> HTMLMarqueeElement::setLoop(int loop)

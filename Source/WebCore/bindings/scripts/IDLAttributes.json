@@ -236,7 +236,7 @@
             "unsupported": true
         },
         "ImplementedAs": {
-            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation"],
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant"],
             "values": ["*"]
         },
         "ImplementedBy": {
@@ -415,7 +415,7 @@
             }
         },
         "Reflect": {
-            "contextsAllowed": ["attribute", "constant"],
+            "contextsAllowed": ["attribute"],
             "values": ["*"]
         },
         "Replaceable": {

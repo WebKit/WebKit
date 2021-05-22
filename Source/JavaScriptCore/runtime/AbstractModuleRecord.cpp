@@ -51,6 +51,9 @@ AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, const I
 
 void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
+    DeferTermination deferScope(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 
@@ -59,7 +62,6 @@ void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
     for (unsigned index = 0; index < values.size(); ++index)
         Base::internalField(index).set(vm, this, values[index]);
 
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSMap* map = JSMap::create(globalObject, vm, globalObject->mapStructure());
     scope.releaseAssertNoException();
     m_dependenciesMap.set(vm, this, map);
@@ -154,7 +156,7 @@ AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(JSGlobalOb
     JSValue moduleNameValue = identifierToJSValue(vm, moduleName);
     JSValue entry = m_dependenciesMap->JSMap::get(globalObject, moduleNameValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, jsCast<AbstractModuleRecord*>(entry.get(globalObject, Identifier::fromString(vm, "module"))));
+    RELEASE_AND_RETURN(scope, entry.getAs<AbstractModuleRecord*>(globalObject, Identifier::fromString(vm, "module")));
 }
 
 auto AbstractModuleRecord::resolveImport(JSGlobalObject* globalObject, const Identifier& localName) -> Resolution

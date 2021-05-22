@@ -171,13 +171,10 @@ enum TreeType {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary HEVCParameterSet {
-    DOMString codecName;
     unsigned short generalProfileSpace;
     unsigned short generalProfileIDC;
     unsigned long generalProfileCompatibilityFlags;
-    boolean generalTierFlag;
     unsigned short generalLevelIDC;
-    sequence<unsigned short> constraintFlags;
 };
 
 [
@@ -599,7 +596,7 @@ enum TreeType {
     undefined setFullscreenAutoHideDuration(double duration);
     undefined setFullscreenControlsHidden(boolean hidden);
 
-    [Conditional=VIDEO_PRESENTATION_MODE] boolean isChangingPresentationMode(HTMLVideoElement element);
+    [Conditional=VIDEO] boolean isChangingPresentationMode(HTMLVideoElement element);
     [Conditional=VIDEO_PRESENTATION_MODE] undefined setMockVideoPresentationModeEnabled(boolean enabled);
 
     undefined setApplicationCacheOriginQuota(unsigned long long quota);
@@ -1002,6 +999,7 @@ enum TreeType {
     unsigned long createSleepDisabler(DOMString reason, boolean display);
     boolean destroySleepDisabler(unsigned long identifier);
     
+    [Conditional=APP_HIGHLIGHTS] readonly attribute sequence<DOMString> appHighlightContextMenuItemTitles;
     [Conditional=APP_HIGHLIGHTS] unsigned long numberOfAppHighlights();
 
     [Conditional=WEBXR] readonly attribute WebXRTest xrTest;
@@ -1029,4 +1027,6 @@ enum TreeType {
     boolean rangeIntersectsRange(AbstractRange outerRange, AbstractRange innerRange, optional TreeType tree = "Tree");
 
     undefined systemBeep();
+
+    DOMString dumpStyleResolvers();
 };

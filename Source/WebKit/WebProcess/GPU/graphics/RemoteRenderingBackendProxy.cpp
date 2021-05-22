@@ -37,6 +37,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <JavaScriptCore/TypedArrayInlines.h>
 
 namespace WebKit {
 

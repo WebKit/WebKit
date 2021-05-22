@@ -62,11 +62,12 @@ GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm @no-unify
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp
 GPUProcess/ios/GPUProcessIOS.mm
 GPUProcess/mac/GPUProcessMac.mm
+GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
 GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
 GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
 GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm
 GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
-GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
+GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @no-unify
 
 Platform/cf/ModuleCF.cpp
 
@@ -538,6 +539,8 @@ UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 UIProcess/Plugins/mac/PluginInfoStoreMac.mm
 UIProcess/Plugins/mac/PluginProcessManagerMac.mm
 UIProcess/Plugins/mac/PluginProcessProxyMac.mm
+
+UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm
 
 UIProcess/RemoteLayerTree/mac/ScrollerMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm

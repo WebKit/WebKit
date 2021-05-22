@@ -31,14 +31,16 @@ import unittest
 class EmailsDotJSONTest(unittest.TestCase):
     def test_valid_emails_json(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
-        json.load(open(os.path.join(cwd, 'emails.json')))
+        with open(os.path.join(cwd, 'emails.json')) as emails_json:
+            json.load(emails_json)
 
     def test_emails_json_required_categories_present(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
-        emails = json.load(open(os.path.join(cwd, 'emails.json')))
-        valid_email_categories = ['ADMIN_EMAILS', 'APPLE_BOT_WATCHERS_EMAILS', 'EMAIL_IDS_TO_UNSUBSCRIBE', 'IGALIA_JSC_TEAM_EMAILS', 'IGALIA_GTK_WPE_EMAILS']
-        for category in valid_email_categories:
-            self.assertTrue(category in list(emails.keys()))
+        with open(os.path.join(cwd, 'emails.json')) as emails_json:
+            emails = json.load(emails_json)
+            valid_email_categories = ['ADMIN_EMAILS', 'APPLE_BOT_WATCHERS_EMAILS', 'EMAIL_IDS_TO_UNSUBSCRIBE', 'IGALIA_JSC_TEAM_EMAILS', 'IGALIA_GTK_WPE_EMAILS']
+            for category in valid_email_categories:
+                self.assertTrue(category in list(emails.keys()))
 
 
 if __name__ == '__main__':

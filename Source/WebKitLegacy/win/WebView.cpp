@@ -137,7 +137,6 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PageConfiguration.h>
-#include <WebCore/PageGroup.h>
 #include <WebCore/PathUtilities.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
@@ -5536,7 +5535,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(true);
     settings.setPrefixedWebAudioEnabled(false);
-    settings.setModernUnprefixedWebAudioEnabled(true);
 #endif // ENABLE(WEB_AUDIO)
 
 #if ENABLE(WEBGL)

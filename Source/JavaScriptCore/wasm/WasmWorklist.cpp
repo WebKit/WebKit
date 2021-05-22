@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,11 @@ const char* Worklist::priorityString(Priority priority)
     case Priority::Synchronous: return "Synchronous";
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void Worklist::dump(PrintStream& out) const
+{
+    out.print("Queue Size = ", m_queue.size());
 }
 
 // The Thread class is designed to prevent threads from blocking when there is still work

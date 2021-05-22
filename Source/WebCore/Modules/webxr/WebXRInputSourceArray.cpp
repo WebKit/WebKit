@@ -38,17 +38,27 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRInputSourceArray);
 
-Ref<WebXRInputSourceArray> WebXRInputSourceArray::create(Ref<WebXRSession>&& session)
+UniqueRef<WebXRInputSourceArray> WebXRInputSourceArray::create(WebXRSession& session)
 {
-    return adoptRef(*new WebXRInputSourceArray(WTFMove(session)));
+    return makeUniqueRef<WebXRInputSourceArray>(session);
 }
 
-WebXRInputSourceArray::WebXRInputSourceArray(Ref<WebXRSession>&& session)
-    : m_session(WTFMove(session))
+WebXRInputSourceArray::WebXRInputSourceArray(WebXRSession& session)
+    : m_session(session)
 {
 }
 
 WebXRInputSourceArray::~WebXRInputSourceArray() = default;
+
+void WebXRInputSourceArray::ref()
+{
+    m_session.ref();
+}
+
+void WebXRInputSourceArray::deref()
+{
+    m_session.deref();
+}
 
 unsigned WebXRInputSourceArray::length() const
 {
@@ -78,12 +88,12 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
     if (!added.isEmpty() || !removed.isEmpty()) {
         // A user agent MUST dispatch an inputsourceschange event on an XRSession when the session’s list of active XR input sources has changed.
         XRInputSourcesChangeEvent::Init init;
-        init.session = m_session.copyRef();
+        init.session = makeRef(m_session);
         init.added = WTFMove(added);
         init.removed = WTFMove(removed);
         
         auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, init);
-        m_session->queueTaskToDispatchEvent(m_session.get(), TaskSource::WebXR, WTFMove(event));
+        ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTFMove(event));
     }
 
     if (!inputEvents.isEmpty()) {
@@ -95,9 +105,9 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
         // 5. Set frame’s active boolean to false.
 
         for (auto& event : inputEvents) {
-            m_session->queueTaskKeepingObjectAlive(m_session.get(), TaskSource::WebXR, [&session = m_session.get(), event = WTFMove(event)]() {
+            ActiveDOMObject::queueTaskKeepingObjectAlive(m_session, TaskSource::WebXR, [session = makeRefPtr(m_session), event = WTFMove(event)]() {
                 event->setFrameActive(true);
-                session.dispatchEvent(event.copyRef());
+                session->dispatchEvent(event.copyRef());
                 event->setFrameActive(false);
             });
         }
@@ -127,7 +137,7 @@ void WebXRInputSourceArray::handleRemovedInputSources(const InputSourceList& inp
 // https://immersive-web.github.io/webxr/#list-of-active-xr-input-sources
 void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, const InputSourceList& inputSources, Vector<RefPtr<WebXRInputSource>>& added, Vector<RefPtr<WebXRInputSource>>& removed, Vector<Ref<XRInputSourceEvent>>& inputEvents)
 {
-    auto* document = downcast<Document>(m_session->scriptExecutionContext());
+    auto* document = downcast<Document>(m_session.scriptExecutionContext());
     if (!document)
         return;
 
@@ -141,7 +151,7 @@ void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, c
             //   3.1 Let inputSource be a new XRInputSource in the relevant realm of this XRSession.
             //   3.2 Add inputSource to added.
 
-            auto input = WebXRInputSource::create(*document, m_session.copyRef(), timestamp, inputSource);
+            auto input = WebXRInputSource::create(*document, m_session, timestamp, inputSource);
             added.append(input.copyRef());
             input->pollEvents(inputEvents);
             m_inputSources.append(WTFMove(input));
@@ -165,7 +175,7 @@ void WebXRInputSourceArray::handleAddedOrUpdatedInputSources(double timestamp, c
             input->pollEvents(inputEvents);
             m_inputSources.remove(index);
 
-            auto newInputSource = WebXRInputSource::create(*document, m_session.copyRef(), timestamp, inputSource);
+            auto newInputSource = WebXRInputSource::create(*document, m_session, timestamp, inputSource);
             added.append(newInputSource.copyRef());
             newInputSource->pollEvents(inputEvents);
             m_inputSources.append(WTFMove(newInputSource));

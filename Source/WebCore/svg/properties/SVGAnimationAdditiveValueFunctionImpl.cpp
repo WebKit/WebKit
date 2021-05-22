@@ -28,6 +28,7 @@
 
 #include "RenderElement.h"
 #include "SVGElement.h"
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -42,6 +43,11 @@ Color SVGAnimationColorFunction::colorFromString(SVGElement* targetElement, cons
         return renderer->style().visitedDependentColor(CSSPropertyColor);
 
     return { };
+}
+
+Optional<float> SVGAnimationIntegerFunction::calculateDistance(SVGElement*, const String& from, const String& to) const
+{
+    return std::abs(parseInteger<int>(to).valueOr(0) - parseInteger<int>(from).valueOr(0));
 }
 
 }

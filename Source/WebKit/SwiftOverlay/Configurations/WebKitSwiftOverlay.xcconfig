@@ -50,7 +50,11 @@ INSTALLHDRS_SCRIPT_PHASE = YES;
 // SDK variant on macOS, in which case it's /System/iOSSupport/usr/lib/swift.
 INSTALL_PATH = $(WK_ALTERNATE_FRAMEWORKS_DIR)$(SWIFT_OVERLAY_INSTALL_PATH);
 
-OTHER_SWIFT_FLAGS = -module-link-name $(SWIFT_MODULE_LINK_NAME) -autolink-force-load -runtime-compatibility-version none -disable-autolinking-runtime-compatibility-dynamic-replacements;
+WK_SWIFT_CONCURRENCY_FLAGS = -Xfrontend -enable-experimental-concurrency;
+WK_SWIFT_CONCURRENCY_FLAGS[sdk=macos*11.*] = ;
+WK_SWIFT_CONCURRENCY_FLAGS[sdk=iphone*14.*] = ;
+
+OTHER_SWIFT_FLAGS = -module-link-name $(SWIFT_MODULE_LINK_NAME) -autolink-force-load -runtime-compatibility-version none -disable-autolinking-runtime-compatibility-dynamic-replacements $(WK_SWIFT_CONCURRENCY_FLAGS);
 SWIFT_MODULE_LINK_NAME = swift$(PRODUCT_NAME);
 
 SWIFT_ENABLE_INCREMENTAL_COMPILATION = NO; // YES conflicts with -autolink-force-load

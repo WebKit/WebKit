@@ -2116,9 +2116,9 @@ void Page::storageBlockingStateChanged()
 
 void Page::updateIsPlayingMedia(uint64_t sourceElementID)
 {
-    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
-    forEachDocument([&] (Document& document) {
-        state |= document.mediaState();
+    MediaProducer::MediaStateFlags state;
+    forEachDocument([&](auto& document) {
+        state.add(document.mediaState());
     });
 
     if (state == m_mediaState)
@@ -2552,6 +2552,15 @@ Color Page::pageExtendedBackgroundColor() const
         return Color();
 
     return renderView->compositor().rootExtendedBackgroundColor();
+}
+
+Color Page::sampledPageTopColor() const
+{
+    auto* document = mainFrame().document();
+    if (!document)
+        return { };
+
+    return document->sampledPageTopColor();
 }
 
 // These are magical constants that might be tweaked over time.
@@ -3370,8 +3379,8 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
         channel->level = level;
 
 #if USE(LIBWEBRTC)
-        if (channel == &LogWebRTC && m_mainFrame->document())
-            libWebRTCProvider().setEnableLogging(!sessionID().isEphemeral());
+        if (channel == &LogWebRTC && m_mainFrame->document() && !sessionID().isEphemeral())
+            libWebRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
     }
 

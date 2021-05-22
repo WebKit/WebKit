@@ -81,8 +81,11 @@ void RemoteAudioTrackProxy::willRemove()
     ASSERT_NOT_REACHED();
 }
 
-void RemoteAudioTrackProxy::enabledChanged(bool)
+void RemoteAudioTrackProxy::enabledChanged(bool enabled)
 {
+    if (enabled == m_enabled)
+        return;
+    m_enabled = enabled;
     configurationChanged();
 }
 

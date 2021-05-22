@@ -73,9 +73,7 @@ void HTMLHRElement::collectStyleForPresentationAttribute(const QualifiedName& na
             addPropertyToPresentationAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
         }
     } else if (name == widthAttr) {
-        bool ok;
-        int v = value.toInt(&ok);
-        if (ok && !v)
+        if (auto valueInteger = parseHTMLInteger(value); valueInteger && !*valueInteger)
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, 1, CSSUnitType::CSS_PX);
         else
             addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -92,8 +90,7 @@ void HTMLHRElement::collectStyleForPresentationAttribute(const QualifiedName& na
             style.setProperty(CSSPropertyBackgroundColor, darkGrayValue);
         }
     } else if (name == sizeAttr) {
-        StringImpl* si = value.impl();
-        int size = si->toInt();
+        int size = parseHTMLInteger(value).value_or(0);
         if (size <= 1)
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderBottomWidth, 0, CSSUnitType::CSS_PX);
         else

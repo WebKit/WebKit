@@ -1612,7 +1612,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 #endif
 
     if (auto* networkSession = this->networkSession(sessionID))
-        networkSession->removeNetworkWebsiteData(modifiedSince, [clearTasksHandler] { });
+        networkSession->removeNetworkWebsiteData(modifiedSince, WTF::nullopt, [clearTasksHandler] { });
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
@@ -1734,6 +1734,20 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         }
     }
 #endif
+
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        HashSet<WebCore::RegistrableDomain> domainsToDeleteNetworkDataFor;
+        for (auto& originData : originDatas)
+            domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(originData.host));
+        for (auto& cookieHostName : cookieHostNames)
+            domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(cookieHostName));
+        for (auto& cacheHostName : HSTSCacheHostNames)
+            domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(cacheHostName));
+        for (auto& domain : registrableDomains)
+            domainsToDeleteNetworkDataFor.add(domain);
+
+        networkSession->removeNetworkWebsiteData(WTF::nullopt, WTFMove(domainsToDeleteNetworkDataFor), [clearTasksHandler] { });
+    }
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

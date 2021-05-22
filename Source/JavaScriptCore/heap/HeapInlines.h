@@ -29,6 +29,7 @@
 #include "Heap.h"
 #include "HeapCellInlines.h"
 #include "IndexingHeader.h"
+#include "JITStubRoutineSet.h"
 #include "JSCast.h"
 #include "Structure.h"
 #include <type_traits>
@@ -277,6 +278,16 @@ void Heap::forEachSlotVisitor(const Func& func)
     func(*m_mutatorSlotVisitor);
     for (auto& visitor : m_parallelSlotVisitors)
         func(*visitor);
+}
+
+inline bool Heap::mayHaveJITStubRoutinesToDelete()
+{
+    return JITStubRoutineSet::mayHaveRoutinesToDelete();
+}
+
+inline void Heap::deleteDeadJITStubRoutines(Seconds timeSlice)
+{
+    m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines(timeSlice);
 }
 
 } // namespace JSC

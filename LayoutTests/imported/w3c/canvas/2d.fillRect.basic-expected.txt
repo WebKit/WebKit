@@ -1,7 +1,0 @@
-2d.fillRect.basic
-fillRect works
-Spec references: 2d.fillRect
-Actual output:
-Expected output:
-
-Passed

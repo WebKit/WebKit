@@ -348,7 +348,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     RefPtr<Node> beyondEnd;
     ASSERT(start.deprecatedNode());
     ASSERT(end.deprecatedNode());
-    if (start.deprecatedNode()->isDescendantOf(*end.deprecatedNode()))
+    if (end.deprecatedNode()->contains(*start.deprecatedNode()))
         beyondEnd = NodeTraversal::nextSkippingChildren(*end.deprecatedNode());
     else
         beyondEnd = NodeTraversal::next(*end.deprecatedNode());

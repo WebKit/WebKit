@@ -1,5 +1,0 @@
-2d.imageData.create1.basic
-createImageData(imgdata) exists and returns something
-Spec references: 2d.imageData.create1.object
-Actual output:
-Passed

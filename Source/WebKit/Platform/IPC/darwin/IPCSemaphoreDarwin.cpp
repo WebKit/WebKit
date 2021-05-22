@@ -69,13 +69,14 @@ Semaphore& Semaphore::operator=(Semaphore&& other)
 void Semaphore::signal()
 {
     auto ret = semaphore_signal(m_semaphore);
-    ASSERT_UNUSED(ret, ret == KERN_SUCCESS);
+    ASSERT_UNUSED(ret, ret == KERN_SUCCESS || ret == KERN_TERMINATED);
 }
 
-void Semaphore::wait()
+bool Semaphore::wait()
 {
     auto ret = semaphore_wait(m_semaphore);
-    ASSERT_UNUSED(ret, ret == KERN_SUCCESS);
+    ASSERT(ret == KERN_SUCCESS || ret == KERN_TERMINATED);
+    return ret == KERN_SUCCESS;
 }
 
 bool Semaphore::waitFor(Timeout timeout)
@@ -83,7 +84,7 @@ bool Semaphore::waitFor(Timeout timeout)
     Seconds waitTime = timeout.secondsUntilDeadline();
     auto seconds = waitTime.secondsAs<unsigned>();
     auto ret = semaphore_timedwait(m_semaphore, { seconds, static_cast<clock_res_t>(waitTime.nanosecondsAs<uint64_t>() - seconds * NSEC_PER_SEC) });
-    ASSERT(ret == KERN_SUCCESS || ret == KERN_OPERATION_TIMED_OUT);
+    ASSERT(ret == KERN_SUCCESS || ret == KERN_OPERATION_TIMED_OUT || ret == KERN_TERMINATED);
     return ret == KERN_SUCCESS;
 }
 

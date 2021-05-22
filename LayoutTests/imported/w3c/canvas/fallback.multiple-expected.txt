@@ -1,5 +1,0 @@
-fallback.multiple
-Fallback content with multiple elements
-Spec references: fallback
-Actual output:
-Passed

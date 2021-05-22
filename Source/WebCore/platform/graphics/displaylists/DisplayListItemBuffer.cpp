@@ -442,17 +442,28 @@ template<typename, typename = void> inline constexpr bool HasIsValid = false;
 template<typename T> inline constexpr bool HasIsValid<T, std::void_t<decltype(std::declval<T>().isValid())>> = true;
 
 template<typename Item>
-static typename std::enable_if_t<!HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
+static inline typename std::enable_if_t<!HasIsValid<Item>, bool> isValid(const Item&)
 {
-    new (destinationWithOffset) Item(itemHandle.get<Item>());
     return true;
 }
 
 template<typename Item>
-static typename std::enable_if_t<HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
+static inline typename std::enable_if_t<HasIsValid<Item>, bool> isValid(const Item& item)
 {
-    auto* newItem = new (destinationWithOffset) Item(itemHandle.get<Item>());
-    return newItem->isValid();
+    return item.isValid();
+}
+
+template<typename Item>
+static inline bool copyInto(uint8_t* destinationWithOffset, const Item& item)
+{
+    auto* newItem = new (destinationWithOffset) Item(item);
+    return isValid(*newItem);
+}
+
+template<typename Item>
+static inline bool copyInto(uint8_t* destinationWithOffset, const ItemHandle& itemHandle)
+{
+    return copyInto(destinationWithOffset, itemHandle.get<Item>());
 }
 
 bool ItemHandle::safeCopy(ItemHandle destination) const
@@ -462,139 +473,150 @@ bool ItemHandle::safeCopy(ItemHandle destination) const
     auto itemOffset = destination.data + sizeof(uint64_t);
     switch (itemType) {
     case ItemType::ClipOutToPath:
-        return copyInto<ClipOutToPath>(*this, itemOffset);
+        return copyInto<ClipOutToPath>(itemOffset, *this);
     case ItemType::ClipPath:
-        return copyInto<ClipPath>(*this, itemOffset);
+        return copyInto<ClipPath>(itemOffset, *this);
     case ItemType::DrawFocusRingPath:
-        return copyInto<DrawFocusRingPath>(*this, itemOffset);
+        return copyInto<DrawFocusRingPath>(itemOffset, *this);
     case ItemType::DrawFocusRingRects:
-        return copyInto<DrawFocusRingRects>(*this, itemOffset);
+        return copyInto<DrawFocusRingRects>(itemOffset, *this);
     case ItemType::DrawGlyphs:
-        return copyInto<DrawGlyphs>(*this, itemOffset);
+        return copyInto<DrawGlyphs>(itemOffset, *this);
     case ItemType::DrawImageBuffer:
-        return copyInto<DrawImageBuffer>(*this, itemOffset);
+        return copyInto<DrawImageBuffer>(itemOffset, *this);
     case ItemType::DrawLinesForText:
-        return copyInto<DrawLinesForText>(*this, itemOffset);
+        return copyInto<DrawLinesForText>(itemOffset, *this);
     case ItemType::DrawNativeImage:
-        return copyInto<DrawNativeImage>(*this, itemOffset);
+        return copyInto<DrawNativeImage>(itemOffset, *this);
     case ItemType::DrawPattern:
-        return copyInto<DrawPattern>(*this, itemOffset);
+        return copyInto<DrawPattern>(itemOffset, *this);
     case ItemType::DrawPath:
-        return copyInto<DrawPath>(*this, itemOffset);
+        return copyInto<DrawPath>(itemOffset, *this);
     case ItemType::FillCompositedRect:
-        return copyInto<FillCompositedRect>(*this, itemOffset);
+        return copyInto<FillCompositedRect>(itemOffset, *this);
     case ItemType::FillPath:
-        return copyInto<FillPath>(*this, itemOffset);
+        return copyInto<FillPath>(itemOffset, *this);
     case ItemType::FillRectWithColor:
-        return copyInto<FillRectWithColor>(*this, itemOffset);
+        return copyInto<FillRectWithColor>(itemOffset, *this);
     case ItemType::FillRectWithGradient:
-        return copyInto<FillRectWithGradient>(*this, itemOffset);
+        return copyInto<FillRectWithGradient>(itemOffset, *this);
     case ItemType::FillRectWithRoundedHole:
-        return copyInto<FillRectWithRoundedHole>(*this, itemOffset);
+        return copyInto<FillRectWithRoundedHole>(itemOffset, *this);
     case ItemType::FillRoundedRect:
-        return copyInto<FillRoundedRect>(*this, itemOffset);
+        return copyInto<FillRoundedRect>(itemOffset, *this);
     case ItemType::GetImageData:
-        return copyInto<GetImageData>(*this, itemOffset);
+        return copyInto<GetImageData>(itemOffset, *this);
     case ItemType::PutImageData:
-        return copyInto<PutImageData>(*this, itemOffset);
+        return copyInto<PutImageData>(itemOffset, *this);
     case ItemType::SetLineDash:
-        return copyInto<SetLineDash>(*this, itemOffset);
+        return copyInto<SetLineDash>(itemOffset, *this);
     case ItemType::SetState:
-        return copyInto<SetState>(*this, itemOffset);
+        return copyInto<SetState>(itemOffset, *this);
     case ItemType::StrokePath:
-        return copyInto<StrokePath>(*this, itemOffset);
+        return copyInto<StrokePath>(itemOffset, *this);
     case ItemType::ApplyDeviceScaleFactor:
-        return copyInto<ApplyDeviceScaleFactor>(*this, itemOffset);
+        return copyInto<ApplyDeviceScaleFactor>(itemOffset, *this);
 #if USE(CG)
     case ItemType::ApplyFillPattern:
-        return copyInto<ApplyFillPattern>(*this, itemOffset);
+        return copyInto<ApplyFillPattern>(itemOffset, *this);
     case ItemType::ApplyStrokePattern:
-        return copyInto<ApplyStrokePattern>(*this, itemOffset);
+        return copyInto<ApplyStrokePattern>(itemOffset, *this);
 #endif
     case ItemType::BeginClipToDrawingCommands:
-        return copyInto<BeginClipToDrawingCommands>(*this, itemOffset);
+        return copyInto<BeginClipToDrawingCommands>(itemOffset, *this);
     case ItemType::BeginTransparencyLayer:
-        return copyInto<BeginTransparencyLayer>(*this, itemOffset);
+        return copyInto<BeginTransparencyLayer>(itemOffset, *this);
     case ItemType::ClearRect:
-        return copyInto<ClearRect>(*this, itemOffset);
+        return copyInto<ClearRect>(itemOffset, *this);
     case ItemType::ClearShadow:
-        return copyInto<ClearShadow>(*this, itemOffset);
+        return copyInto<ClearShadow>(itemOffset, *this);
     case ItemType::Clip:
-        return copyInto<Clip>(*this, itemOffset);
+        return copyInto<Clip>(itemOffset, *this);
     case ItemType::ClipOut:
-        return copyInto<ClipOut>(*this, itemOffset);
+        return copyInto<ClipOut>(itemOffset, *this);
     case ItemType::ClipToImageBuffer:
-        return copyInto<ClipToImageBuffer>(*this, itemOffset);
+        return copyInto<ClipToImageBuffer>(itemOffset, *this);
     case ItemType::ConcatenateCTM:
-        return copyInto<ConcatenateCTM>(*this, itemOffset);
+        return copyInto<ConcatenateCTM>(itemOffset, *this);
     case ItemType::DrawDotsForDocumentMarker:
-        return copyInto<DrawDotsForDocumentMarker>(*this, itemOffset);
+        return copyInto<DrawDotsForDocumentMarker>(itemOffset, *this);
     case ItemType::DrawEllipse:
-        return copyInto<DrawEllipse>(*this, itemOffset);
+        return copyInto<DrawEllipse>(itemOffset, *this);
     case ItemType::DrawLine:
-        return copyInto<DrawLine>(*this, itemOffset);
+        return copyInto<DrawLine>(itemOffset, *this);
     case ItemType::DrawRect:
-        return copyInto<DrawRect>(*this, itemOffset);
+        return copyInto<DrawRect>(itemOffset, *this);
     case ItemType::EndClipToDrawingCommands:
-        return copyInto<EndClipToDrawingCommands>(*this, itemOffset);
+        return copyInto<EndClipToDrawingCommands>(itemOffset, *this);
     case ItemType::EndTransparencyLayer:
-        return copyInto<EndTransparencyLayer>(*this, itemOffset);
+        return copyInto<EndTransparencyLayer>(itemOffset, *this);
     case ItemType::FillEllipse:
-        return copyInto<FillEllipse>(*this, itemOffset);
+        return copyInto<FillEllipse>(itemOffset, *this);
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::FillInlinePath:
-        return copyInto<FillInlinePath>(*this, itemOffset);
+        return copyInto<FillInlinePath>(itemOffset, *this);
 #endif
     case ItemType::FillRect:
-        return copyInto<FillRect>(*this, itemOffset);
+        return copyInto<FillRect>(itemOffset, *this);
     case ItemType::FlushContext:
-        return copyInto<FlushContext>(*this, itemOffset);
+        return copyInto<FlushContext>(itemOffset, *this);
     case ItemType::MetaCommandChangeDestinationImageBuffer:
-        return copyInto<MetaCommandChangeDestinationImageBuffer>(*this, itemOffset);
+        return copyInto<MetaCommandChangeDestinationImageBuffer>(itemOffset, *this);
     case ItemType::MetaCommandChangeItemBuffer:
-        return copyInto<MetaCommandChangeItemBuffer>(*this, itemOffset);
+        return copyInto<MetaCommandChangeItemBuffer>(itemOffset, *this);
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
-        return copyInto<PaintFrameForMedia>(*this, itemOffset);
+        return copyInto<PaintFrameForMedia>(itemOffset, *this);
 #endif
     case ItemType::Restore:
-        return copyInto<Restore>(*this, itemOffset);
+        return copyInto<Restore>(itemOffset, *this);
     case ItemType::Rotate:
-        return copyInto<Rotate>(*this, itemOffset);
+        return copyInto<Rotate>(itemOffset, *this);
     case ItemType::Save:
-        return copyInto<Save>(*this, itemOffset);
+        return copyInto<Save>(itemOffset, *this);
     case ItemType::Scale:
-        return copyInto<Scale>(*this, itemOffset);
+        return copyInto<Scale>(itemOffset, *this);
     case ItemType::SetCTM:
-        return copyInto<SetCTM>(*this, itemOffset);
+        return copyInto<SetCTM>(itemOffset, *this);
     case ItemType::SetInlineFillColor:
-        return copyInto<SetInlineFillColor>(*this, itemOffset);
+        return copyInto<SetInlineFillColor>(itemOffset, *this);
     case ItemType::SetInlineFillGradient:
-        return copyInto<SetInlineFillGradient>(*this, itemOffset);
+        return copyInto<SetInlineFillGradient>(itemOffset, *this);
     case ItemType::SetInlineStrokeColor:
-        return copyInto<SetInlineStrokeColor>(*this, itemOffset);
+        return copyInto<SetInlineStrokeColor>(itemOffset, *this);
     case ItemType::SetLineCap:
-        return copyInto<SetLineCap>(*this, itemOffset);
+        return copyInto<SetLineCap>(itemOffset, *this);
     case ItemType::SetLineJoin:
-        return copyInto<SetLineJoin>(*this, itemOffset);
+        return copyInto<SetLineJoin>(itemOffset, *this);
     case ItemType::SetMiterLimit:
-        return copyInto<SetMiterLimit>(*this, itemOffset);
+        return copyInto<SetMiterLimit>(itemOffset, *this);
     case ItemType::SetStrokeThickness:
-        return copyInto<SetStrokeThickness>(*this, itemOffset);
+        return copyInto<SetStrokeThickness>(itemOffset, *this);
     case ItemType::StrokeEllipse:
-        return copyInto<StrokeEllipse>(*this, itemOffset);
+        return copyInto<StrokeEllipse>(itemOffset, *this);
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath:
-        return copyInto<StrokeInlinePath>(*this, itemOffset);
+        return copyInto<StrokeInlinePath>(itemOffset, *this);
 #endif
     case ItemType::StrokeRect:
-        return copyInto<StrokeRect>(*this, itemOffset);
+        return copyInto<StrokeRect>(itemOffset, *this);
     case ItemType::StrokeLine:
-        return copyInto<StrokeLine>(*this, itemOffset);
+        return copyInto<StrokeLine>(itemOffset, *this);
     case ItemType::Translate:
-        return copyInto<Translate>(*this, itemOffset);
+        return copyInto<Translate>(itemOffset, *this);
     }
     return false;
+}
+
+bool safeCopy(ItemHandle destination, const DisplayListItem& source)
+{
+    return WTF::visit([&](const auto& source) {
+        using DisplayListItemType = typename WTF::RemoveCVAndReference<decltype(source)>::type;
+        constexpr auto itemType = DisplayListItemType::itemType;
+        destination.data[0] = static_cast<uint8_t>(itemType);
+        auto itemOffset = destination.data + sizeof(uint64_t);
+        return copyInto<DisplayListItemType>(itemOffset, source);
+    }, source);
 }
 
 ItemBuffer::ItemBuffer(ItemBufferHandles&& handles)
@@ -687,7 +709,7 @@ DidChangeItemBuffer ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
     return hadPreviousBuffer ? DidChangeItemBuffer::Yes : DidChangeItemBuffer::No;
 }
 
-void ItemBuffer::append(ItemHandle temporaryItem)
+void ItemBuffer::append(const DisplayListItem& temporaryItem)
 {
     auto requiredSizeForItem = m_writingClient->requiredSizeForItem(temporaryItem);
     RefPtr<SharedBuffer> outOfLineItem;
@@ -705,7 +727,7 @@ void ItemBuffer::append(ItemHandle temporaryItem)
 
     auto bufferChanged = swapWritableBufferIfNeeded(additionalCapacityForEncodedItem);
 
-    m_writableBuffer.data[m_writtenNumberOfBytes] = static_cast<uint8_t>(temporaryItem.type());
+    m_writableBuffer.data[m_writtenNumberOfBytes] = static_cast<uint8_t>(displayListItemType(temporaryItem));
     reinterpret_cast<uint64_t*>(m_writableBuffer.data + m_writtenNumberOfBytes)[1] = dataLength;
     auto* location = m_writableBuffer.data + m_writtenNumberOfBytes + 2 * sizeof(uint64_t);
 

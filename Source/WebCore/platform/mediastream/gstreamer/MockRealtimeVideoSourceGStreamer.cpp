@@ -65,8 +65,7 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     if (!imageBuffer)
         return;
 
-    auto imageSize = size();
-    auto sample = MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), imageSize.width(), imageSize.height(), frameRate());
+    auto sample = MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), captureSize(), size(), frameRate());
     sample->offsetTimestampsBy(MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds()));
     dispatchMediaSampleToObservers(sample.get());
 }

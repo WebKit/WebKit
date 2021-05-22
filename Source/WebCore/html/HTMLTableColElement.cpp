@@ -78,8 +78,8 @@ void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomSt
     } else if (name == widthAttr) {
         if (!value.isEmpty()) {
             if (is<RenderTableCol>(renderer())) {
-                RenderTableCol& col = downcast<RenderTableCol>(*renderer());
-                int newWidth = width().toInt();
+                auto& col = downcast<RenderTableCol>(*renderer());
+                int newWidth = parseHTMLInteger(value).value_or(0);
                 if (newWidth != col.width())
                     col.setNeedsLayoutAndPrefWidthsRecalc();
             }

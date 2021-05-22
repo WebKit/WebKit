@@ -20,12 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import calendar
 import logging
 import os
 import re
 import six
+import subprocess
+import sys
+import time
 
-from webkitcorepy import run, decorators, TimeoutExpired
+from datetime import datetime, timedelta
+
+from webkitcorepy import run, decorators
 from webkitscmpy.local import Scm
 from webkitscmpy import Commit, Contributor, log
 
@@ -151,8 +157,11 @@ class Git(Scm):
         return sorted(set(['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]))
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+        # Only git-svn checkouts can convert revisions to fully qualified commits
         if revision and not self.is_svn:
             raise self.Exception('This git checkout does not support SVN revisions')
+
+        # Determine the hash for a provided Subversion revision
         elif revision:
             if hash:
                 raise ValueError('Cannot define both hash and revision')
@@ -173,6 +182,7 @@ class Git(Scm):
         parsed_branch_point = None
         log_format = ['-1'] if include_log else ['-1', '--format=short']
 
+        # Determine the `git log` output and branch for a given identifier
         if identifier is not None:
             if revision:
                 raise ValueError('Cannot define both revision and identifier')
@@ -218,6 +228,7 @@ class Git(Scm):
             if identifier < 0:
                 identifier = None
 
+        # Determine the `git log` output for a given branch or tag
         elif branch or tag:
             if hash:
                 raise ValueError('Cannot define both tag/branch and hash')
@@ -228,29 +239,37 @@ class Git(Scm):
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
+        # Determine the `git log` output for a given hash
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
             log = run([self.executable(), 'log', hash or 'HEAD'] + log_format, cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
+        # Fully define the hash from the `git log` output
         match = self.GIT_COMMIT.match(log.stdout.splitlines()[0])
         if not match:
             raise self.Exception('Invalid commit hash in git log')
         hash = match.group('hash')
 
+        # A commit is often on multiple branches, the canonical branch is the one with the highest priority
         branch = self.prioritize_branches(self._branches_for(hash))
 
+        # Compute the identifier if the function did not receive one and we were asked to
         if not identifier and include_identifier:
             identifier = self._commit_count(hash if branch == default_branch else '{}..{}'.format(default_branch, hash))
+
+        # Only compute the branch point we're on something other than the default branch
         branch_point = None if not include_identifier or branch == default_branch else self._commit_count(hash) - identifier
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 
+        # Check the commit log for a git-svn revision
         logcontent = '\n'.join(line[4:] for line in log.stdout.splitlines()[4:])
         matches = self.GIT_SVN_REVISION.findall(logcontent)
         revision = int(matches[-1].split('@')[0]) if matches else None
 
+        # We only care about when a commit was commited
         commit_time = run(
             [self.executable(), 'show', '-s', '--format=%ct', hash],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
@@ -259,6 +278,9 @@ class Git(Scm):
             raise self.Exception('Failed to retrieve commit time for {}'.format(hash))
         timestamp = int(commit_time.stdout.lstrip())
 
+        # Comparing commits in different repositories involves comparing timestamps. This is problematic because it git,
+        # it's possible for a series of commits to share a commit time. To handle this case, we assign each commit a
+        # zero-indexed "order" within it's timestamp.
         order = 0
         while not identifier or order + 1 < identifier + (branch_point or 0):
             commit_time = run(
@@ -284,13 +306,115 @@ class Git(Scm):
             message=logcontent if include_log else None,
         )
 
+    def _args_from_content(self, content, include_log=True):
+        author = None
+        timestamp = None
+
+        for line in content.splitlines()[:4]:
+            split = line.split(': ')
+            if split[0] == 'Author':
+                author = Contributor.from_scm_log(line.lstrip(), self.contributors)
+            elif split[0] == 'CommitDate':
+                tz_diff = line.split(' ')[-1]
+                date = datetime.strptime(split[1].lstrip()[:-len(tz_diff)], '%a %b %d %H:%M:%S %Y ')
+                date += timedelta(
+                    hours=int(tz_diff[1:3]),
+                    minutes=int(tz_diff[3:5]),
+                ) * (1 if tz_diff[0] == '-' else -1)
+                timestamp = int(calendar.timegm(date.timetuple())) - time.timezone
+
+        message = ''
+        for line in content.splitlines()[5:]:
+            message += line[4:] + '\n'
+        matches = self.GIT_SVN_REVISION.findall(message)
+
+        return dict(
+            revision=int(matches[-1].split('@')[0]) if matches else None,
+            author=author,
+            timestamp=timestamp,
+            message=message.rstrip() if include_log else None,
+        )
+
+    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
+        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+
+        try:
+            log = None
+            log = subprocess.Popen(
+                [self.executable(), 'log', '--format=fuller', '{}...{}'.format(end.hash, begin.hash)],
+                cwd=self.root_path,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
+            )
+            if log.poll():
+                raise self.Exception("Failed to construct history for '{}'".format(end.branch))
+
+            line = log.stdout.readline()
+            previous = [end]
+            while line:
+                if not line.startswith('commit '):
+                    raise OSError('Failed to parse `git log` format')
+                branch_point = previous[0].branch_point
+                identifier = previous[0].identifier
+                hash = line.split(' ')[-1].rstrip()
+                if hash != previous[0].hash:
+                    identifier -= 1
+
+                if not identifier:
+                    identifier = branch_point
+                    branch_point = None
+
+                content = ''
+                line = log.stdout.readline()
+                while line and not line.startswith('commit '):
+                    content += line
+                    line = log.stdout.readline()
+
+                commit = Commit(
+                    repository_id=self.id,
+                    hash=hash,
+                    branch=end.branch if identifier and branch_point else self.default_branch,
+                    identifier=identifier if include_identifier else None,
+                    branch_point=branch_point if include_identifier else None,
+                    order=0,
+                    **self._args_from_content(content, include_log=include_log)
+                )
+
+                # Ensure that we don't duplicate the first and last commits
+                if commit.hash == previous[0].hash:
+                    previous[0] = commit
+
+                # If we share a timestamp with the previous commit, that means that this commit has an order
+                # less than the set of commits cached in previous
+                elif commit.timestamp == previous[0].timestamp:
+                    for cached in previous:
+                        cached.order += 1
+                    previous.append(commit)
+
+                # If we don't share a timestamp with the previous set of commits, we should return all commits
+                # cached in previous.
+                else:
+                    for cached in previous:
+                        yield cached
+                    previous = [commit]
+
+            for cached in previous:
+                cached.order += begin.order
+                yield cached
+        finally:
+            if log:
+                log.kill()
+
     def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
+        # Map any candidate default branch to the one used by this repository
         if argument in self.DEFAULT_BRANCHES:
             argument = self.default_branch
 
+        # See if the argument the user specified is a recognized commit format
         parsed_commit = Commit.parse(argument, do_assert=False)
         if parsed_commit:
             if parsed_commit.branch in self.DEFAULT_BRANCHES:
@@ -305,6 +429,7 @@ class Git(Scm):
                 include_identifier=include_identifier,
             )
 
+        # The argument isn't a recognized commit format, hopefully it is a valid git ref of some form
         output = run(
             [self.executable(), 'rev-parse', argument],
             cwd=self.root_path, capture_output=True, encoding='utf-8',

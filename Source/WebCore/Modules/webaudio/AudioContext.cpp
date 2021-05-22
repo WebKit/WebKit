@@ -190,6 +190,7 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
     destination().close([this, activity = makePendingActivity(*this)] {
         setState(State::Closed);
         uninitialize();
+        m_mediaSession->setActive(false);
     });
 }
 
@@ -348,7 +349,7 @@ bool AudioContext::willPausePlayback()
 MediaProducer::MediaStateFlags AudioContext::mediaState() const
 {
     if (!isStopped() && destination().isPlayingAudio())
-        return MediaProducer::IsPlayingAudio;
+        return MediaProducer::MediaState::IsPlayingAudio;
 
     return MediaProducer::IsNotPlaying;
 }
@@ -397,6 +398,8 @@ bool AudioContext::willBeginPlayback()
         removeBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
     }
 
+    m_mediaSession->setActive(true);
+
     auto willBegin = m_mediaSession->clientWillBeginPlayback();
     ALWAYS_LOG(LOGIDENTIFIER, "returning ", willBegin);
 
@@ -406,7 +409,7 @@ bool AudioContext::willBeginPlayback()
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.
-    if (!document() || mediaState() == MediaProducer::IsPlayingAudio || isStopped())
+    if (!document() || mediaState() == MediaProducer::MediaState::IsPlayingAudio || isStopped())
         return;
 
     if (document()->hidden()) {

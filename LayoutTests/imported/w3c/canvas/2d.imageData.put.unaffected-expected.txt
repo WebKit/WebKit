@@ -1,7 +1,0 @@
-2d.imageData.put.unaffected
-putImageData() is not affected by context state
-Spec references: 2d.imageData.unaffected
-Actual output:
-Expected output:
-
-Passed

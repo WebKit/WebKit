@@ -28,11 +28,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-visited-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-visited.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-unset-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-unset-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-unset-visited-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-unset-visited.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/import-conditional-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/import-conditional-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/important-prop-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/important-prop.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/inherit-initial.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-background-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-background-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-color-background-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-color-background-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-001-expected.xht
@@ -51,3 +59,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/unset-val-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/unset-val-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/unset-val-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/unset-value-storage.html

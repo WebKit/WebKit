@@ -1208,7 +1208,7 @@ sub GeneratePut
             push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect(JSC::getVM(lexicalGlobalObject));\n");
             push(@$outputArray, "        bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, "        slot.disallowVMEntry.reset();\n");
-            push(@$outputArray, "        throwScope.assertNoException();\n");
+            push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, false);\n");
             push(@$outputArray, "        if (!found) {\n");
             $additionalIndent .= "    ";
         }
@@ -1286,7 +1286,7 @@ sub GeneratePutByIndex
             push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect(vm);\n");
             push(@$outputArray, "    bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, "    slot.disallowVMEntry.reset();\n");
-            push(@$outputArray, "    throwScope.assertNoException();\n");
+            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
             push(@$outputArray, "    if (!found) {\n");
             $additionalIndent .= "    ";
         }
@@ -1424,7 +1424,7 @@ sub GenerateDefineOwnProperty
             push(@$outputArray, $additionalIndent. "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
             push(@$outputArray, $additionalIndent. "        bool found = JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, $additionalIndent. "        slot.disallowVMEntry.reset();\n");
-            push(@$outputArray, $additionalIndent. "        throwScope.assertNoException();\n");
+            push(@$outputArray, $additionalIndent. "        RETURN_IF_EXCEPTION(throwScope, false);\n");
             push(@$outputArray, $additionalIndent. "        if (!found) {\n");
             $additionalIndent .= "    ";
         }
@@ -2620,40 +2620,52 @@ sub GenerateDictionaryImplementationContent
                 $result .= "#if ${conditionalString}\n";
             }
 
+            my $needsRuntimeCheck = NeedsRuntimeCheck($dictionary, $member);
+            my $indent = "";
+            if ($needsRuntimeCheck) {
+                my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($dictionary, $member, "&lexicalGlobalObject");
+                $result .= "    if (${runtimeEnableConditionalString}) {\n";
+                $indent = "    ";
+            }
+
             # 4.1. Let key be the identifier of member.
             my $key = $member->name;
             my $implementedAsKey = $member->extendedAttributes->{ImplementedAs} || $key;
 
             # 4.2. Let value be an ECMAScript value, depending on Type(V):
-            $result .= "    JSValue ${key}Value;\n";
-            $result .= "    if (isNullOrUndefined)\n";
-            $result .= "        ${key}Value = jsUndefined();\n";
-            $result .= "    else {\n";
-            $result .= "        ${key}Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, \"${key}\"));\n";
-            $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
-            $result .= "    }\n";
+            $result .= "${indent}    JSValue ${key}Value;\n";
+            $result .= "${indent}    if (isNullOrUndefined)\n";
+            $result .= "${indent}        ${key}Value = jsUndefined();\n";
+            $result .= "${indent}    else {\n";
+            $result .= "${indent}        ${key}Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, \"${key}\"));\n";
+            $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
+            $result .= "${indent}    }\n";
 
             my $IDLType = GetIDLType($typeScope, $type);
 
             # 4.3. If value is not undefined, then:
-            $result .= "    if (!${key}Value.isUndefined()) {\n";
+            $result .= "${indent}    if (!${key}Value.isUndefined()) {\n";
 
             my $nativeValue = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)");
-            $result .= "        result.$implementedAsKey = $nativeValue;\n";
-            $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
+            $result .= "${indent}        result.$implementedAsKey = $nativeValue;\n";
+            $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
 
             # Value is undefined.
             # 4.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if (!$member->isRequired && defined $member->default) {
-                $result .= "    } else\n";
-                $result .= "        result.$implementedAsKey = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
+                $result .= "${indent}    } else\n";
+                $result .= "${indent}        result.$implementedAsKey = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
             } elsif ($member->isRequired) {
                 # 4.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
-                $result .= "    } else {\n";
-                $result .= "        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, \"". $member->name ."\", \"$name\", \"". GetTypeNameForDisplayInException($type) ."\");\n";
-                $result .= "        return { };\n";
-                $result .= "    }\n";
+                $result .= "${indent}    } else {\n";
+                $result .= "${indent}        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, \"". $member->name ."\", \"$name\", \"". GetTypeNameForDisplayInException($type) ."\");\n";
+                $result .= "${indent}        return { };\n";
+                $result .= "${indent}    }\n";
             } else {
+                $result .= "${indent}    }\n";
+            }
+
+            if ($needsRuntimeCheck) {
                 $result .= "    }\n";
             }
 
@@ -2673,7 +2685,8 @@ sub GenerateDictionaryImplementationContent
 
         $result .= "JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ${className}& dictionary)\n";
         $result .= "{\n";
-        $result .= "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n\n";
+        $result .= "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n";
+        $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n\n";
 
         # 1. Let O be ! ObjectCreate(%ObjectPrototype%).
         $result .= "    auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());\n\n";
@@ -2719,12 +2732,14 @@ sub GenerateDictionaryImplementationContent
 
                     $result .= "${indent}    if (!${IDLType}::isNullValue(${valueExpression})) {\n";
                     $result .= "${indent}        auto ${key}Value = ${conversionExpression};\n";
+                    $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
                     $result .= "${indent}        result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"), ${key}Value);\n";
                     $result .= "${indent}    }\n";
                 } else {
                     my $conversionExpression = NativeToJSValueUsingReferences($member, $typeScope, $valueExpression, "globalObject");
 
                     $result .= "${indent}    auto ${key}Value = ${conversionExpression};\n";
+                    $result .= "${indent}    RETURN_IF_EXCEPTION(throwScope, { });\n";
                     $result .= "${indent}    result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"), ${key}Value);\n";
                 }
                 if ($needsRuntimeCheck) {
@@ -2737,7 +2752,7 @@ sub GenerateDictionaryImplementationContent
 
         if (!$hasUnconditionalMember) {
             $result .= "    UNUSED_PARAM(dictionary);\n";
-            $result .= "    UNUSED_PARAM(vm);\n\n";
+            $result .= "    UNUSED_VARIABLE(throwScope);\n\n";
         }
 
         $result .= "    return result;\n";
@@ -5072,6 +5087,12 @@ sub GenerateImplementation
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from ScriptExecutionContext\";\n";
+            } elsif (GetGenerateIsReachable($interface) eq "ImplWebXRSessionRoot") {
+                $rootString  = "    WebXRSession* root = WTF::getPtr(js${interfaceName}->wrapped().session());\n";
+                $rootString .= "    if (!root)\n";
+                $rootString .= "        return false;\n";
+                $rootString .= "    if (UNLIKELY(reason))\n";
+                $rootString .= "        *reason = \"Reachable from WebXRSession\";\n";
             } else {
                 $rootString  = "    void* root = WebCore::root(&js${interfaceName}->wrapped());\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
@@ -5826,12 +5847,14 @@ sub GenerateDefaultToJSONOperationDefinition
 
                 my $attributeName = $attribute->name;
                 my $toJSExpression = "";
+                my $mayThrowException = 0;
                 if (HasCustomGetter($attribute)) {
                     my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->extendedAttributes->{ImplementedAs} || $attributeName);
                     $toJSExpression = "castedThis->${implGetterFunctionName}(*lexicalGlobalObject)";
                 } else {
                     my ($baseFunctionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $currentInterface->type->name, $attribute);
                     my $functionName = GetFullyQualifiedImplementationCallName($currentInterface, $attribute, $baseFunctionName, "impl", $conditional);
+                    $mayThrowException = NativeToJSValueMayThrow($attribute);
                     $toJSExpression = NativeToJSValue($attribute, $currentInterface, "${functionName}(" . join(", ", @arguments) . ")", "*lexicalGlobalObject", "*castedThis->globalObject()");
                 }
 
@@ -5839,10 +5862,14 @@ sub GenerateDefaultToJSONOperationDefinition
                 if ($needsRuntimeCheck) {
                     my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($currentInterface, $attribute, "castedThis->globalObject()");
                     push(@$outputArray, "    if (${runtimeEnableConditionalString}) {\n");
-                    push(@$outputArray, "        result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${toJSExpression});\n");
+                    push(@$outputArray, "        auto ${attributeName}Value = ${toJSExpression};\n");
+                    push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, { });\n") if $mayThrowException;
+                    push(@$outputArray, "        result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${attributeName}Value);\n");
                     push(@$outputArray, "    }\n");
                 } else {
-                    push(@$outputArray, "    result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${toJSExpression});\n");
+                    push(@$outputArray, "    auto ${attributeName}Value = ${toJSExpression};\n");
+                    push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $mayThrowException;
+                    push(@$outputArray, "    result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${attributeName}Value);\n");
                 }
 
                 if ($conditional) {
@@ -7144,7 +7171,7 @@ sub IsValidContextForNativeToJSValue
 sub NativeToJSValueMayThrow
 {
     my ($context) = @_;
-    my $mayThrowException = ref($context) eq "IDLAttribute" || ref($context) eq "IDLOperation";
+    return ref($context) eq "IDLAttribute" || ref($context) eq "IDLOperation" || ref($context) eq "IDLDictionaryMember";
 }
 
 sub NativeToJSValue

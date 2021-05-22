@@ -67,12 +67,19 @@ TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 TextStream& operator<<(TextStream& ts, DestinationColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case DestinationColorSpace::LinearSRGB:
-        ts << "LinearSRGB";
-        break;
     case DestinationColorSpace::SRGB:
         ts << "sRGB";
         break;
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    case DestinationColorSpace::LinearSRGB:
+        ts << "LinearSRGB";
+        break;
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    case DestinationColorSpace::DisplayP3:
+        ts << "DisplayP3";
+        break;
+#endif
     }
     return ts;
 }

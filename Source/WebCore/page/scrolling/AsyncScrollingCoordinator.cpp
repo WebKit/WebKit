@@ -105,7 +105,7 @@ static inline void setStateScrollingNodeSnapOffsetsAsFloat(ScrollingStateScrolli
     }
 
     // FIXME: Incorporate current page scale factor in snapping to device pixel. Perhaps we should just convert to float here and let UI process do the pixel snapping?
-    node.setSnapOffsetsInfo(offsetInfo->convertUnits<float>(deviceScaleFactor));
+    node.setSnapOffsetsInfo(offsetInfo->convertUnits<FloatScrollSnapOffsetsInfo>(deviceScaleFactor));
 }
 #endif
 

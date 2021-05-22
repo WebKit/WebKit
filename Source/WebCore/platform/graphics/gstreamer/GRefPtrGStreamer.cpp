@@ -29,6 +29,25 @@
 
 namespace WTF {
 
+template<> GRefPtr<GstMiniObject> adoptGRef(GstMiniObject* ptr)
+{
+    return GRefPtr<GstMiniObject>(ptr, GRefPtrAdopt);
+}
+
+template<> GstMiniObject* refGPtr<GstMiniObject>(GstMiniObject* ptr)
+{
+    if (ptr)
+        gst_mini_object_ref(ptr);
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstMiniObject>(GstMiniObject* ptr)
+{
+    if (ptr)
+        gst_mini_object_unref(ptr);
+}
+
 template <> GRefPtr<GstElement> adoptGRef(GstElement* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));

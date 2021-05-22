@@ -109,9 +109,10 @@ void FEComponentTransfer::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
 
     auto* imageResult = createUnmultipliedImageResult();
-    auto* pixelArray = imageResult ? imageResult->data() : nullptr;
-    if (!pixelArray)
+    if (!imageResult)
         return;
+
+    auto& pixelArray = imageResult->data();
 
     LookupTable redTable;
     LookupTable greenTable;
@@ -120,9 +121,9 @@ void FEComponentTransfer::platformApplySoftware()
     computeLookupTables(redTable, greenTable, blueTable, alphaTable);
 
     IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyUnmultipliedResult(*pixelArray, drawingRect, operatingColorSpace());
-    unsigned pixelArrayLength = pixelArray->length();
-    uint8_t* data = pixelArray->data();
+    in->copyUnmultipliedResult(pixelArray, drawingRect, operatingColorSpace());
+    unsigned pixelArrayLength = pixelArray.length();
+    uint8_t* data = pixelArray.data();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
         data[pixelOffset] = redTable[data[pixelOffset]];
         data[pixelOffset + 1] = greenTable[data[pixelOffset + 1]];

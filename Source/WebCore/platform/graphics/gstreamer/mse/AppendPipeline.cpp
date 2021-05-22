@@ -28,9 +28,9 @@
 #include "GStreamerEMEUtilities.h"
 #include "GStreamerMediaDescription.h"
 #include "GStreamerRegistryScannerMSE.h"
-#include "MediaSampleGStreamer.h"
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "MediaDescription.h"
+#include "MediaSampleGStreamer.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
 #include <functional>
@@ -389,13 +389,13 @@ void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
     ASSERT(isMainThread());
 
     m_demuxerSrcPadCaps = adoptGRef(demuxerSrcPadCaps);
-    m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Unknown;
+    m_streamType = MediaSourceStreamTypeGStreamer::Unknown;
 
     const char* originalMediaType = capsMediaType(m_demuxerSrcPadCaps.get());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
     if (!gstRegistryScanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, originalMediaType)) {
             m_presentationSize = WebCore::FloatSize();
-            m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Invalid;
+            m_streamType = MediaSourceStreamTypeGStreamer::Invalid;
     } else if (doCapsHaveType(m_demuxerSrcPadCaps.get(), GST_VIDEO_CAPS_TYPE_PREFIX)) {
         Optional<FloatSize> size = getVideoResolutionFromCaps(m_demuxerSrcPadCaps.get());
         if (size.hasValue())
@@ -403,13 +403,13 @@ void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
         else
             m_presentationSize = WebCore::FloatSize();
 
-        m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Video;
+        m_streamType = MediaSourceStreamTypeGStreamer::Video;
     } else {
         m_presentationSize = WebCore::FloatSize();
         if (doCapsHaveType(m_demuxerSrcPadCaps.get(), GST_AUDIO_CAPS_TYPE_PREFIX))
-            m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Audio;
+            m_streamType = MediaSourceStreamTypeGStreamer::Audio;
         else if (doCapsHaveType(m_demuxerSrcPadCaps.get(), GST_TEXT_CAPS_TYPE_PREFIX))
-            m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Text;
+            m_streamType = MediaSourceStreamTypeGStreamer::Text;
     }
 }
 
@@ -426,18 +426,24 @@ void AppendPipeline::appsinkCapsChanged()
     if (!caps)
         return;
 
+    // If this is not the first time we're parsing an initialization segment, fail if the track
+    // has a different codec or type (e.g. if we were previously demuxing an audio stream and
+    // someone appends a video stream).
+    if (m_appsinkCaps && g_strcmp0(capsMediaType(caps.get()), capsMediaType(m_appsinkCaps.get()))) {
+        GST_WARNING_OBJECT(m_pipeline.get(), "User appended track metadata with type '%s' for a SourceBuffer previously handling '%s'. Erroring out.", capsMediaType(caps.get()), capsMediaType(m_appsinkCaps.get()));
+        m_sourceBufferPrivate.appendParsingFailed();
+        return;
+    }
+
     if (doCapsHaveType(caps.get(), GST_VIDEO_CAPS_TYPE_PREFIX)) {
         Optional<FloatSize> size = getVideoResolutionFromCaps(caps.get());
         if (size.hasValue())
             m_presentationSize = size.value();
     }
 
-    // This means that we're right after a new track has appeared. Otherwise, it's a caps change inside the same track.
-    bool previousCapsWereNull = !m_appsinkCaps;
-
     if (m_appsinkCaps != caps) {
         m_appsinkCaps = WTFMove(caps);
-        m_playerPrivate->trackDetected(*this, m_track, previousCapsWereNull);
+        m_playerPrivate->trackDetected(*this, m_track);
     }
 }
 
@@ -709,9 +715,9 @@ void AppendPipeline::connectDemuxerSrcPadToAppsinkFromStreamingThread(GstPad* de
     }
 
     // Must be done in the thread we were called from (usually streaming thread).
-    bool isData = (m_streamType == WebCore::MediaSourceStreamTypeGStreamer::Audio)
-        || (m_streamType == WebCore::MediaSourceStreamTypeGStreamer::Video)
-        || (m_streamType == WebCore::MediaSourceStreamTypeGStreamer::Text);
+    bool isData = (m_streamType == MediaSourceStreamTypeGStreamer::Audio)
+        || (m_streamType == MediaSourceStreamTypeGStreamer::Video)
+        || (m_streamType == MediaSourceStreamTypeGStreamer::Text);
 
     if (isData) {
         GRefPtr<GstObject> parent = adoptGRef(gst_element_get_parent(m_appsink.get()));
@@ -758,6 +764,8 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     // Only one stream per demuxer is supported.
     ASSERT(!gst_pad_is_linked(sinkSinkPad.get()));
 
+    // As it is now, resetParserState() will cause the pads to be disconnected, so they will later be re-added on the next initialization segment.
+
     GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(GST_PAD(demuxerSrcPad)));
 
 #ifndef GST_DISABLE_GST_DEBUG
@@ -769,17 +777,27 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
 
     parseDemuxerSrcPadCaps(gst_caps_ref(caps.get()));
 
+    TrackPrivateBaseGStreamer* gstreamerTrack;
     switch (m_streamType) {
-    case WebCore::MediaSourceStreamTypeGStreamer::Audio:
-        m_track = WebCore::AudioTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
+    case MediaSourceStreamTypeGStreamer::Audio: {
+        auto specificTrack = WebCore::AudioTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
+        gstreamerTrack = specificTrack.ptr();
+        m_track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
         break;
-    case WebCore::MediaSourceStreamTypeGStreamer::Video:
-        m_track = WebCore::VideoTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
+    }
+    case MediaSourceStreamTypeGStreamer::Video: {
+        auto specificTrack = WebCore::VideoTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
+        gstreamerTrack = specificTrack.ptr();
+        m_track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
         break;
-    case WebCore::MediaSourceStreamTypeGStreamer::Text:
-        m_track = WebCore::InbandTextTrackPrivateGStreamer::create(id(), sinkSinkPad.get());
+    }
+    case MediaSourceStreamTypeGStreamer::Text: {
+        auto specificTrack = WebCore::InbandTextTrackPrivateGStreamer::create(id(), sinkSinkPad.get());
+        gstreamerTrack = specificTrack.ptr();
+        m_track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
         break;
-    case WebCore::MediaSourceStreamTypeGStreamer::Invalid:
+    }
+    case MediaSourceStreamTypeGStreamer::Invalid:
         GST_WARNING_OBJECT(m_pipeline.get(), "Unsupported track codec: %" GST_PTR_FORMAT, caps.get());
         // 3.5.7 Initialization Segment Received
         // 5.1. If the initialization segment contains tracks with codecs the user agent does not support, then run the
@@ -791,11 +809,12 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
         return;
     default:
         GST_WARNING_OBJECT(m_pipeline.get(), "Pad has unknown track type, ignoring: %" GST_PTR_FORMAT, caps.get());
-        break;
+        return;
     }
+    gstreamerTrack->setInitialCaps(GRefPtr(caps));
 
     m_appsinkCaps = WTFMove(caps);
-    m_playerPrivate->trackDetected(*this, m_track, true);
+    m_playerPrivate->trackDetected(*this, m_track);
 }
 
 void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad* demuxerSrcPad)

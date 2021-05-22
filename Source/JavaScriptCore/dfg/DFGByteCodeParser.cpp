@@ -5655,9 +5655,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpNewArrayBuffer>();
             // Unfortunately, we can't allocate a new JSImmutableButterfly if the profile tells us new information because we
             // cannot allocate from compilation threads.
-            WTF::loadLoadFence();
             FrozenValue* frozen = get(VirtualRegister(bytecode.m_immutableButterfly))->constant();
-            WTF::loadLoadFence();
+            WTF::dependentLoadLoadFence();
             JSImmutableButterfly* immutableButterfly = frozen->cast<JSImmutableButterfly*>();
             NewArrayBufferData data { };
             data.indexingMode = immutableButterfly->indexingMode();
@@ -5949,7 +5948,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // instanceof ICs because the profit of this optimization is fairly low. So, in the
             // absence of any information, it's better to avoid making this be the cause of a
             // recompilation.
-            if (JSObject* commonPrototype = status.commonPrototype()) {
+            JSObject* commonPrototype = status.commonPrototype();
+            if (commonPrototype && Options::useAccessInlining()) {
                 addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(commonPrototype)), prototype);
                 
                 bool allOK = true;
@@ -8245,7 +8245,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin(), uid);
 
-            if (status.isSimple()) {
+            if (status.isSimple() && Options::useAccessInlining()) {
                 bool allOK = true;
                 MatchStructureData* data = m_graph.m_matchStructureData.add();
                 for (const InByIdVariant& variant : status.variants()) {

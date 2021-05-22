@@ -31,8 +31,6 @@
 #include "CaptureDeviceManager.h"
 #include "GenericTaskQueue.h"
 #include <CoreAudio/CoreAudio.h>
-#include <wtf/HashMap.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

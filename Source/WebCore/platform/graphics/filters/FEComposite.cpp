@@ -230,9 +230,10 @@ void FEComposite::platformApplySoftware()
 
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
         auto* resultImage = createPremultipliedImageResult();
-        auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
-        if (!dstPixelArray)
+        if (!resultImage)
             return;
+        
+        auto& dstPixelArray = resultImage->data();
 
         IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
         auto srcPixelArray = in->premultipliedResult(effectADrawingRect, operatingColorSpace());
@@ -240,9 +241,9 @@ void FEComposite::platformApplySoftware()
             return;
 
         IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-        in2->copyPremultipliedResult(*dstPixelArray, effectBDrawingRect, operatingColorSpace());
+        in2->copyPremultipliedResult(dstPixelArray, effectBDrawingRect, operatingColorSpace());
 
-        platformArithmeticSoftware(*srcPixelArray, *dstPixelArray, m_k1, m_k2, m_k3, m_k4);
+        platformArithmeticSoftware(*srcPixelArray, dstPixelArray, m_k1, m_k2, m_k3, m_k4);
         return;
     }
 

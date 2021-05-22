@@ -115,8 +115,10 @@ private:
         case ProcessTerminationReason::ExceededMemoryLimit:
             webkitWebViewWebProcessTerminated(m_webView, WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT);
             return true;
-        case ProcessTerminationReason::ExceededCPULimit:
         case ProcessTerminationReason::RequestedByClient:
+            webkitWebViewWebProcessTerminated(m_webView, WEBKIT_WEB_PROCESS_TERMINATED_BY_API);
+            return true;
+        case ProcessTerminationReason::ExceededCPULimit:
         case ProcessTerminationReason::RequestedByNetworkProcess:
         case ProcessTerminationReason::NavigationSwap:
         case ProcessTerminationReason::RequestedByGPUProcess:

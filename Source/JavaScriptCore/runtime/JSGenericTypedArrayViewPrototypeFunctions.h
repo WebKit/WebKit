@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,7 +205,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
     if (!targetOption)
         return JSValue::encode(jsBoolean(false));
 
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
     if (std::isnan(static_cast<double>(*targetOption))) {
@@ -249,7 +249,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     auto targetOption = ViewClass::toAdaptorNativeFromValueWithoutCoercion(valueToFind);
     if (!targetOption)
         return JSValue::encode(jsNumber(-1));
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
     for (; index < length; ++index) {
@@ -374,7 +374,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
         return JSValue::encode(jsNumber(-1));
 
     typename ViewClass::ElementType* array = thisObject->typedVector();
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
     for (; index >= 0; --index) {
@@ -557,8 +557,9 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
 }
 
 template<typename ViewClass>
-ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM&vm, JSGlobalObject* globalObject, CallFrame* callFrame)
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
 {
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 22.2.3.23

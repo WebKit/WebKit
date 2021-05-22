@@ -133,12 +133,15 @@ enum class IndirectCompositingReason {
     Preserve3D
 };
 
+enum class ShouldAllowCrossOriginScrolling { No, Yes };
+
 struct ScrollRectToVisibleOptions {
     SelectionRevealMode revealMode { SelectionRevealMode::Reveal };
     const ScrollAlignment& alignX { ScrollAlignment::alignCenterIfNeeded };
     const ScrollAlignment& alignY { ScrollAlignment::alignCenterIfNeeded };
     ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
     ScrollBehavior behavior { ScrollBehavior::Auto };
+    SmoothScrollFeatureEnablement overrideFeatureEnablement { SmoothScrollFeatureEnablement::Default };
 };
 
 using ScrollingScope = uint64_t;
@@ -827,7 +830,6 @@ public:
     IndirectCompositingReason indirectCompositingReason() const { return static_cast<IndirectCompositingReason>(m_indirectCompositingReason); }
 
     bool isRenderFragmentedFlow() const { return renderer().isRenderFragmentedFlow(); }
-    bool isOutOfFlowRenderFragmentedFlow() const { return renderer().isOutOfFlowRenderFragmentedFlow(); }
     bool isInsideFragmentedFlow() const { return renderer().fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow; }
     bool isDirtyRenderFragmentedFlow() const
     {

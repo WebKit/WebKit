@@ -177,7 +177,7 @@ public:
     bool isRadioButton() const { return m_type == Type::Radio; }
     bool isRangeControl() const { return m_type == Type::Range; }
     bool isSearchField() const { return m_type == Type::Search; }
-    bool isSubmitButton() const { return m_type == Type::Submit; }
+    bool isSubmitButton() const { return m_type == Type::Submit || m_type == Type::Image; }
     bool isTelephoneField() const { return m_type == Type::Telephone; }
     bool isTimeField() const { return m_type == Type::Time; }
     bool isURLField() const { return m_type == Type::URL; }

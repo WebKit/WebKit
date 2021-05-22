@@ -25,12 +25,10 @@
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasimagedata
 interface mixin CanvasImageData {
-    // FIXME: All the float arguments below should be longs.
-
     // pixel manipulation
-    ImageData createImageData(float sw, float sh);
+    ImageData createImageData([EnforceRange] long sw, [EnforceRange] long sh);
     ImageData createImageData(ImageData imagedata);
-    ImageData getImageData(float sx, float sy, float sw, float sh);
-    undefined putImageData(ImageData imagedata, float dx, float dy);
-    undefined putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    ImageData getImageData([EnforceRange] long sx, [EnforceRange] long sy, [EnforceRange] long sw, [EnforceRange] long sh);
+    undefined putImageData(ImageData imagedata, [EnforceRange] long dx, [EnforceRange] long dy);
+    undefined putImageData(ImageData imagedata, [EnforceRange] long dx, [EnforceRange] long dy, [EnforceRange] long dirtyX, [EnforceRange] long dirtyY, [EnforceRange] long dirtyWidth, [EnforceRange] long dirtyHeight);
 };

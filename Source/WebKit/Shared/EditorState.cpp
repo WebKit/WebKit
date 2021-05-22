@@ -39,6 +39,7 @@ void EditorState::encode(IPC::Encoder& encoder) const
     encoder << shouldIgnoreSelectionChanges;
     encoder << selectionIsNone;
     encoder << selectionIsRange;
+    encoder << selectionIsRangeInsideImageOverlay;
     encoder << isContentEditable;
     encoder << isContentRichlyEditable;
     encoder << isInPasswordField;
@@ -64,6 +65,9 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
         return false;
 
     if (!decoder.decode(result.selectionIsRange))
+        return false;
+
+    if (!decoder.decode(result.selectionIsRangeInsideImageOverlay))
         return false;
 
     if (!decoder.decode(result.isContentEditable))

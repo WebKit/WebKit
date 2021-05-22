@@ -41,14 +41,22 @@ public:
     {
     }
 
-    HashSet<SVGElement*>& instances() { return m_instances; }
-    const HashSet<SVGElement*>& instances() const { return m_instances; }
+    void addInstance(SVGElement& element) { m_instances.add(element); }
+    void removeInstance(SVGElement& element) { m_instances.remove(element); }
+    const WeakHashSet<SVGElement>& instances() const { return m_instances; }
 
     bool instanceUpdatesBlocked() const { return m_instancesUpdatesBlocked; }
     void setInstanceUpdatesBlocked(bool value) { m_instancesUpdatesBlocked = value; }
 
-    SVGElement* correspondingElement() { return m_correspondingElement; }
-    void setCorrespondingElement(SVGElement* correspondingElement) { m_correspondingElement = correspondingElement; }
+    void addReferencingElement(SVGElement& element) { m_referencingElements.add(element); }
+    void removeReferencingElement(SVGElement& element) { m_referencingElements.remove(element); }
+    const WeakHashSet<SVGElement>& referencingElements() const { return m_referencingElements; }
+    WeakHashSet<SVGElement> takeReferencingElements() { return std::exchange(m_referencingElements, { }); }
+    SVGElement* referenceTarget() const { return m_referenceTarget.get(); }
+    void setReferenceTarget(WeakPtr<SVGElement>&& element) { m_referenceTarget = WTFMove(element); }
+
+    SVGElement* correspondingElement() { return m_correspondingElement.get(); }
+    void setCorrespondingElement(SVGElement* correspondingElement) { m_correspondingElement = makeWeakPtr(correspondingElement); }
 
     MutableStyleProperties* animatedSMILStyleProperties() const { return m_animatedSMILStyleProperties.get(); }
     MutableStyleProperties& ensureAnimatedSMILStyleProperties()
@@ -76,8 +84,10 @@ public:
     void setNeedsOverrideComputedStyleUpdate() { m_needsOverrideComputedStyleUpdate = true; }
 
 private:
-    HashSet<SVGElement*> m_instances;
-    SVGElement* m_correspondingElement { nullptr };
+    WeakHashSet<SVGElement> m_referencingElements;
+    WeakPtr<SVGElement> m_referenceTarget;
+    WeakHashSet<SVGElement> m_instances;
+    WeakPtr<SVGElement> m_correspondingElement;
     bool m_instancesUpdatesBlocked : 1;
     bool m_useOverrideComputedStyle : 1;
     bool m_needsOverrideComputedStyleUpdate : 1;

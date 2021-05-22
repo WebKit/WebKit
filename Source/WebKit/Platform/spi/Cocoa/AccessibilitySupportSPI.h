@@ -40,10 +40,17 @@ extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
 extern CFStringRef _AXSCopyPathForAccessibilityBundle(CFStringRef bundle);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+extern CFStringRef kAXSReduceMotionPreference;
+extern CFStringRef kAXSReduceMotionChangedNotification;
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(FULL_KEYBOARD_ACCESS)
 extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
 extern Boolean _AXSFullKeyboardAccessEnabled();
 #endif
+
+extern CFStringRef kAXSAccessibilityPreferenceDomain;
 
 WTF_EXTERN_C_END
 

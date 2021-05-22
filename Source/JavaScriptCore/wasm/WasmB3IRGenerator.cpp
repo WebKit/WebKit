@@ -285,7 +285,9 @@ public:
     // Calls
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, ExpressionType calleeCode, const Signature&, Vector<ExpressionType>& args, ResultList&);
     B3::Value* createCallPatchpoint(BasicBlock*, Origin, const Signature&, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*)>& patchpointFunctor);
 
     void dump(const ControlStack&, const Stack* expressionStack);
@@ -863,6 +865,95 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
         this->emitExceptionCheck(jit, ExceptionType::Unreachable);
     });
     unreachable->effects.terminal = true;
+    return { };
+}
+
+auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, ExpressionType calleeCode, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+{
+    // Do a context switch if needed.
+    {
+        BasicBlock* continuation = m_proc.addBlock();
+        BasicBlock* doContextSwitch = m_proc.addBlock();
+
+        Value* isSameContextInstance = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+            calleeInstance, instanceValue());
+        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
+            isSameContextInstance, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
+
+        PatchpointValue* patchpoint = doContextSwitch->appendNew<PatchpointValue>(m_proc, B3::Void, origin());
+        patchpoint->effects.writesPinned = true;
+        // We pessimistically assume we're calling something with BoundsChecking memory.
+        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+        patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->append(calleeInstance, ValueRep::SomeRegister);
+        patchpoint->append(instanceValue(), ValueRep::SomeRegister);
+        patchpoint->numGPScratchRegisters = 1;
+
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            GPRReg calleeInstance = params[0].gpr();
+            GPRReg oldContextInstance = params[1].gpr();
+            const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
+            GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
+            ASSERT(calleeInstance != baseMemory);
+            jit.loadPtr(CCallHelpers::Address(oldContextInstance, Instance::offsetOfCachedStackLimit()), baseMemory);
+            jit.storePtr(baseMemory, CCallHelpers::Address(calleeInstance, Instance::offsetOfCachedStackLimit()));
+            jit.storeWasmContextInstance(calleeInstance);
+            ASSERT(pinnedRegs.boundsCheckingSizeRegister != baseMemory);
+            // FIXME: We should support more than one memory size register
+            //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
+            ASSERT(pinnedRegs.boundsCheckingSizeRegister != calleeInstance);
+            GPRReg scratch = params.gpScratch(0);
+
+            jit.loadPtr(CCallHelpers::Address(calleeInstance, Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister); // Memory size.
+            jit.loadPtr(CCallHelpers::Address(calleeInstance, Instance::offsetOfCachedMemory()), baseMemory); // Memory::void*.
+
+            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, scratch);
+        });
+        doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
+
+        m_currentBlock = continuation;
+    }
+
+    B3::Type returnType = toB3ResultType(&signature);
+    ExpressionType callResult = createCallPatchpoint(m_currentBlock, origin(), signature, args,
+        scopedLambdaRef<void(PatchpointValue*)>([=] (PatchpointValue* patchpoint) -> void {
+            patchpoint->effects.writesPinned = true;
+            patchpoint->effects.readsPinned = true;
+            // We need to clobber all potential pinned registers since we might be leaving the instance.
+            // We pessimistically assume we're always calling something that is bounds checking so
+            // because the wasm->wasm thunk unconditionally overrides the size registers.
+            // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
+            // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
+            patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+
+            patchpoint->append(calleeCode, ValueRep::SomeRegister);
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
+            });
+        }));
+
+    switch (returnType.kind()) {
+    case B3::Void: {
+        break;
+    }
+    case B3::Tuple: {
+        const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
+        for (unsigned i = 0; i < signature.returnCount(); ++i)
+            results.append(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i));
+        break;
+    }
+    default: {
+        results.append(callResult);
+        break;
+    }
+    }
+
+    // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
+    restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, instanceValue(), m_proc, m_currentBlock);
+
     return { };
 }
 
@@ -2521,100 +2612,41 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signat
         }
     }
 
-    // Do a context switch if needed.
-    {
-        Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
-            calleeIndex, constant(pointerType(), sizeof(Instance*)));
-        Value* newContextInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Add, origin(), instancesBuffer, offset));
-
-        BasicBlock* continuation = m_proc.addBlock();
-        BasicBlock* doContextSwitch = m_proc.addBlock();
-
-        Value* isSameContextInstance = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
-            newContextInstance, instanceValue());
-        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
-            isSameContextInstance, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
-
-        PatchpointValue* patchpoint = doContextSwitch->appendNew<PatchpointValue>(m_proc, B3::Void, origin());
-        patchpoint->effects.writesPinned = true;
-        // We pessimistically assume we're calling something with BoundsChecking memory.
-        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-        patchpoint->clobber(RegisterSet::macroScratchRegisters());
-        patchpoint->append(newContextInstance, ValueRep::SomeRegister);
-        patchpoint->append(instanceValue(), ValueRep::SomeRegister);
-        patchpoint->numGPScratchRegisters = 1;
-
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            GPRReg newContextInstance = params[0].gpr();
-            GPRReg oldContextInstance = params[1].gpr();
-            const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
-            GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-            ASSERT(newContextInstance != baseMemory);
-            jit.loadPtr(CCallHelpers::Address(oldContextInstance, Instance::offsetOfCachedStackLimit()), baseMemory);
-            jit.storePtr(baseMemory, CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedStackLimit()));
-            jit.storeWasmContextInstance(newContextInstance);
-            ASSERT(pinnedRegs.boundsCheckingSizeRegister != baseMemory);
-            // FIXME: We should support more than one memory size register
-            //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
-            ASSERT(pinnedRegs.boundsCheckingSizeRegister != newContextInstance);
-            GPRReg scratch = params.gpScratch(0);
-
-            jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedBoundsCheckingSize()), pinnedRegs.boundsCheckingSizeRegister); // Memory size.
-            jit.loadPtr(CCallHelpers::Address(newContextInstance, Instance::offsetOfCachedMemory()), baseMemory); // Memory::void*.
-
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, pinnedRegs.boundsCheckingSizeRegister, scratch);
-        });
-        doContextSwitch->appendNewControlValue(m_proc, Jump, origin(), continuation);
-
-        m_currentBlock = continuation;
-    }
-
+    Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
+        calleeIndex, constant(pointerType(), sizeof(Instance*)));
+    Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Add, origin(), instancesBuffer, offset));
     ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
         m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction,
             safeCast<int32_t>(WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation())));
 
-    B3::Type returnType = toB3ResultType(&signature);
-    ExpressionType callResult = createCallPatchpoint(m_currentBlock, origin(), signature, args,
-        scopedLambdaRef<void(PatchpointValue*)>([=] (PatchpointValue* patchpoint) -> void {
-            patchpoint->effects.writesPinned = true;
-            patchpoint->effects.readsPinned = true;
-            // We need to clobber all potential pinned registers since we might be leaving the instance.
-            // We pessimistically assume we're always calling something that is bounds checking so
-            // because the wasm->wasm thunk unconditionally overrides the size registers.
-            // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
-            // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
-            patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
+    return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
+}
 
-            patchpoint->append(calleeCode, ValueRep::SomeRegister);
-            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-                jit.call(params[params.proc().resultCount(returnType)].gpr(), WasmEntryPtrTag);
-            });
-        }));
+auto B3IRGenerator::addCallRef(const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+{
+    ExpressionType callee = args.takeLast();
+    ASSERT(signature.argumentCount() == args.size());
+    m_makesCalls = true;
 
-    switch (returnType.kind()) {
-    case B3::Void: {
-        break;
-    }
-    case B3::Tuple: {
-        const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-        for (unsigned i = 0; i < signature.returnCount(); ++i)
-            results.append(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i));
-        break;
-    }
-    default: {
-        results.append(callResult);
-        break;
-    }
-    }
+    // Note: call ref can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
+    // WebAssemblyWrapperFunction is like calling into the embedder, we conservatively assume all call indirects
+    // can be to the embedder for our stack check calculation.
+    m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
-    // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
-    restoreWebAssemblyGlobalState(RestoreCachedStackLimit::Yes, m_info.memory, instanceValue(), m_proc, m_currentBlock);
+    Value* jsInstanceOffset = constant(pointerType(), safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfInstance()));
+    Value* jsCalleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callee, jsInstanceOffset));
 
-    return { };
+    Value* instanceOffset = constant(pointerType(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfInstance()));
+    Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Add, origin(), jsCalleeInstance, instanceOffset));
+
+    ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+        m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callee,
+            safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation())));
+
+    return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
 }
 
 void B3IRGenerator::unify(const ExpressionType phi, const ExpressionType source)

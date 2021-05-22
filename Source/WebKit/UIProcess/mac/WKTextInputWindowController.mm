@@ -31,6 +31,8 @@
 #import <Carbon/Carbon.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/system/mac/WebPanel.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
 
 @interface WKTextInputView : NSTextView
 @end

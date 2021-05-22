@@ -41,34 +41,32 @@
 namespace WebCore {
 
 #if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+
 bool GameControllerGamepadProvider::willHandleVendorAndProduct(uint16_t vendorID, uint16_t productID)
 {
-    // Check the vendor/product IDs agains a hard coded list of controllers we expect to work well with
-    // GameController.framework on 10.15.
-    static NeverDestroyed<HashSet<uint32_t>> gameControllerCompatibleGamepads;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        gameControllerCompatibleGamepads->add(Nimbus1);
-        gameControllerCompatibleGamepads->add(Nimbus2);
-        gameControllerCompatibleGamepads->add(StratusXL1);
-        gameControllerCompatibleGamepads->add(StratusXL2);
-        gameControllerCompatibleGamepads->add(StratusXL3);
-        gameControllerCompatibleGamepads->add(StratusXL4);
-        gameControllerCompatibleGamepads->add(HoripadUltimate);
-        gameControllerCompatibleGamepads->add(GamesirM2);
-        gameControllerCompatibleGamepads->add(XboxOne1);
-        gameControllerCompatibleGamepads->add(XboxOne2);
-        gameControllerCompatibleGamepads->add(XboxOne3);
-        gameControllerCompatibleGamepads->add(Dualshock4_1);
-        gameControllerCompatibleGamepads->add(Dualshock4_2);
-    });
-
-    uint32_t fullProductID = (((uint32_t)vendorID) << 16) | productID;
-    return gameControllerCompatibleGamepads->contains(fullProductID);
+    // Check the vendor/product ID pair against a hard coded list of controllers we expect to work
+    // well with GameController.framework on macOS 10.15.
+    switch ((static_cast<uint32_t>(vendorID) << 16) | productID) {
+    case Dualshock4_1:
+    case Dualshock4_2:
+    case GamesirM2:
+    case HoripadUltimate:
+    case Nimbus1:
+    case Nimbus2:
+    case StratusXL1:
+    case StratusXL2:
+    case StratusXL3:
+    case StratusXL4:
+    case XboxOne1:
+    case XboxOne2:
+    case XboxOne3:
+        return true;
+    default:
+        return false;
+    }
 }
-#endif // !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 
+#endif // !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 
 static const Seconds inputNotificationDelay { 16_ms };
 
@@ -80,7 +78,6 @@ GameControllerGamepadProvider& GameControllerGamepadProvider::singleton()
 
 GameControllerGamepadProvider::GameControllerGamepadProvider()
     : m_inputNotificationTimer(RunLoop::current(), this, &GameControllerGamepadProvider::inputNotificationTimerFired)
-
 {
 }
 

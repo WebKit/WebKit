@@ -1,8 +1,0 @@
-2d.shadow.canvas.alpha
-Shadows are drawn correctly for partially-transparent canvases
-Spec references: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed
-

@@ -610,6 +610,9 @@ private:
                 m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
 
+                if (!Options::useAccessInlining())
+                    break;
+
                 if (!baseValue.m_structure.isFinite()
                     || (node->child1().useKind() == UntypedUse || (baseValue.m_type & ~SpecCell)))
                     break;
@@ -1388,6 +1391,9 @@ private:
     
     void tryFoldAsPutByOffset(Node* node, unsigned indexInBlock, Edge baseEdge, Edge valueEdge, bool isDirect, PrivateFieldPutKind privateFieldPutKind, bool& changed, bool& alreadyHandled)
     {
+        if (!Options::useAccessInlining())
+            return;
+
         NodeOrigin origin = node->origin;
         Node* baseNode = baseEdge.node();
         UniquedStringImpl* uid = node->cacheableIdentifier().uid();

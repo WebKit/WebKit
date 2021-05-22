@@ -47,7 +47,7 @@ RenderSelectionInfo::RenderSelectionInfo(RenderObject& renderer, bool clipToVisi
 {
     if (renderer.canUpdateSelectionOnRootLineBoxes()) {
         if (is<RenderText>(renderer))
-            m_rect = downcast<RenderText>(renderer).collectSelectionGeometriesForLineBoxes(m_repaintContainer, clipToVisibleContent, m_collectedSelectionRects);
+            m_rect = downcast<RenderText>(renderer).collectSelectionGeometriesForLineBoxes(m_repaintContainer, clipToVisibleContent, m_collectedSelectionQuads);
         else
             m_rect = renderer.selectionRectForRepaint(m_repaintContainer, clipToVisibleContent);
     }

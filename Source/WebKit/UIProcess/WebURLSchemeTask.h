@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIObject.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -52,7 +53,7 @@ class WebPageProxy;
 
 using SyncLoadCompletionHandler = CompletionHandler<void(const WebCore::ResourceResponse&, const WebCore::ResourceError&, const Vector<char>&)>;
 
-class WebURLSchemeTask : public ThreadSafeRefCounted<WebURLSchemeTask>, public InstanceCounted<WebURLSchemeTask> {
+class WebURLSchemeTask : public API::ObjectImpl<API::Object::Type::URLSchemeTask>, public InstanceCounted<WebURLSchemeTask> {
     WTF_MAKE_NONCOPYABLE(WebURLSchemeTask);
 public:
     static Ref<WebURLSchemeTask> create(WebURLSchemeHandler&, WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);

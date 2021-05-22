@@ -8493,7 +8493,7 @@ private:
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
             Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure(vm());
             Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm());
-            WTF::loadLoadFence();
+            WTF::dependentLoadLoadFence();
 
             if (globalObject->stringPrototypeChainIsSane()) {
                 // FIXME: This could be captured using a Speculation mode that means

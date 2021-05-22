@@ -23,6 +23,7 @@
 
 (version 1)
 (deny default (with partial-symbolication))
+(deny nvram*)
 (allow system-audit file-read-metadata)
 
 ;;;
@@ -352,22 +353,6 @@
     (allow file-read* file-write-data file-ioctl
            (literal "/dev/aes_0")))
 
-(define-once (logd-diagnostic-paths)
-    (require-any
-        (subpath "/private/var/db/diagnostics")
-        (subpath "/private/var/db/timesync")
-        (subpath "/private/var/db/uuidtext")
-        (subpath "/private/var/userdata/diagnostics")))
-(define-once (logd-diagnostic-client)
-    (with-filter
-        (require-all
-            (require-any
-                (require-entitlement "com.apple.private.logging.diagnostic")
-                (require-entitlement "com.apple.diagnosticd.diagnostic"))
-            (extension "com.apple.logd.read-only"))
-        (allow file-read*
-               (logd-diagnostic-paths))))
-
 (define required-etc-files
   (literal "/private/etc/fstab"
            "/private/etc/hosts"
@@ -402,10 +387,6 @@
         "com.apple.coreanimation"
         "com.apple.mt"
         "com.apple.preferences.sounds")
-
-    (allow mach-lookup (with report) (with telemetry)
-        (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
-    )
 
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
@@ -485,7 +466,8 @@
 
     (mobile-preferences-read "kCFPreferencesAnyApplication")
     (allow file-read*
-           (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist"))
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist")
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences_m.plist"))
 
     (allow file-read*
            (literal "/private/var/Managed Preferences/mobile/.GlobalPreferences.plist"))
@@ -633,8 +615,6 @@
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.diagnosticd"))
 
-(logd-diagnostic-client)
-
 (managed-configuration-read-public)
 
 (deny system-info (with no-report)
@@ -724,9 +704,6 @@
 ;; <rdar://problem/7344719&26323449> LaunchServices app icons
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
-(allow mach-lookup (with report) (with telemetry)
-    (xpc-service-name "com.apple.iconservices")
-    (global-name "com.apple.iconservices"))
 
 (allow-preferences-common)
 
@@ -925,9 +902,13 @@
 (media-accessibility-support)
 
 ;; Various services required by CFNetwork and other frameworks
-(allow mach-lookup
-    (global-name "com.apple.PowerManagement.control")
+(allow mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.analyticsd"))
+
+;; Silence reports about things we do not want access to:
+(deny mach-lookup (with no-report)
+    (global-name "com.apple.fontservicesd")
+)
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
@@ -940,6 +921,17 @@
 
 (allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
+)
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name
+            "com.apple.PowerManagement.control"
+            "com.apple.frontboard.systemappservices"
+            "com.apple.iconservices"
+        )
+    )
 )
 
 (allow iokit-open
@@ -963,6 +955,16 @@
 (deny mach-lookup (with no-log)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
+
+(deny mach-lookup (with telemetry-backtrace)
+    (xpc-service-name "com.apple.iconservices")
+    (global-name
+        "com.apple.PowerManagement.control"
+        "com.apple.iconservices"
+        "com.apple.frontboard.systemappservices"
+    )
+)
+
 
 (allow mach-lookup
     (require-all

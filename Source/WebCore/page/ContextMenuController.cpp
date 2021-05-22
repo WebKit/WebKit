@@ -63,6 +63,7 @@
 #include "ResourceRequest.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "TranslationContextMenuInfo.h"
 #include "TypingCommand.h"
 #include "UserTypingGestureIndicator.h"
 #include "WindowFeatures.h"
@@ -527,9 +528,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagTranslate:
 #if HAVE(TRANSLATION_UI_SERVICES)
         if (auto view = makeRefPtr(frame->view())) {
-            auto selectionBounds = view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds()));
-            auto location = view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame());
-            m_client.handleTranslation(m_context.hitTestResult().selectedText(), selectionBounds, location);
+            m_client.handleTranslation({
+                m_context.hitTestResult().selectedText(),
+                view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())),
+                view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame()),
+                m_context.hitTestResult().isContentEditable() ? TranslationContextMenuMode::Editable : TranslationContextMenuMode::NonEditable,
+            });
         }
 #endif
         break;
@@ -935,6 +939,8 @@ void ContextMenuController::populate()
             }
         }
 
+        auto selectedRange = frame->selection().selection().range();
+        bool selectionIsInsideImageOverlay = selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange);
         bool shouldShowItemsForNonEditableText = ([&] {
             if (!linkURL.isEmpty())
                 return false;
@@ -942,10 +948,8 @@ void ContextMenuController::populate()
             if (!mediaURL.isEmpty())
                 return false;
 
-            if (!imageURL.isEmpty()) {
-                auto selectedRange = frame->selection().selection().range();
-                return selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange);
-            }
+            if (!imageURL.isEmpty())
+                return selectionIsInsideImageOverlay;
 
             return true;
         })();
@@ -963,7 +967,7 @@ void ContextMenuController::populate()
 
 #if ENABLE(APP_HIGHLIGHTS)
                 if (auto* page = frame->page()) {
-                    if (page->settings().appHighlightsEnabled()) {
+                    if (page->settings().appHighlightsEnabled() && !selectionIsInsideImageOverlay) {
                         appendItem(AddHighlightToNewGroupItem, m_contextMenu.get());
                         appendItem(AddHighlightItem, m_contextMenu.get());
                         appendItem(*separatorItem(), m_contextMenu.get());

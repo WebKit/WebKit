@@ -1,3 +1,25 @@
+2021-05-09  Darin Adler  <darin@apple.com>
+
+        Remove all remaining uses of the String::toInt family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=225580
+
+        Reviewed by Sam Weinig.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::run): Use
+        parseIntegerAllowingTrailingJunk<uint16_t> instead of String::toUInt.
+
+        * glib/WebDriverServiceGLib.cpp:
+        (WebDriver::parseVersion): Use
+        parseIntegerAllowingTrailingJunk<uint64_t> instead of String::toInt64,
+        and then assigning into a uint64_t.
+
+        * socket/HTTPParser.cpp:
+        (WebDriver::HTTPParser::expectedBodyLength const): Use
+        parseIntegerAllowingTrailingJunk<size_t> instead of String::toInt.
+        Also use StringView instead of String::substringSharingImpl and
+        dropped an unneeded call to String::stripWhiteSpace.
+
 2021-03-25  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use WebDriver_DERIVED_SOURCES value

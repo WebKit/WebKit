@@ -1,3 +1,253 @@
+2021-05-07  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Breakpoint action add/remove buttons are not vertically aligned with action dropdown
+        https://bugs.webkit.org/show_bug.cgi?id=225543
+
+        Reviewed by Devin Rousso.
+
+        Change the breakpoint action add/remove button's `margin-top` to `margin-block-start`, and adjust the value to
+        properly vertically center the buttons with the action type menu.
+
+        * UserInterface/Views/BreakpointActionView.css:
+        (:matches(.breakpoint-action-append-button, .breakpoint-action-remove-button)):
+
+2021-05-07  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Default source for new test cases is minified
+        https://bugs.webkit.org/show_bug.cgi?id=225546
+
+        Reviewed by Devin Rousso.
+
+        Move the placeholder test code to `WI.DefaultAudits` as part of the non-minified sources so that new audit test
+        cases do not have their default placeholder script minified. This also allows us to remove
+        `WI.AuditTestCase.stringifyFunction` as it is no longer needed.
+
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.stringifyFunction): Deleted.
+        * UserInterface/NonMinified/DefaultAudits.js:
+        (WI.DefaultAudits.newAuditPlaceholder):
+        * UserInterface/Views/CreateAuditPopover.js:
+        (WI.CreateAuditPopover.prototype.dismiss):
+        (WI.CreateAuditPopover.prototype.dismiss.const.placeholderTestFunction): Deleted.
+
+2021-05-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add assertion for `WI.View` re-entrancy
+        https://bugs.webkit.org/show_bug.cgi?id=224678
+
+        Reviewed by Joseph Pecoraro.
+
+        Add `console.assert` (which are removed from production builds) around each critical
+        `WI.View` subclass member function to prevent reentrancy.
+         - `initialLayout`
+         - `sizeDidChange`
+         - `layout`
+         - `didLayoutSubtree`
+        This is important because `WI.View.prototype._layoutSubtree` sets any related state after
+        calling any of the above (e.g. `_didInitialLayout` after `initialLayout`), meaning that any
+        checks for the related state (which sometimes control whether the function is called, such
+        as in the case of `initialLayout`) would think that the function hadn't been called yet. See
+        r276170 for an example of how this can happen and the potential problems it can cause.
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype._layoutSubtree):
+
+        * UserInterface/Base/Utilities.js:
+        (WI.setReentrantCheck): Added.
+        (WI.clearReentrantCheck): Added.
+
+2021-05-04  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Sources: Inconsistent selection in source tree when grouped by path
+        https://bugs.webkit.org/show_bug.cgi?id=225317
+
+        Reviewed by Devin Rousso.
+
+        Ensure origin tree elements for different domains in the Sources Tab behave as folder tree elements
+        in that they can be individually selected without triggering rendering of any resource.
+
+        In essence, restore behavior prior to https://trac.webkit.org/changeset/248912/webkit
+
+        The only exception is for document resources. Clicking on the origin tree element associated with a document resource,
+        triggers rendering of the corresponding document.
+
+        * UserInterface/Views/OriginTreeElement.js:
+        (WI.OriginTreeElement):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._addResource):
+
+2021-04-28  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: CSS Grid - measure usage of grid overlay options
+        https://bugs.webkit.org/show_bug.cgi?id=225060
+        <rdar://75843294>
+
+        Reviewed by BJ Burg.
+
+        Add telemetry instrumentation to track grid overlay configurations and time spent using them.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Controllers/GridOverlayConfigurationDiagnosticEventRecorder.js: Added.
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.get eventSamplingInterval):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleGridOverlayHidden):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.handleEvent):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._startEventSamplingTimer):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._stopEventSamplingTimer):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._sampleCurrentOverlayConfiguration):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._didObserveUserInteraction):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowFocus):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowBlur):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowKeyDown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowMouseDown):
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager.prototype.hasVisibleGridOverlays):
+        * UserInterface/Main.html:
+
+2021-04-27  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Rename "Open in New Tab" context menu item to "Open in New Window"
+        https://bugs.webkit.org/show_bug.cgi?id=225125
+
+        Reviewed by BJ Burg.
+
+        Update the context menu item label, as the "Open in..." context menu item opens the target item in a new window,
+        not a new tab.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForURL):
+
+2021-04-27  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Default Audits script are minified in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=225009
+
+        Reviewed by BJ Burg.
+
+        Covered by new test:
+        - inspector/audit/non-minified-default-audits.html
+
+        The default audits have been moved out of `AuditManager.js` and into a special `DefaultAudits.js` in the new
+        `NonMinified` directory, which contains JavaScript sources that should be included in `Main.js` and
+        `TestCombined.js`, but should not have whitespace stripped from their contents because the whitespace is
+        important to the script. For example, the source for the default audits are visible to the user, and therefore
+        we want to present well-formatted source in those contexts.
+
+        * Scripts/combine-resources.pl:
+        - Added `NonMinified` directory to list of default `inputDirectoryPattern` exceptions for combining resources.
+        - Added `--skip-concatenate-tag` so that we don't add tags for script we will eventually append to another script.
+        * Scripts/copy-user-interface-resources.pl:
+        - Handle `NonMinified` directory for sources that will be appended to Main.js, but should not be minified.
+        - Handle `NonMinified` directory for sources that will be appended to TestCombined.js.
+        (combineOrStripResourcesForWebKitAdditions):
+        - Drive-by fix for typo in combineOrStripResourcesForWebKitAdditions that caused errors to be emitted during builds.
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype._addDefaultTests):
+        (WI.AuditManager):
+        (WI.AuditManager.prototype._addDefaultTests.const.levelPass): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.levelWarn): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.levelFail): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.levelError): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.levelUnsupported): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.dataDOMNodes): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.dataDOMAttributes): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.dataErrors): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.dataCustom): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getElementsByComputedRole): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getActiveDescendant): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getChildNodes): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getComputedProperties): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getControlledNodes): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getFlowedNodes): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getMouseEventNode): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getOwnedNodes): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getParentNode): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getSelectedChildNodes): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.hasEventListeners): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.hasEventListenersClick): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getResources): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.getResourceContent): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.unsupported): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.hasChildWithRole): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testMenuRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testGridRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testForAriaLabelledBySpelling): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testForMultipleBanners): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testForLinkLabels): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testRowGroupRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testTableRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testForMultipleLiveRegions): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testListBoxRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testImageLabels): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testForAriaHiddenFalse): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testTreeRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testRadioGroupRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testFeedRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testTabListRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testButtonLabels): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testRowRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testListRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testComboBoxRoleForRequiredChildren): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testForMultipleMainContentSections): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testDialogsForLabels): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.const.testForInvalidAriaHiddenValue): Deleted.
+        (WI.AuditManager.prototype._addDefaultTests.removeWhitespace): Deleted.
+        * UserInterface/Main.html:
+        * UserInterface/NonMinified/DefaultAudits.js: Added.
+        (WI.DefaultAudits.levelPass):
+        (WI.DefaultAudits.levelWarn):
+        (WI.DefaultAudits.levelFail):
+        (WI.DefaultAudits.levelError):
+        (WI.DefaultAudits.levelUnsupported):
+        (WI.DefaultAudits.dataDOMNodes):
+        (WI.DefaultAudits.dataDOMAttributes):
+        (WI.DefaultAudits.dataErrors):
+        (WI.DefaultAudits.dataCustom):
+        (WI.DefaultAudits.getElementsByComputedRole):
+        (WI.DefaultAudits.getActiveDescendant):
+        (WI.DefaultAudits.getChildNodes):
+        (WI.DefaultAudits.getComputedProperties):
+        (WI.DefaultAudits.getControlledNodes):
+        (WI.DefaultAudits.getFlowedNodes):
+        (WI.DefaultAudits.getMouseEventNode):
+        (WI.DefaultAudits.getOwnedNodes):
+        (WI.DefaultAudits.getParentNode):
+        (WI.DefaultAudits.getSelectedChildNodes):
+        (WI.DefaultAudits.hasEventListeners):
+        (WI.DefaultAudits.hasEventListenersClick):
+        (WI.DefaultAudits.getResources):
+        (WI.DefaultAudits.getResourceContent):
+        (WI.DefaultAudits.unsupported):
+        (hasChildWithRole):
+        (WI.DefaultAudits.testMenuRoleForRequiredChildren):
+        (WI.DefaultAudits.testGridRoleForRequiredChildren):
+        (WI.DefaultAudits.testForAriaLabelledBySpelling):
+        (WI.DefaultAudits.testForMultipleBanners):
+        (WI.DefaultAudits.testForLinkLabels):
+        (WI.DefaultAudits.testRowGroupRoleForRequiredChildren):
+        (WI.DefaultAudits.testTableRoleForRequiredChildren):
+        (WI.DefaultAudits.testForMultipleLiveRegions):
+        (WI.DefaultAudits.testListBoxRoleForRequiredChildren):
+        (WI.DefaultAudits.testImageLabels):
+        (WI.DefaultAudits.testForAriaHiddenFalse):
+        (WI.DefaultAudits.testTreeRoleForRequiredChildren):
+        (WI.DefaultAudits.testRadioGroupRoleForRequiredChildren):
+        (WI.DefaultAudits.testFeedRoleForRequiredChildren):
+        (WI.DefaultAudits.testTabListRoleForRequiredChildren):
+        (WI.DefaultAudits.testButtonLabels):
+        (WI.DefaultAudits.testRowRoleForRequiredChildren):
+        (WI.DefaultAudits.testListRoleForRequiredChildren):
+        (WI.DefaultAudits.testComboBoxRoleForRequiredChildren):
+        (WI.DefaultAudits.testForMultipleMainContentSections):
+        (WI.DefaultAudits.testDialogsForLabels):
+        (WI.DefaultAudits.testForInvalidAriaHiddenValue):
+        * UserInterface/Test.html:
+
 2021-04-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for GTK WebKit headers

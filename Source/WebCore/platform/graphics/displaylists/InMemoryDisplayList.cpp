@@ -31,14 +31,14 @@
 namespace WebCore {
 namespace DisplayList {
 
-Optional<std::size_t> InMemoryDisplayList::WritingClient::requiredSizeForItem(ItemHandle itemHandle) const
+Optional<std::size_t> InMemoryDisplayList::WritingClient::requiredSizeForItem(const DisplayListItem& displayListItem) const
 {
-    return paddedSizeOfTypeAndItemInBytes(itemHandle.type());
+    return paddedSizeOfTypeAndItemInBytes(displayListItem);
 }
 
-void InMemoryDisplayList::WritingClient::encodeItemInline(ItemHandle itemHandle, uint8_t* location) const
+void InMemoryDisplayList::WritingClient::encodeItemInline(const DisplayListItem& displayListItem, uint8_t* location) const
 {
-    itemHandle.safeCopy({ location });
+    safeCopy({ location }, displayListItem);
 }
 
 Optional<ItemHandle> WARN_UNUSED_RETURN InMemoryDisplayList::ReadingClient::decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation)

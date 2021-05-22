@@ -21,17 +21,18 @@
 // Original version of this file can currently be found at: http://mxr.mozilla.org/mozilla1.8/source/netwerk/streamconv/converters/ParseFTPList.cpp
 
 #include "config.h"
-#if ENABLE(FTPDIR)
 #include "FTPDirectoryParser.h"
+
+#if ENABLE(FTPDIR)
+
+#include <stdio.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 // On Windows, use the threadsafe *_r functions provided by pthread.
 #if OS(WINDOWS) && (USE(PTHREADS) || HAVE(PTHREAD_H))
 #include <pthread.h>
 #endif
-
-#include <wtf/ASCIICType.h>
-#include <stdio.h>
-
 
 namespace WebCore {
 
@@ -1176,7 +1177,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
         {
           /* First try to use result.fe_size to find " -> " sequence.
              This can give proper result for cases like "aaa -> bbb -> ccc". */
-          unsigned int fileSize = result.fileSize.toUInt();
+            auto fileSize = parseIntegerAllowingTrailingJunk<unsigned>(result.fileSize).valueOr(0);
 
           if (result.filenameLength > (fileSize + 4) &&
               strncmp(result.filename + result.filenameLength - fileSize - 4, " -> ", 4) == 0)

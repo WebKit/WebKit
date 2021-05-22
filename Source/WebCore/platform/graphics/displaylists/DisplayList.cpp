@@ -41,7 +41,7 @@ namespace DisplayList {
 WTF::CString DisplayList::description() const
 {
     TextStream ts;
-    ts << this;
+    ts << *this;
     return ts.release().utf8();
 }
 
@@ -345,12 +345,12 @@ auto DisplayList::end() const -> Iterator
     return { *this, Iterator::ImmediatelyMoveToEnd::Yes };
 }
 
-} // namespace DisplayList
-
-TextStream& operator<<(TextStream& ts, const DisplayList::DisplayList& displayList)
+TextStream& operator<<(TextStream& ts, const DisplayList& displayList)
 {
     displayList.dump(ts);
     return ts;
 }
+
+} // namespace DisplayList
 
 } // namespace WebCore

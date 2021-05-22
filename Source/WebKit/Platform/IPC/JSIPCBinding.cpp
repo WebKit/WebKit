@@ -51,19 +51,19 @@ static JSC::JSValue jsValueForDecodedStringArgumentValue(JSC::JSGlobalObject* gl
 }
 
 template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const String& value)
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, String&& value)
 {
     return jsValueForDecodedStringArgumentValue(globalObject, value, "String"_s);
 }
 
 template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const URL& value)
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, URL&& value)
 {
     return jsValueForDecodedStringArgumentValue(globalObject, value.string(), "URL"_s);
 }
 
 template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const WebCore::RegistrableDomain& value)
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::RegistrableDomain&& value)
 {
     return jsValueForDecodedStringArgumentValue(globalObject, value.string(), "RegistrableDomain"_s);
 }
@@ -183,13 +183,13 @@ JSC::JSValue jsValueForDecodedArgumentRect(JSC::JSGlobalObject* globalObject, co
 }
 
 template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const WebCore::IntRect& value)
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::IntRect&& value)
 {
     return jsValueForDecodedArgumentRect(globalObject, value, "IntRect");
 }
 
 template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, const WebCore::FloatRect& value)
+JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::FloatRect&& value)
 {
     return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect");
 }

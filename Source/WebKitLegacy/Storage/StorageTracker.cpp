@@ -28,7 +28,6 @@
 #include "StorageThread.h"
 #include "StorageTrackerClient.h"
 #include "WebStorageNamespaceProvider.h"
-#include <WebCore/PageGroup.h>
 #include <WebCore/SQLiteDatabaseTracker.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SecurityOrigin.h>

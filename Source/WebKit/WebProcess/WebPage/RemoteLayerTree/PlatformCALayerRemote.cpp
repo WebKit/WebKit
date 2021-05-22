@@ -233,7 +233,12 @@ void PlatformCALayerRemote::updateBackingStore()
 
     ASSERT(m_properties.backingStoreAttached);
 
-    m_properties.backingStore->ensureBackingStore(m_properties.bounds.size(), m_properties.contentsScale, m_acceleratesDrawing, m_wantsDeepColorBackingStore, m_properties.opaque);
+    auto type = m_acceleratesDrawing ? RemoteLayerBackingStore::Type::IOSurface : RemoteLayerBackingStore::Type::Bitmap;
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    if (m_context->useCGDisplayListsForDOMRendering())
+        type = RemoteLayerBackingStore::Type::CGDisplayList;
+#endif
+    m_properties.backingStore->ensureBackingStore(type, m_properties.bounds.size(), m_properties.contentsScale, m_wantsDeepColorBackingStore, m_properties.opaque);
 }
 
 void PlatformCALayerRemote::setNeedsDisplayInRect(const FloatRect& rect)

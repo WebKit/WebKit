@@ -109,7 +109,7 @@ private:
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) override;
 
-    void appendDrawGraphsItemWithCachedFont(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
+    void appendDrawGlyphsItemWithCachedFont(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
 
     void drawImageBuffer(WebCore::ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) override;
     void drawNativeImage(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) override;
@@ -160,6 +160,9 @@ private:
         if (UNLIKELY(!canAppendItemOfType(T::itemType)))
             return;
 
+        if constexpr (itemNeedsState<T>())
+            appendStateChangeItemIfNecessary();
+
         m_displayList.append<T>(std::forward<Args>(args)...);
 
         if constexpr (T::isDrawingItem) {
@@ -176,10 +179,14 @@ private:
         }
     }
 
-    WEBCORE_EXPORT bool canAppendItemOfType(ItemType);
+    WEBCORE_EXPORT bool canAppendItemOfType(ItemType) const;
+
+    template<typename T>
+    static constexpr bool itemNeedsState();
 
     void cacheNativeImage(NativeImage&);
 
+    void appendStateChangeItemIfNecessary();
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);
 
     FloatRect extentFromLocalBounds(const FloatRect&) const;
@@ -192,7 +199,6 @@ private:
         FloatRect clipBounds;
         GraphicsContextStateChange stateChange;
         GraphicsContextState lastDrawingState;
-        bool wasUsedForDrawing { false };
         
         ContextState(const GraphicsContextState& state, const AffineTransform& transform, const FloatRect& clip)
             : ctm(transform)
@@ -232,6 +238,20 @@ private:
 
     DrawGlyphsRecorder m_drawGlyphsRecorder;
 };
+
+template<typename T>
+constexpr bool Recorder::itemNeedsState()
+{
+    if (T::isDrawingItem)
+        return true;
+
+#if USE(CG)
+    if (T::itemType == ItemType::ApplyFillPattern || T::itemType == ItemType::ApplyStrokePattern)
+        return true;
+#endif
+
+    return false;
+}
 
 }
 }

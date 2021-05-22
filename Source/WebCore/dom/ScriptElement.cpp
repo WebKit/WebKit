@@ -53,10 +53,9 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "TextNodeTraversal.h"
+#include <wtf/SortedArrayMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -110,21 +109,22 @@ void ScriptElement::handleAsyncAttribute()
 
 static bool isLegacySupportedJavaScriptLanguage(const String& language)
 {
-    static const auto languages = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
-        "javascript"_s,
-        "javascript1.0"_s,
-        "javascript1.1"_s,
-        "javascript1.2"_s,
-        "javascript1.3"_s,
-        "javascript1.4"_s,
-        "javascript1.5"_s,
-        "javascript1.6"_s,
-        "javascript1.7"_s,
-        "livescript"_s,
-        "ecmascript"_s,
-        "jscript"_s,
-    });
-    return languages.get().contains(language);
+    static constexpr ComparableLettersLiteral languageArray[] = {
+        "ecmascript",
+        "javascript",
+        "javascript1.0",
+        "javascript1.1",
+        "javascript1.2",
+        "javascript1.3",
+        "javascript1.4",
+        "javascript1.5",
+        "javascript1.6",
+        "javascript1.7",
+        "jscript",
+        "livescript",
+    };
+    static constexpr SortedArraySet languageSet { languageArray };
+    return languageSet.contains(language);
 }
 
 void ScriptElement::dispatchErrorEvent()
@@ -398,7 +398,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     if (!frame)
         return;
 
-    IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? &document : nullptr);
+    IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? &document : nullptr);
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
     WTFBeginSignpost(this, "Execute Script Element", "executing classic script from URL: %{public}s async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
@@ -417,7 +417,7 @@ void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScri
     if (!frame)
         return;
 
-    IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(&document);
+    IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(&document);
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
     WTFBeginSignpost(this, "Execute Script Element", "executing module script");

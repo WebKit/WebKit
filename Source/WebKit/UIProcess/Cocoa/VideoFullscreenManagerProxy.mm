@@ -520,7 +520,7 @@ void VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange(bool value
 
 #pragma mark Messages from VideoFullscreenManager
 
-void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::IntRect& initialRect, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     MESSAGE_CHECK(videoLayerID);
 
@@ -561,7 +561,7 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
     UNUSED_PARAM(videoDimensions);
     UNUSED_PARAM(blocksReturnToFullscreenFromPictureInPicture);
     IntRect initialWindowRect;
-    m_page->rootViewToWindow(initialRect, initialWindowRect);
+    m_page->rootViewToWindow(enclosingIntRect(initialRect), initialWindowRect);
     interface->setupFullscreen(*model->layerHostView(), initialWindowRect, m_page->platformWindow(), videoFullscreenMode, allowsPictureInPicture);
 #endif
 }
@@ -614,7 +614,7 @@ void VideoFullscreenManagerProxy::enterFullscreen(PlaybackSessionContextIdentifi
     }
 }
 
-void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId, WebCore::IntRect finalRect, CompletionHandler<void(bool)>&& completionHandler)
+void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect finalRect, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_contextMap.contains(contextId));
     if (!m_contextMap.contains(contextId)) {
@@ -624,7 +624,7 @@ void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifie
 
 #if !PLATFORM(IOS_FAMILY)
     IntRect finalWindowRect;
-    m_page->rootViewToWindow(finalRect, finalWindowRect);
+    m_page->rootViewToWindow(enclosingIntRect(finalRect), finalWindowRect);
 #endif
 
     if (m_mockVideoPresentationModeEnabled) {
@@ -664,7 +664,7 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(PlaybackS
 
 #if PLATFORM(IOS_FAMILY)
 
-void VideoFullscreenManagerProxy::setInlineRect(PlaybackSessionContextIdentifier contextId, const WebCore::IntRect& inlineRect, bool visible)
+void VideoFullscreenManagerProxy::setInlineRect(PlaybackSessionContextIdentifier contextId, const WebCore::FloatRect& inlineRect, bool visible)
 {
     if (m_mockVideoPresentationModeEnabled)
         return;
@@ -688,7 +688,7 @@ void VideoFullscreenManagerProxy::setHasVideoContentLayer(PlaybackSessionContext
 
 #else
 
-NO_RETURN_DUE_TO_ASSERT void VideoFullscreenManagerProxy::setInlineRect(PlaybackSessionContextIdentifier, const WebCore::IntRect&, bool)
+NO_RETURN_DUE_TO_ASSERT void VideoFullscreenManagerProxy::setInlineRect(PlaybackSessionContextIdentifier, const WebCore::FloatRect&, bool)
 {
     ASSERT_NOT_REACHED();
 }
@@ -710,13 +710,13 @@ void VideoFullscreenManagerProxy::cleanupFullscreen(PlaybackSessionContextIdenti
     ensureInterface(contextId).cleanupFullscreen();
 }
 
-void VideoFullscreenManagerProxy::preparedToReturnToInline(PlaybackSessionContextIdentifier contextId, bool visible, WebCore::IntRect inlineRect)
+void VideoFullscreenManagerProxy::preparedToReturnToInline(PlaybackSessionContextIdentifier contextId, bool visible, WebCore::FloatRect inlineRect)
 {
     m_page->fullscreenMayReturnToInline();
 
 #if !PLATFORM(IOS_FAMILY)
     IntRect inlineWindowRect;
-    m_page->rootViewToWindow(inlineRect, inlineWindowRect);
+    m_page->rootViewToWindow(enclosingIntRect(inlineRect), inlineWindowRect);
 #endif
 
     if (m_mockVideoPresentationModeEnabled)

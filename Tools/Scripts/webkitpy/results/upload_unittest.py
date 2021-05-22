@@ -29,6 +29,11 @@ import sys
 import time
 import unittest
 
+try:
+    from collections.abc import Iterable, Mapping
+except ImportError:
+    from collections import Iterable, Mapping
+
 from webkitpy.results.upload import Upload
 from webkitpy.thirdparty import mock
 
@@ -55,9 +60,9 @@ class UploadTest(unittest.TestCase):
     def normalize(data):
         if isinstance(data, basestring):
             return str(data)
-        elif isinstance(data, collections.Mapping):
+        elif isinstance(data, Mapping):
             return dict(map(UploadTest.normalize, data.items()))
-        elif isinstance(data, collections.Iterable):
+        elif isinstance(data, Iterable):
             return type(data)(map(UploadTest.normalize, data))
         return data
 

@@ -98,10 +98,8 @@ WARN_UNUSED_RETURN bool ArgumentCoder<CString>::decode(Decoder& decoder, CString
     }
 
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<char>(length)) {
-        decoder.markInvalid();
+    if (!decoder.bufferIsLargeEnoughToContain<char>(length))
         return false;
-    }
 
     char* buffer;
     CString string = CString::newUninitialized(length, buffer);
@@ -140,10 +138,8 @@ template <typename CharacterType>
 static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length)) {
-        decoder.markInvalid();
+    if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
         return WTF::nullopt;
-    }
     
     CharacterType* buffer;
     String string = String::createUninitialized(length, buffer);

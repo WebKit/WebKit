@@ -78,6 +78,7 @@ public:
     static void registerWebKitVP9Decoder();
     static void registerWebKitVP8Decoder();
     static void setH264HardwareEncoderAllowed(bool);
+    static void setRTCLogging(WTFLogLevel);
 
     virtual void setActive(bool);
 
@@ -128,7 +129,7 @@ public:
 
     void clearFactory() { m_factory = nullptr; }
 
-    void setEnableLogging(bool);
+    virtual void setLoggingLevel(WTFLogLevel);
     void setEnableWebRTCEncryption(bool);
     void setUseDTLS10(bool);
 
@@ -163,7 +164,6 @@ protected:
     bool m_supportsVP9Profile0 { false };
     bool m_supportsVP9Profile2 { false };
     bool m_supportsVP9VTB { false };
-    bool m_enableLogging { true };
     bool m_useDTLS10 { false };
 #endif
 };

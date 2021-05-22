@@ -82,6 +82,8 @@ struct ItemHandle {
     bool safeCopy(ItemHandle destination) const;
 };
 
+bool safeCopy(ItemHandle destination, const DisplayListItem& source);
+
 enum class DidChangeItemBuffer : bool { No, Yes };
 
 class ItemBufferWritingClient {
@@ -95,17 +97,17 @@ public:
         return { };
     }
 
-    virtual Optional<std::size_t> requiredSizeForItem(ItemHandle) const
+    virtual Optional<std::size_t> requiredSizeForItem(const DisplayListItem&) const
     {
         return WTF::nullopt;
     }
 
-    virtual RefPtr<SharedBuffer> encodeItemOutOfLine(ItemHandle) const
+    virtual RefPtr<SharedBuffer> encodeItemOutOfLine(const DisplayListItem&) const
     {
         return nullptr;
     }
 
-    virtual void encodeItemInline(ItemHandle, uint8_t*) const
+    virtual void encodeItemInline(const DisplayListItem&, uint8_t*) const
     {
     }
 
@@ -175,18 +177,9 @@ public:
     {
         static_assert(std::is_trivially_destructible<T>::value == T::isInlineItem);
 
-        if (!T::isInlineItem) {
+        if constexpr (!T::isInlineItem) {
             RELEASE_ASSERT(m_writingClient);
-#if COMPILER(MSVC)
-            __declspec(align(8)) typedef uint8_t EncodingBuffer[sizeof(uint64_t) + sizeof(T)];
-#else
-            using EncodingBuffer __attribute__((aligned (8))) = uint8_t[sizeof(uint64_t) + sizeof(T)];
-#endif
-            static EncodingBuffer temporaryItemBuffer;
-            temporaryItemBuffer[0] = static_cast<uint8_t>(T::itemType);
-            new (temporaryItemBuffer + sizeof(uint64_t)) T(std::forward<Args>(args)...);
-            append({ temporaryItemBuffer });
-            ItemHandle { temporaryItemBuffer }.destroy();
+            append(DisplayListItem(T(std::forward<Args>(args)...)));
             return;
         }
 
@@ -205,7 +198,7 @@ private:
     WEBCORE_EXPORT void didAppendData(size_t numberOfBytes, DidChangeItemBuffer);
 
     WEBCORE_EXPORT DidChangeItemBuffer swapWritableBufferIfNeeded(size_t numberOfBytes);
-    WEBCORE_EXPORT void append(ItemHandle);
+    WEBCORE_EXPORT void append(const DisplayListItem&);
     template<typename T, class... Args> void uncheckedAppend(DidChangeItemBuffer didChangeItemBuffer, Args&&... args)
     {
         auto* startOfItem = &m_writableBuffer.data[m_writtenNumberOfBytes];

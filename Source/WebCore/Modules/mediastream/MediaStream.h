@@ -140,7 +140,7 @@ private:
 
     HashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
 
-    MediaProducer::MediaStateFlags m_state { MediaProducer::IsNotPlaying };
+    MediaProducer::MediaStateFlags m_state;
 
     bool m_isActive { false };
     bool m_isProducingData { false };

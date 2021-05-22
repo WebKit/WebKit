@@ -143,19 +143,10 @@ static void doReleaseLogging(rtc::LoggingSeverity severity, const char* message)
 #endif
 }
 
-static void setLogging(rtc::LoggingSeverity level)
+static rtc::LoggingSeverity computeLogLevel(WTFLogLevel level)
 {
-    rtc::LogMessage::SetLogOutput(level, (level == rtc::LS_NONE) ? nullptr : doReleaseLogging);
-}
-
-static rtc::LoggingSeverity computeLogLevel()
-{
-#if defined(NDEBUG)
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    if (LogWebRTC.state != WTFLogChannelState::On)
-        return rtc::LS_ERROR;
-
-    switch (LogWebRTC.level) {
+#if !RELEASE_LOG_DISABLED
+    switch (level) {
     case WTFLogLevel::Always:
     case WTFLogLevel::Error:
         return rtc::LS_ERROR;
@@ -166,14 +157,17 @@ static rtc::LoggingSeverity computeLogLevel()
     case WTFLogLevel::Debug:
         return rtc::LS_VERBOSE;
     }
-    RELEASE_ASSERT_NOT_REACHED();
-    return rtc::LS_NONE;
+    ASSERT_NOT_REACHED();
 #else
+    UNUSED_PARAM(level);
+#endif
     return rtc::LS_NONE;
-#endif
-#else
-    return (LogWebRTC.state != WTFLogChannelState::On) ? rtc::LS_WARNING : rtc::LS_INFO;
-#endif
+}
+
+void LibWebRTCProvider::setRTCLogging(WTFLogLevel level)
+{
+    auto rtcLevel = computeLogLevel(level);
+    rtc::LogMessage::SetLogOutput(rtcLevel, (rtcLevel == rtc::LS_NONE) ? nullptr : doReleaseLogging);
 }
 
 static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndThreads& factoryAndThreads)
@@ -244,12 +238,9 @@ void LibWebRTCProvider::callOnWebRTCSignalingThread(Function<void()>&& callback)
     threads.signalingThread->Post(RTC_FROM_HERE, &threads, 1, new ThreadMessageData(WTFMove(callback)));
 }
 
-void LibWebRTCProvider::setEnableLogging(bool enableLogging)
+void LibWebRTCProvider::setLoggingLevel(WTFLogLevel level)
 {
-    if (!m_enableLogging)
-        return;
-    m_enableLogging = enableLogging;
-    setLogging(enableLogging ? computeLogLevel() : rtc::LS_NONE);
+    setRTCLogging(level);
 }
 
 webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()

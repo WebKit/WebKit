@@ -62,7 +62,7 @@ public:
     void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType);
     void registerBlobURL(const URL&, const URL& srcURL);
     void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType);
-    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end);
+    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType);
     void unregisterBlobURL(const URL&);
 
     unsigned long long blobSize(const URL&);

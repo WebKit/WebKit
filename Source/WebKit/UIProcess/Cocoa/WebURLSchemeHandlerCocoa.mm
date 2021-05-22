@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebURLSchemeHandlerCocoa.h"
 
-#import "APIURLSchemeTask.h"
 #import "WKFoundation.h"
 #import "WKURLSchemeHandler.h"
 #import "WKURLSchemeTaskInternal.h"
@@ -48,32 +47,18 @@ WebURLSchemeHandlerCocoa::WebURLSchemeHandlerCocoa(id <WKURLSchemeHandler> apiHa
 
 void WebURLSchemeHandlerCocoa::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
-    auto result = m_apiTasks.add(task.identifier(), API::URLSchemeTask::create(task));
-    ASSERT(result.isNewEntry);
-
+    auto strongTask = retainPtr(wrapper(task));
     if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() startURLSchemeTask:wrapper(result.iterator->value.get())];
+        [m_apiHandler.get() webView:webView.get() startURLSchemeTask:strongTask.get()];
 }
 
 void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
-    auto iterator = m_apiTasks.find(task.identifier());
-    if (iterator == m_apiTasks.end())
-        return;
-
+    auto strongTask = retainPtr(wrapper(task));
     if (auto webView = page.cocoaView())
-        [m_apiHandler.get() webView:webView.get() stopURLSchemeTask:wrapper(iterator->value.get())];
+        [m_apiHandler.get() webView:webView.get() stopURLSchemeTask:strongTask.get()];
     else
         task.suppressTaskStoppedExceptions();
-
-    m_apiTasks.remove(iterator);
-}
-
-void WebURLSchemeHandlerCocoa::platformTaskCompleted(WebURLSchemeTask& task)
-{
-    // Release the last reference to this API task on the next spin of the runloop.
-    RunLoop::main().dispatch([takenTask = m_apiTasks.take(task.identifier())] {
-    });
 }
 
 } // namespace WebKit

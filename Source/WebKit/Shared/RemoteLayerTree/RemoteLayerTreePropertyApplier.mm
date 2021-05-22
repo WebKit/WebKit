@@ -37,6 +37,14 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SeparatedLayerAdditions.h>
+#else
+static void configureSeparatedLayer(CALayer *) { }
+#endif
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIView.h>
 #import <UIKitSPI.h>
@@ -267,8 +275,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         updateCustomAppearance(layer, properties.customAppearance);
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    if (properties.changedProperties & RemoteLayerTreeTransaction::SeparatedChanged)
+    if (properties.changedProperties & RemoteLayerTreeTransaction::SeparatedChanged) {
         layer.separated = properties.isSeparated;
+        if (properties.isSeparated)
+            configureSeparatedLayer(layer);
+    }
 #endif
 }
 

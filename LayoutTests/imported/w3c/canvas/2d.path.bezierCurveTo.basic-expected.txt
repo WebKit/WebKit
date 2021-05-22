@@ -1,6 +1,0 @@
-2d.path.bezierCurveTo.basic
-Spec references: 2d.path.bezier.nonempty
-Actual output:
-Expected output:
-
-Passed

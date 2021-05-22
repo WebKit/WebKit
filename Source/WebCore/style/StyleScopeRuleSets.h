@@ -69,8 +69,6 @@ public:
 
     bool hasComplexSelectorsForStyleAttribute() const;
 
-    void setIsForShadowScope() { m_isForShadowScope = true; }
-
     void setUsesSharedUserStyle(bool b) { m_usesSharedUserStyle = b; }
     void initializeUserStyle();
 
@@ -110,7 +108,6 @@ private:
     mutable unsigned m_userAgentMediaQueryRuleCountOnUpdate { 0 };
 
     bool m_usesSharedUserStyle { false };
-    bool m_isForShadowScope { false };
     bool m_isAuthorStyleDefined { false };
 
     // For catching <rdar://problem/53413013>

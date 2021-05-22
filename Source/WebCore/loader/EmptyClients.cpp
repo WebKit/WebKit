@@ -121,7 +121,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)
-    void handleTranslation(const String&, const IntRect&, const IntPoint&) final { }
+    void handleTranslation(const TranslationContextMenuInfo&) final { }
 #endif
 
 #if PLATFORM(GTK)

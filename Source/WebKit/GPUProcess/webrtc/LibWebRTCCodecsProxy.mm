@@ -29,10 +29,11 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 #import "GPUConnectionToWebProcess.h"
+#import "GPUProcess.h"
 #import "LibWebRTCCodecsMessages.h"
 #import "LibWebRTCCodecsProxyMessages.h"
 #import "WebCoreArgumentCoders.h"
-#import <WebCore/LibWebRTCMacros.h>
+#import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/RemoteVideoSample.h>
 #import <webrtc/sdk/WebKit/WebKitDecoder.h>
 #import <webrtc/sdk/WebKit/WebKitEncoder.h>
@@ -174,16 +175,16 @@ void LibWebRTCCodecsProxy::initializeEncoder(RTCEncoderIdentifier identifier, ui
     webrtc::initializeLocalEncoder(encoder, width, height, startBitrate, maxBitrate, minBitrate, maxFramerate);
 }
 
-static inline webrtc::VideoRotation toWebRTCVideoRotation(MediaSample::VideoRotation rotation)
+static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::MediaSample::VideoRotation rotation)
 {
     switch (rotation) {
-    case MediaSample::VideoRotation::None:
+    case WebCore::MediaSample::VideoRotation::None:
         return webrtc::kVideoRotation_0;
-    case MediaSample::VideoRotation::UpsideDown:
+    case WebCore::MediaSample::VideoRotation::UpsideDown:
         return webrtc::kVideoRotation_180;
-    case MediaSample::VideoRotation::Right:
+    case WebCore::MediaSample::VideoRotation::Right:
         return webrtc::kVideoRotation_90;
-    case MediaSample::VideoRotation::Left:
+    case WebCore::MediaSample::VideoRotation::Left:
         return webrtc::kVideoRotation_270;
     }
     ASSERT_NOT_REACHED();
@@ -222,6 +223,11 @@ bool LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure() const
     ASSERT(isMainRunLoop());
     auto locker = holdLock(m_lock);
     return m_encoders.isEmpty() && m_decoders.isEmpty();
+}
+
+void LibWebRTCCodecsProxy::setRTCLoggingLevel(WTFLogLevel level)
+{
+    WebCore::LibWebRTCProvider::setRTCLogging(level);
 }
 
 }

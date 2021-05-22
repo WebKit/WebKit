@@ -161,7 +161,7 @@ private:
 
 template<typename MapFunction, typename T>
 struct Mapper<MapFunction, const WeakHashSet<T> &, void> {
-    using SourceItemType = WeakPtr<T>;
+    using SourceItemType = T&;
     using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
 
     static Vector<DestinationItemType> map(const WeakHashSet<T>& source, const MapFunction& mapFunction)

@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "HitTestRequest.h"
 #include "LengthFunctions.h"
 #include "RenderObject.h"
 
@@ -144,7 +145,16 @@ public:
     bool isTransparent() const { return style().opacity() < 1.0f; }
     float opacity() const { return style().opacity(); }
 
-    bool visibleToHitTesting() const { return style().visibility() == Visibility::Visible && style().pointerEvents() != PointerEvents::None; }
+    bool visibleToHitTesting(Optional<HitTestRequest> hitTestRequest = WTF::nullopt) const
+    {
+        if (style().visibility() != Visibility::Visible)
+            return false;
+
+        if ((!hitTestRequest || !hitTestRequest->ignoreCSSPointerEventsProperty()) && style().pointerEvents() == PointerEvents::None)
+            return false;
+
+        return true;
+    }
 
     bool hasBackground() const { return style().hasBackground(); }
     bool hasMask() const { return style().hasMask(); }
@@ -431,8 +441,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
         || isSVGForeignObject()
-        || shouldApplyLayoutContainment(*this)
-        || isOutOfFlowRenderFragmentedFlow();
+        || shouldApplyLayoutContainment(*this);
 }
 
 inline bool RenderElement::canContainAbsolutelyPositionedObjects() const

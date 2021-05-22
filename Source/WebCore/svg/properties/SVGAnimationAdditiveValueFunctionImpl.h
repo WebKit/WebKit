@@ -126,7 +126,7 @@ private:
     static Color colorFromString(SVGElement*, const String&);
 };
 
-class SVGAnimationIntegerFunction : public SVGAnimationAdditiveValueFunction<int> {
+class SVGAnimationIntegerFunction final : public SVGAnimationAdditiveValueFunction<int> {
     friend class SVGAnimatedIntegerPairAnimator;
 
 public:
@@ -139,7 +139,7 @@ public:
         m_to = SVGPropertyTraits<int>::fromString(to);
     }
 
-    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) final
     {
         m_toAtEndOfDuration = SVGPropertyTraits<int>::fromString(toAtEndOfDuration);
     }
@@ -149,13 +149,10 @@ public:
         animated = static_cast<int>(roundf(Base::animate(progress, repeatCount, m_from, m_to, toAtEndOfDuration(), animated)));
     }
 
-    Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
-    {
-        return std::abs(to.toIntStrict() - from.toIntStrict());
-    }
+    Optional<float> calculateDistance(SVGElement*, const String&, const String&) const final;
 
 private:
-    void addFromAndToValues(SVGElement*) override
+    void addFromAndToValues(SVGElement*) final
     {
         m_to += m_from;
     }

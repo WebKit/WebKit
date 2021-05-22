@@ -44,6 +44,7 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include <wtf/JSONValues.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace Inspector {
 
@@ -395,9 +396,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
         auto sourceIDString = location->getString(Protocol::Runtime::TypeLocation::sourceIDKey);
         auto divot = location->getInteger(Protocol::Runtime::TypeLocation::divotKey).valueOr(0);
 
-        bool okay;
-        TypeLocation* typeLocation = m_vm.typeProfiler()->findLocation(divot, sourceIDString.toIntPtrStrict(&okay), static_cast<TypeProfilerSearchDescriptor>(descriptor), m_vm);
-        ASSERT(okay);
+        auto typeLocation = m_vm.typeProfiler()->findLocation(divot, parseInteger<uintptr_t>(sourceIDString).value(), static_cast<TypeProfilerSearchDescriptor>(descriptor), m_vm);
 
         RefPtr<TypeSet> typeSet;
         if (typeLocation) {
@@ -504,7 +503,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>> Inspe
         return makeUnexpected("VM has no control flow information"_s);
 
     auto basicBlocks = JSON::ArrayOf<Protocol::Runtime::BasicBlock>::create();
-    for (const auto& block : m_vm.controlFlowProfiler()->getBasicBlocksForSourceID(sourceID.toIntPtr(), m_vm)) {
+    for (const auto& block : m_vm.controlFlowProfiler()->getBasicBlocksForSourceID(parseIntegerAllowingTrailingJunk<uintptr_t>(sourceID).valueOr(0), m_vm)) {
         auto location = Protocol::Runtime::BasicBlock::create()
             .setStartOffset(block.m_startOffset)
             .setEndOffset(block.m_endOffset)

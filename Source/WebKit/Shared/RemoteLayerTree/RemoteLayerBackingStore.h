@@ -52,7 +52,15 @@ public:
     RemoteLayerBackingStore(PlatformCALayerRemote*);
     ~RemoteLayerBackingStore();
 
-    void ensureBackingStore(WebCore::FloatSize, float scale, bool acceleratesDrawing, bool deepColor, bool isOpaque);
+    enum class Type : uint8_t {
+        IOSurface,
+        Bitmap,
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        CGDisplayList,
+#endif
+    };
+
+    void ensureBackingStore(Type, WebCore::FloatSize, float scale, bool deepColor, bool isOpaque);
 
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
@@ -61,7 +69,7 @@ public:
 
     WebCore::FloatSize size() const { return m_size; }
     float scale() const { return m_scale; }
-    bool acceleratesDrawing() const { return m_acceleratesDrawing; }
+    Type type() const { return m_type; }
     bool isOpaque() const { return m_isOpaque; }
     unsigned bytesPerPixel() const;
 
@@ -98,8 +106,9 @@ private:
     void clearBackingStore();
     void swapToValidFrontBuffer();
 
+    bool supportsPartialRepaint();
+
     WebCore::PixelFormat pixelFormat() const;
-    WebCore::IntSize backingStoreSize() const;
 
     PlatformCALayerRemote* m_layer;
 
@@ -128,7 +137,7 @@ private:
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> m_frontBufferFlusher;
 
-    bool m_acceleratesDrawing { false };
+    Type m_type;
     bool m_deepColor { false };
 
     WebCore::RepaintRectList m_paintingRects;
@@ -137,3 +146,18 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::RemoteLayerBackingStore::Type> {
+    using values = EnumValues<
+        WebKit::RemoteLayerBackingStore::Type
+        , WebKit::RemoteLayerBackingStore::Type::IOSurface
+        , WebKit::RemoteLayerBackingStore::Type::Bitmap
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        , WebKit::RemoteLayerBackingStore::Type::CGDisplayList
+#endif
+    >;
+};
+
+} // namespace WTF

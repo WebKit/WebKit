@@ -217,7 +217,7 @@ RefPtr<NativeImage> SVGImage::nativeImage(const GraphicsContext*)
     if (!m_page)
         return nullptr;
 
-    auto imageBuffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated);
+    auto imageBuffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 

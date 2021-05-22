@@ -153,7 +153,7 @@ private:
     bool m_isSkipWaitingFlagSet { false };
     Vector<CompletionHandler<void(bool)>> m_whenActivatedHandlers;
     HashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;
-    bool m_shouldSkipHandleFetch;
+    bool m_shouldSkipHandleFetch { false };
     bool m_hasTimedOutAnyFetchTasks { false };
     Vector<CompletionHandler<void()>> m_terminationCallbacks;
     Timer m_terminationTimer;

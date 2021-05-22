@@ -517,6 +517,7 @@ public:
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     bool hasAttribute(const QualifiedName&) const override;
     const AtomString& getAttribute(const QualifiedName&) const override;
+    int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const override;
     String tagName() const override;
 

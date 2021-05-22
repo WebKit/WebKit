@@ -1,7 +1,0 @@
-2d.strokeRect.transform
-fillRect is affected by transforms
-Spec references: 2d.strokeRect
-Actual output:
-Expected output:
-
-Passed

@@ -36,7 +36,7 @@ public:
     void registerBlobURL(const URL&, const URL& srcURL) final;
     void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) final;
     void unregisterBlobURL(const URL&) final;
-    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) final;
+    void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final;
     unsigned long long blobSize(const URL&) final;
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
 };

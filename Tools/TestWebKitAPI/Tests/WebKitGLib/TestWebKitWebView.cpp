@@ -1177,24 +1177,7 @@ static void testWebViewAutoplayPolicy(WebViewTest* test, gconstpointer)
     g_assert_cmpint(webkit_website_policies_get_autoplay_policy(policies), ==, WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND);
 }
 
-class WebViewIsWebProcessResponsiveTest: public WebViewTest {
-public:
-    MAKE_GLIB_TEST_FIXTURE(WebViewIsWebProcessResponsiveTest);
-
-    static void isWebProcessResponsiveChanged(WebKitWebView* view, GParamSpec*, WebViewIsWebProcessResponsiveTest* test)
-    {
-        g_signal_handlers_disconnect_by_func(test->m_webView, reinterpret_cast<void*>(isWebProcessResponsiveChanged), test);
-        g_main_loop_quit(test->m_mainLoop);
-    }
-
-    void waitUntilIsWebProcessResponsiveChanged()
-    {
-        g_signal_connect(m_webView, "notify::is-web-process-responsive", G_CALLBACK(isWebProcessResponsiveChanged), this);
-        g_main_loop_run(m_mainLoop);
-    }
-};
-
-static void testWebViewIsWebProcessResponsive(WebViewIsWebProcessResponsiveTest* test, gconstpointer)
+static void testWebViewIsWebProcessResponsive(WebViewTest* test, gconstpointer)
 {
     static const char* hangHTML =
         "<html>"
@@ -1561,6 +1544,70 @@ static void testWebViewExternalAudioRendering(AudioRenderingWebViewTest* test, g
 }
 #endif
 
+class WebViewTerminateWebProcessTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(WebViewTerminateWebProcessTest);
+
+    static void webProcessTerminatedCallback(WebKitWebView* webView, WebKitWebProcessTerminationReason reason, WebViewTerminateWebProcessTest* test)
+    {
+        test->m_terminationReason = reason;
+    }
+
+    WebViewTerminateWebProcessTest()
+    {
+        g_signal_connect_after(m_webView, "web-process-terminated", G_CALLBACK(WebViewTerminateWebProcessTest::webProcessTerminatedCallback), this);
+    }
+
+    ~WebViewTerminateWebProcessTest()
+    {
+        g_signal_handlers_disconnect_by_data(m_webView, this);
+    }
+
+    WebKitWebProcessTerminationReason m_terminationReason { WEBKIT_WEB_PROCESS_CRASHED };
+};
+
+static void testWebViewTerminateWebProcess(WebViewTerminateWebProcessTest* test, gconstpointer)
+{
+    test->loadHtml("<html></html>", nullptr);
+    test->waitUntilLoadFinished();
+    test->m_expectedWebProcessCrash = true;
+    webkit_web_view_terminate_web_process(test->m_webView);
+    g_assert_cmpuint(test->m_terminationReason, ==, WEBKIT_WEB_PROCESS_TERMINATED_BY_API);
+    g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+}
+
+static void testWebViewTerminateUnresponsiveWebProcess(WebViewTerminateWebProcessTest* test, gconstpointer)
+{
+    static const char* hangHTML =
+        "<html>"
+        " <body>"
+        "  <script>"
+        "   setTimeout(function() {"
+        "     while(true) { }"
+        "    }, 500);"
+        "  </script>"
+        " </body>"
+        "</html>";
+
+    test->loadHtml(hangHTML, nullptr);
+    test->waitUntilLoadFinished();
+    g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+    // Wait 1 second, so the js while loop kicks in and blocks the web process, and try to load a new page.
+    // As the web process is busy this won't work, and after 3 seconds the web process will be marked
+    // as unresponsive.
+    test->wait(1);
+    test->loadHtml("<html></html>", nullptr);
+    test->waitUntilIsWebProcessResponsiveChanged();
+    g_assert_false(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+
+    // Now that the process is unresponsive, terminate it.
+    test->m_expectedWebProcessCrash = true;
+    test->m_terminationReason = WEBKIT_WEB_PROCESS_CRASHED;
+    webkit_web_view_terminate_web_process(test->m_webView);
+    g_assert_cmpuint(test->m_terminationReason, ==, WEBKIT_WEB_PROCESS_TERMINATED_BY_API);
+    g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+}
+
 #if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -1628,7 +1675,9 @@ void beforeAll()
 #if PLATFORM(WPE) && USE(WPEBACKEND_FDO_AUDIO_EXTENSION)
     AudioRenderingWebViewTest::add("WebKitWebView", "external-audio-rendering", testWebViewExternalAudioRendering);
 #endif
-    WebViewIsWebProcessResponsiveTest::add("WebKitWebView", "is-web-process-responsive", testWebViewIsWebProcessResponsive);
+    WebViewTest::add("WebKitWebView", "is-web-process-responsive", testWebViewIsWebProcessResponsive);
+    WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-web-process", testWebViewTerminateWebProcess);
+    WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-unresponsive-web-process", testWebViewTerminateUnresponsiveWebProcess);
 }
 
 void afterAll()

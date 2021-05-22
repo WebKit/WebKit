@@ -1762,7 +1762,9 @@ inline auto copyToVectorSpecialization(const Collection& collection) -> Destinat
 template<typename DestinationItemType, typename Collection>
 inline auto copyToVectorOf(const Collection& collection) -> Vector<DestinationItemType>
 {
-    return WTF::map(collection, [] (const auto& v) -> DestinationItemType { return v; });
+    return WTF::map(collection, [] (auto&& v) -> DestinationItemType {
+        return v;
+    });
 }
 
 template<typename Collection>

@@ -577,7 +577,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
         || (renderer().style().specifiesColumns() && !isRenderViewLayer())
-        || renderer().isInFlowRenderFragmentedFlow();
+        || renderer().isRenderFragmentedFlow();
 }
 
 bool RenderLayer::shouldBeCSSStackingContext() const
@@ -984,7 +984,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
     if (m_reflection)
         m_reflection->layout();
 
-    if (renderer().isInFlowRenderFragmentedFlow()) {
+    if (renderer().isRenderFragmentedFlow()) {
         updatePagination();
         flags.add(UpdatePagination);
     }
@@ -1388,7 +1388,7 @@ void RenderLayer::updatePagination()
     // genuinely know if it is going to have to split itself up when painting only its contents (and not any other descendant
     // layers). We track an enclosingPaginationLayer instead of using a simple bit, since we want to be able to get back
     // to that layer easily.
-    if (renderer().isInFlowRenderFragmentedFlow()) {
+    if (renderer().isRenderFragmentedFlow()) {
         m_enclosingPaginationLayer = makeWeakPtr(*this);
         return;
     }
@@ -2275,11 +2275,6 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
     if (position == PositionType::Fixed && fixedFragmentedFlowContainer) {
         ASSERT(ancestorLayer);
-        if (ancestorLayer->isOutOfFlowRenderFragmentedFlow()) {
-            location += toLayoutSize(layer->location());
-            return ancestorLayer;
-        }
-
         if (ancestorLayer == renderer.view().layer()) {
             // Add location in flow thread coordinates.
             location += toLayoutSize(layer->location());
@@ -2313,7 +2308,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
         // We should not reach RenderView layer past the RenderFragmentedFlow layer for any
         // children of the RenderFragmentedFlow.
-        if (renderer.enclosingFragmentedFlow() && !layer->isOutOfFlowRenderFragmentedFlow())
+        if (renderer.enclosingFragmentedFlow())
             ASSERT(parentLayer != renderer.view().layer());
 
         if (foundAncestorFirst) {
@@ -2412,7 +2407,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
     auto scrollPositionChangeOptionsForElement = [this, options](Element* element)
     {
         auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
-        if (!renderer().frame().eventHandler().autoscrollInProgress() && element && useSmoothScrolling(options.behavior, element))
+        if (!renderer().frame().eventHandler().autoscrollInProgress() && element && useSmoothScrolling(options.behavior, element, options.overrideFeatureEnablement))
             scrollPositionOptions.animated = AnimatedScroll::Yes;
         return scrollPositionOptions;
     };
@@ -4313,13 +4308,6 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
     // the content in the layer has an element. So just walk up
     // the tree.
     if (!result.innerNode() || !result.innerNonSharedNode()) {
-        if (isOutOfFlowRenderFragmentedFlow()) {
-            // The flowthread doesn't have an enclosing element, so when hitting the layer of the
-            // flowthread (e.g. the descent area of the RootInlineBox for the image flowed alone
-            // inside the flow thread) we're letting the hit testing continue so it will hit the region.
-            return false;
-        }
-
         Element* e = enclosingElement();
         if (!result.innerNode())
             result.setInnerNode(e);
@@ -4562,11 +4550,6 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         backgroundRect = paintDirtyRect;
 
     LayoutSize offsetFromRootLocal = offsetFromRoot;
-
-    if (clipRectsContext.rootLayer->isOutOfFlowRenderFragmentedFlow()) {
-        LayoutPoint absPos = LayoutPoint(renderer().view().localToAbsolute(FloatPoint(), IsFixed));
-        offsetFromRootLocal += toLayoutSize(absPos);
-    }
 
     layerBounds = LayoutRect(toLayoutPoint(offsetFromRootLocal), size());
 
@@ -5148,7 +5131,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
-        || renderer().isInFlowRenderFragmentedFlow();
+        || renderer().isRenderFragmentedFlow();
 }
 
 void RenderLayer::updateSelfPaintingLayer()

@@ -33,7 +33,8 @@ import loadConfig
 class ConfigDotJSONTest(unittest.TestCase):
     def get_config(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
-        return json.load(open(os.path.join(cwd, 'config.json')))
+        with open(os.path.join(cwd, 'config.json'), 'r') as config:
+            return json.load(config)
 
     def get_builder_from_config(self, config, builder_name):
         for builder in config['builders']:

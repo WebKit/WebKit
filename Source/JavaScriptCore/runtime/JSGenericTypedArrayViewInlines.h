@@ -175,7 +175,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
 
     RELEASE_ASSERT(other->canAccessRangeQuickly(otherOffset, length));
     bool success = validateRange(globalObject, offset, length);
-    EXCEPTION_ASSERT(!scope.exception() == success);
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() == success);
     if (!success)
         return false;
 
@@ -463,9 +463,10 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
         return false;
 
     JSValue value;
-    if constexpr (Adaptor::canConvertToJSQuickly)
+    if constexpr (Adaptor::canConvertToJSQuickly) {
+        UNUSED_VARIABLE(scope);
         value = thisObject->getIndexQuickly(propertyName);
-    else {
+    } else {
         auto nativeValue = thisObject->getIndexQuicklyAsNativeValue(propertyName);
         value = Adaptor::toJSValue(globalObject, nativeValue);
         RETURN_IF_EXCEPTION(scope, false);

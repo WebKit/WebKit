@@ -1,0 +1,3 @@
+
+FAIL A new noopener window to make sure there is a not copy of the previous window's sessionStorage Can't find variable: BroadcastChannel
+

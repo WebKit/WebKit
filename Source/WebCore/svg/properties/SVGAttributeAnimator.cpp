@@ -69,8 +69,8 @@ void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement* targetEl
     applyAnimatedStylePropertyChange(targetElement, id, value);
     
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    for (auto* instance : targetElement->instances())
-        applyAnimatedStylePropertyChange(instance, id, value);
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances()))
+        applyAnimatedStylePropertyChange(instance.ptr(), id, value);
 }
     
 void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement* element, CSSPropertyID id)
@@ -98,8 +98,8 @@ void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement* targetElement
     removeAnimatedStyleProperty(targetElement, id);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    for (auto* instance : targetElement->instances())
-        removeAnimatedStyleProperty(instance, id);
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances()))
+        removeAnimatedStyleProperty(instance.ptr(), id);
 }
     
 void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement* element, const QualifiedName& attributeName)
@@ -121,8 +121,8 @@ void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement* targetElement
     applyAnimatedPropertyChange(targetElement, m_attributeName);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    for (auto* instance : targetElement->instances())
-        applyAnimatedPropertyChange(instance, m_attributeName);
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances()))
+        applyAnimatedPropertyChange(instance.ptr(), m_attributeName);
 }
 
 }

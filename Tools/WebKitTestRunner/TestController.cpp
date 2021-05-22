@@ -888,6 +888,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         if (enableAllExperimentalFeatures)
             WKPreferencesEnableAllExperimentalFeatures(preferences);
 
+        WKPreferencesResetAllInternalDebugFeatures(preferences);
+
         WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
         WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
     
@@ -2165,6 +2167,11 @@ void TestController::processDidCrash()
 
     if (m_shouldExitWhenWebProcessCrashes)
         exit(1);
+}
+
+void TestController::didNotHandleTapAsMeaningfulClick()
+{
+    m_currentInvocation->didNotHandleTapAsMeaningfulClick();
 }
 
 void TestController::didBeginNavigationGesture(WKPageRef)

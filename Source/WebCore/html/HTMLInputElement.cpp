@@ -56,6 +56,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderTextControlSingleLine.h"
@@ -70,6 +71,7 @@
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"
@@ -520,11 +522,15 @@ bool HTMLInputElement::shouldUseInputMethod()
 void HTMLInputElement::handleFocusEvent(Node* oldFocusedNode, FocusDirection direction)
 {
     m_inputType->handleFocusEvent(oldFocusedNode, direction);
+
+    invalidateStyleOnFocusChangeIfNeeded();
 }
 
 void HTMLInputElement::handleBlurEvent()
 {
     m_inputType->handleBlurEvent();
+
+    invalidateStyleOnFocusChangeIfNeeded();
 }
 
 void HTMLInputElement::setType(const AtomString& type)
@@ -796,7 +802,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (name == resultsAttr)
-        m_maxResults = !value.isNull() ? std::min(value.toInt(), maxSavedResults) : -1;
+        m_maxResults = value.isNull() ? -1 : std::min(parseHTMLInteger(value).value_or(0), maxSavedResults);
     else if (name == autosaveAttr || name == incrementalAttr)
         invalidateStyleForSubtree();
     else if (name == maxAttr || name == minAttr || name == multipleAttr || name == patternAttr || name == precisionAttr || name == stepAttr)
@@ -2002,6 +2008,15 @@ bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const
     if (!isTextField())
         return false;
     return document().focusedElement() != this && style.textOverflow() == TextOverflow::Ellipsis;
+}
+
+void HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded()
+{
+    if (!isTextField())
+        return;
+    // Focus change may affect the result of shouldTruncateText().
+    if (auto* style = renderStyle(); style && style->textOverflow() == TextOverflow::Ellipsis)
+        invalidateStyleForSubtreeInternal();
 }
 
 ExceptionOr<int> HTMLInputElement::selectionStartForBindings() const

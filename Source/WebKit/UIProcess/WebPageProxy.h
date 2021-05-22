@@ -108,6 +108,7 @@
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/TextManipulationController.h>
+#include <WebCore/TranslationContextMenuInfo.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
 #include <memory>
@@ -260,6 +261,7 @@ enum class EventMakesGamepadsVisible : bool;
 enum class LockBackForwardList : bool;
 enum class HasInsecureContent : bool;
 enum class HighlightRequestOriginatedInApp : bool;
+enum class HighlightVisibility : bool;
 enum class MouseEventPolicy : uint8_t;
 enum class NotificationDirection : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
@@ -665,6 +667,8 @@ public:
     // the message entirely.
     WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
 
+    WebCore::Color sampledPageTopColor() const { return m_sampledPageTopColor; }
+
     WebCore::Color scrollAreaBackgroundColor() const;
 
     void viewWillStartLiveResize();
@@ -732,7 +736,7 @@ public:
     bool isEditable() const { return m_isEditable; }
 
     void activateMediaStreamCaptureInPage();
-    bool isMediaStreamCaptureMuted() const { return m_mutedState & WebCore::MediaProducer::MediaStreamCaptureIsMuted; }
+    bool isMediaStreamCaptureMuted() const { return m_mutedState.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted); }
     void setMediaStreamCaptureMuted(bool);
 
     void requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&&);
@@ -825,6 +829,7 @@ public:
     void applicationWillEnterForegroundForMedia();
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
+    void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&);
     void didCompleteSyntheticClick();
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID);
     void handleSmartMagnificationInformationForPotentialTap(uint64_t requestID, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel);
@@ -1362,7 +1367,7 @@ public:
 
     void setMediaVolume(float);
     void setMuted(WebCore::MediaProducer::MutedStateFlags, CompletionHandler<void()>&& = [] { });
-    bool isAudioMuted() const { return m_mutedState & WebCore::MediaProducer::AudioIsMuted; };
+    bool isAudioMuted() const { return m_mutedState.contains(WebCore::MediaProducer::MutedState::AudioIsMuted); };
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
     void setMediaCaptureEnabled(bool);
@@ -1449,7 +1454,7 @@ public:
     void recordAutomaticNavigationSnapshot();
     void suppressNextAutomaticNavigationSnapshot() { m_shouldSuppressNextAutomaticNavigationSnapshot = true; }
     void recordNavigationSnapshot(WebBackForwardListItem&);
-    void requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&&);
+    void requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&&);
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&);
@@ -1473,17 +1478,17 @@ public:
 
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
-    bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducer::IsPlayingAudio); }
+    bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducer::MediaState::IsPlayingAudio); }
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t);
     void updateReportedMediaCaptureState();
 
     enum class CanDelayNotification { No, Yes };
     void updatePlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, CanDelayNotification = CanDelayNotification::No);
-    bool isCapturingAudio() const { return m_mediaState & WebCore::MediaProducer::AudioCaptureMask; }
-    bool isCapturingVideo() const { return m_mediaState & WebCore::MediaProducer::VideoCaptureMask; }
-    bool hasActiveAudioStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveAudioCaptureDevice; }
-    bool hasActiveVideoStream() const { return m_mediaState & WebCore::MediaProducer::HasActiveVideoCaptureDevice; }
-    WebCore::MediaProducer::MediaStateFlags reportedMediaState() const { return m_reportedMediaCaptureState | (m_mediaState & ~WebCore::MediaProducer::MediaCaptureMask); }
+    bool isCapturingAudio() const { return m_mediaState.containsAny(WebCore::MediaProducer::AudioCaptureMask); }
+    bool isCapturingVideo() const { return m_mediaState.containsAny(WebCore::MediaProducer::VideoCaptureMask); }
+    bool hasActiveAudioStream() const { return m_mediaState.containsAny(WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice); }
+    bool hasActiveVideoStream() const { return m_mediaState.containsAny(WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice); }
+    WebCore::MediaProducer::MediaStateFlags reportedMediaState() const { return m_reportedMediaCaptureState | (m_mediaState - WebCore::MediaProducer::MediaCaptureMask); }
     WebCore::MediaProducer::MutedStateFlags mutedStateFlags() const { return m_mutedState; }
 
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>);
@@ -1887,6 +1892,7 @@ public:
     void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void storeAppHighlight(const WebCore::AppHighlight&);
     void restoreAppHighlightsAndScrollToIndex(const Vector<Ref<WebKit::SharedMemory>>& highlights, const Optional<unsigned> index);
+    void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1906,7 +1912,7 @@ public:
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuTranslation() const;
-    void handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& locationInView);
+    void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -1924,6 +1930,8 @@ public:
     RetainPtr<WKWebView> cocoaView();
     void setCocoaView(WKWebView *);
 #endif
+
+    bool isRunningModalJavaScriptDialog() const { return m_isRunningModalJavaScriptDialog; }
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2096,6 +2104,7 @@ private:
     void didChangePageCount(unsigned);
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
+    void sampledPageTopColorChanged(const WebCore::Color&);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString);
     void didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured);
@@ -2468,6 +2477,8 @@ private:
 
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 
+    void runModalJavaScriptDialog(RefPtr<WebFrameProxy>&&, FrameInfoData&&, const String& message, CompletionHandler<void(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, const String&, CompletionHandler<void()>&&)>&&);
+
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
     WeakPtr<PageClient> m_pageClient;
@@ -2641,6 +2652,7 @@ private:
     WebCore::Color m_themeColor;
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
+    WebCore::Color m_sampledPageTopColor;
 
     bool m_useFixedLayout { false };
     WebCore::IntSize m_fixedLayoutSize;
@@ -2821,7 +2833,7 @@ private:
     WebCore::LayoutPoint m_maxStableLayoutViewportOrigin;
 
     float m_mediaVolume { 1 };
-    WebCore::MediaProducer::MutedStateFlags m_mutedState { WebCore::MediaProducer::NoneMuted };
+    WebCore::MediaProducer::MutedStateFlags m_mutedState;
     bool m_mayStartMediaWhenInWindow { true };
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaCaptureEnabled { true };
@@ -2856,10 +2868,10 @@ private:
     bool m_activityStateChangeWantsSynchronousReply { false };
     Vector<CompletionHandler<void()>> m_nextActivityStateChangeCallbacks;
 
-    WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
+    WebCore::MediaProducer::MediaStateFlags m_mediaState;
 
     // To make sure capture indicators are visible long enough, m_reportedMediaCaptureState is the same as m_mediaState except that we might delay a bit transition from capturing to not-capturing.
-    WebCore::MediaProducer::MediaStateFlags m_reportedMediaCaptureState { WebCore::MediaProducer::IsNotPlaying };
+    WebCore::MediaProducer::MediaStateFlags m_reportedMediaCaptureState;
     RunLoop::Timer<WebPageProxy> m_updateReportedMediaCaptureStateTimer;
     static constexpr Seconds DefaultMediaCaptureReportingDelay { 3_s };
     Seconds m_mediaCaptureReportingDelay { DefaultMediaCaptureReportingDelay };
@@ -3002,6 +3014,7 @@ private:
     size_t m_suspendMediaPlaybackCounter { 0 };
 
     bool m_lastNavigationWasAppBound { false };
+    bool m_isRunningModalJavaScriptDialog { false };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
 

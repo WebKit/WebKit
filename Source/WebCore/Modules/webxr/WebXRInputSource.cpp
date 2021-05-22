@@ -42,14 +42,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRInputSource);
 
-Ref<WebXRInputSource> WebXRInputSource::create(Document& document, Ref<WebXRSession>&& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
+Ref<WebXRInputSource> WebXRInputSource::create(Document& document, WebXRSession& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
 {
-    return adoptRef(*new WebXRInputSource(document, WTFMove(session), timestamp, source));
+    return adoptRef(*new WebXRInputSource(document, session, timestamp, source));
 }
 
-WebXRInputSource::WebXRInputSource(Document& document, Ref<WebXRSession>&& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
-    : m_session(WTFMove(session))
-    , m_targetRaySpace(WebXRInputSpace::create(document, m_session.copyRef(), source.pointerOrigin))
+WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
+    : m_session(makeWeakPtr(session))
+    , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin))
     , m_connectTime(timestamp)
 #if ENABLE(GAMEPAD)
     , m_gamepad(Gamepad::create(WebXRGamepad(timestamp, timestamp, source)))
@@ -60,8 +60,17 @@ WebXRInputSource::WebXRInputSource(Document& document, Ref<WebXRSession>&& sessi
 
 WebXRInputSource::~WebXRInputSource() = default;
 
+WebXRSession* WebXRInputSource::session()
+{
+    return m_session.get();
+}
+
 void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
 {
+    auto session = makeRefPtr(m_session.get());
+    if (!session)
+        return;
+
 #if !ENABLE(GAMEPAD)
     UNUSED_PARAM(timestamp);
 #endif
@@ -70,8 +79,8 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameD
     if (auto gripOrigin = source.gripOrigin) {
         if (m_gripSpace)
             m_gripSpace->setPose(*gripOrigin);
-        else if (auto* document = downcast<Document>(m_session->scriptExecutionContext()))
-            m_gripSpace = WebXRInputSpace::create(*document, m_session.copyRef(), *gripOrigin);
+        else if (auto* document = downcast<Document>(session->scriptExecutionContext()))
+            m_gripSpace = WebXRInputSpace::create(*document, *session, *gripOrigin);
     } else
         m_gripSpace = nullptr;
 #if ENABLE(GAMEPAD)
@@ -97,6 +106,18 @@ void WebXRInputSource::disconnect()
 
 void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
 {
+    auto session = makeRefPtr(m_session.get());
+    if (!session)
+        return;
+
+    auto createEvent = [this, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
+        XRInputSourceEvent::Init init;
+        init.frame = WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No);
+        init.inputSource = makeRefPtr(*this);
+
+        return XRInputSourceEvent::create(name, init);
+    };
+
     if (!m_connected) {
         // A user agent MUST dispatch a selectend event on an XRSession when one of its XRInputSources ends 
         // when an XRInputSource that has begun a primary select action is disconnected.
@@ -141,15 +162,6 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
         }
         m_squeezeStarted = squeezeStarted;
     }
-}
-
-Ref<XRInputSourceEvent> WebXRInputSource::createEvent(const AtomString& name)
-{
-    XRInputSourceEvent::Init init;
-    init.frame = WebXRFrame::create(m_session.copyRef(), WebXRFrame::IsAnimationFrame::No);
-    init.inputSource = makeRefPtr(*this);
-
-    return XRInputSourceEvent::create(name, init);
 }
 
 } // namespace WebCore

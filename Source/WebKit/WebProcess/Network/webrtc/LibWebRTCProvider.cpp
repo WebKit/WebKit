@@ -160,6 +160,14 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> LibWebRTCProvider::createRTCDataCh
     return &RTCDataChannelRemoteManager::sharedManager().remoteHandlerConnection();
 }
 
+void LibWebRTCProvider::setLoggingLevel(WTFLogLevel level)
+{
+    WebCore::LibWebRTCProvider::setLoggingLevel(level);
+#if PLATFORM(COCOA)
+    WebProcess::singleton().libWebRTCCodecs().setLoggingLevel(level);
+#endif
+}
+
 } // namespace WebKit
 
 #endif // USE(LIBWEBRTC)

@@ -75,20 +75,6 @@ AsyncClipboardAPIEnabled:
     WebCore:
       default: false
 
-AudioWorkletEnabled:
-  type: bool
-  humanReadableName: "WebAudio AudioWorklet API"
-  humanReadableDescription: "WebAudio AudioWorklet API"
-  condition: ENABLE(WEB_AUDIO)
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)" : true
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 BlankAnchorTargetImpliesNoOpenerEnabled:
   type: bool
   humanReadableName: "Blank anchor target implies rel=noopener"
@@ -257,6 +243,18 @@ CSSTypedOMEnabled:
       default: false
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      default: false
+
+CanvasColorSpaceEnabled:
+  type: bool
+  humanReadableName: "Canvas Color Spaces"
+  humanReadableDescription: "Enable use of predefined canvas color spaces"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 CaptureVideoInGPUProcessEnabled:
@@ -709,20 +707,6 @@ ModelElementEnabled:
     WebCore:
       default: false
 
-ModernUnprefixedWebAudioEnabled:
-  type: bool
-  humanReadableName: "Modern WebAudio API"
-  humanReadableDescription: "Modern and unprefixed WebAudio API"
-  condition: ENABLE(WEB_AUDIO)
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)" : true
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 OpusDecoderEnabled:
   type: bool
   humanReadableName: "Opus audio decoder"
@@ -880,6 +864,18 @@ RequestIdleCallbackEnabled:
     WebCore:
       default: false
 
+RequestSubmitEnabled:
+  type: bool
+  humanReadableName: "Form requestSubmit"
+  humanReadableDescription: "Form requestSubmit method"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 ResizeObserverEnabled:
   type: bool
@@ -1017,6 +1013,17 @@ UseGPUProcessForMediaEnabled:
   defaultValue:
     WebKit:
       default: WebKit::defaultUseGPUProcessForMediaEnabled()
+
+UseGPUProcessForWebGLEnabled:
+  type: bool
+  humanReadableName: "GPU Process: WebGL"
+  humanReadableDescription: "Process all WebGL operations in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !(PLATFORM(GTK) || PLATFORM(WPE))
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForWebGLEnabled()
 
 UserGesturePromisePropagationEnabled:
   type: bool

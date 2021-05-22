@@ -152,12 +152,17 @@ public:
     JSValue get(JSGlobalObject*, unsigned propertyName) const;
     JSValue get(JSGlobalObject*, uint64_t propertyName) const;
 
+    template<typename T, typename PropertyNameType>
+    T getAs(JSGlobalObject*, PropertyNameType) const;
+
     template<bool checkNullStructure = false>
     bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, unsigned propertyName, PropertySlot&);
     bool getPropertySlot(JSGlobalObject*, uint64_t propertyName, PropertySlot&);
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
+
+    JSValue getIfPropertyExists(JSGlobalObject*, PropertyName);
 
 private:
     static bool getOwnPropertySlotImpl(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
@@ -1492,7 +1497,7 @@ inline JSValue JSObject::get(JSGlobalObject* globalObject, PropertyName property
     PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
     bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
 
-    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()) || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException() || !hasProperty);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
     if (hasProperty)
@@ -1508,13 +1513,25 @@ inline JSValue JSObject::get(JSGlobalObject* globalObject, unsigned propertyName
     PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
     bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
 
-    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()) || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException() || !hasProperty);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
     if (hasProperty)
         RELEASE_AND_RETURN(scope, slot.getValue(globalObject, propertyName));
 
     return jsUndefined();
+}
+
+template<typename T, typename PropertyNameType>
+inline T JSObject::getAs(JSGlobalObject* globalObject, PropertyNameType propertyName) const
+{
+    JSValue value = get(globalObject, propertyName);
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
+    VM& vm = getVM(globalObject);
+    if (vm.exceptionForInspection())
+        return nullptr;
+#endif
+    return jsCast<T>(value);
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)

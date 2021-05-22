@@ -42,6 +42,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -160,18 +161,15 @@ static String processFilesizeString(const String& size, bool isDirectory)
     if (isDirectory)
         return "--"_s;
 
-    bool valid;
-    int64_t bytes = size.toUInt64(&valid);
-    if (!valid)
+    auto bytes = parseIntegerAllowingTrailingJunk<uint64_t>(size);
+    if (!bytes)
         return unknownFileSizeText();
 
-    if (bytes < 1000000)
-        return makeString(FormattedNumber::fixedWidth(bytes / 1000., 2), " KB");
-
-    if (bytes < 1000000000)
-        return makeString(FormattedNumber::fixedWidth(bytes / 1000000., 2), " MB");
-
-    return makeString(FormattedNumber::fixedWidth(bytes / 1000000000., 2), " GB");
+    if (*bytes < 1000000)
+        return makeString(FormattedNumber::fixedWidth(*bytes / 1000.0, 2), " KB");
+    if (*bytes < 1000000000)
+        return makeString(FormattedNumber::fixedWidth(*bytes / 1000000.0, 2), " MB");
+    return makeString(FormattedNumber::fixedWidth(*bytes / 1000000000.0, 2), " GB");
 }
 
 static bool wasLastDayOfMonth(int year, int month, int day)

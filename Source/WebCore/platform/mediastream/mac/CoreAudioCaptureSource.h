@@ -33,10 +33,6 @@
 #include "RealtimeMediaSourceFactory.h"
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
-#include <wtf/HashMap.h>
-#include <wtf/Lock.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct OpaqueCMClock* CMClockRef;

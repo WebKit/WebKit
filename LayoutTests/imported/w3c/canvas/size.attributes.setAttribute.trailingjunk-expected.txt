@@ -1,7 +1,0 @@
-size.attributes.setAttribute.trailingjunk
-Parsing of non-negative integers in setAttribute
-Spec references: size.nonnegativeinteger
-Actual output:
-Expected output:
-
-Passed

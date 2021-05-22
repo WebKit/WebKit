@@ -2251,9 +2251,13 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     // Adjust line height.
     adjustLineHeightOfSelectionGeometries(geometries, numberOfGeometries, lineNumber, lineTop, lineBottom - lineTop);
 
-    // Sort the rectangles and make sure there are no gaps. The rectangles could be unsorted when
-    // there is ruby text and we could have gaps on the line when adjacent elements on the line
-    // have a different orientation.
+    // When using SelectionRenderingBehavior::CoalesceBoundingRects, sort the rectangles and make sure there are no gaps.
+    // The rectangles could be unsorted when there is ruby text and we could have gaps on the line when adjacent elements
+    // on the line have a different orientation.
+    //
+    // Note that for selection geometries with SelectionRenderingBehavior::UseIndividualQuads, we avoid sorting in order to
+    // preserve the fact that the resulting geometries correspond to the order in which the quads are discovered during DOM
+    // traversal. This allows us to efficiently coalesce adjacent selection quads.
     size_t firstRectWithCurrentLineNumber = 0;
     for (size_t currentRect = 1; currentRect < numberOfGeometries; ++currentRect) {
         if (geometries[currentRect].lineNumber() != geometries[currentRect - 1].lineNumber()) {
@@ -2261,6 +2265,9 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
             continue;
         }
         if (geometries[currentRect].logicalLeft() >= geometries[currentRect - 1].logicalLeft())
+            continue;
+
+        if (geometries[currentRect].behavior() != SelectionRenderingBehavior::CoalesceBoundingRects)
             continue;
 
         auto selectionRect = geometries[currentRect];
@@ -2303,6 +2310,35 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     return { WTFMove(geometries), maxLineNumber };
 }
 
+static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeometry& current, const SelectionGeometry& next)
+{
+    auto nextQuad = next.quad();
+    if (nextQuad.isEmpty())
+        return true;
+
+    auto areCloseEnoughToCoalesce = [](const FloatPoint& first, const FloatPoint& second) {
+        constexpr float maxDistanceBetweenBoundaryPoints = 2;
+        return (first - second).diagonalLengthSquared() <= maxDistanceBetweenBoundaryPoints * maxDistanceBetweenBoundaryPoints;
+    };
+
+    auto currentQuad = current.quad();
+    if (!areCloseEnoughToCoalesce(currentQuad.p2(), nextQuad.p1()) || !areCloseEnoughToCoalesce(currentQuad.p3(), nextQuad.p4()))
+        return false;
+
+    if (std::abs(rotatedBoundingRectWithMinimumAngleOfRotation(currentQuad).angleInRadians - rotatedBoundingRectWithMinimumAngleOfRotation(nextQuad).angleInRadians) > radiansPerDegreeFloat)
+        return false;
+
+    currentQuad.setP2(nextQuad.p2());
+    currentQuad.setP3(nextQuad.p3());
+    current.setQuad(currentQuad);
+    current.setDirection(current.containsStart() || current.containsEnd() ? current.direction() : next.direction());
+    current.setContainsStart(current.containsStart() || next.containsStart());
+    current.setContainsEnd(current.containsEnd() || next.containsEnd());
+    current.setIsFirstOnLine(current.isFirstOnLine() || next.isFirstOnLine());
+    current.setIsLastOnLine(current.isLastOnLine() || next.isLastOnLine());
+    return true;
+}
+
 Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleRange& range)
 {
     auto result = RenderObject::collectSelectionGeometriesInternal(range);
@@ -2315,10 +2351,10 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
     for (size_t i = 0; i < numberOfGeometries; ++i) {
         auto& currentGeometry = result.geometries[i];
         if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads) {
-            // FIXME: We still probably want some way to coalesce quads, probably by projecting them onto rotated bounding rects
-            // and then checking whether the rotated bounding rects are overlapping and share the same rotation angle. Until then,
-            // we simply append all non-empty quads.
-            if (!currentGeometry.quad().isEmpty())
+            if (currentGeometry.quad().isEmpty())
+                continue;
+
+            if (coalescedGeometries.isEmpty() || !coalesceSelectionGeometryWithAdjacentQuadsIfPossible(coalescedGeometries.last(), currentGeometry))
                 coalescedGeometries.append(currentGeometry);
             continue;
         }

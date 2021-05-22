@@ -1,6 +1,0 @@
-2d.path.clip.intersect
-Spec references: 2d.path.clip.basic
-Actual output:
-Expected output:
-
-Passed

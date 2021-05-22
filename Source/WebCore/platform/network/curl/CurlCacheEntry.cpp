@@ -43,6 +43,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/HexNumber.h>
 #include <wtf/SHA1.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -187,10 +188,8 @@ void CurlCacheEntry::setResponseFromCachedHeaders(ResourceResponse& response)
     // Try to parse expected content length
     long long contentLength = -1;
     if (!response.httpHeaderField(HTTPHeaderName::ContentLength).isNull()) {
-        bool success = false;
-        long long parsedContentLength = response.httpHeaderField(HTTPHeaderName::ContentLength).toInt64(&success);
-        if (success)
-            contentLength = parsedContentLength;
+        if (auto parsedContentLength = parseIntegerAllowingTrailingJunk<long long>(response.httpHeaderField(HTTPHeaderName::ContentLength)))
+            contentLength = *parsedContentLength;
     }
     response.setExpectedContentLength(contentLength); // -1 on parse error or null
 

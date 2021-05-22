@@ -117,6 +117,7 @@ public:
 
     void setVP9VTBSupport(bool supportVP9VTB) { m_supportVP9VTB = supportVP9VTB; }
     bool supportVP9VTB() const { return m_supportVP9VTB; }
+    void setLoggingLevel(WTFLogLevel);
 
 private:
     LibWebRTCCodecs();
@@ -154,6 +155,7 @@ private:
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
     bool m_supportVP9VTB { false };
+    Optional<WTFLogLevel> m_loggingLevel;
 };
 
 } // namespace WebKit

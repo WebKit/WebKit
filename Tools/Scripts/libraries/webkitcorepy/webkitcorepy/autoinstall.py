@@ -286,7 +286,7 @@ class Package(object):
                     with open(log_location, 'w') as setup_log:
                         subprocess.check_call(
                             [
-                                sys.executable,
+                                os.environ.get('AUTOINSTALL_PYTHON_EXECUTABLE', sys.executable),
                                 os.path.join(candidate, 'setup.py'),
                                 'install',
                                 '--home={}'.format(install_location),

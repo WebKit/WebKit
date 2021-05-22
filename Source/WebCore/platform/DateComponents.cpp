@@ -105,7 +105,7 @@ template<typename CharacterType> static unsigned countDigits(StringParsingBuffer
     return buffer.position() - begin;
 }
 
-// Very strict integer parser. Do not allow leading or trailing whitespace unlike charactersToIntStrict().
+// Differences from parseInteger<int>: Takes StringParsingBuffer. Does not allow leading or trailing spaces. Does not allow leading "+".
 template<typename CharacterType> static Optional<int> parseInt(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse)
 {
     if (maximumNumberOfDigitsToParse > buffer.lengthRemaining() || !maximumNumberOfDigitsToParse)

@@ -641,7 +641,7 @@ override;
     }
 
     // True if this box can have a range in an outside fragmentation context.
-    bool canHaveOutsideFragmentRange() const { return !isInFlowRenderFragmentedFlow(); }
+    bool canHaveOutsideFragmentRange() const { return !isRenderFragmentedFlow(); }
     virtual bool needsLayoutAfterFragmentRangeChange() const { return false; }
 
     bool isGridItem() const { return parent() && parent()->isRenderGrid() && !isExcludedFromNormalLayout(); }
@@ -760,7 +760,7 @@ private:
     // This function calculates the minimum and maximum preferred widths for an object.
     // These values are used in shrink-to-fit layout systems.
     // These include tables, positioned objects, floats and flexible boxes.
-    virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
+    virtual void computePreferredLogicalWidths();
 
     LayoutRect frameRectForStickyPositioning() const final { return frameRect(); }
 

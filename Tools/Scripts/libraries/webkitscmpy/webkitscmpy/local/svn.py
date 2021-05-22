@@ -269,6 +269,7 @@ class Svn(Scm):
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
+        # Determine commit info, revision and branch for a given identifier
         parsed_branch_point = None
         if identifier is not None:
             if revision:
@@ -290,6 +291,8 @@ class Svn(Scm):
             if branch == self.default_branch and parsed_branch_point:
                 raise self.Exception('Cannot provide a branch point for a commit on the default branch')
 
+            # Populate mapping of revisions on their respective branches if we don't have enough revisions on the
+            # branch specified by the provided identifier
             if not self._metadata_cache.get(branch, []) or identifier >= len(self._metadata_cache.get(branch, [])):
                 if branch != self.default_branch:
                     self._cache_revisions(branch=self.default_branch)
@@ -312,6 +315,7 @@ class Svn(Scm):
             if not self._metadata_cache.get(branch, []) or identifier >= len(self._metadata_cache.get(branch, [])):
                 self._cache_revisions(branch=branch)
 
+        # Determine the commit info and branch for a given revision
         elif revision:
             if branch:
                 raise ValueError('Cannot define both branch and revision')
@@ -321,6 +325,7 @@ class Svn(Scm):
             branch = self._branch_for(revision)
             info = self.info(cached=True, revision=revision)
 
+        # Determine the commit info, revision and branch for a tag or branch.
         else:
             if branch and tag:
                 raise ValueError('Cannot define both branch and tag')
@@ -336,6 +341,7 @@ class Svn(Scm):
             if branch != self.default_branch:
                 branch = self._branch_for(revision)
 
+        # Extract the commit time from the commit info
         date = info['Last Changed Date'].split(' (')[0] if info.get('Last Changed Date') else None
         if date:
             tz_diff = date.split(' ')[-1]
@@ -345,6 +351,7 @@ class Svn(Scm):
                 minutes=int(tz_diff[3:5]),
             ) * (1 if tz_diff[0] == '-' else -1)
 
+        # Compute the identifier if the function did not receive one and we were asked to
         if include_identifier and not identifier:
             if branch != self.default_branch and revision > self._metadata_cache.get(self.default_branch, [0])[-1]:
                 self._cache_revisions(branch=self.default_branch)
@@ -356,11 +363,12 @@ class Svn(Scm):
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 
+        # Determine the commit message for a commit. Note that in Subversion, this will always result in a network call
+        # and is one of the major reasons the WebKit project uses ChangeLogs.
         if branch == self.default_branch or '/' in branch:
             branch_arg = '^/{}'.format(branch)
         else:
             branch_arg = '^/branches/{}'.format(branch)
-
         log = run(
             [self.executable(), 'log', '-l', '1', '-r', str(revision), branch_arg], cwd=self.root_path,
             capture_output=True, encoding='utf-8',
@@ -392,6 +400,91 @@ class Svn(Scm):
             author=author,
             message=message,
         )
+
+    def _args_from_content(self, content, include_log=True):
+        leading = content.splitlines()[0]
+        match = Contributor.SVN_AUTHOR_RE.match(leading) or Contributor.SVN_AUTHOR_Q_RE.match(leading)
+        if not match:
+            return {}
+
+        tz_diff = match.group('date').split(' ', 2)[-1]
+        date = datetime.strptime(match.group('date')[:-len(tz_diff)], '%Y-%m-%d %H:%M:%S ')
+        date += timedelta(
+            hours=int(tz_diff[1:3]),
+            minutes=int(tz_diff[3:5]),
+        ) * (1 if tz_diff[0] == '-' else -1)
+
+        return dict(
+            revision=int(match.group('revision')),
+            timestamp=int(calendar.timegm(date.timetuple())),
+            author=Contributor.from_scm_log(leading, self.contributors),
+            message='\n'.join(content.splitlines()[2:]).rstrip() if include_log else None,
+        )
+
+
+    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
+        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier)
+        previous = end
+        if end.branch == self.default_branch or '/' in end.branch:
+            branch_arg = '^/{}'.format(end.branch)
+        else:
+            branch_arg = '^/branches/{}'.format(end.branch)
+
+        try:
+            log = None
+            log = subprocess.Popen(
+                [self.executable(), 'log', '-r', '{}:{}'.format(
+                    end.revision, begin.revision,
+                ), branch_arg] + ([] if include_log else ['-q']),
+                cwd=self.root_path,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
+            )
+            if log.poll():
+                raise self.Exception('Failed to find commits between {} and {} on {}'.format(begin, end, branch_arg))
+
+            content = ''
+            line = log.stdout.readline()
+            divider = '-' * 72
+            while True:
+                if line and line.rstrip() != divider:
+                    content += line
+                    line = log.stdout.readline()
+                    continue
+
+                if not content:
+                    line = log.stdout.readline()
+                    continue
+
+                branch_point = previous.branch_point if include_identifier else None
+                identifier = previous.identifier if include_identifier else None
+
+                args = self._args_from_content(content, include_log=include_log)
+                if args['revision'] != previous.revision:
+                    yield previous
+                    identifier -= 1
+                if not identifier:
+                    identifier = branch_point
+                    branch_point = None
+
+                previous = Commit(
+                    repository_id=self.id,
+                    branch=end.branch if branch_point else self.default_branch,
+                    identifier=identifier,
+                    branch_point=branch_point,
+                    **args
+                )
+                content = ''
+                if not line:
+                    break
+                line = log.stdout.readline()
+
+            yield previous
+
+        finally:
+            if log:
+                log.kill()
 
     def checkout(self, argument):
         commit = self.find(argument)

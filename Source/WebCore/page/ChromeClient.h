@@ -233,6 +233,7 @@ public:
 
     virtual void themeColorChanged() const { }
     virtual void pageExtendedBackgroundColorDidChange() const { }
+    virtual void sampledPageTopColorChanged() const { }
 
     virtual void exceededDatabaseQuota(Frame&, const String& databaseName, DatabaseDetails) = 0;
 
@@ -256,6 +257,8 @@ public:
 #if ENABLE(IOS_TOUCH_EVENTS)
     virtual void didPreventDefaultForEvent() = 0;
 #endif
+
+    virtual void didHandleOrPreventMouseDownOrMouseUpEvent() { }
 
     virtual Seconds eventThrottlingDelay() { return 0_s; };
 

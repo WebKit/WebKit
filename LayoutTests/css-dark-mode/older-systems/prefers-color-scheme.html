@@ -22,7 +22,7 @@ div {
     }
 }
 
-@media (prefers-color-scheme: no-preference) {
+@media not (prefers-color-scheme) {
     /* This is valid, but should not apply for us since there is no option for no user preference. */
     #test1 {
         background-color: cyan;

@@ -149,7 +149,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String&)
     return false;
 }
 
-void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&& callback)
+void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&& callback)
 {
     if (!hasRunningProcess())
         return callback({ });
@@ -339,6 +339,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 {
     themeColorChanged(layerTreeTransaction.themeColor());
     pageExtendedBackgroundColorDidChange(layerTreeTransaction.pageExtendedBackgroundColor());
+    sampledPageTopColorChanged(layerTreeTransaction.sampledPageTopColor());
 
     if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
         if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
@@ -1006,6 +1007,12 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
     pageClient().didNotHandleTapAsClick(point);
     m_uiClient->didNotHandleTapAsClick(point);
+}
+
+void WebPageProxy::didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint& point)
+{
+    pageClient().didNotHandleTapAsMeaningfulClickAtPoint(point);
+    m_uiClient->didNotHandleTapAsMeaningfulClickAtPoint(point);
 }
     
 void WebPageProxy::didCompleteSyntheticClick()

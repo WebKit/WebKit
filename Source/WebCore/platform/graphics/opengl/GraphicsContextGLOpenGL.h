@@ -34,6 +34,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueArray.h>
+#include <wtf/UniqueRef.h>
 
 #if PLATFORM(COCOA)
 #include "GraphicsContextGLANGLEEGLUtilities.h"

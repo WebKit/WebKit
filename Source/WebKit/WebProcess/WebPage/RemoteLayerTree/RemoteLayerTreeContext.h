@@ -80,6 +80,9 @@ public:
     void adoptLayersFromContext(RemoteLayerTreeContext&);
 
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
+
+    bool useCGDisplayListsForDOMRendering() const { return m_useCGDisplayListsForDOMRendering; }
+    void setUseCGDisplayListsForDOMRendering(bool useCGDisplayLists) { m_useCGDisplayListsForDOMRendering = useCGDisplayLists; }
     
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const;
@@ -106,6 +109,8 @@ private:
     WebCore::LayerPool m_layerPool;
     
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
+
+    bool m_useCGDisplayListsForDOMRendering { false };
 };
 
 } // namespace WebKit

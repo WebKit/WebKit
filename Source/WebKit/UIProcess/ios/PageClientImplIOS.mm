@@ -232,7 +232,12 @@ void PageClientImpl::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
     [m_contentView _didNotHandleTapAsClick:point];
 }
-    
+
+void PageClientImpl::didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint& point)
+{
+    [m_webView _didNotHandleTapAsMeaningfulClickAtPoint:point];
+}
+
 void PageClientImpl::didCompleteSyntheticClick()
 {
     [m_contentView _didCompleteSyntheticClick];
@@ -994,6 +999,11 @@ void PageClientImpl::handleAsynchronousCancelableScrollEvent(UIScrollView *scrol
     [m_webView _scrollView:scrollView asynchronouslyHandleScrollEvent:scrollEvent completion:completion];
 }
 #endif
+
+void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callback)
+{
+    [m_contentView runModalJavaScriptDialog:WTFMove(callback)];
+}
 
 } // namespace WebKit
 

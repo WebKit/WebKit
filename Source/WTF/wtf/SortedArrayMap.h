@@ -35,7 +35,17 @@ namespace WTF {
 // The array passed to the constructor has std::pair elements: keys first and values second.
 // The array and the SortedArrayMap should typically both be global constant expressions.
 
-template<typename ArrayType> class SortedArrayMap {
+class SortedArrayBase {
+protected:
+    // Some informal empirical tests indicate that arrays shorter than this are faster to
+    // search with linear search than with binary search. Even if we don't get this threshold
+    // exactly right, it's helpful for both performance and code size to use linear search at
+    // least for very small arrays, and important for performance to make sure that we use
+    // binary search for much larger ones.
+    static constexpr size_t binarySearchThreshold = 20;
+};
+
+template<typename ArrayType> class SortedArrayMap : public SortedArrayBase {
 public:
     using ElementType = typename std::remove_extent_t<ArrayType>;
     using ValueType = typename ElementType::second_type;
@@ -52,37 +62,86 @@ private:
     const ArrayType& m_array;
 };
 
+template<typename ArrayType> class SortedArraySet : public SortedArrayBase {
+public:
+    constexpr SortedArraySet(const ArrayType&);
+    template<typename KeyArgument> bool contains(const KeyArgument&) const;
+
+private:
+    const ArrayType& m_array;
+};
+
 struct ComparableStringView {
     StringView string;
 };
 
-struct ComparableASCIILiteral {
-    const char* literal;
-    template<std::size_t size> constexpr ComparableASCIILiteral(const char (&characters)[size]) : literal { characters } { }
+// NoUppercaseLettersOptimized means no characters with the 0x20 bit set.
+// That means the strings can't include control characters, uppercase letters, or any of @[\]_.
+enum class ASCIISubset { All, NoUppercaseLetters, NoUppercaseLettersOptimized };
+
+template<ASCIISubset> struct ComparableASCIISubsetLiteral {
+    ASCIILiteral literal;
+    template<unsigned size> constexpr ComparableASCIISubsetLiteral(const char (&characters)[size]);
     static Optional<ComparableStringView> parse(StringView string) { return { { string } }; }
 };
 
-constexpr bool operator==(ComparableASCIILiteral, ComparableASCIILiteral);
-constexpr bool operator<(ComparableASCIILiteral, ComparableASCIILiteral);
+using ComparableASCIILiteral = ComparableASCIISubsetLiteral<ASCIISubset::All>;
+using ComparableCaseFoldingASCIILiteral = ComparableASCIISubsetLiteral<ASCIISubset::NoUppercaseLetters>;
+using ComparableLettersLiteral = ComparableASCIISubsetLiteral<ASCIISubset::NoUppercaseLettersOptimized>;
+
+template<ASCIISubset subset> constexpr bool operator==(ComparableASCIISubsetLiteral<subset>, ComparableASCIISubsetLiteral<subset>);
+template<ASCIISubset subset> constexpr bool operator<(ComparableASCIISubsetLiteral<subset>, ComparableASCIISubsetLiteral<subset>);
 
 bool operator==(ComparableStringView, ComparableASCIILiteral);
+bool operator==(ComparableStringView, ComparableCaseFoldingASCIILiteral);
+bool operator==(ComparableStringView, ComparableLettersLiteral);
 bool operator<(ComparableStringView, ComparableASCIILiteral);
-bool operator!=(ComparableStringView, ComparableASCIILiteral);
-bool operator==(ComparableASCIILiteral, ComparableStringView);
+bool operator<(ComparableStringView, ComparableCaseFoldingASCIILiteral);
+bool operator<(ComparableStringView, ComparableLettersLiteral);
+bool operator<(ComparableASCIILiteral, ComparableStringView);
+bool operator<(ComparableCaseFoldingASCIILiteral, ComparableStringView);
+bool operator<(ComparableLettersLiteral, ComparableStringView);
 
-// FIXME: Use std::is_sorted instead of this and remove it, once we require C++20.
-template<typename Iterator, typename Predicate> constexpr bool isSortedConstExpr(Iterator begin, Iterator end, Predicate predicate)
+template<typename OtherType> bool operator==(OtherType, ComparableStringView);
+
+template<typename StorageInteger> class PackedASCIILowerCodes {
+public:
+    static_assert(std::is_unsigned_v<StorageInteger>);
+
+    template<unsigned size> constexpr PackedASCIILowerCodes(const char (&characters)[size]);
+    static Optional<PackedASCIILowerCodes> parse(StringView);
+    constexpr StorageInteger value() const { return m_value; }
+
+private:
+    template<unsigned size> static constexpr StorageInteger pack(const char (&characters)[size]);
+    explicit constexpr PackedASCIILowerCodes(StorageInteger);
+    StorageInteger m_value { 0 };
+};
+
+template<typename StorageInteger> constexpr bool operator==(PackedASCIILowerCodes<StorageInteger>, PackedASCIILowerCodes<StorageInteger>);
+template<typename StorageInteger> constexpr bool operator<(PackedASCIILowerCodes<StorageInteger>, PackedASCIILowerCodes<StorageInteger>);
+
+template<ASCIISubset subset> constexpr bool isInSubset(char character)
 {
-    if (begin == end)
+    if (!(character && isASCII(character)))
+        return false;
+    switch (subset) {
+    case ASCIISubset::All:
         return true;
-    auto current = begin;
-    auto previous = current;
-    while (++current != end) {
-        if (!predicate(*previous, *current))
-            return false;
-        previous = current;
+    case ASCIISubset::NoUppercaseLetters:
+        return !isASCIIUpper(character);
+    case ASCIISubset::NoUppercaseLettersOptimized:
+        return character == toASCIILowerUnchecked(character);
     }
-    return true;
+}
+
+template<ASCIISubset subset> template<unsigned size> constexpr ComparableASCIISubsetLiteral<subset>::ComparableASCIISubsetLiteral(const char (&characters)[size])
+    : literal { ASCIILiteral::fromLiteralUnsafe(characters) }
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(allOfConstExpr(&characters[0], &characters[size - 1], [] (char character) {
+        return isInSubset<subset>(character);
+    }));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(!characters[size - 1]);
 }
 
 template<typename ArrayType> constexpr SortedArrayMap<ArrayType>::SortedArrayMap(const ArrayType& array)
@@ -93,23 +152,64 @@ template<typename ArrayType> constexpr SortedArrayMap<ArrayType>::SortedArrayMap
     }));
 }
 
+template<typename, typename = void> constexpr bool HasParseMember = false;
+template<typename T> constexpr bool HasParseMember<T, std::void_t<decltype(std::declval<T>().parse)>> = true;
+
 template<typename ArrayType> template<typename KeyArgument> inline auto SortedArrayMap<ArrayType>::tryGet(const KeyArgument& key) const -> const ValueType*
 {
-    auto parsedKey = ElementType::first_type::parse(key);
+    using KeyType = typename ElementType::first_type;
+    auto parsedKey = [&key] {
+        if constexpr (HasParseMember<KeyType>)
+            return KeyType::parse(key);
+        else
+            return makeOptional(key);
+    }();
     if (!parsedKey)
         return nullptr;
-    // FIXME: We should enhance tryBinarySearch so it can deduce ElementType.
-    // FIXME: If the array's size is small enough, should do linear search since it is more efficient than binary search.
-    auto element = tryBinarySearch<ElementType>(m_array, std::size(m_array), *parsedKey, [] (auto* element) {
-        return element->first;
-    });
-    return element ? &element->second : nullptr;
+    decltype(std::begin(m_array)) iterator;
+    if (std::size(m_array) < binarySearchThreshold) {
+        iterator = std::find_if(std::begin(m_array), std::end(m_array), [&parsedKey] (auto& pair) {
+            return pair.first == *parsedKey;
+        });
+        if (iterator == std::end(m_array))
+            return nullptr;
+    } else {
+        iterator = std::lower_bound(std::begin(m_array), std::end(m_array), *parsedKey, [] (auto& pair, auto& value) {
+            return pair.first < value;
+        });
+        if (iterator == std::end(m_array) || !(iterator->first == *parsedKey))
+            return nullptr;
+    }
+    return &iterator->second;
 }
 
 template<typename ArrayType> template<typename KeyArgument> inline auto SortedArrayMap<ArrayType>::get(const KeyArgument& key, const ValueType& defaultValue) const -> ValueType
 {
     auto result = tryGet(key);
     return result ? *result : defaultValue;
+}
+
+template<typename ArrayType> constexpr SortedArraySet<ArrayType>::SortedArraySet(const ArrayType& array)
+    : m_array { array }
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(isSortedConstExpr(std::begin(array), std::end(array)));
+}
+
+template<typename ArrayType> template<typename KeyArgument> inline bool SortedArraySet<ArrayType>::contains(const KeyArgument& key) const
+{
+    using KeyType = typename std::remove_extent_t<ArrayType>;
+    auto parsedKey = [&key] {
+        if constexpr (HasParseMember<KeyType>)
+            return KeyType::parse(key);
+        else
+            return makeOptional(key);
+    }();
+    if (!parsedKey)
+        return false;
+    if (std::size(m_array) < binarySearchThreshold)
+        return std::find(std::begin(m_array), std::end(m_array), *parsedKey) != std::end(m_array);
+    auto iterator = std::lower_bound(std::begin(m_array), std::end(m_array), *parsedKey);
+    return iterator != std::end(m_array) && *iterator == *parsedKey;
 }
 
 constexpr int strcmpConstExpr(const char* a, const char* b)
@@ -121,14 +221,50 @@ constexpr int strcmpConstExpr(const char* a, const char* b)
     return *a == *b ? 0 : *a < *b ? -1 : 1;
 }
 
-constexpr bool operator==(ComparableASCIILiteral a, ComparableASCIILiteral b)
+template<typename CharacterType> inline bool lessThanASCIICaseFolding(const CharacterType* characters, unsigned length, const char* literalWithNoUppercase)
 {
-    return !strcmpConstExpr(a.literal, b.literal);
+    for (unsigned i = 0; i < length; ++i) {
+        if (!literalWithNoUppercase[i])
+            return false;
+        if (auto character = toASCIILower(characters[i]); character != literalWithNoUppercase[i])
+            return character < literalWithNoUppercase[i];
+    }
+    return true;
 }
 
-constexpr bool operator<(ComparableASCIILiteral a, ComparableASCIILiteral b)
+inline bool lessThanASCIICaseFolding(StringView string, const char* literalWithNoUppercase)
 {
-    return strcmpConstExpr(a.literal, b.literal) < 0;
+    if (string.is8Bit())
+        return lessThanASCIICaseFolding(string.characters8(), string.length(), literalWithNoUppercase);
+    return lessThanASCIICaseFolding(string.characters16(), string.length(), literalWithNoUppercase);
+}
+
+template<typename CharacterType> inline bool lessThanASCIICaseFolding(const char* literalWithNoUppercase, const CharacterType* characters, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (!literalWithNoUppercase[i])
+            return true;
+        if (auto character = toASCIILower(characters[i]); character != literalWithNoUppercase[i])
+            return literalWithNoUppercase[i] < character;
+    }
+    return false;
+}
+
+inline bool lessThanASCIICaseFolding(const char* literalWithNoUppercase, StringView string)
+{
+    if (string.is8Bit())
+        return lessThanASCIICaseFolding(literalWithNoUppercase, string.characters8(), string.length());
+    return lessThanASCIICaseFolding(literalWithNoUppercase, string.characters16(), string.length());
+}
+
+template<ASCIISubset subset> constexpr bool operator==(ComparableASCIISubsetLiteral<subset> a, ComparableASCIISubsetLiteral<subset> b)
+{
+    return !strcmpConstExpr(a.literal.characters(), b.literal.characters());
+}
+
+template<ASCIISubset subset> constexpr bool operator<(ComparableASCIISubsetLiteral<subset> a, ComparableASCIISubsetLiteral<subset> b)
+{
+    return strcmpConstExpr(a.literal.characters(), b.literal.characters()) < 0;
 }
 
 inline bool operator==(ComparableStringView a, ComparableASCIILiteral b)
@@ -138,20 +274,105 @@ inline bool operator==(ComparableStringView a, ComparableASCIILiteral b)
 
 inline bool operator<(ComparableStringView a, ComparableASCIILiteral b)
 {
-    return codePointCompare(a.string, b.literal) < 0;
+    return codePointCompare(a.string, b.literal.characters()) < 0;
 }
 
-inline bool operator!=(ComparableStringView a, ComparableASCIILiteral b)
+inline bool operator<(ComparableASCIILiteral a, ComparableStringView b)
 {
-    return !(a == b);
+    return codePointCompare(a.literal.characters(), b.string) < 0;
 }
 
-inline bool operator==(ComparableASCIILiteral a, ComparableStringView b)
+inline bool operator==(ComparableStringView a, ComparableLettersLiteral b)
+{
+    return equalLettersIgnoringASCIICaseCommonWithoutLength(a.string, b.literal);
+}
+
+inline bool operator<(ComparableStringView a, ComparableLettersLiteral b)
+{
+    return lessThanASCIICaseFolding(a.string, b.literal);
+}
+
+inline bool operator<(ComparableLettersLiteral a, ComparableStringView b)
+{
+    return lessThanASCIICaseFolding(a.literal, b.string);
+}
+
+inline bool operator==(ComparableStringView a, ComparableCaseFoldingASCIILiteral b)
+{
+    return equalIgnoringASCIICase(a.string, b.literal);
+}
+
+inline bool operator<(ComparableStringView a, ComparableCaseFoldingASCIILiteral b)
+{
+    return lessThanASCIICaseFolding(a.string, b.literal);
+}
+
+inline bool operator<(ComparableCaseFoldingASCIILiteral a, ComparableStringView b)
+{
+    return lessThanASCIICaseFolding(a.literal, b.string);
+}
+
+template<typename OtherType> inline bool operator==(OtherType a, ComparableStringView b)
 {
     return b == a;
 }
 
+template<typename StorageInteger> template<unsigned size> constexpr PackedASCIILowerCodes<StorageInteger>::PackedASCIILowerCodes(const char (&string)[size])
+    : m_value { pack(string) }
+{
 }
 
+template<typename StorageInteger> constexpr PackedASCIILowerCodes<StorageInteger>::PackedASCIILowerCodes(StorageInteger value)
+    : m_value { value }
+{
+}
+
+template<typename StorageInteger> template<unsigned size> constexpr StorageInteger PackedASCIILowerCodes<StorageInteger>::pack(const char (&string)[size])
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(size);
+    constexpr unsigned length = size - 1;
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(!string[length]);
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(length <= sizeof(StorageInteger));
+    StorageInteger result = 0;
+    for (unsigned index = 0; index < length; ++index) {
+        StorageInteger code = static_cast<uint8_t>(string[index]);
+        result |= code << ((sizeof(StorageInteger) - index - 1) * 8);
+    }
+    return result;
+}
+
+template<typename StorageInteger> auto PackedASCIILowerCodes<StorageInteger>::parse(StringView string) -> Optional<PackedASCIILowerCodes>
+{
+    if (string.length() > sizeof(StorageInteger))
+        return WTF::nullopt;
+    StorageInteger result = 0;
+    for (unsigned index = 0; index < string.length(); ++index) {
+        UChar code = string[index];
+        if (!isASCII(code))
+            return WTF::nullopt;
+        result |= static_cast<StorageInteger>(toASCIILower(code)) << ((sizeof(StorageInteger) - index - 1) * 8);
+    }
+    return PackedASCIILowerCodes(result);
+}
+
+template<typename StorageInteger> constexpr bool operator==(PackedASCIILowerCodes<StorageInteger> a, PackedASCIILowerCodes<StorageInteger> b)
+{
+    return a.value() == b.value();
+}
+
+template<typename StorageInteger> constexpr bool operator<(PackedASCIILowerCodes<StorageInteger> a, PackedASCIILowerCodes<StorageInteger> b)
+{
+    return a.value() < b.value();
+}
+
+}
+
+// FIXME: Rename the Comparable and Packed types for clarity and to align them better with each other.
+using WTF::ASCIISubset;
 using WTF::ComparableASCIILiteral;
+using WTF::ComparableASCIISubsetLiteral;
+using WTF::ComparableCaseFoldingASCIILiteral;
+using WTF::ComparableLettersLiteral;
+using WTF::PackedASCIILowerCodes;
 using WTF::SortedArrayMap;
+using WTF::SortedArraySet;

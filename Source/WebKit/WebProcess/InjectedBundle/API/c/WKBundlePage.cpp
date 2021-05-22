@@ -163,11 +163,6 @@ void WKBundlePageDidExitFullScreen(WKBundlePageRef pageRef)
 #endif
 }
 
-WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
-{
-    return toAPI(WebKit::toImpl(pageRef)->pageGroup());
-}
-
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 {
     return toAPI(&WebKit::toImpl(pageRef)->mainWebFrame());

@@ -53,6 +53,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -1003,12 +1004,12 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
         if (sql.isColumnNull(0))
             return nullptr;
         String stringVersion = sql.getColumnText(0);
-        bool ok;
-        databaseVersion = stringVersion.toUInt64Strict(&ok);
-        if (!ok) {
+        auto parsedVersion = parseInteger<uint64_t>(stringVersion);
+        if (!parsedVersion) {
             LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8().data());
             return nullptr;
         }
+        databaseVersion = *parsedVersion;
     }
 
     auto databaseInfo = makeUnique<IDBDatabaseInfo>(databaseName, databaseVersion, 0);
@@ -1166,14 +1167,13 @@ Optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersio
 
     SQLiteStatement versql(database, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
     String stringVersion = versql.getColumnText(0);
-    bool ok;
-    uint64_t databaseVersion = stringVersion.toUInt64Strict(&ok);
-    if (!ok) {
+    auto databaseVersion = parseInteger<uint64_t>(stringVersion);
+    if (!databaseVersion) {
         LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8().data());
         return WTF::nullopt;
     }
 
-    return IDBDatabaseNameAndVersion { databaseName, databaseVersion };
+    return IDBDatabaseNameAndVersion { databaseName, *databaseVersion };
 }
 
 String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()

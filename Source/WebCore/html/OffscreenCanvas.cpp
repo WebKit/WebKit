@@ -264,11 +264,14 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer))) };
         }
 
-        auto buffer = takeImageBuffer();
-        if (!buffer)
-            return { RefPtr<ImageBitmap> { nullptr } };
+        // As the canvas context state is stored in GraphicsContext, which is owned
+        // by buffer(), to avoid resetting the context state, we have to make a copy and
+        // clear the original buffer rather than returning the original buffer.
+        auto bufferCopy = buffer()->copyRectToBuffer(FloatRect(FloatPoint(), buffer()->logicalSize()), buffer()->colorSpace(), *drawingContext());
+        downcast<OffscreenCanvasRenderingContext2D>(*m_context).clearCanvas();
+        clearCopiedImage();
 
-        return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer), originClean() ? SerializationState::OriginClean : SerializationState())) };
+        return { ImageBitmap::create(ImageBitmapBacking(WTFMove(bufferCopy), originClean() ? SerializationState::OriginClean : SerializationState())) };
     }
 
 #if ENABLE(WEBGL)
@@ -478,18 +481,13 @@ void OffscreenCanvas::createImageBuffer() const
 
 RefPtr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
 {
-    if (!m_detached)
-        m_hasCreatedImageBuffer = true;
+    ASSERT(m_detached);
 
-    // This function is primarily for use with transferToImageBitmap, which
-    // requires that the canvas bitmap refer to a new, blank bitmap of the same
-    // size after the existing bitmap is taken. In the case of a zero-size
-    // bitmap, our buffer is null, so returning early here is valid.
     if (size().isEmpty())
         return nullptr;
 
     clearCopiedImage();
-    return setImageBuffer(m_detached ? nullptr : ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated));
+    return setImageBuffer(nullptr);
 }
 
 void OffscreenCanvas::reset()

@@ -87,6 +87,12 @@ public:
             m_drawingContext.replayDisplayList(BaseConcreteImageBuffer::context());
     }
 
+    void clearBackend() override
+    {
+        m_drawingContext.displayList().clear();
+        BaseConcreteImageBuffer::clearBackend();
+    }
+
 protected:
     DrawingContext m_drawingContext;
     std::unique_ptr<ItemBufferWritingClient> m_writingClient;

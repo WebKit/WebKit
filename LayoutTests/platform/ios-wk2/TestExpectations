@@ -865,10 +865,6 @@ imported/mozilla/svg/filters/filter-marked-line-06.svg [ Failure Pass ]
 imported/mozilla/svg/filters/filter-marked-line-07.svg [ Failure Pass ]
 imported/mozilla/svg/filters/filter-marked-line-08.svg [ Failure Pass ]
 imported/mozilla/svg/filters/filter-marked-line-09.svg [ Failure Pass ]
-imported/w3c/canvas/2d.gradient.interpolate.colouralpha.html [ Failure Pass ]
-imported/w3c/canvas/2d.line.cap.round.html [ Failure Pass ]
-imported/w3c/canvas/2d.line.join.parallel.html [ Failure Pass ]
-imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure Pass ]
 transitions/svg-text-shadow-transition.html [ Failure Pass ]
 
 # Flaky tests that time out:
@@ -891,8 +887,6 @@ fast/loader/frame-src-change-added-to-history.html
 fast/loader/frame-src-change-not-added-to-history.html
 fast/loader/stateobjects/pushstate-clears-forward-history.html
 http/tests/appcache/404-manifest.html
-http/tests/canvas/philip/tests/security.drawImage.canvas.html
-http/tests/canvas/philip/tests/security.drawImage.image.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
 storage/domstorage/sessionstorage/window-open.html
 transitions/cubic-bezier-overflow-transform.html
@@ -1768,6 +1762,10 @@ webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mim
 webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.html [ Pass Failure ]
 
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/background-position-subpixel-at-border.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-7.html [ ImageOnlyFailure ]
+webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-stretch.html [ ImageOnlyFailure ]
+webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-8.html [ ImageOnlyFailure ]
+webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/simple-bg-color.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-multicol/equal-gap-and-rule.html [ ImageOnlyFailure ]

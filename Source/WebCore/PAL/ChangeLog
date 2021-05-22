@@ -1,3 +1,13 @@
+2021-04-29  Jean-Yves Avenard  <jya@apple.com>
+
+        Adopt AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification
+        https://bugs.webkit.org/show_bug.cgi?id=225170
+
+        Reviewed by Eric Carlson.
+
+        * pal/cocoa/AVFoundationSoftLink.h: Add AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification and its related key
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Add missing SPI declarations

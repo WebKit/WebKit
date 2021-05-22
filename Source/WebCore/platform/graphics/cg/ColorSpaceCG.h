@@ -123,16 +123,16 @@ static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 static inline CGColorSpaceRef cachedCGColorSpace(DestinationColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case DestinationColorSpace::LinearSRGB: {
-#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
-        return linearSRGBColorSpaceRef();
-#else
-        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
-        return sRGBColorSpaceRef();
-#endif
-    }
     case DestinationColorSpace::SRGB:
         return sRGBColorSpaceRef();
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    case DestinationColorSpace::LinearSRGB:
+        return linearSRGBColorSpaceRef();
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    case DestinationColorSpace::DisplayP3:
+        return displayP3ColorSpaceRef();
+#endif
     }
     ASSERT_NOT_REACHED();
     return sRGBColorSpaceRef();

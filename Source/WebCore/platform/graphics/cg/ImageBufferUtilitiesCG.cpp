@@ -126,7 +126,7 @@ static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeTy
     ASSERT(uti);
 
     CGImageAlphaInfo dataAlphaInfo = kCGImageAlphaLast;
-    unsigned char* data = source.data()->data();
+    unsigned char* data = source.data().data();
     Vector<uint8_t> premultipliedData;
 
     if (CFEqual(uti.get(), jpegUTI())) {

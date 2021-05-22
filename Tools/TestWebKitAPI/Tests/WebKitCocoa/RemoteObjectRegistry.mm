@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "RemoteObjectRegistry.h"
 #import "Test.h"
+#import "TestAwakener.h"
 #import "TestNavigationDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -82,6 +83,14 @@ TEST(RemoteObjectRegistry, Basic)
         [object takeRange:NSMakeRange(345, 123) completionHandler:^(NSUInteger location, NSUInteger length) {
             EXPECT_EQ(345U, location);
             EXPECT_EQ(123U, length);
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+        auto initialAwakener = adoptNS([[TestAwakener alloc] initWithValue:42]);
+        [object sendAwakener:initialAwakener.get() completionHandler:^(TestAwakener *awakener) {
+            EXPECT_EQ(awakener.value, 42);
             isDone = true;
         }];
         TestWebKitAPI::Util::run(&isDone);

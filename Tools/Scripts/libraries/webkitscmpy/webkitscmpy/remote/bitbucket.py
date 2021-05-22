@@ -145,6 +145,7 @@ class BitBucket(Scm):
         if revision:
             raise self.Exception('Cannot map revisions to commits on BitBucket')
 
+        # Determine the commit data and branch for a given identifier
         if identifier is not None:
             if revision:
                 raise ValueError('Cannot define both revision and identifier')
@@ -194,6 +195,7 @@ class BitBucket(Scm):
             if identifier <= 0:
                 identifier = None
 
+        # Determine the commit data for a given branch or tag
         elif branch or tag:
             if hash:
                 raise ValueError('Cannot define both tag/branch and hash')
@@ -203,34 +205,41 @@ class BitBucket(Scm):
             if not commit_data:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
+        # Determine the commit data for a given hash
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
             commit_data = self.request('commits/{}'.format(hash or self.default_branch))
             if not commit_data:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
+        # A commit is often on multiple branches, the canonical branch is the one with the highest priority
         branches = self._branches_for(commit_data['id'])
         if branches:
             branch = self.prioritize_branches(branches)
-
         else:
             # A commit not on any branches cannot have an identifier
             identifier = None
             branch = None
 
+        # Define identifiers on default branch
         branch_point = None
         if include_identifier and branch and branch == self.default_branch:
             if not identifier:
                 identifier = self._distance(commit_data['id'])
 
+        # Define identifiers on branches diverged from the default branch
         elif include_identifier and branch:
             if not identifier:
                 identifier = self._distance(commit_data['id'], magnitude=256, condition=lambda val: self.default_branch not in val)
             branch_point = self._distance(commit_data['id']) - identifier
 
+        # Check the commit log for a git-svn revision
         matches = self.GIT_SVN_REVISION.findall(commit_data['message'])
         revision = int(matches[-1].split('@')[0]) if matches else None
 
+        # Comparing commits in different repositories involves comparing timestamps. This is problematic because it git,
+        # it's possible for a series of commits to share a commit time. To handle this case, we assign each commit a
+        # zero-indexed "order" within it's timestamp.
         timestamp = int(commit_data['committerTimestamp'] / 1000)
         order = 0
         while not identifier or order + 1 < identifier + (branch_point or 0):

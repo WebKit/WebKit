@@ -274,8 +274,6 @@ inline void loadLoadFence() { arm_dmb(); }
 inline void loadStoreFence() { arm_dmb(); }
 inline void storeLoadFence() { arm_dmb(); }
 inline void storeStoreFence() { arm_dmb_st(); }
-inline void memoryBarrierAfterLock() { arm_dmb(); }
-inline void memoryBarrierBeforeUnlock() { arm_dmb(); }
 inline void crossModifyingCodeFence() { arm_isb(); }
 
 #elif CPU(X86) || CPU(X86_64)
@@ -312,8 +310,6 @@ inline void loadLoadFence() { compilerFence(); }
 inline void loadStoreFence() { compilerFence(); }
 inline void storeLoadFence() { x86_ortop(); }
 inline void storeStoreFence() { compilerFence(); }
-inline void memoryBarrierAfterLock() { compilerFence(); }
-inline void memoryBarrierBeforeUnlock() { compilerFence(); }
 inline void crossModifyingCodeFence() { x86_cpuid(); }
 
 #else
@@ -322,10 +318,15 @@ inline void loadLoadFence() { std::atomic_thread_fence(std::memory_order_seq_cst
 inline void loadStoreFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
 inline void storeLoadFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
 inline void storeStoreFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
-inline void memoryBarrierAfterLock() { std::atomic_thread_fence(std::memory_order_seq_cst); }
-inline void memoryBarrierBeforeUnlock() { std::atomic_thread_fence(std::memory_order_seq_cst); }
 inline void crossModifyingCodeFence() { std::atomic_thread_fence(std::memory_order_seq_cst); } // Probably not strong enough.
 
+#endif
+
+#if CPU(ARM64) || CPU(X86) || CPU(X86_64)
+// Use this fence if you want a fence between loads that are already depdendent.
+inline void dependentLoadLoadFence() { compilerFence(); }
+#else
+inline void dependentLoadLoadFence() { loadLoadFence(); }
 #endif
 
 typedef unsigned InternalDependencyType;

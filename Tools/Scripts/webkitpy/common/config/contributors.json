@@ -3356,7 +3356,7 @@
       "nicks" : [
          "kate"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Katie Madonna" : {
       "emails" : [
@@ -3660,6 +3660,15 @@
       "nicks" : [
          "hyuki"
       ]
+   },
+   "Kyle Piddington" : {
+      "emails" : [
+         "kpiddington@apple.com"
+      ],
+      "nicks" : [
+         "kpiddington"
+      ],
+      "status" : "committer"
    },
    "Lars Knoll" : {
       "emails" : [
@@ -5548,7 +5557,8 @@
       ],
       "nicks" : [
          "ntim"
-      ]
+      ],
+      "status": "committer"
    },
    "Tim Omernick" : {
       "emails" : [

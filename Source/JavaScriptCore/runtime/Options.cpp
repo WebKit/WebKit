@@ -452,7 +452,8 @@ void Options::recomputeDependentOptions()
     if (!Options::useWebAssembly())
         Options::useFastTLSForWasmContext() = false;
     
-    if (Options::dumpDisassembly()
+    if (Options::logJIT()
+        || Options::dumpDisassembly()
         || Options::dumpDFGDisassembly()
         || Options::dumpFTLDisassembly()
         || Options::dumpBytecodeAtDFGTime()

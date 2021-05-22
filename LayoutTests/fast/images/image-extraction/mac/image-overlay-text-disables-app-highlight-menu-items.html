@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ appHighlightsEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+p {
+    font-size: 32px;
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+<img src="../../resources/green-400x400.png"></img>
+<p>Hello world this is a test.</p>
+</body>
+<script>
+var foundTitle1;
+var foundTitle2;
+
+function checkForAppHighlightContextMenuItems() {
+    foundTitle1 = false;
+    foundTitle2 = false;
+
+    let [title1, title2] = internals.appHighlightContextMenuItemTitles;
+    for (let item of eventSender.contextClick()) {
+        if (item.title === title1)
+            foundTitle1 = true;
+
+        if (item.title === title2)
+            foundTitle2 = true;
+    }
+}
+
+addEventListener("load", () => {
+    let text = document.querySelector("p");
+    let textRect = text.getBoundingClientRect();
+    let image = document.querySelector("img");
+
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+            children: [
+                {
+                    text : "foobar",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 1),
+                    bottomLeft : new DOMPointReadOnly(0, 1),
+                }
+            ]
+        }
+    ]);
+
+    getSelection().selectAllChildren(text);
+    eventSender.mouseMoveTo(textRect.left + textRect.width / 2, textRect.top + textRect.height / 2);
+    checkForAppHighlightContextMenuItems();
+    shouldBeTrue("foundTitle1");
+    shouldBeTrue("foundTitle2");
+
+    getSelection().selectAllChildren(internals.shadowRoot(image).querySelector("div#image-overlay"));
+    testPassed("Selected image overlay")
+    eventSender.mouseMoveTo(200, 200);
+    checkForAppHighlightContextMenuItems();
+    shouldBeFalse("foundTitle1");
+    shouldBeFalse("foundTitle2");
+
+    text.remove();
+});
+</script>
+</html>

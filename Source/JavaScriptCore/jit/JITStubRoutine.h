@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,14 +53,6 @@ public:
         : m_code(code)
         , m_refCount(1)
     {
-    }
-    
-    // Use this if you want to pass a CodePtr to someone who insists on taking
-    // a RefPtr<JITStubRoutine>.
-    static Ref<JITStubRoutine> createSelfManagedRoutine(
-        MacroAssemblerCodePtr<JITStubRoutinePtrTag> rawCodePointer)
-    {
-        return adoptRef(*new JITStubRoutine(MacroAssemblerCodeRef<JITStubRoutinePtrTag>::createSelfManagedCodeRef(rawCodePointer)));
     }
     
     virtual ~JITStubRoutine();

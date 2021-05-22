@@ -52,7 +52,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
     RegisterBlobURLFromURL(URL url, URL srcURL)
     RegisterBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
-    RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end)
+    RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
     UnregisterBlobURL(URL url)
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async

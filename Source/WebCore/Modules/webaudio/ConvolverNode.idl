@@ -29,7 +29,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface ConvolverNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional ConvolverOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional ConvolverOptions options);
 
     attribute AudioBuffer? buffer;
     attribute boolean normalize;

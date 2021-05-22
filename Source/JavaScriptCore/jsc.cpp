@@ -3008,7 +3008,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
                 // If the passed file isn't an absolute path append "./" so the module loader doesn't think this is a bare-name specifier.
                 fileName = fileName.startsWith('/') ? fileName : makeString("./", fileName);
                 promise = loadAndEvaluateModule(globalObject, fileName, jsUndefined(), jsUndefined());
-                scope.releaseAssertNoException();
+                RETURN_IF_EXCEPTION(scope, void());
             } else {
                 if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer)) {
                     success = false; // fail early so we can catch missing files
@@ -3042,14 +3042,17 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
             });
 
             promise->then(globalObject, fulfillHandler, rejectHandler);
-            scope.releaseAssertNoException();
+            scope.releaseAssertNoExceptionExceptTermination();
             vm.drainMicrotasks();
         } else {
             NakedPtr<Exception> evaluationException;
             JSValue returnValue = evaluate(globalObject, jscSource(scriptBuffer, sourceOrigin , fileName), JSValue(), evaluationException);
             scope.assertNoException();
-            if (evaluationException)
+            if (evaluationException) {
+                if (vm.isTerminationException(evaluationException.get()))
+                    vm.setExecutionForbidden();
                 returnValue = evaluationException->value();
+            }
             checkException(globalObject, isLastFile, evaluationException, returnValue, options, success);
         }
 
@@ -3299,7 +3302,7 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
         if (!strcmp(arg, "--sample")) {
             JSC::Options::useSamplingProfiler() = true;
-            JSC::Options::collectSamplingProfilerDataForJSCShell() = true;
+            JSC::Options::collectExtraSamplingProfilerData() = true;
             m_dumpSamplingProfilerData = true;
             continue;
         }

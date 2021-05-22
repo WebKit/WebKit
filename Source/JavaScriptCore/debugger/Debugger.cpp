@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
@@ -29,6 +29,7 @@
 #include "JSCInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "VMEntryScope.h"
+#include "VMTrapsInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -865,6 +866,7 @@ void Debugger::updateCallFrameInternal(CallFrame* callFrame)
 void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 {
     VM& vm = m_vm;
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (m_isPaused)

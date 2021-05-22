@@ -241,7 +241,10 @@ private:
     void didFailNavigation(API::Navigation*) override;
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
     void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
+    void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&) final;
     void didCompleteSyntheticClick() override;
+
+    void runModalJavaScriptDialog(CompletionHandler<void()>&& callback) final;
 
     void didChangeBackgroundColor() override;
     void videoControlsManagerDidChange() override;

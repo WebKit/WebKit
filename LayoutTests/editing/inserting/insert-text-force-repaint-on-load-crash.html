@@ -1,0 +1,27 @@
+<script>
+  onload = () => {
+    let n0 = document.createElement('embed');
+    n0.src = '#';
+    document.body.appendChild(n0);
+    document.documentElement.appendChild(document.createElement('input'));
+    document.documentElement.appendChild(document.createElement('span'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    let animation = new Animation();
+    animation.onfinish = () => document.execCommand('InsertText');
+    setTimeout(() => {
+      animation.reverse();
+      document.execCommand('InsertText');
+      if (window.testRunner) {
+        document.body.innerHTML = 'PASS';
+        testRunner.notifyDone();
+      }
+    }, 0);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        if (testRunner.displayOnLoadFinish)
+          testRunner.displayOnLoadFinish();
+        testRunner.waitUntilDone();
+    }
+  };
+</script>

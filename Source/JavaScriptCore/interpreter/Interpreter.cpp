@@ -65,6 +65,7 @@
 #include "StrictEvalActivation.h"
 #include "VMEntryScope.h"
 #include "VMInlines.h"
+#include "VMTrapsInlines.h"
 #include "VirtualRegister.h"
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
@@ -496,6 +497,7 @@ private:
 
 ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
 {
+    DeferTermination deferScope(vm);
     JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     if (Debugger* debugger = globalObject->debugger()) {
@@ -658,7 +660,6 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
     EXCEPTION_ASSERT(throwScope.exception() || program);
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
     if (vm.isCollectorBusyOnCurrentThread())
@@ -797,7 +798,7 @@ failedJSONP:
 
     // Compile source to bytecode if necessary:
     JSObject* error = program->initializeGlobalProperties(vm, globalObject, scope);
-    EXCEPTION_ASSERT(!throwScope.exception() || !error || vm.isTerminationException(throwScope.exception()));
+    EXCEPTION_ASSERT(!throwScope.exception() || !error || vm.hasPendingTerminationException());
     RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
     if (UNLIKELY(error))
         return checkedReturn(throwException(globalObject, throwScope, error));
@@ -1271,6 +1272,7 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
 NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHookType)
 {
     VM& vm = callFrame->deprecatedVM();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (UNLIKELY(Options::debuggerTriggersBreakpointException()) && debugHookType == DidReachDebuggerStatement)

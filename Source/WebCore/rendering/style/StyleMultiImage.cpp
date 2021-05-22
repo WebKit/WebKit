@@ -148,6 +148,13 @@ void StyleMultiImage::removeClient(RenderElement& renderer)
     m_selectedImage->removeClient(renderer);
 }
 
+bool StyleMultiImage::hasClient(RenderElement& renderer) const
+{
+    if (!m_selectedImage)
+        return false;
+    return m_selectedImage->hasClient(renderer);
+}
+
 RefPtr<Image> StyleMultiImage::image(RenderElement* renderer, const FloatSize& size) const
 {
     if (!m_selectedImage)

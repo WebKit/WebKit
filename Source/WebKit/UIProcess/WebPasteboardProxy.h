@@ -29,10 +29,7 @@
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
 #include <WebCore/PageIdentifier.h>
-#include <WebCore/SharedBuffer.h>
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/WeakHashSet.h>
 

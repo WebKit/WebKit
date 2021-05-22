@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2015-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -112,7 +112,7 @@ sub readLicenseFile($)
 
 my $inspectorLicense = <<'EOF';
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek. All rights reserved.
  * Copyright (C) 2008-2009 Anthony Ricaud <rik@webkit.org>
  * Copyright (C) 2009-2010 Joseph Pecoraro. All rights reserved.
@@ -238,7 +238,7 @@ sub combineOrStripResourcesForWebKitAdditions() {
         my $foundJSFile = 0;
         my $foundCSSFile = 0;
         foreach my $file (@files) {
-            my $path = File::Spec->catdir($$webInspectorUIAdditionsDir, $file);
+            my $path = File::Spec->catdir($webInspectorUIAdditionsDir, $file);
             next if -d $path;
             if ($file =~ /\.js$/) {
                 debugLog("Found a JavaScript file to combine: $file");
@@ -346,11 +346,28 @@ if ($shouldCombineMain) {
        '--output-dir', $derivedSourcesDir,
        '--output-script-name', 'Three.js');
 
+    # Combine non-minified JavaScript files in Production builds into a single file (NonMinified.js), which will be
+    # appended to Main.js after Main.js has been minified.
+    system($perl, $combineResourcesCmd,
+       '--input-dir', 'NonMinified',
+       '--input-html', $derivedSourcesMainHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'NonMinified.js',
+       '--skip-concatenate-tag');
+
     # Remove console.assert calls from the Main.js file.
     my $derivedSourcesMainJS = File::Spec->catfile($derivedSourcesDir, 'Main.js');
     system($perl, File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'),
         '--input-script', $derivedSourcesMainJS,
         '--output-script', $derivedSourcesMainJS);
+
+    # Remove console.assert calls from the NonMinified.js file.
+    my $derivedSourcesNonMinifiedJS = File::Spec->catfile($derivedSourcesDir, 'NonMinified.js');
+    system($perl, File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'),
+        '--input-script', $derivedSourcesNonMinifiedJS,
+        '--output-script', $derivedSourcesNonMinifiedJS);
 
     # Fix Image URLs in the Main.css file by removing the "../".
     my $derivedSourcesMainCSS = File::Spec->catfile($derivedSourcesDir, 'Main.css');
@@ -406,6 +423,9 @@ if ($shouldCombineMain) {
     my $derivedSourcesThreejsJS = File::Spec->catfile($derivedSourcesDir, 'Three.js');
     system(qq("$python" "$jsMinScript" < "$derivedSourcesThreejsJS" >> "$targetThreejsJS")) and die "Failed to minify $derivedSourcesThreejsJS: $!";
 
+    # Append non-minified JavaScript to Main.js.
+    appendFile($targetMainJS, $derivedSourcesNonMinifiedJS);
+
     # Copy over the Images directory.
     ditto(File::Spec->catdir($uiRoot, 'Images'), File::Spec->catdir($targetResourcePath, 'Images'));
 
@@ -443,6 +463,19 @@ if ($shouldCombineTest) {
 
     my $derivedSourcesTestHTML = File::Spec->catfile($derivedSourcesDir, 'Test.html');
     my $derivedSourcesTestJS = File::Spec->catfile($derivedSourcesDir, 'TestCombined.js');
+
+    # Combine non-minified JavaScript files in Production builds into the same TestCombined.js, because test files are not minified.
+    system($perl, $combineResourcesCmd,
+       '--input-dir', 'NonMinified',
+       '--input-html', $derivedSourcesTestHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'NonMinifiedTestCombined.js',
+       '--skip-concatenate-tag');
+
+    my $derivedSourcesNonMinifiedTestJS = File::Spec->catfile($derivedSourcesDir, 'NonMinifiedTestCombined.js');
+
     # Combine the CodeMirror JavaScript files into single file (TestCodeMirror.js).
     system($perl, $combineResourcesCmd,
         '--input-dir', 'External/CodeMirror',
@@ -475,6 +508,9 @@ if ($shouldCombineTest) {
 
     # Append TestCombined.js to the license that was exported above.
     appendFile($targetTestJS, $derivedSourcesTestJS);
+
+    # Append the non-minified sources to TestCombined.js.
+    appendFile($targetTestJS, $derivedSourcesNonMinifiedTestJS);
 
     # Append CodeMirror.js to the license that was exported above.
     my $derivedSourcesCodeMirrorJS = File::Spec->catfile($derivedSourcesDir, 'TestCodeMirror.js');

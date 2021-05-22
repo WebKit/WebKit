@@ -35,7 +35,6 @@
 #import <stdio.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SchedulePair.h>

@@ -1,7 +1,0 @@
-2d.shadow.stroke.basic
-Shadows are drawn for strokes
-Spec references: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed

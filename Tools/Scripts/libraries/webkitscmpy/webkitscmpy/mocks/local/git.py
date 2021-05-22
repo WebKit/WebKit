@@ -23,6 +23,7 @@
 import json
 import os
 import re
+import time
 
 from datetime import datetime
 from webkitcorepy import mocks, OutputCapture, StringIO
@@ -228,7 +229,7 @@ nothing to commit, working tree clean
                             branch=self.branch,
                             author=self.find(args[2]).author.name,
                             email=self.find(args[2]).author.email,
-                            date=datetime.fromtimestamp(self.find(args[2]).timestamp).strftime('%a %b %d %H:%M:%S %Y'),
+                            date=datetime.utcfromtimestamp(self.find(args[2]).timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
                             log='\n'.join([
                                     ('    ' + line) if line else '' for line in self.find(args[2]).message.splitlines()
                                 ] + (['    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
@@ -239,6 +240,33 @@ nothing to commit, working tree clean
                             )
                         ),
                 ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128),
+            ), mocks.Subprocess.Route(
+                self.executable, 'log', '--format=fuller', re.compile(r'.+\.\.\..+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join([
+                        'commit {hash}\n'
+                        'Author:     {author} <{email}>\n'
+                        'AuthorDate: {date}\n'
+                        'Commit:     {author} <{email}>\n'
+                        'CommitDate: {date}\n'
+                        '\n{log}'.format(
+                            hash=commit.hash,
+                            author=commit.author.name,
+                            email=commit.author.email,
+                            date=datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            log='\n'.join([
+                                ('    ' + line) if line else '' for line in commit.message.splitlines()
+                            ] + ([
+                                '    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
+                                    self.remote.split('@')[-1].split(':')[0],
+                                    os.path.basename(path),
+                                   commit.revision,
+                            )] if git_svn else []),
+                        )) for commit in self.commits_in_range(args[3].split('...')[-1], args[3].split('...')[0])
+                    ])
+                )
             ), mocks.Subprocess.Route(
                 self.executable, 'rev-list', '--count', '--no-merges', re.compile(r'.+'),
                 cwd=self.path,
@@ -463,3 +491,34 @@ nothing to commit, working tree clean
             returncode=0,
             stdout=stdout.getvalue(),
         )
+
+    def commits_in_range(self, begin, end):
+        branches = [self.default_branch]
+        for branch, commits in self.commits.items():
+            if branch == self.default_branch:
+                continue
+            for commit in commits:
+                if commit.hash == end:
+                    branches.insert(0, branch)
+                    break
+            if len(branches) > 1:
+                break
+
+        in_range = False
+        previous = None
+        for branch in branches:
+            for commit in reversed(self.commits[branch]):
+                if commit.hash == end:
+                    in_range = True
+                if in_range and (not previous or commit.hash != previous.hash):
+                    yield commit
+                previous = commit
+                if commit.hash == begin:
+                    in_range = False
+            in_range = False
+            if not previous or branch == self.default_branch:
+                continue
+
+            for commit in reversed(self.commits[self.default_branch]):
+                if previous.branch_point == commit.identifier:
+                    end = commit.hash

@@ -36,6 +36,7 @@
 #include "HTMLCollection.h"
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Length.h"
 #include "MouseEvent.h"
 #include "RenderFrameSet.h"
@@ -131,7 +132,7 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
 
     if (name == borderAttr) {
         if (!value.isNull()) {
-            m_border = value.toInt();
+            m_border = parseHTMLInteger(value).value_or(0);
             m_borderSet = true;
         } else
             m_borderSet = false;

@@ -2405,7 +2405,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlo
 
     if (baseValue.isObject()) {
         const Identifier fieldName = fieldNameValue.toPropertyKey(globalObject);
-        EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
+        EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         ASSERT(fieldName.isSymbol());
 
@@ -3534,7 +3534,7 @@ JSC_DEFINE_JIT_OPERATION(operationRetrieveAndClearExceptionIfCatchable, JSCell*,
     RELEASE_ASSERT(!!scope.exception());
 
     Exception* exception = scope.exception();
-    if (vm.isTerminationException(exception)) {
+    if (UNLIKELY(vm.isTerminationException(exception))) {
         genericUnwind(vm, callFrame);
         return nullptr;
     }

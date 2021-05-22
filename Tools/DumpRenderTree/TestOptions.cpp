@@ -89,6 +89,7 @@ const TestFeatures& TestOptions::defaults()
             { "MediaDevicesEnabled", true },
             { "MediaPreloadingEnabled", true },
             { "MockScrollbarsEnabled", true },
+            { "NPAPIPlugInsEnabledForTestingInWebKitLegacy", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OfflineWebApplicationCacheEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
@@ -132,10 +133,11 @@ const TestFeatures& TestOptions::defaults()
             { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },
             { "CSSContainmentEnabled", false },
-            { "CSSCounterStyleAtRulesEnabled", false },
             { "CSSCounterStyleAtRuleImageSymbolsEnabled", false },
+            { "CSSCounterStyleAtRulesEnabled", false },
             { "CSSLogicalEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },
+            { "CanvasColorSpaceEnabled", true },
             { "ColorFilterEnabled", false },
             { "ContactPickerAPIEnabled", false },
             { "CoreMathMLEnabled", false },
@@ -168,6 +170,9 @@ const TestFeatures& TestOptions::defaults()
             { "UsesBackForwardCache", false },
             { "WebGPUEnabled", false },
             { "XSSAuditorEnabled", false },
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+            { "UseGPUProcessForWebGLEnabled", false },
 #endif
         };
 #if PLATFORM(WIN)

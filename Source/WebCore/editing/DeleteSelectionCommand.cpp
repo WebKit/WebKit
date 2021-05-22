@@ -511,6 +511,9 @@ static inline bool shouldRemoveContentOnly(const Node& node)
 
 void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
+    if (!node.parentNode())
+        return;
+
     Ref<Node> protectedNode = node;
     if (m_startRoot != m_endRoot && !(node.isDescendantOf(m_startRoot.get()) && node.isDescendantOf(m_endRoot.get()))) {
         // If a node is not in both the start and end editable roots, remove it only if its inside an editable region.
@@ -846,15 +849,14 @@ void DeleteSelectionCommand::mergeParagraphs()
 
 void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
 {
+    // DeleteSelectionCommand::removeNode does not remove rows but only empties them in preparation for this function.
+    // Instead, DeleteSelectionCommand::removeNodeUpdatingStates is used below, which calls a raw CompositeEditCommand::removeNode and adjusts selection.
     if (m_endTableRow && m_endTableRow->isConnected() && m_endTableRow != m_startTableRow) {
         auto row = makeRefPtr(m_endTableRow->previousSibling());
         while (row && row != m_startTableRow) {
             auto previousRow = makeRefPtr(row->previousSibling());
-            if (isTableRowEmpty(row.get())) {
-                // Use a raw removeNode, instead of DeleteSelectionCommand's, because
-                // that won't remove rows, it only empties them in preparation for this function.
-                CompositeEditCommand::removeNode(*row);
-            }
+            if (isTableRowEmpty(row.get()))
+                removeNodeUpdatingStates(*row, DoNotAssumeContentIsAlwaysEditable);
             row = WTFMove(previousRow);
         }
     }
@@ -865,7 +867,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
         while (row && row != m_endTableRow) {
             auto nextRow = makeRefPtr(row->nextSibling());
             if (isTableRowEmpty(row.get()))
-                CompositeEditCommand::removeNode(*row);
+                removeNodeUpdatingStates(*row, DoNotAssumeContentIsAlwaysEditable);
             row = WTFMove(nextRow);
         }
     }

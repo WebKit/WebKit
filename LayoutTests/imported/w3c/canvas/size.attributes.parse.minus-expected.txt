@@ -1,7 +1,0 @@
-size.attributes.parse.minus
-Parsing of non-negative integers
-Spec references: size.nonnegativeinteger size.error
-Actual output:
-Expected output:
-
-Passed

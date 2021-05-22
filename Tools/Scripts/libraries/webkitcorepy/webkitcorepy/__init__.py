@@ -37,13 +37,15 @@ from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDupl
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.credentials import credentials
 
-version = Version(0, 5, 9)
+version = Version(0, 5, 14)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
     AutoInstall.register(Package('mock', Version(4)))
+    AutoInstall.register(Package('setuptools', Version(56, 0, 0)))
 else:
     AutoInstall.register(Package('mock', Version(3, 0, 5)))
+    AutoInstall.register(Package('setuptools', Version(44, 1, 1)))
     if platform.system() == 'Windows':
         AutoInstall.register(Package('win_inet_pton', Version(1, 1, 0), pypi_name='win-inet-pton'))
 
@@ -57,7 +59,6 @@ AutoInstall.register(Package('keyring', Version(7, 3, 1)))
 AutoInstall.register(Package('packaging', Version(20, 4)))
 AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 AutoInstall.register(Package('requests', Version(2, 24)))
-AutoInstall.register(Package('setuptools', Version(44, 1, 1)))
 AutoInstall.register(Package('setuptools_scm', Version(5, 0, 2), pypi_name='setuptools-scm'))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
 AutoInstall.register(Package('six', Version(1, 15, 0)))

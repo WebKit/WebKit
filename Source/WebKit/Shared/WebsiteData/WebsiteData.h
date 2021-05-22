@@ -27,7 +27,6 @@
 
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginData.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>

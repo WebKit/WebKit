@@ -572,9 +572,20 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
 
         memoryHandles.append(SharedMemory::IPCHandle { WTFMove(handle), highlight->size() });
     }
+    
+    setUpHighlightsObserver();
 
     send(Messages::WebPage::RestoreAppHighlightsAndScrollToIndex(WTFMove(memoryHandles), index));
 }
+
+void WebPageProxy::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightsVisibility)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SetAppHighlightsVisibility(appHighlightsVisibility));
+}
+
 #endif
 
 SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
@@ -615,9 +626,9 @@ bool WebPageProxy::canHandleContextMenuTranslation() const
     return pageClient().canHandleContextMenuTranslation();
 }
 
-void WebPageProxy::handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& locationInView)
+void WebPageProxy::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
-    return pageClient().handleContextMenuTranslation(text, boundsInView, locationInView);
+    return pageClient().handleContextMenuTranslation(info);
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)

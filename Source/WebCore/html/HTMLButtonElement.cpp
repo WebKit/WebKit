@@ -138,7 +138,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
             if (auto currentForm = form()) {
                 if (m_type == SUBMIT) {
                     SetForScope<bool> activatedSubmitState(m_isActivatedSubmit, true);
-                    currentForm->prepareForSubmission(event);
+                    currentForm->submitIfPossible(&event);
                 }
 
                 if (m_type == RESET)
@@ -235,6 +235,11 @@ const AtomString& HTMLButtonElement::value() const
 bool HTMLButtonElement::computeWillValidate() const
 {
     return m_type == SUBMIT && HTMLFormControlElement::computeWillValidate();
+}
+
+bool HTMLButtonElement::isSubmitButton() const
+{
+    return m_type == SUBMIT;
 }
 
 } // namespace

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -52,8 +52,12 @@ ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* st
     String messageString = message.isUndefined() ? String() : message.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    JSValue cause = !options.isObject() ? jsUndefined() : options.get(globalObject, vm.propertyNames->cause);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSValue cause;
+    if (options.isObject()) {
+        // Since `throw undefined;` is valid, we need to distinguish the case where `cause` is an explicit undefined.
+        cause = asObject(options)->getIfPropertyExists(globalObject, vm.propertyNames->cause);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
 
     return create(globalObject, vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
 }
@@ -137,7 +141,7 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     if (!messageWithSource.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, messageWithSource), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    if (!cause.isUndefined())
+    if (!cause.isEmpty())
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
@@ -155,10 +159,10 @@ String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
     PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry, &vm);
     if (JSObject::getOwnPropertySlot(this, globalObject, messagePropertName, messageSlot) && messageSlot.isValue())
         messageValue = messageSlot.getValue(globalObject, messagePropertName);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (!messageValue)
-        return String();
+        return { };
     RELEASE_AND_RETURN(scope, messageValue.toWTFString(globalObject));
 }
 
@@ -186,7 +190,7 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
         }
         currentObj = obj->getPrototypeDirect(vm);
     }
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (!nameValue)
         return "Error"_s;

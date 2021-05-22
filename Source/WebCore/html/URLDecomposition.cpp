@@ -27,6 +27,7 @@
 #include "URLDecomposition.h"
 
 #include "SecurityOrigin.h"
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -118,7 +119,7 @@ void URLDecomposition::setHost(StringView value)
         if (!portLength) {
             fullURL.setHost(value.substring(0, separator));
         } else {
-            auto portNumber = parseUInt16(value.substring(separator + 1, portLength));
+            auto portNumber = parseInteger<uint16_t>(value.substring(separator + 1, portLength));
             if (portNumber && WTF::isDefaultPortForProtocol(*portNumber, fullURL.protocol()))
                 fullURL.setHostAndPort(value.substring(0, separator));
             else
@@ -172,7 +173,7 @@ static Optional<Optional<uint16_t>> parsePort(StringView string, StringView prot
     auto digitsOnly = string.left(countASCIIDigits(string));
     if (digitsOnly.isEmpty())
         return Optional<uint16_t> { WTF::nullopt };
-    auto port = parseUInt16(digitsOnly);
+    auto port = parseInteger<uint16_t>(digitsOnly);
     if (!port)
         return WTF::nullopt;
     if (WTF::isDefaultPortForProtocol(*port, protocol))

@@ -32,7 +32,7 @@ def default_browser():
 
 
 def config_argument_parser():
-    parser = argparse.ArgumentParser(description='Run browser based performance benchmarks. To run a single benchmark in the recommended way, use run-benchmark --plan. To see the vailable benchmarks, use run-benchmark --list-plans.')
+    parser = argparse.ArgumentParser(description='Run browser based performance benchmarks. To run a single benchmark in the recommended way, use run-benchmark --plan. To see the vailable benchmarks, use run-benchmark --list-plans. This script passes through the __XPC variables in its environment to the Safari process.')
     mutual_group = parser.add_mutually_exclusive_group(required=True)
     mutual_group.add_argument('--plan', help='Run a specific benchmark plan (e.g. speedometer, jetstream).')
     mutual_group.add_argument('--list-plans', action='store_true', help='List all available benchmark plans.')

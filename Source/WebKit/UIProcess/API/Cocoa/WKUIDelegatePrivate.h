@@ -164,6 +164,7 @@ struct UIEdgeInsets;
 - (BOOL)_webView:(WKWebView *)webView shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element WK_API_AVAILABLE(ios(9.0));
 - (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray<_WKElementAction *> *)defaultActions;
 - (void)_webView:(WKWebView *)webView didNotHandleTapAsClickAtPoint:(CGPoint)point;
+- (void)_webView:(WKWebView *)webView didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView requestGeolocationAuthorizationForURL:(NSURL *)url frame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL authorized))decisionHandler WK_API_AVAILABLE(ios(11.0));
 - (BOOL)_webView:(WKWebView *)webView fileUploadPanelContentIsManagedWithInitiatingFrame:(WKFrameInfo *)frame;
 

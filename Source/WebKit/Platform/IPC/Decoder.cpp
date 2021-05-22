@@ -79,25 +79,19 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDealloca
     , m_bufferDeallocator { bufferDeallocator }
     , m_attachments { WTFMove(attachments) }
 {
-    if (reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t)) {
+    if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t))) {
         markInvalid();
         return;
     }
 
-    if (!decode(m_messageFlags)) {
-        markInvalid();
+    if (UNLIKELY(!decode(m_messageFlags)))
         return;
-    }
 
-    if (!decode(m_messageName)) {
-        markInvalid();
+    if (UNLIKELY(!decode(m_messageName)))
         return;
-    }
 
-    if (!decode(m_destinationID)) {
-        markInvalid();
+    if (UNLIKELY(!decode(m_destinationID)))
         return;
-    }
 }
 
 Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, ConstructWithoutHeaderTag)
@@ -106,7 +100,7 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, ConstructWithoutHeade
     , m_bufferEnd { m_buffer + bufferSize }
     , m_bufferDeallocator([] (const uint8_t*, size_t) { })
 {
-    if (reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t))
+    if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t)))
         markInvalid();
 }
 
@@ -117,10 +111,8 @@ Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationI
     , m_bufferDeallocator([] (const uint8_t*, size_t) { })
     , m_destinationID(destinationID)
 {
-    if (!decode(m_messageName)) {
-        markInvalid();
+    if (UNLIKELY(!decode(m_messageName)))
         return;
-    }
 }
 
 Decoder::~Decoder()
@@ -199,7 +191,7 @@ static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPos
 bool Decoder::alignBufferPosition(size_t alignment, size_t size)
 {
     const uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
-    if (!alignedBufferIsLargeEnoughToContain(alignedPosition, m_buffer, m_bufferEnd, size)) {
+    if (UNLIKELY(!alignedBufferIsLargeEnoughToContain(alignedPosition, m_buffer, m_bufferEnd, size))) {
         // We've walked off the end of this buffer.
         markInvalid();
         return false;

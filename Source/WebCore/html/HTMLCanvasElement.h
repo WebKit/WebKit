@@ -31,7 +31,6 @@
 #include "CanvasBase.h"
 #include "FloatRect.h"
 #include "HTMLElement.h"
-#include "ImageBitmapRenderingContextSettings.h"
 #include <memory>
 #include <wtf/Forward.h>
 
@@ -53,6 +52,8 @@ class MediaStream;
 class OffscreenCanvas;
 class WebGLRenderingContextBase;
 class GPUCanvasContext;
+struct CanvasRenderingContext2DSettings;
+struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
 
 namespace DisplayList {
@@ -77,8 +78,8 @@ public:
     CanvasRenderingContext* getContext(const String&);
 
     static bool is2dType(const String&);
-    CanvasRenderingContext2D* createContext2d(const String& type);
-    CanvasRenderingContext2D* getContext2d(const String&);
+    CanvasRenderingContext2D* createContext2d(const String&, CanvasRenderingContext2DSettings&&);
+    CanvasRenderingContext2D* getContext2d(const String&, CanvasRenderingContext2DSettings&&);
 
 #if ENABLE(WEBGL)
     using WebGLVersion = GraphicsContextGLWebGLVersion;
@@ -95,8 +96,8 @@ public:
 #endif
 
     static bool isBitmapRendererType(const String&);
-    ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&& = { });
-    ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&& = { });
+    ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
+    ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);

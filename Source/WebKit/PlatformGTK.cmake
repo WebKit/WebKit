@@ -33,20 +33,11 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
 )
 
-if (NOT USE_GTK4)
-    list(APPEND WebKit_SOURCES
-        UIProcess/ViewGestureController.cpp
+list(APPEND WebKit_MESSAGES_IN_FILES
+    UIProcess/ViewGestureController
 
-        UIProcess/gtk/ViewGestureControllerGtk.cpp
-
-        WebProcess/WebPage/ViewGestureGeometryCollector.cpp
-    )
-    list(APPEND WebKit_MESSAGES_IN_FILES
-        UIProcess/ViewGestureController
-
-        WebProcess/WebPage/ViewGestureGeometryCollector
-    )
-endif ()
+    WebProcess/WebPage/ViewGestureGeometryCollector
+)
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit2Gtk_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c

@@ -1,0 +1,12 @@
+Test that the colorSpace member of CanvasRenderingContext2DSettings is unsupported when CanvasColorSpaceEnabled=false.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testSettings.colorSpace is undefined.
+PASS testSettings.colorSpace is undefined.
+PASS testSettings.colorSpace is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

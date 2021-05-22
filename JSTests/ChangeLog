@@ -1,3 +1,88 @@
+2021-05-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Error#cause must recognize explicit undefined
+        https://bugs.webkit.org/show_bug.cgi?id=225535
+
+        Reviewed by Alexey Shvayka.
+
+        * test262/config.yaml:
+        Re-enable tests for this feature; they were all failing due to this quirk.
+
+2021-05-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update test262 (2021.05.07)
+        https://bugs.webkit.org/show_bug.cgi?id=225536
+
+        Reviewed by Alexey Shvayka.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/:
+        * test262/test262-Revision.txt:
+
+2021-05-06  Mark Lam  <mark.lam@apple.com>
+
+        Forbid further execution in jsc shell if execution is terminated.
+        https://bugs.webkit.org/show_bug.cgi?id=225410
+        rdar://77548608
+
+        Reviewed by Michael Saboff.
+
+        * stress/jsc-shell-forbid-execution-after-termination.js: Added.
+
+2021-05-05  Saam Barati  <sbarati@apple.com>
+
+        Update tests to use collectExtraSamplingProfilerData instead of collectSamplingProfilerDataForJSCShell
+        https://bugs.webkit.org/show_bug.cgi?id=225398
+
+        Reviewed by Mark Lam.
+
+        I forgot to update the tests to use the new option name.
+
+        * stress/sampling-profiler-code-origin.js:
+        * stress/sampling-profiler-richards.js:
+
+2021-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix syntax error message for AUTOPLUSPLUS token.
+        https://bugs.webkit.org/show_bug.cgi?id=225308
+        rdar://76830934
+
+        Reviewed by Saam Barati.
+
+        * stress/prefix-plusplus-syntax-error-should-say-plusplus.js: Added.
+
+2021-05-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add call_ref instruction
+        https://bugs.webkit.org/show_bug.cgi?id=222903
+
+        Reviewed by Yusuke Suzuki.
+
+        Add basic tests for new call_ref instruction:
+        https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md.
+        Add tests for calling same-instance wasm function, foreign-instance
+        wasm function and for calling imported js function.
+
+        * wasm.yaml:
+        * wasm/function-references/call_ref.js: Added.
+        (module):
+        (async basics):
+        (async indirectCall):
+        (async importHostCall):
+        * wasm/wasm.json:
+
+2021-04-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception assertions in light of the TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=225128
+        rdar://76694909
+
+        Reviewed by Robin Morisset.
+
+        * stress/suppress-TerminationException-in-JSFunction-prototypeForConstruction.js: Added.
+
 2021-04-27  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Skip tests failing on Loongson 3A4000

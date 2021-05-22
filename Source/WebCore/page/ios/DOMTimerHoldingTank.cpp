@@ -28,8 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <wtf/HashSet.h>
-
 namespace WebCore {
 
 #if PLATFORM(IOS_SIMULATOR)

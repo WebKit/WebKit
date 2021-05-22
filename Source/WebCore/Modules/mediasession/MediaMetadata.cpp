@@ -80,7 +80,7 @@ void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkL
     RefPtr<SharedBuffer> bufferToSanitize = m_cachedImage->image()->data();
     auto bitmapImage = BitmapImage::create();
     bitmapImage->setData(WTFMove(bufferToSanitize), true);
-    auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingMode::Unaccelerated);
+    auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
     if (!imageBuffer) {
         m_callback(nullptr);
         return;
@@ -180,6 +180,8 @@ void MediaMetadata::refreshArtworkImage()
     // FIXME: Implement a heuristic to retrieve the "best" image.
     m_artworkImageSrc = mediaImages[0].src;
     m_artworkLoader = makeUnique<ArtworkImageLoader>(*m_session->document(), m_artworkImageSrc, [this](Image* image) {
+        if (!image || !image->data())
+            return;
         setArtworkImage(image);
         metadataUpdated();
     });

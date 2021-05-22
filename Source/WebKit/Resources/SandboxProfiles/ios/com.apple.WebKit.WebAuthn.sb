@@ -23,6 +23,7 @@
 
 (version 1)
 (deny default (with partial-symbolication))
+(deny nvram*)
 (allow system-audit file-read-metadata)
 
 ;;;
@@ -148,22 +149,6 @@
 
     (allow file-read* file-write-data file-ioctl
            (literal "/dev/aes_0")))
-
-(define-once (logd-diagnostic-paths)
-    (require-any
-        (subpath "/private/var/db/diagnostics")
-        (subpath "/private/var/db/timesync")
-        (subpath "/private/var/db/uuidtext")
-        (subpath "/private/var/userdata/diagnostics")))
-(define-once (logd-diagnostic-client)
-    (with-filter
-        (require-all
-            (require-any
-                (require-entitlement "com.apple.private.logging.diagnostic")
-                (require-entitlement "com.apple.diagnosticd.diagnostic"))
-            (extension "com.apple.logd.read-only"))
-        (allow file-read*
-               (logd-diagnostic-paths))))
 
 (define required-etc-files
   (literal "/private/etc/fstab"
@@ -398,8 +383,6 @@
 
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.diagnosticd"))
-
-(logd-diagnostic-client)
 
 (managed-configuration-read-public)
 

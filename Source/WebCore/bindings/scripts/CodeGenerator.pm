@@ -1421,7 +1421,7 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
     my @checks = ();
     foreach my $constant (@{$interface->constants}) {
         my $scope = $constant->extendedAttributes->{"ImplementedBy"} || $baseScope;
-        my $name = $constant->extendedAttributes->{"Reflect"} || $constant->name;
+        my $name = $constant->extendedAttributes->{"ImplementedAs"} || $constant->name;
         my $value = $constant->value;
         my $conditional = $constant->extendedAttributes->{"Conditional"};
         push(@checks, "#if " . $generator->GenerateConditionalStringFromAttributeValue($conditional) . "\n") if $conditional;

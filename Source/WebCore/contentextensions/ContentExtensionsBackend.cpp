@@ -71,6 +71,13 @@ static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& ur
 }
 #endif
 
+bool ContentExtensionsBackend::shouldBeMadeSecure(const URL& url)
+{
+    ContentRuleListResults results;
+    makeSecureIfNecessary(results, url);
+    return results.summary.madeHTTPS;
+}
+
 void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, ContentExtension::ShouldCompileCSS shouldCompileCSS)
 {
     ASSERT(!identifier.isEmpty());

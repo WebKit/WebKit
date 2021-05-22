@@ -37,12 +37,14 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "ColorSpace.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "Path2D.h"
+#include "PixelFormat.h"
 #include "RenderTheme.h"
 #include "RenderWidget.h"
 #include "ResourceLoadObserver.h"
@@ -67,17 +69,18 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext2D);
 
-std::unique_ptr<CanvasRenderingContext2D> CanvasRenderingContext2D::create(CanvasBase& canvas, bool usesCSSCompatibilityParseMode)
+std::unique_ptr<CanvasRenderingContext2D> CanvasRenderingContext2D::create(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
 {
-    auto renderingContext = std::unique_ptr<CanvasRenderingContext2D>(new CanvasRenderingContext2D(canvas, usesCSSCompatibilityParseMode));
+    auto renderingContext = std::unique_ptr<CanvasRenderingContext2D>(new CanvasRenderingContext2D(canvas, WTFMove(settings), usesCSSCompatibilityParseMode));
 
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
 
     return renderingContext;
 }
 
-CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, bool usesCSSCompatibilityParseMode)
+CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
     : CanvasRenderingContext2DBase(canvas, usesCSSCompatibilityParseMode)
+    , m_settings { WTFMove(settings) }
 {
 }
 
@@ -210,7 +213,8 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     return measureTextInternal(textRun);
 }
 
-auto CanvasRenderingContext2D::fontProxy() -> const FontProxy* {
+auto CanvasRenderingContext2D::fontProxy() -> const FontProxy*
+{
     // Intentionally don't update style here, because updating style can cause JS to run synchronously.
     // This function is called in the middle of processing, and running arbitrary JS in the middle of processing can cause unexpected behavior.
     // Instead, the relevant canvas entry points update style once when they begin running, and we won't touch the style after that.
@@ -240,6 +244,17 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
+}
+
+PixelFormat CanvasRenderingContext2D::pixelFormat() const
+{
+    // FIXME: Take m_settings.alpha into account here and add PixelFormat::BGRX8.
+    return PixelFormat::BGRA8;
+}
+
+DestinationColorSpace CanvasRenderingContext2D::colorSpace() const
+{
+    return toDestinationColorSpace(m_settings.colorSpace);
 }
 
 } // namespace WebCore

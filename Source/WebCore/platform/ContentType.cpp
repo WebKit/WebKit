@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
@@ -57,43 +57,44 @@ const String& ContentType::profilesParameter()
 
 String ContentType::parameter(const String& parameterName) const
 {
-    String parameterValue;
-    String strippedType = m_type.stripWhiteSpace();
+    // A MIME type can have one or more "param=value" after a semicolon, separated from each other by semicolons.
 
-    // a MIME type can have one or more "param=value" after a semi-colon, and separated from each other by semi-colons
-    size_t semi = strippedType.find(';');
-    if (semi != notFound) {
-        size_t start = strippedType.findIgnoringASCIICase(parameterName, semi + 1);
-        if (start != notFound) {
-            start = strippedType.find('=', start + parameterName.length());
-            if (start != notFound) {
-                size_t quote = strippedType.find('\"', start + 1);
-                size_t end = strippedType.find('\"', start + 2);
-                if (quote != notFound && end != notFound)
-                    start = quote;
-                else {
-                    end = strippedType.find(';', start + 1);
-                    if (end == notFound)
-                        end = strippedType.length();
-                }
-                parameterValue = strippedType.substring(start + 1, end - (start + 1)).stripWhiteSpace();
-            }
-        }
+    // FIXME: This will ignore a quotation mark if it comes before the semicolon. Is that the desired behavior?
+    auto semicolonPosition = m_type.find(';');
+    if (semicolonPosition == notFound)
+        return { };
+
+    // FIXME: This matches parameters that have parameterName as a suffix; that is not the desired behavior.
+    auto nameStart = m_type.findIgnoringASCIICase(parameterName, semicolonPosition + 1);
+    if (nameStart == notFound)
+        return { };
+
+    auto equalSignPosition = m_type.find('=', nameStart + parameterName.length());
+    if (equalSignPosition == notFound)
+        return { };
+
+    // FIXME: This skips over any characters that come before a quotation mark; that is not the desired behavior.
+    auto quotePosition = m_type.find('"', equalSignPosition + 1);
+    // FIXME: This does not work if there is an escaped quotation mark in the quoted string. Is that the desired behavior?
+    auto secondQuotePosition = m_type.find('"', quotePosition + 1);
+    size_t start;
+    size_t end;
+    if (quotePosition != notFound && secondQuotePosition != notFound) {
+        start = quotePosition + 1;
+        end = secondQuotePosition;
+    } else {
+        // FIXME: If there is only one quotation mark, this will treat it as part of the string; that is not the desired behavior.
+        start = equalSignPosition + 1;
+        end = m_type.find(';', start);
     }
-
-    return parameterValue;
+    return StringView { m_type }.substring(start, end - start).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString();
 }
 
 String ContentType::containerType() const
 {
-    String strippedType = m_type.stripWhiteSpace();
-
-    // "type" can have parameters after a semi-colon, strip them
-    size_t semi = strippedType.find(';');
-    if (semi != notFound)
-        strippedType = strippedType.left(semi).stripWhiteSpace();
-
-    return strippedType;
+    // Strip parameters that come after a semicolon.
+    // FIXME: This will ignore a quotation mark if it comes before the semicolon. Is that the desired behavior?
+    return stripLeadingAndTrailingHTMLSpaces(m_type.left(m_type.find(';')));
 }
 
 static inline Vector<String> splitParameters(StringView parametersView)

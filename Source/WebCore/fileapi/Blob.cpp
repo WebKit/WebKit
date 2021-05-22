@@ -160,7 +160,7 @@ Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, 
     // m_size is not necessarily equal to end - start so we do not initialize it here.
 {
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end);
+    ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end, m_type);
 }
 
 Blob::~Blob()

@@ -31,6 +31,12 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+#if PLATFORM(COCOA)
+#include <WebCore/ColorSpaceCG.h>
+#include <WebCore/IOSurface.h>
+#include <wtf/MachSendRight.h>
+#endif
+
 namespace PlatformXR {
 
 enum class SessionMode : uint8_t {
@@ -166,6 +172,9 @@ public:
 
         struct LayerData {
             PlatformGLObject opaqueTexture { 0 };
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+            std::unique_ptr<WebCore::IOSurface> surface;
+#endif
 
             template<class Encoder> void encode(Encoder&) const;
             template<class Decoder> static Optional<LayerData> decode(Decoder&);
@@ -204,6 +213,8 @@ public:
         Vector<View> views;
         HashMap<LayerHandle, LayerData> layers;
         Vector<InputSource> inputSources;
+
+        FrameData copy() const;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<FrameData> decode(Decoder&);
@@ -419,6 +430,10 @@ template<class Encoder>
 void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
     encoder << opaqueTexture;
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    WTF::MachSendRight surfaceSendRight = surface ? surface->createSendRight() : WTF::MachSendRight();
+    encoder << surfaceSendRight;
+#endif
 }
 
 template<class Decoder>
@@ -427,6 +442,12 @@ Optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Deco
     PlatformXR::Device::FrameData::LayerData layerData;
     if (!decoder.decode(layerData.opaqueTexture))
         return WTF::nullopt;
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    WTF::MachSendRight surfaceSendRight;
+    if (!decoder.decode(surfaceSendRight))
+        return WTF::nullopt;
+    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::sRGBColorSpaceRef());
+#endif
     return layerData;
 }
 
@@ -469,6 +490,22 @@ Optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
         return WTF::nullopt;
     if (!decoder.decode(frameData.layers))
         return WTF::nullopt;
+
+    return frameData;
+}
+
+inline Device::FrameData Device::FrameData::copy() const
+{
+    PlatformXR::Device::FrameData frameData;
+    frameData.isTrackingValid = isTrackingValid;
+    frameData.isPositionValid = isPositionValid;
+    frameData.isPositionEmulated = isPositionEmulated;
+    frameData.shouldRender = shouldRender;
+    frameData.predictedDisplayTime = predictedDisplayTime;
+    frameData.origin = origin;
+    frameData.floorTransform = floorTransform;
+    frameData.stageParameters = stageParameters;
+    frameData.views = views;
     return frameData;
 }
 

@@ -27,7 +27,6 @@
 
 #include "Node.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>

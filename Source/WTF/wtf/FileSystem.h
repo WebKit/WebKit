@@ -166,9 +166,9 @@ WTF_EXPORT_PRIVATE void unlockAndCloseFile(PlatformFileHandle);
 // Returns true if the write was successful, false if it was not.
 WTF_EXPORT_PRIVATE bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);
 
-WTF_EXPORT_PRIVATE bool hardLink(const String& source, const String& destination);
+WTF_EXPORT_PRIVATE bool hardLink(const String& targetPath, const String& linkPath);
 // Hard links a file if possible, copies it if not.
-WTF_EXPORT_PRIVATE bool hardLinkOrCopyFile(const String& source, const String& destination);
+WTF_EXPORT_PRIVATE bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath);
 
 #if USE(FILE_LOCK)
 WTF_EXPORT_PRIVATE bool lockFile(PlatformFileHandle, OptionSet<FileLockMode>);

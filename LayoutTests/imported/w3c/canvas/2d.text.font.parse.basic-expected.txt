@@ -1,4 +1,0 @@
-2d.text.font.parse.basic
-Spec references: 2d.text.font.parse 2d.text.font.get
-Actual output:
-Passed

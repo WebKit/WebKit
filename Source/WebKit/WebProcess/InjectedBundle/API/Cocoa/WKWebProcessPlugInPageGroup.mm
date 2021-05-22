@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WKWebProcessPlugInPageGroupInternal.h"
 
-#import "WKBundlePageGroup.h"
 #import "WKAPICast.h"
 #import "WKNSString.h"
 #import "WKRetainPtr.h"

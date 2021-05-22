@@ -33,7 +33,6 @@
 #import "SandboxUtilities.h"
 #import <WebCore/PluginBlocklist.h>
 #import <pwd.h>
-#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 

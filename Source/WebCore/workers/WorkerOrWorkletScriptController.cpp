@@ -108,13 +108,13 @@ void WorkerOrWorkletScriptController::detachDebugger(JSC::Debugger* debugger)
 void WorkerOrWorkletScriptController::forbidExecution()
 {
     ASSERT(m_globalScope->isContextThread());
-    m_executionForbidden = true;
+    m_vm->setExecutionForbidden();
 }
 
 bool WorkerOrWorkletScriptController::isExecutionForbidden() const
 {
     ASSERT(m_globalScope->isContextThread());
-    return m_executionForbidden;
+    return m_vm->executionForbidden();
 }
 
 void WorkerOrWorkletScriptController::scheduleExecutionTermination()

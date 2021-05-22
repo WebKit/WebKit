@@ -117,6 +117,10 @@ Invalidator::RuleInformation Invalidator::collectRuleInformation()
             information.hasHostPseudoClassRules = true;
         if (ruleSet->hasShadowPseudoElementRules())
             information.hasShadowPseudoElementRules = true;
+#if ENABLE(VIDEO)
+        if (!ruleSet->cuePseudoRules().isEmpty())
+            information.hasCuePseudoElementRules = true;
+#endif
         if (!ruleSet->partPseudoElementRules().isEmpty())
             information.hasPartPseudoElementRules = true;
     }
@@ -315,15 +319,35 @@ void Invalidator::invalidateShadowParts(ShadowRoot& shadowRoot)
     }
 }
 
+void Invalidator::invalidateShadowPseudoElements(ShadowRoot& shadowRoot)
+{
+    if (shadowRoot.mode() != ShadowRootMode::UserAgent)
+        return;
+
+    for (auto& descendant : descendantsOfType<Element>(shadowRoot)) {
+        auto& shadowPseudoId = descendant.shadowPseudoId();
+        if (!shadowPseudoId)
+            continue;
+        for (auto& ruleSet : m_ruleSets) {
+            if (ruleSet->shadowPseudoElementRules(shadowPseudoId))
+                descendant.invalidateStyleInternal();
+        }
+    }
+}
+
 void Invalidator::invalidateInShadowTreeIfNeeded(Element& element)
 {
     auto* shadowRoot = element.shadowRoot();
     if (!shadowRoot)
         return;
 
-    // FIXME: This could do actual rule matching too.
     if (m_ruleInformation.hasShadowPseudoElementRules)
+        invalidateShadowPseudoElements(*shadowRoot);
+
+#if ENABLE(VIDEO)
+    if (m_ruleInformation.hasCuePseudoElementRules && element.isMediaElement())
         element.invalidateStyleForSubtreeInternal();
+#endif
 
     // FIXME: More fine-grained invalidation for ::part()
     if (m_ruleInformation.hasPartPseudoElementRules)

@@ -48,7 +48,7 @@ class WebXRFrame : public RefCounted<WebXRFrame> {
     WTF_MAKE_ISO_ALLOCATED(WebXRFrame);
 public:
     enum class IsAnimationFrame : bool { No, Yes };
-    static Ref<WebXRFrame> create(Ref<WebXRSession>&&, IsAnimationFrame);
+    static Ref<WebXRFrame> create(WebXRSession&, IsAnimationFrame);
     ~WebXRFrame();
 
     const WebXRSession& session() const { return m_session.get(); }
@@ -66,7 +66,7 @@ public:
     static TransformationMatrix matrixFromPose(const PlatformXR::Device::FrameData::Pose&);
 
 private:
-    WebXRFrame(Ref<WebXRSession>&&, IsAnimationFrame);
+    WebXRFrame(WebXRSession&, IsAnimationFrame);
 
     bool isOutsideNativeBoundsOfBoundedReferenceSpace(const WebXRSpace&, const WebXRSpace&) const;
     bool isLocalReferenceSpace(const WebXRSpace&) const;

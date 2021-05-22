@@ -72,6 +72,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/style-animation-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-transform-animation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-transform-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/translation-animation-subpixel-offset-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/translation-animation-subpixel-offset.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html

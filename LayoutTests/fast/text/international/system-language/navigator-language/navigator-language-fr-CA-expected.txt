@@ -1,4 +1,4 @@
-PASS navigator.language is "fr-ca"
+PASS navigator.language is "fr-CA"
 PASS successfullyParsed is true
 
 TEST COMPLETE

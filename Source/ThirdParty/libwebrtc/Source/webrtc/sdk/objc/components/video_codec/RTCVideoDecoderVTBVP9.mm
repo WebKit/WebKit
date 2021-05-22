@@ -305,10 +305,10 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   // we can pass CVPixelBuffers as native handles in decoder output.
   static size_t const attributesSize = 3;
   CFTypeRef keys[attributesSize] = {
-#if defined(WEBRTC_IOS)
-    kCVPixelBufferOpenGLESCompatibilityKey,
-#elif defined(WEBRTC_MAC)
+#if defined(WEBRTC_MAC) || defined(WEBRTC_MAC_CATALYST)
     kCVPixelBufferOpenGLCompatibilityKey,
+#elif defined(WEBRTC_IOS)
+    kCVPixelBufferOpenGLESCompatibilityKey,
 #endif
     kCVPixelBufferIOSurfacePropertiesKey,
     kCVPixelBufferPixelFormatTypeKey

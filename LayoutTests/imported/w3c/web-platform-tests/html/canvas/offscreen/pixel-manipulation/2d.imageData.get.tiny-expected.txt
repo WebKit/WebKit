@@ -1,7 +1,0 @@
-2d.imageData.get.tiny
-
-getImageData() works for sizes smaller than one pixel
-
-
-PASS getImageData() works for sizes smaller than one pixel
-

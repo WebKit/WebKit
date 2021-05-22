@@ -35,6 +35,8 @@ enum class ScrollBehavior : uint8_t {
     Smooth
 };
 
-bool useSmoothScrolling(ScrollBehavior, Element* associatedElement);
+enum class SmoothScrollFeatureEnablement : bool { Default, Override };
+
+bool useSmoothScrolling(ScrollBehavior, Element* associatedElement, SmoothScrollFeatureEnablement = SmoothScrollFeatureEnablement::Default);
 
 } // namespace WebCore

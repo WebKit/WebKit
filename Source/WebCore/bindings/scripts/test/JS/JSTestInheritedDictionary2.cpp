@@ -83,19 +83,23 @@ template<> TestInheritedDictionary2 convertDictionary<TestInheritedDictionary2>(
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestInheritedDictionary2& dictionary)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
 
     if (!IDLBoolean::isNullValue(dictionary.boolMember)) {
-        auto boolMemberValue = toJS<IDLBoolean>(IDLBoolean::extractValueFromNullable(dictionary.boolMember));
+        auto boolMemberValue = toJS<IDLBoolean>(lexicalGlobalObject, throwScope, IDLBoolean::extractValueFromNullable(dictionary.boolMember));
+        RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "boolMember"), boolMemberValue);
     }
     if (!IDLCallbackFunction<JSVoidCallback>::isNullValue(dictionary.callbackMember)) {
-        auto callbackMemberValue = toJS<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, globalObject, IDLCallbackFunction<JSVoidCallback>::extractValueFromNullable(dictionary.callbackMember));
+        auto callbackMemberValue = toJS<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, globalObject, throwScope, IDLCallbackFunction<JSVoidCallback>::extractValueFromNullable(dictionary.callbackMember));
+        RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "callbackMember"), callbackMemberValue);
     }
     if (!IDLDOMString::isNullValue(dictionary.stringMember)) {
-        auto stringMemberValue = toJS<IDLDOMString>(lexicalGlobalObject, IDLDOMString::extractValueFromNullable(dictionary.stringMember));
+        auto stringMemberValue = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(dictionary.stringMember));
+        RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "stringMember"), stringMemberValue);
     }
     return result;

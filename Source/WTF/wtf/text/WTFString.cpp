@@ -1016,8 +1016,6 @@ intptr_t charactersToIntPtr(const UChar* data, size_t length, bool* ok)
     return toIntegralType<intptr_t>(data, lengthOfCharactersAsInteger<UChar>(data, length), ok, 10);
 }
 
-enum TrailingJunkPolicy { DisallowTrailingJunk, AllowTrailingJunk };
-
 template<typename CharacterType, TrailingJunkPolicy policy>
 static inline double toDoubleType(const CharacterType* data, size_t length, bool* ok, size_t& parsedLength)
 {
@@ -1034,46 +1032,46 @@ static inline double toDoubleType(const CharacterType* data, size_t length, bool
 
     parsedLength += leadingSpacesLength;
     if (ok)
-        *ok = policy == AllowTrailingJunk || parsedLength == length;
+        *ok = policy == TrailingJunkPolicy::Allow || parsedLength == length;
     return number;
 }
 
 double charactersToDouble(const LChar* data, size_t length, bool* ok)
 {
     size_t parsedLength;
-    return toDoubleType<LChar, DisallowTrailingJunk>(data, length, ok, parsedLength);
+    return toDoubleType<LChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength);
 }
 
 double charactersToDouble(const UChar* data, size_t length, bool* ok)
 {
     size_t parsedLength;
-    return toDoubleType<UChar, DisallowTrailingJunk>(data, length, ok, parsedLength);
+    return toDoubleType<UChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength);
 }
 
 float charactersToFloat(const LChar* data, size_t length, bool* ok)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
     size_t parsedLength;
-    return static_cast<float>(toDoubleType<LChar, DisallowTrailingJunk>(data, length, ok, parsedLength));
+    return static_cast<float>(toDoubleType<LChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength));
 }
 
 float charactersToFloat(const UChar* data, size_t length, bool* ok)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
     size_t parsedLength;
-    return static_cast<float>(toDoubleType<UChar, DisallowTrailingJunk>(data, length, ok, parsedLength));
+    return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength));
 }
 
 float charactersToFloat(const LChar* data, size_t length, size_t& parsedLength)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<LChar, AllowTrailingJunk>(data, length, nullptr, parsedLength));
+    return static_cast<float>(toDoubleType<LChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
 }
 
 float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<UChar, AllowTrailingJunk>(data, length, nullptr, parsedLength));
+    return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
 }
 
 const String& emptyString()

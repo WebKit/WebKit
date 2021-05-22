@@ -134,6 +134,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -3548,6 +3549,16 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         [_textInteractionAssistant activateSelection];
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+
+- (BOOL)shouldAllowAppHighlightCreation
+{
+    auto editorState = _page->editorState();
+    return editorState.selectionIsRange && !editorState.isContentEditable && !editorState.selectionIsRangeInsideImageOverlay;
+}
+
+#endif // ENABLE(APP_HIGHLIGHTS)
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
     if (_domPasteRequestHandler)
@@ -3564,11 +3575,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (action == @selector(_deleteByWord) || action == @selector(_deleteForwardByWord) || action == @selector(_deleteForwardAndNotify:) || action == @selector(_deleteToEndOfParagraph) || action == @selector(_deleteToStartOfLine)
         || action == @selector(_transpose))
         return editorState.isContentEditable;
-
-#if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
-        return editorState.selectionIsRange && !editorState.isContentEditable;
-#endif
 
     return [_webView canPerformAction:action withSender:sender];
 }
@@ -3761,8 +3767,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (id)targetForAction:(SEL)action withSender:(id)sender
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
-        return self;
+    if (action == @selector(createHighlightInCurrentGroupWithRange:))
+        return self.shouldAllowAppHighlightCreation && _page->appHighlightsVisibility() ? self : nil;
+    if (action == @selector(createHighlightInNewGroupWithRange:))
+        return self.shouldAllowAppHighlightCreation && !_page->appHighlightsVisibility() ? self : nil;
+    
 #endif
     return [_webView targetForAction:action withSender:sender];
 }
@@ -4494,7 +4503,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    if (_domPasteRequestHandler) {
+    if (_page->isRunningModalJavaScriptDialog() || _domPasteRequestHandler) {
         completionHandler([WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]);
         return;
     }
@@ -4520,6 +4529,14 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     _lastAutocorrectionContext = context;
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
+}
+
+- (void)runModalJavaScriptDialog:(CompletionHandler<void()>&&)callback
+{
+    if (_isFocusingElementWithKeyboard)
+        _pendingRunModalJavaScriptDialogCallback = WTFMove(callback);
+    else
+        callback();
 }
 
 - (void)_didStartProvisionalLoadForMainFrame
@@ -6153,6 +6170,11 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, self._hasFocusedElement };
     SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, [self _shouldShowKeyboardForElement:information] };
 
+    auto runModalJavaScriptDialogCallbackIfNeeded = makeScopeExit([&] {
+        if (auto callback = std::exchange(_pendingRunModalJavaScriptDialogCallback, { }))
+            callback();
+    });
+
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
 
     _didAccessoryTabInitiateFocus = _isChangingFocusUsingAccessoryTab;
@@ -6194,7 +6216,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
                 if (_isChangingFocus)
                     return YES;
 
-                if ([UIKeyboard isInHardwareKeyboardMode])
+                if (_isFocusingElementWithKeyboard && [UIKeyboard isInHardwareKeyboardMode])
                     return YES;
 #endif
             }
@@ -6519,13 +6541,13 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     WeakObjCPtr<WKContentView> weakSelf { self };
     auto identifierBeforeUpdate = _focusedElementInformation.focusedElementIdentifier;
     _page->requestFocusedElementInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info) {
-        if (!weakSelf || info.focusedElementIdentifier != identifierBeforeUpdate) {
+        if (!weakSelf || !info || info->focusedElementIdentifier != identifierBeforeUpdate) {
             // If the focused element may have changed in the meantime, don't overwrite focused element information.
             callback(false);
             return;
         }
 
-        weakSelf.get()->_focusedElementInformation = info;
+        weakSelf.get()->_focusedElementInformation = info.value();
         callback(true);
     });
 }
@@ -9138,18 +9160,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 #endif
 
+
+
+
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)setUpAppHighlightMenusIfNeeded
-{
-    if (_hasSetUpAppHighlightMenus || !_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
-        return;
-
-    auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
-    auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
-    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
-    _hasSetUpAppHighlightMenus = YES;
-}
-
 - (void)createHighlightInCurrentGroupWithRange:(id)sender
 {
     _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::No);

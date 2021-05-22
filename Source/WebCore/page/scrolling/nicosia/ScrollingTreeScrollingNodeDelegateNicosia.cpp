@@ -173,8 +173,8 @@ WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelE
         FloatPoint newFloatOffset = scrollingNode().currentScrollOffset() + FloatSize(deltaX, deltaY);
         auto newOffset = LayoutPoint(newFloatOffset.x() / scale, newFloatOffset.y() / scale);
 
-        auto offsetX = scrollingNode().snapOffsetsInfo().closestSnapOffset(ScrollEventAxis::Horizontal, newOffset.x(), deltaX, originalOffset.x()).first;
-        auto offsetY = scrollingNode().snapOffsetsInfo().closestSnapOffset(ScrollEventAxis::Vertical, newOffset.y(), deltaY, originalOffset.y()).first;
+        auto offsetX = scrollingNode().snapOffsetsInfo().closestSnapOffset(ScrollEventAxis::Horizontal, scrollableAreaSize(), newOffset.x(), deltaX, originalOffset.x()).first;
+        auto offsetY = scrollingNode().snapOffsetsInfo().closestSnapOffset(ScrollEventAxis::Vertical, scrollableAreaSize(), newOffset.y(), deltaY, originalOffset.y()).first;
 
         deltaX = (offsetX - originalOffset.x()) * scale;
         deltaY = (offsetY - originalOffset.y()) * scale;

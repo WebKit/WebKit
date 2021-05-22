@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Successfuly preconnected to http://localhost:8000/
+CONSOLE MESSAGE: Successfully preconnected to http://localhost:8000/
 Tests that preconnect tasks get marked with the proper context string.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

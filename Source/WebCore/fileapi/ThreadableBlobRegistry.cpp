@@ -126,15 +126,15 @@ void ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(const URL& url,
     });
 }
 
-void ThreadableBlobRegistry::registerBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end)
+void ThreadableBlobRegistry::registerBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end, const String& contentType)
 {
     if (isMainThread()) {
-        blobRegistry().registerBlobURLForSlice(newURL, srcURL, start, end);
+        blobRegistry().registerBlobURLForSlice(newURL, srcURL, start, end, contentType);
         return;
     }
 
-    callOnMainThread([newURL = newURL.isolatedCopy(), srcURL = srcURL.isolatedCopy(), start, end] {
-        blobRegistry().registerBlobURLForSlice(newURL, srcURL, start, end);
+    callOnMainThread([newURL = newURL.isolatedCopy(), srcURL = srcURL.isolatedCopy(), start, end, contentType = contentType.isolatedCopy()] {
+        blobRegistry().registerBlobURLForSlice(newURL, srcURL, start, end, contentType);
     });
 }
 

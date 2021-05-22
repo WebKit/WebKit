@@ -29,8 +29,6 @@
 
 #include "CaptureDeviceManager.h"
 #include "GenericTaskQueue.h"
-#include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WorkQueue.h>

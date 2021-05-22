@@ -33,9 +33,9 @@
 #import <wtf/HashSet.h>
 #import <wtf/MainThread.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
@@ -88,7 +88,7 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginModuleInfo&
     CFDictionaryGetKeysAndValues(mimeTypes.get(), reinterpret_cast<const void**>(mimeTypesVector.data()), reinterpret_cast<const void**>(mimeTypeInfoVector.data()));
     
     for (CFIndex i = 0; i < numMimeTypes; ++i) {
-        MimeClassInfo mimeClassInfo;
+        WebCore::MimeClassInfo mimeClassInfo;
         
         // If this MIME type is invalid, ignore it.
         CFStringRef mimeType = mimeTypesVector[i];
@@ -194,7 +194,7 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
         plugin.info.desc = plugin.info.file;
 
     plugin.info.isApplicationPlugin = false;
-    plugin.info.clientLoadPolicy = PluginLoadClientPolicy::Undefined;
+    plugin.info.clientLoadPolicy = WebCore::PluginLoadClientPolicy::Undefined;
 #if PLATFORM(MAC)
     plugin.info.bundleIdentifier = plugin.bundleIdentifier;
     plugin.info.versionString = plugin.versionString;
@@ -222,17 +222,12 @@ private:
 PluginVersion PluginVersion::parse(const String& versionString)
 {
     PluginVersion version;
-
-    Vector<String> versionStringComponents = versionString.split('.');
-    for (size_t i = 0; i < versionStringComponents.size(); ++i) {
-        bool successfullyParsed = false;
-        unsigned versionComponent = versionStringComponents[i].toUInt(&successfullyParsed);
-        if (!successfullyParsed)
-            return PluginVersion();
-
-        version.m_versionComponents.append(versionComponent);
+    for (auto component : StringView { versionString }.split('.')) {
+        auto versionComponent = parseIntegerAllowingTrailingJunk<unsigned>(component);
+        if (!versionComponent)
+            return { };
+        version.m_versionComponents.append(*versionComponent);
     }
-
     return version;
 }
 

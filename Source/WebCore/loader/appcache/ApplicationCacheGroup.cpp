@@ -50,7 +50,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

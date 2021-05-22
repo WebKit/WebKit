@@ -124,6 +124,7 @@
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
+#import <WebCore/ContentExtensionsBackend.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
@@ -559,6 +560,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setServiceWorkerEntitlementDisabledForTesting(!![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting);
 #endif
 
+    pageConfiguration->preferences()->setSampledPageTopColorMaxDifference([_configuration _sampledPageTopColorMaxDifference]);
+    pageConfiguration->preferences()->setSampledPageTopColorMinHeight([_configuration _sampledPageTopColorMinHeight]);
+
     if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
         pageConfiguration->preferences()->setNeedsSiteSpecificQuirks(false);
 }
@@ -983,9 +987,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (WKMediaCaptureState)cameraCaptureState
 {
     auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice)
         return WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice)
         return WKMediaCaptureStateMuted;
     return WKMediaCaptureStateNone;
 }
@@ -993,9 +997,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (WKMediaCaptureState)microphoneCaptureState
 {
     auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice)
         return WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice)
         return WKMediaCaptureStateMuted;
     return WKMediaCaptureStateNone;
 }
@@ -1012,10 +1016,10 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
     auto mutedState = _page->mutedStateFlags();
-    if (state == WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::AudioCaptureIsMuted)
-        mutedState ^= WebCore::MediaProducer::AudioCaptureIsMuted;
+    if (state == WKMediaCaptureStateActive)
+        mutedState.remove(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
-        mutedState = WebCore::MediaProducer::AudioCaptureIsMuted;
+        mutedState.add(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
     _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
@@ -1033,10 +1037,10 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
     auto mutedState = _page->mutedStateFlags();
-    if (state == WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::VideoCaptureIsMuted)
-        mutedState ^= WebCore::MediaProducer::VideoCaptureIsMuted;
+    if (state == WKMediaCaptureStateActive)
+        mutedState.remove(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
-        mutedState = WebCore::MediaProducer::VideoCaptureIsMuted;
+        mutedState.add(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
     _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
@@ -1951,14 +1955,14 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const Optional<Web
     });
 }
 
-static WebCore::TextManipulationController::ItemIdentifier coreTextManipulationItemIdentifierFromString(NSString* identifier)
+static WebCore::TextManipulationController::ItemIdentifier coreTextManipulationItemIdentifierFromString(NSString *identifier)
 {
-    return makeObjectIdentifier<WebCore::TextManipulationController::ItemIdentifierType>(String(identifier).toUInt64());
+    return makeObjectIdentifier<WebCore::TextManipulationController::ItemIdentifierType>(identifier.longLongValue);
 }
 
-static WebCore::TextManipulationController::TokenIdentifier coreTextManipulationTokenIdentifierFromString(NSString* identifier)
+static WebCore::TextManipulationController::TokenIdentifier coreTextManipulationTokenIdentifierFromString(NSString *identifier)
 {
-    return makeObjectIdentifier<WebCore::TextManipulationController::TokenIdentifierType>(String(identifier).toUInt64());
+    return makeObjectIdentifier<WebCore::TextManipulationController::TokenIdentifierType>(identifier.longLongValue);
 }
 
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler
@@ -2517,6 +2521,11 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     return true;
 }
 
++ (BOOL)_willUpgradeToHTTPS:(NSURL *)url
+{
+    return WebCore::ContentExtensions::ContentExtensionsBackend::shouldBeMadeSecure(url);
+}
+
 - (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler
 {
     [self _showSafeBrowsingWarningWithURL:nil title:title warning:warning detailsWithLinks:details completionHandler:^(BOOL continueUnsafeLoad, NSURL *url) {
@@ -3030,6 +3039,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     return WebCore::platformColor(pageExtendedBackgroundColor);
 }
 
+- (CocoaColor *)_sampledPageTopColor
+{
+    auto sampledPageTopColor = _page->sampledPageTopColor();
+    if (!sampledPageTopColor.isValid())
+        return nil;
+    return WebCore::platformColor(sampledPageTopColor);
+}
+
 - (id <_WKInputDelegate>)_inputDelegate
 {
     return _inputDelegate.getAutoreleased();
@@ -3340,14 +3357,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState
 {
-    WebCore::MediaProducer::MutedStateFlags coreState = WebCore::MediaProducer::NoneMuted;
+    WebCore::MediaProducer::MutedStateFlags coreState;
 
     if (mutedState & _WKMediaAudioMuted)
-        coreState |= WebCore::MediaProducer::AudioIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::AudioIsMuted);
     if (mutedState & _WKMediaCaptureDevicesMuted)
-        coreState |= WebCore::MediaProducer::AudioAndVideoCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::AudioAndVideoCaptureIsMuted);
     if (mutedState & _WKMediaScreenCaptureMuted)
-        coreState |= WebCore::MediaProducer::ScreenCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
 
     _page->setMuted(coreState);
 }

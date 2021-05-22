@@ -55,7 +55,6 @@ bool DeprecatedGlobalSettings::gAllowsAnySSLCertificate = false;
 
 #if PLATFORM(IOS_FAMILY)
 bool DeprecatedGlobalSettings::gNetworkDataUsageTrackingEnabled = false;
-bool DeprecatedGlobalSettings::gAVKitEnabled = false;
 bool DeprecatedGlobalSettings::gShouldOptOutOfNetworkStateObservation = false;
 bool DeprecatedGlobalSettings::gDisableScreenSizeOverride = false;
 #endif

@@ -1603,7 +1603,11 @@ void WebProcess::nonVisibleProcessMemoryCleanupTimerFired()
     if (!m_pagesInWindows.isEmpty())
         return;
 
-    WebCore::releaseMemory(Critical::Yes, Synchronous::No, WebCore::MaintainBackForwardCache::Yes, WebCore::MaintainMemoryCache::No);
+    // If this is a process that we keep around for performance, then don't proactively slim it down until absolutely necessary (in the memory pressure handler).
+    if (m_processType == ProcessType::CachedWebContent || areAllPagesSuspended())
+        return;
+
+    WebCore::releaseMemory(Critical::Yes, Synchronous::No, MaintainBackForwardCache::Yes, MaintainMemoryCache::No);
     for (auto& page : m_pageMap.values())
         page->releaseMemory(Critical::Yes);
 }

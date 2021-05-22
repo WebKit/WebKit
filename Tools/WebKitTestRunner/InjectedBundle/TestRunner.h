@@ -128,6 +128,8 @@ public:
     void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
     void display();
     void displayAndTrackRepaints();
+    void displayOnLoadFinish() { m_displayOnLoadFinish = true; }
+    bool shouldDisplayOnLoadFinish() { return m_displayOnLoadFinish; }
 
     // UserContent testing.
     void addUserScript(JSStringRef source, bool runAtStart, bool allFrames);
@@ -342,6 +344,9 @@ public:
     void setAllowedMenuActions(JSValueRef);
     void installCustomMenuAction(JSStringRef name, bool dismissesAutomatically, JSValueRef callback);
     void performCustomMenuAction();
+
+    void installDidNotHandleTapAsMeaningfulClickCallback(JSValueRef);
+    void callDidNotHandleTapAsMeaningfulClickCallback();
 
     void installDidBeginSwipeCallback(JSValueRef);
     void installWillEndSwipeCallback(JSValueRef);
@@ -572,6 +577,7 @@ private:
     bool m_disallowIncreaseForApplicationCacheQuota { false };
     bool m_testRepaint { false };
     bool m_testRepaintSweepHorizontally { false };
+    bool m_displayOnLoadFinish { false };
     bool m_isPrinting { false };
     bool m_willSendRequestReturnsNull { false };
     bool m_willSendRequestReturnsNullOnRedirect { false };

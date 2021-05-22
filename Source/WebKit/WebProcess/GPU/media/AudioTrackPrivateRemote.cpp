@@ -81,7 +81,7 @@ void AudioTrackPrivateRemote::updateConfiguration(TrackPrivateRemoteConfiguratio
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
     m_kind = configuration.audioKind;
-    setEnabled(configuration.enabled);
+    AudioTrackPrivate::setEnabled(configuration.enabled);
 }
 
 } // namespace WebKit

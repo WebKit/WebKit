@@ -30,6 +30,8 @@
 
 #include "DataReference.h"
 #include "Decoder.h"
+#include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "RemoteMediaRecorder.h"
 #include <WebCore/ExceptionData.h>
 

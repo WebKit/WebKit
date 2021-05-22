@@ -31,25 +31,23 @@
 #import "FourCC.h"
 #import "HEVCUtilities.h"
 #import "MediaCapabilitiesInfo.h"
-
-#import <wtf/RobinHoodHashMap.h>
 #import <wtf/text/StringToIntegerConversion.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
 
 #import "VideoToolboxSoftLink.h"
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
-bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo& info, bool hasAlphaChannel, bool hdrSupport)
+Optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     CMVideoCodecType codec = kCMVideoCodecType_HEVC;
     if (hasAlphaChannel) {
         if (!PAL::isAVFoundationFrameworkAvailable() || !PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha())
-            return false;
+            return WTF::nullopt;
 
         auto codecCode = FourCC::fromString(AVVideoCodecTypeHEVCWithAlpha);
         if (!codecCode)
-            return false;
+            return WTF::nullopt;
 
         codec = codecCode.value().value;
     }
@@ -59,12 +57,12 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
         bool isMain10 = parameters.generalProfileSpace == 0
             && (parameters.generalProfileIDC == 2 || parameters.generalProfileCompatibilityFlags == 1);
         if (!isMain10)
-            return false;
+            return WTF::nullopt;
     }
 
     OSStatus status = VTSelectAndCreateVideoDecoderInstance(codec, kCFAllocatorDefault, nullptr, nullptr);
     if (status != noErr)
-        return false;
+        return WTF::nullopt;
 
     if (!canLoad_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary()
         || !canLoad_VideoToolbox_kVTHEVCDecoderCapability_SupportedProfiles()
@@ -72,30 +70,34 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
         || !canLoad_VideoToolbox_kVTHEVCDecoderProfileCapability_IsHardwareAccelerated()
         || !canLoad_VideoToolbox_kVTHEVCDecoderProfileCapability_MaxDecodeLevel()
         || !canLoad_VideoToolbox_kVTHEVCDecoderProfileCapability_MaxPlaybackLevel())
-        return false;
+        return WTF::nullopt;
 
-    RetainPtr<CFDictionaryRef> capabilities = adoptCF(VTCopyHEVCDecoderCapabilitiesDictionary());
+    auto capabilities = adoptCF(VTCopyHEVCDecoderCapabilitiesDictionary());
     if (!capabilities)
-        return false;
+        return WTF::nullopt;
 
     auto supportedProfiles = (CFArrayRef)CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_SupportedProfiles);
     if (!supportedProfiles || CFGetTypeID(supportedProfiles) != CFArrayGetTypeID())
-        return false;
+        return WTF::nullopt;
 
     int16_t generalProfileIDC = parameters.generalProfileIDC;
     auto cfGeneralProfileIDC = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt16Type, &generalProfileIDC));
     auto searchRange = CFRangeMake(0, CFArrayGetCount(supportedProfiles));
     if (!CFArrayContainsValue(supportedProfiles, searchRange, cfGeneralProfileIDC.get()))
-        return false;
+        return WTF::nullopt;
 
     auto perProfileSupport = (CFDictionaryRef)CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_PerProfileSupport);
     if (!perProfileSupport || CFGetTypeID(perProfileSupport) != CFDictionaryGetTypeID())
-        return false;
+        return WTF::nullopt;
 
     auto generalProfileIDCString = String::number(generalProfileIDC).createCFString();
     auto profileSupport = (CFDictionaryRef)CFDictionaryGetValue(perProfileSupport, generalProfileIDCString.get());
     if (!profileSupport || CFGetTypeID(profileSupport) != CFDictionaryGetTypeID())
-        return false;
+        return WTF::nullopt;
+
+    MediaCapabilitiesInfo info;
+
+    info.supported = true;
 
     auto isHardwareAccelerated = (CFBooleanRef)CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_IsHardwareAccelerated);
     if (isHardwareAccelerated && CFGetTypeID(isHardwareAccelerated) == CFBooleanGetTypeID())
@@ -105,80 +107,59 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
     if (cfMaxDecodeLevel && CFGetTypeID(cfMaxDecodeLevel) == CFNumberGetTypeID()) {
         int16_t maxDecodeLevel = 0;
         if (!CFNumberGetValue(cfMaxDecodeLevel, kCFNumberSInt16Type, &maxDecodeLevel))
-            return false;
+            return WTF::nullopt;
 
         if (parameters.generalLevelIDC > maxDecodeLevel)
-            return false;
-
-        info.supported = true;
+            return WTF::nullopt;
     }
 
     auto cfMaxPlaybackLevel = (CFNumberRef)CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxPlaybackLevel);
     if (cfMaxPlaybackLevel && CFGetTypeID(cfMaxPlaybackLevel) == CFNumberGetTypeID()) {
         int16_t maxPlaybackLevel = 0;
         if (!CFNumberGetValue(cfMaxPlaybackLevel, kCFNumberSInt16Type, &maxPlaybackLevel))
-            return false;
+            return WTF::nullopt;
 
         info.smooth = parameters.generalLevelIDC <= maxPlaybackLevel;
     }
 
-    return true;
+    return info;
 }
 
-static Optional<CMVideoCodecType> codecTypeForDoViCodecString(const String& codecString)
+static CMVideoCodecType codecType(DoViParameters::Codec codec)
 {
-    static auto map = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<String, CMVideoCodecType>>({
-        { "avc1"_s, kCMVideoCodecType_H264 },
-        { "avc3"_s, kCMVideoCodecType_H264 },
-        { "hvc1"_s, kCMVideoCodecType_HEVC },
-        { "hev1"_s, kCMVideoCodecType_HEVC },
-    });
-
-    auto findResult = map.get().find(codecString);
-    if (findResult == map.get().end())
-        return WTF::nullopt;
-    return findResult->value;
+    switch (codec) {
+    case DoViParameters::Codec::AVC1:
+    case DoViParameters::Codec::AVC3:
+        return kCMVideoCodecType_H264;
+    case DoViParameters::Codec::HEV1:
+    case DoViParameters::Codec::HVC1:
+        return kCMVideoCodecType_HEVC;
+    }
 }
 
-static Optional<Vector<unsigned short>> CFStringArrayToNumberVector(CFArrayRef arrayCF)
+static Optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(CFDictionaryRef dictionary, const void* key)
 {
-    if (!arrayCF || CFGetTypeID(arrayCF) != CFArrayGetTypeID())
+    auto value = CFDictionaryGetValue(dictionary, key);
+    if (!value || CFGetTypeID(value) != CFArrayGetTypeID())
         return WTF::nullopt;
-
-    auto arrayNS = (__bridge NSArray<NSString*>*)arrayCF;
-    Vector<unsigned short> values;
-    values.reserveInitialCapacity(arrayNS.count);
-
-    bool areAllValidNumbers = true;
-    [arrayNS enumerateObjectsUsingBlock:[&] (NSString* value, NSUInteger, BOOL *stop) {
-        if (![value isKindOfClass:NSString.class]) {
-            areAllValidNumbers = false;
-            if (stop)
-                *stop = true;
-            return;
-        }
-
-        bool isValidNumber = false;
-        auto numericValue = toIntegralType<unsigned short>(String(value), &isValidNumber);
-        if (!isValidNumber) {
-            areAllValidNumbers = false;
-            if (stop)
-                *stop = true;
-            return;
-        }
-
-        values.uncheckedAppend(numericValue);
-    }];
-
-    if (!areAllValidNumbers)
-        return WTF::nullopt;
-    return values;
+    NSArray *array = (__bridge NSArray *)value;
+    Vector<uint16_t> vector;
+    vector.reserveInitialCapacity(array.count);
+    for (id value in array) {
+        if (![value isKindOfClass:NSString.class])
+            return WTF::nullopt;
+        auto numericValue = parseInteger<uint16_t>(String((NSString *)value));
+        if (!numericValue)
+            return WTF::nullopt;
+        vector.uncheckedAppend(*numericValue);
+    }
+    return vector;
 }
 
-bool validateDoViParameters(DoViParameterSet& parameters, MediaCapabilitiesInfo& info, bool hasAlphaChannel, bool hdrSupport)
+Optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     if (hasAlphaChannel)
-        return false;
+        return WTF::nullopt;
 
     if (hdrSupport) {
         // Platform supports HDR playback of HEVC Main10 Profile, which is signalled by DoVi profiles 4, 5, 7, & 8.
@@ -189,50 +170,41 @@ bool validateDoViParameters(DoViParameterSet& parameters, MediaCapabilitiesInfo&
         case 8:
             break;
         default:
-            return false;
+            return WTF::nullopt;
         }
     }
 
-    auto codecType = codecTypeForDoViCodecString(parameters.codecName);
-    if (!codecType)
-        return false;
-
-    OSStatus status = VTSelectAndCreateVideoDecoderInstance(codecType.value(), kCFAllocatorDefault, nullptr, nullptr);
+    OSStatus status = VTSelectAndCreateVideoDecoderInstance(codecType(parameters.codec), kCFAllocatorDefault, nullptr, nullptr);
     if (status != noErr)
-        return false;
+        return WTF::nullopt;
 
     if (!canLoad_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary()
         || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_SupportedProfiles()
         || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_SupportedLevels()
         || !canLoad_VideoToolbox_kVTDolbyVisionDecoderCapability_IsHardwareAccelerated())
-        return false;
+        return WTF::nullopt;
 
-    RetainPtr<CFDictionaryRef> capabilities = adoptCF(VTCopyHEVCDecoderCapabilitiesDictionary());
+    auto capabilities = adoptCF(VTCopyHEVCDecoderCapabilitiesDictionary());
     if (!capabilities)
-        return false;
+        return WTF::nullopt;
 
-    auto supportedProfilesCF = (CFArrayRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedProfiles);
-    auto supportedProfiles = CFStringArrayToNumberVector(supportedProfilesCF);
+    auto supportedProfiles = parseStringArrayFromDictionaryToUInt16Vector(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedProfiles);
     if (!supportedProfiles)
-        return false;
+        return WTF::nullopt;
 
-    auto supportedLevelsCF = (CFArrayRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedLevels);
-    auto supportedLevels = CFStringArrayToNumberVector(supportedLevelsCF);
+    auto supportedLevels = parseStringArrayFromDictionaryToUInt16Vector(capabilities.get(), kVTDolbyVisionDecoderCapability_SupportedLevels);
     if (!supportedLevels)
-        return false;
+        return WTF::nullopt;
 
     auto isHardwareAcceleratedCF = (CFBooleanRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_IsHardwareAccelerated);
     if (!isHardwareAcceleratedCF || CFGetTypeID(isHardwareAcceleratedCF) != CFBooleanGetTypeID())
-        return false;
+        return WTF::nullopt;
+    bool isHardwareAccelerated = CFBooleanGetValue(isHardwareAcceleratedCF);
 
     if (!supportedProfiles.value().contains(parameters.bitstreamProfileID) || !supportedLevels.value().contains(parameters.bitstreamLevelID))
-        return false;
+        return WTF::nullopt;
 
-    info.supported = true;
-    info.smooth = true;
-    info.powerEfficient = CFBooleanGetValue(isHardwareAcceleratedCF);
-
-    return true;
+    return { { true, true, isHardwareAccelerated } };
 }
 
 }

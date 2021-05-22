@@ -100,9 +100,10 @@ void FEDisplacementMap::platformApplySoftware()
     ASSERT(m_yChannelSelector != CHANNEL_UNKNOWN);
 
     auto* resultImage = createPremultipliedImageResult();
-    auto* dstPixelArray = resultImage ? resultImage->data() : nullptr;
-    if (!dstPixelArray)
+    if (!resultImage)
         return;
+
+    auto& dstPixelArray = resultImage->data();
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     auto inputImage = in->premultipliedResult(effectADrawingRect);
@@ -140,7 +141,7 @@ void FEDisplacementMap::platformApplySoftware()
             int srcX = x + static_cast<int>(scaleForColorX * displacementImage->item(dstIndex + displacementChannelX) + scaledOffsetX);
             int srcY = y + static_cast<int>(scaleForColorY * displacementImage->item(dstIndex + displacementChannelY) + scaledOffsetY);
 
-            unsigned* dstPixelPtr = reinterpret_cast<unsigned*>(dstPixelArray->data() + dstIndex);
+            unsigned* dstPixelPtr = reinterpret_cast<unsigned*>(dstPixelArray.data() + dstIndex);
             if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height()) {
                 *dstPixelPtr = 0;
                 continue;

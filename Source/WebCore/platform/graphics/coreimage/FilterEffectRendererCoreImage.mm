@@ -276,7 +276,7 @@ ImageBuffer* FilterEffectRendererCoreImage::output() const
 void FilterEffectRendererCoreImage::renderToImageBuffer(FilterEffect& lastEffect)
 {
     FloatSize clampedSize = ImageBuffer::clampedSize(lastEffect.absolutePaintRect().size());
-    m_outputImageBuffer = ImageBuffer::create(clampedSize, RenderingMode::Accelerated, lastEffect.filter().filterScale(), lastEffect.resultColorSpace());
+    m_outputImageBuffer = ImageBuffer::create(clampedSize, RenderingMode::Accelerated, lastEffect.filter().filterScale(), lastEffect.resultColorSpace(), PixelFormat::BGRA8);
     
     if (!m_outputImageBuffer) {
         clearResult();

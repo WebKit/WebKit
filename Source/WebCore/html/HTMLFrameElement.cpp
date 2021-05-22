@@ -82,7 +82,7 @@ int HTMLFrameElement::defaultTabIndex() const
 void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == frameborderAttr) {
-        m_frameBorder = value.toInt();
+        m_frameBorder = parseHTMLInteger(value).value_or(0);
         m_frameBorderSet = !value.isNull();
         // FIXME: If we are already attached, this has no effect.
     } else if (name == noresizeAttr) {

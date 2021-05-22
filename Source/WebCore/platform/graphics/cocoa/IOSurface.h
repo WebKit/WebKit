@@ -104,7 +104,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, CGColorSpaceRef, Format = Format::BGRA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, IntSize contextSize, CGColorSpaceRef, Format = Format::BGRA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&, CGColorSpaceRef);
-    static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, CGColorSpaceRef);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, CGColorSpaceRef);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromPixelBuffer(CVPixelBufferRef);
     

@@ -49,36 +49,6 @@ namespace WTF {
 
 namespace FileSystemImpl {
 
-bool fileExists(const String& path)
-{
-    if (path.isNull())
-        return false;
-
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return false;
-
-    return access(fsRep.data(), F_OK) != -1;
-}
-
-bool deleteFile(const String& path)
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0') {
-        LOG_ERROR("File failed to delete. Failed to get filesystem representation to create CString from cfString or filesystem representation is a null value");
-        return false;
-    }
-
-    // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
-    bool unlinked = !unlink(fsRep.data());
-    if (!unlinked && errno != ENOENT)
-        LOG_ERROR("File failed to delete. Error message: %s", strerror(errno));
-
-    return unlinked;
-}
-
 PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission permission, bool failIfFileExists)
 {
     CString fsRep = fileSystemRepresentation(path);
@@ -186,35 +156,6 @@ bool unlockFile(PlatformFileHandle handle)
 }
 #endif
 
-#if !PLATFORM(MAC)
-bool deleteEmptyDirectory(const String& path)
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return false;
-
-    // rmdir(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
-    return !rmdir(fsRep.data());
-}
-#endif
-
-bool getFileSize(const String& path, long long& result)
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return false;
-
-    struct stat fileInfo;
-
-    if (stat(fsRep.data(), &fileInfo))
-        return false;
-
-    result = fileInfo.st_size;
-    return true;
-}
-
 bool getFileSize(PlatformFileHandle handle, long long& result)
 {
     struct stat fileInfo;
@@ -243,134 +184,6 @@ Optional<WallTime> getFileCreationTime(const String& path)
     UNUSED_PARAM(path);
     return WTF::nullopt;
 #endif
-}
-
-Optional<WallTime> getFileModificationTime(const String& path)
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
-
-    struct stat fileInfo;
-
-    if (stat(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
-
-    return WallTime::fromRawSeconds(fileInfo.st_mtime);
-}
-
-static FileMetadata::Type toFileMetataType(struct stat fileInfo)
-{
-    if (S_ISDIR(fileInfo.st_mode))
-        return FileMetadata::Type::Directory;
-    if (S_ISLNK(fileInfo.st_mode))
-        return FileMetadata::Type::SymbolicLink;
-    return FileMetadata::Type::File;
-}
-
-static Optional<FileMetadata> fileMetadataUsingFunction(const String& path, int (*statFunc)(const char*, struct stat*))
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
-
-    struct stat fileInfo;
-    if (statFunc(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
-
-    String filename = pathGetFileName(path);
-    bool isHidden = !filename.isEmpty() && filename[0] == '.';
-    return FileMetadata {
-        WallTime::fromRawSeconds(fileInfo.st_mtime),
-        fileInfo.st_size,
-        isHidden,
-        toFileMetataType(fileInfo)
-    };
-}
-
-Optional<FileMetadata> fileMetadata(const String& path)
-{
-    return fileMetadataUsingFunction(path, &lstat);
-}
-
-Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
-{
-    return fileMetadataUsingFunction(path, &stat);
-}
-
-bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
-{
-    CString targetPathFSRep = fileSystemRepresentation(targetPath);
-    if (!targetPathFSRep.data() || targetPathFSRep.data()[0] == '\0')
-        return false;
-
-    CString symbolicLinkPathFSRep = fileSystemRepresentation(symbolicLinkPath);
-    if (!symbolicLinkPathFSRep.data() || symbolicLinkPathFSRep.data()[0] == '\0')
-        return false;
-
-    return !symlink(targetPathFSRep.data(), symbolicLinkPathFSRep.data());
-}
-
-String pathByAppendingComponent(const String& path, const String& component)
-{
-    if (path.endsWith('/'))
-        return path + component;
-    return path + "/" + component;
-}
-
-String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
-{
-    StringBuilder builder;
-    builder.append(path);
-    for (auto& component : components)
-        builder.append('/', component);
-    return builder.toString();
-}
-
-bool makeAllDirectories(const String& path)
-{
-    CString fullPath = fileSystemRepresentation(path);
-    if (!access(fullPath.data(), F_OK))
-        return true;
-
-    char* p = fullPath.mutableData() + 1;
-    int length = fullPath.length();
-
-    if (p[length - 1] == '/')
-        p[length - 1] = '\0';
-    for (; *p; ++p) {
-        if (*p == '/') {
-            *p = '\0';
-            if (access(fullPath.data(), F_OK)) {
-                if (mkdir(fullPath.data(), S_IRWXU))
-                    return false;
-            }
-            *p = '/';
-        }
-    }
-    if (access(fullPath.data(), F_OK)) {
-        if (mkdir(fullPath.data(), S_IRWXU))
-            return false;
-    }
-
-    return true;
-}
-
-String pathGetFileName(const String& path)
-{
-    return path.substring(path.reverseFind('/') + 1);
-}
-
-String directoryName(const String& path)
-{
-    CString fsRep = fileSystemRepresentation(path);
-
-    if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return String();
-
-    return String::fromUTF8(dirname(fsRep.mutableData()));
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)
@@ -419,29 +232,6 @@ CString fileSystemRepresentation(const String& path)
 #endif
 
 #if !PLATFORM(COCOA)
-bool moveFile(const String& oldPath, const String& newPath)
-{
-    auto oldFilename = fileSystemRepresentation(oldPath);
-    if (oldFilename.isNull())
-        return false;
-
-    auto newFilename = fileSystemRepresentation(newPath);
-    if (newFilename.isNull())
-        return false;
-
-    return rename(oldFilename.data(), newFilename.data()) != -1;
-}
-
-bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
-{
-    struct statvfs fileSystemStat;
-    if (!statvfs(fileSystemRepresentation(path).data(), &fileSystemStat)) {
-        freeSpace = fileSystemStat.f_bavail * fileSystemStat.f_frsize;
-        return true;
-    }
-    return false;
-}
-
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const String& suffix)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
@@ -467,53 +257,6 @@ end:
     return String();
 }
 #endif // !PLATFORM(COCOA)
-
-bool hardLink(const String& source, const String& destination)
-{
-    if (source.isEmpty() || destination.isEmpty())
-        return false;
-
-    auto fsSource = fileSystemRepresentation(source);
-    if (!fsSource.data())
-        return false;
-
-    auto fsDestination = fileSystemRepresentation(destination);
-    if (!fsDestination.data())
-        return false;
-
-    return !link(fsSource.data(), fsDestination.data());
-}
-
-bool hardLinkOrCopyFile(const String& source, const String& destination)
-{
-    if (hardLink(source, destination))
-        return true;
-
-    // Hard link failed. Perform a copy instead.
-    if (source.isEmpty() || destination.isEmpty())
-        return false;
-
-    auto fsSource = fileSystemRepresentation(source);
-    if (!fsSource.data())
-        return false;
-
-    auto fsDestination = fileSystemRepresentation(destination);
-    if (!fsDestination.data())
-        return false;
-
-    auto handle = open(fsDestination.data(), O_WRONLY | O_CREAT | O_EXCL, 0666);
-    if (handle == -1)
-        return false;
-
-    bool appendResult = appendFileContentsToFileHandle(source, handle);
-    close(handle);
-
-    // If the copy failed, delete the unusable file.
-    if (!appendResult)
-        unlink(fsDestination.data());
-
-    return appendResult;
-}
 
 Optional<int32_t> getFileDeviceId(const CString& fsFile)
 {

@@ -74,7 +74,14 @@ public:
     Glyph glyphAt(unsigned index) const { return m_glyphs[index]; }
     GlyphBufferAdvance advanceAt(unsigned index) const { return m_advances[index]; }
     GlyphBufferOrigin originAt(unsigned index) const { return m_origins[index]; }
-    GlyphBufferStringOffset stringOffsetAt(unsigned index) const { return m_offsetsInString[index]; }
+    GlyphBufferStringOffset uncheckedStringOffsetAt(unsigned index) const { return m_offsetsInString[index]; }
+    Optional<GlyphBufferStringOffset> checkedStringOffsetAt(unsigned index, unsigned stringLength) const
+    {
+        auto result = uncheckedStringOffsetAt(index);
+        if (result < 0 || static_cast<unsigned>(result) >= stringLength)
+            return WTF::nullopt;
+        return result;
+    }
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }

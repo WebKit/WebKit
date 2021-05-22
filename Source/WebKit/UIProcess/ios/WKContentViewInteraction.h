@@ -62,6 +62,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
+#import <wtf/Function.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -431,6 +432,7 @@ enum class ProceedWithImageExtraction : bool {
     NSInteger _suppressNonEditableSingleTapTextInteractionCount;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> _domPasteRequestHandler;
     BlockPtr<void(UIWKAutocorrectionContext *)> _pendingAutocorrectionContextHandler;
+    CompletionHandler<void()> _pendingRunModalJavaScriptDialogCallback;
 
     RetainPtr<NSDictionary> _additionalContextForStrongPasswordAssistance;
 
@@ -446,10 +448,6 @@ enum class ProceedWithImageExtraction : bool {
     RetainPtr<UIView> _unselectedContentSnapshot;
     RetainPtr<_UITextDragCaretView> _editDropCaretView;
     BlockPtr<void()> _actionToPerformAfterReceivingEditDragSnapshot;
-#endif
-
-#if ENABLE(APP_HIGHLIGHTS)
-    BOOL _hasSetUpAppHighlightMenus;
 #endif
 
 #if HAVE(PEPPER_UI_CORE)
@@ -643,6 +641,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
 - (void)doAfterEditorStateUpdateAfterFocusingElement:(dispatch_block_t)block;
+- (void)runModalJavaScriptDialog:(CompletionHandler<void()>&&)callback;
 
 #if ENABLE(DRAG_SUPPORT)
 - (void)_didChangeDragInteractionPolicy;

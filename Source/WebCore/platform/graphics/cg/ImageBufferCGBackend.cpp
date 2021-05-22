@@ -34,6 +34,7 @@
 #include "ImageData.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include "RuntimeApplicationChecks.h"
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
@@ -173,13 +174,16 @@ void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatR
 
 RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
 {
+#if ENABLE(GPU_PROCESS)
+    ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#else
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#endif
 
     auto uti = utiFromImageBufferMIMEType(mimeType);
     ASSERT(uti);
 
     PlatformImagePtr image;
-    RefPtr<Uint8ClampedArray> protectedPixelArray;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
@@ -187,12 +191,16 @@ RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Opti
         if (!imageData)
             return nullptr;
 
-        protectedPixelArray = makeRefPtr(imageData->data());
-        size_t dataSize = protectedPixelArray->byteLength();
-        IntSize pixelArrayDimensions = imageData->size();
+        auto& pixelArray = imageData->data();
+        auto dataSize = pixelArray.byteLength();
+        auto pixelArrayDimensions = imageData->size();
 
-        verifyImageBufferIsBigEnough(protectedPixelArray->data(), dataSize);
-        auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, protectedPixelArray->data(), dataSize, nullptr));
+        verifyImageBufferIsBigEnough(pixelArray.data(), dataSize);
+
+        auto dataProvider = adoptCF(CGDataProviderCreateWithData(imageData.leakRef(), pixelArray.data(), dataSize, [] (void* context, const void*, size_t) {
+            reinterpret_cast<ImageData*>(context)->deref();
+        }));
+        
         if (!dataProvider)
             return nullptr;
 

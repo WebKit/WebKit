@@ -30,7 +30,6 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
-#include "Logging.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"

@@ -109,9 +109,13 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
         }
 
         effectElement.setStandardAttributes(effect.get());
-        if (effectElement.renderer())
+        if (effectElement.renderer()) {
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
             effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB : DestinationColorSpace::SRGB);
-
+#else
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB);
+#endif
+        }
         builder->add(effectElement.result(), effect);
         referenceEffects.append(*effect);
     }
@@ -340,11 +344,11 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
     IntSize logicalSize { m_sourceDrawingRegion.size() };
     if (!sourceImage() || sourceImage()->logicalSize() != logicalSize) {
 #if USE(DIRECT2D)
-        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale()));
+        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale(), DestinationColorSpace::SRGB, PixelFormat::BGRA8));
 #else
         UNUSED_PARAM(targetContext);
         RenderingMode mode = m_filterRenderer ? RenderingMode::Accelerated : renderingMode();
-        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale()));
+        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale(), DestinationColorSpace::SRGB, PixelFormat::BGRA8));
 #endif
     }
     m_graphicsBufferAttached = true;

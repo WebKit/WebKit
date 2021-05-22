@@ -39,8 +39,7 @@ const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFuncti
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunction);
 
 WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmToWasmImportableFunction importableFunction)
-    : Base(vm, executable, globalObject, structure)
-    , m_importableFunction(importableFunction)
+    : Base(vm, executable, globalObject, structure, importableFunction)
 { }
 
 WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::SignatureIndex signatureIndex)

@@ -32,13 +32,11 @@
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/VideoPlaybackQualityMetrics.h>
 #include <wtf/MediaTime.h>
-#include <wtf/WallTime.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebKit {
 
 struct RemoteMediaPlayerState {
-    WallTime wallTime;
-    MediaTime currentTime;
     MediaTime duration;
     MediaTime minTimeSeekable;
     MediaTime maxTimeSeekable;
@@ -72,8 +70,6 @@ struct RemoteMediaPlayerState {
     template<class Encoder>
     void encode(Encoder& encoder) const
     {
-        encoder << wallTime;
-        encoder << currentTime;
         encoder << duration;
         encoder << minTimeSeekable;
         encoder << maxTimeSeekable;
@@ -108,16 +104,6 @@ struct RemoteMediaPlayerState {
     template <class Decoder>
     static Optional<RemoteMediaPlayerState> decode(Decoder& decoder)
     {
-        Optional<WallTime> wallTime;
-        decoder >> wallTime;
-        if (!wallTime)
-            return WTF::nullopt;
-
-        Optional<MediaTime> currentTime;
-        decoder >> currentTime;
-        if (!currentTime)
-            return WTF::nullopt;
-
         Optional<MediaTime> duration;
         decoder >> duration;
         if (!duration)
@@ -260,8 +246,6 @@ struct RemoteMediaPlayerState {
             return WTF::nullopt;
 
         return {{
-            WTFMove(*wallTime),
-            WTFMove(*currentTime),
             WTFMove(*duration),
             WTFMove(*minTimeSeekable),
             WTFMove(*maxTimeSeekable),

@@ -56,6 +56,7 @@ FetchBodyOwner::~FetchBodyOwner()
 
 void FetchBodyOwner::stop()
 {
+    m_readableStreamSource = nullptr;
     if (m_body)
         m_body->cleanConsumer();
 

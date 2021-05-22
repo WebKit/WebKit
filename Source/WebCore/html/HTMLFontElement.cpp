@@ -33,6 +33,7 @@
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -108,12 +109,7 @@ static bool parseFontSize(const CharacterType* characters, unsigned length, int&
         return false;
 
     // Step 8
-    int value;
-
-    if (digits.is8Bit())
-        value = charactersToIntStrict(digits.characters8(), digits.length());
-    else
-        value = charactersToIntStrict(digits.characters16(), digits.length());
+    int value = parseInteger<int>(digits).valueOr(0);
 
     // Step 9
     if (mode == RelativePlus)

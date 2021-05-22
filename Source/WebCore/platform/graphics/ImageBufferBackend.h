@@ -31,6 +31,7 @@
 #include "GraphicsTypesGL.h"
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
+#include "PixelFormat.h"
 #include "PlatformLayer.h"
 #include "RenderingMode.h"
 #include <wtf/RefPtr.h>
@@ -53,13 +54,6 @@ enum BackingStoreCopy {
 enum class PreserveResolution : uint8_t {
     No,
     Yes,
-};
-
-enum class PixelFormat : uint8_t {
-    RGBA8,
-    BGRA8,
-    RGB10,
-    RGB10A8,
 };
 
 enum class VolatilityState : uint8_t {
@@ -169,16 +163,6 @@ protected:
 } // namespace WebCore
 
 namespace WTF {
-
-template<> struct EnumTraits<WebCore::PixelFormat> {
-    using values = EnumValues<
-    WebCore::PixelFormat,
-    WebCore::PixelFormat::RGBA8,
-    WebCore::PixelFormat::BGRA8,
-    WebCore::PixelFormat::RGB10,
-    WebCore::PixelFormat::RGB10A8
-    >;
-};
 
 template<> struct EnumTraits<WebCore::PreserveResolution> {
     using values = EnumValues<

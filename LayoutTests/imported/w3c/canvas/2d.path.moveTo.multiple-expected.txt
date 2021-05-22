@@ -1,6 +1,0 @@
-2d.path.moveTo.multiple
-Spec references: 2d.path.moveTo
-Actual output:
-Expected output:
-
-Passed

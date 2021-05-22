@@ -536,6 +536,16 @@ MouseEventsSimulationEnabled:
     WebKit:
       default: false
 
+NPAPIPlugInsEnabledForTestingInWebKitLegacy:
+  type: bool
+  humanReadableName: "NPAPI Plug-Ins Enabled In WebKitLegacy"
+  humanReadableDescription: "Enable NPAPI Plug-Ins for testing"
+  webcoreBinding: none
+  exposed: [ WebKitLegacy ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+
 OffscreenCanvasEnabled:
   type: bool
   humanReadableName: "OffscreenCanvas"
@@ -728,6 +738,17 @@ UpgradeKnownHostsToHTTPSEnabled:
     WebKit:
       default: true
 
+UseCGDisplayListsForDOMRendering:
+  type: bool
+  humanReadableName: "Use CG Display Lists for DOM rendering"
+  humanReadableDescription: "Use CG Display Lists for DOM rendering"
+  webcoreBinding: none
+  condition: ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 UseGPUProcessForDOMRenderingEnabled:
   type: bool
   humanReadableName: "GPU Process: DOM Rendering"
@@ -739,16 +760,17 @@ UseGPUProcessForDOMRenderingEnabled:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
 
-UseGPUProcessForWebGLEnabled:
+UseSampledPageTopColorForScrollAreaBackgroundColor:
   type: bool
-  humanReadableName: "GPU Process: WebGL"
-  humanReadableDescription: "Enable WebGL in GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS)
-  exposed: [ WebKit ]
+  humanReadableName: "Use sampled page top color for scroll area background color"
+  humanReadableDescription: "Use sampled page top color for scroll area background color"
   defaultValue:
+    WebKitLegacy:
+      default: false
     WebKit:
-      default: defaultUseGPUProcessForWebGLEnabled()
+      default: false
+    WebCore:
+      default: false
 
 UseThemeColorForScrollAreaBackgroundColor:
   type: bool

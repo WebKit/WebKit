@@ -122,7 +122,7 @@ TEST(IPCTestingAPI, AlertIsSyncMessage)
     EXPECT_STREQ([alertMessage UTF8String], "true");
 }
 
-TEST(IPCTestingAPI, CanSendInvalidAsyncMessageWithoutTermination)
+TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToUIProcessWithoutTermination)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
@@ -138,7 +138,7 @@ TEST(IPCTestingAPI, CanSendInvalidAsyncMessageWithoutTermination)
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
 
-TEST(IPCTestingAPI, CanSendInvalidMessageWithoutTermination)
+TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
@@ -153,6 +153,201 @@ TEST(IPCTestingAPI, CanSendInvalidMessageWithoutTermination)
 
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
+
+#if ENABLE(GPU_PROCESS)
+TEST(IPCTestingAPI, CanSendSyncMessageToGPUProcess)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "result = !!IPC.sendSyncMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_EnsureAudioSession.name, 100, []);"
+        "alert(result)</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([alertMessage boolValue]);
+}
+
+TEST(IPCTestingAPI, CanSendAsyncMessageToGPUProcess)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(async function test() {"
+        "window.result = await IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}]);"
+        "alert(!!result)"
+        "})();</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([alertMessage boolValue]);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"result.arguments[0].type"].UTF8String, "bool");
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"result.arguments[0].value"].boolValue);
+}
+
+TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToGPUProcessWithoutTermination)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(async function test() {"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, []);"
+        "window.result = await IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}]);"
+        "alert(!!result)"
+        "})();</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([alertMessage boolValue]);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"result.arguments[0].type"].UTF8String, "bool");
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"result.arguments[0].value"].boolValue);
+}
+
+TEST(IPCTestingAPI, CanReceiveIPCSemaphore)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "const semaphore = IPC.createSemaphore();"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,"
+        "    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore, 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);"
+        "const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_SemaphoreForGetImageData.name, 100, []);"
+        "semaphore.signal();"
+        "alert(result.arguments.length + ':' + result.arguments[0].type + ':' + result.arguments[0].value.waitFor(100));"
+        "</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "1:Semaphore:false");
+}
+
+TEST(IPCTestingAPI, CanReceiveSharedMemory)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    auto* html = @R"HTML(<!DOCTYPE html>
+<script>
+IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
+    [{type: 'RemoteRenderingBackendCreationParameters', 'identifier': 123, semaphore: IPC.createSemaphore(), 'pageProxyID': IPC.webPageProxyID, 'pageID': IPC.pageID}]);
+const result = IPC.sendSyncMessage('GPU', 123, IPC.messages.RemoteRenderingBackend_UpdateSharedMemoryForGetImageData.name, 100, [{type: 'uint32_t', value: 8}]);
+alert(result.arguments.length);
+</script>)HTML";
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:html];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ([alertMessage intValue], 1);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply = result.arguments[0]; firstReply.type"].UTF8String, "SharedMemory");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstReply.protection"].UTF8String, "ReadOnly");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"Array.from(new Uint8Array(firstReply.value.readBytes(0, 8))).toString()"].UTF8String, "0,0,0,0,0,0,0,0");
+
+}
+#endif
+
+TEST(IPCTestingAPI, CanCreateIPCSemaphore)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>alert(IPC.createSemaphore().waitFor(100));</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_FALSE([alertMessage boolValue]);
+}
+
+TEST(IPCTestingAPI, CanCreateSharedMemory)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>const sharedMemory = IPC.createSharedMemory(8); alert(sharedMemory.toString());</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "[object SharedMemory]");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"new Int8Array(sharedMemory.readBytes(0))[0]"].intValue, 0);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"sharedMemory.writeBytes(new Int8Array([1, 2, 4, 8, 16, 32]))"].intValue, 0);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"Array.from(new Int8Array(sharedMemory.readBytes(1, 3))).toString()"].UTF8String, "2,4,8");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"sharedMemory.writeBytes(new Int8Array([101, 102, 103, 104, 105, 106]), 2, 3)"].intValue, 0);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"Array.from(new Int8Array(sharedMemory.readBytes())).toString()"].UTF8String, "1,2,101,102,103,32,0,0");
+}
+
+TEST(IPCTestingAPI, CanSendSemaphore)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    auto* html = @R"HTML(<!DOCTYPE html>
+<body>
+<script>
+const audioContext = new AudioContext;
+const destination = audioContext.createMediaStreamDestination();
+const semaphore = IPC.createSemaphore();
+const result = IPC.sendSyncMessage('GPU', 0, IPC.messages.RemoteAudioDestinationManager_CreateAudioDestination.name, 100,
+    [{type: 'String', value: 'some device'},
+    {type: 'uint32_t', value: destination.numberOfInputs},
+    {type: 'uint32_t', value: destination.channelCount},
+    {type: 'float', value: audioContext.sampleRate}, {type: 'float', value: audioContext.sampleRate},
+    {type: 'Semaphore', value: semaphore}]);
+alert(result.arguments[0].type);
+</script>
+</body>)HTML";
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:html];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "uint64_t");
+}
+
+#if PLATFORM(COCOA)
+TEST(IPCTestingAPI, CanSendSharedMemory)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    auto* html = @R"HTML(<!DOCTYPE html>
+<body>
+<script>
+const sharedMemory = IPC.createSharedMemory(8);
+sharedMemory.writeBytes(new Uint8Array(Array.from('hello').map((char) => char.charCodeAt(0))));
+const result = IPC.sendSyncMessage('UI', 0, IPC.messages.WebPasteboardProxy_SetPasteboardBufferForType.name, 100, [
+    {type: 'String', value: 'Apple CFPasteboard general'}, {type: 'String', value: 'text/plain'},
+    {type: 'SharedMemory', value: sharedMemory, protection: 'ReadOnly'}, {type: 'bool', value: 1}, {type: 'uint64_t', value: IPC.pageID}]);
+alert(result.arguments.length + ':' + JSON.stringify(result.arguments[0]));
+</script>
+</body>)HTML";
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:html];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_STREQ([alertMessage UTF8String], "1:{\"type\":\"int64_t\",\"value\":0}");
+}
+#endif
 
 TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
 {

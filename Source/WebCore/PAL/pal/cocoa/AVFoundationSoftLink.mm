@@ -170,6 +170,8 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVPlayerItemDidPlay
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotification, NSString*, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey, NSString*, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification, NSString*, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferAudioRendererFlushTimeKey, NSString*, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVStreamDataParserContentKeyRequestProtocolVersionsKey, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVStreamSessionContentProtectionSessionIdentifierChangedNotification, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVStreamingKeyDeliveryContentKeyType, NSString *, PAL_EXPORT)

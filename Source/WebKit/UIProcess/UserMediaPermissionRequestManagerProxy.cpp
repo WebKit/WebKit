@@ -49,7 +49,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(MEDIA_STREAM)
-static const MediaProducer::MediaStateFlags activeCaptureMask = MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice;
+static const MediaProducer::MediaStateFlags activeCaptureMask { MediaProducer::MediaState::HasActiveAudioCaptureDevice, MediaProducer::MediaState::HasActiveVideoCaptureDevice };
 
 static uint64_t generateRequestID()
 {
@@ -878,7 +878,7 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducer::
     if (m_captureState == (newState & activeCaptureMask))
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "state was: ", m_captureState, ", is now: ", newState & activeCaptureMask);
+    ALWAYS_LOG(LOGIDENTIFIER, "state was: ", m_captureState.toRaw(), ", is now: ", (newState & activeCaptureMask).toRaw());
     m_captureState = newState & activeCaptureMask;
 
     Seconds interval;

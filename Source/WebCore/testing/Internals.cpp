@@ -124,6 +124,7 @@
 #include "LegacySchemeRegistry.h"
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
+#include "LocalizedStrings.h"
 #include "Location.h"
 #include "MallocStatistics.h"
 #include "MediaDevices.h"
@@ -232,6 +233,7 @@
 #include <wtf/URLHelpers.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
@@ -361,10 +363,9 @@ using JSC::PropertySlot;
 using JSC::ScriptExecutable;
 using JSC::StackVisitor;
 
-
 namespace WebCore {
-using namespace Inspector;
 
+using namespace Inspector;
 using namespace HTMLNames;
 
 class InspectorStubFrontend final : public InspectorFrontendClientLocal, public FrontendChannel {
@@ -1600,7 +1601,7 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
 
 void Internals::setSFrameCounter(RTCRtpSFrameTransform& transform, const String& counter)
 {
-    if (auto value = StringView(counter).toUInt64Strict())
+    if (auto value = parseInteger<uint64_t>(counter))
         transform.setCounterForTesting(*value);
 }
 
@@ -3430,12 +3431,19 @@ void Internals::setFullscreenControlsHidden(bool hidden)
     page->setFullscreenControlsHidden(hidden);
 }
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO)
 bool Internals::isChangingPresentationMode(HTMLVideoElement& element) const
 {
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     return element.isChangingPresentationMode();
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
 }
+#endif
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
 void Internals::setMockVideoPresentationModeEnabled(bool enabled)
 {
     Document* document = contextDocument();
@@ -4589,14 +4597,14 @@ void Internals::setPageMuted(StringView statesString)
     if (!document)
         return;
 
-    WebCore::MediaProducer::MutedStateFlags state = MediaProducer::NoneMuted;
+    WebCore::MediaProducer::MutedStateFlags state;
     for (StringView stateString : statesString.split(',')) {
         if (equalLettersIgnoringASCIICase(stateString, "audio"))
-            state |= MediaProducer::AudioIsMuted;
+            state.add(MediaProducer::MutedState::AudioIsMuted);
         if (equalLettersIgnoringASCIICase(stateString, "capturedevices"))
-            state |= MediaProducer::AudioAndVideoCaptureIsMuted;
+            state.add(MediaProducer::AudioAndVideoCaptureIsMuted);
         if (equalLettersIgnoringASCIICase(stateString, "screencapture"))
-            state |= MediaProducer::ScreenCaptureIsMuted;
+            state.add(MediaProducer::MutedState::ScreenCaptureIsMuted);
     }
 
     if (Page* page = document->page())
@@ -4609,45 +4617,45 @@ String Internals::pageMediaState()
     if (!document || !document->page())
         return emptyString();
 
-    WebCore::MediaProducer::MediaStateFlags state = document->page()->mediaState();
+    auto state = document->page()->mediaState();
     StringBuilder string;
-    if (state & MediaProducer::IsPlayingAudio)
+    if (state.containsAny(MediaProducer::MediaState::IsPlayingAudio))
         string.append("IsPlayingAudio,");
-    if (state & MediaProducer::IsPlayingVideo)
+    if (state.containsAny(MediaProducer::MediaState::IsPlayingVideo))
         string.append("IsPlayingVideo,");
-    if (state & MediaProducer::IsPlayingToExternalDevice)
+    if (state.containsAny(MediaProducer::MediaState::IsPlayingToExternalDevice))
         string.append("IsPlayingToExternalDevice,");
-    if (state & MediaProducer::RequiresPlaybackTargetMonitoring)
+    if (state.containsAny(MediaProducer::MediaState::RequiresPlaybackTargetMonitoring))
         string.append("RequiresPlaybackTargetMonitoring,");
-    if (state & MediaProducer::ExternalDeviceAutoPlayCandidate)
+    if (state.containsAny(MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate))
         string.append("ExternalDeviceAutoPlayCandidate,");
-    if (state & MediaProducer::DidPlayToEnd)
+    if (state.containsAny(MediaProducer::MediaState::DidPlayToEnd))
         string.append("DidPlayToEnd,");
-    if (state & MediaProducer::IsSourceElementPlaying)
+    if (state.containsAny(MediaProducer::MediaState::IsSourceElementPlaying))
         string.append("IsSourceElementPlaying,");
 
-    if (state & MediaProducer::IsNextTrackControlEnabled)
+    if (state.containsAny(MediaProducer::MediaState::IsNextTrackControlEnabled))
         string.append("IsNextTrackControlEnabled,");
-    if (state & MediaProducer::IsPreviousTrackControlEnabled)
+    if (state.containsAny(MediaProducer::MediaState::IsPreviousTrackControlEnabled))
         string.append("IsPreviousTrackControlEnabled,");
 
-    if (state & MediaProducer::HasPlaybackTargetAvailabilityListener)
+    if (state.containsAny(MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener))
         string.append("HasPlaybackTargetAvailabilityListener,");
-    if (state & MediaProducer::HasAudioOrVideo)
+    if (state.containsAny(MediaProducer::MediaState::HasAudioOrVideo))
         string.append("HasAudioOrVideo,");
-    if (state & MediaProducer::HasActiveAudioCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasActiveAudioCaptureDevice))
         string.append("HasActiveAudioCaptureDevice,");
-    if (state & MediaProducer::HasActiveVideoCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasActiveVideoCaptureDevice))
         string.append("HasActiveVideoCaptureDevice,");
-    if (state & MediaProducer::HasMutedAudioCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasMutedAudioCaptureDevice))
         string.append("HasMutedAudioCaptureDevice,");
-    if (state & MediaProducer::HasMutedVideoCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasMutedVideoCaptureDevice))
         string.append("HasMutedVideoCaptureDevice,");
-    if (state & MediaProducer::HasUserInteractedWithMediaElement)
+    if (state.containsAny(MediaProducer::MediaState::HasUserInteractedWithMediaElement))
         string.append("HasUserInteractedWithMediaElement,");
-    if (state & MediaProducer::HasActiveDisplayCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasActiveDisplayCaptureDevice))
         string.append("HasActiveDisplayCaptureDevice,");
-    if (state & MediaProducer::HasMutedDisplayCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasMutedDisplayCaptureDevice))
         string.append("HasMutedDisplayCaptureDevice,");
 
     if (string.isEmpty())
@@ -5750,19 +5758,39 @@ bool Internals::capsLockIsOn()
     return WebCore::PlatformKeyboardEvent::currentCapsLockState();
 }
 
-Optional<HEVCParameterSet> Internals::parseHEVCCodecParameters(const String& codecString)
+auto Internals::parseHEVCCodecParameters(StringView string) -> Optional<HEVCParameterSet>
 {
-    return WebCore::parseHEVCCodecParameters(codecString);
+    return WebCore::parseHEVCCodecParameters(string);
 }
 
-Optional<DoViParameterSet> Internals::parseDoViCodecParameters(const String& codecString)
+auto Internals::parseDoViCodecParameters(StringView string) -> Optional<DoViParameterSet>
 {
-    return WebCore::parseDoViCodecParameters(codecString);
+    auto parseResult = WebCore::parseDoViCodecParameters(string);
+    if (!parseResult)
+        return WTF::nullopt;
+    DoViParameterSet convertedResult;
+    switch (parseResult->codec) {
+    case DoViParameters::Codec::AVC1:
+        convertedResult.codecName = "avc1"_s;
+        break;
+    case DoViParameters::Codec::AVC3:
+        convertedResult.codecName = "avc3"_s;
+        break;
+    case DoViParameters::Codec::HEV1:
+        convertedResult.codecName = "hev1"_s;
+        break;
+    case DoViParameters::Codec::HVC1:
+        convertedResult.codecName = "hvc1"_s;
+        break;
+    }
+    convertedResult.bitstreamProfileID = parseResult->bitstreamProfileID;
+    convertedResult.bitstreamLevelID = parseResult->bitstreamLevelID;
+    return convertedResult;
 }
 
-Optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(const String& codecString)
+Optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(StringView string)
 {
-    return WebCore::parseVPCodecParameters(codecString);
+    return WebCore::parseVPCodecParameters(string);
 }
 
 auto Internals::getCookies() const -> Vector<CookieData>
@@ -6053,6 +6081,14 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
+Vector<String> Internals::appHighlightContextMenuItemTitles() const
+{
+    return {{
+        contextMenuItemTagAddHighlightToCurrentGroup(),
+        contextMenuItemTagAddHighlightToNewGroup(),
+    }};
+}
+
 unsigned Internals::numberOfAppHighlights()
 {
     Document* document = contextDocument();
@@ -6295,5 +6331,40 @@ bool Internals::rangeIntersectsRange(const AbstractRange& a, const AbstractRange
 {
     return intersectsForTesting(convertType(type), makeSimpleRange(a), makeSimpleRange(b));
 }
+
+String Internals::dumpStyleResolvers()
+{
+    auto* document = contextDocument();
+    if (!document || !document->domWindow())
+        return { };
+
+    document->updateStyleIfNeeded();
+
+    unsigned currentIdentifier = 0;
+    HashMap<Style::Resolver*, unsigned> resolverIdentifiers;
+
+    StringBuilder result;
+
+    auto dumpResolver = [&](auto name, auto& resolver) {
+        auto identifier = resolverIdentifiers.ensure(&resolver, [&] {
+            return currentIdentifier++;
+        }).iterator->value;
+
+        result.append("(", name, " ");
+        result.append("(identifier=", identifier, ") ");
+        result.append("(author rule count=", resolver.ruleSets().authorStyle().ruleCount(), ")");
+        result.append(")\n");
+    };
+
+    dumpResolver("document resolver", document->styleScope().resolver());
+
+    for (auto* shadowRoot : document->inDocumentShadowRoots()) {
+        auto* name = shadowRoot->mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)" : "shadow root resolver (author)";
+        dumpResolver(name, shadowRoot->styleScope().resolver());
+    }
+
+    return result.toString();
+}
+
 
 } // namespace WebCore

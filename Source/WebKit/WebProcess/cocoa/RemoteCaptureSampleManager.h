@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "Connection.h"
+#include "IPCSemaphore.h"
 #include "MessageReceiver.h"
 #include "RemoteRealtimeAudioSource.h"
 #include "RemoteRealtimeVideoSource.h"
@@ -65,7 +66,7 @@ private:
     void dispatchToThread(Function<void()>&&) final;
 
     // Messages
-    void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
+    void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
     void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&);
 
@@ -75,15 +76,25 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit RemoteAudio(Ref<RemoteRealtimeAudioSource>&&);
+        ~RemoteAudio();
 
-        void setStorage(const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
-        void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
+        void setStorage(const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameChunkSize);
 
     private:
+        void stopThread();
+        void startThread();
+
         Ref<RemoteRealtimeAudioSource> m_source;
         WebCore::CAAudioStreamDescription m_description;
-        std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
         std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
+        std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
+        int64_t m_readOffset { 0 };
+        MediaTime m_startTime;
+        size_t m_frameChunkSize { 0 };
+
+        IPC::Semaphore m_semaphore;
+        RefPtr<Thread> m_thread;
+        std::atomic<bool> m_shouldStopThread { false };
     };
 
     class RemoteVideo {

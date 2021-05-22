@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "RemoteLayerTreeHost.h"
+#import "RemoteLayerTreeLayers.h"
 #import "RemoteLayerTreeNode.h"
 #import "UIKitSPI.h"
 #import "WKDeferringGestureRecognizer.h"
@@ -312,6 +313,11 @@ static Class scrollViewScrollIndicatorClass()
 @end
 
 @implementation WKCompositingView
+
++ (Class)layerClass
+{
+    return [WKCompositingLayer class];
+}
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {

@@ -1,4 +1,4 @@
-FAIL navigator.language should be es-419. Was es-xl.
+FAIL navigator.language should be es-419. Was es-XL.
 PASS successfullyParsed is true
 Some tests failed.
 

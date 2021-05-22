@@ -25,7 +25,6 @@
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "SVGMatrix.h"
-#include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 

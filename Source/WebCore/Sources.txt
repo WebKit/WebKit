@@ -431,6 +431,7 @@ Modules/webxr/WebXRInputSource.cpp @no-unify
 Modules/webxr/WebXRInputSourceArray.cpp @no-unify
 Modules/webxr/WebXRInputSpace.cpp @no-unify
 Modules/webxr/WebXRLayer.cpp @no-unify
+Modules/webxr/WebXROpaqueFramebuffer.cpp @no-unify
 Modules/webxr/WebXRPose.cpp @no-unify
 Modules/webxr/WebXRReferenceSpace.cpp @no-unify
 Modules/webxr/WebXRRenderState.cpp @no-unify
@@ -1344,6 +1345,7 @@ html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/canvas/PaintRenderingContext2D.cpp
 html/canvas/Path2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
+html/canvas/PredefinedColorSpace.cpp
 html/canvas/WebGL2RenderingContext.cpp
 html/canvas/WebGLBuffer.cpp
 html/canvas/WebGLColorBufferFloat.cpp
@@ -1508,40 +1510,40 @@ inspector/agents/worker/WorkerDOMDebuggerAgent.cpp
 inspector/agents/worker/WorkerDebuggerAgent.cpp
 inspector/agents/worker/WorkerNetworkAgent.cpp
 inspector/agents/worker/WorkerRuntimeAgent.cpp
-layout/FormattingContext.cpp
-layout/FormattingContextGeometry.cpp
-layout/FormattingContextQuirks.cpp
+layout/formattingContexts/FormattingContext.cpp
+layout/formattingContexts/FormattingContextGeometry.cpp
+layout/formattingContexts/FormattingContextQuirks.cpp
 layout/FormattingState.cpp
 layout/LayoutContext.cpp
 layout/LayoutPhase.cpp
 layout/LayoutState.cpp
 layout/LayoutUnits.cpp
 layout/Verification.cpp
-layout/blockformatting/BlockFormattingContext.cpp
-layout/blockformatting/BlockFormattingContextGeometry.cpp
-layout/blockformatting/BlockFormattingContextQuirks.cpp
-layout/blockformatting/BlockFormattingState.cpp
-layout/blockformatting/BlockMarginCollapse.cpp
-layout/blockformatting/PrecomputedBlockMarginCollapse.cpp
-layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContext.cpp
-layout/blockformatting/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp
-layout/flexformatting/FlexFormattingContext.cpp
-layout/flexformatting/FlexFormattingContextGeometry.cpp
-layout/flexformatting/FlexFormattingState.cpp
+layout/formattingContexts/block/BlockFormattingContext.cpp
+layout/formattingContexts/block/BlockFormattingContextGeometry.cpp
+layout/formattingContexts/block/BlockFormattingContextQuirks.cpp
+layout/formattingContexts/block/BlockFormattingState.cpp
+layout/formattingContexts/block/BlockMarginCollapse.cpp
+layout/formattingContexts/block/PrecomputedBlockMarginCollapse.cpp
+layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp
+layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContextQuirks.cpp
+layout/formattingContexts/flex/FlexFormattingContext.cpp
+layout/formattingContexts/flex/FlexFormattingContextGeometry.cpp
+layout/formattingContexts/flex/FlexFormattingState.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/FloatingState.cpp
-layout/inlineformatting/InlineContentBreaker.cpp
-layout/inlineformatting/InlineFormattingContext.cpp
-layout/inlineformatting/InlineFormattingContextGeometry.cpp
-layout/inlineformatting/InlineFormattingContextQuirks.cpp
-layout/inlineformatting/InlineFormattingState.cpp
-layout/inlineformatting/InlineItem.cpp
-layout/inlineformatting/InlineLine.cpp
-layout/inlineformatting/InlineLineBox.cpp
-layout/inlineformatting/InlineLineBuilder.cpp
-layout/inlineformatting/InlineTextItem.cpp
-layout/inlineformatting/text/TextUtil.cpp
+layout/formattingContexts/inline/InlineContentBreaker.cpp
+layout/formattingContexts/inline/InlineFormattingContext.cpp
+layout/formattingContexts/inline/InlineFormattingContextGeometry.cpp
+layout/formattingContexts/inline/InlineFormattingContextQuirks.cpp
+layout/formattingContexts/inline/InlineFormattingState.cpp
+layout/formattingContexts/inline/InlineItem.cpp
+layout/formattingContexts/inline/InlineLine.cpp
+layout/formattingContexts/inline/InlineLineBox.cpp
+layout/formattingContexts/inline/InlineLineBuilder.cpp
+layout/formattingContexts/inline/InlineTextItem.cpp
+layout/formattingContexts/inline/text/TextUtil.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
 layout/integration/LayoutIntegrationCoverage.cpp
 layout/integration/LayoutIntegrationInlineContentBuilder.cpp
@@ -1560,12 +1562,12 @@ layout/layouttree/LayoutInlineTextBox.cpp
 layout/layouttree/LayoutLineBreakBox.cpp
 layout/layouttree/LayoutReplacedBox.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
-layout/tableformatting/TableFormattingContext.cpp
-layout/tableformatting/TableFormattingContextGeometry.cpp
-layout/tableformatting/TableFormattingContextQuirks.cpp
-layout/tableformatting/TableFormattingState.cpp
-layout/tableformatting/TableGrid.cpp
-layout/tableformatting/TableLayout.cpp
+layout/formattingContexts/table/TableFormattingContext.cpp
+layout/formattingContexts/table/TableFormattingContextGeometry.cpp
+layout/formattingContexts/table/TableFormattingContextQuirks.cpp
+layout/formattingContexts/table/TableFormattingState.cpp
+layout/formattingContexts/table/TableGrid.cpp
+layout/formattingContexts/table/TableLayout.cpp
 loader/PrivateClickMeasurement.cpp
 loader/ApplicationManifestLoader.cpp
 loader/CanvasActivityRecord.cpp
@@ -2010,6 +2012,7 @@ platform/graphics/Path.cpp
 platform/graphics/PathTraversalState.cpp
 platform/graphics/PathUtilities.cpp
 platform/graphics/Pattern.cpp
+platform/graphics/PixelBuffer.cpp
 platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/Region.cpp
 platform/graphics/RemoteGraphicsContextGLProxyBase.cpp
@@ -2648,6 +2651,7 @@ svg/graphics/filters/SVGFilterBuilder.cpp
 svg/properties/SVGAnimatedProperty.cpp
 svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp
 svg/properties/SVGAttributeAnimator.cpp
+svg/properties/SVGPropertyTraits.cpp
 workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp
 workers/DedicatedWorkerThread.cpp
@@ -2674,6 +2678,7 @@ workers/service/SWClientConnection.cpp
 workers/service/ServiceWorker.cpp
 workers/service/ServiceWorkerClient.cpp
 workers/service/ServiceWorkerClientData.cpp
+workers/service/ServiceWorkerClientIdentifier.cpp
 workers/service/ServiceWorkerClients.cpp
 workers/service/ServiceWorkerContainer.cpp
 workers/service/ServiceWorkerContextData.cpp
@@ -2877,6 +2882,7 @@ JSCanvasPathDrawingStyles.cpp
 JSCanvasPattern.cpp
 JSCanvasRect.cpp
 JSCanvasRenderingContext2D.cpp
+JSCanvasRenderingContext2DSettings.cpp
 JSCanvasShadowStyles.cpp
 JSCanvasState.cpp
 JSCanvasText.cpp
@@ -3366,6 +3372,7 @@ JSPositionCallback.cpp
 JSPositionErrorCallback.cpp
 JSPositionOptions.cpp
 JSPostMessageOptions.cpp
+JSPredefinedColorSpace.cpp
 JSProcessingInstruction.cpp
 JSProgressEvent.cpp
 JSPromiseRejectionEvent.cpp

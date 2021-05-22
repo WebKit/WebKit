@@ -26,8 +26,6 @@
 #include "config.h"
 #include <wtf/CheckedLock.h>
 
-#include <wtf/StdLibExtras.h>
-
 namespace TestWebKitAPI {
 
 namespace {

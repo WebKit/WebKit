@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -71,7 +70,7 @@ public:
     WEBCORE_EXPORT static bool isSupportedImageVideoOrSVGMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being encoded.
-    static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a JavaScript or JSON resource.
     WEBCORE_EXPORT static bool isSupportedJavaScriptMIMEType(const String& mimeType);
@@ -128,17 +127,13 @@ public:
     // makes this test is after many other tests are done on the MIME type.
     WEBCORE_EXPORT static bool isTextMIMEType(const String& mimeType);
 
-    // FIXME: Would be nice to find a way to avoid exposing these sets, even worse exposing non-const references.
-    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> supportedImageMIMETypes();
     static HashSet<String, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedMediaMIMETypes();
-    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& pdfMIMETypes();
-    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& unsupportedTextMIMETypes();
-    WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& systemPreviewMIMETypes();
-
-    // FIXME: Unclear what the concept of a normalized MIME type is; currently it's a platform-specific notion.
-    static String normalizedMIMEType(const String&);
+    WEBCORE_EXPORT static FixedVector<const char*> pdfMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> unsupportedTextMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> systemPreviewMIMETypes();
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
 

@@ -89,28 +89,37 @@ public:
     WARN_UNUSED_RETURN bool decode(T& t)
     {
         using Impl = ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>;
-        if constexpr(HasLegacyDecoder<T, Impl>::value)
-            return Impl::decode(*this, t);
-        else {
+        if constexpr(HasLegacyDecoder<T, Impl>::value) {
+            if (UNLIKELY(!Impl::decode(*this, t))) {
+                markInvalid();
+                return false;
+            }
+        } else {
             Optional<T> optional;
             *this >> optional;
-            if (!optional)
+            if (UNLIKELY(!optional)) {
+                markInvalid();
                 return false;
+            }
             t = WTFMove(*optional);
-            return true;
         }
+        return true;
     }
 
     template<typename T>
     Decoder& operator>>(Optional<T>& t)
     {
         using Impl = ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>, void>;
-        if constexpr(HasModernDecoder<T, Impl>::value)
+        if constexpr(HasModernDecoder<T, Impl>::value) {
             t = Impl::decode(*this);
-        else {
+            if (UNLIKELY(!t))
+                markInvalid();
+        } else {
             T v;
-            if (Impl::decode(*this, v))
+            if (LIKELY(Impl::decode(*this, v)))
                 t = WTFMove(v);
+            else
+                markInvalid();
         }
         return *this;
     }

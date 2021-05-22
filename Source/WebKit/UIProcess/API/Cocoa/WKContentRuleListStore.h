@@ -36,8 +36,11 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 + (instancetype)storeWithURL:(NSURL *)url;
 
 - (void)compileContentRuleListForIdentifier:(NSString *)identifier encodedContentRuleList:(NSString *)encodedContentRuleList completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
-- (void)lookUpContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler;
+
+- (void)lookUpContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(WKContentRuleList *, NSError *))completionHandler WK_SWIFT_ASYNC_NAME(contentRuleList(forIdentifier:));
+
 - (void)removeContentRuleListForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler;
-- (void)getAvailableContentRuleListIdentifiers:(void (^)(NSArray<NSString *> *))completionHandler;
+
+- (void)getAvailableContentRuleListIdentifiers:(void (^)(NSArray<NSString *> *))completionHandler WK_SWIFT_ASYNC_NAME(availableIdentifiers());
 
 @end

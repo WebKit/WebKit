@@ -68,7 +68,7 @@ endmacro()
 # using RHEL), so the best we can do is guess based on based on the target CPU architecture. In
 # practice, guessing works for all architectures except aarch64 (unless unusual page sizes are
 # used), but it fails for aarch64 because distros are split between using 4 KB and 64 KB pages
-# there. Most distros (including Fedora) use 4 KB, but RHEL uses 16 KB. SUSE actually supports both.
+# there. Most distros (including Fedora) use 4 KB, but RHEL uses 64 KB. SUSE actually supports both.
 # Since there is no way to guess correctly, the best we can do is provide an option for it. You
 # should probably only use this if building for aarch64. Otherwise, known CPUs except PowerPC
 # will use 4 KB, while PowerPC and unknown CPUs will use 64 KB (see wtf/PageBlock.h). aarch64 will
@@ -451,3 +451,5 @@ endmacro()
 
 option(ENABLE_EXPERIMENTAL_FEATURES "Enable experimental features" OFF)
 SET_AND_EXPOSE_TO_BUILD(ENABLE_EXPERIMENTAL_FEATURES ${ENABLE_EXPERIMENTAL_FEATURES})
+
+SET_AND_EXPOSE_TO_BUILD(USE_64KB_PAGE_BLOCK ${USE_64KB_PAGE_BLOCK})

@@ -66,7 +66,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy policy)
 
 #if PLATFORM(COCOA)
-    SetVideoInlineSizeFenced(WebCore::IntSize size, MachSendRight machSendRight)
+    SetVideoInlineSizeFenced(WebCore::FloatSize size, MachSendRight machSendRight)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -105,9 +105,10 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier identifier, bool selected)
     TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier identifier, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
 
-    PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<WallTime> wallTime) Async
+    PerformTaskAtMediaTime(MediaTime mediaTime, MonotonicTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<MonotonicTime> monotonicTime) Async
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous
-    SetShouldUpdatePlaybackMetrics(bool should)
+
+    SetVideoPlaybackMetricsUpdateInterval(double interval)
 
 #if PLATFORM(IOS_FAMILY)
     ErrorLog() -> (String errorLog) Synchronous

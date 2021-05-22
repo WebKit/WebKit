@@ -1,6 +1,0 @@
-2d.path.quadraticCurveTo.scaled
-Spec references: 2d.path.quadratic.nonempty
-Actual output:
-Expected output:
-
-Passed

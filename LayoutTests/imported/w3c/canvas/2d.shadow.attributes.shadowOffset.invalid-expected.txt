@@ -1,4 +1,0 @@
-2d.shadow.attributes.shadowOffset.invalid
-Spec references: 2d.shadow.offset.invalid
-Actual output:
-Passed

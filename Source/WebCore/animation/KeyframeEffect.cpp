@@ -56,6 +56,7 @@
 #include "StyleAdjuster.h"
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "TimingFunction.h"
 #include "TranslateTransformOperation.h"
 #include "WillChangeData.h"
@@ -1824,13 +1825,6 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
     animation->setIterationCount(iterations());
     animation->setTimingFunction(timingFunction()->clone());
     animation->setPlaybackRate(effectAnimation->playbackRate());
-
-    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition && is<CubicBezierTimingFunction>(timingFunction())) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215918
-        // If we are dealing with a CSS Transition and using a cubic bezier timing function, we set up
-        // the Animation object so that GraphicsLayerCA can work around a Core Animation limitation.
-        animation->setProperty({ Animation::TransitionMode::SingleProperty, *m_blendingKeyframes.properties().begin() });
-    }
 
     switch (fill()) {
     case FillMode::None:

@@ -35,37 +35,37 @@ namespace JSC {
 JSObject* createError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(), message, jsUndefined(), appender, TypeNothing, ErrorType::Error, true);
+    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(), message, JSValue(), appender, TypeNothing, ErrorType::Error, true);
 }
 
 JSObject* createEvalError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::EvalError), message, jsUndefined(), appender, TypeNothing, ErrorType::EvalError, true);
+    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::EvalError), message, JSValue(), appender, TypeNothing, ErrorType::EvalError, true);
 }
 
 JSObject* createRangeError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::RangeError), message, jsUndefined(), appender, TypeNothing, ErrorType::RangeError, true);
+    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::RangeError), message, JSValue(), appender, TypeNothing, ErrorType::RangeError, true);
 }
 
 JSObject* createReferenceError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::ReferenceError), message, jsUndefined(), appender, TypeNothing, ErrorType::ReferenceError, true);
+    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::ReferenceError), message, JSValue(), appender, TypeNothing, ErrorType::ReferenceError, true);
 }
 
 JSObject* createSyntaxError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::SyntaxError), message, jsUndefined(), appender, TypeNothing, ErrorType::SyntaxError, true);
+    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::SyntaxError), message, JSValue(), appender, TypeNothing, ErrorType::SyntaxError, true);
 }
 
 JSObject* createTypeError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender, RuntimeType type)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message, jsUndefined(), appender, type, ErrorType::TypeError, true);
+    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message, JSValue(), appender, type, ErrorType::TypeError, true);
 }
 
 JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject, ErrorInstance::SourceAppender appender)
@@ -76,7 +76,7 @@ JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject, ErrorInsta
 JSObject* createURIError(JSGlobalObject* globalObject, const String& message, ErrorInstance::SourceAppender appender)
 {
     ASSERT(!message.isEmpty());
-    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::URIError), message, jsUndefined(), appender, TypeNothing, ErrorType::URIError, true);
+    return ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::URIError), message, JSValue(), appender, TypeNothing, ErrorType::URIError, true);
 }
 
 JSObject* createError(JSGlobalObject* globalObject, ErrorType errorType, const String& message)
@@ -113,7 +113,7 @@ JSObject* createError(JSGlobalObject* globalObject, ErrorTypeWithExtension error
 static JSObject* createGetterTypeError(JSGlobalObject* globalObject, const String& message)
 {
     ASSERT(!message.isEmpty());
-    auto* error = ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message, jsUndefined(), nullptr, TypeNothing, ErrorType::TypeError);
+    auto* error = ErrorInstance::create(globalObject, globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message, JSValue(), nullptr, TypeNothing, ErrorType::TypeError);
     error->setNativeGetterTypeError();
     return error;
 }

@@ -1,6 +1,0 @@
-2d.gradient.interpolate.colour
-Spec references: 2d.gradient.interpolate.linear
-Actual output:
-Expected output:
-
-Passed

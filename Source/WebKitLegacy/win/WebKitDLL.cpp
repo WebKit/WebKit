@@ -37,7 +37,6 @@
 #include "WebStorageNamespaceProvider.h"
 #include <WebCore/COMPtr.h>
 #include <WebCore/Page.h>
-#include <WebCore/PageGroup.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/RenderThemeWin.h>
 #include <WebCore/SharedBuffer.h>

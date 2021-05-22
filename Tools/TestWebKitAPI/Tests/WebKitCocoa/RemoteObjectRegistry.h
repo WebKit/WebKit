@@ -39,6 +39,8 @@
 
 @end
 
+@class TestAwakener;
+
 @protocol RemoteObjectProtocol <BaseRemoteObjectProtocol, OtherBaseRemoteObjectProtocol>
 
 - (void)selectionAndClickInformationForClickAtPoint:(NSValue *)pointValue completionHandler:(void (^)(NSDictionary *))completionHandler;
@@ -53,6 +55,7 @@
 - (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *))completionHandler;
 - (void)callUIProcessMethodWithReplyBlock;
 - (void)sendError:(NSError *)error completionHandler:(void (^)(NSError *))completionHandler;
+- (void)sendAwakener:(TestAwakener *)awakener completionHandler:(void (^)(TestAwakener *))completionHandler;
 
 @end
 

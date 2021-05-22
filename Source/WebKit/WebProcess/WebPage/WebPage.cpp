@@ -244,6 +244,7 @@
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/TranslationContextMenuInfo.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <WebCore/UserInputBridge.h>
@@ -780,7 +781,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     webPageCounter.increment();
 #endif
 
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(SCROLLING_THREAD) && !PLATFORM(GTK)
     if (m_useAsyncScrolling)
         webProcess.eventDispatcher().addScrollingTreeForPage(this);
 #endif
@@ -1208,6 +1209,11 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     Ref<Document> document = *frame->document();
     result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
 
+    if (result.selectionIsRange) {
+        auto selectionRange = selection.range();
+        result.selectionIsRangeInsideImageOverlay = selectionRange && HTMLElement::isInsideImageOverlay(*selectionRange);
+    }
+
     if (shouldPerformLayout == ShouldPerformLayout::Yes || platformNeedsLayoutForEditorState(frame))
         document->updateLayout(); // May cause document destruction
 
@@ -1556,7 +1562,8 @@ void WebPage::close()
         m_remoteObjectRegistry->close();
     ASSERT(!m_remoteObjectRegistry);
 #endif
-#if ENABLE(SCROLLING_THREAD)
+
+#if ENABLE(SCROLLING_THREAD) && !PLATFORM(GTK)
     if (m_useAsyncScrolling)
         webProcess.eventDispatcher().removeScrollingTreeForPage(this);
 #endif
@@ -3901,9 +3908,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if PLATFORM(IOS_FAMILY)
     setForceAlwaysUserScalable(m_forceAlwaysUserScalable || store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
-#if HAVE(AVKIT)
-    DeprecatedGlobalSettings::setAVKitEnabled(true);
-#endif
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -4024,6 +4028,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
     layerTransaction.setThemeColor(corePage()->themeColor());
     layerTransaction.setPageExtendedBackgroundColor(corePage()->pageExtendedBackgroundColor());
+    layerTransaction.setSampledPageTopColor(corePage()->sampledPageTopColor());
 
     layerTransaction.setBaseLayoutViewportSize(frameView->baseLayoutViewportSize());
     layerTransaction.setMinStableLayoutViewportOrigin(frameView->minStableLayoutViewportOrigin());
@@ -4054,6 +4059,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
 
     m_pendingThemeColorChange = false;
     m_pendingPageExtendedBackgroundColorChange = false;
+    m_pendingSampledPageTopColorChange = false;
 
     if (m_hasPendingEditorStateUpdate) {
         layerTransaction.setEditorState(editorState());
@@ -5941,13 +5947,15 @@ void WebPage::elementDidFocus(WebCore::Element& element)
 #endif
 
         ++m_currentFocusedElementIdentifier;
-        FocusedElementInformation information;
-        getFocusedElementInformation(information);
+        auto information = focusedElementInformation();
+        if (!information)
+            return;
+
         RefPtr<API::Object> userData;
 
         m_formClient->willBeginInputSession(this, &element, WebFrame::fromCoreFrame(*element.document().frame()), m_userIsInteracting, userData);
 
-        send(Messages::WebPageProxy::ElementDidFocus(information, m_userIsInteracting, m_recentlyBlurredElement, m_lastActivityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        send(Messages::WebPageProxy::ElementDidFocus(information.value(), m_userIsInteracting, m_recentlyBlurredElement, m_lastActivityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 #elif PLATFORM(MAC)
         // FIXME: This can be unified with the iOS code above by bringing ElementDidFocus to macOS.
         // This also doesn't take other noneditable controls into account, such as input type color.
@@ -6451,6 +6459,16 @@ void WebPage::flushPendingPageExtendedBackgroundColorChange()
     m_pendingPageExtendedBackgroundColorChange = false;
 
     send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(m_page->pageExtendedBackgroundColor()));
+}
+
+void WebPage::flushPendingSampledPageTopColorChange()
+{
+    if (!m_pendingSampledPageTopColorChange)
+        return;
+
+    m_pendingSampledPageTopColorChange = false;
+
+    send(Messages::WebPageProxy::SampledPageTopColorChanged(m_page->sampledPageTopColor()));
 }
 
 void WebPage::flushPendingEditorStateUpdate()
@@ -7512,6 +7530,15 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IP
         i++;
     }
 }
+
+void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightVisibility)
+{
+    for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+        if (auto document = makeRefPtr(frame->document()))
+            document->appHighlightRegister().setHighlightVisibility(appHighlightVisibility);
+    }
+}
+
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -7546,9 +7573,9 @@ void WebPage::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completi
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
-void WebPage::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const IntPoint& locationInView)
+void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
-    send(Messages::WebPageProxy::HandleContextMenuTranslation(text, boundsInView, locationInView));
+    send(Messages::WebPageProxy::HandleContextMenuTranslation(info));
 }
 
 #endif

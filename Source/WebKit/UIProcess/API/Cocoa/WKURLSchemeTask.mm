@@ -75,31 +75,33 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 
 @implementation WKURLSchemeTaskImpl
 
+- (instancetype)init
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 - (void)dealloc
 {
-    auto func = [task = WTFMove(_urlSchemeTask)] () mutable {
-        task->API::URLSchemeTask::~URLSchemeTask();
-    };
-
-    ensureOnMainRunLoop(WTFMove(func));
-
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKURLSchemeTaskImpl.class, self))
+        return;
+    _urlSchemeTask->WebURLSchemeTask::~WebURLSchemeTask();
     [super dealloc];
 }
 
 - (NSURLRequest *)request
 {
-    return _urlSchemeTask->task().nsRequest();
+    return _urlSchemeTask->nsRequest();
 }
 
 - (BOOL)_requestOnlyIfCached
 {
-    return _urlSchemeTask->task().nsRequest().cachePolicy == NSURLRequestReturnCacheDataDontLoad;
+    return _urlSchemeTask->nsRequest().cachePolicy == NSURLRequestReturnCacheDataDontLoad;
 }
 
 - (void)_willPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
     auto function = [protectedSelf = retainPtr(self), self, protectedResponse = retainPtr(response), response, protectedRequest = retainPtr(request), request, handler = makeBlockPtr(completionHandler)] () mutable {
-        return _urlSchemeTask->task().willPerformRedirection(response, request, [handler = WTFMove(handler)] (WebCore::ResourceRequest&& actualNewRequest) {
+        return _urlSchemeTask->willPerformRedirection(response, request, [handler = WTFMove(handler)] (WebCore::ResourceRequest&& actualNewRequest) {
             handler.get()(actualNewRequest.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody));
         });
     };
@@ -111,7 +113,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 - (void)didReceiveResponse:(NSURLResponse *)response
 {
     auto function = [protectedSelf = retainPtr(self), self, protectedResponse = retainPtr(response), response] {
-        return _urlSchemeTask->task().didReceiveResponse(response);
+        return _urlSchemeTask->didReceiveResponse(response);
     };
 
     auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
@@ -121,7 +123,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 - (void)didReceiveData:(NSData *)data
 {
     auto function = [protectedSelf = retainPtr(self), self, protectedData = retainPtr(data), data] () mutable {
-        return _urlSchemeTask->task().didReceiveData(WebCore::SharedBuffer::create(data));
+        return _urlSchemeTask->didReceiveData(WebCore::SharedBuffer::create(data));
     };
 
     auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
@@ -131,7 +133,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 - (void)didFinish
 {
     auto function = [protectedSelf = retainPtr(self), self] {
-        return _urlSchemeTask->task().didComplete({ });
+        return _urlSchemeTask->didComplete({ });
     };
 
     auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
@@ -141,7 +143,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 - (void)didFailWithError:(NSError *)error
 {
     auto function = [protectedSelf = retainPtr(self), self, protectedError = retainPtr(error), error] {
-        return _urlSchemeTask->task().didComplete(error);
+        return _urlSchemeTask->didComplete(error);
     };
 
     auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
@@ -151,7 +153,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 - (void)_didPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request
 {
     auto function = [protectedSelf = retainPtr(self), self, protectedResponse = retainPtr(response), response, protectedRequest = retainPtr(request), request] {
-        return _urlSchemeTask->task().didPerformRedirection(response, request);
+        return _urlSchemeTask->didPerformRedirection(response, request);
     };
 
     auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
@@ -160,7 +162,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 
 - (WKFrameInfo *)_frame
 {
-    return wrapper(_urlSchemeTask->task().frameInfo());
+    return wrapper(_urlSchemeTask->frameInfo());
 }
 
 #pragma mark WKObject protocol implementation

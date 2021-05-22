@@ -1860,6 +1860,11 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 
     injectedBundle.setTopLoadingFrame(nullptr);
 
+    if (injectedBundle.testRunner()->shouldDisplayOnLoadFinish()) {
+        if (auto page = InjectedBundle::singleton().page())
+            WKBundlePageForceRepaint(page->page());
+    }
+
     if (injectedBundle.testRunner()->shouldWaitUntilDone())
         return;
 

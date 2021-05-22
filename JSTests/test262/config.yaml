@@ -8,6 +8,7 @@ flags:
   class-static-fields-public: usePublicStaticClassFields
   class-static-fields-private: usePrivateStaticClassFields
   class-static-methods-private: usePrivateMethods
+  error-cause: useErrorCause
   Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
@@ -21,8 +22,9 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
     - legacy-regexp
-
     - cleanupSome
+    # https://bugs.webkit.org/show_bug.cgi?id=221093
+    - class-fields-private-in
   paths:
   files:
     # Slightly different formatting. We should update test262 side.

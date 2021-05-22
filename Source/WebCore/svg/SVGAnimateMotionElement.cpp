@@ -258,7 +258,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         return;
 
     // ...except in case where we have additional instances in <use> trees.
-    for (auto* instance : targetElement->instances()) {
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances())) {
         AffineTransform* transform = instance->supplementalTransform();
         if (!transform || *transform == *targetSupplementalTransform)
             continue;

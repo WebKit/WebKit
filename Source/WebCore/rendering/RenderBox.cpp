@@ -227,8 +227,6 @@ static RenderBlockFlow* outermostBlockContainingFloatingObject(RenderBox& box)
     ASSERT(box.isFloating());
     RenderBlockFlow* parentBlock = nullptr;
     for (auto& ancestor : ancestorsOfType<RenderBlockFlow>(box)) {
-        if (ancestor.isRenderView())
-            break;
         if (!parentBlock || ancestor.containsFloat(box))
             parentBlock = &ancestor;
     }
@@ -1357,7 +1355,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     // foreground phase (which is true for replaced elements like images).
     LayoutRect boundsRect = borderBoxRectInFragment(nullptr);
     boundsRect.moveBy(adjustedLocation);
-    if (visibleToHitTesting() && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
+    if (visibleToHitTesting(request) && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
         if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
             return true;
@@ -2368,21 +2366,6 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
     if (!localContainer)
         return adjustedRect;
     
-    // This code isn't necessary for in-flow RenderFragmentedFlows.
-    // Don't add the location of the fragment in the flow thread for absolute positioned
-    // elements because their absolute position already pushes them down through
-    // the fragments so adding this here and then adding the topLeft again would cause
-    // us to add the height twice.
-    // The same logic applies for elements flowed directly into the flow thread. Their topLeft member
-    // will already contain the portion rect of the fragment.
-    auto position = styleToUse.position();
-    if (localContainer->isOutOfFlowRenderFragmentedFlow() && position != PositionType::Absolute && containingBlock() != enclosingFragmentedFlow()) {
-        RenderFragmentContainer* firstFragment = nullptr;
-        RenderFragmentContainer* lastFragment = nullptr;
-        if (downcast<RenderFragmentedFlow>(*localContainer).getFragmentRangeForBox(this, firstFragment, lastFragment))
-            adjustedRect.moveBy(firstFragment->fragmentedFlowPortionRect().location());
-    }
-
     if (isWritingModeRoot()) {
         if (!isOutOfFlowPositioned() || !context.dirtyRectIsFlipped) {
             flipForWritingMode(adjustedRect);
@@ -2418,6 +2401,7 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
 
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
+    auto position = styleToUse.position();
     if (hasLayer() && layer()->transform()) {
         context.hasPositionFixedDescendant = position == PositionType::Fixed;
         adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
@@ -2956,11 +2940,16 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             // translate this to a nullopt intrinsic height for further logical height computations.
             Optional<LayoutUnit> intrinsicHeight;
             if (computedValues.m_extent != LayoutUnit::max())
-                intrinsicHeight = computedValues.m_extent - borderAndPaddingLogicalHeight();
-            if (shouldComputeLogicalHeightFromAspectRatio())
+                intrinsicHeight = computedValues.m_extent;
+            if (shouldComputeLogicalHeightFromAspectRatio()) {
+                if (intrinsicHeight && style().boxSizingForAspectRatio() == BoxSizing::ContentBox)
+                    *intrinsicHeight -= borderAndPaddingLogicalHeight();
                 heightResult = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth());
-            else
+            } else {
+                if (intrinsicHeight)
+                    *intrinsicHeight -= borderAndPaddingLogicalHeight();
                 heightResult = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), intrinsicHeight).valueOr(computedValues.m_extent);
+            }
             heightResult = constrainLogicalHeightByMinMax(heightResult, intrinsicHeight);
         } else {
             ASSERT(h.isFixed());
@@ -3054,7 +3043,7 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
 {
     // Flow threads for multicol or paged overflow should be skipped. They are invisible to the DOM,
     // and percent heights of children should be resolved against the multicol or paged container.
-    if (containingBlock.isInFlowRenderFragmentedFlow() && !isPerpendicularWritingMode)
+    if (containingBlock.isRenderFragmentedFlow() && !isPerpendicularWritingMode)
         return true;
 
     // Render view is not considered auto height.
@@ -3232,6 +3221,14 @@ static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
 #else
     return false;
 #endif
+}
+
+void RenderBox::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), borderAndPaddingLogicalWidth());
+    setPreferredLogicalWidthsDirty(false);
 }
 
 void RenderBox::computePreferredLogicalWidths(const Length& minWidth, const Length& maxWidth, LayoutUnit borderAndPadding)

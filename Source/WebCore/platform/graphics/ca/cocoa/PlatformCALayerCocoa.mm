@@ -1205,12 +1205,11 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
             fontAntialiasingState.emplace(context, !![platformCALayer->platformLayer() isOpaque]);
             fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
 #endif
-        }
-        
-        {
             graphicsContext.setIsCALayerContext(true);
             graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
+        }
 
+        {
             if (!layerContents->platformCALayerContentsOpaque() && !platformCALayer->supportsSubpixelAntialiasedText() && FontCascade::isSubpixelAntialiasingAvailable()) {
                 // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
                 graphicsContext.setShouldSmoothFonts(false);
@@ -1238,12 +1237,15 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
     // Re-fetch the layer owner, since <rdar://problem/9125151> indicates that it might have been destroyed during painting.
     layerContents = platformCALayer->owner();
     ASSERT(layerContents);
-    
+
+    if (!layerContents)
+        return;
+
     // Always update the repaint count so that it's accurate even if the count itself is not shown. This will be useful
     // for the Web Inspector feeding this information through the LayerTreeAgent.
     int repaintCount = layerContents->platformCALayerIncrementRepaintCount(platformCALayer);
 
-    if (!platformCALayer->usesTiledBackingLayer() && layerContents && layerContents->platformCALayerShowRepaintCounter(platformCALayer))
+    if (!platformCALayer->usesTiledBackingLayer() && layerContents->platformCALayerShowRepaintCounter(platformCALayer))
         drawRepaintIndicator(graphicsContext, platformCALayer, repaintCount);
 }
 

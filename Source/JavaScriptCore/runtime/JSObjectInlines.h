@@ -191,6 +191,24 @@ inline bool JSObject::getOwnPropertySlotInline(JSGlobalObject* globalObject, Pro
     return JSObject::getOwnPropertySlot(this, globalObject, propertyName, slot);
 }
 
+inline JSValue JSObject::getIfPropertyExists(JSGlobalObject* globalObject, PropertyName propertyName)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    PropertySlot slot(this, PropertySlot::InternalMethodType::HasProperty);
+    bool hasProperty = getPropertySlot(globalObject, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!hasProperty)
+        return { };
+
+    scope.release();
+    if (UNLIKELY(slot.isTaintedByOpaqueObject()))
+        return get(globalObject, propertyName);
+
+    return slot.getValue(globalObject, propertyName);
+}
+
 inline bool JSObject::mayInterceptIndexedAccesses(VM& vm)
 {
     return structure(vm)->mayInterceptIndexedAccesses();

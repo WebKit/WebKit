@@ -1785,3 +1785,17 @@ function insertObjectIntoSortedArray(object, array, comparator)
 {
     array.splice(insertionIndexForObjectInListSortedByFunction(object, array, comparator), 0, object);
 }
+
+WI.setReentrantCheck = function(object, key)
+{
+    key = "__checkReentrant_" + key;
+    object[key] = (object[key] || 0) + 1;
+    return object[key] === 1;
+};
+
+WI.clearReentrantCheck = function(object, key)
+{
+    key = "__checkReentrant_" + key;
+    object[key] = (object[key] || 0) - 1;
+    return object[key] === 0;
+};

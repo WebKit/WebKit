@@ -33,6 +33,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -105,22 +106,21 @@ Optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const St
     if (separator1 == separator2)
         return WTF::nullopt;
     
-    // Make sure the port section is a valid port number or doesn't exist
-    bool portOkay;
-    int port = databaseIdentifier.right(databaseIdentifier.length() - separator2 - 1).toInt(&portOkay);
-    bool portAbsent = (separator2 == databaseIdentifier.length() - 1);
-    if (!(portOkay || portAbsent))
+    // Make sure the port section is a valid port number or doesn't exist.
+    auto portLength = databaseIdentifier.length() - separator2 - 1;
+    auto port = parseIntegerAllowingTrailingJunk<uint16_t>(StringView { databaseIdentifier }.right(portLength));
+
+    // Nothing after the colon is fine. Failure to parse after the colon is not.
+    if (!port && portLength)
         return WTF::nullopt;
-    
-    if (port < 0 || port > std::numeric_limits<uint16_t>::max())
-        return WTF::nullopt;
-    
+
+    // Treat port 0 like there is was no port specified.
+    if (port && !*port)
+        port = WTF::nullopt;
+
     auto protocol = databaseIdentifier.substring(0, separator1);
     auto host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
-    if (!port)
-        return SecurityOriginData { protocol, host, WTF::nullopt };
-
-    return SecurityOriginData { protocol, host, static_cast<uint16_t>(port) };
+    return SecurityOriginData { protocol, host, port };
 }
 
 SecurityOriginData SecurityOriginData::isolatedCopy() const

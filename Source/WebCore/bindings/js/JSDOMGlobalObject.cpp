@@ -59,6 +59,7 @@
 #include <JavaScriptCore/JSCustomSetterFunction.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/VMTrapsInlines.h>
 #include <JavaScriptCore/WasmStreamingCompiler.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 
@@ -96,6 +97,7 @@ JSC_DEFINE_HOST_FUNCTION(makeThisTypeErrorForBuiltins, (JSGlobalObject* globalOb
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount() == 2);
     VM& vm = globalObject->vm();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto interfaceName = callFrame->uncheckedArgument(0).getString(globalObject);
@@ -110,6 +112,7 @@ JSC_DEFINE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins, (JSGlobalObject* global
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount() == 2);
     VM& vm = globalObject->vm();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto interfaceName = callFrame->uncheckedArgument(0).getString(globalObject);
@@ -128,6 +131,7 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
     ASSERT(callFrame->argumentCount() == 2);
 
     auto& vm = globalObject->vm();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto codeValue = callFrame->uncheckedArgument(0).getString(globalObject);
@@ -141,7 +145,7 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
         code = AbortError;
     auto value = createDOMException(globalObject, code, message);
 
-    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
 
     return JSValue::encode(value);
 }
@@ -410,7 +414,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
                 auto scope = DECLARE_THROW_SCOPE(vm);
                 auto error = createDOMException(*globalObject, WTFMove(exception));
                 if (UNLIKELY(scope.exception())) {
-                    ASSERT(vm.isTerminationException(scope.exception()));
+                    ASSERT(vm.hasPendingTerminationException());
                     compiler->cancel();
                     return;
                 }

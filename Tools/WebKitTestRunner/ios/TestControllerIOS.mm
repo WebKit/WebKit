@@ -110,10 +110,6 @@ void TestController::platformInitialize()
     CFNotificationCenterAddObserver(center, this, handleKeyboardDidHideNotification, (CFStringRef)UIKeyboardDidHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleMenuWillHideNotification, (CFStringRef)UIMenuControllerWillHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleMenuDidHideNotification, (CFStringRef)UIMenuControllerDidHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
-
-    // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
-    // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
-    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
 }
 
 void TestController::platformDestroy()
@@ -177,6 +173,12 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     }
 
     GSEventSetHardwareKeyboardAttached(true, 0);
+
+    // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
+    // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
+    //
+    // FIXME: Investigate whether this can be removed. The swizzled return value is inconsistent with GSEventSetHardwareKeyboardAttached.
+    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
 
 #if !HAVE(NONDESTRUCTIVE_IMAGE_PASTE_SUPPORT_QUERY)
     // FIXME: Remove this workaround once -[UIKeyboardImpl delegateSupportsImagePaste] no longer increments the general pasteboard's changeCount.

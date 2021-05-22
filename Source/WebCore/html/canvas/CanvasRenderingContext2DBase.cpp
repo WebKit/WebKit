@@ -1643,7 +1643,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         repaintEntireCanvas = true;
     } else if (state().globalComposite == CompositeOperator::Copy) {
         if (&sourceCanvas == &canvasBase()) {
-            if (auto copy = buffer->copyRectToBuffer(srcRect, DestinationColorSpace::SRGB, *c)) {
+            if (auto copy = buffer->copyRectToBuffer(srcRect, colorSpace(), *c)) {
                 clearCanvas();
                 c->drawImageBuffer(*copy, dstRect, { { }, srcRect.size() }, { state().globalComposite, state().globalBlend });
             }
@@ -1829,7 +1829,7 @@ template<class T> IntRect CanvasRenderingContext2DBase::calculateCompositingBuff
 
 RefPtr<ImageBuffer> CanvasRenderingContext2DBase::createCompositingBuffer(const IntRect& bufferRect)
 {
-    return ImageBuffer::create(bufferRect.size(), isAccelerated() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated);
+    return ImageBuffer::create(bufferRect.size(), isAccelerated() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, 1, colorSpace(), pixelFormat());
 }
 
 void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const IntRect& bufferRect, CompositeOperator op)
@@ -2026,7 +2026,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 #endif
 
     auto renderingMode = !drawingContext() || drawingContext()->isAcceleratedContext() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-    auto imageBuffer = videoElement.createBufferForPainting(size(videoElement), renderingMode);
+    auto imageBuffer = videoElement.createBufferForPainting(size(videoElement), renderingMode, colorSpace(), pixelFormat());
     if (!imageBuffer)
         return nullptr;
 
@@ -2155,7 +2155,7 @@ static RefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
     auto data = ImageData::create(size);
     if (data)
-        data->data()->zeroFill();
+        data->data().zeroFill();
     return data;
 }
 
@@ -2164,25 +2164,16 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::createImageData(ImageData& image
     return createEmptyImageData(imageData.size());
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::createImageData(float sw, float sh) const
+ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh) const
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
 
-    FloatSize logicalSize(std::abs(sw), std::abs(sh));
-    if (!logicalSize.isExpressibleAsIntSize())
-        return nullptr;
-
-    IntSize size = expandedIntSize(logicalSize);
-    if (size.width() < 1)
-        size.setWidth(1);
-    if (size.height() < 1)
-        size.setHeight(1);
-
+    IntSize size { std::abs(sw), std::abs(sh) };
     return createEmptyImageData(size);
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(float sx, float sy, float sw, float sh) const
+ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh) const
 {
     if (!canvasBase().originClean()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
@@ -2202,15 +2193,7 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(float 
         sh = -sh;
     }
 
-    FloatRect logicalRect(sx, sy, sw, sh);
-    if (logicalRect.width() < 1)
-        logicalRect.setWidth(1);
-    if (logicalRect.height() < 1)
-        logicalRect.setHeight(1);
-    if (!logicalRect.isExpressibleAsIntRect())
-        return nullptr;
-
-    IntRect imageDataRect = enclosingIntRect(logicalRect);
+    IntRect imageDataRect { sx, sy, sw, sh };
 
     ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer)
@@ -2226,18 +2209,18 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(float 
     return imageData;
 }
 
-void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float dy)
+void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
 {
     putImageData(data, dx, dy, 0, 0, data.width(), data.height());
 }
 
-void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight)
+void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight)
 {
     ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer)
         return;
 
-    if (!data.data() || data.data()->isDetached())
+    if (data.data().isDetached())
         return;
 
     if (dirtyWidth < 0) {
@@ -2250,20 +2233,20 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, float dx, float
         dirtyHeight = -dirtyHeight;
     }
 
-    FloatRect clipRect(dirtyX, dirtyY, dirtyWidth, dirtyHeight);
-    clipRect.intersect(IntRect(0, 0, data.width(), data.height()));
-    IntSize destOffset(static_cast<int>(dx), static_cast<int>(dy));
-    IntRect destRect = enclosingIntRect(clipRect);
+    IntRect clipRect { dirtyX, dirtyY, dirtyWidth, dirtyHeight };
+    clipRect.intersect(IntRect { 0, 0, data.width(), data.height() });
+    IntSize destOffset { dx, dy };
+    IntRect destRect = clipRect;
     destRect.move(destOffset);
-    destRect.intersect(IntRect(IntPoint(), buffer->logicalSize()));
+    destRect.intersect(IntRect { { }, buffer->logicalSize() });
     if (destRect.isEmpty())
         return;
-    IntRect sourceRect(destRect);
+    IntRect sourceRect { destRect };
     sourceRect.move(-destOffset);
-    sourceRect.intersect(IntRect(0, 0, data.width(), data.height()));
+    sourceRect.intersect(IntRect { 0, 0, data.width(), data.height() });
 
     if (!sourceRect.isEmpty())
-        buffer->putImageData(AlphaPremultiplication::Unpremultiplied, data, sourceRect, IntPoint(destOffset));
+        buffer->putImageData(AlphaPremultiplication::Unpremultiplied, data, sourceRect, IntPoint { destOffset });
 
     didDraw(FloatRect { destRect }, { }); // ignore transform, shadow and clip
 }
@@ -2507,7 +2490,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, flo
             }
         };
 
-        if (c->clipToDrawingCommands(maskRect, DestinationColorSpace::SRGB, WTFMove(paintMaskImage)) == GraphicsContext::ClipToDrawingCommandsResult::FailedToCreateImageBuffer)
+        if (c->clipToDrawingCommands(maskRect, colorSpace(), WTFMove(paintMaskImage)) == GraphicsContext::ClipToDrawingCommandsResult::FailedToCreateImageBuffer)
             return;
 
         drawStyle.applyFillColor(*c);

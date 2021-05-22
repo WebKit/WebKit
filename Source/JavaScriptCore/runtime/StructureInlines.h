@@ -367,10 +367,10 @@ inline void Structure::didReplaceProperty(PropertyOffset offset)
 inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset offset)
 {
     ConcurrentJSLocker locker(m_lock);
-    if (!hasRareData())
+    StructureRareData* rareData = tryRareData();
+    if (!rareData)
         return nullptr;
-    WTF::loadLoadFence();
-    StructureRareData::PropertyWatchpointMap* map = rareData()->m_replacementWatchpointSets.get();
+    StructureRareData::PropertyWatchpointMap* map = rareData->m_replacementWatchpointSets.get();
     if (!map)
         return nullptr;
     return map->get(offset);

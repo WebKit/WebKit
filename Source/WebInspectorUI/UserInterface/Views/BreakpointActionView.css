@@ -39,7 +39,7 @@ body[dir=rtl] .breakpoint-action-button-container {
     background-origin: border-box;
     width: 13px;
     height: 13px;
-    margin-top: 2px;
+    margin-block-start: 5px;
     margin-inline-start: 5px;
     background-color: transparent;
     border: none;

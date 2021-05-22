@@ -38,6 +38,7 @@
 #import "PlatformScreen.h"
 #import "RealtimeMediaSourceSettings.h"
 #import "RealtimeVideoUtilities.h"
+#import <wtf/text/StringToIntegerConversion.h>
 
 #import "CoreVideoSoftLink.h"
 
@@ -80,15 +81,12 @@ static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
 
 Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> ScreenDisplayCapturerMac::create(const String& deviceID)
 {
-    bool ok;
-    auto displayID = deviceID.toUIntStrict(&ok);
-    if (!ok)
+    auto displayID = parseInteger<uint32_t>(deviceID);
+    if (!displayID)
         return makeUnexpected("Invalid display device ID"_s);
-
-    auto actualDisplayID = updateDisplayID(displayID);
+    auto actualDisplayID = updateDisplayID(*displayID);
     if (!actualDisplayID)
         return makeUnexpected("Invalid display ID"_s);
-
     return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ScreenDisplayCapturerMac>(actualDisplayID.value()));
 }
 
@@ -267,20 +265,18 @@ void ScreenDisplayCapturerMac::newFrame(CGDisplayStreamFrameStatus status, Displ
 
 Optional<CaptureDevice> ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
-    bool ok;
-    auto displayID = deviceID.toUIntStrict(&ok);
-    if (!ok) {
+    auto displayID = parseInteger<uint32_t>(deviceID);
+    if (!displayID) {
         RELEASE_LOG(WebRTC, "ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID: display ID does not convert to 32-bit integer");
         return WTF::nullopt;
     }
 
-    auto actualDisplayID = updateDisplayID(displayID);
+    auto actualDisplayID = updateDisplayID(*displayID);
     if (!actualDisplayID)
         return WTF::nullopt;
 
-    auto device = CaptureDevice(String::number(actualDisplayID.value()), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s);
+    auto device = CaptureDevice(String::number(*actualDisplayID), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s);
     device.setEnabled(true);
-
     return device;
 }
 

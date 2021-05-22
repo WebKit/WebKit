@@ -99,8 +99,7 @@ ElementType* LazyProperty<OwnerType, ElementType>::callFunc(const Initializer& i
     callStatelessLambda<void, Func>(initializer);
     if (UNLIKELY(initializer.property.m_pointer & initializingTag)) {
         VM& vm = initializer.vm;
-        Exception* exception = vm.exceptionForInspection();
-        RELEASE_ASSERT(exception && vm.isTerminationException(exception));
+        RELEASE_ASSERT(vm.hasPendingTerminationException());
         RELEASE_ASSERT(initializer.property.m_pointer & lazyTag);
         return nullptr;
     }

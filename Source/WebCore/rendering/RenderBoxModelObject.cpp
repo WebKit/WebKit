@@ -2645,18 +2645,6 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
     if (!container)
         return;
     
-    // FIXME: This code is wrong for named flow threads since it only works for content in the first region.
-    // We also don't want to run it for multicolumn flow threads, since we can use our knowledge of column
-    // geometry to actually get a better result.
-    // The point inside a box that's inside a region has its coordinates relative to the region,
-    // not the FragmentedFlow that is its container in the RenderObject tree.
-    if (is<RenderBox>(*this) && container->isOutOfFlowRenderFragmentedFlow()) {
-        RenderFragmentContainer* startFragment = nullptr;
-        RenderFragmentContainer* endFragment = nullptr;
-        if (downcast<RenderFragmentedFlow>(*container).getFragmentRangeForBox(downcast<RenderBox>(this), startFragment, endFragment))
-            container = startFragment;
-    }
-
     container->mapAbsoluteToLocalPoint(mode, transformState);
 
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint());

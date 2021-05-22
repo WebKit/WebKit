@@ -72,7 +72,7 @@ static inline Optional<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGlobalO
     auto scope = DECLARE_CATCH_SCOPE(vm);
     auto callData = JSC::getCallData(vm, function);
     auto result = call(&lexicalGlobalObject, function, callData, thisValue, arguments);
-    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
     if (scope.exception())
         return { };
     return result;
@@ -131,7 +131,7 @@ void ReadableStream::lock()
     ASSERT(!args.hasOverflowed());
 
     JSC::construct(&lexicalGlobalObject, constructor, constructData, args);
-    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
 }
 
 static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadableStream* readableStream, JSC::JSValue function)
@@ -149,7 +149,7 @@ static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadab
     ASSERT(callData.type != JSC::CallData::Type::None);
 
     auto result = call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
-    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
 
     return result.isTrue() || scope.exception();
 }

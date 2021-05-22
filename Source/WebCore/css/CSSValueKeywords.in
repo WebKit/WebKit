@@ -1176,7 +1176,6 @@ fine
 // (hover:) media feature.
 // none
 hover
-on-demand
 
 // blend modes
 // normal
@@ -1463,7 +1462,6 @@ reduce
 no-preference
 
 // prefers-contrast
-forced
 more
 less
 // no-preference
@@ -1472,7 +1470,6 @@ less
 // prefers-color-scheme
 light
 dark
-// no-preference
 
 // color-scheme
 only

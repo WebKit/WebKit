@@ -27,12 +27,12 @@ import unittest
 from webkitcorepy import OutputCapture, TaskPool, log as logger
 
 
-def setup():
-    logger.warning('Setting up')
+def setup(arg='Setting up'):
+    logger.warning(arg)
 
 
-def teardown():
-    logger.warning('Tearing down')
+def teardown(arg='Tearing down'):
+    logger.warning(arg)
 
 
 def action(argument):
@@ -118,6 +118,17 @@ class TaskPoolUnittest(unittest.TestCase):
             ['worker/{} Setting up'.format(x) for x in range(4)],
         )
 
+    def test_setup_arguments(self):
+        with OutputCapture() as captured:
+            with TaskPool(workers=4, setup=setup, setupargs=['Setup argument']) as pool:
+                for character in self.alphabet:
+                    pool.do(action, character)
+                pool.wait()
+        self.assertEqual(
+            sorted(captured.webkitcorepy.log.getvalue().splitlines()),
+            ['worker/{} Setup argument'.format(x) for x in range(4)],
+        )
+
     def test_teardown(self):
         with OutputCapture() as captured:
             with TaskPool(workers=4, teardown=teardown) as pool:
@@ -127,6 +138,17 @@ class TaskPoolUnittest(unittest.TestCase):
         self.assertEqual(
             sorted(captured.webkitcorepy.log.getvalue().splitlines()),
             ['worker/{} Tearing down'.format(x) for x in range(4)],
+        )
+
+    def test_teardown_arguments(self):
+        with OutputCapture() as captured:
+            with TaskPool(workers=4, teardown=teardown, teardownargs=['Teardown argument']) as pool:
+                for character in self.alphabet:
+                    pool.do(action, character)
+                pool.wait()
+        self.assertEqual(
+            sorted(captured.webkitcorepy.log.getvalue().splitlines()),
+            ['worker/{} Teardown argument'.format(x) for x in range(4)],
         )
 
     def test_invalid_shutdown(self):

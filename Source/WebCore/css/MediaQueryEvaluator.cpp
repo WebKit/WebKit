@@ -807,8 +807,6 @@ static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConvers
     bool useDarkAppearance = frame.page()->useDarkAppearance();
 
     switch (keyword) {
-    case CSSValueNoPreference:
-        return false;
     case CSSValueDark:
         return useDarkAppearance;
     case CSSValueLight:
@@ -839,7 +837,7 @@ static bool prefersContrastEvaluate(CSSValue* value, const CSSToLengthConversion
     if (!value)
         return userPrefersContrast;
 
-    // Apple platforms: less and forced are ignored and only "more" is mapped to the user's preference.
+    // Apple platforms: "less" is ignored and only "more" is mapped to the user's preference.
     return downcast<CSSPrimitiveValue>(*value).valueID() == (userPrefersContrast ? CSSValueMore : CSSValueNoPreference);
 }
 

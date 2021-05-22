@@ -1,8 +1,0 @@
-2d.shadow.image.section
-Shadows are not drawn for areas outside image source rectangles
-Spec references: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed
-

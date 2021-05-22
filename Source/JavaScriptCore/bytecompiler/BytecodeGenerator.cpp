@@ -55,6 +55,7 @@
 #include "UnlinkedMetadataTableInlines.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
+#include "VMTrapsInlines.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
@@ -3070,9 +3071,11 @@ RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
 JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8_t radix, bool sign)
 {
     return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix, sign), [&] {
-        auto scope = DECLARE_CATCH_SCOPE(vm());
+        VM& vm = this->vm();
+        DeferTermination deferScope(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
         auto parseIntSign = sign ? JSBigInt::ParseIntSign::Signed : JSBigInt::ParseIntSign::Unsigned;
-        JSValue bigIntInMap = JSBigInt::parseInt(nullptr, vm(), identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
+        JSValue bigIntInMap = JSBigInt::parseInt(nullptr, vm, identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
         scope.assertNoException();
         addConstantValue(bigIntInMap);
 

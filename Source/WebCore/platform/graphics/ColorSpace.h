@@ -48,8 +48,13 @@ enum class ColorSpace : uint8_t {
 };
 
 enum class DestinationColorSpace : uint8_t {
-    LinearSRGB,
-    SRGB,
+    SRGB
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    , LinearSRGB
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    , DisplayP3
+#endif
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ColorSpace);
@@ -97,6 +102,26 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
     return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
 }
 
+template<typename T, typename Functor> constexpr decltype(auto) callWithColorType(const ColorComponents<T, 4>& components, DestinationColorSpace colorSpace, Functor&& functor)
+{
+    switch (colorSpace) {
+    case DestinationColorSpace::SRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    case DestinationColorSpace::LinearSRGB:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<LinearSRGBA<T>>(components));
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    case DestinationColorSpace::DisplayP3:
+        return std::invoke(std::forward<Functor>(functor), makeFromComponents<DisplayP3<T>>(components));
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::invoke(std::forward<Functor>(functor), makeFromComponents<SRGBA<T>>(components));
+}
+
+
 } // namespace WebCore
 
 namespace WTF {
@@ -119,8 +144,13 @@ template<> struct EnumTraits<WebCore::ColorSpace> {
 template<> struct EnumTraits<WebCore::DestinationColorSpace> {
     using values = EnumValues<
         WebCore::DestinationColorSpace,
-        WebCore::DestinationColorSpace::LinearSRGB,
         WebCore::DestinationColorSpace::SRGB
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+        , WebCore::DestinationColorSpace::LinearSRGB
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        , WebCore::DestinationColorSpace::DisplayP3
+#endif
     >;
 };
 

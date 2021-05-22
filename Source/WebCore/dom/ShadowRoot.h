@@ -62,7 +62,7 @@ public:
 
     using TreeScope::rootNode;
 
-    Style::Scope& styleScope();
+    WEBCORE_EXPORT Style::Scope& styleScope();
     StyleSheetList& styleSheets();
 
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }

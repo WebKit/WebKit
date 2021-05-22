@@ -27,14 +27,50 @@ import logging
 import unittest
 import os
 
-from webkitpy.benchmark_runner.run_benchmark import default_browser, default_platform, benchmark_runner_subclasses
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
-from webkitpy.benchmark_runner.webserver_benchmark_runner import WebServerBenchmarkRunner
-from webkitpy.benchmark_runner.webdriver_benchmark_runner import WebDriverBenchmarkRunner
-from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
+from webkitpy.benchmark_runner.browser_driver.browser_driver import BrowserDriver
+from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import (
+    BrowserDriverFactory,
+)
+from webkitpy.benchmark_runner.run_benchmark import (
+    benchmark_runner_subclasses,
+)
 
 
 _log = logging.getLogger(__name__)
+
+
+class FakeBrowserDriver(BrowserDriver):
+    browser_name = None
+    process_search_list = []
+    platform = "fake"
+
+    def __init__(self):
+        self.process_name = "fake/process"
+
+    def prepare_env(self, config):
+        pass
+
+    def prepare_initial_env(self, config):
+        pass
+
+    def restore_env(self):
+        pass
+
+    def restore_env_after_all_testing(self):
+        pass
+
+    def close_browsers(self):
+        pass
+
+    def launch_url(self, url, options, browser_build_path, browser_path):
+        pass
+
+    def launch_webdriver(self, url, driver):
+        pass
+
+
+BrowserDriverFactory.add_browser_driver("fake", None, FakeBrowserDriver)
 
 
 class FakeBenchmarkRunner(BenchmarkRunner):
@@ -60,5 +96,7 @@ class BrowserPerfDashRunnerTest(unittest.TestCase):
         # This tests that constructing the benchmark_runner object specifying the minimum required paramaters is ok.
         plan_list = BenchmarkRunner.available_plans()
         build_dir = os.path.abspath(os.curdir)
-        runner = FakeBenchmarkRunner(plan_list[0], False, 1, build_dir, "/tmp/testOutput.txt", default_platform(), default_browser(), None)
+        runner = FakeBenchmarkRunner(
+            plan_list[0], False, 1, build_dir, "/tmp/testOutput.txt", "fake", None, None
+        )
         self.assertTrue(runner.execute())

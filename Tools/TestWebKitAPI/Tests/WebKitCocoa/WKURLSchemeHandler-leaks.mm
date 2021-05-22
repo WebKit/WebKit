@@ -68,9 +68,7 @@
 static void runUntilTasksInFlight(size_t count)
 {
     while (true) {
-        EXPECT_EQ(WKGetAPIURLSchemeTaskInstanceCount(), WKGetWebURLSchemeTaskInstanceCount());
-
-        if (WKGetAPIURLSchemeTaskInstanceCount() == count)
+        if (WKGetWebURLSchemeTaskInstanceCount() == count)
             return;
 
         TestWebKitAPI::Util::spinRunLoop(10);

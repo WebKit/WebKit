@@ -60,8 +60,7 @@ public:
     uint32_t allocatedLength() const { return m_table->allocatedLength(length()); }
     bool grow(uint32_t delta, JSValue defaultValue) WARN_UNUSED_RETURN;
     JSValue get(uint32_t);
-    void set(uint32_t, WebAssemblyFunction*);
-    void set(uint32_t, WebAssemblyWrapperFunction*);
+    void set(uint32_t, WebAssemblyFunctionBase*);
     void set(uint32_t, JSValue);
     void clear(uint32_t);
     JSObject* type(JSGlobalObject*);

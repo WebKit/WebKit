@@ -137,12 +137,25 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager& manager,
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
-    manager.addSession(*this);
 }
 
 PlatformMediaSession::~PlatformMediaSession()
 {
-    if (m_manager)
+    setActive(false);
+}
+
+void PlatformMediaSession::setActive(bool active)
+{
+    if (m_active == active)
+        return;
+    m_active = active;
+
+    if (!m_manager)
+        return;
+
+    if (m_active)
+        m_manager->addSession(*this);
+    else
         m_manager->removeSession(*this);
 }
 
@@ -363,7 +376,12 @@ void PlatformMediaSession::clientCharacteristicsChanged()
 
 static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)
 {
+#if ENABLE(VIDEO)
     return mediaType == MediaElementSession::MediaType::VideoAudio || mediaType == MediaElementSession::MediaType::Audio;
+#else
+    UNUSED_PARAM(mediaType);
+    return false;
+#endif
 }
 
 bool PlatformMediaSession::canPlayConcurrently(const PlatformMediaSession& otherSession) const

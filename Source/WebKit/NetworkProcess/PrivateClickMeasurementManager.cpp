@@ -145,6 +145,8 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
         if (attributionReportEndpoint == PrivateClickMeasurement::AttributionReportEndpoint::Destination)
             return;
         tokenPublicKeyURL = *m_tokenPublicKeyURLForTesting;
+        // FIXME(225364)
+        pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
     }
 
     if (tokenPublicKeyURL.isEmpty() || !tokenPublicKeyURL.isValid())
@@ -182,8 +184,11 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
     auto pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
     auto tokenSignatureURL = attribution.tokenSignatureURL();
-    if (m_tokenSignatureURLForTesting)
+    if (m_tokenSignatureURLForTesting) {
         tokenSignatureURL = *m_tokenSignatureURLForTesting;
+        // FIXME(225364)
+        pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
+    }
 
     if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
         return;

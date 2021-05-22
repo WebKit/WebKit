@@ -58,36 +58,36 @@ struct ClientState {
 
     WebMediaSessionManagerClient& client;
     PlaybackTargetClientContextIdentifier contextId;
-    WebCore::MediaProducer::MediaStateFlags flags { WebCore::MediaProducer::IsNotPlaying };
+    WebCore::MediaProducer::MediaStateFlags flags;
     bool requestedPicker { false };
     bool previouslyRequestedPicker { false };
     bool configurationRequired { true };
     bool playedToEnd { false };
 };
 
-static bool flagsAreSet(MediaProducer::MediaStateFlags value, unsigned flags)
+static bool flagsAreSet(MediaProducer::MediaStateFlags value, MediaProducer::MediaStateFlags flags)
 {
-    return value & flags;
+    return value.containsAny(flags);
 }
 
 String mediaProducerStateString(MediaProducer::MediaStateFlags flags)
 {
     StringBuilder string;
-    if (flags & MediaProducer::IsPlayingAudio)
+    if (flags & MediaProducer::MediaState::IsPlayingAudio)
         string.append("IsPlayingAudio+");
-    if (flags & MediaProducer::IsPlayingVideo)
+    if (flags & MediaProducer::MediaState::IsPlayingVideo)
         string.append("IsPlayingVideo+");
-    if (flags & MediaProducer::IsPlayingToExternalDevice)
+    if (flags & MediaProducer::MediaState::IsPlayingToExternalDevice)
         string.append("IsPlayingToExternalDevice+");
-    if (flags & MediaProducer::HasPlaybackTargetAvailabilityListener)
+    if (flags & MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener)
         string.append("HasTargetAvailabilityListener+");
-    if (flags & MediaProducer::RequiresPlaybackTargetMonitoring)
+    if (flags & MediaProducer::MediaState::RequiresPlaybackTargetMonitoring)
         string.append("RequiresTargetMonitoring+");
-    if (flags & MediaProducer::ExternalDeviceAutoPlayCandidate)
+    if (flags & MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate)
         string.append("ExternalDeviceAutoPlayCandidate+");
-    if (flags & MediaProducer::DidPlayToEnd)
+    if (flags & MediaProducer::MediaState::DidPlayToEnd)
         string.append("DidPlayToEnd+");
-    if (flags & MediaProducer::HasAudioOrVideo)
+    if (flags & MediaProducer::MediaState::HasAudioOrVideo)
         string.append("HasAudioOrVideo+");
     if (string.isEmpty())
         string.append("IsNotPlaying");
@@ -255,7 +255,7 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
 
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, m_clientState[index].get());
 
-    bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducer::IsPlayingToExternalDevice);
+    bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducer::MediaState::IsPlayingToExternalDevice);
     targetPicker().showPlaybackTargetPicker(client.platformView(), FloatRect(rect), hasActiveRoute, useDarkAppearance, client.useiTunesAVOutputContext());
 }
 
@@ -275,18 +275,18 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
 
     changedClientState->flags = newFlags;
 
-    MediaProducer::MediaStateFlags updateConfigurationFlags = MediaProducer::RequiresPlaybackTargetMonitoring | MediaProducer::HasPlaybackTargetAvailabilityListener | MediaProducer::HasAudioOrVideo;
+    constexpr MediaProducer::MediaStateFlags updateConfigurationFlags { MediaProducer::MediaState::RequiresPlaybackTargetMonitoring, MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener, MediaProducer::MediaState::HasAudioOrVideo };
     if ((oldFlags & updateConfigurationFlags) != (newFlags & updateConfigurationFlags))
         scheduleDelayedTask(TargetMonitoringConfigurationTask);
 
-    MediaProducer::MediaStateFlags playingToTargetFlags = MediaProducer::IsPlayingToExternalDevice | MediaProducer::IsPlayingVideo;
+    constexpr MediaProducer::MediaStateFlags playingToTargetFlags { MediaProducer::MediaState::IsPlayingToExternalDevice, MediaProducer::MediaState::IsPlayingVideo };
     if ((oldFlags & playingToTargetFlags) != (newFlags & playingToTargetFlags)) {
-        if (flagsAreSet(oldFlags, MediaProducer::IsPlayingVideo) && !flagsAreSet(newFlags, MediaProducer::IsPlayingVideo) && flagsAreSet(newFlags, MediaProducer::DidPlayToEnd))
+        if (flagsAreSet(oldFlags, MediaProducer::MediaState::IsPlayingVideo) && !flagsAreSet(newFlags, MediaProducer::MediaState::IsPlayingVideo) && flagsAreSet(newFlags, MediaProducer::MediaState::DidPlayToEnd))
             changedClientState->playedToEnd = true;
         scheduleDelayedTask(WatchdogTimerConfigurationTask);
     }
 
-    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute() || !flagsAreSet(newFlags, MediaProducer::ExternalDeviceAutoPlayCandidate))
+    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute() || !flagsAreSet(newFlags, MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate))
         return;
 
     // Do not interrupt another element already playing to a device.
@@ -294,14 +294,14 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
         if (state == changedClientState)
             continue;
 
-        if (flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice) && flagsAreSet(state->flags, MediaProducer::IsPlayingVideo)) {
+        if (flagsAreSet(state->flags, MediaProducer::MediaState::IsPlayingToExternalDevice) && flagsAreSet(state->flags, MediaProducer::MediaState::IsPlayingVideo)) {
             ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " returning early");
             return;
         }
     }
 
     // Do not begin playing to the device unless playback has just started.
-    if (!flagsAreSet(newFlags, MediaProducer::IsPlayingVideo) || flagsAreSet(oldFlags, MediaProducer::IsPlayingVideo)) {
+    if (!flagsAreSet(newFlags, MediaProducer::MediaState::IsPlayingVideo) || flagsAreSet(oldFlags, MediaProducer::MediaState::IsPlayingVideo)) {
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, "returning early, playback didn't just start");
         return;
     }
@@ -376,7 +376,7 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
         if ((m_targetChanged || m_playbackTargetPickerDismissed) && state->requestedPicker)
             indexOfClientThatRequestedPicker = i;
 
-        if (indexOfClientWillPlayToTarget == notFound && flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice))
+        if (indexOfClientWillPlayToTarget == notFound && flagsAreSet(state->flags, MediaProducer::MediaState::IsPlayingToExternalDevice))
             indexOfClientWillPlayToTarget = i;
 
         if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute && state->previouslyRequestedPicker)
@@ -387,7 +387,7 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
         indexOfClientWillPlayToTarget = indexOfClientThatRequestedPicker;
     if (indexOfClientWillPlayToTarget == notFound && indexOfLastClientToRequestPicker != notFound)
         indexOfClientWillPlayToTarget = indexOfLastClientToRequestPicker;
-    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute && flagsAreSet(m_clientState[0]->flags, MediaProducer::ExternalDeviceAutoPlayCandidate) && !flagsAreSet(m_clientState[0]->flags, MediaProducer::IsPlayingVideo))
+    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute && flagsAreSet(m_clientState[0]->flags, MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate) && !flagsAreSet(m_clientState[0]->flags, MediaProducer::MediaState::IsPlayingVideo))
         indexOfClientWillPlayToTarget = 0;
 
     for (size_t i = 0; i < m_clientState.size(); ++i) {
@@ -413,7 +413,7 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
 
     if (haveActiveRoute && indexOfClientWillPlayToTarget != notFound) {
         auto& state = m_clientState[indexOfClientWillPlayToTarget];
-        if (!flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice)) {
+        if (!flagsAreSet(state->flags, MediaProducer::MediaState::IsPlayingToExternalDevice)) {
             ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " calling setShouldPlayToPlaybackTarget(true)");
             state->client.setShouldPlayToPlaybackTarget(state->contextId, true);
         }
@@ -430,13 +430,13 @@ void WebMediaSessionManager::configurePlaybackTargetMonitoring()
     bool haveClientWithMedia = false;
     for (auto& state : m_clientState) {
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get());
-        if (state->flags & MediaProducer::RequiresPlaybackTargetMonitoring) {
+        if (state->flags & MediaProducer::MediaState::RequiresPlaybackTargetMonitoring) {
             monitoringRequired = true;
             break;
         }
-        if (state->flags & MediaProducer::HasPlaybackTargetAvailabilityListener)
+        if (state->flags & MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener)
             hasAvailabilityListener = true;
-        if (state->flags & MediaProducer::HasAudioOrVideo)
+        if (state->flags & MediaProducer::MediaState::HasAudioOrVideo)
             haveClientWithMedia = true;
     }
 
@@ -500,7 +500,7 @@ void WebMediaSessionManager::configureWatchdogTimer()
 
         ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, state.get(), " playedToEnd = ", state->playedToEnd);
 
-        if (flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice) && flagsAreSet(state->flags, MediaProducer::IsPlayingVideo))
+        if (flagsAreSet(state->flags, MediaProducer::MediaState::IsPlayingToExternalDevice) && flagsAreSet(state->flags, MediaProducer::MediaState::IsPlayingVideo))
             stopTimer = true;
         if (state->playedToEnd)
             didPlayToEnd = true;

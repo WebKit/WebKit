@@ -28,6 +28,7 @@
 #include "APISerializedScriptValue.h"
 #include "DataReference.h"
 #include "ImageOptions.h"
+#include "ProvisionalPageProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
@@ -3270,7 +3271,10 @@ void webkit_web_view_set_is_muted(WebKitWebView* webView, gboolean muted)
     if (webkit_web_view_get_is_muted (webView) == muted)
         return;
 
-    getPage(webView).setMuted(muted ? WebCore::MediaProducer::AudioIsMuted : WebCore::MediaProducer::NoneMuted);
+    WebCore::MediaProducer::MutedStateFlags audioMutedFlag;
+    if (muted)
+        audioMutedFlag.add(WebCore::MediaProducer::MutedState::AudioIsMuted);
+    getPage(webView).setMuted(audioMutedFlag);
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_MUTED]);
 }
 
@@ -4424,6 +4428,9 @@ void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessT
     }
 #endif
     g_signal_emit(webView, signals[WEB_PROCESS_TERMINATED], 0, reason);
+
+    // Reset the state of the responsiveness property.
+    webkitWebViewSetIsWebProcessResponsive(webView, true);
 }
 
 /*
@@ -4751,4 +4758,29 @@ gboolean webkit_web_view_get_is_web_process_responsive(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     return webView->priv->isWebProcessResponsive;
+}
+
+/**
+ * webkit_web_view_terminate_web_process:
+ * @web_view: a #WebKitWebView
+ *
+ * Terminates the web process associated to @web_view. When the web process gets terminated
+ * using this method, the #WebKitWebView::web-process-terminated signal is emitted with
+ * %WEBKIT_WEB_PROCESS_TERMINATED_BY_API as the reason for termination.
+ *
+ * Since: 2.34
+ */
+void webkit_web_view_terminate_web_process(WebKitWebView* webView)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    auto& page = getPage(webView);
+
+    Ref<WebKit::WebProcessProxy> protectedProcessProxy(page.process());
+    protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
+
+    if (auto* provisionalPageProxy = page.provisionalPageProxy()) {
+        Ref<WebKit::WebProcessProxy> protectedProcessProxy(provisionalPageProxy->process());
+        protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
+    }
 }

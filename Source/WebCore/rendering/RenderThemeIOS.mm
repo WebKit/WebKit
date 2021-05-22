@@ -2339,11 +2339,11 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
         tickRect.setX(rect.center().x() - tickRect.width() / 2.0f);
     }
 
-    auto deviceScaleFactor = box.document().deviceScaleFactor();
-
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
+    auto value = input.valueAsNumber();
+    auto deviceScaleFactor = box.document().deviceScaleFactor();
     auto styleColorOptions = box.styleColorOptions();
 
     for (auto& optionElement : dataList->suggestions()) {
@@ -2356,7 +2356,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
                 tickRect.setY(rect.y() + tickRatio * (rect.height() - tickRect.height()));
 
             FloatRoundedRect roundedTickRect(snapRectToDevicePixels(LayoutRect(tickRect), deviceScaleFactor), tickCornerRadii);
-            context.fillRoundedRect(roundedTickRect, systemColor(CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
+            context.fillRoundedRect(roundedTickRect, systemColor((value >= *optionValue) ? CSSValueAppleSystemBlue : CSSValueAppleSystemOpaqueSeparator, styleColorOptions));
         }
     }
 }

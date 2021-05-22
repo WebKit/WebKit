@@ -353,10 +353,31 @@ inline bool RenderElement::shouldRepaintForStyleDifference(StyleDifference diff)
 
 void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer& newLayers)
 {
-    // Optimize the common case.
-    if (FillLayer::imagesIdentical(oldLayers, &newLayers))
+    auto fillImagesAreIdentical = [](const FillLayer* layer1, const FillLayer* layer2) -> bool {
+        if (layer1 == layer2)
+            return true;
+
+        for (; layer1 && layer2; layer1 = layer1->next(), layer2 = layer2->next()) {
+            if (!arePointingToEqualData(layer1->image(), layer2->image()))
+                return false;
+        }
+
+        return !layer1 && !layer2;
+    };
+
+    auto isRegisteredWithNewFillImages = [&]() -> bool {
+        for (auto* layer = &newLayers; layer; layer = layer->next()) {
+            if (layer->image() && !layer->image()->hasClient(*this))
+                return false;
+        }
+        return true;
+    };
+
+    // If images have the same characteristics and this element is already registered as a
+    // client to the new images, there is nothing to do.
+    if (fillImagesAreIdentical(oldLayers, &newLayers) && isRegisteredWithNewFillImages())
         return;
-    
+
     // Add before removing, to avoid removing all clients of an image that is in both sets.
     for (auto* layer = &newLayers; layer; layer = layer->next()) {
         if (layer->image())

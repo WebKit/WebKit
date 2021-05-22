@@ -158,6 +158,7 @@ class HTMLIFrameElement;
 class HTMLImageElement;
 class HTMLMapElement;
 class HTMLMediaElement;
+class HTMLMetaElement;
 class HTMLVideoElement;
 class HighlightRegister;
 class HitTestLocation;
@@ -741,7 +742,9 @@ public:
     Seconds timeSinceDocumentCreation() const { return MonotonicTime::now() - m_documentCreationTime; };
 #endif
 
-    const Color& themeColor() const { return m_metaElementThemeColor.isValid() ? m_metaElementThemeColor : m_applicationManifestThemeColor; }
+    const Color& themeColor();
+
+    const Color& sampledPageTopColor() const { return m_sampledPageTopColor; }
 
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
@@ -910,7 +913,8 @@ public:
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
-    void processMetaElementThemeColor(const String& themeColor);
+
+    void metaElementThemeColorChanged(HTMLMetaElement&);
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
@@ -1148,10 +1152,6 @@ public:
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
     WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
 
-    void addSVGUseElement(SVGUseElement&);
-    void removeSVGUseElement(SVGUseElement&);
-    HashSet<SVGUseElement*> const svgUseElements() const { return m_svgUseElements; }
-
     void initSecurityContext();
     void initContentSecurityPolicy();
 
@@ -1313,7 +1313,6 @@ public:
     void invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 
     void didRemoveAllPendingStylesheet();
-    void didClearStyleResolver();
 
     bool inStyleRecalc() const { return m_inStyleRecalc; }
     bool inRenderTreeUpdate() const { return m_inRenderTreeUpdate; }
@@ -1462,7 +1461,7 @@ public:
 
     void didInsertInDocumentShadowRoot(ShadowRoot&);
     void didRemoveInDocumentShadowRoot(ShadowRoot&);
-    const HashSet<ShadowRoot*>& inDocumentShadowRoots() const { return m_inDocumentShadowRoots; }
+    const ListHashSet<ShadowRoot*>& inDocumentShadowRoots() const { return m_inDocumentShadowRoots; }
 
     void attachToCachedFrame(CachedFrameBase&);
     void detachFromCachedFrame(CachedFrameBase&);
@@ -1609,7 +1608,7 @@ public:
     const FrameSelection& selection() const { return m_selection; }
 
     void prepareCanvasesForDisplayIfNeeded();
-    void clearCanvasPreparation(HTMLCanvasElement*);
+    void clearCanvasPreparation(HTMLCanvasElement&);
     void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final;
     void canvasResized(CanvasBase&) final { };
     void canvasDestroyed(CanvasBase&) final;
@@ -1675,7 +1674,10 @@ private:
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
 
+    WeakPtr<HTMLMetaElement> determineActiveThemeColorMetaElement();
     void themeColorChanged();
+
+    void determineSampledPageTopColor();
 
     void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
@@ -1741,8 +1743,6 @@ private:
 
     UniqueRef<Quirks> m_quirks;
 
-    RefPtr<Style::Resolver> m_userAgentShadowTreeStyleResolver;
-
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;
 
@@ -1797,8 +1797,12 @@ private:
 
     std::unique_ptr<FormController> m_formController;
 
-    Color m_metaElementThemeColor;
+    Color m_cachedThemeColor;
+    Optional<Vector<WeakPtr<HTMLMetaElement>>> m_metaThemeColorElements;
+    WeakPtr<HTMLMetaElement> m_activeThemeColorMetaElement;
     Color m_applicationManifestThemeColor;
+
+    Color m_sampledPageTopColor;
 
     Color m_textColor { Color::black };
     Color m_linkColor;
@@ -1855,12 +1859,11 @@ private:
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 
     std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
-    HashSet<SVGUseElement*> m_svgUseElements;
 
     // Collection of canvas objects that need to do work after they've
     // rendered but before compositing, for the next frame. The set is
     // cleared after they've been called.
-    HashSet<HTMLCanvasElement*> m_canvasesNeedingDisplayPreparation;
+    WeakHashSet<HTMLCanvasElement> m_canvasesNeedingDisplayPreparation;
 
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> m_colorScheme;
@@ -1869,10 +1872,10 @@ private:
 
     HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
 
-    HashSet<Element*> m_documentSuspensionCallbackElements;
+    WeakHashSet<Element> m_documentSuspensionCallbackElements;
 
 #if ENABLE(VIDEO)
-    HashSet<HTMLMediaElement*> m_mediaElements;
+    WeakHashSet<HTMLMediaElement> m_mediaElements;
 #endif
 
 #if ENABLE(VIDEO)
@@ -1880,8 +1883,8 @@ private:
     WeakPtr<HTMLMediaElement> m_mediaElementShowingTextTrack;
 #endif
 
-    Element* m_mainArticleElement { nullptr };
-    HashSet<Element*> m_articleElements;
+    WeakPtr<Element> m_mainArticleElement;
+    WeakHashSet<Element> m_articleElements;
 
     HashSet<VisibilityChangeClient*> m_visibilityStateCallbackClients;
 
@@ -1994,7 +1997,7 @@ private:
     WeakHashSet<MediaProducer> m_audioProducers;
     WeakPtr<SpeechRecognition> m_activeSpeechRecognition;
 
-    HashSet<ShadowRoot*> m_inDocumentShadowRoots;
+    ListHashSet<ShadowRoot*> m_inDocumentShadowRoots;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     using TargetIdToClientMap = HashMap<PlaybackTargetClientContextIdentifier, WebCore::MediaPlaybackTargetClient*>;
@@ -2043,7 +2046,7 @@ private:
     unsigned m_writeRecursionDepth { 0 };
 
     InheritedBool m_designMode { inherit };
-    MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
+    MediaProducer::MediaStateFlags m_mediaState;
     bool m_userHasInteractedWithMediaElement { false };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
     Optional<ReferrerPolicy> m_referrerPolicy;
@@ -2127,7 +2130,6 @@ private:
     std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
 
 #if ENABLE(MEDIA_STREAM)
-    HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;
     String m_idHashSalt;
     bool m_hasHadCaptureMediaStreamTrack { false };
 #endif

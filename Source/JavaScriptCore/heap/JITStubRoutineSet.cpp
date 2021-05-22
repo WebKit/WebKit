@@ -29,8 +29,13 @@
 #if ENABLE(JIT)
 
 #include "GCAwareJITStubRoutine.h"
+#include <algorithm>
 
 namespace JSC {
+
+using WTF::Range;
+
+bool JITStubRoutineSet::s_mayHaveRoutinesToDelete = false;
 
 JITStubRoutineSet::JITStubRoutineSet() { }
 JITStubRoutineSet::~JITStubRoutineSet()
@@ -113,19 +118,46 @@ void JITStubRoutineSet::markSlow(uintptr_t address)
     }
 }
 
-void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines()
+void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines(Seconds timeSlice)
 {
+    ASSERT(s_mayHaveRoutinesToDelete);
+
+    MonotonicTime startTime = MonotonicTime::now();
+    Seconds elapsedTime;
+    constexpr unsigned maxBatchSize = 100;
+
+    unsigned endIndex = m_routines.size();
+
+    // Clear the s_mayHaveRoutinesToDelete flag before we start.
+    // Destruction of a MarkingGCAwareJITStubRoutine can trigger more routines
+    // to be deleted, and some of those may be the ones we have already iterated
+    // pass.
+    s_mayHaveRoutinesToDelete = false;
+
     unsigned srcIndex = 0;
-    unsigned dstIndex = srcIndex;
-    while (srcIndex < m_routines.size()) {
-        Routine routine = m_routines[srcIndex++];
-        if (!routine.routine->m_isJettisoned || routine.routine->m_mayBeExecuting) {
-            m_routines[dstIndex++] = routine;
-            continue;
+    while (srcIndex < endIndex) {
+        unsigned batchSize = std::min<unsigned>(maxBatchSize, endIndex - srcIndex);
+        while (batchSize--) {
+            Routine routine = m_routines[srcIndex];
+            if (!routine.routine->m_isJettisoned || routine.routine->m_mayBeExecuting) {
+                srcIndex++;
+                continue;
+            }
+            m_routines[srcIndex] = m_routines[--endIndex];
+
+            routine.routine->deleteFromGC();
         }
-        routine.routine->deleteFromGC();
+
+        elapsedTime = MonotonicTime::now() - startTime;
+        if (elapsedTime > timeSlice) {
+            // We timed out. Assume there's more to do, and that we should check
+            // again next time slice.
+            s_mayHaveRoutinesToDelete = true;
+            break;
+        }
     }
-    m_routines.shrinkCapacity(dstIndex);
+
+    m_routines.shrinkCapacity(endIndex);
 }
 
 template<typename Visitor>

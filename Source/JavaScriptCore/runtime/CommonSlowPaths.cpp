@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,7 +235,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
 
         size_t inlineCapacity = bytecode.m_inlineCapacity;
         ObjectAllocationProfileWithPrototype* allocationProfile = constructor->ensureRareDataAndAllocationProfile(globalObject, inlineCapacity)->objectAllocationProfile();
-        throwScope.releaseAssertNoException();
+        CHECK_EXCEPTION();
         Structure* structure = allocationProfile->structure();
         result = constructEmptyObject(vm, structure);
         if (structure->hasPolyProto()) {

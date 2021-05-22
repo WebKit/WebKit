@@ -34,7 +34,6 @@
 #include "CachedSVGDocument.h"
 #include "Document.h"
 #include "InspectorPageAgent.h"
-#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

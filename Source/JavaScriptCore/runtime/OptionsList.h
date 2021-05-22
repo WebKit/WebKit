@@ -71,18 +71,6 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
 // On instantiation of the first VM instance, the Options will be write protected
 // and cannot be modified thereafter.
 
-#if OS(LINUX) && !defined(__BIONIC__) && !defined(__GLIBC__)
-// non-glibc/non-android options on linux ( musl )
-constexpr unsigned jscMaxPerThreadStack = 128 * KB;
-constexpr unsigned jscSoftReservedZoneSize = 32 * KB;
-constexpr unsigned jscReservedZoneSize = 16 * KB;
-#else
-// default
-constexpr unsigned jscMaxPerThreadStack = 5 * MB;
-constexpr unsigned jscSoftReservedZoneSize = 128 * KB;
-constexpr unsigned jscReservedZoneSize = 64 * KB;
-#endif
-
 #define FOR_EACH_JSC_OPTION(v)                                          \
     v(Bool, useKernTCSM, defaultTCSMValue(), Normal, "Note: this needs to go before other options since they depend on this value.") \
     v(Bool, validateOptions, false, Normal, "crashes if mis-typed JSC options were passed to the VM") \
@@ -98,9 +86,9 @@ constexpr unsigned jscReservedZoneSize = 64 * KB;
     \
     v(Bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
     \
-    v(Unsigned, maxPerThreadStackUsage, jscMaxPerThreadStack, Normal, "Max allowed stack usage by the VM") \
-    v(Unsigned, softReservedZoneSize, jscSoftReservedZoneSize, Normal, "A buffer greater than reservedZoneSize that reserves space for stringifying exceptions.") \
-    v(Unsigned, reservedZoneSize, jscReservedZoneSize, Normal, "The amount of stack space we guarantee to our clients (and to interal VM code that does not call out to clients).") \
+    v(Unsigned, maxPerThreadStackUsage, 5 * MB, Normal, "Max allowed stack usage by the VM") \
+    v(Unsigned, softReservedZoneSize, 128 * KB, Normal, "A buffer greater than reservedZoneSize that reserves space for stringifying exceptions.") \
+    v(Unsigned, reservedZoneSize, 64 * KB, Normal, "The amount of stack space we guarantee to our clients (and to interal VM code that does not call out to clients).") \
     \
     v(Bool, crashOnDisallowedVMEntry, ASSERT_ENABLED, Normal, "Forces a crash if we attempt to enter the VM when disallowed") \
     v(Bool, crashIfCantAllocateJITMemory, false, Normal, nullptr) \
@@ -134,6 +122,7 @@ constexpr unsigned jscReservedZoneSize = 64 * KB;
     /* dumpDisassembly implies dumpDFGDisassembly. */ \
     v(Bool, dumpDisassembly, false, Normal, "dumps disassembly of all JIT compiled code upon compilation") \
     v(Bool, asyncDisassembly, false, Normal, nullptr) \
+    v(Bool, logJIT, false, Normal, nullptr) \
     v(Bool, dumpDFGDisassembly, false, Normal, "dumps disassembly of DFG function upon compilation") \
     v(Bool, dumpFTLDisassembly, false, Normal, "dumps disassembly of FTL function upon compilation") \
     v(Bool, dumpRegExpDisassembly, false, Normal, "dumps disassembly of RegExp upon compilation") \
@@ -373,7 +362,7 @@ constexpr unsigned jscReservedZoneSize = 64 * KB;
     \
     v(Bool, useSamplingProfiler, false, Normal, nullptr) \
     v(Unsigned, sampleInterval, 1000, Normal, "Time between stack traces in microseconds.") \
-    v(Bool, collectSamplingProfilerDataForJSCShell, false, Normal, "This corresponds to the JSC shell's --sample option.") \
+    v(Bool, collectExtraSamplingProfilerData, false, Normal, "This corresponds to the JSC shell's --sample option, or if we're wanting to use the sampling profiler via the Debug menu in the browser.") \
     v(Unsigned, samplingProfilerTopFunctionsCount, 12, Normal, "Number of top functions to report when using the command line interface.") \
     v(Unsigned, samplingProfilerTopBytecodesCount, 40, Normal, "Number of top bytecodes to report when using the command line interface.") \
     v(OptionString, samplingProfilerPath, nullptr, Normal, "The path to the directory to write sampiling profiler output to. This probably will not work with WK2 unless the path is in the sandbox.") \
@@ -544,6 +533,7 @@ constexpr unsigned jscReservedZoneSize = 64 * KB;
     v(Bool, useErrorCause, true, Normal, "Allow a cause to be provided when constructing an Error, _NativeError_, or AggregateError.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useTopLevelAwait, true, Normal, "allow the await keyword at the top level of a module.") \
+    v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
 
 
 enum OptionEquivalence {

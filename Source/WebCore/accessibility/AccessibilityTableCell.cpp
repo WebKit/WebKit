@@ -402,9 +402,8 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     
 int AccessibilityTableCell::axColumnIndex() const
 {
-    const AtomString& colIndexValue = getAttribute(aria_colindexAttr);
-    if (colIndexValue.toInt() >= 1)
-        return colIndexValue.toInt();
+    if (int value = getIntegralAttribute(aria_colindexAttr); value >= 1)
+        return value;
 
     // "ARIA 1.1: If the set of columns which is present in the DOM is contiguous, and if there are no cells which span more than one row
     // or column in that set, then authors may place aria-colindex on each row, setting the value to the index of the first column of the set."
@@ -420,13 +419,12 @@ int AccessibilityTableCell::axRowIndex() const
 {
     // ARIA 1.1: Authors should place aria-rowindex on each row. Authors may also place
     // aria-rowindex on all of the children or owned elements of each row.
-    const AtomString& rowIndexValue = getAttribute(aria_rowindexAttr);
-    if (rowIndexValue.toInt() >= 1)
-        return rowIndexValue.toInt();
-    
+    if (int value = getIntegralAttribute(aria_rowindexAttr); value >= 1)
+        return value;
+
     if (AccessibilityTableRow* parentRow = this->parentRow())
         return parentRow->axRowIndex();
-    
+
     return -1;
 }
 
@@ -437,11 +435,10 @@ int AccessibilityTableCell::axColumnSpan() const
     if (hasAttribute(colspanAttr))
         return -1;
 
-    const AtomString& colSpanValue = getAttribute(aria_colspanAttr);
     // ARIA 1.1: Authors must set the value of aria-colspan to an integer greater than or equal to 1.
-    if (colSpanValue.toInt() >= 1)
-        return colSpanValue.toInt();
-    
+    if (int value = getIntegralAttribute(aria_colspanAttr); value >= 1)
+        return value;
+
     return -1;
 }
 
@@ -452,15 +449,13 @@ int AccessibilityTableCell::axRowSpan() const
     if (hasAttribute(rowspanAttr))
         return -1;
 
-    const AtomString& rowSpanValue = getAttribute(aria_rowspanAttr);
-    
     // ARIA 1.1: Authors must set the value of aria-rowspan to an integer greater than or equal to 0.
     // Setting the value to 0 indicates that the cell or gridcell is to span all the remaining rows in the row group.
-    if (rowSpanValue == "0")
+    if (getAttribute(aria_rowspanAttr) == "0")
         return 0;
-    if (rowSpanValue.toInt() >= 1)
-        return rowSpanValue.toInt();
-    
+    if (int value = getIntegralAttribute(aria_rowspanAttr); value >= 1)
+        return value;
+
     return -1;
 }
     

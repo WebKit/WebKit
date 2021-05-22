@@ -103,7 +103,7 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
     protectedElement->document().updateLayoutIgnorePendingStylesheets();
 
     if (auto currentForm = protectedElement->form())
-        currentForm->prepareForSubmission(event); // Event handlers can run.
+        currentForm->submitIfPossible(&event); // Event handlers can run.
 
     protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();

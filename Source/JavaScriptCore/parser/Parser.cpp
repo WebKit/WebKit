@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -5392,7 +5392,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         ASSERT(oldTokenStackDepth + tokenStackDepth == context.unaryTokenStackDepth());
     if (isUpdateOp(static_cast<JSTokenType>(lastOperator))) {
         semanticFailIfTrue(context.isMetaProperty(expr), metaPropertyName(context, expr), " can't come after a prefix operator");
-        semanticFailIfFalse(isSimpleAssignmentTarget(context, expr), "Prefix ", lastOperator == PLUSPLUS ? "++" : "--", " operator applied to value that is not a reference");
+        semanticFailIfFalse(isSimpleAssignmentTarget(context, expr), "Prefix ", lastOperator == PLUSPLUS || lastOperator == AUTOPLUSPLUS ? "++" : "--", " operator applied to value that is not a reference");
     }
     bool isEvalOrArguments = false;
     if (strictMode()) {

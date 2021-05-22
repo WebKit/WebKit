@@ -4,7 +4,7 @@
 /*---
 description: Computed property name from assignment expression logical or (ComputedPropertyName in ObjectLiteral)
 esid: prod-ComputedPropertyName
-features: [computed-property-names]
+features: [computed-property-names, logical-assignment-operators]
 flags: [generated]
 info: |
     ObjectLiteral:

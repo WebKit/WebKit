@@ -1,0 +1,9 @@
+This test checks that using a modifier key does not make the element to stop matching :focus-visible.
+If the element that says "Focused" has a red background, then the test result is a FAILURE.
+Press the Ctrl key.
+If the element keeps the green outline and has not a red background, then the test result is SUCCESS.
+Focused
+
+PASS ":focus-visible" should be a valid selector
+PASS Ctrl key doesn't make an element to stop matching :focus-visible
+

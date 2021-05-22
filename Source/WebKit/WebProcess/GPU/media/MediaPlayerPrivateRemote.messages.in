@@ -32,12 +32,14 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     TimeChanged(struct WebKit::RemoteMediaPlayerState state)
     DurationChanged(struct WebKit::RemoteMediaPlayerState state)
     RateChanged(double rate)
-    PlaybackStateChanged(bool paused, MediaTime mediaTime, WallTime wallTime)
+    PlaybackStateChanged(bool paused, MediaTime mediaTime, MonotonicTime wallTime)
     EngineFailedToLoad(int platformErrorCode)
     UpdateCachedState(struct WebKit::RemoteMediaPlayerState state)
     CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
     SizeChanged(WebCore::FloatSize naturalSize)
     RenderingModeChanged()
+
+    CurrentTimeChanged(MediaTime mediaTime, MonotonicTime wallTime)
 
     AddRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TrackPrivateRemoteConfiguration configuration)
     RemoveRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID)

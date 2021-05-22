@@ -152,7 +152,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
         return WTF::nullopt;
 
     // First element: profile. Legal values are 0-3.
-    auto profile = toIntegralType<uint8_t>(*nextElement);
+    auto profile = parseInteger<uint8_t>(*nextElement);
     if (!profile || *profile > 3)
         return WTF::nullopt;
     configuration.profile = *profile;
@@ -161,7 +161,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
         return WTF::nullopt;
 
     // Second element: level. Legal values are enumerated in validVPLevels above.
-    auto level = toIntegralType<uint8_t>(*nextElement);
+    auto level = parseInteger<uint8_t>(*nextElement);
     if (!level || !isValidVPLevel(*level))
         return WTF::nullopt;
     configuration.level = *level;
@@ -170,7 +170,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
         return WTF::nullopt;
 
     // Third element: bitDepth. Legal values are 8, 10, and 12.
-    auto bitDepth = toIntegralType<uint8_t>(*nextElement);
+    auto bitDepth = parseInteger<uint8_t>(*nextElement);
     if (!bitDepth || (*bitDepth != 8 && *bitDepth != 10 && *bitDepth != 12))
         return WTF::nullopt;
     configuration.bitDepth = *bitDepth;
@@ -183,7 +183,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
         return configuration;
 
     // Fourth element: chromaSubsampling. Legal values are 0-3.
-    auto chromaSubsampling = toIntegralType<uint8_t>(*nextElement);
+    auto chromaSubsampling = parseInteger<uint8_t>(*nextElement);
     if (!chromaSubsampling || *chromaSubsampling > VPConfigurationChromaSubsampling::Subsampling_444)
         return WTF::nullopt;
     configuration.chromaSubsampling = *chromaSubsampling;
@@ -191,9 +191,9 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     if (++nextElement == codecSplit.end())
         return WTF::nullopt;
 
-    // Fifth element: colorPrimaries. Legal values are defined by  ISO/IEC 23001-8:2016, superceded
+    // Fifth element: colorPrimaries. Legal values are defined by ISO/IEC 23001-8:2016, superseded
     // by ISO/IEC 23091-2:2019.
-    auto colorPrimaries = toIntegralType<uint8_t>(*nextElement);
+    auto colorPrimaries = parseInteger<uint8_t>(*nextElement);
     if (!colorPrimaries || !isValidVPColorPrimaries(*colorPrimaries))
         return WTF::nullopt;
     configuration.colorPrimaries = *colorPrimaries;
@@ -201,9 +201,9 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     if (++nextElement == codecSplit.end())
         return WTF::nullopt;
 
-    // Sixth element: transferCharacteristics. Legal values are defined by  ISO/IEC 23001-8:2016, superceded
+    // Sixth element: transferCharacteristics. Legal values are defined by ISO/IEC 23001-8:2016, superseded
     // by ISO/IEC 23091-2:2019.
-    auto transferCharacteristics = toIntegralType<uint8_t>(*nextElement);
+    auto transferCharacteristics = parseInteger<uint8_t>(*nextElement);
     if (!transferCharacteristics || !isValidVPTransferCharacteristics(*transferCharacteristics))
         return WTF::nullopt;
     configuration.transferCharacteristics = *transferCharacteristics;
@@ -211,9 +211,9 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     if (++nextElement == codecSplit.end())
         return WTF::nullopt;
 
-    // Seventh element: matrixCoefficients. Legal values are defined by  ISO/IEC 23001-8:2016, superceded
+    // Seventh element: matrixCoefficients. Legal values are defined by ISO/IEC 23001-8:2016, superseded
     // by ISO/IEC 23091-2:2019.
-    auto matrixCoefficients = toIntegralType<uint8_t>(*nextElement);
+    auto matrixCoefficients = parseInteger<uint8_t>(*nextElement);
     if (!matrixCoefficients || !isValidVPMatrixCoefficients(*matrixCoefficients))
         return WTF::nullopt;
     configuration.matrixCoefficients = *matrixCoefficients;
@@ -226,7 +226,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
         return WTF::nullopt;
 
     // Eighth element: videoFullRangeFlag. Legal values are 0 and 1.
-    auto videoFullRangeFlag = toIntegralType<uint8_t>(*nextElement);
+    auto videoFullRangeFlag = parseInteger<uint8_t>(*nextElement);
     if (!videoFullRangeFlag || *videoFullRangeFlag > 1)
         return WTF::nullopt;
     configuration.videoFullRangeFlag = *videoFullRangeFlag;

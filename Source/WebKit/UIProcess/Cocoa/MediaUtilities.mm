@@ -31,13 +31,13 @@ namespace WebKit {
 _WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducer::MediaStateFlags state)
 {
     _WKMediaCaptureStateDeprecated mediaCaptureState = _WKMediaCaptureStateDeprecatedNone;
-    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveMicrophone;
-    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveCamera;
-    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedMicrophone;
-    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedCamera;
 
     return mediaCaptureState;
@@ -46,13 +46,11 @@ _WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaPro
 _WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducer::MutedStateFlags state)
 {
     _WKMediaMutedState mediaMutedState = _WKMediaNoneMuted;
-    if (state & WebCore::MediaProducer::NoneMuted)
-        mediaMutedState |= _WKMediaNoneMuted;
-    if (state & WebCore::MediaProducer::AudioIsMuted)
+    if (state & WebCore::MediaProducer::MutedState::AudioIsMuted)
         mediaMutedState |= _WKMediaAudioMuted;
     if (state & WebCore::MediaProducer::AudioAndVideoCaptureIsMuted)
         mediaMutedState |= _WKMediaCaptureDevicesMuted;
-    if (state & WebCore::MediaProducer::ScreenCaptureIsMuted)
+    if (state & WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted)
         mediaMutedState |= _WKMediaScreenCaptureMuted;
     return mediaMutedState;
 }

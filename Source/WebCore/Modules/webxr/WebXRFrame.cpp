@@ -38,14 +38,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRFrame);
 
-Ref<WebXRFrame> WebXRFrame::create(Ref<WebXRSession>&& session, IsAnimationFrame isAnimationFrame)
+Ref<WebXRFrame> WebXRFrame::create(WebXRSession& session, IsAnimationFrame isAnimationFrame)
 {
-    return adoptRef(*new WebXRFrame(WTFMove(session), isAnimationFrame));
+    return adoptRef(*new WebXRFrame(session, isAnimationFrame));
 }
 
-WebXRFrame::WebXRFrame(Ref<WebXRSession>&& session, IsAnimationFrame isAnimationFrame)
+WebXRFrame::WebXRFrame(WebXRSession& session, IsAnimationFrame isAnimationFrame)
     : m_isAnimationFrame(isAnimationFrame == IsAnimationFrame::Yes)
-    , m_session(WTFMove(session))
+    , m_session(session)
 {
 }
 

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #include <CoreMedia/CMTime.h>
 #include <functional>
 #include <wtf/Lock.h>

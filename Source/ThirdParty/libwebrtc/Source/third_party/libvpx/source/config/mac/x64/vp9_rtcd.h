@@ -79,7 +79,7 @@ int vp9_denoiser_filter_sse2(const uint8_t* sig,
                              int increase_denoising,
                              BLOCK_SIZE bs,
                              int motion_magnitude);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_denoiser_filter vp9_denoiser_filter_c
 #else
 #define vp9_denoiser_filter vp9_denoiser_filter_sse2
@@ -122,7 +122,7 @@ void vp9_fht16x16_sse2(const int16_t* input,
                        tran_low_t* output,
                        int stride,
                        int tx_type);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_fht16x16 vp9_fht16x16_c
 #else
 #define vp9_fht16x16 vp9_fht16x16_sse2
@@ -136,7 +136,7 @@ void vp9_fht4x4_sse2(const int16_t* input,
                      tran_low_t* output,
                      int stride,
                      int tx_type);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_fht4x4 vp9_fht4x4_c
 #else
 #define vp9_fht4x4 vp9_fht4x4_sse2
@@ -150,7 +150,7 @@ void vp9_fht8x8_sse2(const int16_t* input,
                      tran_low_t* output,
                      int stride,
                      int tx_type);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_fht8x8 vp9_fht8x8_c
 #else
 #define vp9_fht8x8 vp9_fht8x8_sse2
@@ -166,7 +166,7 @@ void vp9_filter_by_weight16x16_sse2(const uint8_t* src,
                                     uint8_t* dst,
                                     int dst_stride,
                                     int src_weight);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_filter_by_weight16x16 vp9_filter_by_weight16x16_c
 #else
 #define vp9_filter_by_weight16x16 vp9_filter_by_weight16x16_sse2
@@ -182,7 +182,7 @@ void vp9_filter_by_weight8x8_sse2(const uint8_t* src,
                                   uint8_t* dst,
                                   int dst_stride,
                                   int src_weight);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_filter_by_weight8x8 vp9_filter_by_weight8x8_c
 #else
 #define vp9_filter_by_weight8x8 vp9_filter_by_weight8x8_sse2
@@ -190,7 +190,7 @@ void vp9_filter_by_weight8x8_sse2(const uint8_t* src,
 
 void vp9_fwht4x4_c(const int16_t* input, tran_low_t* output, int stride);
 void vp9_fwht4x4_sse2(const int16_t* input, tran_low_t* output, int stride);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_fwht4x4 vp9_fwht4x4_c
 #else
 #define vp9_fwht4x4 vp9_fwht4x4_sse2
@@ -206,7 +206,7 @@ int64_t vp9_highbd_block_error_sse2(const tran_low_t* coeff,
                                     intptr_t block_size,
                                     int64_t* ssz,
                                     int bd);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_highbd_block_error vp9_highbd_block_error_c
 #else
 #define vp9_highbd_block_error vp9_highbd_block_error_sse2
@@ -351,7 +351,7 @@ void vp9_iht16x16_256_add_sse2(const tran_low_t* input,
                                uint8_t* dest,
                                int stride,
                                int tx_type);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_iht16x16_256_add vp9_iht16x16_256_add_c
 #else
 #define vp9_iht16x16_256_add vp9_iht16x16_256_add_sse2
@@ -365,7 +365,7 @@ void vp9_iht4x4_16_add_sse2(const tran_low_t* input,
                             uint8_t* dest,
                             int stride,
                             int tx_type);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_iht4x4_16_add vp9_iht4x4_16_add_c
 #else
 #define vp9_iht4x4_16_add vp9_iht4x4_16_add_sse2
@@ -379,7 +379,7 @@ void vp9_iht8x8_64_add_sse2(const tran_low_t* input,
                             uint8_t* dest,
                             int stride,
                             int tx_type);
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #define vp9_iht8x8_64_add vp9_iht8x8_64_add_c
 #else
 #define vp9_iht8x8_64_add vp9_iht8x8_64_add_sse2
@@ -507,7 +507,7 @@ static void setup_rtcd_internal(void) {
 
   (void)flags;
 
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
   vp9_block_error = vp9_block_error_c;
   vp9_block_error_fp = vp9_block_error_fp_c;
 #else
@@ -515,26 +515,26 @@ static void setup_rtcd_internal(void) {
   vp9_block_error_fp = vp9_block_error_fp_sse2;
 #endif
   vp9_diamond_search_sad = vp9_diamond_search_sad_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
   if (flags & HAS_AVX)
     vp9_diamond_search_sad = vp9_diamond_search_sad_avx;
 #endif
   vp9_highbd_iht16x16_256_add = vp9_highbd_iht16x16_256_add_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
   if (flags & HAS_SSE4_1)
     vp9_highbd_iht16x16_256_add = vp9_highbd_iht16x16_256_add_sse4_1;
 #endif
   vp9_highbd_iht4x4_16_add = vp9_highbd_iht4x4_16_add_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
   if (flags & HAS_SSE4_1)
     vp9_highbd_iht4x4_16_add = vp9_highbd_iht4x4_16_add_sse4_1;
 #endif
   vp9_highbd_iht8x8_64_add = vp9_highbd_iht8x8_64_add_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
   if (flags & HAS_SSE4_1)
     vp9_highbd_iht8x8_64_add = vp9_highbd_iht8x8_64_add_sse4_1;
 #endif
-#ifdef WK_DISABLE_HARDWARE_ACCELERATION
+#ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
   vp9_quantize_fp = vp9_quantize_fp_c;
 #else
   vp9_quantize_fp = vp9_quantize_fp_sse2;
@@ -542,22 +542,22 @@ static void setup_rtcd_internal(void) {
     vp9_quantize_fp = vp9_quantize_fp_ssse3;
 #endif
   vp9_quantize_fp_32x32 = vp9_quantize_fp_32x32_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#ifndef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
   if (flags & HAS_SSSE3)
     vp9_quantize_fp_32x32 = vp9_quantize_fp_32x32_ssse3;
 #endif
   vp9_scale_and_extend_frame = vp9_scale_and_extend_frame_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#ifndef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
   if (flags & HAS_SSSE3)
     vp9_scale_and_extend_frame = vp9_scale_and_extend_frame_ssse3;
 #endif
   vp9_apply_temporal_filter = vp9_apply_temporal_filter_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
   if (flags & HAS_SSE4_1)
     vp9_apply_temporal_filter = vp9_apply_temporal_filter_sse4_1;
 #endif
   vp9_highbd_apply_temporal_filter = vp9_highbd_apply_temporal_filter_c;
-#ifndef WK_DISABLE_HARDWARE_ACCELERATION
+#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
   if (flags & HAS_SSE4_1)
     vp9_highbd_apply_temporal_filter = vp9_highbd_apply_temporal_filter_sse4_1;
 #endif

@@ -95,14 +95,13 @@ void RemoteAudioSessionProxyManager::updateCategory()
     else
         category = AudioSession::None;
 
+    policy = RouteSharingPolicy::Default;
     if (policyCounts.contains(RouteSharingPolicy::LongFormVideo))
         policy = RouteSharingPolicy::LongFormVideo;
     else if (policyCounts.contains(RouteSharingPolicy::LongFormAudio))
         policy = RouteSharingPolicy::LongFormAudio;
     else if (policyCounts.contains(RouteSharingPolicy::Independent))
-        policy = RouteSharingPolicy::Independent;
-    else
-        policy = RouteSharingPolicy::Default;
+        ASSERT_NOT_REACHED();
 
     m_session->setCategory(category, policy);
 }

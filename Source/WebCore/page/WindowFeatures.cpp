@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -132,7 +133,7 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
     if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes"))
         numericValue = 1;
     else
-        numericValue = value.toInt();
+        numericValue = parseIntegerAllowingTrailingJunk<int>(value).valueOr(0);
 
     // We treat key of "resizable" here as an additional feature rather than setting resizeable to true.
     // This is consistent with Firefox, but could also be handled at another level.

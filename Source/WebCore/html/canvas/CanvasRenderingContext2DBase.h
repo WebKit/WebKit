@@ -176,6 +176,7 @@ public:
     ExceptionOr<void> drawImage(CanvasImageSource&&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
 
     void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
+    void clearCanvas();
 
     using StyleVariant = Variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
     StyleVariant strokeStyle() const;
@@ -188,10 +189,10 @@ public:
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasImageSource&&, const String& repetition);
 
     RefPtr<ImageData> createImageData(ImageData&) const;
-    ExceptionOr<RefPtr<ImageData>> createImageData(float width, float height) const;
-    ExceptionOr<RefPtr<ImageData>> getImageData(float sx, float sy, float sw, float sh) const;
-    void putImageData(ImageData&, float dx, float dy);
-    void putImageData(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    ExceptionOr<RefPtr<ImageData>> createImageData(int width, int height) const;
+    ExceptionOr<RefPtr<ImageData>> getImageData(int sx, int sy, int sw, int sh) const;
+    void putImageData(ImageData&, int dx, int dy);
+    void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
 
     static constexpr float webkitBackingStorePixelRatio() { return 1; }
 
@@ -365,7 +366,6 @@ private:
     bool isPointInPathInternal(const Path&, float x, float y, CanvasFillRule);
     bool isPointInStrokeInternal(const Path&, float x, float y);
 
-    void clearCanvas();
     Path transformAreaToDevice(const Path&) const;
     Path transformAreaToDevice(const FloatRect&) const;
     bool rectContainsCanvas(const FloatRect&) const;

@@ -28,7 +28,6 @@
 #if WK_HAVE_C_SPI
 
 #include "InjectedBundleTest.h"
-#include <WebKit/WKBundlePageGroup.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKBundleScriptWorld.h>

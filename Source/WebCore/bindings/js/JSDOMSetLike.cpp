@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSSet.h>
 #include <JavaScriptCore/JSSetInlines.h>
+#include <JavaScriptCore/VMTrapsInlines.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlob
     auto backingSet = setLike.get(&lexicalGlobalObject, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingSetPrivateName());
     if (backingSet.isUndefined()) {
         auto& vm = lexicalGlobalObject.vm();
+        JSC::DeferTermination deferScope(vm);
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
         backingSet = JSC::JSSet::create(&lexicalGlobalObject, vm, lexicalGlobalObject.setStructure());

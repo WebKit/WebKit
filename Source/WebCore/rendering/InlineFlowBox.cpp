@@ -1134,7 +1134,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     }
 
     // Now check ourselves. Pixel snap hit testing.
-    if (!visibleToHitTesting())
+    if (!visibleToHitTesting(request))
         return false;
 
     // Do not hittest content beyond the ellipsis box.

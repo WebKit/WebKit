@@ -36,7 +36,7 @@ class Document;
 class Frame;
 class GraphicsContext;
 class IntRect;
-class LayoutRect;
+class FloatQuad;
 class Page;
 class RenderElement;
 struct GapRects;
@@ -46,7 +46,7 @@ class ImageOverlayController final : private PageOverlay::Client {
 public:
     explicit ImageOverlayController(Page&);
 
-    void selectionRectsDidChange(Frame&, const Vector<LayoutRect>&);
+    void selectionQuadsDidChange(Frame&, const Vector<FloatQuad>&);
     void documentDetached(const Document&);
 
 private:
@@ -63,7 +63,8 @@ private:
     WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
     WeakPtr<Document> m_currentOverlayDocument;
-    Vector<LayoutRect> m_overlaySelectionRects;
+    Vector<FloatQuad> m_overlaySelectionQuads;
+    LayoutRect m_selectionOverlayBounds;
     Color m_selectionBackgroundColor { Color::transparentBlack };
 };
 

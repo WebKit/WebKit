@@ -1,6 +1,0 @@
-2d.gradient.interpolate.outside
-Spec references: 2d.gradient.outside.first 2d.gradient.outside.last
-Actual output:
-Expected output:
-
-Passed

@@ -38,6 +38,7 @@
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
 #import "WebPageProxyMessages.h"
+#import "WebPreferencesKeys.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DebugPageOverlays.h>
@@ -161,7 +162,7 @@ bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameVi
     return frameView.frame().isMainFrame() || m_webPage.corePage()->settings().asyncFrameScrollingEnabled();
 }
 
-void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
+void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& preferences)
 {
     Settings& settings = m_webPage.corePage()->settings();
 
@@ -170,6 +171,8 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
 
     m_rootLayer->setShowDebugBorder(settings.showDebugBorders());
+
+    m_remoteLayerTreeContext->setUseCGDisplayListsForDOMRendering(preferences.getBoolValueForKey(WebPreferencesKey::useCGDisplayListsForDOMRenderingKey()));
 
     DebugPageOverlays::settingsChanged(*m_webPage.corePage());
 }

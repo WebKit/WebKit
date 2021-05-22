@@ -30,11 +30,9 @@
 
 @protocol WKURLSchemeHandler;
 
-namespace API {
-class URLSchemeTask;
-}
-
 namespace WebKit {
+
+class WebURLSchemeTask;
 
 class WebURLSchemeHandlerCocoa : public WebURLSchemeHandler {
 public:
@@ -47,10 +45,8 @@ private:
 
     void platformStartTask(WebPageProxy&, WebURLSchemeTask&) final;
     void platformStopTask(WebPageProxy&, WebURLSchemeTask&) final;
-    void platformTaskCompleted(WebURLSchemeTask&) final;
 
     RetainPtr<id <WKURLSchemeHandler>> m_apiHandler;
-    HashMap<uint64_t, Ref<API::URLSchemeTask>> m_apiTasks;
 
 }; // class WebURLSchemeHandler
 

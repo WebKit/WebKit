@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "ShadowChickenInlines.h"
+#include "VMTrapsInlines.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -488,6 +489,7 @@ void ShadowChicken::dump(PrintStream& out) const
 JSArray* ShadowChicken::functionsOnStack(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSArray* result = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, nullptr);

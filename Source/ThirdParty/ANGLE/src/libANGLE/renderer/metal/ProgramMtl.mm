@@ -195,7 +195,7 @@ angle::Result CreateMslShader(mtl::Context *context,
 {
     NSError *nsErr = nil;
 
-    id<MTLFunction> mtlShader;
+    id<MTLFunction> mtlShader = nullptr;
     if (funcConstants)
     {
         mtlShader = [shaderLib newFunctionWithName:SHADER_ENTRY_NAME

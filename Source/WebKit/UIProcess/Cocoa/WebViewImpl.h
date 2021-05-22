@@ -96,6 +96,10 @@ class PageConfiguration;
 namespace WebCore {
 struct ShareDataWithParsedURL;
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+struct TranslationContextMenuInfo;
+#endif
+
 #if ENABLE(IMAGE_EXTRACTION)
 struct ImageExtractionResult;
 #endif
@@ -648,7 +652,7 @@ public:
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuTranslation() const;
-    void handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& menuLocation);
+    void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

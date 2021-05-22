@@ -76,11 +76,13 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ExposedToWorkerAndWindow::Dict& dictionary)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
 
     if (!IDLInterface<TestObj>::isNullValue(dictionary.obj)) {
-        auto objValue = toJS<IDLInterface<TestObj>>(lexicalGlobalObject, globalObject, IDLInterface<TestObj>::extractValueFromNullable(dictionary.obj));
+        auto objValue = toJS<IDLInterface<TestObj>>(lexicalGlobalObject, globalObject, throwScope, IDLInterface<TestObj>::extractValueFromNullable(dictionary.obj));
+        RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "obj"), objValue);
     }
     return result;

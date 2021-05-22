@@ -1,0 +1,5 @@
+event_session_url
+
+
+PASS url property test of session event - Session event is fired due to an invocation of the setItem() method.
+

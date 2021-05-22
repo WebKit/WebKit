@@ -142,19 +142,20 @@ static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Docum
     return document.textEncoding();
 }
 
-Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attributes& attributes, Event* event, LockHistory lockHistory, FormSubmissionTrigger trigger)
+Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormControlElement* overrideSubmitter, const Attributes& attributes, Event* event, LockHistory lockHistory, FormSubmissionTrigger trigger)
 {
     auto copiedAttributes = attributes;
 
-    if (auto* submitButton = form.findSubmitButton(event)) {
+    auto submitter = makeRefPtr(overrideSubmitter ? overrideSubmitter : form.findSubmitter(event));
+    if (submitter) {
         AtomString attributeValue;
-        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formactionAttr)).isNull())
+        if (!(attributeValue = submitter->attributeWithoutSynchronization(formactionAttr)).isNull())
             copiedAttributes.parseAction(attributeValue);
-        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formenctypeAttr)).isNull())
+        if (!(attributeValue = submitter->attributeWithoutSynchronization(formenctypeAttr)).isNull())
             copiedAttributes.updateEncodingType(attributeValue);
-        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formmethodAttr)).isNull())
+        if (!(attributeValue = submitter->attributeWithoutSynchronization(formmethodAttr)).isNull())
             copiedAttributes.updateMethodType(attributeValue);
-        if (!(attributeValue = submitButton->attributeWithoutSynchronization(formtargetAttr)).isNull())
+        if (!(attributeValue = submitter->attributeWithoutSynchronization(formtargetAttr)).isNull())
             copiedAttributes.setTarget(attributeValue);
     }
     
@@ -214,7 +215,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attribut
 
     auto formState = FormState::create(form, WTFMove(formValues), document, trigger);
 
-    return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, form.effectiveTarget(event), encodingType, WTFMove(formState), formData.releaseNonNull(), boundary, lockHistory, event));
+    return adoptRef(*new FormSubmission(copiedAttributes.method(), actionURL, form.effectiveTarget(event, submitter.get()), encodingType, WTFMove(formState), formData.releaseNonNull(), boundary, lockHistory, event));
 }
 
 URL FormSubmission::requestURL() const

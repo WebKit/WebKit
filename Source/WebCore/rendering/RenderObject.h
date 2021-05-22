@@ -85,8 +85,6 @@ const int caretWidth = 2; // This value should be kept in sync with UIKit. See <
 const int caretWidth = 1;
 #endif
 
-enum class ShouldAllowCrossOriginScrolling { No, Yes };
-
 struct ScrollRectToVisibleOptions;
 
 namespace Style {
@@ -261,8 +259,6 @@ public:
     virtual bool isRenderFullScreenPlaceholder() const { return false; }
 #endif
     virtual bool isRenderGrid() const { return false; }
-    bool isInFlowRenderFragmentedFlow() const { return isRenderFragmentedFlow() && !isOutOfFlowPositioned(); }
-    bool isOutOfFlowRenderFragmentedFlow() const { return isRenderFragmentedFlow() && isOutOfFlowPositioned(); }
 
     virtual bool isMultiColumnBlockFlow() const { return false; }
     virtual bool isRenderMultiColumnSet() const { return false; }

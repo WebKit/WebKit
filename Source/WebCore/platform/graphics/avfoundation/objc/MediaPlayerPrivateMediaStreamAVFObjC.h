@@ -168,6 +168,8 @@ private:
 
     void scheduleDeferredTask(Function<void ()>&&);
 
+    void layersAreInitialized(IntSize, bool);
+
     enum DisplayMode {
         None,
         PaintItBlack,

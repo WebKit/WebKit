@@ -210,9 +210,7 @@ public:
     // then also the watchpoint state() will change to IsInvalidated.
     WatchpointState state() const
     {
-        WTF::loadLoadFence();
         WatchpointState result = static_cast<WatchpointState>(m_state);
-        WTF::loadLoadFence();
         return result;
     }
     
@@ -363,9 +361,7 @@ public:
     // state if you also add a watchpoint.
     WatchpointState state() const
     {
-        WTF::loadLoadFence();
         uintptr_t data = m_data;
-        WTF::loadLoadFence();
         if (isFat(data))
             return fat(data)->state();
         return decodeState(data);

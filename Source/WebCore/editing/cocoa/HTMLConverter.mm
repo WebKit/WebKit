@@ -67,6 +67,7 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/ASCIICType.h>
 #import <wtf/text/StringBuilder.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 #if ENABLE(DATA_DETECTION)
 #import "DataDetection.h"
@@ -978,7 +979,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         }
 
         String fontWeight = _caches->propertyValueForNode(element, CSSPropertyFontStyle);
-        if (fontWeight.startsWith("bold") || fontWeight.toInt() >= 700) {
+        if (fontWeight.startsWith("bold") || parseIntegerAllowingTrailingJunk<int>(fontWeight).valueOr(0) >= 700) {
             // ??? handle weight properly using NSFontManager
             PlatformFont *originalFont = font;
 #if PLATFORM(IOS_FAMILY)

@@ -38,7 +38,6 @@
 #include "RemoteLegacyCDMSessionProxy.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
-#include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResource.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteMediaResourceLoader.h"
@@ -49,6 +48,7 @@
 #include "TrackPrivateRemoteConfiguration.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/LayoutRect.h>
+#include <WebCore/Logging.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/NotImplemented.h>
@@ -118,6 +118,13 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     configuration.canPlayToWirelessPlaybackTarget = m_player->canPlayToWirelessPlaybackTarget();
 #endif
     configuration.shouldIgnoreIntrinsicSize = m_player->shouldIgnoreIntrinsicSize();
+
+    m_observingTimeChanges = m_player->setCurrentTimeDidChangeCallback([this, weakThis = makeWeakPtr(this)] (auto currentTime) mutable {
+        if (!weakThis)
+            return;
+
+        currentTimeChanged(currentTime);
+    });
 }
 
 void RemoteMediaPlayerProxy::load(URL&& url, Optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const ContentType& contentType, const String& keySystem, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
@@ -176,6 +183,7 @@ void RemoteMediaPlayerProxy::play()
 void RemoteMediaPlayerProxy::pause()
 {
     m_updateCachedStateMessageTimer.stop();
+    updateCachedVideoMetrics();
     m_player->pause();
     sendCachedState();
 }
@@ -329,14 +337,21 @@ void RemoteMediaPlayerProxy::errorLog(CompletionHandler<void(String)>&& completi
 
 void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 {
-    updateCachedState();
+    updateCachedState(true);
+    m_cachedState.readyState = m_player->readyState();
+    m_cachedState.networkState = m_player->networkState();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::NetworkStateChanged(m_cachedState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
-    updateCachedState();
+    updateCachedVideoMetrics();
+    updateCachedState(true);
+    m_cachedState.readyState = m_player->readyState();
+    m_cachedState.networkState = m_player->networkState();
+    m_cachedState.duration = m_player->duration();
 
+    m_cachedState.movieLoadType = m_player->movieLoadType();
     m_cachedState.minTimeSeekable = m_player->minTimeSeekable();
     m_cachedState.maxTimeSeekable = m_player->maxTimeSeekable();
     m_cachedState.startDate = m_player->getStartDate();
@@ -370,18 +385,21 @@ void RemoteMediaPlayerProxy::mediaPlayerMuteChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()
 {
-    updateCachedState();
+    updateCachedState(true);
+    m_cachedState.duration = m_player->duration();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::TimeChanged(m_cachedState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerDurationChanged()
 {
-    updateCachedState();
+    updateCachedState(true);
+    m_cachedState.duration = m_player->duration();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::DurationChanged(m_cachedState), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRateChanged()
 {
+    updateCachedVideoMetrics();
     sendCachedState();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RateChanged(m_player->rate()), m_id);
 }
@@ -460,7 +478,8 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
 
 void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_player->paused(), m_player->currentTime(), WallTime::now()), m_id);
+    m_cachedState.paused = m_player->paused();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_cachedState.paused, m_player->currentTime(), MonotonicTime::now()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
@@ -481,7 +500,10 @@ void RemoteMediaPlayerProxy::mediaPlayerSeekableTimeRangesChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
 {
+    updateCachedVideoMetrics();
     updateCachedState();
+    m_cachedState.hasAudio = m_player->hasAudio();
+    m_cachedState.hasVideo = m_player->hasVideo();
     m_cachedState.hasClosedCaptions = m_player->hasClosedCaptions();
     m_cachedState.languageOfPrimaryAudioTrack = m_player->languageOfPrimaryAudioTrack();
 
@@ -804,12 +826,14 @@ bool RemoteMediaPlayerProxy::mediaPlayerShouldCheckHardwareSupport() const
 
 void RemoteMediaPlayerProxy::startUpdateCachedStateMessageTimer()
 {
-    static const Seconds maxTimeupdateEventFrequency { 100_ms };
+    static const Seconds lessFrequentTimeupdateEventFrequency { 2000_ms };
+    static const Seconds moreFrequentTimeupdateEventFrequency { 250_ms };
 
     if (m_updateCachedStateMessageTimer.isActive())
         return;
 
-    m_updateCachedStateMessageTimer.startRepeating(maxTimeupdateEventFrequency);
+    auto frequency = m_observingTimeChanges ? lessFrequentTimeupdateEventFrequency : moreFrequentTimeupdateEventFrequency;
+    m_updateCachedStateMessageTimer.startRepeating(frequency);
 }
 
 void RemoteMediaPlayerProxy::timerFired()
@@ -817,21 +841,18 @@ void RemoteMediaPlayerProxy::timerFired()
     sendCachedState();
 }
 
-void RemoteMediaPlayerProxy::updateCachedState()
+void RemoteMediaPlayerProxy::currentTimeChanged(const MediaTime& mediaTime)
 {
-    m_cachedState.wallTime = WallTime::now();
-    m_cachedState.currentTime = m_player->currentTime();
-    m_cachedState.duration = m_player->duration();
-    m_cachedState.networkState = m_player->networkState();
-    m_cachedState.readyState = m_player->readyState();
-    m_cachedState.movieLoadType = m_player->movieLoadType();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::CurrentTimeChanged(mediaTime, MonotonicTime::now()), m_id);
+}
+
+void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)
+{
+    if (!m_observingTimeChanges || forceCurrentTimeUpdate)
+        currentTimeChanged(m_player->currentTime());
+
     m_cachedState.paused = m_player->paused();
-    m_cachedState.hasAudio = m_player->hasAudio();
-    m_cachedState.hasVideo = m_player->hasVideo();
-
-    if (m_shouldUpdatePlaybackMetrics)
-        m_cachedState.videoMetrics = m_player->videoPlaybackQualityMetrics();
-
+    maybeUpdateCachedVideoMetrics();
     if (m_bufferedChanged) {
         m_bufferedChanged = false;
         if (m_engineIdentifier != MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE)
@@ -956,7 +977,7 @@ void RemoteMediaPlayerProxy::tracksChanged()
     m_player->tracksChanged();
 }
 
-void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, WallTime messageTime, PerformTaskAtMediaTimeCompletionHandler&& completionHandler)
+void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, MonotonicTime messageTime, PerformTaskAtMediaTimeCompletionHandler&& completionHandler)
 {
     if (m_performTaskAtMediaTimeCompletionHandler) {
         // A media player is only expected to track one pending task-at-time at once (e.g. see
@@ -966,11 +987,12 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, W
         handler(WTF::nullopt, WTF::nullopt);
     }
 
-    auto transmissionTime = MediaTime::createWithDouble((WallTime::now() - messageTime).value(), 1);
+    auto now = MonotonicTime::now();
+    auto transmissionTime = MediaTime::createWithDouble((now - messageTime).value(), 1);
     auto adjustedTaskTime = taskTime - transmissionTime;
     auto currentTime = m_player->currentTime();
     if (adjustedTaskTime <= currentTime) {
-        completionHandler(currentTime, WallTime::now());
+        completionHandler(currentTime, now);
         return;
     }
 
@@ -980,7 +1002,7 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, W
             return;
 
         auto completionHandler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
-        completionHandler(m_player->currentTime(), WallTime::now());
+        completionHandler(m_player->currentTime(), MonotonicTime::now());
     }, adjustedTaskTime);
 }
 
@@ -989,9 +1011,29 @@ void RemoteMediaPlayerProxy::wouldTaintOrigin(struct WebCore::SecurityOriginData
     completionHandler(m_player->wouldTaintOrigin(originData.securityOrigin()));
 }
 
-void RemoteMediaPlayerProxy::setShouldUpdatePlaybackMetrics(bool should)
+void RemoteMediaPlayerProxy::setVideoPlaybackMetricsUpdateInterval(double interval)
 {
-    m_shouldUpdatePlaybackMetrics = should;
+    static const Seconds metricsAdvanceUpdate = 0.25_s;
+    ALWAYS_LOG(LOGIDENTIFIER, interval);
+
+    updateCachedVideoMetrics();
+    m_videoPlaybackMetricsUpdateInterval = Seconds(interval);
+    m_nextPlaybackQualityMetricsUpdateTime = MonotonicTime::now() + Seconds(interval) - metricsAdvanceUpdate;
+}
+
+void RemoteMediaPlayerProxy::maybeUpdateCachedVideoMetrics()
+{
+    if (m_cachedState.paused || !m_videoPlaybackMetricsUpdateInterval || MonotonicTime::now() < m_nextPlaybackQualityMetricsUpdateTime)
+        return;
+
+    updateCachedVideoMetrics();
+}
+
+void RemoteMediaPlayerProxy::updateCachedVideoMetrics()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_nextPlaybackQualityMetricsUpdateTime = MonotonicTime::now() + m_videoPlaybackMetricsUpdateInterval;
+    m_cachedState.videoMetrics = m_player->videoPlaybackQualityMetrics();
 }
 
 void RemoteMediaPlayerProxy::createAudioSourceProvider()
@@ -1015,6 +1057,13 @@ void RemoteMediaPlayerProxy::setShouldEnableAudioSourceProvider(bool shouldEnabl
         provider->setClient(shouldEnable ? m_remoteAudioSourceProvider.get() : nullptr);
 #endif
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
+{
+    return WebCore::LogMedia;
+}
+#endif
 
 } // namespace WebKit
 

@@ -1,5 +1,0 @@
-2d.canvas.readonly
-CanvasRenderingContext2D.canvas is readonly
-Spec references: 2d.canvas.attribute
-Actual output:
-Passed

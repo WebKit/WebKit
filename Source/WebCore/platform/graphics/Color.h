@@ -124,6 +124,9 @@ public:
     // wrapper around toColorTypeLossy<>().
     template<typename T> SRGBA<T> toSRGBALossy() const { return toColorTypeLossy<SRGBA<T>>(); }
 
+    ColorComponents<float, 4> toColorComponentsInColorSpace(ColorSpace) const;
+    ColorComponents<float, 4> toColorComponentsInColorSpace(DestinationColorSpace) const;
+
     WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float, 4>> colorSpaceAndComponents() const;
 
     WEBCORE_EXPORT Color lightened() const;

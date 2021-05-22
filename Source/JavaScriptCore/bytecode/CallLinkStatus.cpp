@@ -193,7 +193,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     // never mutated after the PolymorphicCallStubRoutine is instantiated. We have some conservative
     // fencing in place to make sure that we see the variants list after construction.
     if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub()) {
-        WTF::loadLoadFence();
+        WTF::dependentLoadLoadFence();
         
         if (!stub->hasEdges()) {
             // This means we have an FTL profile, which has incomplete information.

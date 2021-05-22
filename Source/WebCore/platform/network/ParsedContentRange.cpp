@@ -28,6 +28,7 @@
 
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -83,7 +84,7 @@ static bool parseContentRange(StringView headerValue, int64_t& firstBytePosition
     if (!firstByteString.isAllSpecialCharacters<isASCIIDigit>())
         return false;
 
-    auto optionalFirstBytePosition = firstByteString.toInt64Strict();
+    auto optionalFirstBytePosition = parseInteger<int64_t>(firstByteString);
     if (!optionalFirstBytePosition)
         return false;
     firstBytePosition = *optionalFirstBytePosition;
@@ -92,7 +93,7 @@ static bool parseContentRange(StringView headerValue, int64_t& firstBytePosition
     if (!lastByteString.isAllSpecialCharacters<isASCIIDigit>())
         return false;
 
-    auto optionalLastBytePosition = lastByteString.toInt64Strict();
+    auto optionalLastBytePosition = parseInteger<int64_t>(lastByteString);
     if (!optionalLastBytePosition)
         return false;
     lastBytePosition = *optionalLastBytePosition;
@@ -104,7 +105,7 @@ static bool parseContentRange(StringView headerValue, int64_t& firstBytePosition
         if (!instanceString.isAllSpecialCharacters<isASCIIDigit>())
             return false;
 
-        auto optionalInstanceLength = instanceString.toInt64Strict();
+        auto optionalInstanceLength = parseInteger<int64_t>(instanceString);
         if (!optionalInstanceLength)
             return false;
         instanceLength = *optionalInstanceLength;

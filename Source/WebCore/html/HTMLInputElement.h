@@ -122,7 +122,7 @@ public:
     WEBCORE_EXPORT bool isFileUpload() const;
     bool isImageButton() const;
     WEBCORE_EXPORT bool isNumberField() const;
-    bool isSubmitButton() const;
+    bool isSubmitButton() const final;
     WEBCORE_EXPORT bool isTelephoneField() const;
     WEBCORE_EXPORT bool isURLField() const;
     WEBCORE_EXPORT bool isDateField() const;
@@ -332,6 +332,7 @@ public:
     void capsLockStateMayHaveChanged();
 
     bool shouldTruncateText(const RenderStyle&) const;
+    void invalidateStyleOnFocusChangeIfNeeded();
 
     ExceptionOr<int> selectionStartForBindings() const;
     ExceptionOr<void> setSelectionStartForBindings(int);

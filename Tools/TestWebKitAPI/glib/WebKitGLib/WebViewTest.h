@@ -53,6 +53,7 @@ public:
     void waitUntilTitleChangedTo(const char* expectedTitle);
     void waitUntilTitleChanged();
     void waitUntilFileChanged(const char*, GFileMonitorEvent);
+    void waitUntilIsWebProcessResponsiveChanged();
     void resizeView(int width, int height);
     void hideView();
     void selectAll();

@@ -123,6 +123,11 @@
     completionHandler(error);
 }
 
+- (void)sendAwakener:(TestAwakener *)awakener completionHandler:(void (^)(TestAwakener *))completionHandler
+{
+    completionHandler(awakener);
+}
+
 - (void)callUIProcessMethodWithReplyBlock
 {
     id <LocalObjectProtocol> localObject = [[_browserContextController _remoteObjectRegistry] remoteObjectProxyWithInterface:localObjectInterface()];

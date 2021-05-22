@@ -24,7 +24,7 @@
 
 [
     Conditional=WEB_AUDIO,
-    EnabledBySetting=ModernUnprefixedWebAudio,
+    EnabledBySetting=WebAudio,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface OfflineAudioContext : BaseAudioContext {

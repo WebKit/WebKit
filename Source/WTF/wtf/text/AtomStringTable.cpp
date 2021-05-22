@@ -23,8 +23,6 @@
 #include "config.h"
 #include <wtf/text/AtomStringTable.h>
 
-#include <wtf/HashSet.h>
-
 namespace WTF {
 
 AtomStringTable::~AtomStringTable()

@@ -31,7 +31,6 @@
 extern "C" {
 #endif
 
-WK_EXPORT size_t WKGetAPIURLSchemeTaskInstanceCount();
 WK_EXPORT size_t WKGetWebURLSchemeTaskInstanceCount();
 
 #ifdef __cplusplus

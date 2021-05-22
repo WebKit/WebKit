@@ -126,6 +126,10 @@ struct DragItem;
 #if ENABLE(ATTACHMENT_ELEMENT)
 struct PromisedAttachmentInfo;
 #endif
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+struct TranslationContextMenuInfo;
+#endif
 }
 
 namespace WebKit {
@@ -331,8 +335,11 @@ public:
 #endif
 #if PLATFORM(IOS_FAMILY)
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) = 0;
+    virtual void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&) = 0;
     virtual void didCompleteSyntheticClick() = 0;
 #endif
+
+    virtual void runModalJavaScriptDialog(CompletionHandler<void()>&& callback) { callback(); }
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     virtual void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID) { }
@@ -509,6 +516,8 @@ public:
     virtual void themeColorDidChange() { }
     virtual void pageExtendedBackgroundColorWillChange() { }
     virtual void pageExtendedBackgroundColorDidChange() { }
+    virtual void sampledPageTopColorWillChange() { }
+    virtual void sampledPageTopColorDidChange() { }
     virtual void didChangeBackgroundColor() = 0;
     virtual void isPlayingAudioWillChange() = 0;
     virtual void isPlayingAudioDidChange() = 0;
@@ -612,7 +621,7 @@ public:
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     virtual bool canHandleContextMenuTranslation() const = 0;
-    virtual void handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& menuLocation) = 0;
+    virtual void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) = 0;
 #endif
 };
 

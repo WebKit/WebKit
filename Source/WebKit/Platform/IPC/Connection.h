@@ -33,8 +33,9 @@
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "Timeout.h"
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -106,6 +107,9 @@ class UnixMessage;
 
 class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
+    enum SyncRequestIDType { };
+    using SyncRequestID = ObjectIdentifier<SyncRequestIDType>;
+
     class Client : public MessageReceiver {
     public:
         virtual void didClose(Connection&) = 0;
@@ -276,8 +280,8 @@ public:
     }
 
     bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions);
-    UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, uint64_t& syncRequestID);
-    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
+    UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, SyncRequestID&);
+    std::unique_ptr<Decoder> sendSyncMessage(SyncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
     bool sendSyncReply(UniqueRef<Encoder>&&);
 
     void wakeUpRunLoop();
@@ -324,10 +328,11 @@ private:
     bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
     
     std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
-    uint64_t makeSyncRequestID() { return ++m_syncRequestID; }
-    bool pushPendingSyncRequestID(uint64_t syncRequestID);
-    void popPendingSyncRequestID(uint64_t syncRequestID);
-    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
+
+    SyncRequestID makeSyncRequestID() { return SyncRequestID::generateThreadSafe(); }
+    bool pushPendingSyncRequestID(SyncRequestID);
+    void popPendingSyncRequestID(SyncRequestID);
+    std::unique_ptr<Decoder> waitForSyncReply(SyncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
     void enqueueMatchingMessagesToMessageReceiveQueue(Locker<Lock>& incomingMessagesLocker, MessageReceiveQueue&, ReceiverName, uint64_t destinationID);
 
@@ -382,22 +387,22 @@ private:
     UniqueID m_uniqueID;
     bool m_isServer;
     std::atomic<bool> m_isValid { true };
-    std::atomic<uint64_t> m_syncRequestID;
 
-    bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
-    bool m_shouldExitOnSyncMessageSendFailure;
-    DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback;
+    bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage { false };
+    bool m_shouldExitOnSyncMessageSendFailure { false };
+    DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback { nullptr };
 
-    bool m_isConnected;
+    bool m_isConnected { false };
     Ref<WorkQueue> m_connectionQueue;
 
-    unsigned m_inSendSyncCount;
-    unsigned m_inDispatchMessageCount;
-    unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
+    unsigned m_inSendSyncCount { 0 };
+    unsigned m_inDispatchMessageCount { 0 };
+    unsigned m_inDispatchSyncMessageCount { 0 };
+    unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount { 0 };
     unsigned m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting { 0 };
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreTimeoutsForTesting { false };
-    bool m_didReceiveInvalidMessage;
+    bool m_didReceiveInvalidMessage { false };
 
     // Incoming messages.
     Lock m_incomingMessagesMutex;
@@ -408,18 +413,18 @@ private:
     // Outgoing messages.
     Lock m_outgoingMessagesMutex;
     Deque<UniqueRef<Encoder>> m_outgoingMessages;
-    
-    Condition m_waitForMessageCondition;
-    Lock m_waitForMessageMutex;
+
+    CheckedCondition m_waitForMessageCondition;
+    CheckedLock m_waitForMessageMutex;
 
     struct WaitForMessageState;
-    WaitForMessageState* m_waitingForMessage { nullptr };
+    WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageMutex) { nullptr }; // NOLINT
 
     class SyncMessageState;
 
     Lock m_syncReplyStateMutex;
-    bool m_shouldWaitForSyncReplies;
-    bool m_shouldWaitForMessages;
+    bool m_shouldWaitForSyncReplies { true };
+    bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageMutex) { true };
     struct PendingSyncReply;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 
@@ -558,7 +563,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
     RELEASE_ASSERT(RunLoop::isMain());
 
-    uint64_t syncRequestID = 0;
+    SyncRequestID syncRequestID;
     auto encoder = createSyncMessageEncoder(T::name(), destinationID, syncRequestID);
 
     if (sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting)) {

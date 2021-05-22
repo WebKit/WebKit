@@ -21,20 +21,6 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include <wtf/HashMap.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
-
-#if OS(DARWIN) && USE(CG)
-#include "SharedBuffer.h"
-#include <CoreGraphics/CGFont.h>
-#endif
-
-#if PLATFORM(WIN) && USE(CORE_TEXT)
-#include <pal/spi/win/CoreTextSPIWin.h>
-#endif
-
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)

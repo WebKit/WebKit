@@ -333,7 +333,11 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureState) {
 
  The above function text will create a promise that will fulfull with the value 42 after a one second delay, wait for it to resolve, then return the fulfillment value of 42.
 */
+#ifdef NS_SWIFT_ASYNC_NAME
+- (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable_result id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+#else
 - (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^ _Nullable)(_Nullable id, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+#endif
 
 /*! @abstract Closes all out-of-window media presentations in a WKWebView.
  @discussion Includes picture-in-picture and fullscreen.
@@ -401,9 +405,9 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureState) {
  device scale. The completionHandler is passed the image of the viewport contents or an error.
  */
 #if TARGET_OS_IPHONE
-- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(UIImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(ios(11.0));
+- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(UIImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_NAME(takeSnapshot(configuration:)) WK_API_AVAILABLE(ios(11.0));
 #else
-- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(macos(10.13));
+- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_NAME(takeSnapshot(configuration:)) WK_API_AVAILABLE(macos(10.13));
 #endif
 
 /*! @abstract Create a PDF document representation from the web page currently displayed in the WKWebView

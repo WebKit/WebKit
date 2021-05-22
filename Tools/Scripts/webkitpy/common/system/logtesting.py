@@ -61,7 +61,10 @@ class TestLogStream(object):
     #
     # http://docs.python.org/library/logging.html#module-logging.handlers
     def write(self, message):
-        self.messages.append(message)
+        if message == "\n" and self.messages:
+            self.messages[-1] += "\n"
+        else:
+            self.messages.append(message)
 
     def flush(self):
         pass

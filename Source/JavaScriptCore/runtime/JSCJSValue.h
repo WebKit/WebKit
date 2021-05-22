@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -315,6 +315,9 @@ public:
     JSValue get(JSGlobalObject*, unsigned propertyName) const;
     JSValue get(JSGlobalObject*, unsigned propertyName, PropertySlot&) const;
     JSValue get(JSGlobalObject*, uint64_t propertyName) const;
+
+    template<typename T, typename PropertyNameType>
+    T getAs(JSGlobalObject*, PropertyNameType) const;
 
     bool getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&) const;
     template<typename CallbackWhenNoException> typename std::result_of<CallbackWhenNoException(bool, PropertySlot&)>::type getPropertySlot(JSGlobalObject*, PropertyName, CallbackWhenNoException) const;

@@ -653,7 +653,7 @@ static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& s
     if (!rotate || !rendererCanBeTransformed(renderer) || rotate->isIdentity())
         return cssValuePool.createIdentifierValue(CSSValueNone);
 
-    if (!rotate->is3DOperation())
+    if (!rotate->is3DOperation() || (!rotate->x() && !rotate->y() && rotate->z()))
         return cssValuePool.createValue(rotate->angle(), CSSUnitType::CSS_DEG);
 
     auto list = CSSValueList::createSpaceSeparated();
@@ -662,8 +662,6 @@ static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& s
         list->append(cssValuePool.createIdentifierValue(CSSValueX));
     else if (!rotate->x() && rotate->y() && !rotate->z())
         list->append(cssValuePool.createIdentifierValue(CSSValueY));
-    else if (!rotate->x() && !rotate->y() && rotate->z())
-        list->append(cssValuePool.createIdentifierValue(CSSValueZ));
     else {
         list->append(cssValuePool.createValue(rotate->x(), CSSUnitType::CSS_NUMBER));
         list->append(cssValuePool.createValue(rotate->y(), CSSUnitType::CSS_NUMBER));

@@ -4,7 +4,7 @@
 /*---
 description: Computed property name from assignment expression logical and (ComputedPropertyName in ClassExpression)
 esid: prod-ComputedPropertyName
-features: [computed-property-names, class-fields-public, class-static-fields-public]
+features: [computed-property-names, logical-assignment-operators, class-fields-public, class-static-fields-public]
 flags: [generated]
 info: |
     ClassExpression:

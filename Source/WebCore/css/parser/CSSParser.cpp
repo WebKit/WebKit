@@ -199,7 +199,10 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
             return nullptr;
 
         for (auto& property : parsedProperties) {
-            if (property.id() == propID)
+            CSSPropertyID currentId = property.id();
+            if (CSSProperty::isDirectionAwareProperty(currentId))
+                currentId = CSSProperty::resolveDirectionAwareProperty(currentId, direction, writingMode);
+            if (currentId == propID)
                 return property.value();
         }
 

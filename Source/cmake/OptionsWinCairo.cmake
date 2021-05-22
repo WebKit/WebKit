@@ -41,9 +41,6 @@ if (WebP_FOUND)
     SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)
 endif ()
 
-# TODO: Add a check for HAVE_RSA_PSS for support of CryptoAlgorithmRSA_PSS
-# https://bugs.webkit.org/show_bug.cgi?id=206635
-
 set(USE_ANGLE_EGL ON)
 set(USE_ANGLE_WEBGL ON)
 

@@ -1,7 +1,0 @@
-2d.path.arc.nonempty
-arc() with a non-empty path does draw a straight line to the start point
-Spec references: 2d.path.arc.nonempty
-Actual output:
-Expected output:
-
-Passed

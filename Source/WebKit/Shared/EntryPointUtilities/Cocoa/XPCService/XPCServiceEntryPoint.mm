@@ -31,9 +31,9 @@
 #import <WebCore/ProcessIdentifier.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate()
 {
@@ -83,33 +83,25 @@ bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBund
 
 bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersion)
 {
-    auto string = xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version");
-    bool ok;
-    clientSDKVersion = charactersToUIntStrict(reinterpret_cast<const LChar*>(string), string ? std::strlen(string) : 0, &ok);
-    return ok;
+    auto version = parseInteger<uint32_t>(xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version"));
+    clientSDKVersion = version.valueOr(0);
+    return version.hasValue();
 }
 
 bool XPCServiceInitializerDelegate::getProcessIdentifier(ProcessIdentifier& identifier)
 {
-    String processIdentifierString = xpc_dictionary_get_string(m_initializerMessage, "process-identifier");
-    if (processIdentifierString.isEmpty())
+    auto parsedIdentifier = parseInteger<uint64_t>(xpc_dictionary_get_string(m_initializerMessage, "process-identifier"));
+    if (!parsedIdentifier)
         return false;
 
-    bool ok;
-    auto parsedIdentifier = processIdentifierString.toUInt64Strict(&ok);
-    if (!ok)
-        return false;
-
-    identifier = makeObjectIdentifier<ProcessIdentifierType>(parsedIdentifier);
+    identifier = makeObjectIdentifier<ProcessIdentifierType>(*parsedIdentifier);
     return true;
 }
 
 bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
 {
     clientProcessName = xpc_dictionary_get_string(m_initializerMessage, "ui-process-name");
-    if (clientProcessName.isEmpty())
-        return false;
-    return true;
+    return !clientProcessName.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>& extraInitializationData)

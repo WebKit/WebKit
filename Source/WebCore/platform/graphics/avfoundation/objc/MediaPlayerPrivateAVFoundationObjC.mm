@@ -36,14 +36,12 @@
 #import "AuthenticationChallenge.h"
 #import "CDMInstanceFairPlayStreamingAVFObjC.h"
 #import "CDMSessionAVFoundationObjC.h"
+#import "ColorSpaceCG.h"
 #import "Cookie.h"
 #import "DeprecatedGlobalSettings.h"
 #import "ExtensionsGL.h"
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
-#import "GraphicsContextCG.h"
-#import "GraphicsContextGL.h"
-#import "GraphicsContextGLCV.h"
 #import "ImageRotationSessionVT.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
@@ -518,6 +516,11 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
 #if !PLATFORM(IOS_FAMILY)
         [m_avPlayer setOutputContext:nil];
 #endif
+
+        if (m_currentTimeObserver)
+            [m_avPlayer removeTimeObserver:m_currentTimeObserver.get()];
+        m_currentTimeObserver = nil;
+
         m_avPlayer = nil;
     }
 
@@ -1100,6 +1103,11 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 #endif
 
+    ASSERT(!m_currentTimeObserver);
+    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[this] (CMTime time) {
+        currentMediaTimeDidChange(PAL::toMediaTime(time));
+    }];
+
     setDelayCallbacks(false);
 }
 
@@ -1428,11 +1436,37 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::currentMediaTime() const
     if (!metaDataAvailable() || !m_avPlayerItem)
         return MediaTime::zeroTime();
 
-    CMTime itemTime = [m_avPlayerItem.get() currentTime];
-    if (CMTIME_IS_NUMERIC(itemTime))
-        return std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
+    if (!m_wallClockAtCachedCurrentTime)
+        currentMediaTimeDidChange(toMediaTime([m_avPlayerItem.get() currentTime]));
+    ASSERT(m_wallClockAtCachedCurrentTime);
 
-    return MediaTime::zeroTime();
+    auto itemTime = m_cachedCurrentMediaTime;
+    if (!itemTime.isFinite())
+        return MediaTime::zeroTime();
+
+    if (m_timeControlStatusAtCachedCurrentTime == AVPlayerTimeControlStatusPlaying) {
+        auto elapsedMediaTime = (WallTime::now() - *m_wallClockAtCachedCurrentTime) * m_requestedRateAtCachedCurrentTime;
+        itemTime += MediaTime::createWithDouble(elapsedMediaTime.seconds());
+    }
+
+    return std::min(std::max(itemTime, MediaTime::zeroTime()), m_cachedDuration);
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
+{
+    m_currentTimeDidChangeCallback = WTFMove(callback);
+    return true;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange(MediaTime&& time) const
+{
+    m_cachedCurrentMediaTime = WTFMove(time);
+    m_wallClockAtCachedCurrentTime = WallTime::now();
+    m_timeControlStatusAtCachedCurrentTime = m_cachedTimeControlStatus;
+    m_requestedRateAtCachedCurrentTime = m_requestedRate;
+
+    if (m_currentTimeDidChangeCallback)
+        m_currentTimeDidChangeCallback(time.isFinite() ? m_cachedCurrentMediaTime : MediaTime::zeroTime());
 }
 
 void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
@@ -1508,6 +1542,7 @@ void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
     m_requestedRate = rate;
     if (m_requestedPlaying)
         setPlayerRate(rate);
+    m_wallClockAtCachedCurrentTime = WTF::nullopt;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate)
@@ -1521,6 +1556,8 @@ void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate)
     m_cachedTimeControlStatus = [m_avPlayer timeControlStatus];
     setShouldObserveTimeControlStatus(true);
     setDelayCallbacks(false);
+
+    m_wallClockAtCachedCurrentTime = WTF::nullopt;
 }
 
 double MediaPlayerPrivateAVFoundationObjC::rate() const
@@ -1660,21 +1697,24 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
     if (!m_avAsset)
         return MediaPlayerAVAssetStatusDoesNotExist;
 
-    for (NSString *keyName in assetMetadataKeyNames()) {
-        NSError *error = nil;
-        AVKeyValueStatus keyStatus = [m_avAsset.get() statusOfValueForKey:keyName error:&error];
+    if (!m_cachedAssetIsLoaded) {
+        for (NSString *keyName in assetMetadataKeyNames()) {
+            NSError *error = nil;
+            AVKeyValueStatus keyStatus = [m_avAsset.get() statusOfValueForKey:keyName error:&error];
 
-        if (error)
-            ERROR_LOG(LOGIDENTIFIER, "failed for ", [keyName UTF8String], ", error = ", [[error localizedDescription] UTF8String]);
+            if (error)
+                ERROR_LOG(LOGIDENTIFIER, "failed for ", [keyName UTF8String], ", error = ", [[error localizedDescription] UTF8String]);
 
-        if (keyStatus < AVKeyValueStatusLoaded)
-            return MediaPlayerAVAssetStatusLoading;// At least one key is not loaded yet.
-        
-        if (keyStatus == AVKeyValueStatusFailed)
-            return MediaPlayerAVAssetStatusFailed; // At least one key could not be loaded.
+            if (keyStatus < AVKeyValueStatusLoaded)
+                return MediaPlayerAVAssetStatusLoading; // At least one key is not loaded yet.
 
-        if (keyStatus == AVKeyValueStatusCancelled)
-            return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
+            if (keyStatus == AVKeyValueStatusFailed)
+                return MediaPlayerAVAssetStatusFailed; // At least one key could not be loaded.
+
+            if (keyStatus == AVKeyValueStatusCancelled)
+                return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
+        }
+        m_cachedAssetIsLoaded = true;
     }
 
     if (!player()->shouldCheckHardwareSupport())
@@ -1690,7 +1730,10 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
         }
     }
 
-    if ([[m_avAsset.get() valueForKey:@"playable"] boolValue] && m_tracksArePlayable.value())
+    if (!m_cachedAssetIsPlayable)
+        m_cachedAssetIsPlayable = [[m_avAsset.get() valueForKey:@"playable"] boolValue];
+
+    if (*m_cachedAssetIsPlayable && m_tracksArePlayable.value())
         return MediaPlayerAVAssetStatusPlayable;
 
     return MediaPlayerAVAssetStatusLoaded;
@@ -3345,6 +3388,7 @@ void MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange(int timeCont
 
     m_cachedTimeControlStatus = timeControlStatus;
     rateChanged();
+    m_wallClockAtCachedCurrentTime = WTF::nullopt;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (!isCurrentPlaybackTargetWireless())

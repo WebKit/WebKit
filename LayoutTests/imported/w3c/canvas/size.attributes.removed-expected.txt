@@ -1,7 +1,0 @@
-size.attributes.removed
-Removing content attributes reverts to default size
-Spec references: size.missing
-Actual output:
-Expected output:
-
-Passed

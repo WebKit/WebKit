@@ -30,6 +30,7 @@
 
 #include "CachedImage.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableColElement.h"
 #include "HTMLTableElement.h"
@@ -258,7 +259,7 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
                 auto& tableColElement = static_cast<HTMLTableColElement&>(*renderer.element());
                 auto columnWidth = tableColElement.width();
                 if (!columnWidth.isEmpty())
-                    childLayoutBox->setColumnWidth(columnWidth.toInt());
+                    childLayoutBox->setColumnWidth(parseHTMLInteger(columnWidth).value_or(0));
                 if (tableColElement.span() > 1)
                     childLayoutBox->setColumnSpan(tableColElement.span());
             } else {
@@ -276,7 +277,6 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
                 auto rowSpan = cellElement.rowSpan();
                 if (rowSpan > 1)
                     childLayoutBox->setRowSpan(rowSpan);
-
                 auto columnSpan = cellElement.colSpan();
                 if (columnSpan > 1)
                     childLayoutBox->setColumnSpan(columnSpan);

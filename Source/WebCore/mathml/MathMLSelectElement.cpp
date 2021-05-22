@@ -117,7 +117,7 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
     if (!selectedChild)
         return 1;
 
-    int selection = attributeWithoutSynchronization(MathMLNames::selectionAttr).toInt();
+    int selection = getIntegralAttribute(MathMLNames::selectionAttr);
     int i;
     for (i = 1; i < selection; i++) {
         auto* nextChild = selectedChild->nextElementSibling();

@@ -87,11 +87,9 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
 
     auto context = makeUnique<GraphicsContext>(cgContext.get());
 
-    const auto releaseImageData = [] (void*, const void* data, size_t) {
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, numBytes, [] (void*, const void* data, size_t) {
         fastFree(const_cast<void*>(data));
-    };
-
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(0, data, numBytes, releaseImageData));
+    }));
 
     return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data, WTFMove(dataProvider), WTFMove(context)));
 }

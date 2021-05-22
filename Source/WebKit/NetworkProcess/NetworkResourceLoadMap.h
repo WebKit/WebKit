@@ -27,7 +27,6 @@
 
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 
 #if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
 #include "ProcessAssertion.h"

@@ -3926,6 +3926,8 @@ void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
     Color backgroundColor;
     if (page().settings().useThemeColorForScrollAreaBackgroundColor())
         backgroundColor = page().themeColor();
+    if (page().settings().useSampledPageTopColorForScrollAreaBackgroundColor() && !backgroundColor.isValid())
+        backgroundColor = page().sampledPageTopColor();
     if (!backgroundColor.isValid())
         backgroundColor = m_rootExtendedBackgroundColor;
 

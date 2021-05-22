@@ -177,6 +177,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APP_HIGHLIGHTS)
     BOOL _appHighlightsEnabled;
 #endif
+    double _sampledPageTopColorMaxDifference;
+    double _sampledPageTopColorMinHeight;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -199,8 +201,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsInlineMediaPlayback = WebKit::currentUserInterfaceIdiomIsPadOrMac();
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
-
-    _mediaDataLoadsAutomatically = NO;
+    _mediaDataLoadsAutomatically = _allowsInlineMediaPlayback;
 #if !PLATFORM(WATCHOS)
     if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
@@ -275,6 +276,10 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APP_HIGHLIGHTS)
     _appHighlightsEnabled = DEFAULT_VALUE_FOR_AppHighlightsEnabled;
 #endif
+
+    _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
+    _sampledPageTopColorMinHeight = DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight;
+
     return self;
 }
 
@@ -452,6 +457,9 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APP_HIGHLIGHTS)
     configuration->_appHighlightsEnabled = self->_appHighlightsEnabled;
 #endif
+
+    configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
+    configuration->_sampledPageTopColorMinHeight = self->_sampledPageTopColorMinHeight;
 
     return configuration;
 }
@@ -1271,6 +1279,26 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setProcessDisplayName:(NSString *)lsDisplayName
 {
     _pageConfiguration->setProcessDisplayName(lsDisplayName);
+}
+
+- (void)_setSampledPageTopColorMaxDifference:(double)value
+{
+    _sampledPageTopColorMaxDifference = value;
+}
+
+- (double)_sampledPageTopColorMaxDifference
+{
+    return _sampledPageTopColorMaxDifference;
+}
+
+- (void)_setSampledPageTopColorMinHeight:(double)value
+{
+    _sampledPageTopColorMinHeight = value;
+}
+
+- (double)_sampledPageTopColorMinHeight
+{
+    return _sampledPageTopColorMinHeight;
 }
 
 @end

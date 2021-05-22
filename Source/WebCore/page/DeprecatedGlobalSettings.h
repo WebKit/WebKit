@@ -78,10 +78,6 @@ public:
 
     static void setDisableScreenSizeOverride(bool flag) { gDisableScreenSizeOverride = flag; }
     static bool disableScreenSizeOverride() { return gDisableScreenSizeOverride; }
-#if HAVE(AVKIT)
-    static void setAVKitEnabled(bool flag) { gAVKitEnabled = flag; }
-#endif
-    static bool avKitEnabled() { return gAVKitEnabled; }
 
     static void setShouldOptOutOfNetworkStateObservation(bool flag) { gShouldOptOutOfNetworkStateObservation = flag; }
     static bool shouldOptOutOfNetworkStateObservation() { return gShouldOptOutOfNetworkStateObservation; }
@@ -114,7 +110,6 @@ private:
 #endif
 #if PLATFORM(IOS_FAMILY)
     static bool gNetworkDataUsageTrackingEnabled;
-    WEBCORE_EXPORT static bool gAVKitEnabled;
     WEBCORE_EXPORT static bool gShouldOptOutOfNetworkStateObservation;
     WEBCORE_EXPORT static bool gDisableScreenSizeOverride;
 #endif

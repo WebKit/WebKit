@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,13 @@
 
 #include "CachedImage.h"
 #include "CanvasPattern.h"
+#include "ColorSpace.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "Image.h"
 #include "ImageBitmap.h"
+#include "PixelFormat.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
 #include <wtf/IsoMallocInlines.h>
@@ -78,6 +80,16 @@ void CanvasRenderingContext::ref()
 void CanvasRenderingContext::deref()
 {
     m_canvas.derefCanvasBase();
+}
+
+PixelFormat CanvasRenderingContext::pixelFormat() const
+{
+    return PixelFormat::BGRA8;
+}
+
+DestinationColorSpace CanvasRenderingContext::colorSpace() const
+{
+    return DestinationColorSpace::SRGB;
 }
 
 bool CanvasRenderingContext::wouldTaintOrigin(const CanvasPattern* pattern)

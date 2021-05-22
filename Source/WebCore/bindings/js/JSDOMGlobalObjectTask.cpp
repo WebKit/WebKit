@@ -60,7 +60,7 @@ public:
         if (!context)
             return;
         JSExecState::runTask(lexicalGlobalObject, m_task);
-        scope.assertNoException();
+        scope.assertNoExceptionExceptTermination();
     }
 
 private:

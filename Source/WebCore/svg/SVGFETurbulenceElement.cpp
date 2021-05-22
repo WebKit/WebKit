@@ -25,6 +25,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -80,7 +81,7 @@ void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::numOctavesAttr) {
-        m_numOctaves->setBaseValInternal(value.string().toUIntStrict());
+        m_numOctaves->setBaseValInternal(parseInteger<unsigned>(value).valueOr(0));
         return;
     }
 

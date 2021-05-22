@@ -1,4 +1,0 @@
-2d.fillStyle.parse.system
-Spec references: 2d.colours.parse
-Actual output:
-Passed

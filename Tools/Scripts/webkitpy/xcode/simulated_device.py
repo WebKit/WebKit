@@ -23,7 +23,6 @@
 import atexit
 import json
 import logging
-import plistlib
 import re
 import time
 
@@ -34,6 +33,11 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
+
+try:
+    from plistlib import load as readPlist
+except ImportError:
+    from plistlib import readPlist
 
 _log = logging.getLogger(__name__)
 
@@ -106,7 +110,7 @@ class SimulatedDeviceManager(object):
 
         # Find device type. If we can't parse the device type, ignore this device.
         try:
-            device_type_string = SimulatedDeviceManager._device_identifier_to_name[plistlib.readPlist(host.filesystem.open_binary_file_for_reading(device_plist))['deviceType']]
+            device_type_string = SimulatedDeviceManager._device_identifier_to_name[readPlist(host.filesystem.open_binary_file_for_reading(device_plist))['deviceType']]
             device_type = DeviceType.from_string(device_type_string, runtime.version)
             assert device_type.software_variant == runtime.os_variant
         except (ValueError, AssertionError):
@@ -250,7 +254,10 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def _get_device_identifier_for_type(device_type):
-        type_name_for_request = u'{} {}'.format(device_type.hardware_family.lower(), device_type.standardized_hardware_type.lower())
+        type_name_for_request = u'{}{}'.format(
+            device_type.hardware_family.lower(),
+            ' {}'.format(device_type.standardized_hardware_type.lower()) if device_type.standardized_hardware_type else '',
+        )
         for type_id, type_name in SimulatedDeviceManager._device_identifier_to_name.items():
             if type_name.lower() == type_name_for_request:
                 return type_id
@@ -525,6 +532,11 @@ class SimulatedDevice(object):
         'SHUTTING DOWN',
     ]
 
+    UI_MANAGER_SERVICE = {
+        'iOS': 'com.apple.springboard.services',
+        'watchOS': 'com.apple.carousel.sessionservice',
+    }
+
     def __init__(self, name, udid, host, device_type, build_version):
         assert device_type.software_version
 
@@ -549,7 +561,7 @@ class SimulatedDevice(object):
             return self._state
 
         device_plist = self.filesystem.expanduser(self.filesystem.join(SimulatedDeviceManager.simulator_device_path, self.udid, 'device.plist'))
-        self._state = int(plistlib.readPlist(self.filesystem.open_binary_file_for_reading(device_plist))['state'])
+        self._state = int(readPlist(self.filesystem.open_binary_file_for_reading(device_plist))['state'])
         self._last_updated_state = time.time()
         return self._state
 
@@ -562,16 +574,13 @@ class SimulatedDevice(object):
         if self.state(force_update=force_update) != SimulatedDevice.DeviceState.BOOTED:
             return False
 
-        if self.device_type.software_variant == 'iOS':
-            home_screen_service = 'com.apple.springboard.services'
-        elif self.device_type.software_variant == 'watchOS':
-            home_screen_service = 'com.apple.carousel.sessionservice'
-        else:
+        service = self.UI_MANAGER_SERVICE.get(self.device_type.software_variant)
+        if service:
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
 
         system_processes = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system'], decode_output=True, return_stderr=False)
-        if re.search(r'"{}"'.format(home_screen_service), system_processes) or re.search(r'A\s+{}'.format(home_screen_service), system_processes):
+        if re.search(r'"{}"'.format(service), system_processes) or re.search(r'A\s+{}'.format(service), system_processes):
             return True
         return False
 

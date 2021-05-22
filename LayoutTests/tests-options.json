@@ -632,6 +632,9 @@
     "imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-animations/idlharness.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
@@ -3105,6 +3108,18 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/websockets/unload-a-document/005.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webstorage/event_basic.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webstorage/event_body_attribute.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webstorage/event_setattribute.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm": [

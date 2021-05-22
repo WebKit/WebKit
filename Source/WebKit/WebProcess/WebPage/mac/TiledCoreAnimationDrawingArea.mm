@@ -451,6 +451,7 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
         m_webPage.updateRendering();
         m_webPage.flushPendingThemeColorChange();
         m_webPage.flushPendingPageExtendedBackgroundColorChange();
+        m_webPage.flushPendingSampledPageTopColorChange();
         m_webPage.flushPendingEditorStateUpdate();
         m_webPage.flushPendingIntrinsicContentSizeUpdate();
 

@@ -113,6 +113,7 @@ interface TestRunner {
     undefined repaintSweepHorizontally();
     undefined display();
     undefined displayAndTrackRepaints();
+    undefined displayOnLoadFinish();
 
     // Failed load condition testing
     undefined forceImmediateCompletion();
@@ -255,6 +256,9 @@ interface TestRunner {
     object failNextNewCodeBlock();
     object numberOfDFGCompiles(object function);
     object neverInlineFunction(object function);
+
+    // UI delegate hooks.
+    undefined installDidNotHandleTapAsMeaningfulClickCallback(object callback);
 
     // Swipe gestures
     undefined installDidBeginSwipeCallback(object callback);

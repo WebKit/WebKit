@@ -44,6 +44,7 @@
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -533,7 +534,7 @@ static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object
         return false;
     }
 
-    sourceID = scriptIDStr.toIntPtr();
+    sourceID = parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptIDStr).valueOr(0);
     columnNumber = location.getInteger(Protocol::Debugger::Location::columnNumberKey).valueOr(0);
     return true;
 }
@@ -729,7 +730,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::continueToLocation(Ref<JSO
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> InspectorDebuggerAgent::searchInContent(const Protocol::Debugger::ScriptId& scriptId, const String& query, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex)
 {
-    auto it = m_scripts.find(scriptId.toIntPtr());
+    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).valueOr(0));
     if (it == m_scripts.end())
         return makeUnexpected("Missing script for given scriptId"_s);
 
@@ -738,7 +739,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>>
 
 Protocol::ErrorStringOr<String> InspectorDebuggerAgent::getScriptSource(const Protocol::Debugger::ScriptId& scriptId)
 {
-    auto it = m_scripts.find(scriptId.toIntPtr());
+    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).valueOr(0));
     if (it == m_scripts.end())
         return makeUnexpected("Missing script for given scriptId");
 

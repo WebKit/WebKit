@@ -712,7 +712,13 @@ void DisplayMtl::ensureCapsInitialized() const
     // Fill in additional limits for UBOs and SSBOs.
     mNativeCaps.maxUniformBufferBindings = mNativeCaps.maxCombinedUniformBlocks;
     mNativeCaps.maxUniformBlockSize      = mtl::kMaxUBOSize;  // Default according to GLES 3.0 spec.
-    mNativeCaps.uniformBufferOffsetAlignment = 1;
+    if([mMetalDevice supportsFamily:MTLGPUFamilyApple1])
+    {
+        mNativeCaps.uniformBufferOffsetAlignment = 16; // on Apple based GPU's We can ignore data types when setting constant buffer alignment at 16.
+    }
+    else{
+        mNativeCaps.uniformBufferOffsetAlignment = 256; // constant buffers on all other GPUs must be aligned to 256.
+    }
 
     mNativeCaps.maxShaderStorageBufferBindings     = 0;
     mNativeCaps.maxShaderStorageBlockSize          = 0;

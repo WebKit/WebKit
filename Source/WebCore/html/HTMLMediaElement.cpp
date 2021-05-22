@@ -1136,6 +1136,7 @@ void HTMLMediaElement::prepareForLoad()
     if (!document().hasBrowsingContext())
         return;
 
+    mediaSession().setActive(true);
     createMediaPlayer();
 
     // 2 - Let pending tasks be a list of all tasks from the media element's media element event task source in one of the task queues.
@@ -1421,6 +1422,8 @@ void HTMLMediaElement::loadNextSourceChild()
         waitForSourceChange();
         return;
     }
+
+    mediaSession().setActive(true);
 
     // Recreate the media player for the new url
     createMediaPlayer();
@@ -2227,6 +2230,7 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
     logMediaLoadRequest(document().page(), String(), convertEnumerationToString(error), false);
 
     mediaSession().clientCharacteristicsChanged();
+    mediaSession().setActive(false);
 }
 
 void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
@@ -3501,6 +3505,7 @@ void HTMLMediaElement::playInternal()
         return;
     }
 
+    mediaSession().setActive(true);
     if (!mediaSession().clientWillBeginPlayback()) {
         ALWAYS_LOG(LOGIDENTIFIER, "returning because of interruption");
         return;
@@ -7331,18 +7336,19 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         argList.append(mediaControlsHostJSWrapper);
         ASSERT(!argList.hasOverflowed());
 
-        auto* function = functionValue.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
-        auto callData = JSC::getCallData(vm, function);
-        if (callData.type == JSC::CallData::Type::None)
-            return false;
-
         auto reportExceptionAndReturnFalse = [&] () -> bool {
             auto* exception = scope.exception();
             scope.clearException();
             reportException(&globalObject, exception);
             return false;
         };
+
+        auto* function = functionValue.toObject(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+        auto callData = JSC::getCallData(vm, function);
+        if (callData.type == JSC::CallData::Type::None)
+            return false;
+
 
         auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
         RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
@@ -7353,7 +7359,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
         // Connect the Media, MediaControllerHost, and Controller so the GC knows about their relationship
         auto* mediaJSWrapperObject = mediaJSWrapper.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
+        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
         auto controlsHost = JSC::Identifier::fromString(vm, "controlsHost");
 
         ASSERT(!mediaJSWrapperObject->hasProperty(&lexicalGlobalObject, controlsHost));
@@ -7415,7 +7421,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
             return false;
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
+        RETURN_IF_EXCEPTION(scope, false);
         auto callData = JSC::getCallData(vm, function);
         if (callData.type == JSC::CallData::Type::None)
             return false;
@@ -7459,7 +7465,7 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
             return false;
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
+        RETURN_IF_EXCEPTION(scope, false);
         auto callData = JSC::getCallData(vm, function);
         JSC::MarkedArgumentBuffer argList;
         ASSERT(!argList.hasOverflowed());
@@ -7693,7 +7699,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             return true;
 #endif
 #if ENABLE(MEDIA_STREAM)
-        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+        if (hasMediaStreamSrcObject() && mediaState().containsAny(MediaProducer::MediaState::IsPlayingAudio) && document().mediaState().containsAny(MediaProducer::MediaState::HasActiveAudioCaptureDevice)) {
             INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
             return true;
         }
@@ -7708,7 +7714,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             return true;
         }
 #if ENABLE(MEDIA_STREAM)
-        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+        if (hasMediaStreamSrcObject() && mediaState().containsAny(MediaProducer::MediaState::IsPlayingAudio) && document().mediaState().containsAny(MediaProducer::MediaState::HasActiveAudioCaptureDevice)) {
             INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
             return true;
         }
@@ -7768,29 +7774,29 @@ void HTMLMediaElement::updateMediaState()
 
 MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
 {
-    MediaStateFlags state = IsNotPlaying;
+    MediaStateFlags state;
 
     bool hasActiveVideo = isVideo() && hasVideo();
     bool hasAudio = this->hasAudio();
     if (isPlayingToExternalTarget())
-        state |= IsPlayingToExternalDevice;
+        state.add(MediaProducer::MediaState::IsPlayingToExternalDevice);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_hasPlaybackTargetAvailabilityListeners) {
-        state |= HasPlaybackTargetAvailabilityListener;
+        state.add(MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener);
         if (!mediaSession().wirelessVideoPlaybackDisabled())
-            state |= RequiresPlaybackTargetMonitoring;
+            state.add(MediaProducer::MediaState::RequiresPlaybackTargetMonitoring);
     }
 
     bool requireUserGesture = mediaSession().hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
     if (m_readyState >= HAVE_METADATA && !requireUserGesture && !m_failedToPlayToWirelessTarget)
-        state |= ExternalDeviceAutoPlayCandidate;
+        state.add(MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate);
 
     if (hasActiveVideo || hasAudio)
-        state |= HasAudioOrVideo;
+        state.add(MediaProducer::MediaState::HasAudioOrVideo);
 
     if (hasActiveVideo && endedPlayback())
-        state |= DidPlayToEnd;
+        state.add(MediaProducer::MediaState::DidPlayToEnd);
 #endif
 
     if (!isPlaying())
@@ -7804,10 +7810,10 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
     isPlayingAudio = isPlayingAudio && !muted();
 #endif
     if (isPlayingAudio)
-        state |= IsPlayingAudio;
+        state.add(MediaProducer::MediaState::IsPlayingAudio);
 
     if (hasActiveVideo)
-        state |= IsPlayingVideo;
+        state.add(MediaProducer::MediaState::IsPlayingVideo);
 
     return state;
 }

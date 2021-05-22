@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,6 +257,21 @@ bool isDrawingItem(ItemType type)
 size_t paddedSizeOfTypeAndItemInBytes(ItemType type)
 {
     return sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), sizeOfItemInBytes(type));
+}
+
+size_t paddedSizeOfTypeAndItemInBytes(const DisplayListItem& displayListItem)
+{
+    auto itemSize = WTF::visit([](const auto& item) {
+        return sizeof(item);
+    }, displayListItem);
+    return sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), itemSize);
+}
+
+ItemType displayListItemType(const DisplayListItem& displayListItem)
+{
+    return WTF::visit([](const auto& item) {
+        return item.itemType;
+    }, displayListItem);
 }
 
 bool isInlineItem(ItemType type)

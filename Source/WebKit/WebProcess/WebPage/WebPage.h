@@ -216,6 +216,7 @@ enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class HighlightRequestOriginatedInApp : bool;
+enum class HighlightVisibility : bool;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
@@ -245,6 +246,10 @@ struct ViewportArguments;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 class HTMLAttachmentElement;
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+struct TranslationContextMenuInfo;
 #endif
 }
 
@@ -744,7 +749,7 @@ public:
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
 
     void blurFocusedElement();
-    void requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&&);
+    void requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&&);
     void selectWithGesture(const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
     void updateSelectionWithTouches(const WebCore::IntPoint&, SelectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&&);
     void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType, GestureRecognizerState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
@@ -1240,6 +1245,9 @@ public:
     void pageExtendedBackgroundColorDidChange() { m_pendingPageExtendedBackgroundColorChange = true; }
     void flushPendingPageExtendedBackgroundColorChange();
 
+    void sampledPageTopColorChanged() { m_pendingSampledPageTopColorChange = true; }
+    void flushPendingSampledPageTopColorChange();
+
     void flushPendingEditorStateUpdate();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -1392,7 +1400,7 @@ public:
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
-    void handleContextMenuTranslation(const String& text, const WebCore::IntRect& selectionBoundsInView, const WebCore::IntPoint& menuLocationInView);
+    void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -1418,6 +1426,7 @@ public:
 
     bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IPCHandle>&&, const Optional<unsigned> index);
+    void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
@@ -1442,6 +1451,9 @@ public:
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
+
+    void didHandleOrPreventMouseDownOrMouseUpEvent();
+    void prepareToRunModalJavaScriptDialog();
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -1473,7 +1485,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void updateViewportSizeForCSSViewportUnits();
 
-    void getFocusedElementInformation(FocusedElementInformation&);
+    Optional<FocusedElementInformation> focusedElementInformation();
     void platformInitializeAccessibility();
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);
     void handleSyntheticClick(WebCore::Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebKit::WebEvent::Modifier>, WebCore::PointerID = WebCore::mousePointerID);
@@ -2137,6 +2149,7 @@ private:
     bool m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement { false };
     bool m_pendingThemeColorChange { false };
     bool m_pendingPageExtendedBackgroundColorChange { false };
+    bool m_pendingSampledPageTopColorChange { false };
     bool m_hasPendingEditorStateUpdate { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -2163,6 +2176,7 @@ private:
     RefPtr<WebCore::Node> m_potentialTapNode;
     WebCore::FloatPoint m_potentialTapLocation;
     RefPtr<WebCore::SecurityOrigin> m_potentialTapSecurityOrigin;
+    bool m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick { false };
 
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad { false };
     bool m_hasRestoredExposedContentRectAfterDidCommitLoad { false };
@@ -2331,6 +2345,8 @@ private:
 #if !PLATFORM(IOS_FAMILY)
 inline void WebPage::platformWillPerformEditingCommand() { }
 inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) const { return false; }
+inline void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent() { }
+inline void WebPage::prepareToRunModalJavaScriptDialog() { }
 #endif
 
 } // namespace WebKit

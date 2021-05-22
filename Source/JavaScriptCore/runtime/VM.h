@@ -341,6 +341,9 @@ public:
     bool terminationInProgress() const { return m_terminationInProgress; }
     void setTerminationInProgress(bool value) { m_terminationInProgress = value; }
 
+    bool executionForbidden() const { return m_executionForbidden; }
+    void setExecutionForbidden() { m_executionForbidden = true; }
+
     JS_EXPORT_PRIVATE Exception* ensureTerminationException();
     Exception* terminationException() const
     {
@@ -351,6 +354,10 @@ public:
     {
         ASSERT(exception);
         return exception == m_terminationException;
+    }
+    bool hasPendingTerminationException() const
+    {
+        return m_exception && isTerminationException(m_exception);
     }
 
     void throwTerminationException();
@@ -887,8 +894,8 @@ public:
     Exception* lastException() const { return m_lastException; }
     JSCell** addressOfLastException() { return reinterpret_cast<JSCell**>(&m_lastException); }
 
-    // This should only be used for test or assertion code that wants to inspect
-    // the pending exception without interfering with Throw/CatchScopes.
+    // This should only be used for code that wants to check for any pending
+    // exception without interfering with Throw/CatchScopes.
     Exception* exceptionForInspection() const { return m_exception; }
 
     void setFailNextNewCodeBlock() { m_failNextNewCodeBlock = true; }
@@ -1259,6 +1266,7 @@ private:
     uintptr_t m_currentWeakRefVersion { 0 };
 
     bool m_terminationInProgress { false };
+    bool m_executionForbidden { false };
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uint64_t>>> m_loopHintExecutionCounts;

@@ -213,7 +213,7 @@ bool JSTestNamedSetterThrowingException::put(JSCell* cell, JSGlobalObject* lexic
         JSValue prototype = thisObject->getPrototypeDirect(JSC::getVM(lexicalGlobalObject));
         bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);
         slot.disallowVMEntry.reset();
-        throwScope.assertNoException();
+        RETURN_IF_EXCEPTION(throwScope, false);
         if (!found) {
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
             RETURN_IF_EXCEPTION(throwScope, true);
@@ -239,7 +239,7 @@ bool JSTestNamedSetterThrowingException::putByIndex(JSCell* cell, JSGlobalObject
     JSValue prototype = thisObject->getPrototypeDirect(vm);
     bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);
     slot.disallowVMEntry.reset();
-    throwScope.assertNoException();
+    RETURN_IF_EXCEPTION(throwScope, false);
     if (!found) {
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
@@ -262,7 +262,7 @@ bool JSTestNamedSetterThrowingException::defineOwnProperty(JSObject* object, JSG
         PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         bool found = JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot);
         slot.disallowVMEntry.reset();
-        throwScope.assertNoException();
+        RETURN_IF_EXCEPTION(throwScope, false);
         if (!found) {
             if (!propertyDescriptor.isDataDescriptor())
                 return false;

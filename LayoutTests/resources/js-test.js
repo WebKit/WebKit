@@ -311,7 +311,7 @@ function shouldBeOneOfValues(_a, _values)
         testFailed(_a + " should be one of " + stringifiedValues + ". Threw exception " + _exception);
     else {
         var matchedValue = _values.find(function (value) { return isResultCorrect(_av, value); });
-        if (matchedValue) {
+        if (matchedValue !== undefined) {
             testPassed(_a + " is one of " + stringifiedValues);
         } else {
             testFailed(_a + " should be one of " + stringifiedValues + ". Was " + stringify(_av) + ".");

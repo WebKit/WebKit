@@ -54,7 +54,7 @@ OBJC_CLASS WebAVPlayerViewControllerDelegate;
 OBJC_CLASS NSError;
 
 namespace WebCore {
-class IntRect;
+class FloatRect;
 class FloatSize;
 class VideoFullscreenModel;
 class VideoFullscreenChangeObserver;
@@ -80,16 +80,16 @@ public:
     // PlaybackSessionModelClient
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
 
-    WEBCORE_EXPORT void setupFullscreen(UIView& videoView, const IntRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
+    WEBCORE_EXPORT void setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
     WEBCORE_EXPORT void enterFullscreen();
-    WEBCORE_EXPORT bool exitFullscreen(const IntRect& finalRect);
+    WEBCORE_EXPORT bool exitFullscreen(const FloatRect& finalRect);
     WEBCORE_EXPORT void cleanupFullscreen();
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void requestHideAndExitFullscreen();
-    WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
+    WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const FloatRect& inlineRect);
     WEBCORE_EXPORT void preparedToExitFullscreen();
     WEBCORE_EXPORT void setHasVideoContentLayer(bool);
-    WEBCORE_EXPORT void setInlineRect(const IntRect&, bool visible);
+    WEBCORE_EXPORT void setInlineRect(const FloatRect&, bool visible);
     WEBCORE_EXPORT void preparedToReturnToStandby();
     bool changingStandbyOnly() { return m_changingStandbyOnly; }
 

@@ -36,6 +36,7 @@
 #include "StyleBuilder.h"
 #include "StyleBuilderConverter.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

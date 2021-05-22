@@ -1,3 +1,41 @@
+2021-05-09  Darin Adler  <darin@apple.com>
+
+        Remove all remaining uses of the String::toInt family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=225580
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/PluginDatabaseWin.cpp:
+        (WebCore::parseVersionString): Use parseIntegerAllowinTrailingJunk<int>
+        isnstead of String::toInt.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::handlePost): Use
+        parseIntegerAllowingTrailingJunk<unsigned> instead of String::toInt,
+        and then assigning to an unsigned.
+
+2021-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused references to PageGroup from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=225359
+
+        Reviewed by Sihui Liu.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebHistory.cpp:
+        * WebHistory.h:
+        * WebKitDLL.cpp:
+        * WebView.cpp:
+
+2021-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost
+        https://bugs.webkit.org/show_bug.cgi?id=225057
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
 2021-04-22  Chris Dumez  <cdumez@apple.com>
 
         Disable prefixed WebAudio on WebKitLegacy-Windows

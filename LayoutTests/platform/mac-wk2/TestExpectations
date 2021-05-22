@@ -334,7 +334,7 @@ webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Pass Timeout ]
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # A lot of the disk-cache tests are flaky on mac-wk2
-webkit.org/b/169359 [ Debug ] http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
+webkit.org/b/169359 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Failure Timeout ]
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-validation.html [ Pass Failure Timeout ]
 webkit.org/b/149087 [ Release ] http/tests/cache/disk-cache/disk-cache-validation.html [ Pass Timeout ]
@@ -601,8 +601,6 @@ compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
-
-webkit.org/b/171553 [ Release ] http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 
 webkit.org/b/171763 compositing/tiling/non-active-window-tiles-size.html [ Pass Failure ]
 
@@ -1146,13 +1144,7 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] fast/table/hidpi-collapsed-border-with-odd-pixel-width.html [ Pass ImageOnlyFailure ]
 
 # rdar://65642935 ([AS] 20A2323e: 15 canvas layout tests consistently failing)
-[ arm64 ] canvas/philip/tests/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] canvas/philip/tests/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] canvas/philip/tests/2d.path.arc.shape.3.html [ Failure ]
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-[ arm64 ] imported/w3c/canvas/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] imported/w3c/canvas/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] imported/w3c/canvas/2d.path.arc.shape.3.html [ Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
@@ -1293,8 +1285,6 @@ webkit.org/b/222183 [ BigSur ] imported/w3c/web-platform-tests/media-source/medi
 
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
-webkit.org/b/222371 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Pass Failure Crash ]
-
 # webkit.org/b/222277
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Skip ]
@@ -1385,3 +1375,19 @@ webkit.org/b/224845 [ BigSur Debug arm64 ] http/wpt/preload/change-link-rel-attr
 webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 
 webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ] 
+
+webkit.org/b/225430 [ BigSur arm64 ] http/tests/inspector/network/resource-sizes-network.html [ Pass Failure ]
+
+webkit.org/b/225488 fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html [ Pass Timeout ]
+
+webkit.org/b/225498 fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/225500 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
+
+webkit.org/b/225526 [ BigSur Release arm64 ] http/tests/misc/repeat-open-cancel.html [ Pass Timeout ]
+
+webkit.org/b/225527 [ BigSur Release arm64 ] http/tests/workers/service/self_registration.html [ Pass Timeout ]
+
+webkit.org/b/224788 [ BugSur Release arm64 ] inspector/css/node-styles-refreshed.html [ Pass Failure ]
+
+webkit.org/b/224784 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]

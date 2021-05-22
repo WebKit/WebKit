@@ -38,6 +38,8 @@ class ImageBuffer;
 class RenderVideo;
 class PictureInPictureObserver;
 
+enum class DestinationColorSpace : uint8_t;
+enum class PixelFormat : uint8_t;
 enum class RenderingMode : bool;
 
 class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HTMLVideoElement> {
@@ -70,7 +72,7 @@ public:
     void webkitRequestFullscreen() override;
 #endif
 
-    RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode) const;
+    RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode, DestinationColorSpace, PixelFormat) const;
 
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);

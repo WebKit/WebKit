@@ -37,7 +37,6 @@
 #include "WebErrors.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Seconds.h>
 

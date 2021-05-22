@@ -133,6 +133,10 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+#include "LocalAudioSessionRoutingArbitrator.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -198,6 +202,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_audioTrackRendererManager(RemoteAudioMediaStreamTrackRendererManager::create(*this))
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
 #endif
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+    , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create())
+#endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -228,6 +235,10 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+    m_routingArbitrator->processDidTerminate();
+#endif
+
 #if USE(AUDIO_SESSION)
     if (m_audioSessionProxy) {
         gpuProcess().audioSessionManager().removeProxy(*m_audioSessionProxy);
@@ -331,6 +342,10 @@ bool GPUConnectionToWebProcess::isAlwaysOnLoggingAllowed() const
 
 void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
+#if ENABLE(IPC_TESTING_API)
+    if (connection.ignoreInvalidMessageForTesting())
+        return;
+#endif
     RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName), m_webProcessIdentifier.toUInt64());
     terminateWebProcess();
 }
@@ -654,8 +669,9 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
     }
 #endif
 
-    if (m_remoteRemoteCommandListener && decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
-        m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
+        if (m_remoteRemoteCommandListener)
+            m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
         return true;
     }
 

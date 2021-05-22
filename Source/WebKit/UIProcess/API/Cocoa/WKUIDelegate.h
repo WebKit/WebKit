@@ -144,7 +144,7 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
  @param decisionHandler The completion handler to call once the decision is made
  @discussion If not implemented, the result is the same as calling the decisionHandler with WKPermissionDecisionPrompt.
  */
-- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_SWIFT_ASYNC_NAME(webView(_:decideMediaCapturePermissionsFor:initiatedBy:type:)) WK_SWIFT_ASYNC(5) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Allows your app to determine whether or not the given security origin should have access to the device's orientation and motion.
  @param securityOrigin The security origin which requested access to the device's orientation and motion.
@@ -200,7 +200,7 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
  * Pass a valid UIContextMenuConfiguration to show a context menu, or pass nil to not show a context menu.
  */
 
-- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void (^)(UIContextMenuConfiguration * _Nullable configuration))completionHandler WK_API_AVAILABLE(ios(13.0));
+- (void)webView:(WKWebView *)webView contextMenuConfigurationForElement:(WKContextMenuElementInfo *)elementInfo completionHandler:(void (^)(UIContextMenuConfiguration * _Nullable configuration))completionHandler WK_SWIFT_ASYNC_NAME(webView(_:contextMenuConfigurationFor:)) WK_API_AVAILABLE(ios(13.0));
 
 /**
  * @abstract Called when the context menu will be presented.

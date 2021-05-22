@@ -319,7 +319,8 @@ void WebKitAudioPannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node, H
             AudioNodeInput* input = node->input(i);
 
             // For each input, go through all of its connections, looking for AudioBufferSourceNodes.
-            for (auto* connectedOutput : input->renderingOutputs()) {
+            for (unsigned j = 0; j < input->numberOfRenderingConnections(); ++j) {
+                AudioNodeOutput* connectedOutput = input->renderingOutput(j);
                 AudioNode* connectedNode = connectedOutput->node();
                 if (visitedNodes.contains(connectedNode))
                     continue;

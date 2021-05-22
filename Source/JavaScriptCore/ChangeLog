@@ -1,3 +1,724 @@
+2021-05-08  Darin Adler  <darin@apple.com>
+
+        Remove calls to the String::toInt family of functions from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=225571
+
+        Reviewed by Sam Weinig.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::parseLocation): Use parseIntegerAllowingTrailingJunk<JSC::SourceID>
+        instead of String::toIntPtr. There was no reason to parse the source ID as a
+        signed integer, and it's more elegant to parse the type we intend to store and
+        process, not a different but similar type.
+        (Inspector::InspectorDebuggerAgent::searchInContent): Ditto.
+        (Inspector::InspectorDebuggerAgent::getScriptSource): Ditto.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets): Use
+        parseInteger<uintptr_t> instead of String::toIntPtrStrict.
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks): Use
+        parseIntegerAllowingTrailingJunk<uintptr_t> instead of String::toIntPtr.
+
+        * runtime/FuzzerPredictions.cpp:
+        (JSC::FuzzerPredictions::FuzzerPredictions): Use parseInteger<uint64_t>
+        instead of String::toUInt64Strict.
+
+2021-05-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Fix invalid exception checks after recent ErrorInstance changes
+        https://bugs.webkit.org/show_bug.cgi?id=225565
+
+        Reviewed by Alexey Shvayka.
+
+        r277221 and r277224 each introduced issues under validateExceptionChecks=1; this patch fixes them.
+
+        Of particular note:
+        The earlier patch sought to consolidate Error#cause logic under ErrorInstance::finishCreation.
+        This part must be undone as it is crucial that non-user-thrown errors be able to bypass that logic
+        (otherwise throwException itself would need to be exception-checked).
+
+        * runtime/AggregateError.cpp:
+        (JSC::createAggregateError):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        (JSC::createGetterTypeError):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getIfPropertyExists):
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunctionInternal::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::createJSWebAssemblyCompileError):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::createJSWebAssemblyLinkError):
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        (JSC::createJSWebAssemblyRuntimeError):
+
+2021-05-08  Chris Dumez  <cdumez@apple.com>
+
+        Port Filesystem::pathByAppendingComponent() & Filesystem:: pathByAppendingComponents() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225550
+
+        Reviewed by Darin Adler.
+
+        Build fix.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
+2021-05-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Introduce JSObject::getIfPropertyExists helper
+        https://bugs.webkit.org/show_bug.cgi?id=225553
+
+        Reviewed by Alexey Shvayka.
+
+        Suggested by Alexey during review of r277221.
+        ArrayPrototype also has a "Has-guarded Get", so it's helpful for JSObject to house this functionality.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getIfPropertyExists):
+
+2021-05-07  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Error#cause must recognize explicit undefined
+        https://bugs.webkit.org/show_bug.cgi?id=225535
+
+        Reviewed by Alexey Shvayka.
+
+        Error#cause is specified such that `new Error(message, {})` and `new Error(message, { cause: undefined })`
+        are not the same -- namely, the latter should create a property descriptor with an undefined `value`.
+
+        This would seem absurd, but the reason is because the `cause` field is meant to store a thrown object,
+        and `throw undefined;` is valid code.
+
+        In aligning our implementation with the spec, this patch also consolidates the relevant logic in one place
+        (ErrorInstance::finishCreation) to minimize confusion.
+
+        * runtime/AggregateError.cpp:
+        (JSC::createAggregateError):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::create):
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Port Filesystem::fileMetadata() & Filesystem::getFileModificationTime() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225362
+
+        Reviewed by Darin Adler.
+
+        Build fix.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
+2021-05-06  Eleni Maria Stea  <estea@igalia.com>
+
+        Removed the assertion m_numParameters >= 0, it is always true as
+        m_numParameters is unsigned.
+        https://bugs.webkit.org/show_bug.cgi?id=225457
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Make some things easier to dataLog in wasm
+        https://bugs.webkit.org/show_bug.cgi?id=225472
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/WasmMemoryMode.cpp:
+        (WTF::printInternal):
+        * wasm/WasmMemoryMode.h:
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::dump const):
+        * wasm/WasmWorklist.h:
+
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Reduce use of dmb ish on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=225465
+
+        Reviewed by Keith Miller.
+        
+        We use loadLoadFence a lot, often in situations like:
+        
+        Foo* ptr = loadStuff;
+        loadLoadFence();
+        use ptr
+        
+        On ARM64, we don't need a dmb ish here.  This introduces a dependentLoadLoadFence() for these
+        cases; it's just a compiler fence on ARM64 and Intel.
+
+        We also used loadLoadFence in some places where I couldn't think of any good reason for the
+        fence other than paranoia. I got rid of those.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::jitType const):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfileBase::structure):
+        (JSC::ObjectAllocationProfileWithPrototype::prototype):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::state const):
+        (JSC::InlineWatchpointSet::state const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        * runtime/GetterSetter.h:
+        * runtime/InferredValue.h:
+        (JSC::InferredValue::state const):
+        * runtime/Structure.h:
+        (JSC::Structure::tryRareData):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::propertyReplacementWatchpointSet):
+
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to --logJIT=true
+        https://bugs.webkit.org/show_bug.cgi?id=225464
+
+        Reviewed by Mark Lam.
+
+        This makes it easy to just log when JITing happens. It's like --dumpDisassembly=true but
+        without the disassembly.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassemblyImpl):
+        * assembler/LinkBuffer.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+
+2021-05-06  Mark Lam  <mark.lam@apple.com>
+
+        Forbid further execution in jsc shell if execution is terminated.
+        https://bugs.webkit.org/show_bug.cgi?id=225410
+        rdar://77548608
+
+        Reviewed by Michael Saboff.
+
+        1. Introduce a VM::m_executionForbidden flag.
+        2. In the jsc shell, forbid further execution if termination was encountered.
+
+        * jsc.cpp:
+        (runWithOptions):
+        * runtime/VM.cpp:
+        (JSC::VM::drainMicrotasks):
+        * runtime/VM.h:
+        (JSC::VM::executionForbidden const):
+        (JSC::VM::setExecutionForbidden):
+
+2021-05-06  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception check in objectConstructorGetOwnPropertyDescriptors().
+        https://bugs.webkit.org/show_bug.cgi?id=225413
+        rdar://77551530
+
+        Reviewed by Michael Saboff.
+
+        Need to handle TerminationException.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+
+2021-05-05  Mark Lam  <mark.lam@apple.com>
+
+        Introduce VM::hasPendingTerminationException() to make code a little more terse.
+        https://bugs.webkit.org/show_bug.cgi?id=225412
+
+        Reviewed by Michael Saboff.
+
+        This is purely a refactoring patch.  There is no behavior change.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        * jit/JITOperations.cpp:
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::assertNoExceptionExceptTermination):
+        (JSC::ExceptionScope::releaseAssertNoExceptionExceptTermination):
+        * runtime/JSObject.h:
+        (JSC::JSObject::get const):
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::callFunc):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::hasPendingTerminationException const):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::deferTerminationSlow):
+
+2021-05-05  Mark Lam  <mark.lam@apple.com>
+
+        Enable incremental sweeping of GCAwareJITStubRoutines.
+        https://bugs.webkit.org/show_bug.cgi?id=225376
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes the following changes:
+
+        1. Enhance JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines() to be able to
+           run in an incremental time slice.
+
+        2. Added JITStubRoutineSet::notifyHaveRoutinesToDelete() so that
+           GCAwareJITStubRoutine::observeZeroRefCount() can flag that the GC may have
+           some dead GCAwareJITStubRoutines to delete.
+
+        3. Added JITStubRoutineSet::mayHaveRoutinesToDelete() so that clients can do
+           a cheap check ahead of time to determine if there's work to do, and avoid
+           calling JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines() altogether
+           if not needed.
+
+        4. Added Heap::mayHaveJITStubRoutinesToDelete() and Heap::deleteDeadJITStubRoutines()
+           as wrappers around JITStubRoutineSet::mayHaveRoutinesToDelete() and
+           JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines() because the use of
+           the JITStubRoutineSet is a heap internal implementation detail.
+
+        5. Enhanced the IncrementalSweeper to also call Heap::deleteDeadJITStubRoutines()
+           if needed.
+
+        6. Enhanced Heap::sweepSynchronously() to also call Heap::deleteDeadJITStubRoutines()
+           if needed.
+
+        7. Time slices for Heap::deleteDeadJITStubRoutines() is currently set at the
+           current values:
+           a. max of 1 ms (1/10 of the IncreamentalSweeper's time slice) when invoked from
+              the IncreamentalSweeper.
+           b. max of 5 ms when invoked from Heap::deleteUnmarkedCompiledCode().
+           c. unlimited time (with a sanity check) when called from Heap::sweepSynchronously().
+
+           The choices of 1ms and 5ms were picked to not be too long, but would still delete
+           the bulk of the dead GCAwareJITStubRoutines quickly enough based on data from my
+           instrumented runs the CLI version of JetStream2.
+
+           I think these hardcoded values will do for now.  If need be, we can try something
+           more sophisticated later.
+
+        * CMakeLists.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::sweepSynchronously):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::mayHaveJITStubRoutinesToDelete):
+        (JSC::Heap::deleteDeadJITStubRoutines):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::mayHaveRoutinesToDelete):
+        (JSC::JITStubRoutineSet::notifyHaveRoutinesToDelete):
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::observeZeroRefCount):
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::createSelfManagedRoutine): Deleted.
+
+2021-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix syntax error message for AUTOPLUSPLUS token.
+        https://bugs.webkit.org/show_bug.cgi?id=225308
+        rdar://76830934
+
+        Reviewed by Saam Barati.
+
+        For the record, it's not easy to tell from the code why AUTOPLUSPLUS is needed.
+        It's needed to distinguish this:
+            ```
+            statement ++ stuff  // ++ is a postfix operator applied to `statement`.
+            ```
+        from this:
+            ```
+            statement
+            ++stuff    // The `\n` before the ++ makes it a prefix operator applied to `stuff``.
+            ```
+
+        If we merely tokenize the ++ as a PLUSPLUS token, then it's unclear whether it acts
+        as a postfix or prefix token in the 2nd case above.
+
+        This is why the correct fix is not to get rid of the AUTOPLUSPLUS token, but to
+        teach the syntax error message to be aware of the AUTOPLUSPLUS token.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+
+2021-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Restore pre-r276879 behavior for FileSystem::deleteFile() and FileSystem::deleteEmptyDirectory()
+        https://bugs.webkit.org/show_bug.cgi?id=225289
+
+        Reviewed by Darin Adler.
+
+        Fix build.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
+2021-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Add some missing exception checks before some jsCasts.
+        https://bugs.webkit.org/show_bug.cgi?id=225264
+        rdar://77381608
+
+        Reviewed by Saam Barati.
+
+        Introducing JSObject::getAs() and JSValue::getAs() convenience methods that will
+        check for an exception before doing a jsCast on the get result.  We only need this
+        to placate the assertion in jsCast in the event a pending exception exists at the
+        time of the jsCast.  If ASSERTs are not enabled, this will be a no-op.  All clients
+        that use jsCast this way (and now use getAs instead) will already be doing an
+        exception check immediately after.  Hence, they are already doing the right thing
+        in terms of handling exceptions.  We're only placating the jsCast assertion here.
+
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::hostResolveImportedModule):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getAs const):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::dependencyKeysIfEvaluated):
+        (JSC::JSModuleLoader::provideFetch):
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::requestImportModule):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getAs const):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::createDeferredData):
+        * runtime/VM.h:
+
+2021-05-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add call_ref instruction
+        https://bugs.webkit.org/show_bug.cgi?id=222903
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for call_ref instruction from the typed function
+        references proposal: https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md.
+        call_ref calls the given function references from the stack 
+        and it does almost the same stuff as call_indirect but
+        it doesn't check signatures because wasm types system guaranties
+        correctness.
+
+        * bytecode/BytecodeList.rb:
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * llint/LowLevelInterpreter.asm:
+        * llint/WebAssembly.asm:
+        * runtime/Gate.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::AirIRGenerator::addCallRef):
+        (JSC::Wasm::AirIRGenerator::emitIndirectCall):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitIndirectCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::B3IRGenerator::addCallRef):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addCallRef):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::doWasmCallRef):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+        (JSC::WebAssemblyFunctionBase::WebAssemblyFunctionBase):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        (JSC::WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::WebAssemblyWrapperFunction):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+        * wasm/wasm.json:
+
+2021-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Start leveraging std::filesystem in WTF::FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=225255
+
+        Reviewed by Sam Weinig.
+
+        Unexport some symbols to fix build.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
+2021-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Make small JIT pool tests pass on AS
+        https://bugs.webkit.org/show_bug.cgi?id=225256
+
+        Reviewed by Mark Lam.
+
+        If we ask for a JIT pool that is smaller than the smallest possible "region" (thing with jump
+        island) that we can create -- i.e. smaller than a jump region, then assume that the user is
+        asking us to create a pool that has that much usable space plus a jump region.
+
+        I think that this makes the option easier to use when you're testing ridiculously small JIT
+        pools, which we happen to do in our test suite.
+
+        Also remove some dead options I didn't mean to commit.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        * runtime/OptionsList.h:
+
+2021-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Make the JIT pool smaller on AS
+        https://bugs.webkit.org/show_bug.cgi?id=225249
+
+        Reviewed by Saam Barati.
+
+        This adds three related features:
+
+        - Makes it easy to dump where the JIT pool was allocated.
+
+        - Makes it possible to override the JIT pool size with Options even with jump islands.
+
+        - Changes the default JIT pool size on AS to 512MB.
+
+        Estimated 2% speed-up on JetStream2, 1.5% speed-up on Speedometer2.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        * runtime/OptionsList.h:
+
+2021-04-29  Saam Barati  <sbarati@apple.com>
+
+        Inlining property accesses inside constant folding should check Options::useAccessInlining
+        https://bugs.webkit.org/show_bug.cgi?id=225194
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+
+2021-04-29  Saam Barati  <sbarati@apple.com>
+
+        Sampling profiler should dump a tier breakdown, and add ability to see time spent in C code with sampleCCode=0, and fix bugs with frames having the wrong jitType if they're inlined
+        https://bugs.webkit.org/show_bug.cgi?id=225116
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes it so we also dump time spent in each tier when dumping top
+        bytecodes. This can be helpful info when analyzing benchmarks.
+        
+        This patch also makes it so we know when we're in C/C++ code when we're not
+        using the sampleCCode=true option. I found some weird performance pathologies
+        with that option that cause us to not sample code at all. I was seeing ~50
+        samples taken for ~7 seconds of code running time. It's worth figuring out
+        what's going on there eventually. But for now, I've made it so that we
+        recognize that the top frame is C/C++ when using the collectExtraSamplingProfilerData=1
+        option.
+        
+        This patch also fixes a bug where we mis-attribute JITTypes for inline
+        frames. We'd attribute it to whatever the CodeBlock was compiled as, instead
+        of using the machine frame's JITType.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/OptionsList.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+
+2021-04-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception assertions in light of the TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=225128
+        rdar://76694909
+
+        Reviewed by Robin Morisset.
+
+        Some pre-existing functions assertNoException() or releaseAssertNoException().
+        These assertion may not be valid anymore in light of the TerminationException, and
+        require some fix up:
+
+        1. If it makes sense to convert the assertion into an exception check, then do so.
+
+           For example, see objectPrototypeToString(), slow_path_create_this().
+
+        2. If the assertion is at the end of a function just before it returns, or if the
+           remaining code in the function will not be affected by the pending exception,
+           then we can replace the assertion as follows:
+
+               assertNoException() => assertNoExceptionExceptTermination()
+               releaseAssertNoException() => releaseAssertNoExceptionExceptTermination()
+
+           For example, see objectPrototypeHasOwnProperty(), JSObject::getOwnNonIndexPropertyNames().
+
+        3. If the assertion is in a function where perf is not absolutely critical, and the
+           function isn't calling any other functions that will re-enter the VM or potentially
+           get stuck in an infinite loop, then we can use a DeferTermination scope to defer
+           termination.
+
+           For example, see Debugger::pauseIfNeeded(), SamplingProfiler::StackFrame::nameFromCallee().
+
+        4. If the assertion is in an initializer function is only run once and adding
+           exception checks would complicate the code more than it's worth (an engineering
+           judgement), then use a DeferTermination scope.
+
+           For example, see ProgramExecutable::initializeGlobalProperties(), setupAdaptiveWatchpoint().
+
+           Some leaf (or near-leaf) functions that currently DECLARE_CATCH_SCOPE() may also
+           fall under this category.
+
+           For example, see JSFunction::prototypeForConstruction().
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addBigIntConstant):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * interpreter/Interpreter.cpp:
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::debug):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::functionsOnStack):
+        * jsc.cpp:
+        (runWithOptions):
+        * parser/ParserArena.cpp:
+        (JSC::IdentifierArena::makeBigIntDecimalIdentifier):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::finishCreation):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedMessageString):
+        (JSC::ErrorInstance::sanitizedNameString):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::assertNoExceptionExceptTermination):
+        (JSC::ExceptionScope::releaseAssertNoExceptionExceptTermination):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::prototypeForConstruction):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::setupAdaptiveWatchpoint):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC::JSGlobalObject::tryInstallSpeciesWatchpoint):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::printableModuleKey):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ordinaryToPrimitive const):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        * runtime/JSTemplateObjectDescriptor.cpp:
+        (JSC::JSTemplateObjectDescriptor::createTemplateObject):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectPrototypeHasOwnProperty):
+        (JSC::objectPrototypeToString):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-04-28  Daniel Kolesa  <dkolesa@igalia.com>
+
+        [WPE][GTK] More correct fixes for stack size issues on musl libc
+        https://bugs.webkit.org/show_bug.cgi?id=225099
+
+        Reviewed by Adrian Perez de Castro.
+
+        Partial revert https://bugs.webkit.org/show_bug.cgi?id=210068
+
+        After fixing the thread stack issues in WTF properly, we can revert
+        the JSC options changes, which are actually harmful since they result
+        in JSC being unstable. Previously, softReservedZoneSize was causing a
+        crash when set to 128K because of the main thread stack bounds, and
+        this is now fixed. We can keep the maxPerThreadStackUsage at 5M as
+        well; there is no fundamental difference from how things are done on
+        glibc anymore.
+
+        * runtime/OptionsList.h:
+
+2021-04-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Get the bytecode profiler working again
+        https://bugs.webkit.org/show_bug.cgi?id=225129
+
+        Reviewed by Saam Barati.
+
+        The bytecode profiler was broken because it was trying to look at unset labels. This patch
+        improves our label discipline a bit so we don't try to look at unset labels.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+
+2021-04-27  Mark Lam  <mark.lam@apple.com>
+
+        Move ExceptionExpectation into its own .h file.
+        https://bugs.webkit.org/show_bug.cgi?id=225124
+
+        Reviewed by Robin Morisset.
+
+        Also fixed some compiler warnings.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/ExceptionExpectation.h: Added.
+        * runtime/ExceptionHelpers.h:
+        * runtime/HashMapImplInlines.h:
+        (JSC::jsMapHashImpl):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::setWithSpecificType):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+
 2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] Remove defaultValue() from the method table

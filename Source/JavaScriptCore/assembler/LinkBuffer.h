@@ -378,16 +378,16 @@ private:
 };
 
 #if OS(LINUX)
-#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...)  \
-    (UNLIKELY((condition))                                              \
-        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(true, __VA_ARGS__) \
+#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...) \
+    (UNLIKELY((condition) || JSC::Options::logJIT()) \
+        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>((condition), __VA_ARGS__) \
         : (UNLIKELY(JSC::Options::logJITCodeForPerf()) \
             ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(false, __VA_ARGS__) \
             : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>()))
 #else
-#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...)  \
-    (UNLIKELY((condition))                                              \
-        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>(true, __VA_ARGS__) \
+#define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, ...) \
+    (UNLIKELY((condition) || JSC::Options::logJIT()) \
+        ? (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>((condition), __VA_ARGS__) \
         : (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>())
 #endif
 

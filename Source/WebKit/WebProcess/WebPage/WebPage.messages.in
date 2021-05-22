@@ -113,7 +113,7 @@ messages -> WebPage LegacyReceiver {
     StoreSelectionForAccessibility(bool shouldStore)
     StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
     CancelAutoscroll()
-    RequestFocusedElementInformation() -> (struct WebKit::FocusedElementInformation info) Async
+    RequestFocusedElementInformation() -> (Optional<WebKit::FocusedElementInformation> info) Async
     HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
     SetIsShowingInputViewForFocusedElement(bool showingInputView)
     UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> () Async
@@ -629,6 +629,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(APP_HIGHLIGHTS)
     CreateAppHighlightInSelectedRange(enum:bool WebCore::CreateNewGroupForHighlight createNewGroup, enum:bool WebCore::HighlightRequestOriginatedInApp requestOrigin)
     RestoreAppHighlightsAndScrollToIndex(Vector<WebKit::SharedMemory::IPCHandle> memoryHandles, Optional<unsigned> index)
+    SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async

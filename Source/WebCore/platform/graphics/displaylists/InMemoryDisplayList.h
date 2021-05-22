@@ -40,8 +40,8 @@ public:
     class WEBCORE_EXPORT WritingClient : public ItemBufferWritingClient {
         WTF_MAKE_FAST_ALLOCATED;
     private:
-        Optional<std::size_t> requiredSizeForItem(ItemHandle) const final;
-        void encodeItemInline(ItemHandle, uint8_t*) const final;
+        Optional<std::size_t> requiredSizeForItem(const DisplayListItem&) const final;
+        void encodeItemInline(const DisplayListItem&, uint8_t*) const final;
     };
 
     class WEBCORE_EXPORT ReadingClient : public ItemBufferReadingClient {

@@ -40,12 +40,15 @@
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
+#include "TrackPrivateBaseGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {
 
+class AppendPipeline;
 class MediaSourcePrivateGStreamer;
+class MediaSourceTrackGStreamer;
 
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate {
 public:
@@ -67,10 +70,6 @@ public:
     bool isReadyForMoreSamples(const AtomString&) final;
     void setActive(bool) final;
     bool isActive() const final;
-    void notifyClientWhenReadyForMoreSamples(const AtomString&) final;
-
-    void setReadyForMoreSamples(bool);
-    void notifyReadyForMoreSamples();
 
     void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
     void didReceiveSample(Ref<MediaSample>&&);
@@ -80,6 +79,9 @@ public:
     bool isSeeking() const final;
     MediaTime currentMediaTime() const final;
     MediaTime duration() const final;
+
+    bool hasReceivedInitializationSegment() const { return m_hasReceivedInitializationSegment; }
+    HashMap<AtomString, RefPtr<MediaSourceTrackGStreamer>>::ValuesIteratorRange tracks() { return m_tracks.values(); }
 
     ContentType type() const { return m_type; }
 
@@ -95,14 +97,17 @@ public:
 private:
     SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer*, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
 
+    void notifyClientWhenReadyForMoreSamples(const AtomString&) override;
+
     MediaSourcePrivateGStreamer* m_mediaSource;
     bool m_isActive { false };
+    bool m_hasBeenRemovedFromMediaSource { false };
     ContentType m_type;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     UniqueRef<AppendPipeline> m_appendPipeline;
-    bool m_isReadyForMoreSamples = true;
-    bool m_notifyWhenReadyForMoreSamples = false;
     AtomString m_trackId;
+    HashMap<AtomString, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
+    bool m_hasReceivedInitializationSegment { false };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

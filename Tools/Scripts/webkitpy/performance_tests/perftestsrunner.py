@@ -111,7 +111,7 @@ class PerfTestsRunner(object):
                 help="Path to generate a JSON file at; may contain previous results if it already exists."),
             optparse.make_option("--reset-results", action="store_true",
                 help="Clears the content in the generated JSON file before adding the results."),
-            optparse.make_option("--slave-config-json-path", "--worker-config-json-path", action='callback',
+            optparse.make_option("--worker-config-json-path", action='callback',
                 callback=_expand_path, type="str", dest="worker_config_json_path",
                 help="Only used on bots. Path to a worker configuration file."),
             optparse.make_option("--description",

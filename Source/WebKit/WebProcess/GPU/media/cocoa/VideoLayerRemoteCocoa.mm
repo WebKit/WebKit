@@ -91,7 +91,14 @@ static const Seconds PostAnimationDelay { 100_ms };
 
     WebCore::FloatRect sourceVideoFrame = self.videoLayerFrame;
     WebCore::FloatRect targetVideoFrame = self.bounds;
-    CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    if (!sourceVideoFrame.isEmpty()) {
+        if (auto* mediaPlayerPrivateRemote = self.mediaPlayerPrivateRemote; mediaPlayerPrivateRemote && mediaPlayerPrivateRemote->inVideoFullscreenOrPictureInPicture()) {
+            auto scale = std::fmax(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
+            transform = CGAffineTransformMakeScale(scale, scale);
+        } else
+            transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
+    }
 
     auto* videoSublayer = [sublayers objectAtIndex:0];
     [CATransaction begin];
@@ -136,7 +143,7 @@ static const Seconds PostAnimationDelay { 100_ms };
         self.videoLayerFrame = self.bounds;
         if (auto* mediaPlayerPrivateRemote = self.mediaPlayerPrivateRemote) {
             MachSendRight fenceSendRight = MachSendRight::adopt([_context createFencePort]);
-            mediaPlayerPrivateRemote->setVideoInlineSizeFenced(WebCore::IntSize(self.videoLayerFrame.size), fenceSendRight);
+            mediaPlayerPrivateRemote->setVideoInlineSizeFenced(WebCore::FloatSize(self.videoLayerFrame.size), fenceSendRight);
         }
     }
 

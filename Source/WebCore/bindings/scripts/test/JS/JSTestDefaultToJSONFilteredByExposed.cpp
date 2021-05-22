@@ -248,12 +248,18 @@ static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFuncti
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto* result = constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype());
-    result->putDirect(vm, Identifier::fromString(vm, "normalAttribute"), toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.normalAttribute()));
+    auto normalAttributeValue = toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.normalAttribute());
+    RETURN_IF_EXCEPTION(throwScope, { });
+    result->putDirect(vm, Identifier::fromString(vm, "normalAttribute"), normalAttributeValue);
     if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->isDocument()) {
-        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWindowAttribute"), toJS<IDLDouble>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWindowAttribute()));
+        auto filteredByExposedWindowAttributeValue = toJS<IDLDouble>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWindowAttribute());
+        RETURN_IF_EXCEPTION(throwScope, { });
+        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWindowAttribute"), filteredByExposedWindowAttributeValue);
     }
     if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
-        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWorkerAttribute"), toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWorkerAttribute()));
+        auto filteredByExposedWorkerAttributeValue = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWorkerAttribute());
+        RETURN_IF_EXCEPTION(throwScope, { });
+        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWorkerAttribute"), filteredByExposedWorkerAttributeValue);
     }
     return JSValue::encode(result);
 }

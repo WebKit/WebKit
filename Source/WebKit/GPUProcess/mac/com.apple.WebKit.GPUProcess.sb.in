@@ -23,6 +23,7 @@
 
 (version 1)
 (deny default (with partial-symbolication))
+(deny nvram*)
 (allow system-audit file-read-metadata)
 
 ;;;
@@ -953,4 +954,10 @@
 
 (allow iokit-open
     (iokit-user-client-class "AppleAVDUserClient")
+)
+
+(when (equal? (param "CPU") "arm64")
+    (allow iokit-open
+        (iokit-user-client-class "IOMobileFramebufferUserClient")
+    )
 )

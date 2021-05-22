@@ -13,6 +13,11 @@ body, html {
 }
 </style>
 <script>
+function selectImageOverlay()
+{
+    getSelection().selectAllChildren(internals.shadowRoot(document.querySelector("img")).querySelector("div#image-overlay"));
+}
+
 addEventListener("load", () => {
     if (!window.internals)
         return;

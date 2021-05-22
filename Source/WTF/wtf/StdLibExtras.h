@@ -527,6 +527,37 @@ constexpr auto constructFixedSizeArrayWithArguments(Args&&... args) -> decltype(
     return constructFixedSizeArrayWithArgumentsImpl<ResultType>(tuple, std::forward<Args>(args)...);
 }
 
+// FIXME: Use std::is_sorted instead of this and remove it, once we require C++20.
+template<typename Iterator, typename Predicate> constexpr bool isSortedConstExpr(Iterator first, Iterator last, Predicate predicate)
+{
+    if (first == last)
+        return true;
+    auto current = first;
+    auto previous = current;
+    while (++current != last) {
+        if (!predicate(*previous, *current))
+            return false;
+        previous = current;
+    }
+    return true;
+}
+
+// FIXME: Use std::is_sorted instead of this and remove it, once we require C++20.
+template<typename Iterator> constexpr bool isSortedConstExpr(Iterator first, Iterator last)
+{
+    return isSortedConstExpr(first, last, [] (auto& a, auto& b) { return a < b; });
+}
+
+// FIXME: Use std::all_of instead of this and remove it, once we require C++20.
+template<typename Iterator, typename Predicate> constexpr bool allOfConstExpr(Iterator first, Iterator last, Predicate predicate)
+{
+    for (; first != last; ++first) {
+        if (!predicate(*first))
+            return false;
+    }
+    return true;
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)

@@ -30,6 +30,7 @@ import pytest
 def pytest_configure(config):
     config.addinivalue_line("markers", "serial: tests that must be run in serial")
     config.addinivalue_line("markers", "integration: integration tests")
+    config.addinivalue_line("markers", "slow: tests that take a while to run")
 
 
 def pytest_addoption(parser):
@@ -38,6 +39,9 @@ def pytest_addoption(parser):
         action="store_true",
         default=False,
         help="run integration tests",
+    )
+    parser.addoption(
+        "--run-slow", action="store_true", default=False, help="run slow tests"
     )
 
 
@@ -108,3 +112,9 @@ def pytest_collection_modifyitems(config, items):
         for item in items:
             if "integration" in item.keywords:
                 item.add_marker(skip_integration)
+
+    if not config.getoption("--run-slow"):
+        skip_slow = pytest.mark.skip(reason="need --run-slow option to run")
+        for item in items:
+            if "slow" in item.keywords:
+                item.add_marker(skip_slow)

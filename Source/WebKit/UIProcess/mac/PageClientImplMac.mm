@@ -1022,9 +1022,9 @@ bool PageClientImpl::canHandleContextMenuTranslation() const
     return m_impl->canHandleContextMenuTranslation();
 }
 
-void PageClientImpl::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const WebCore::IntPoint& menuLocation)
+void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuInfo& info)
 {
-    m_impl->handleContextMenuTranslation(text, boundsInView, menuLocation);
+    m_impl->handleContextMenuTranslation(info);
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

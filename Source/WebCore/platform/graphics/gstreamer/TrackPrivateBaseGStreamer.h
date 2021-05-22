@@ -62,6 +62,11 @@ public:
         return m_stream.get();
     }
 
+    // Used for MSE, where the initial caps of the pad are relevant for initializing the matching pad in the
+    // playback pipeline.
+    void setInitialCaps(GRefPtr<GstCaps>&& caps) { m_initialCaps = WTFMove(caps); }
+    const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
+
 protected:
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream>);
@@ -82,6 +87,7 @@ protected:
     GRefPtr<GstPad> m_bestUpstreamPad;
     GRefPtr<GstStream> m_stream;
     gulong m_eventProbe;
+    GRefPtr<GstCaps> m_initialCaps;
 
 private:
     bool getLanguageCode(GstTagList* tags, AtomString& value);

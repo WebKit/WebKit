@@ -2712,14 +2712,14 @@ void WKPageSetMediaVolume(WKPageRef page, float volume)
 
 void WKPageSetMuted(WKPageRef page, WKMediaMutedState mutedState)
 {
-    WebCore::MediaProducer::MutedStateFlags coreState = WebCore::MediaProducer::NoneMuted;
+    WebCore::MediaProducer::MutedStateFlags coreState;
 
     if (mutedState & kWKMediaAudioMuted)
-        coreState |= WebCore::MediaProducer::AudioIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::AudioIsMuted);
     if (mutedState & kWKMediaCaptureDevicesMuted)
-        coreState |= WebCore::MediaProducer::AudioAndVideoCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::AudioAndVideoCaptureIsMuted);
     if (mutedState & kWKMediaScreenCaptureMuted)
-        coreState |= WebCore::MediaProducer::ScreenCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
 
     toImpl(page)->setMuted(coreState);
 }
@@ -2862,21 +2862,21 @@ WKMediaState WKPageGetMediaState(WKPageRef page)
     WebCore::MediaProducer::MediaStateFlags coreState = toImpl(page)->reportedMediaState();
     WKMediaState state = kWKMediaIsNotPlaying;
 
-    if (coreState & WebCore::MediaProducer::IsPlayingAudio)
+    if (coreState & WebCore::MediaProducer::MediaState::IsPlayingAudio)
         state |= kWKMediaIsPlayingAudio;
-    if (coreState & WebCore::MediaProducer::IsPlayingVideo)
+    if (coreState & WebCore::MediaProducer::MediaState::IsPlayingVideo)
         state |= kWKMediaIsPlayingVideo;
-    if (coreState & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+    if (coreState & WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice)
         state |= kWKMediaHasActiveAudioCaptureDevice;
-    if (coreState & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+    if (coreState & WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice)
         state |= kWKMediaHasActiveVideoCaptureDevice;
-    if (coreState & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+    if (coreState & WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice)
         state |= kWKMediaHasMutedAudioCaptureDevice;
-    if (coreState & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+    if (coreState & WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice)
         state |= kWKMediaHasMutedVideoCaptureDevice;
-    if (coreState & WebCore::MediaProducer::HasActiveDisplayCaptureDevice)
+    if (coreState & WebCore::MediaProducer::MediaState::HasActiveDisplayCaptureDevice)
         state |= kWKMediaHasActiveDisplayCaptureDevice;
-    if (coreState & WebCore::MediaProducer::HasMutedDisplayCaptureDevice)
+    if (coreState & WebCore::MediaProducer::MediaState::HasMutedDisplayCaptureDevice)
         state |= kWKMediaHasMutedDisplayCaptureDevice;
 
     return state;

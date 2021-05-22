@@ -42,6 +42,7 @@
 #include <unistd.h>
 #include <wtf/Threading.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -200,20 +201,15 @@ static void collectCPUUsage(float period)
 
     struct dirent* dp;
     while ((dp = readdir(dir))) {
-        String name = String::fromUTF8(dp->d_name);
-        if (name == "." || name == "..")
+        auto id = parseInteger<pid_t>(dp->d_name);
+        if (!id)
             continue;
 
-        bool ok;
-        pid_t id = name.toIntStrict(&ok);
-        if (!ok)
-            continue;
+        auto& info = threadInfoMap().add(*id, ThreadInfo()).iterator->value;
+        if (!threadCPUUsage(*id, period, info))
+            threadInfoMap().remove(*id);
 
-        auto& info = threadInfoMap().add(id, ThreadInfo()).iterator->value;
-        if (!threadCPUUsage(id, period, info))
-            threadInfoMap().remove(id);
-
-        previousTasks.remove(id);
+        previousTasks.remove(*id);
     }
     closedir(dir);
 

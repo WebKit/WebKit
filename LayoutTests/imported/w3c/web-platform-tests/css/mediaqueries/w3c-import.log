@@ -64,6 +64,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-case-insensitive-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-deprecated-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-deprecated-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-dynamic-empty-children.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002-expected.xht
@@ -88,6 +89,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/mq-range-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/navigation-controls.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-contrast.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-reduced-data.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/prefers-reduced-motion.html
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/relative-units-001-expected.xht

@@ -404,6 +404,25 @@ Color RenderThemeMac::platformAppHighlightColor(OptionSet<StyleColor::Options>) 
 }
 #endif
 
+static Color activeButtonTextColor()
+{
+    // FIXME: <rdar://problem/77572622> There is no single corresponding NSColor for ActiveButtonText.
+    // Instead, the NSColor used is dependent on NSButtonCell's interiorBackgroundStyle. Consequently,
+    // we need to create an NSButtonCell just to determine the correct color.
+
+    auto cell = adoptNS([[NSButtonCell alloc] init]);
+    [cell setBezelStyle:NSBezelStyleRounded];
+    [cell setHighlighted:YES];
+
+    NSColor *activeButtonTextColor;
+    if ([cell interiorBackgroundStyle] == NSBackgroundStyleEmphasized)
+        activeButtonTextColor = [NSColor alternateSelectedControlTextColor];
+    else
+        activeButtonTextColor = [NSColor controlTextColor];
+
+    return semanticColorFromNSColor(activeButtonTextColor);
+}
+
 static SRGBA<uint8_t> menuBackgroundColor()
 {
     RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
@@ -642,8 +661,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
         switch (cssValueID) {
         case CSSValueActivebuttontext:
-            // No corresponding NSColor for this so we use a hard coded value.
-            return Color::white;
+            return activeButtonTextColor();
 
         case CSSValueButtonface:
         case CSSValueThreedface:

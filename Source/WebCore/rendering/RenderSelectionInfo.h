@@ -53,11 +53,11 @@ public:
     RenderSelectionInfo(RenderObject& renderer, bool clipToVisibleContent);
 
     void repaint();
-    const Vector<LayoutRect>& collectedSelectionRects() const { return m_collectedSelectionRects; }
+    const Vector<FloatQuad>& collectedSelectionQuads() const { return m_collectedSelectionQuads; }
     LayoutRect rect() const { return m_rect; }
 
 private:
-    Vector<LayoutRect> m_collectedSelectionRects; // relative to repaint container
+    Vector<FloatQuad> m_collectedSelectionQuads; // relative to repaint container
     LayoutRect m_rect; // relative to repaint container
 };
 

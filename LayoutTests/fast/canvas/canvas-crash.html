@@ -13,7 +13,7 @@ if (window.testRunner)
 function canvastest()
 {
     var ctx = document.getCSSCanvasContext("2d", "canvastest", 13951, 11138);
-    ctx.putImageData(ctx.getImageData(1431655766, document.getElementById("a").appendChild(document.createElement("media")).clientWidth, 4096, -1024), 128, -65535, 127, -2147483648, 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111, -1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111);
+    ctx.putImageData(ctx.getImageData(1431655766, document.getElementById("a").appendChild(document.createElement("media")).clientWidth, 4096, -1024), 128, -65535, 127, -2147483648, 2147483647, -2147483648);
 }
 
 canvastest();

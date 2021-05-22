@@ -28,6 +28,7 @@ set(WTF_PUBLIC_HEADERS
     CallbackAggregator.h
     CheckedArithmetic.h
     CheckedBoolean.h
+    CheckedCondition.h
     CheckedLock.h
     ClockType.h
     CommaPrinter.h
@@ -264,6 +265,7 @@ set(WTF_PUBLIC_HEADERS
     SystemFree.h
     SystemTracing.h
     TaggedArrayStoragePtr.h
+    ThreadAssertions.h
     ThreadGroup.h
     ThreadMessage.h
     ThreadSafetyAnalysis.h
@@ -544,6 +546,12 @@ endif ()
 
 if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND WTF_LIBRARIES atomic)
+endif ()
+
+if (COMPILER_IS_GCC_OR_CLANG)
+    if (HAVE_STD_EXPERIMENTAL_FILESYSTEM)
+        list(APPEND WTF_LIBRARIES stdc++fs)
+    endif ()
 endif ()
 
 set(WTF_INTERFACE_LIBRARIES WTF)

@@ -24,6 +24,7 @@
  */
 
 [
+    GenerateIsReachable=ImplWebXRSessionRoot,
     EnabledBySetting=WebXR,
     Conditional=WEBXR,
     SecureContext,

@@ -73,8 +73,10 @@ String stringFromFileSystemRepresentation(const char* representation)
 
 CString fileSystemRepresentation(const String& path)
 {
-    if (path.isEmpty())
+    if (path.isNull())
         return { };
+    if (path.isEmpty())
+        return CString("");
 
     CString utf8 = path.utf8();
 
@@ -118,52 +120,6 @@ String filenameForDisplay(const String& string)
 #endif
 }
 
-bool fileExists(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    return validRepresentation(filename) ? g_file_test(filename.data(), G_FILE_TEST_EXISTS) : false;
-}
-
-bool deleteFile(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    return validRepresentation(filename) ? g_remove(filename.data()) != -1 : false;
-}
-
-bool deleteEmptyDirectory(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    return validRepresentation(filename) ? g_rmdir(filename.data()) != -1 : false;
-}
-
-static bool getFileStat(const String& path, GStatBuf* statBuffer)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return false;
-
-    return g_stat(filename.data(), statBuffer) != -1;
-}
-
-static bool getFileLStat(const String& path, GStatBuf* statBuffer)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return false;
-
-    return g_lstat(filename.data(), statBuffer) != -1;
-}
-
-bool getFileSize(const String& path, long long& resultSize)
-{
-    GStatBuf statResult;
-    if (!getFileStat(path, &statResult))
-        return false;
-
-    resultSize = statResult.st_size;
-    return true;
-}
-
 bool getFileSize(PlatformFileHandle handle, long long& resultSize)
 {
     GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
@@ -180,126 +136,9 @@ Optional<WallTime> getFileCreationTime(const String&)
     return WTF::nullopt;
 }
 
-Optional<WallTime> getFileModificationTime(const String& path)
-{
-    GStatBuf statResult;
-    if (!getFileStat(path, &statResult))
-        return WTF::nullopt;
-
-    return WallTime::fromRawSeconds(statResult.st_mtime);
-}
-
-static FileMetadata::Type toFileMetataType(GStatBuf statResult)
-{
-    if (S_ISDIR(statResult.st_mode))
-        return FileMetadata::Type::Directory;
-    if (S_ISLNK(statResult.st_mode))
-        return FileMetadata::Type::SymbolicLink;
-    return FileMetadata::Type::File;
-}
-
-static Optional<FileMetadata> fileMetadataUsingFunction(const String& path, bool (*statFunc)(const String&, GStatBuf*))
-{
-    GStatBuf statResult;
-    if (!statFunc(path, &statResult))
-        return WTF::nullopt;
-
-    String filename = pathGetFileName(path);
-    bool isHidden = !filename.isEmpty() && filename[0] == '.';
-
-    return FileMetadata {
-        WallTime::fromRawSeconds(statResult.st_mtime),
-        statResult.st_size,
-        isHidden,
-        toFileMetataType(statResult)
-    };
-}
-
-Optional<FileMetadata> fileMetadata(const String& path)
-{
-    return fileMetadataUsingFunction(path, &getFileLStat);
-}
-
-Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
-{
-    return fileMetadataUsingFunction(path, &getFileStat);
-}
-
-String pathByAppendingComponent(const String& path, const String& component)
-{
-    if (path.endsWith(G_DIR_SEPARATOR_S))
-        return path + component;
-    return path + G_DIR_SEPARATOR_S + component;
-}
-
-String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
-{
-    StringBuilder builder;
-    builder.append(path);
-    for (auto& component : components) {
-        builder.append(G_DIR_SEPARATOR_S);
-        builder.append(component);
-    }
-    return builder.toString();
-}
-
-bool makeAllDirectories(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    return validRepresentation(filename) ? g_mkdir_with_parents(filename.data(), S_IRWXU) != -1 : false;
-}
-
 String homeDirectoryPath()
 {
     return stringFromFileSystemRepresentation(g_get_home_dir());
-}
-
-bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
-{
-    CString targetPathFSRep = fileSystemRepresentation(targetPath);
-    if (!validRepresentation(targetPathFSRep))
-        return false;
-
-    CString symbolicLinkPathFSRep = fileSystemRepresentation(symbolicLinkPath);
-    if (!validRepresentation(symbolicLinkPathFSRep))
-        return false;
-
-    return !symlink(targetPathFSRep.data(), symbolicLinkPathFSRep.data());
-}
-
-String pathGetFileName(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return path;
-
-    GUniquePtr<gchar> baseName(g_path_get_basename(filename.data()));
-    return String::fromUTF8(baseName.get());
-}
-
-bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return false;
-
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.data()));
-    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_filesystem_info(file.get(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE, nullptr, nullptr));
-    if (!fileInfo)
-        return false;
-
-    freeSpace = g_file_info_get_attribute_uint64(fileInfo.get(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-    return !!freeSpace;
-}
-
-String directoryName(const String& path)
-{
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return String();
-
-    GUniquePtr<char> dirname(g_path_get_dirname(filename.data()));
-    return String::fromUTF8(dirname.get());
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)
@@ -426,62 +265,6 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
             return bytesRead;
     } while (error && error->code == G_FILE_ERROR_INTR);
     return -1;
-}
-
-bool moveFile(const String& oldPath, const String& newPath)
-{
-    auto oldFilename = fileSystemRepresentation(oldPath);
-    if (!validRepresentation(oldFilename))
-        return false;
-
-    auto newFilename = fileSystemRepresentation(newPath);
-    if (!validRepresentation(newFilename))
-        return false;
-
-    GRefPtr<GFile> oldFile = adoptGRef(g_file_new_for_path(oldFilename.data()));
-    GRefPtr<GFile> newFile = adoptGRef(g_file_new_for_path(newFilename.data()));
-
-    return g_file_move(oldFile.get(), newFile.get(), G_FILE_COPY_OVERWRITE, nullptr, nullptr, nullptr, nullptr);
-}
-
-bool hardLink(const String& source, const String& destination)
-{
-#if OS(WINDOWS)
-    return CreateHardLink(destination.wideCharacters().data(), source.wideCharacters().data(), nullptr);
-#else
-    auto sourceFilename = fileSystemRepresentation(source);
-    if (!validRepresentation(sourceFilename))
-        return false;
-
-    auto destinationFilename = fileSystemRepresentation(destination);
-    if (!validRepresentation(destinationFilename))
-        return false;
-
-    return !link(sourceFilename.data(), destinationFilename.data());
-#endif
-}
-
-bool hardLinkOrCopyFile(const String& source, const String& destination)
-{
-    if (hardLink(source, destination))
-        return true;
-
-    // Hard link failed. Perform a copy instead.
-#if OS(WINDOWS)
-    return !!::CopyFile(source.wideCharacters().data(), destination.wideCharacters().data(), TRUE);
-#else
-    auto sourceFilename = fileSystemRepresentation(source);
-    if (!validRepresentation(sourceFilename))
-        return false;
-
-    auto destinationFilename = fileSystemRepresentation(destination);
-    if (!validRepresentation(destinationFilename))
-        return false;
-
-    GRefPtr<GFile> sourceFile = adoptGRef(g_file_new_for_path(sourceFilename.data()));
-    GRefPtr<GFile> destinationFile = adoptGRef(g_file_new_for_path(destinationFilename.data()));
-    return g_file_copy(sourceFile.get(), destinationFile.get(), G_FILE_COPY_NONE, nullptr, nullptr, nullptr, nullptr);
-#endif
 }
 
 Optional<int32_t> getFileDeviceId(const CString& fsFile)

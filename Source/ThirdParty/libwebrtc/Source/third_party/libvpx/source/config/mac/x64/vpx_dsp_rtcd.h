@@ -1,4 +1,4 @@
-#if WK_DISABLE_HARDWARE_ACCELERATION
+#if WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
 #include "vpx_dsp_rtcd_no_acceleration.h"
 #else
 
@@ -7812,32 +7812,50 @@ static void setup_rtcd_internal(void) {
   vpx_highbd_hadamard_32x32 = vpx_highbd_hadamard_32x32_c;
   vpx_highbd_hadamard_8x8 = vpx_highbd_hadamard_8x8_c;
   vpx_highbd_idct16x16_10_add = vpx_highbd_idct16x16_10_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct16x16_10_add = vpx_highbd_idct16x16_10_add_sse4_1;
+#endif
   vpx_highbd_idct16x16_256_add = vpx_highbd_idct16x16_256_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct16x16_256_add = vpx_highbd_idct16x16_256_add_sse4_1;
+#endif
   vpx_highbd_idct16x16_38_add = vpx_highbd_idct16x16_38_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct16x16_38_add = vpx_highbd_idct16x16_38_add_sse4_1;
+#endif
   vpx_highbd_idct32x32_1024_add = vpx_highbd_idct32x32_1024_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct32x32_1024_add = vpx_highbd_idct32x32_1024_add_sse4_1;
+#endif
   vpx_highbd_idct32x32_135_add = vpx_highbd_idct32x32_135_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct32x32_135_add = vpx_highbd_idct32x32_135_add_sse4_1;
+#endif
   vpx_highbd_idct32x32_34_add = vpx_highbd_idct32x32_34_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct32x32_34_add = vpx_highbd_idct32x32_34_add_sse4_1;
+#endif
   vpx_highbd_idct4x4_16_add = vpx_highbd_idct4x4_16_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct4x4_16_add = vpx_highbd_idct4x4_16_add_sse4_1;
+#endif
   vpx_highbd_idct8x8_12_add = vpx_highbd_idct8x8_12_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct8x8_12_add = vpx_highbd_idct8x8_12_add_sse4_1;
+#endif
   vpx_highbd_idct8x8_64_add = vpx_highbd_idct8x8_64_add_sse2;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_highbd_idct8x8_64_add = vpx_highbd_idct8x8_64_add_sse4_1;
+#endif
   vpx_highbd_satd = vpx_highbd_satd_c;
   vpx_idct32x32_135_add = vpx_idct32x32_135_add_sse2;
   if (flags & HAS_SSSE3)
@@ -7864,8 +7882,10 @@ static void setup_rtcd_internal(void) {
   if (flags & HAS_SSSE3)
     vpx_sad16x16x3 = vpx_sad16x16x3_ssse3;
   vpx_sad16x16x8 = vpx_sad16x16x8_c;
+#ifndef WEBRTC_WEBKIT_MAC_CATALIST
   if (flags & HAS_SSE4_1)
     vpx_sad16x16x8 = vpx_sad16x16x8_sse4_1;
+#endif
   vpx_sad16x8x3 = vpx_sad16x8x3_c;
   if (flags & HAS_SSE3)
     vpx_sad16x8x3 = vpx_sad16x8x3_sse3;
@@ -8004,4 +8024,4 @@ static void setup_rtcd_internal(void) {
 
 #endif
 
-#endif // WK_DISABLE_HARDWARE_ACCELERATION
+#endif // WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION

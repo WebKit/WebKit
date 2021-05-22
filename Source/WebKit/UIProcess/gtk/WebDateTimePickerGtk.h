@@ -29,6 +29,7 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include "WebDateTimePicker.h"
+#include <WebCore/DateComponents.h>
 #include <WebCore/DateTimeChooserParameters.h>
 
 namespace WebKit {
@@ -43,6 +44,16 @@ private:
 
     void endPicker() final;
     void showDateTimePicker(WebCore::DateTimeChooserParameters&&) final;
+
+    void update(WebCore::DateTimeChooserParameters&&);
+    void didChooseDate();
+    void invalidate();
+
+    GtkWidget* m_popover { nullptr };
+    GtkWidget* m_calendar { nullptr };
+    Optional<WebCore::DateComponents> m_currentDate;
+    WebCore::SecondFormat m_secondFormat { WebCore::SecondFormat::None };
+    bool m_inUpdate { false };
 };
 
 } // namespace WebKit

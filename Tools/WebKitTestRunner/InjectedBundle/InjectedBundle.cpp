@@ -74,11 +74,6 @@ void InjectedBundle::willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, c
     static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->willDestroyPage(page);
 }
 
-void InjectedBundle::didInitializePageGroup(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, const void* clientInfo)
-{
-    static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didInitializePageGroup(pageGroup);
-}
-
 void InjectedBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
     static_cast<InjectedBundle*>(const_cast<void*>(clientInfo))->didReceiveMessage(messageName, messageBody);
@@ -97,12 +92,12 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
         { 1, this },
         didCreatePage,
         willDestroyPage,
-        didInitializePageGroup,
+        nullptr,
         didReceiveMessage,
         didReceiveMessageToPage
     };
-    WKBundleSetClient(m_bundle, &client.base);
-    WKBundleSetServiceWorkerProxyCreationCallback(m_bundle, WebCoreTestSupport::setupNewlyCreatedServiceWorker);
+    WKBundleSetClient(m_bundle.get(), &client.base);
+    WKBundleSetServiceWorkerProxyCreationCallback(m_bundle.get(), WebCoreTestSupport::setupNewlyCreatedServiceWorker);
     platformInitialize(initializationUserData);
     WebCoreTestSupport::populateJITOperations();
 
@@ -121,7 +116,7 @@ void InjectedBundle::didCreatePage(WKBundlePageRef page)
 
     WKTypeRef result = nullptr;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WKBundlePostSynchronousMessage(m_bundle, toWK("Initialization").get(), nullptr, &result);
+    WKBundlePostSynchronousMessage(m_bundle.get(), toWK("Initialization").get(), nullptr, &result);
     ALLOW_DEPRECATED_DECLARATIONS_END
     auto initializationDictionary = adoptWK(dictionaryValue(result));
 
@@ -134,11 +129,6 @@ void InjectedBundle::willDestroyPage(WKBundlePageRef page)
     m_pages.removeFirstMatching([page](auto& current) {
         return current->page() == page;
     });
-}
-
-void InjectedBundle::didInitializePageGroup(WKBundlePageGroupRef pageGroup)
-{
-    m_pageGroup = pageGroup;
 }
 
 void InjectedBundle::setUpInjectedBundleClients(WKBundlePageRef page)
@@ -178,7 +168,7 @@ WKBundlePageRef InjectedBundle::pageRef() const
 
 void InjectedBundle::didReceiveMessage(WKStringRef, WKTypeRef)
 {
-    WKBundlePostMessage(m_bundle, toWK("Error").get(), toWK("Unknown").get());
+    WKBundlePostMessage(m_bundle.get(), toWK("Error").get(), toWK("Unknown").get());
 }
 
 static void postGCTask(void* context)
@@ -191,10 +181,10 @@ static void postGCTask(void* context)
 void InjectedBundle::reportLiveDocuments(WKBundlePageRef page)
 {
     // Release memory again, after the GC and timer fire. This is necessary to clear entries from CachedResourceLoader's m_documentResources in some scenarios.
-    WKBundleReleaseMemory(m_bundle);
+    WKBundleReleaseMemory(m_bundle.get());
 
     const bool excludeDocumentsInPageGroup = true;
-    WKBundlePagePostMessage(page, toWK("LiveDocuments").get(), adoptWK(WKBundleGetLiveDocumentURLs(m_bundle, m_pageGroup, excludeDocumentsInPageGroup)).get());
+    WKBundlePagePostMessage(page, toWK("LiveDocuments").get(), adoptWK(WKBundleGetLiveDocumentURLsForTesting(m_bundle.get(), excludeDocumentsInPageGroup)).get());
 }
 
 void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody)
@@ -216,7 +206,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         if (auto options = stringValue(messageBodyDictionary, "JSCOptions"))
             JSC::Options::setOptions(toWTFString(options).utf8().data());
         if (booleanValue(messageBodyDictionary, "ShouldGC"))
-            WKBundleGarbageCollectJavaScriptObjects(m_bundle);
+            WKBundleGarbageCollectJavaScriptObjects(m_bundle.get());
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         m_accessibilityIsolatedTreeMode = booleanValue(messageBodyDictionary, "AccessibilityIsolatedTree");
@@ -243,12 +233,12 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "GetLiveDocuments")) {
         const bool excludeDocumentsInPageGroup = false;
-        postPageMessage("LiveDocuments", adoptWK(WKBundleGetLiveDocumentURLs(m_bundle, m_pageGroup, excludeDocumentsInPageGroup)));
+        postPageMessage("LiveDocuments", adoptWK(WKBundleGetLiveDocumentURLsForTesting(m_bundle.get(), excludeDocumentsInPageGroup)));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "CheckForWorldLeaks")) {
-        WKBundleReleaseMemory(m_bundle);
+        WKBundleReleaseMemory(m_bundle.get());
 
         WKRetain(page); // Balanced by the release in postGCTask.
         WKBundlePageCallAfterTasksAndTimers(page, postGCTask, (void*)page);
@@ -272,6 +262,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
     if (WKStringIsEqualToUTF8CString(messageName, "CallSetBackingScaleFactorCallback")) {
         m_testRunner->callSetBackingScaleFactorCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidNotHandleTapAsMeaningfulClickCallback")) {
+        m_testRunner->callDidNotHandleTapAsMeaningfulClickCallback();
         return;
     }
 
@@ -523,14 +518,14 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     if (testingMode != BegingTestingMode::New)
         return;
 
-    WKBundleClearAllDatabases(m_bundle);
+    WKBundleClearAllDatabases(m_bundle.get());
     WKBundlePageClearApplicationCache(page()->page());
-    WKBundleResetOriginAccessAllowLists(m_bundle);
-    WKBundleClearResourceLoadStatistics(m_bundle);
+    WKBundleResetOriginAccessAllowLists(m_bundle.get());
+    WKBundleClearResourceLoadStatistics(m_bundle.get());
 
     // [WK2] REGRESSION(r128623): It made layout tests extremely slow
     // https://bugs.webkit.org/show_bug.cgi?id=96862
-    // WKBundleSetDatabaseQuota(m_bundle, 5 * 1024 * 1024);
+    // WKBundleSetDatabaseQuota(m_bundle.get(), 5 * 1024 * 1024);
 }
 
 void InjectedBundle::done()
@@ -834,7 +829,7 @@ void InjectedBundle::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
 
 bool InjectedBundle::statisticsNotifyObserver()
 {
-    return WKBundleResourceLoadStatisticsNotifyObserver(m_bundle);
+    return WKBundleResourceLoadStatisticsNotifyObserver(m_bundle.get());
 }
 
 void InjectedBundle::textDidChangeInTextField()

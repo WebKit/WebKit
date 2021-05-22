@@ -339,7 +339,7 @@ void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRe
 #if ENABLE(VIDEO)
     // FXIME: WebVTT should not be done by styling UA shadow trees like this.
     if (element().isWebVTTElement())
-        collectMatchingRulesForList(rules.cuePseudoRules(), matchRequest);
+        collectMatchingRulesForList(&rules.cuePseudoRules(), matchRequest);
 #endif
     auto& pseudoId = element().shadowPseudoId();
     if (!pseudoId.isEmpty())

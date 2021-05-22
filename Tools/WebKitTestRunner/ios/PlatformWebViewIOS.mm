@@ -91,11 +91,6 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
     [super dealloc];
 }
 
-- (BOOL)isKeyWindow
-{
-    return [super isKeyWindow] && (_platformWebView ? _platformWebView->windowIsKey() : YES);
-}
-
 - (void)setFrameOrigin:(CGPoint)point
 {
     _fakeOrigin = point;
@@ -240,8 +235,24 @@ PlatformWindow PlatformWebView::keyWindow()
 void PlatformWebView::setWindowIsKey(bool isKey)
 {
     m_windowIsKey = isKey;
-    if (isKey && !m_window.keyWindow)
+
+    if (isKey && !m_window.keyWindow) {
+        [m_otherWindow setHidden:YES];
         [m_window makeKeyWindow];
+        return;
+    }
+
+    if (!isKey && m_window.keyWindow) {
+        if (!m_otherWindow) {
+            m_otherWindow = adoptNS([[UIWindow alloc] initWithWindowScene:m_window.windowScene]);
+            [m_otherWindow setFrame:CGRectMake(-1, -1, 1, 1)];
+        }
+        // On iOS, there's no API to force a UIWindow to resign key window. However, we can instead
+        // cause the test runner window to resign key window by making a different window (in this
+        // case, m_otherWindow) the key window.
+        [m_otherWindow setHidden:NO];
+        [m_otherWindow makeKeyWindow];
+    }
 }
 
 void PlatformWebView::addToWindow()

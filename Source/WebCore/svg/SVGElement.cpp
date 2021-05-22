@@ -169,13 +169,13 @@ SVGElement::SVGElement(const QualifiedName& tagName, Document& document, Constru
 SVGElement::~SVGElement()
 {
     if (m_svgRareData) {
-        for (SVGElement* instance : m_svgRareData->instances())
-            instance->m_svgRareData->setCorrespondingElement(nullptr);
+        RELEASE_ASSERT(m_svgRareData->referencingElements().computesEmpty());
+        for (SVGElement& instance : copyToVectorOf<Ref<SVGElement>>(instances()))
+            instance.m_svgRareData->setCorrespondingElement(nullptr);
         RELEASE_ASSERT(!m_svgRareData->correspondingElement());
         m_svgRareData = nullptr;
     }
-    document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
-    document().accessSVGExtensions().removeAllElementReferencesForTarget(*this);
+    document().accessSVGExtensions().removeElementToRebuild(*this);
 }
 
 void SVGElement::willRecalcStyle(Style::Change change)
@@ -240,13 +240,20 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
 void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
-        updateRelativeLengthsInformation(false, this);
+        updateRelativeLengthsInformation(false, *this);
 
     StyledElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (removalType.disconnectedFromDocument) {
-        document().accessSVGExtensions().clearTargetDependencies(*this);
-        document().accessSVGExtensions().removeAllElementReferencesForTarget(*this);
+        auto& extensions = document().accessSVGExtensions();
+        if (m_svgRareData) {
+            for (auto& element : m_svgRareData->takeReferencingElements()) {
+                extensions.addElementToRebuild(element);
+                makeRef(element)->clearTarget();
+            }
+            RELEASE_ASSERT(m_svgRareData->referencingElements().computesEmpty());
+        }
+        extensions.removeElementToRebuild(*this);
     }
     invalidateInstances();
 
@@ -282,10 +289,10 @@ SVGElement* SVGElement::viewportElement() const
     return nullptr;
 }
  
-const HashSet<SVGElement*>& SVGElement::instances() const
+const WeakHashSet<SVGElement>& SVGElement::instances() const
 {
     if (!m_svgRareData) {
-        static NeverDestroyed<HashSet<SVGElement*>> emptyInstances;
+        static NeverDestroyed<WeakHashSet<SVGElement>> emptyInstances;
         return emptyInstances;
     }
     return m_svgRareData->instances();
@@ -298,6 +305,35 @@ Optional<FloatRect> SVGElement::getBoundingBox() const
             return renderer->objectBoundingBox();
     }
     return WTF::nullopt;
+}
+
+Vector<Ref<SVGElement>> SVGElement::referencingElements() const
+{
+    if (!m_svgRareData)
+        return { };
+    return copyToVectorOf<Ref<SVGElement>>(m_svgRareData->referencingElements());
+}
+
+void SVGElement::addReferencingElement(SVGElement& element)
+{
+    ensureSVGRareData().addReferencingElement(element);
+    auto& rareDataOfReferencingElement = element.ensureSVGRareData();
+    RELEASE_ASSERT(!rareDataOfReferencingElement.referenceTarget());
+    rareDataOfReferencingElement.setReferenceTarget(makeWeakPtr(*this));
+}
+
+void SVGElement::removeReferencingElement(SVGElement& element)
+{
+    ensureSVGRareData().removeReferencingElement(element);
+    element.ensureSVGRareData().setReferenceTarget(nullptr);
+}
+
+void SVGElement::removeElementReference()
+{
+    if (!m_svgRareData)
+        return;
+    if (auto destination = makeRefPtr(m_svgRareData->referenceTarget()))
+        destination->removeReferencingElement(*this);
 }
 
 SVGElement* SVGElement::correspondingElement() const
@@ -322,12 +358,12 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
 {
     if (m_svgRareData) {
         if (auto oldCorrespondingElement = makeRefPtr(m_svgRareData->correspondingElement()))
-            oldCorrespondingElement->m_svgRareData->instances().remove(this);
+            oldCorrespondingElement->m_svgRareData->removeInstance(*this);
     }
     if (m_svgRareData || correspondingElement)
         ensureSVGRareData().setCorrespondingElement(correspondingElement);
     if (correspondingElement)
-        correspondingElement->ensureSVGRareData().instances().add(this);
+        correspondingElement->ensureSVGRareData().addInstance(*this);
 }
 
 void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -372,7 +408,7 @@ bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener
 
     // Add event listener to all shadow tree DOM element instances
     ASSERT(!instanceUpdatesBlocked());
-    for (auto* instance : instances()) {
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(instances())) {
         ASSERT(instance->correspondingElement() == this);
         ASSERT(instance->isInUserAgentShadowTree());
         bool result = instance->Node::addEventListener(eventType, listener.copyRef(), options);
@@ -400,7 +436,7 @@ bool SVGElement::removeEventListener(const AtomString& eventType, EventListener&
 
     // Remove event listener from all shadow tree DOM element instances
     ASSERT(!instanceUpdatesBlocked());
-    for (auto& instance : instances()) {
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(instances())) {
         ASSERT(instance->correspondingElement() == this);
         ASSERT(instance->isInUserAgentShadowTree());
 
@@ -574,7 +610,7 @@ RefPtr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& att
     auto animator = propertyRegistry().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive);
     if (!animator)
         return animator;
-    for (auto* instance : instances())
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(instances()))
         instance->propertyRegistry().appendAnimatedInstance(attributeName, *animator);
     return animator;
 }
@@ -859,7 +895,7 @@ void SVGElement::buildPendingResourcesIfNeeded()
     extensions.markPendingResourcesForRemoval(resourceId);
 
     // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (auto clientElement = extensions.removeElementFromPendingResourcesForRemovalMap(resourceId)) {
+    while (auto clientElement = extensions.takeElementFromPendingResourcesForRemovalMap(resourceId)) {
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
@@ -902,7 +938,7 @@ AffineTransform SVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope
     return AffineTransform();
 }
 
-void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement* element)
+void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement& element)
 {
     // If we're not yet in a document, this function will be called again from insertedIntoAncestor(). Do nothing now.
     if (!isConnected())
@@ -915,18 +951,16 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
     if (hasRelativeLengths)
         m_elementsWithRelativeLengths.add(element);
     else {
-        if (!m_elementsWithRelativeLengths.contains(element)) {
-            // We were never registered. Do nothing.
+        bool neverRegistered = !m_elementsWithRelativeLengths.contains(element);
+        if (neverRegistered)
             return;
-        }
 
         m_elementsWithRelativeLengths.remove(element);
     }
 
-    if (is<SVGGraphicsElement>(*element)) {
-        auto parent = makeRefPtr(parentNode());
-        if (is<SVGElement>(parent))
-            downcast<SVGElement>(*parent).updateRelativeLengthsInformation(hasRelativeLengths, this);
+    if (is<SVGGraphicsElement>(element)) {
+        if (auto parent = makeRefPtr(parentNode()); is<SVGElement>(parent))
+            downcast<SVGElement>(*parent).updateRelativeLengthsInformation(hasRelativeLengths, *this);
     }
 }
 
@@ -940,9 +974,7 @@ void SVGElement::invalidateInstances()
     if (instanceUpdatesBlocked())
         return;
 
-    auto& instances = this->instances();
-    while (!instances.isEmpty()) {
-        auto instance = makeRefPtr(*instances.begin());
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(instances())) {
         if (auto useElement = instance->correspondingUseElement())
             useElement->invalidateShadowTree();
         instance->setCorrespondingElement(nullptr);

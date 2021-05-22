@@ -1,7 +1,0 @@
-2d.path.stroke.prune.curve
-Zero-length line segments from quadraticCurveTo and bezierCurveTo are removed before stroking
-Spec references: 2d.path.stroke.prune
-Actual output:
-Expected output:
-
-Passed

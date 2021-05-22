@@ -73,10 +73,8 @@ bool Plugin::Parameters::decode(IPC::Decoder& decoder, Parameters& parameters)
     if (!decoder.decode(parameters.layerHostingMode))
         return false;
 #endif
-    if (parameters.names.size() != parameters.values.size()) {
-        decoder.markInvalid();
+    if (parameters.names.size() != parameters.values.size())
         return false;
-    }
 
     return true;
 }

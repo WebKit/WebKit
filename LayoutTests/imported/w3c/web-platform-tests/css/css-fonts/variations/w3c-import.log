@@ -32,7 +32,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-variation-settings-inherit.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-variation-settings-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-lighter-bolder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-matching.html
@@ -44,4 +43,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gsub-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-gsub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz.html

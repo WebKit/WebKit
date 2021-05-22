@@ -58,6 +58,16 @@ SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
 
 namespace WTR {
 
+static BOOL returnYes()
+{
+    return YES;
+}
+
+static BOOL returnNo()
+{
+    return NO;
+}
+
 static NSDictionary *toNSDictionary(CGRect rect)
 {
     return @{
@@ -1210,6 +1220,7 @@ JSObjectRef UIScriptControllerIOS::calendarType() const
 void UIScriptControllerIOS::setHardwareKeyboardAttached(bool attached)
 {
     GSEventSetHardwareKeyboardAttached(attached, 0);
+    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(attached ? returnYes : returnNo));
 }
 
 void UIScriptControllerIOS::setAllowsViewportShrinkToFit(bool allows)

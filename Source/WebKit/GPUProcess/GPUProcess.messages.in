@@ -39,6 +39,7 @@ messages -> GPUProcess {
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
     SetOrientationForMediaCapture(uint64_t orientation);
+    UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
     UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> () Async
     AddMockMediaDevice(struct WebCore::MockMediaDevice device);
     ClearMockMediaDevices();

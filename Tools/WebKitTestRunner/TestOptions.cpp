@@ -117,6 +117,9 @@ const TestFeatures& TestOptions::defaults()
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
             { "VP9DecoderEnabled", false },
 #endif
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+            { "UseGPUProcessForWebGLEnabled", false },
+#endif
         };
         features.stringWebPreferenceFeatures = {
             { "CursiveFontFamily", "Apple Chancery" },
@@ -135,6 +138,7 @@ const TestFeatures& TestOptions::defaults()
             { "enableInAppBrowserPrivacy", false },
             { "enableProcessSwapOnNavigation", true },
             { "enableProcessSwapOnWindowOpen", false },
+            { "appHighlightsEnabled", false },
             { "ignoreSynchronousMessagingTimeouts", false },
             { "ignoresViewportScaleLimits", false },
             { "isAppBoundWebView", false },
@@ -186,6 +190,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "enableInAppBrowserPrivacy", TestHeaderKeyType::BoolTestRunner },
         { "enableProcessSwapOnNavigation", TestHeaderKeyType::BoolTestRunner },
         { "enableProcessSwapOnWindowOpen", TestHeaderKeyType::BoolTestRunner },
+        { "appHighlightsEnabled", TestHeaderKeyType::BoolTestRunner },
         { "ignoreSynchronousMessagingTimeouts", TestHeaderKeyType::BoolTestRunner },
         { "ignoresViewportScaleLimits", TestHeaderKeyType::BoolTestRunner },
         { "isAppBoundWebView", TestHeaderKeyType::BoolTestRunner },

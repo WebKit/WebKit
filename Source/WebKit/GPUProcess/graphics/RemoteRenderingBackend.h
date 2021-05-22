@@ -123,9 +123,9 @@ private:
     // Messages to be received.
     void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::DestinationColorSpace, WebCore::PixelFormat, WebCore::RenderingResourceIdentifier);
     void wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments&);
-    void updateSharedMemoryForGetImageData(size_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&&);
+    void updateSharedMemoryForGetImageData(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&&);
     void semaphoreForGetImageData(CompletionHandler<void(const IPC::Semaphore&)>&&);
-    void updateSharedMemoryAndSemaphoreForGetImageData(size_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&, const IPC::Semaphore&)>&&);
+    void updateSharedMemoryAndSemaphoreForGetImageData(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&, const IPC::Semaphore&)>&&);
     void destroyGetImageDataSharedMemory();
     void getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution, WebCore::RenderingResourceIdentifier, CompletionHandler<void(String&&)>&&);
     void getDataForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&&);

@@ -57,24 +57,8 @@ public:
         return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsets : m_snapOffsetsInfo.verticalSnapOffsets;
     }
 
-    const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRangesForAxis(ScrollEventAxis axis) const
-    {
-        return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsetRanges : m_snapOffsetsInfo.verticalSnapOffsetRanges;
-    }
-
     const LayoutScrollSnapOffsetsInfo& snapOffsetInfo() const { return m_snapOffsetsInfo; }
     void setSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo& newInfo) { m_snapOffsetsInfo = newInfo; }
-
-    void setSnapOffsetsAndPositionRangesForAxis(ScrollEventAxis axis, const Vector<SnapOffset<LayoutUnit>>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges)
-    {
-        if (axis == ScrollEventAxis::Horizontal) {
-            m_snapOffsetsInfo.horizontalSnapOffsets = snapOffsets;
-            m_snapOffsetsInfo.horizontalSnapOffsetRanges = snapOffsetRanges;
-        } else {
-            m_snapOffsetsInfo.verticalSnapOffsets = snapOffsets;
-            m_snapOffsetsInfo.verticalSnapOffsetRanges = snapOffsetRanges;
-        }
-    }
 
     ScrollSnapState currentState() const { return m_currentState; }
 
@@ -100,7 +84,7 @@ public:
     void transitionToDestinationReachedState();
 
 private:
-    float targetOffsetForStartOffset(ScrollEventAxis, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta, unsigned& outActiveSnapIndex) const;
+    float targetOffsetForStartOffset(ScrollEventAxis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta, unsigned& outActiveSnapIndex) const;
     void teardownAnimationForState(ScrollSnapState);
     void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
 

@@ -246,6 +246,8 @@ for this property.
 
 - (void)_simulateDeviceOrientationChangeWithAlpha:(double)alpha beta:(double)beta gamma:(double)gamma WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
++ (BOOL)_willUpgradeToHTTPS:(NSURL *)url WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 + (BOOL)_handlesSafeBrowsing WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 + (NSURL *)_confirmMalwareSentinel WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 + (NSURL *)_visitUnsafeWebsiteSentinel WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
@@ -382,6 +384,13 @@ for this property.
 @property (nonatomic, readonly) UIColor *_pageExtendedBackgroundColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 @property (nonatomic, readonly) NSColor *_pageExtendedBackgroundColor;
+#endif
+
+// Only set if `-[WKWebViewConfiguration _sampledPageTopColorMaxDifference]` is a positive number.
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) UIColor *_sampledPageTopColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#else
+@property (nonatomic, readonly) NSColor *_sampledPageTopColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
 #endif
 
 - (void)_grantAccessToAssetServices WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(14.0));

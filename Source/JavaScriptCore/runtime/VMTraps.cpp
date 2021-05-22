@@ -416,9 +416,7 @@ void VMTraps::deferTerminationSlow(DeferAction)
     ASSERT(m_deferTerminationCount == 1);
 
     VM& vm = this->vm();
-    Exception* pendingException = vm.exception();
-    ASSERT(pendingException);
-    if (vm.isTerminationException(pendingException)) {
+    if (vm.hasPendingTerminationException()) {
         ASSERT(vm.terminationInProgress());
         vm.clearException();
         m_suspendedTerminationException = true;

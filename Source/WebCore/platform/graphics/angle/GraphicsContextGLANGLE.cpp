@@ -90,14 +90,14 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::readPixelsForPaintResults()
     ScopedPixelStorageMode packSkipPixels(GL_PACK_SKIP_PIXELS, 0, m_isForWebGL2);
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
 
-    gl::ReadnPixelsRobustANGLE(0, 0, imageData->width(), imageData->height(), GL_RGBA, GL_UNSIGNED_BYTE, imageData->data()->byteLength(), nullptr, nullptr, nullptr, imageData->data()->data());
+    gl::ReadnPixelsRobustANGLE(0, 0, imageData->width(), imageData->height(), GL_RGBA, GL_UNSIGNED_BYTE, imageData->data().byteLength(), nullptr, nullptr, nullptr, imageData->data().data());
     // FIXME: Rendering to GL_RGB textures with a IOSurface bound to the texture image leaves
     // the alpha in the IOSurface in incorrect state. Also ANGLE gl::ReadPixels will in some
     // cases expose the non-255 values.
     // https://bugs.webkit.org/show_bug.cgi?id=215804
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     if (!contextAttributes().alpha)
-        wipeAlphaChannelFromPixels(imageData->width(), imageData->height(), imageData->data()->data());
+        wipeAlphaChannelFromPixels(imageData->width(), imageData->height(), imageData->data().data());
 #endif
     return imageData;
 }

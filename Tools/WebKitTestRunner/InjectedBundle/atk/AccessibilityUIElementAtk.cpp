@@ -43,6 +43,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WTR {
@@ -1139,7 +1140,7 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     if (atkAttributeName.startsWith("row") || atkAttributeName.startsWith("col")) {
         String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, atkAttributeName);
         if (!attributeValue.isEmpty())
-            return attributeValue.toInt();
+            return parseIntegerAllowingTrailingJunk<int>(attributeValue).valueOr(0);
     }
 
     return 0;
@@ -1632,11 +1633,7 @@ bool AccessibilityUIElement::isIndeterminate() const
 
 int AccessibilityUIElement::hierarchicalLevel() const
 {
-    String level = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "level");
-    if (!level.isEmpty())
-        return level.toInt();
-
-    return 0;
+    return parseIntegerAllowingTrailingJunk<int>(getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "level")).valueOr(0);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()

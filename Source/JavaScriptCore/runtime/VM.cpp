@@ -992,7 +992,7 @@ void VM::throwTerminationException()
 Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exceptionToThrow)
 {
     // The TerminationException should never be overridden.
-    if (m_exception && isTerminationException(m_exception))
+    if (hasPendingTerminationException())
         return m_exception;
 
     // The TerminationException is not like ordinary exceptions that should be
@@ -1385,14 +1385,18 @@ void VM::promiseRejected(JSPromise* promise)
 
 void VM::drainMicrotasks()
 {
-    do {
-        while (!m_microtaskQueue.isEmpty()) {
-            m_microtaskQueue.takeFirst()->run();
-            if (m_onEachMicrotaskTick)
-                m_onEachMicrotaskTick(*this);
-        }
-        didExhaustMicrotaskQueue();
-    } while (!m_microtaskQueue.isEmpty());
+    if (UNLIKELY(executionForbidden()))
+        m_microtaskQueue.clear();
+    else {
+        do {
+            while (!m_microtaskQueue.isEmpty()) {
+                m_microtaskQueue.takeFirst()->run();
+                if (m_onEachMicrotaskTick)
+                    m_onEachMicrotaskTick(*this);
+            }
+            didExhaustMicrotaskQueue();
+        } while (!m_microtaskQueue.isEmpty());
+    }
     finalizeSynchronousJSExecution();
 }
 

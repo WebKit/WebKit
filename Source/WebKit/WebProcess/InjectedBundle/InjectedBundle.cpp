@@ -171,10 +171,11 @@ void InjectedBundle::resetOriginAccessAllowLists()
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResetOriginAccessAllowLists { }, 0);
 }
 
-void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
+void InjectedBundle::setAsynchronousSpellCheckingEnabled(bool enabled)
 {
-    for (auto& page : PageGroup::pageGroup(pageGroup->identifier())->pages())
+    Page::forEachPage([enabled](Page& page) {
         page.settings().setAsynchronousSpellCheckingEnabled(enabled);
+    });
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
@@ -272,11 +273,6 @@ void InjectedBundle::willDestroyPage(WebPage* page)
     m_client->willDestroyPage(*this, *page);
 }
 
-void InjectedBundle::didInitializePageGroup(WebPageGroupProxy* pageGroup)
-{
-    m_client->didInitializePageGroup(*this, *pageGroup);
-}
-
 void InjectedBundle::didReceiveMessage(const String& messageName, API::Object* messageBody)
 {
     m_client->didReceiveMessage(*this, messageName, messageBody);
@@ -287,10 +283,11 @@ void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messag
     m_client->didReceiveMessageToPage(*this, *page, messageName, messageBody);
 }
 
-void InjectedBundle::setUserStyleSheetLocation(WebPageGroupProxy* pageGroup, const String& location)
+void InjectedBundle::setUserStyleSheetLocation(const String& location)
 {
-    for (auto& page : PageGroup::pageGroup(pageGroup->identifier())->pages())
+    Page::forEachPage([location](Page& page) {
         page.settings().setUserStyleSheetLocation(URL(URL(), location));
+    });
 }
 
 void InjectedBundle::setWebNotificationPermission(WebPage* page, const String& originString, bool allowed)
@@ -336,7 +333,7 @@ Ref<API::Data> InjectedBundle::createWebDataFromUint8Array(JSContextRef context,
     return API::Data::create(static_cast<unsigned char*>(arrayData->baseAddress()), arrayData->byteLength());
 }
 
-InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(WebPageGroupProxy* pageGroup, bool excludeDocumentsInPageGroupPages)
+InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool excludeDocumentsInPageGroupPages)
 {
     DocumentIDToURLMap result;
 
@@ -344,13 +341,13 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(WebPageGroup
         result.add(document->identifier().toUInt64(), document->url().string());
 
     if (excludeDocumentsInPageGroupPages) {
-        for (auto& page : PageGroup::pageGroup(pageGroup->identifier())->pages()) {
+        Page::forEachPage([&](Page& page) {
             for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
                 if (!frame->document())
                     continue;
                 result.remove(frame->document()->identifier().toUInt64());
             }
-        }
+        });
     }
 
     return result;

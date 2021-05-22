@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,12 +176,18 @@ auto QuickTimePluginReplacement::installReplacement(ShadowRoot& root) -> Install
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
+    auto clearExceptionAndReturnFalse = [&] () -> InstallResult {
+        scope.clearException();
+        return { false };
+    };
+
     // Lookup the "createPluginReplacement" function.
     JSC::JSValue replacementFunction = globalObject->get(lexicalGlobalObject, JSC::Identifier::fromString(vm, "createPluginReplacement"));
     if (replacementFunction.isUndefinedOrNull())
         return { false };
     JSC::JSObject* replacementObject = replacementFunction.toObject(lexicalGlobalObject);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, clearExceptionAndReturnFalse());
+
     auto callData = getCallData(vm, replacementObject);
     if (callData.type == JSC::CallData::Type::None)
         return { false };
@@ -194,10 +200,7 @@ auto QuickTimePluginReplacement::installReplacement(ShadowRoot& root) -> Install
     argList.append(toJS<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, *globalObject, m_values));
     ASSERT(!argList.hasOverflowed());
     JSC::JSValue replacement = call(lexicalGlobalObject, replacementObject, callData, globalObject, argList);
-    if (UNLIKELY(scope.exception())) {
-        scope.clearException();
-        return { false };
-    }
+    RETURN_IF_EXCEPTION(scope, clearExceptionAndReturnFalse());
 
     // Get the <video> created to replace the plug-in.
     JSC::JSValue value = replacement.get(lexicalGlobalObject, JSC::Identifier::fromString(vm, "video"));

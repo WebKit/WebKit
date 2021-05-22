@@ -38,6 +38,7 @@
 #include <wtf/Scope.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 using namespace WebCore;
 using WTF::DataMutex;
@@ -1071,17 +1072,12 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     // Signal to downstream if this is an Icecast stream.
     GRefPtr<GstCaps> caps;
-    String metadataIntervalAsString = response.httpHeaderField(HTTPHeaderName::IcyMetaInt);
-    if (!metadataIntervalAsString.isEmpty()) {
-        bool isMetadataIntervalParsed;
-        int metadataInterval = metadataIntervalAsString.toInt(&isMetadataIntervalParsed);
-        if (isMetadataIntervalParsed && metadataInterval > 0) {
-            caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, metadataInterval, nullptr));
+    if (auto metadataInterval = parseIntegerAllowingTrailingJunk<int>(response.httpHeaderField(HTTPHeaderName::IcyMetaInt)); metadataInterval && *metadataInterval > 0) {
+        caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, *metadataInterval, nullptr));
 
-            String contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
-            GST_DEBUG_OBJECT(src, "R%u: Response ContentType: %s", m_requestNumber, contentType.utf8().data());
-            gst_caps_set_simple(caps.get(), "content-type", G_TYPE_STRING, contentType.utf8().data(), nullptr);
-        }
+        String contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
+        GST_DEBUG_OBJECT(src, "R%u: Response ContentType: %s", m_requestNumber, contentType.utf8().data());
+        gst_caps_set_simple(caps.get(), "content-type", G_TYPE_STRING, contentType.utf8().data(), nullptr);
     }
     if (caps) {
         GST_DEBUG_OBJECT(src, "R%u: Set caps to %" GST_PTR_FORMAT, m_requestNumber, caps.get());

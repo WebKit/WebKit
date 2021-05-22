@@ -1,7 +1,0 @@
-2d.shadow.enable.off.1
-Shadows are not drawn when only shadowColor is set
-Spec references: 2d.shadow.enable 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed

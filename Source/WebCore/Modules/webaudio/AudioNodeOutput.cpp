@@ -228,24 +228,22 @@ void AudioNodeOutput::disable()
 {
     ASSERT(context().isGraphOwner());
 
-    if (!m_isEnabled)
-        return;
-
-    m_isEnabled = false;
-    for (auto& input : m_inputs.keys())
-        input->outputEnabledStateChanged(*this);
+    if (m_isEnabled) {
+        for (auto& input : m_inputs.keys())
+            input->disable(this);
+        m_isEnabled = false;
+    }
 }
 
 void AudioNodeOutput::enable()
 {
     ASSERT(context().isGraphOwner());
 
-    if (m_isEnabled)
-        return;
-
-    m_isEnabled = true;
-    for (auto& input : m_inputs.keys())
-        input->outputEnabledStateChanged(*this);
+    if (!m_isEnabled) {
+        for (auto& input : m_inputs.keys())
+            input->enable(this);
+        m_isEnabled = true;
+    }
 }
 
 } // namespace WebCore

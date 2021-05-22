@@ -23,6 +23,7 @@
 
 (version 1)
 (deny default (with partial-symbolication))
+(deny nvram*)
 (allow system-audit file-read-metadata)
 
 ;;;
@@ -386,22 +387,6 @@
     (allow file-read* file-write-data file-ioctl
            (literal "/dev/aes_0")))
 
-(define-once (logd-diagnostic-paths)
-    (require-any
-        (subpath "/private/var/db/diagnostics")
-        (subpath "/private/var/db/timesync")
-        (subpath "/private/var/db/uuidtext")
-        (subpath "/private/var/userdata/diagnostics")))
-(define-once (logd-diagnostic-client)
-    (with-filter
-        (require-all
-            (require-any
-                (require-entitlement "com.apple.private.logging.diagnostic")
-                (require-entitlement "com.apple.diagnosticd.diagnostic"))
-            (extension "com.apple.logd.read-only"))
-        (allow file-read*
-               (logd-diagnostic-paths))))
-
 (define required-etc-files
   (literal "/private/etc/fstab"
            "/private/etc/hosts"
@@ -723,7 +708,7 @@
     (apply-message-filter
         (deny mach-message-send (with telemetry))
         (deny mach-message-send (with no-report) (message-number 1023))
-        (allow mach-message-send (with telemetry) (message-number
+        (allow mach-message-send (message-number
             1002
             1009
             1010
@@ -749,8 +734,6 @@
 )
 (allow ipc-posix-shm-read*
        (ipc-posix-name "apple.shm.notification_center"))
-
-(logd-diagnostic-client)
 
 (managed-configuration-read-public)
 
@@ -1159,7 +1142,17 @@
             ;;; FIXME(207716): End services to remove.
 )))
 
-(allow mach-lookup (with telemetry-backtrace)
+;; Silence warnings about these connections if we have decided not to extend access to them:
+(deny mach-lookup (with no-report)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.mach"))
+        (global-name
+            "com.apple.audio.AudioComponentRegistrar"
+        )
+    )
+)
+
+(allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name

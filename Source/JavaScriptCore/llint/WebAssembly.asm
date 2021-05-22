@@ -877,6 +877,14 @@ wasmOp(call_indirect_no_tls, WasmCallIndirectNoTls, macro(ctx)
     slowPathForWasmCall(ctx, _slow_path_wasm_call_indirect_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
 end)
 
+wasmOp(call_ref, WasmCallRef, macro(ctx)
+    slowPathForWasmCall(ctx, _slow_path_wasm_call_ref, storeWasmInstanceToTLS)
+end)
+
+wasmOp(call_ref_no_tls, WasmCallRefNoTls, macro(ctx)
+    slowPathForWasmCall(ctx, _slow_path_wasm_call_ref_no_tls, macro(targetInstance) move targetInstance, wasmInstance end)
+end)
+
 wasmOp(current_memory, WasmCurrentMemory, macro(ctx)
     loadp Wasm::Instance::m_memory[wasmInstance], t0
     loadp Wasm::Memory::m_handle[t0], t0

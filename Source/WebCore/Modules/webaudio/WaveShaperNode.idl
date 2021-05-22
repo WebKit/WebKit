@@ -27,7 +27,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface WaveShaperNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor(BaseAudioContext context, optional WaveShaperOptions options);
+    [EnabledBySetting=WebAudio] constructor(BaseAudioContext context, optional WaveShaperOptions options);
 
     attribute Float32Array? curve;
     attribute OverSampleType oversample;

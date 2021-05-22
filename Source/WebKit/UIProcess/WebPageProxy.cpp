@@ -192,6 +192,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 
@@ -562,7 +563,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     m_inspectorController->init();
 
 #if ENABLE(IPC_TESTING_API)
-    if (m_preferences->store().getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))
+    if (m_preferences->ipcTestingAPIEnabled())
         process.setIgnoreInvalidMessageForTesting();
 #endif
 
@@ -1917,6 +1918,9 @@ Color WebPageProxy::scrollAreaBackgroundColor() const
     if (m_preferences->useThemeColorForScrollAreaBackgroundColor() && m_themeColor.isValid())
         return m_themeColor;
 
+    if (m_preferences->useSampledPageTopColorForScrollAreaBackgroundColor() && m_sampledPageTopColor.isValid())
+        return m_sampledPageTopColor;
+
     return m_pageExtendedBackgroundColor;
 }
 
@@ -1987,11 +1991,11 @@ void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpd
         m_activityState.add(ActivityState::IsInWindow);
     if (flagsToUpdate & ActivityState::IsVisuallyIdle && pageClient().isVisuallyIdle())
         m_activityState.add(ActivityState::IsVisuallyIdle);
-    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState & MediaProducer::AudioIsMuted))
+    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState.contains(MediaProducer::MediaState::IsPlayingAudio) && !(m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted)))
         m_activityState.add(ActivityState::IsAudible);
     if (flagsToUpdate & ActivityState::IsLoading && m_pageLoadState.isLoading())
         m_activityState.add(ActivityState::IsLoading);
-    if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState & (MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice))
+    if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState.containsAny({ MediaProducer::MediaState::HasActiveAudioCaptureDevice,  MediaProducer::MediaState::HasActiveVideoCaptureDevice }))
         m_activityState.add(ActivityState::IsCapturingMedia);
 }
 
@@ -2444,10 +2448,12 @@ void WebPageProxy::setEditable(bool editable)
     
 void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
 {
+    auto state = m_mutedState;
     if (muted)
-        setMuted(m_mutedState | WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+        state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
     else
-        setMuted(m_mutedState & ~WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+        state.remove(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+    setMuted(state);
 }
 
 void WebPageProxy::activateMediaStreamCaptureInPage()
@@ -2455,7 +2461,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
 #if ENABLE(MEDIA_STREAM)
     WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
 #endif
-    setMuted(m_mutedState & ~WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+    setMediaStreamCaptureMuted(false);
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -5686,9 +5692,24 @@ void WebPageProxy::closePage()
     m_uiClient->close(this);
 }
 
+void WebPageProxy::runModalJavaScriptDialog(RefPtr<WebFrameProxy>&& frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void(WebPageProxy&, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&&)>&& runDialogCallback)
+{
+    pageClient().runModalJavaScriptDialog([weakThis = makeWeakPtr(*this), frameInfo = WTFMove(frameInfo), frame = WTFMove(frame), message, runDialogCallback = WTFMove(runDialogCallback)]() mutable {
+        auto protectedThis = makeRefPtr(weakThis.get());
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_isRunningModalJavaScriptDialog = true;
+        runDialogCallback(*protectedThis, frame.get(), WTFMove(frameInfo), message, [weakThis = WTFMove(weakThis)]() mutable {
+            if (auto protectedThis = makeRefPtr(weakThis.get()))
+                protectedThis->m_isRunningModalJavaScriptDialog = false;
+        });
+    });
+}
+
 void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& frameInfo, const String& message, Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply&& reply)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
+    auto frame = makeRefPtr(m_process->webFrame(frameID));
     MESSAGE_CHECK(m_process, frame);
 
     exitFullscreenImmediately();
@@ -5700,12 +5721,18 @@ void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& f
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
-    m_uiClient->runJavaScriptAlert(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
+
+    runModalJavaScriptDialog(WTFMove(frame), WTFMove(frameInfo), message, [reply = WTFMove(reply)](WebPageProxy& page, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&& completion) mutable {
+        page.m_uiClient->runJavaScriptAlert(page, message, frame, WTFMove(frameInfo), [reply = WTFMove(reply), completion = WTFMove(completion)]() mutable {
+            reply();
+            completion();
+        });
+    });
 }
 
 void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&& frameInfo, const String& message, Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply&& reply)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
+    auto frame = makeRefPtr(m_process->webFrame(frameID));
     MESSAGE_CHECK(m_process, frame);
 
     exitFullscreenImmediately();
@@ -5718,12 +5745,17 @@ void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&&
             automationSession->willShowJavaScriptDialog(*this);
     }
 
-    m_uiClient->runJavaScriptConfirm(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
+    runModalJavaScriptDialog(WTFMove(frame), WTFMove(frameInfo), message, [reply = WTFMove(reply)](WebPageProxy& page, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&& completion) mutable {
+        page.m_uiClient->runJavaScriptConfirm(page, message, frame, WTFMove(frameInfo), [reply = WTFMove(reply), completion = WTFMove(completion)](bool result) mutable {
+            reply(result);
+            completion();
+        });
+    });
 }
 
 void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& frameInfo, const String& message, const String& defaultValue, Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply&& reply)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
+    auto frame = makeRefPtr(m_process->webFrame(frameID));
     MESSAGE_CHECK(m_process, frame);
 
     exitFullscreenImmediately();
@@ -5736,7 +5768,12 @@ void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& 
             automationSession->willShowJavaScriptDialog(*this);
     }
 
-    m_uiClient->runJavaScriptPrompt(*this, message, defaultValue, frame, WTFMove(frameInfo), WTFMove(reply));
+    runModalJavaScriptDialog(WTFMove(frame), WTFMove(frameInfo), message, [reply = WTFMove(reply), defaultValue](WebPageProxy& page, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&& completion) mutable {
+        page.m_uiClient->runJavaScriptPrompt(page, message, defaultValue, frame, WTFMove(frameInfo), [reply = WTFMove(reply), completion = WTFMove(completion)](auto& result) mutable {
+            reply(result);
+            completion();
+        });
+    });
 }
 
 void WebPageProxy::setStatusText(const String& text)
@@ -6006,8 +6043,8 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state, Compl
         return completionHandler();
 
 #if ENABLE(MEDIA_STREAM)
-    bool hasMutedCaptureStreams = m_mediaState & WebCore::MediaProducer::MutedCaptureMask;
-    if (hasMutedCaptureStreams && !(state & WebCore::MediaProducer::MediaStreamCaptureIsMuted))
+    bool hasMutedCaptureStreams = m_mediaState.containsAny(WebCore::MediaProducer::MutedCaptureMask);
+    if (hasMutedCaptureStreams && !(state.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted)))
         WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
 #endif
 
@@ -7513,11 +7550,7 @@ void WebPageProxy::resetRecentCrashCount()
 
 void WebPageProxy::stopAllURLSchemeTasks(WebProcessProxy* process)
 {
-    HashSet<WebURLSchemeHandler*> handlers;
-    for (auto& handler : m_urlSchemeHandlersByScheme.values())
-        handlers.add(handler.ptr());
-
-    for (auto* handler : handlers)
+    for (auto& handler : copyToVectorOf<Ref<WebURLSchemeHandler>>(m_urlSchemeHandlersByScheme.values()))
         handler->stopAllTasksForPage(*this, process);
 }
 
@@ -8524,6 +8557,16 @@ void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& pageExtende
     pageClient().pageExtendedBackgroundColorDidChange();
 }
 
+void WebPageProxy::sampledPageTopColorChanged(const Color& sampledPageTopColor)
+{
+    if (m_sampledPageTopColor == sampledPageTopColor)
+        return;
+
+    pageClient().sampledPageTopColorWillChange();
+    m_sampledPageTopColor = sampledPageTopColor;
+    pageClient().sampledPageTopColorDidChange();
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {
@@ -9179,10 +9222,10 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
     WebCore::MediaProducer::MediaStateFlags newMediaCaptureState = newState & WebCore::MediaProducer::MediaCaptureMask;
 #endif
 
-    MediaProducer::MediaStateFlags playingMediaMask = MediaProducer::IsPlayingAudio | MediaProducer::IsPlayingVideo;
+    MediaProducer::MediaStateFlags playingMediaMask { MediaProducer::MediaState::IsPlayingAudio, MediaProducer::MediaState::IsPlayingVideo };
     MediaProducer::MediaStateFlags oldState = m_mediaState;
 
-    bool playingAudioChanges = (oldState & MediaProducer::IsPlayingAudio) != (newState & MediaProducer::IsPlayingAudio);
+    bool playingAudioChanges = (oldState.contains(MediaProducer::MediaState::IsPlayingAudio)) != (newState.contains(MediaProducer::MediaState::IsPlayingAudio));
     if (playingAudioChanges)
         pageClient().isPlayingAudioWillChange();
     m_mediaState = newState;
@@ -9202,11 +9245,11 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
 
-    playingMediaMask |= WebCore::MediaProducer::MediaCaptureMask;
+    playingMediaMask.add(WebCore::MediaProducer::MediaCaptureMask);
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingMediaDidChange(*this);
 
-    if ((oldState & MediaProducer::HasAudioOrVideo) != (m_mediaState & MediaProducer::HasAudioOrVideo))
+    if ((oldState.containsAny(MediaProducer::MediaState::HasAudioOrVideo)) != (m_mediaState.containsAny(MediaProducer::MediaState::HasAudioOrVideo)))
         videoControlsManagerDidChange();
 
     m_process->updateAudibleMediaAssertions();
@@ -9218,8 +9261,8 @@ void WebPageProxy::updateReportedMediaCaptureState()
     if (m_reportedMediaCaptureState == activeCaptureState)
         return;
 
-    bool haveReportedCapture = m_reportedMediaCaptureState & MediaProducer::MediaCaptureMask;
-    bool willReportCapture = activeCaptureState;
+    bool haveReportedCapture = m_reportedMediaCaptureState.containsAny(MediaProducer::MediaCaptureMask);
+    bool willReportCapture = !activeCaptureState.isEmpty();
 
     if (haveReportedCapture && !willReportCapture && m_updateReportedMediaCaptureStateTimer.isActive())
         return;
@@ -9227,7 +9270,7 @@ void WebPageProxy::updateReportedMediaCaptureState()
     if (!haveReportedCapture && willReportCapture)
         m_updateReportedMediaCaptureStateTimer.startOneShot(m_mediaCaptureReportingDelay);
 
-    RELEASE_LOG_IF_ALLOWED(WebRTC, "updateReportedMediaCaptureState: from %d to %d", m_reportedMediaCaptureState, activeCaptureState);
+    RELEASE_LOG_IF_ALLOWED(WebRTC, "updateReportedMediaCaptureState: from %d to %d", m_reportedMediaCaptureState.toRaw(), activeCaptureState.toRaw());
 
     bool microphoneCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::AudioCaptureMask) != (activeCaptureState & MediaProducer::AudioCaptureMask);
     bool cameraCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::VideoCaptureMask) != (activeCaptureState & MediaProducer::VideoCaptureMask);

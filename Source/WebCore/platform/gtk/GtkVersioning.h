@@ -276,4 +276,18 @@ gtk_scrolled_window_new()
     return gtk_scrolled_window_new(nullptr, nullptr);
 }
 
+static inline GdkModifierType
+gtk_event_controller_get_current_event_state(GtkEventController*)
+{
+    GdkModifierType modifiers;
+    gtk_get_current_event_state(&modifiers);
+    return modifiers;
+}
+
+static inline uint32_t
+gtk_event_controller_get_current_event_time(GtkEventController*)
+{
+    return gtk_get_current_event_time();
+}
+
 #endif // USE(GTK4)

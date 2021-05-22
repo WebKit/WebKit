@@ -58,7 +58,11 @@ public:
     virtual ~RemoteAudioTrackProxy();
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };
-    void setEnabled(bool enabled) { m_trackPrivate->setEnabled(enabled); }
+    void setEnabled(bool enabled)
+    {
+        m_enabled = enabled;
+        m_trackPrivate->setEnabled(enabled);
+    }
 
 private:
     RemoteAudioTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::AudioTrackPrivate&, WebCore::MediaPlayerIdentifier);
@@ -79,6 +83,7 @@ private:
     TrackPrivateRemoteIdentifier m_identifier;
     Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
+    bool m_enabled { false };
 };
 
 } // namespace WebKit

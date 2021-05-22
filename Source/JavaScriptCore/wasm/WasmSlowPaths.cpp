@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
+#include "JSWebAssemblyInstance.h"
 #include "LLIntData.h"
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
@@ -40,6 +41,7 @@
 #include "WasmOperations.h"
 #include "WasmSignatureInlines.h"
 #include "WasmWorklist.h"
+#include "WebAssemblyFunction.h"
 
 namespace JSC { namespace LLInt {
 
@@ -496,6 +498,40 @@ WASM_SLOW_PATH_DECL(call_indirect_no_tls)
     auto instruction = pc->as<WasmCallIndirectNoTls, WasmOpcodeTraits>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
+}
+
+inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned signatureIndex)
+{
+    UNUSED_PARAM(callFrame);
+
+    ASSERT(targetReference.isObject());
+    JSObject* referenceAsObject = jsCast<JSObject*>(targetReference);
+
+    ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>(callerInstance->owner<JSObject>()->vm()));
+    auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
+    Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
+    Wasm::Instance* calleeInstance = &wasmFunction->instance()->instance();
+
+    if (calleeInstance != callerInstance)
+        calleeInstance->setCachedStackLimit(callerInstance->cachedStackLimit());
+
+    ASSERT(function.signatureIndex == Wasm::SignatureInformation::get(CODE_BLOCK()->signature(signatureIndex)));
+    UNUSED_PARAM(signatureIndex);
+    WASM_CALL_RETURN(calleeInstance, function.entrypointLoadLocation->executableAddress(), WasmEntryPtrTag);
+}
+
+WASM_SLOW_PATH_DECL(call_ref)
+{
+    auto instruction = pc->as<WasmCallRef, WasmOpcodeTraits>();
+    JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
+    return doWasmCallRef(callFrame, instance, reference, instruction.m_signatureIndex);
+}
+
+WASM_SLOW_PATH_DECL(call_ref_no_tls)
+{
+    auto instruction = pc->as<WasmCallRefNoTls, WasmOpcodeTraits>();
+    JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
+    return doWasmCallRef(callFrame, instance, reference, instruction.m_signatureIndex);
 }
 
 WASM_SLOW_PATH_DECL(set_global_ref)

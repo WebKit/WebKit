@@ -189,7 +189,7 @@ JSValue createDOMException(JSGlobalObject& lexicalGlobalObject, Exception&& exce
 
 void propagateExceptionSlowPath(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, Exception&& exception)
 {
-    throwScope.assertNoException();
+    throwScope.assertNoExceptionExceptTermination();
     throwException(&lexicalGlobalObject, throwScope, createDOMException(lexicalGlobalObject, WTFMove(exception)));
 }
     
@@ -209,19 +209,19 @@ template<typename... StringTypes> static String makeArgumentTypeErrorMessage(uns
 
 void throwNotSupportedError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, NotSupportedError, message));
 }
 
 void throwInvalidStateError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, InvalidStateError, message));
 }
 
 void throwSecurityError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, const String& message)
 {
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, SecurityError, message));
 }
 
@@ -298,13 +298,13 @@ JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::JSGlobalObject& lexicalG
 
 void throwDOMSyntaxError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, ASCIILiteral message)
 {
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, SyntaxError, message));
 }
 
 void throwDataCloneError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope)
 {
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     throwException(&lexicalGlobalObject, scope, createDOMException(&lexicalGlobalObject, DataCloneError));
 }
 

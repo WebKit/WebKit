@@ -159,8 +159,6 @@ public:
     void fillUnsetProperties();
     void cullEmptyLayers();
 
-    static bool imagesIdentical(const FillLayer*, const FillLayer*);
-
     static FillAttachment initialFillAttachment(FillLayerType) { return FillAttachment::ScrollBackground; }
     static FillBox initialFillClip(FillLayerType) { return FillBox::Border; }
     static FillBox initialFillOrigin(FillLayerType type) { return type == FillLayerType::Background ? FillBox::Padding : FillBox::Border; }

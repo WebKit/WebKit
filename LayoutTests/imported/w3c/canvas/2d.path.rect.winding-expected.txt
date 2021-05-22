@@ -1,5 +1,0 @@
-2d.path.rect.winding
-Spec references: 2d.path.rect.subpath
-Actual output:
-
-Passed

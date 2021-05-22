@@ -48,6 +48,7 @@
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -163,7 +164,7 @@ SVGSMILElement::~SVGSMILElement()
 
 void SVGSMILElement::clearResourceReferences()
 {
-    document().accessSVGExtensions().removeAllTargetReferencesForElement(*this);
+    removeElementReference();
 }
 
 void SVGSMILElement::clearTarget()
@@ -191,13 +192,10 @@ void SVGSMILElement::buildPendingResource()
         target = WTFMove(result.element);
         id = WTFMove(result.identifier);
     }
-    SVGElement* svgTarget = is<SVGElement>(target) ? downcast<SVGElement>(target.get()) : nullptr;
-
-    if (svgTarget && !svgTarget->isConnected())
-        svgTarget = nullptr;
+    auto svgTarget = makeRefPtr(is<SVGElement>(target) && target->isConnected() ? downcast<SVGElement>(target.get()) : nullptr);
 
     if (svgTarget != targetElement())
-        setTargetElement(svgTarget);
+        setTargetElement(svgTarget.get());
 
     if (!svgTarget) {
         // Do not register as pending if we are already pending this resource.
@@ -208,11 +206,8 @@ void SVGSMILElement::buildPendingResource()
             document().accessSVGExtensions().addPendingResource(id, *this);
             ASSERT(hasPendingResources());
         }
-    } else {
-        // Register us with the target in the dependencies map. Any change of hrefElement
-        // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions().addElementReferencingTarget(*this, *svgTarget);
-    }
+    } else
+        svgTarget->addReferencingElement(*this);
 }
 
 inline QualifiedName SVGSMILElement::constructAttributeName() const
@@ -339,7 +334,7 @@ SMILTime SVGSMILElement::parseClockValue(const String& data)
 {
     if (data.isNull())
         return SMILTime::unresolved();
-    
+
     String parse = data.stripWhiteSpace();
 
     static MainThreadNeverDestroyed<const AtomString> indefiniteValue("indefinite", AtomString::ConstructFromLiteral);
@@ -350,27 +345,24 @@ SMILTime SVGSMILElement::parseClockValue(const String& data)
     bool ok;
     size_t doublePointOne = parse.find(':');
     size_t doublePointTwo = parse.find(':', doublePointOne + 1);
-    if (doublePointOne == 2 && doublePointTwo == 5 && parse.length() >= 8) { 
-        result += parse.substring(0, 2).toUIntStrict(&ok) * 60 * 60;
-        if (!ok)
+    if (doublePointOne == 2 && doublePointTwo == 5 && parse.length() >= 8) {
+        auto hour = parseInteger<uint8_t>(StringView { parse }.substring(0, 2));
+        auto minute = parseInteger<uint8_t>(StringView { parse }.substring(3, 2));
+        if (!hour || !minute)
             return SMILTime::unresolved();
-        result += parse.substring(3, 2).toUIntStrict(&ok) * 60;
-        if (!ok)
-            return SMILTime::unresolved();
-        result += parse.substring(6).toDouble(&ok);
+        result = *hour * 60 * 60 + *minute * 60 + parse.substring(6).toDouble(&ok);
     } else if (doublePointOne == 2 && doublePointTwo == notFound && parse.length() >= 5) { 
-        result += parse.substring(0, 2).toUIntStrict(&ok) * 60;
-        if (!ok)
+        auto minute = parseInteger<uint8_t>(StringView { parse }.substring(0, 2));
+        if (!minute)
             return SMILTime::unresolved();
-        result += parse.substring(3).toDouble(&ok);
+        result = *minute * 60 + parse.substring(3).toDouble(&ok);
     } else
         return parseOffsetValue(parse);
-
     if (!ok || !SMILTime(result).isFinite())
         return SMILTime::unresolved();
     return result;
 }
-    
+
 static void sortTimeList(Vector<SMILTimeWithOrigin>& timeList)
 {
     std::sort(timeList.begin(), timeList.end());
@@ -381,7 +373,6 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
     String parseString = value.stripWhiteSpace();
     
     double sign = 1.;
-    bool ok;
     size_t pos = parseString.find('+');
     if (pos == notFound) {
         pos = parseString.find('-');
@@ -418,12 +409,13 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
     Condition::Type type;
     int repeats = -1;
     if (nameString.startsWith("repeat(") && nameString.endsWith(')')) {
-        // FIXME: For repeat events we just need to add the data carrying TimeEvent class and 
-        // fire the events at appropiate times.
-        repeats = nameString.substring(7, nameString.length() - 8).toUIntStrict(&ok);
-        if (!ok)
+        // FIXME: For repeat events we just need to add the data carrying TimeEvent class and fire the events at appropiate times.
+        auto parsedRepeat = parseInteger<unsigned>(StringView { nameString }.substring(7, nameString.length() - 8));
+        if (!parsedRepeat)
             return false;
-        nameString = "repeat";
+        // FIXME: By assigning an unsigned to a signed, this can turn large integers into negative numbers.
+        repeats = *parsedRepeat;
+        nameString = "repeat"_s;
         type = Condition::EventBase;
     } else if (nameString == "begin" || nameString == "end") {
         if (baseID.isEmpty())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,20 +29,71 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "CryptoKeyRSA.h"
-#include "NotImplemented.h"
+#include "OpenSSLUtilities.h"
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoKeyRSA&, const Vector<uint8_t>&)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoKeyRSA& key, const Vector<uint8_t>& data)
 {
-    notImplemented();
-    return Exception { NotSupportedError };
+    const EVP_MD* md = digestAlgorithm(key.hashAlgorithmIdentifier());
+    if (!md)
+        return Exception { NotSupportedError };
+
+    Optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    if (!digest)
+        return Exception { OperationError };
+
+    auto ctx = EvpPKeyCtxPtr(EVP_PKEY_CTX_new(key.platformKey(), nullptr));
+    if (!ctx)
+        return Exception { OperationError };
+
+    if (EVP_PKEY_sign_init(ctx.get()) <= 0)
+        return Exception { OperationError };
+
+    if (EVP_PKEY_CTX_set_rsa_padding(ctx.get(), RSA_PKCS1_PADDING) <= 0)
+        return Exception { OperationError };
+
+    if (EVP_PKEY_CTX_set_signature_md(ctx.get(), md) <= 0)
+        return Exception { OperationError };
+
+    size_t signatureLen;
+    if (EVP_PKEY_sign(ctx.get(), nullptr, &signatureLen, digest->data(), digest->size()) <= 0)
+        return Exception { OperationError };
+
+    Vector<uint8_t> signature(signatureLen);
+    if (EVP_PKEY_sign(ctx.get(), signature.data(), &signatureLen, digest->data(), digest->size()) <= 0)
+        return Exception { OperationError };
+    signature.shrink(signatureLen);
+
+    return signature;
 }
 
-ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoKeyRSA&, const Vector<uint8_t>&, const Vector<uint8_t>&)
+ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoKeyRSA& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    notImplemented();
-    return Exception { NotSupportedError };
+    const EVP_MD* md = digestAlgorithm(key.hashAlgorithmIdentifier());
+    if (!md)
+        return Exception { NotSupportedError };
+
+    Optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    if (!digest)
+        return Exception { OperationError };
+
+    auto ctx = EvpPKeyCtxPtr(EVP_PKEY_CTX_new(key.platformKey(), nullptr));
+    if (!ctx)
+        return Exception { OperationError };
+
+    if (EVP_PKEY_verify_init(ctx.get()) <= 0)
+        return Exception { OperationError };
+
+    if (EVP_PKEY_CTX_set_rsa_padding(ctx.get(), RSA_PKCS1_PADDING) <= 0)
+        return Exception { OperationError };
+
+    if (EVP_PKEY_CTX_set_signature_md(ctx.get(), md) <= 0)
+        return Exception { OperationError };
+
+    int ret = EVP_PKEY_verify(ctx.get(), signature.data(), signature.size(), digest->data(), digest->size());
+
+    return ret == 1;
 }
 
 } // namespace WebCore

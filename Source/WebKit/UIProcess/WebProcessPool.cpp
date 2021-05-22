@@ -360,11 +360,6 @@ WebProcessPool::~WebProcessPool()
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 #endif
 
-#if ENABLE(GPU_PROCESS)
-    if (m_gpuProcess)
-        m_gpuProcess->replyToPendingMessages();
-#endif
-
     // Only remaining processes should be pre-warmed ones as other keep the process pool alive.
     while (!m_processes.isEmpty()) {
         auto& process = m_processes.first();
@@ -529,10 +524,19 @@ void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminatio
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, GPUProcessConnectionParameters&& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
+#if ENABLE(IPC_TESTING_API)
+    parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
+#endif
     ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = makeWeakPtr(*this), parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
-        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
-            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
-            ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, parameters, WTFMove(reply));
+        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
+            // Retry on the next RunLoop iteration because we may be inside the WebProcessPool destructor.
+            RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), parameters = WTFMove(parameters), reply = WTFMove(reply)] () mutable {
+                if (weakThis && webProcessProxy) {
+                    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
+                    ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, parameters, WTFMove(reply));
+                } else
+                    reply({ });
+            });
             return;
         }
         reply(connectionInfo);
@@ -750,7 +754,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
     String javaScriptConfigurationDirectory;
     if (!m_javaScriptConfigurationDirectory.isEmpty())
-        javaScriptConfigurationDirectory = m_javaScriptConfigurationDirectory;
+        javaScriptConfigurationDirectory = resolvePathForSandboxExtension(m_javaScriptConfigurationDirectory);
     else if (javaScriptConfigurationFileEnabled())
         javaScriptConfigurationDirectory = websiteDataStore.resolvedJavaScriptConfigurationDirectory();
 

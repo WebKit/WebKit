@@ -1,7 +1,0 @@
-2d.strokeRect.basic
-strokeRect works
-Spec references: 2d.strokeRect
-Actual output:
-Expected output:
-
-Passed

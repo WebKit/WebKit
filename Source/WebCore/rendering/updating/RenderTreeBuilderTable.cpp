@@ -265,6 +265,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Table::collapseAndDetachAnonymousNext
     if (!canCollapseNextSibling(*previousSibling, *nextSibling))
         return { };
     m_builder.moveAllChildren(*nextSibling, *previousSibling, RenderTreeBuilder::NormalizeAfterInsertion::No);
+    previousSibling->setChildrenInline(!previousSibling->firstInFlowChild() || previousSibling->firstInFlowChild()->isInline());
     return m_builder.detach(*parent, *nextSibling);
 }
 

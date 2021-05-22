@@ -478,7 +478,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
 
 Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
 {
-    if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents(target))
+    if (!shouldDispatchSimulatedMouseEvents(target))
         return { };
 
     // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
@@ -1396,16 +1396,16 @@ bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
 bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
 {
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
-    // Some sites (e.g., wowhead.com and vimeo.com) do not set element's styles properly when a video
+    // Some sites (e.g., vimeo.com) do not set element's styles properly when a video
     // returns to fullscreen from picture-in-picture. This quirk disables the "return to fullscreen
-    // from picture-in-picture" feature for those sites. We should remove the quirk once rdar://problem/73167861
-    // and rdar://problem/73167931 have been fixed.
+    // from picture-in-picture" feature for those sites. We should remove the quirk once
+    // rdar://problem/73167931 has been fixed.
     if (!needsQuirks())
         return false;
 
     if (!m_blocksReturnToFullscreenFromPictureInPictureQuirk) {
         auto domain = RegistrableDomain { m_document->topDocument().url() };
-        m_blocksReturnToFullscreenFromPictureInPictureQuirk = domain == "vimeo.com"_s || domain == "wowhead.com"_s;
+        m_blocksReturnToFullscreenFromPictureInPictureQuirk = domain == "vimeo.com"_s;
     }
 
     return *m_blocksReturnToFullscreenFromPictureInPictureQuirk;

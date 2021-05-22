@@ -96,6 +96,11 @@
 #endif
 }
 
+- (void)_didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point
+{
+    // For subclasses to override.
+}
+
 - (BOOL)_mayContainEditableElementsInRect:(CGRect)rect
 {
 #if ENABLE(EDITABLE_REGION)

@@ -834,6 +834,25 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
     m_pendingSyntheticClickPointerId = 0;
 }
 
+static bool isProbablyMeaningfulClick(Node& clickNode)
+{
+    auto frame = makeRefPtr(clickNode.document().frame());
+    if (!is<Element>(clickNode) || !clickNode.isConnected() || !frame)
+        return true;
+
+    if (is<HTMLBodyElement>(clickNode))
+        return false;
+
+    if (auto view = makeRefPtr(frame->mainFrame().view())) {
+        auto elementBounds = WebPage::rootViewBoundsForElement(downcast<Element>(clickNode));
+        auto unobscuredRect = view->unobscuredContentRect();
+        if (elementBounds.width() >= unobscuredRect.width() / 2 && elementBounds.height() >= unobscuredRect.height() / 2)
+            return false;
+    }
+
+    return true;
+}
+
 void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, SyntheticClickType syntheticClickType, WebCore::PointerID pointerId)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
@@ -852,6 +871,8 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
     bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
     bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
+
+    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = false;
 
     tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId));
     if (m_isClosed)
@@ -879,8 +900,13 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
+    if (!m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick && !isProbablyMeaningfulClick(nodeRespondingToClick))
+        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(roundedIntPoint(location)));
+
     if (!tapWasHandled || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
+
+    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = false;
     
     send(Messages::WebPageProxy::DidCompleteSyntheticClick());
 }
@@ -892,12 +918,18 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEvent::M
     Frame* frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
     IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
-    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
+    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()) {
+        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
-    else if (m_interactionNode == nodeRespondingToClick)
+    } else if (m_interactionNode == nodeRespondingToClick)
         completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::OneFingerTap);
     else
         handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers);
+}
+
+void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent()
+{
+    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = true;
 }
 
 void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID lastLayerTreeTransactionId)
@@ -922,13 +954,13 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
     nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 2, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::OneFingerTap));
 }
 
-void WebPage::requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&& completionHandler)
+void WebPage::requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&& completionHandler)
 {
-    FocusedElementInformation info;
+    Optional<FocusedElementInformation> information;
     if (m_focusedElement)
-        getFocusedElementInformation(info);
+        information = focusedElementInformation();
 
-    completionHandler(info);
+    completionHandler(information);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1094,7 +1126,9 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
     if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
+        auto adjustedIntPoint = roundedIntPoint(adjustedPoint);
+        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
         return;
     }
     sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick);
@@ -1169,7 +1203,10 @@ void WebPage::commitPotentialTapFailed()
         clearSelection();
 
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
-    send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
+
+    auto adjustedIntPoint = roundedIntPoint(m_potentialTapLocation);
+    send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+    send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
 }
 
 void WebPage::cancelPotentialTap()
@@ -1338,6 +1375,34 @@ static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const 
         constrainedPoint.setY(maxY);
                     
     return constrainedPoint;
+}
+
+static bool insideImageOverlay(const VisiblePosition& position)
+{
+    auto container = makeRefPtr(position.deepEquivalent().containerNode());
+    return container && HTMLElement::isInsideImageOverlay(*container);
+}
+
+static Optional<SimpleRange> expandForImageOverlay(const SimpleRange& range)
+{
+    VisiblePosition expandedStart(makeContainerOffsetPosition(&range.startContainer(), range.startOffset()));
+    VisiblePosition expandedEnd(makeContainerOffsetPosition(&range.endContainer(), range.endOffset()));
+
+    for (auto start = expandedStart; insideImageOverlay(start); start = start.previous()) {
+        if (auto container = makeRefPtr(start.deepEquivalent().containerNode()); is<Text>(container)) {
+            expandedStart = firstPositionInNode(container.get()).downstream();
+            break;
+        }
+    }
+
+    for (auto end = expandedEnd; insideImageOverlay(end); end = end.next()) {
+        if (auto container = makeRefPtr(end.deepEquivalent().containerNode()); is<Text>(container)) {
+            expandedEnd = lastPositionInNode(container.get()).upstream();
+            break;
+        }
+    }
+
+    return makeSimpleRange({ expandedStart, expandedEnd });
 }
 
 void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
@@ -1524,19 +1589,22 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
     if (baseIsStart) {
         if (result <= selectionStart)
             result = selectionStart.next();
-        else if (targetNode && selectionStart.deepEquivalent().treeScope() != &targetNode->treeScope())
-            result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), selectionStart.deepEquivalent().containerNode());
+        else if (auto containerNode = makeRefPtr(selectionStart.deepEquivalent().containerNode()); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
+            result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), containerNode.get());
 
         range = makeSimpleRange(selectionStart, result);
     } else {
         if (selectionEnd <= result)
             result = selectionEnd.previous();
-        else if (targetNode && selectionEnd.deepEquivalent().treeScope() != &targetNode->treeScope())
-            result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), selectionEnd.deepEquivalent().containerNode());
+        else if (auto containerNode = makeRefPtr(selectionEnd.deepEquivalent().containerNode()); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
+            result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), containerNode.get());
 
         range = makeSimpleRange(result, selectionEnd);
     }
     
+    if (range && HTMLElement::isInsideImageOverlay(*range))
+        return expandForImageOverlay(*range);
+
     return range;
 }
 
@@ -2520,6 +2588,21 @@ void WebPage::requestAutocorrectionContext()
     send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
 }
 
+void WebPage::prepareToRunModalJavaScriptDialog()
+{
+    if (!m_focusedElement)
+        return;
+
+    if (!m_focusedElement->hasEditableStyle() && !is<HTMLTextFormControlElement>(*m_focusedElement))
+        return;
+
+    // When a modal dialog is presented while an editable element is focused, UIKit will attempt to request a
+    // WebAutocorrectionContext, which triggers synchronous IPC back to the web process, resulting in deadlock.
+    // To avoid this deadlock, we preemptively compute and send autocorrection context data to the UI process,
+    // such that the UI process can immediately respond to UIKit without synchronous IPC to the web process.
+    send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
+}
+
 static HTMLAnchorElement* containingLinkAnchorElement(Element& element)
 {
     // FIXME: There is code in the drag controller that supports any link, even if it's not an HTMLAnchorElement. Why is this different?
@@ -3077,11 +3160,11 @@ void WebPage::focusNextFocusedElement(bool isForward, CompletionHandler<void()>&
     completionHandler();
 }
 
-void WebPage::getFocusedElementInformation(FocusedElementInformation& information)
+Optional<FocusedElementInformation> WebPage::focusedElementInformation()
 {
     RefPtr<Document> document = m_page->focusController().focusedOrMainFrame().document();
     if (!document || !document->view())
-        return;
+        return WTF::nullopt;
 
     auto focusedElement = m_focusedElement.copyRef();
     bool willLayout = document->view()->needsLayout();
@@ -3089,12 +3172,14 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
 
     // Layout may have detached the document or caused a change of focus.
     if (!document->view() || focusedElement != m_focusedElement)
-        return;
+        return WTF::nullopt;
 
     if (willLayout)
         sendEditorStateUpdate();
     else
         scheduleFullEditorStateUpdate();
+
+    FocusedElementInformation information;
 
     information.lastInteractionLocation = m_lastInteractionLocation;
     if (auto elementContext = contextForElement(*focusedElement))
@@ -3281,6 +3366,8 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     information.shouldAvoidResizingWhenInputViewBoundsChange = quirks.shouldAvoidResizingWhenInputViewBoundsChange();
     information.shouldAvoidScrollingWhenFocusedContentIsVisible = quirks.shouldAvoidScrollingWhenFocusedContentIsVisible();
     information.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation = quirks.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation();
+
+    return information;
 }
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)

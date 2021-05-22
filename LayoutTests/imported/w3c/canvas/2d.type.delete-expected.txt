@@ -1,6 +1,0 @@
-2d.type.delete
-window.CanvasRenderingContext2D is Configurable
-Spec references: context.2d.type
-Defined in "Web IDL" (draft)
-Actual output:
-Passed

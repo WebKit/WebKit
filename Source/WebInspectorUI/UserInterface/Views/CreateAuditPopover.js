@@ -86,13 +86,7 @@ WI.CreateAuditPopover = class CreateAuditPopover extends WI.Popover
 
     dismiss()
     {
-        const placeholderTestFunction = function() {
-            let result = {
-                level: "pass",
-            };
-            return result;
-        };
-        const placeholderTestFunctionString = WI.AuditTestCase.stringifyFunction(placeholderTestFunction, 8);
+        const placeholderTestFunctionString = WI.DefaultAudits.newAuditPlaceholder.toString();
 
         let type = this._typeSelectElement.value;
         let name = this._nameInputElement.value;

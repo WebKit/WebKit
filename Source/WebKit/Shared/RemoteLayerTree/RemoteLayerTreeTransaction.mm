@@ -590,6 +590,8 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
     encoder << m_themeColor;
     encoder << m_pageExtendedBackgroundColor;
+    encoder << m_sampledPageTopColor;
+
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
     encoder << m_maximumScaleFactor;
@@ -690,6 +692,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_pageExtendedBackgroundColor))
         return false;
 
+    if (!decoder.decode(result.m_sampledPageTopColor))
+        return false;
+
     if (!decoder.decode(result.m_pageScaleFactor))
         return false;
 
@@ -787,14 +792,24 @@ void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vec
 
 #if !defined(NDEBUG) || !LOG_DISABLED
 
+static const char* nameForBackingStoreType(RemoteLayerBackingStore::Type type)
+{
+    switch (type) {
+    case RemoteLayerBackingStore::Type::IOSurface:
+        return "IOSurface";
+    case RemoteLayerBackingStore::Type::Bitmap:
+        return "Bitmap";
+    }
+    return nullptr;
+}
+
 static TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
 {
     ts << backingStore.size();
     ts << " scale=" << backingStore.scale();
     if (backingStore.isOpaque())
         ts << " opaque";
-    if (backingStore.acceleratesDrawing())
-        ts << " accelerated";
+    ts << " " << nameForBackingStoreType(backingStore.type());
     return ts;
 }
 

@@ -28,9 +28,11 @@
 #if ENABLE(WEBXR)
 
 #include "PlatformXR.h"
+#include "ScriptWrappable.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
@@ -39,12 +41,16 @@ class WebXRInputSource;
 class XRInputSourceEvent;
 class WebXRSession;
 
-class WebXRInputSourceArray : public RefCounted<WebXRInputSourceArray> {
+class WebXRInputSourceArray final : public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSourceArray);
+    friend UniqueRef<WebXRInputSourceArray> WTF::makeUniqueRefWithoutFastMallocCheck<WebXRInputSourceArray, WebCore::WebXRSession&>(WebCore::WebXRSession&);
 public:
     using InputSourceList = Vector<PlatformXR::Device::FrameData::InputSource>;
-    static Ref<WebXRInputSourceArray> create(Ref<WebXRSession>&&);
+    static UniqueRef<WebXRInputSourceArray> create(WebXRSession&);
     ~WebXRInputSourceArray();
+
+    void ref();
+    void deref();
 
     unsigned length() const;
     WebXRInputSource* item(unsigned) const;
@@ -52,13 +58,16 @@ public:
     void clear();
     void update(double timestamp, const InputSourceList&);
 
+    // For GC reachablitiy.
+    WebXRSession* session() const { return &m_session; }
+
 private:
-    WebXRInputSourceArray(Ref<WebXRSession>&&);
+    WebXRInputSourceArray(WebXRSession&);
 
     void handleRemovedInputSources(const InputSourceList&, Vector<RefPtr<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
     void handleAddedOrUpdatedInputSources(double timestamp, const InputSourceList&, Vector<RefPtr<WebXRInputSource>>&, Vector<RefPtr<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
 
-    Ref<WebXRSession> m_session;
+    WebXRSession& m_session;
     Vector<Ref<WebXRInputSource>> m_inputSources;
 };
 

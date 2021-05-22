@@ -43,8 +43,6 @@ InjectedBundleController& InjectedBundleController::singleton()
 }
 
 InjectedBundleController::InjectedBundleController()
-    : m_bundle(0)
-    , m_currentTest(0)
 {
 }
 
@@ -61,11 +59,11 @@ void InjectedBundleController::initialize(WKBundleRef bundle, WKTypeRef initiali
         { 0, this },
         didCreatePage,
         willDestroyPage,
-        didInitializePageGroup,
+        nullptr,
         didReceiveMessage,
         didReceiveMessageToPage
     };
-    WKBundleSetClient(m_bundle, &client.base);
+    WKBundleSetClient(m_bundle.get(), &client.base);
 
     // Initialize the test from the "initializationUserData".
 
@@ -92,13 +90,6 @@ void InjectedBundleController::willDestroyPage(WKBundleRef bundle, WKBundlePageR
     InjectedBundleController* self = static_cast<InjectedBundleController*>(const_cast<void*>(clientInfo));
     assert(self->m_currentTest);
     self->m_currentTest->willDestroyPage(bundle, page);
-}
-
-void InjectedBundleController::didInitializePageGroup(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, const void* clientInfo)
-{
-    InjectedBundleController* self = static_cast<InjectedBundleController*>(const_cast<void*>(clientInfo));
-    assert(self->m_currentTest);
-    self->m_currentTest->didInitializePageGroup(bundle, pageGroup);
 }
 
 void InjectedBundleController::didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)

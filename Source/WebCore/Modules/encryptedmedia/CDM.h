@@ -34,7 +34,6 @@
 #include "MediaKeysRestrictions.h"
 #include "SharedBuffer.h"
 #include <wtf/Function.h>
-#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>

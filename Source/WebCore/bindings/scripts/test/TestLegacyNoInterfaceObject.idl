@@ -41,5 +41,5 @@
     static undefined staticOperation();
 
     const unsigned short CONSTANT1 = 1;
-    [Reflect=CONST_IMPL] const unsigned short CONSTANT2 = 2;
+    [ImplementedAs=CONST_IMPL] const unsigned short CONSTANT2 = 2;
 };

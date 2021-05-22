@@ -946,11 +946,11 @@ void WebChromeClient::triggerRenderingUpdate()
 
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode)
 {
-#if PLATFORM(IOS_FAMILY)
-    if (!DeprecatedGlobalSettings::avKitEnabled())
-        return false;
-#endif
+#if !PLATFORM(IOS_FAMILY) || HAVE(AVKIT)
     return true;
+#else
+    return false;
+#endif
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

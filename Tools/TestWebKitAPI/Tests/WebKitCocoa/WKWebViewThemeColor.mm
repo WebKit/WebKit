@@ -41,7 +41,7 @@
 constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
 constexpr CGFloat blueColorComponents[4] = { 0, 0, 1, 1 };
 
-TEST(WKWebViewThemeColor, MetaElementOnLoad)
+TEST(WKWebViewThemeColor, MetaElementValidNameAndColor)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     EXPECT_TRUE(![webView themeColor]);
@@ -51,22 +51,78 @@ TEST(WKWebViewThemeColor, MetaElementOnLoad)
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
     EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
-
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='not-theme-color' content='red'>"];
-
-    EXPECT_TRUE(![webView themeColor]);
 }
 
-TEST(WKWebViewThemeColor, MultipleMetaElements)
+TEST(WKWebViewThemeColor, MetaElementValidNameAndColorAndMedia)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     EXPECT_TRUE(![webView themeColor]);
 
-    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'><meta name='theme-color' content='blue'>"];
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red' media='screen'>"];
 
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-    auto blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
-    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+}
+
+TEST(WKWebViewThemeColor, MetaElementInvalidName)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='not-theme-color' content='blue'><meta name='theme-color' content='red'>"];
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+}
+
+TEST(WKWebViewThemeColor, MetaElementInvalidColor)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='invalid'><meta name='theme-color' content='red'>"];
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+}
+
+TEST(WKWebViewThemeColor, MetaElementInvalidMedia)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='blue' media='invalid'><meta name='theme-color' content='red' media='screen'>"];
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+}
+
+TEST(WKWebViewThemeColor, MetaElementMultipleValid)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<div><meta name='theme-color' content='red'></div><meta name='theme-color' content='blue'>"];
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+}
+
+TEST(WKWebViewThemeColor, MetaElementValidSubframe)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<iframe srcdoc=\"<meta name='theme-color' content='blue'>\"></iframe><meta name='theme-color' content='red'>"];
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
 }
 
 @interface WKWebViewThemeColorObserver : NSObject
@@ -105,8 +161,13 @@ TEST(WKWebViewThemeColor, MultipleMetaElements)
         return;
     }
 
-    if ([_state isEqualToString:@"before-content-change"]) {
-        _state = @"after-content-change";
+    if ([_state isEqualToString:@"before-content-change-invalid"]) {
+        _state = @"after-content-change-invalid";
+        return;
+    }
+
+    if ([_state isEqualToString:@"before-content-change-valid"]) {
+        _state = @"after-content-change-valid";
         return;
     }
 
@@ -117,6 +178,26 @@ TEST(WKWebViewThemeColor, MultipleMetaElements)
 
     if ([_state isEqualToString:@"before-name-change-theme-color"]) {
         _state = @"after-name-change-theme-color";
+        return;
+    }
+
+    if ([_state isEqualToString:@"before-invalid-media-added"]) {
+        _state = @"after-invalid-media-added";
+        return;
+    }
+
+    if ([_state isEqualToString:@"before-media-changed-valid"]) {
+        _state = @"after-media-changed-valid";
+        return;
+    }
+
+    if ([_state isEqualToString:@"before-media-state-changed"]) {
+        _state = @"after-media-state-changed";
+        return;
+    }
+
+    if ([_state isEqualToString:@"before-node-inserted"]) {
+        _state = @"after-node-inserted";
         return;
     }
 
@@ -146,10 +227,16 @@ TEST(WKWebViewThemeColor, KVO)
     EXPECT_NSSTRING_EQ("after-load", [themeColorObserver state]);
     EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
 
-    [themeColorObserver setState:@"before-content-change"];
+    [themeColorObserver setState:@"before-content-change-invalid"];
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').setAttribute('content', 'invalid')"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NSSTRING_EQ("after-content-change-invalid", [themeColorObserver state]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [themeColorObserver setState:@"before-content-change-valid"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').setAttribute('content', 'blue')"];
     [webView waitForNextPresentationUpdate];
-    EXPECT_NSSTRING_EQ("after-content-change", [themeColorObserver state]);
+    EXPECT_NSSTRING_EQ("after-content-change-valid", [themeColorObserver state]);
     EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
 
     [themeColorObserver setState:@"before-name-change-not-theme-color"];
@@ -163,6 +250,30 @@ TEST(WKWebViewThemeColor, KVO)
     [webView waitForNextPresentationUpdate];
     EXPECT_NSSTRING_EQ("after-name-change-theme-color", [themeColorObserver state]);
     EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
+
+    [themeColorObserver setState:@"before-invalid-media-added"];
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').setAttribute('media', 'invalid')"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NSSTRING_EQ("after-invalid-media-added", [themeColorObserver state]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [themeColorObserver setState:@"before-media-changed-valid"];
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').setAttribute('media', 'screen')"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NSSTRING_EQ("after-media-changed-valid", [themeColorObserver state]);
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
+
+    [themeColorObserver setState:@"before-media-state-changed"];
+    [webView setMediaType:@"print"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NSSTRING_EQ("after-media-state-changed", [themeColorObserver state]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    [themeColorObserver setState:@"before-node-inserted"];
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').insertAdjacentHTML('beforebegin', \"<meta name='theme-color' content='red'>\")"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NSSTRING_EQ("after-node-inserted", [themeColorObserver state]);
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
 
     [themeColorObserver setState:@"before-node-removed"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').remove()"];

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSMap.h>
+#include <JavaScriptCore/VMTrapsInlines.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlob
     if (!backingMap.isUndefined())
         return { false, *JSC::asObject(backingMap) };
 
+    JSC::DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     backingMap = JSC::JSMap::create(&lexicalGlobalObject, vm, lexicalGlobalObject.mapStructure());

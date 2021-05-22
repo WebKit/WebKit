@@ -40,6 +40,7 @@
 #include <memory>
 #include <utility>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h>
@@ -237,16 +238,16 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
                 // If the blank line is somewhere in the middle of the buffer, everything before is the header
                 headerFields = parseRFC822HeaderFields(postBuffer, location);
                 unsigned dataLength = postBufferSize - location;
-                
+
                 // Sometimes plugins like to set Content-Length themselves when they post,
                 // but WebFoundation does not like that. So we will remove the header
                 // and instead truncate the data to the requested length.
                 String contentLength = headerFields.get(HTTPHeaderName::ContentLength);
-                
+
                 if (!contentLength.isNull())
-                    dataLength = std::min(contentLength.toInt(), (int)dataLength);
+                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).valueOr(0), dataLength);
                 headerFields.remove(HTTPHeaderName::ContentLength);
-                
+
                 postBuffer += location;
                 postBufferSize = dataLength;
             }

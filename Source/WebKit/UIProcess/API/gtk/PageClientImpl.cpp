@@ -412,65 +412,8 @@ void PageClientImpl::beganExitFullScreen(const IntRect& /* initialFrame */, cons
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
-#if !USE(GTK4)
-    const GdkEvent* touchEvent = event.nativeEvent();
-    if (!touchEvent)
-        return;
-
-    GestureController& gestureController = webkitWebViewBaseGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-    if (wasEventHandled) {
-        gestureController.reset();
-        return;
-    }
-    wasEventHandled = gestureController.handleEvent(const_cast<GdkEvent*>(event.nativeEvent()));
-
     if (wasEventHandled)
-        return;
-
-    // Emulate pointer events if unhandled.
-    if (!touchEvent->touch.emulating_pointer)
-        return;
-
-    GUniquePtr<GdkEvent> pointerEvent;
-
-    if (touchEvent->type == GDK_TOUCH_UPDATE) {
-        pointerEvent.reset(gdk_event_new(GDK_MOTION_NOTIFY));
-        pointerEvent->motion.time = touchEvent->touch.time;
-        pointerEvent->motion.x = touchEvent->touch.x;
-        pointerEvent->motion.y = touchEvent->touch.y;
-        pointerEvent->motion.x_root = touchEvent->touch.x_root;
-        pointerEvent->motion.y_root = touchEvent->touch.y_root;
-        pointerEvent->motion.state = touchEvent->touch.state | GDK_BUTTON1_MASK;
-    } else {
-        switch (touchEvent->type) {
-        case GDK_TOUCH_CANCEL:
-            FALLTHROUGH;
-        case GDK_TOUCH_END:
-            pointerEvent.reset(gdk_event_new(GDK_BUTTON_RELEASE));
-            pointerEvent->button.state = touchEvent->touch.state | GDK_BUTTON1_MASK;
-            break;
-        case GDK_TOUCH_BEGIN:
-            pointerEvent.reset(gdk_event_new(GDK_BUTTON_PRESS));
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-
-        pointerEvent->button.button = 1;
-        pointerEvent->button.time = touchEvent->touch.time;
-        pointerEvent->button.x = touchEvent->touch.x;
-        pointerEvent->button.y = touchEvent->touch.y;
-        pointerEvent->button.x_root = touchEvent->touch.x_root;
-        pointerEvent->button.y_root = touchEvent->touch.y_root;
-    }
-
-    gdk_event_set_device(pointerEvent.get(), gdk_event_get_device(touchEvent));
-    gdk_event_set_source_device(pointerEvent.get(), gdk_event_get_source_device(touchEvent));
-    pointerEvent->any.window = GDK_WINDOW(g_object_ref(touchEvent->any.window));
-    pointerEvent->any.send_event = TRUE;
-
-    gtk_widget_event(m_viewWidget, pointerEvent.get());
-#endif
+        webkitWebViewBasePageGrabbedTouch(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
@@ -482,7 +425,12 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
 #if !USE(GTK4)
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     if (controller && controller->isSwipeGestureEnabled()) {
-        controller->wheelEventWasNotHandledByWebCore(&event.nativeEvent()->scroll);
+        double deltaX;
+        gdk_event_get_scroll_deltas(event.nativeEvent(), &deltaX, nullptr);
+        bool isEnd = gdk_event_is_scroll_stop_event(event.nativeEvent()) ? true : false;
+        int32_t eventTime = static_cast<int32_t>(gdk_event_get_time(event.nativeEvent()));
+        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = false, .isEnd = isEnd };
+        controller->wheelEventWasNotHandledByWebCore(&scrollData);
         return;
     }
 

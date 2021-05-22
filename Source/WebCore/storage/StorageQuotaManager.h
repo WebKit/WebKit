@@ -27,8 +27,6 @@
 
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 

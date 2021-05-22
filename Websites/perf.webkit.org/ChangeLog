@@ -1,3 +1,23 @@
+2021-05-07  Zhifei Fang  <zhifei_fang@apple.com>
+        
+        Add support for syncing repo with commit revision label.
+        https://bugs.webkit.org/show_bug.cgi?id=221982
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new syncing option reportRevisionIdentifier, which will let the script try to sync the commit revision identifier from the commit message.
+        Add new syncing option reportSVNRevision, which will let the script try to report SVN revision from a git-svn repo.
+
+        * tools/sync-commits.py:
+        (main):
+        (load_repository):
+        (GitRepository.__init__):
+        (GitRepository.fetch_next_commit):
+        (GitRepository._git_hash_to_svn_revision):
+        (GitRepository._svn_revision_to_git_hash):
+        (GitRepository._revision_from_tokens):
+        (GitRepository._fetch_all_hashes):
+
 2021-04-14  Zhifei Fang  <zhifei_fang@apple.com>
 
         Support Commit revision identifier in the Chart

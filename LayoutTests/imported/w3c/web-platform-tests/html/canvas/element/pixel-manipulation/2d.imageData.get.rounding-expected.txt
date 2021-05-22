@@ -2,5 +2,5 @@
 Test the handling of non-integer source coordinates in getImageData().
 Actual output:
 
-FAIL Test the handling of non-integer source coordinates in getImageData(). assert_true: imageData.width == width expected true got false
+PASS Test the handling of non-integer source coordinates in getImageData().
 

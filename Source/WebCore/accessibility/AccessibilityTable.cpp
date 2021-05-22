@@ -44,7 +44,6 @@
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
-
 #include <wtf/Deque.h>
 
 namespace WebCore {
@@ -153,11 +152,11 @@ bool AccessibilityTable::isDataTable() const
     
     // If the author has used ARIA to specify a valid column or row count, assume they
     // want us to treat the table as a data table.
-    int axColumnCount = getAttribute(aria_colcountAttr).toInt();
+    int axColumnCount = getIntegralAttribute(aria_colcountAttr);
     if (axColumnCount == -1 || axColumnCount > 0)
         return true;
 
-    int axRowCount = getAttribute(aria_rowcountAttr).toInt();
+    int axRowCount = getIntegralAttribute(aria_rowcountAttr);
     if (axRowCount == -1 || axRowCount > 0)
         return true;
 
@@ -234,16 +233,16 @@ bool AccessibilityTable::isDataTable() const
 
             // If the author has used ARIA to specify a valid column or row index, assume they want us
             // to treat the table as a data table.
-            int axColumnIndex =  cellElement->attributeWithoutSynchronization(aria_colindexAttr).toInt();
+            int axColumnIndex = cellElement->getIntegralAttribute(aria_colindexAttr);
             if (axColumnIndex >= 1)
                 return true;
 
-            int axRowIndex = cellElement->attributeWithoutSynchronization(aria_rowindexAttr).toInt();
+            int axRowIndex = cellElement->getIntegralAttribute(aria_rowindexAttr);
             if (axRowIndex >= 1)
                 return true;
 
             if (auto cellParentElement = cellElement->parentElement()) {
-                axRowIndex = cellParentElement->attributeWithoutSynchronization(aria_rowindexAttr).toInt();
+                axRowIndex = cellParentElement->getIntegralAttribute(aria_rowindexAttr);
                 if (axRowIndex >= 1)
                     return true;
             }
@@ -251,11 +250,11 @@ bool AccessibilityTable::isDataTable() const
             // If the author has used ARIA to specify a column or row span, we're supposed to ignore
             // the value for the purposes of exposing the span. But assume they want us to treat the
             // table as a data table.
-            int axColumnSpan = cellElement->attributeWithoutSynchronization(aria_colspanAttr).toInt();
+            int axColumnSpan = cellElement->getIntegralAttribute(aria_colspanAttr);
             if (axColumnSpan >= 1)
                 return true;
 
-            int axRowSpan = cellElement->attributeWithoutSynchronization(aria_rowspanAttr).toInt();
+            int axRowSpan = cellElement->getIntegralAttribute(aria_rowspanAttr);
             if (axRowSpan >= 1)
                 return true;
 
@@ -707,8 +706,7 @@ String AccessibilityTable::title() const
 
 int AccessibilityTable::axColumnCount() const
 {
-    const AtomString& colCountValue = getAttribute(aria_colcountAttr);
-    int colCountInt = colCountValue.toInt();
+    int colCountInt = getIntegralAttribute(aria_colcountAttr);
     // The ARIA spec states, "Authors must set the value of aria-colcount to an integer equal to the
     // number of columns in the full table. If the total number of columns is unknown, authors must
     // set the value of aria-colcount to -1 to indicate that the value should not be calculated by
@@ -721,8 +719,7 @@ int AccessibilityTable::axColumnCount() const
 
 int AccessibilityTable::axRowCount() const
 {
-    const AtomString& rowCountValue = getAttribute(aria_rowcountAttr);
-    int rowCountInt = rowCountValue.toInt();
+    int rowCountInt = getIntegralAttribute(aria_rowcountAttr);
     // The ARIA spec states, "Authors must set the value of aria-rowcount to an integer equal to the
     // number of rows in the full table. If the total number of rows is unknown, authors must set
     // the value of aria-rowcount to -1 to indicate that the value should not be calculated by the

@@ -27,7 +27,6 @@
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGPropertyOwnerRegistry.h"
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

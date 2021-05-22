@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "HitTestRequest.h"
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
 #include "TextFlags.h"
@@ -29,7 +30,6 @@
 
 namespace WebCore {
 
-class HitTestRequest;
 class HitTestResult;
 class RootInlineBox;
 
@@ -230,7 +230,16 @@ public:
     void invalidateParentChildList();
 #endif
 
-    bool visibleToHitTesting() const { return renderer().style().visibility() == Visibility::Visible && renderer().style().pointerEvents() != PointerEvents::None; }
+    bool visibleToHitTesting(Optional<HitTestRequest> hitTestRequest = WTF::nullopt) const
+    {
+        if (renderer().style().visibility() != Visibility::Visible)
+            return false;
+
+        if ((!hitTestRequest || !hitTestRequest->ignoreCSSPointerEventsProperty()) && renderer().style().pointerEvents() == PointerEvents::None)
+            return false;
+
+        return true;
+    }
 
     const RenderStyle& lineStyle() const { return m_bitfields.firstLine() ? renderer().firstLineStyle() : renderer().style(); }
     

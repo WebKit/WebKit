@@ -24,7 +24,7 @@
 #include "MediaQueryEvaluator.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
-#include "StyleScope.h"
+#include "StyleScopeOrdinal.h"
 #include <memory>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

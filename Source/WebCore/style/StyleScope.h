@@ -27,9 +27,10 @@
 
 #pragma once
 
-#include "Timer.h"
+#include "StyleScopeOrdinal.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
@@ -52,15 +53,6 @@ class TreeScope;
 namespace Style {
 
 class Resolver;
-
-// This is used to identify style scopes that can affect an element.
-// Scopes are in tree-of-trees order. Styles from earlier scopes win over later ones (modulo !important).
-enum class ScopeOrdinal : int {
-    ContainingHost = -1, // ::part rules and author-exposed UA pseudo classes from the host tree scope.
-    Element = 0, // Normal rules in the same tree where the element is.
-    FirstSlot = 1, // ::slotted rules in the parent's shadow tree. Values greater than FirstSlot indicate subsequent slots in the chain.
-    Shadow = std::numeric_limits<int>::max(), // :host rules in element's own shadow tree.
-};
 
 class Scope {
     WTF_MAKE_FAST_ALLOCATED;
@@ -119,7 +111,7 @@ public:
 #endif
 
     WEBCORE_EXPORT Resolver& resolver();
-    Resolver* resolverIfExists();
+    Resolver* resolverIfExists() { return m_resolver.get(); }
     void clearResolver();
     void releaseMemory();
 
@@ -132,7 +124,8 @@ public:
     static Scope* forOrdinal(Element&, ScopeOrdinal);
 
 private:
-    bool shouldUseSharedUserAgentShadowTreeStyleResolver() const;
+    Scope& documentScope();
+    bool isForUserAgentShadowTree() const;
 
     void didRemovePendingStylesheet();
 
@@ -160,6 +153,12 @@ private:
     void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
 
     void updateResolver(Vector<RefPtr<CSSStyleSheet>>&, ResolverUpdateType);
+    void createDocumentResolver();
+    void createOrFindSharedShadowTreeResolver();
+    void unshareShadowTreeResolverBeforeMutation();
+
+    using ResolverSharingKey = std::tuple<Vector<RefPtr<StyleSheetContents>>, bool, bool>;
+    ResolverSharingKey makeResolverSharingKey();
 
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
@@ -188,6 +187,9 @@ private:
     bool m_hasDescendantWithPendingUpdate { false };
     bool m_usesStyleBasedEditability { false };
     bool m_isUpdatingStyleResolver { false };
+
+    // FIXME: These (and some things above) are only relevant for the root scope.
+    HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 };
 
 inline bool Scope::hasPendingSheets() const
@@ -211,12 +213,6 @@ inline void Scope::flushPendingUpdate()
         flushPendingDescendantUpdates();
     if (m_pendingUpdate)
         flushPendingSelfUpdate();
-}
-
-inline ScopeOrdinal& operator++(ScopeOrdinal& ordinal)
-{
-    ASSERT(ordinal < ScopeOrdinal::Shadow);
-    return ordinal = static_cast<ScopeOrdinal>(static_cast<int>(ordinal) + 1);
 }
 
 }

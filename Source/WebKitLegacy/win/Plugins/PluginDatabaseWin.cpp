@@ -31,6 +31,7 @@
 #include <WebCore/Frame.h>
 #include <wtf/URL.h>
 #include <wtf/WindowsExtras.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -133,10 +134,7 @@ static inline Vector<int> parseVersionString(const String& versionString)
         for (endPos = startPos; endPos < versionString.length(); ++endPos)
             if (versionString[endPos] == '.' || versionString[endPos] == '_')
                 break;
-
-        int versionComponent = versionString.substring(startPos, endPos - startPos).toInt();
-        version.append(versionComponent);
-
+        version.append(parseIntegerAllowingTrailingJunk<int>(StringView { versionString }.substring(startPos, endPos - startPos)).valueOr(0));
         startPos = endPos + 1;
     }
 

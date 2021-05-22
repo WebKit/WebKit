@@ -65,13 +65,7 @@ void RealtimeIncomingAudioSourceLibWebRTC::OnData(const void* audioData, int, in
     gst_audio_info_set_format(&info, format, sampleRate, numberOfChannels, NULL);
 
     auto bufferSize = GST_AUDIO_INFO_BPF(&info) * numberOfFrames;
-    gpointer bufferData = fastMalloc(bufferSize);
-    if (muted())
-        webkitGstAudioFormatFillSilence(info.finfo, bufferData, bufferSize);
-    else
-        memcpy(bufferData, audioData, bufferSize);
-
-    auto buffer = adoptGRef(gstBufferNewWrappedFast(bufferData, bufferSize));
+    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, const_cast<gpointer>(audioData), bufferSize, 0, bufferSize, nullptr, nullptr));
     auto caps = adoptGRef(gst_audio_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     GStreamerAudioData data(WTFMove(sample), info);

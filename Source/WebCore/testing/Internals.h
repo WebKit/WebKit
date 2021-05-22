@@ -539,8 +539,11 @@ public:
     void setFullscreenAutoHideDuration(double);
     void setFullscreenControlsHidden(bool);
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+#if ENABLE(VIDEO)
     bool isChangingPresentationMode(HTMLVideoElement&) const;
+#endif
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     void setMockVideoPresentationModeEnabled(bool);
 #endif
 
@@ -971,14 +974,18 @@ public:
 
     bool capsLockIsOn();
         
-    using HEVCParameterSet = WebCore::HEVCParameterSet;
-    Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString);
+    using HEVCParameterSet = WebCore::HEVCParameters;
+    Optional<HEVCParameterSet> parseHEVCCodecParameters(StringView);
 
-    using DoViParameterSet = WebCore::DoViParameterSet;
-    Optional<DoViParameterSet> parseDoViCodecParameters(const String& codecString);
+    struct DoViParameterSet {
+        String codecName;
+        uint16_t bitstreamProfileID;
+        uint16_t bitstreamLevelID;
+    };
+    Optional<DoViParameterSet> parseDoViCodecParameters(StringView);
 
     using VPCodecConfigurationRecord = WebCore::VPCodecConfigurationRecord;
-    Optional<VPCodecConfigurationRecord> parseVPCodecParameters(const String& codecString);
+    Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView);
 
     struct CookieData {
         String name;
@@ -1100,6 +1107,7 @@ public:
     bool destroySleepDisabler(unsigned identifier);
         
 #if ENABLE(APP_HIGHLIGHTS)
+    Vector<String> appHighlightContextMenuItemTitles() const;
     unsigned numberOfAppHighlights();
 #endif
 
@@ -1148,6 +1156,8 @@ public:
     bool rangeIntersectsRange(const AbstractRange&, const AbstractRange&, TreeType);
 
     void systemBeep();
+
+    String dumpStyleResolvers();
 
 private:
     explicit Internals(Document&);

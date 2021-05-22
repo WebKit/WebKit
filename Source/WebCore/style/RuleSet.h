@@ -130,7 +130,7 @@ public:
     const RuleDataVector* shadowPseudoElementRules(const AtomString& key) const { return m_shadowPseudoElementRules.get(key); }
     const RuleDataVector* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
 #if ENABLE(VIDEO)
-    const RuleDataVector* cuePseudoRules() const { return &m_cuePseudoRules; }
+    const RuleDataVector& cuePseudoRules() const { return m_cuePseudoRules; }
 #endif
     const RuleDataVector& hostPseudoClassRules() const { return m_hostPseudoClassRules; }
     const RuleDataVector& slottedPseudoElementRules() const { return m_slottedPseudoElementRules; }
@@ -142,7 +142,7 @@ public:
 
     unsigned ruleCount() const { return m_ruleCount; }
 
-    bool hasShadowPseudoElementRules() const;
+    bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
 private:

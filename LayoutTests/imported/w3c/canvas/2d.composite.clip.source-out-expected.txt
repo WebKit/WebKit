@@ -1,7 +1,0 @@
-2d.composite.clip.source-out
-fill() does not affect pixels outside the clip region.
-Spec references: 2d.composite.source-out
-Actual output:
-Expected output:
-
-Passed

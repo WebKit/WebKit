@@ -1,6 +1,0 @@
-2d.path.closePath.empty
-Spec references: 2d.path.closePath.empty
-Actual output:
-Expected output:
-
-Passed

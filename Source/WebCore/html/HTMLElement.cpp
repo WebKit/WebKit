@@ -1339,6 +1339,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
     static MainThreadNeverDestroyed<const AtomString> imageOverlayLineClass("image-overlay-line", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
 
+    bool hasUserSelectNone = renderer() && renderer()->style().userSelect() == UserSelect::None;
     IntSize containerSize { offsetWidth(), offsetHeight() };
     for (auto& line : result.lines) {
         auto lineQuad = line.normalizedQuad;
@@ -1383,11 +1384,12 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
             if (child.normalizedQuad.isEmpty())
                 continue;
 
-            constexpr float horizontalMarginToMinimizeSelectionGaps = 0.125;
-            float horizontalOffset = -horizontalMarginToMinimizeSelectionGaps;
-            float horizontalExtent = horizontalMarginToMinimizeSelectionGaps;
+            bool lineHasOneChild = line.children.size() == 1;
+            float horizontalMarginToMinimizeSelectionGaps = lineHasOneChild ? 0 : 0.125;
+            float horizontalOffset = lineHasOneChild ? 0 : -horizontalMarginToMinimizeSelectionGaps;
+            float horizontalExtent = lineHasOneChild ? 0 : horizontalMarginToMinimizeSelectionGaps;
 
-            if (line.children.size() == 1) {
+            if (lineHasOneChild) {
                 horizontalOffset += offsetsAlongHorizontalAxis[childIndex].begin();
                 horizontalExtent += offsetsAlongHorizontalAxis[childIndex].end();
             } else if (!childIndex) {
@@ -1431,6 +1433,9 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
                 (targetSize.height() - sizeBeforeTransform.height()) / 2, "px) "_s,
                 "scale("_s, targetSize.width() / sizeBeforeTransform.width(), ", "_s, targetSize.height() / sizeBeforeTransform.height(), ") "_s
             ));
+
+            if (!hasUserSelectNone || document().isImageDocument())
+                textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueAll);
         }
 
         lineContainer->appendChild(HTMLBRElement::create(document()));

@@ -1,4 +1,0 @@
-2d.composite.operation.get
-Spec references: 2d.composite.operation
-Actual output:
-Passed

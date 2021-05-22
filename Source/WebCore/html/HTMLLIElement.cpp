@@ -117,13 +117,10 @@ void HTMLLIElement::didAttachRenderers()
 inline void HTMLLIElement::parseValue(const AtomString& value)
 {
     ASSERT(renderer());
-
-    bool valueOK;
-    int requestedValue = value.toInt(&valueOK);
-    if (valueOK)
-        downcast<RenderListItem>(*renderer()).setExplicitValue(requestedValue);
-    else
-        downcast<RenderListItem>(*renderer()).setExplicitValue(WTF::nullopt);
+    Optional<int> explicitValue;
+    if (auto parsedValue = parseHTMLInteger(value))
+        explicitValue = *parsedValue;
+    downcast<RenderListItem>(*renderer()).setExplicitValue(explicitValue);
 }
 
 }

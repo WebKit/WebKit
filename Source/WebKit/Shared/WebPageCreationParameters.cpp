@@ -275,8 +275,13 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.mediaVolume))
         return WTF::nullopt;
-    if (!decoder.decode(parameters.muted))
+
+    Optional<MediaProducer::MutedStateFlags> mutedStateFlags;
+    decoder >> mutedStateFlags;
+    if (!mutedStateFlags)
         return WTF::nullopt;
+    parameters.muted = *mutedStateFlags;
+
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
         return WTF::nullopt;
     if (!decoder.decode(parameters.mediaPlaybackIsSuspended))

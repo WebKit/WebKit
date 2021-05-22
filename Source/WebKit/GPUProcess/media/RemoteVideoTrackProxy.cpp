@@ -81,8 +81,11 @@ void RemoteVideoTrackProxy::willRemove()
     ASSERT_NOT_REACHED();
 }
 
-void RemoteVideoTrackProxy::selectedChanged(bool)
+void RemoteVideoTrackProxy::selectedChanged(bool selected)
 {
+    if (m_selected == selected)
+        return;
+    m_selected = selected;
     configurationChanged();
 }
 

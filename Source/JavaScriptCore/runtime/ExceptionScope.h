@@ -54,6 +54,8 @@ public:
 
     ALWAYS_INLINE void assertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
+    ALWAYS_INLINE void assertNoExceptionExceptTermination() { RELEASE_ASSERT_WITH_MESSAGE(!exception() || m_vm.hasPendingTerminationException(), "%s", unexpectedExceptionMessage().data()); }
+    ALWAYS_INLINE void releaseAssertNoExceptionExceptTermination() { RELEASE_ASSERT_WITH_MESSAGE(!exception() || m_vm.hasPendingTerminationException(), "%s", unexpectedExceptionMessage().data()); }
 
 #if ASAN_ENABLED || ENABLE(C_LOOP)
     const void* stackPosition() const {  return m_location.stackPosition; }
@@ -88,6 +90,8 @@ public:
 
     ALWAYS_INLINE void assertNoException() { ASSERT(!exception()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT(!exception()); }
+    ALWAYS_INLINE void assertNoExceptionExceptTermination() { ASSERT(!exception() || m_vm.hasPendingTerminationException()); }
+    ALWAYS_INLINE void releaseAssertNoExceptionExceptTermination() { RELEASE_ASSERT(!exception() || m_vm.hasPendingTerminationException()); }
 
 protected:
     ALWAYS_INLINE ExceptionScope(VM& vm)

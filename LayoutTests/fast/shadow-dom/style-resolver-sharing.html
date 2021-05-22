@@ -1,0 +1,65 @@
+Verify that shadow roots with identical styles share style resolvers (have equal identifier below).
+<input></input>
+<textarea></textarea>
+<div id=a></div>
+<div id=b></div>
+<div id=c></div>
+<div id=d></div>
+<div id=e></div>
+<div id=f></div>
+<div id=g></div>
+<div id=h></div>
+<div id=i></div>
+
+<pre id=log></pre>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function attachShadowWithStyle(id, style)
+{
+    const element = document.querySelector("#" + id);
+    const shadow = element.attachShadow({ mode: "open" });
+    shadow.innerHTML = `
+        <style>${ style }</style>
+        <div>${ id }</div>
+    `;
+}
+
+attachShadowWithStyle("a", "");
+attachShadowWithStyle("b", "");
+attachShadowWithStyle("c", "");
+attachShadowWithStyle("d", "");
+attachShadowWithStyle("e", "div { color: green }");
+attachShadowWithStyle("f", "div { color: green }");
+attachShadowWithStyle("g", "div { color: green }");
+attachShadowWithStyle("h", "div { color: green }");
+attachShadowWithStyle("i", "div { color: green }");
+
+if (window.internals) {
+    log.textContent += internals.dumpStyleResolvers();
+    log.textContent += "\nAfter style mutation\n"
+}
+
+c.shadowRoot.querySelector("style").textContent = "div { color: green }";
+
+{
+    const styleElement = document.createElement("style");
+    styleElement.textContent = "div { color: green }";
+    d.shadowRoot.appendChild(styleElement);
+}
+{
+    const styleElement = document.createElement("style");
+    styleElement.textContent = "div { color: blue }";
+    e.shadowRoot.appendChild(styleElement);
+}
+
+f.shadowRoot.querySelector("style").sheet.addRule("div", "color: blue");
+g.shadowRoot.querySelector("style").textContent = "";
+h.shadowRoot.querySelector("style").remove();
+
+if (window.internals)
+    log.textContent += internals.dumpStyleResolvers();
+
+</script>

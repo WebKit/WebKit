@@ -40,6 +40,7 @@
 #include "MarkedBlockSet.h"
 #include "NativeExecutable.h"
 #include "VM.h"
+#include "VMTrapsInlines.h"
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
@@ -380,6 +381,8 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
                 llintPC = removeCodePtrTag(MachineContext::llintInstructionPointer(registers));
                 assertIsNotTagged(machinePC);
             }
+
+            bool shouldAppendTopFrameAsCCode = false;
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761
             if (ExecutableAllocator::singleton().isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
@@ -396,6 +399,8 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
                 // We resort to topCallFrame to see if we can get anything
                 // useful. We usually get here when we're executing C code.
                 callFrame = m_vm.topCallFrame;
+                if (Options::collectExtraSamplingProfilerData() && !Options::sampleCCode())
+                    shouldAppendTopFrameAsCCode = true;
             }
 
             size_t walkSize;
@@ -422,7 +427,9 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
                 if (sReportStats)
                     sNumTotalStackTraces++;
                 Vector<UnprocessedStackFrame> stackTrace;
-                stackTrace.reserveInitialCapacity(walkSize);
+                stackTrace.reserveInitialCapacity(walkSize + !!shouldAppendTopFrameAsCCode);
+                if (shouldAppendTopFrameAsCCode)
+                    stackTrace.uncheckedAppend(UnprocessedStackFrame { machinePC });
                 for (size_t i = 0; i < walkSize; i++) {
                     UnprocessedStackFrame frame = m_currentFrames[i];
                     stackTrace.uncheckedAppend(frame);
@@ -464,7 +471,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
         StackTrace& stackTrace = m_stackTraces.last();
         stackTrace.timestamp = unprocessedStackTrace.timestamp;
 
-        auto populateCodeLocation = [] (CodeBlock* codeBlock, BytecodeIndex bytecodeIndex, StackFrame::CodeLocation& location) {
+        auto populateCodeLocation = [] (CodeBlock* codeBlock, JITType jitType, BytecodeIndex bytecodeIndex, StackFrame::CodeLocation& location) {
             if (bytecodeIndex.offset() < codeBlock->instructionsSize()) {
                 int divot;
                 int startOffset;
@@ -473,16 +480,15 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
                     location.lineNumber, location.columnNumber);
                 location.bytecodeIndex = bytecodeIndex;
             }
-            if (Options::collectSamplingProfilerDataForJSCShell()) {
+            if (codeBlock->hasHash())
                 location.codeBlockHash = codeBlock->hash();
-                location.jitType = codeBlock->jitType();
-            }
+            location.jitType = jitType;
         };
 
-        auto appendCodeBlock = [&] (CodeBlock* codeBlock, BytecodeIndex bytecodeIndex) {
+        auto appendCodeBlock = [&] (CodeBlock* codeBlock, JITType jitType, BytecodeIndex bytecodeIndex) {
             stackTrace.frames.append(StackFrame(codeBlock->ownerExecutable()));
             m_liveCellPointers.add(codeBlock->ownerExecutable());
-            populateCodeLocation(codeBlock, bytecodeIndex, stackTrace.frames.last().semanticLocation);
+            populateCodeLocation(codeBlock, jitType, bytecodeIndex, stackTrace.frames.last().semanticLocation);
         };
 
         auto appendEmptyFrame = [&] {
@@ -560,10 +566,10 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
             origin.walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
                 machineOrigin = codeOrigin;
                 auto* inlineCallFrame = codeOrigin.inlineCallFrame();
-                appendCodeBlock(inlineCallFrame ? inlineCallFrame->baselineCodeBlock.get() : machineCodeBlock, codeOrigin.bytecodeIndex());
+                appendCodeBlock(inlineCallFrame ? inlineCallFrame->baselineCodeBlock.get() : machineCodeBlock, machineCodeBlock->jitType(), codeOrigin.bytecodeIndex());
             });
 
-            if (Options::collectSamplingProfilerDataForJSCShell()) {
+            if (Options::collectExtraSamplingProfilerData()) {
                 RELEASE_ASSERT(machineOrigin.isSet());
                 RELEASE_ASSERT(!machineOrigin.inlineCallFrame());
 
@@ -599,7 +605,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
 
                     UNUSED_PARAM(bytecodeIndex); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
 
-                    appendCodeBlock(topCodeBlock, bytecodeIndex);
+                    appendCodeBlock(topCodeBlock, topCodeBlock->jitType(), bytecodeIndex);
                     storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0]);
                     startIndex = 1;
                 }
@@ -621,7 +627,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
                 CallSiteIndex callSiteIndex = unprocessedStackFrame.callSiteIndex;
 
                 auto appendCodeBlockNoInlining = [&] {
-                    appendCodeBlock(codeBlock, tryGetBytecodeIndex(callSiteIndex.bits(), codeBlock));
+                    appendCodeBlock(codeBlock, codeBlock->jitType(), tryGetBytecodeIndex(callSiteIndex.bits(), codeBlock));
                 };
 
 #if ENABLE(DFG_JIT)
@@ -629,7 +635,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
                     if (codeBlock->canGetCodeOrigin(callSiteIndex))
                         appendCodeOrigin(codeBlock, codeBlock->codeOrigin(callSiteIndex));
                     else
-                        appendCodeBlock(codeBlock, BytecodeIndex());
+                        appendCodeBlock(codeBlock, codeBlock->jitType(), BytecodeIndex());
                 } else
                     appendCodeBlockNoInlining();
 #else
@@ -729,6 +735,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
     if (!callee)
         return String();
 
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSGlobalObject* globalObject = callee->globalObject(vm);
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
@@ -762,7 +769,6 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
     }
 
     switch (frameType) {
-    case FrameType::Unknown:
     case FrameType::C:
 #if HAVE(DLADDR)
         if (frameType == FrameType::C) {
@@ -772,6 +778,8 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
             WTF::dataLog("couldn't get a name");
         }
 #endif
+        return "(unknown C PC)"_s;
+    case FrameType::Unknown:
         return "(unknown)"_s;
 
     case FrameType::Host:
@@ -1090,6 +1098,32 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 
     size_t totalSamples = 0;
     HashMap<String, size_t> bytecodeCounts;
+    HashMap<String, size_t> tierCounts;
+
+    String llint = "LLInt"_s;
+    String baseline = "Baseline"_s;
+    String dfg = "DFG"_s;
+    String ftl = "FTL"_s;
+    String builtin = "js builtin"_s;
+    String wasm = "Wasm"_s;
+    String host = "Host"_s;
+    String cpp = "C/C++"_s;
+    String unknownFrame = "Unknown Frame"_s;
+    String unknownExecutable = "Unknown Executable"_s;
+
+    auto forEachTier = [&] (auto func) {
+        func(llint);
+        func(baseline);
+        func(dfg);
+        func(ftl);
+        func(builtin);
+        func(wasm);
+        func(host);
+        func(cpp);
+        func(unknownFrame);
+        func(unknownExecutable);
+    };
+
     for (StackTrace& stackTrace : m_stackTraces) {
         if (!stackTrace.frames.size())
             continue;
@@ -1125,6 +1159,57 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
                 machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, WTF::nullopt));
         }
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
+        
+        {
+            String tierName;
+            switch (frame.frameType) {
+            case SamplingProfiler::FrameType::Executable:
+                switch (frame.semanticLocation.jitType) {
+                case JITType::HostCallThunk:
+                    tierName = host;
+                    break;
+                case JITType::InterpreterThunk:
+                    tierName = llint;
+                    break;
+                case JITType::BaselineJIT:
+                    tierName = baseline;
+                    break;
+                case JITType::DFGJIT:
+                    tierName = dfg;
+                    break;
+                case JITType::FTLJIT:
+                    tierName = ftl;
+                    break;
+                default:
+                    tierName = unknownExecutable;
+                    break;
+                }
+
+                if (frame.executable) {
+                    if (auto* executable = jsDynamicCast<FunctionExecutable*>(m_vm, frame.executable)) {
+                        if (executable->isBuiltinFunction())
+                            tierCounts.add(builtin, 0).iterator->value++;
+                    }
+                }
+
+                break;
+            case SamplingProfiler::FrameType::Wasm:
+                tierName = wasm;
+                break;
+            case SamplingProfiler::FrameType::Host:
+                tierName = host;
+                break;
+            case SamplingProfiler::FrameType::C:
+                tierName = cpp;
+                break;
+            case SamplingProfiler::FrameType::Unknown:
+                tierName = unknownFrame;
+                break;
+            }
+
+            tierCounts.add(tierName, 0).iterator->value++;
+        }
+         
         totalSamples++;
     }
 
@@ -1143,7 +1228,27 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     };
 
     if (Options::samplingProfilerTopBytecodesCount()) {
-        out.println("\n\nSampling rate: ", m_timingInterval.microseconds(), " microseconds. Total samples: ", totalSamples);
+        out.println("\n\nSampling rate: ", m_timingInterval.microseconds(), " microseconds. Total samples: ", totalSamples, "\n");
+
+        out.println("Tier breakdown:");
+        out.println("-----------------------------------");
+        unsigned maxTierNameLength = 0;
+        forEachTier([&] (String tier) {
+            maxTierNameLength = std::max(maxTierNameLength, tier.length());
+        });
+        auto printTier = [&] (String tier) {
+            size_t count = tierCounts.get(tier);
+            if (!count && (tier == unknownFrame || tier == unknownExecutable))
+                return;
+            out.print(tier, ": ");
+            for (unsigned i = 0; i < maxTierNameLength + 2 - tier.length(); ++i)
+                out.print(" ");
+            out.printf("%6zu ", count);
+            out.println(" (", (static_cast<double>(count) / static_cast<double>(totalSamples)) * 100, "%)");
+        };
+        forEachTier(printTier);
+        out.println("\n");
+
         out.println("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>");
         for (size_t i = 0; i < Options::samplingProfilerTopBytecodesCount(); i++) {
             auto pair = takeMax();

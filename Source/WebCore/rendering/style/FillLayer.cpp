@@ -396,19 +396,6 @@ bool FillLayer::hasFixedImage() const
     return false;
 }
 
-bool FillLayer::imagesIdentical(const FillLayer* layer1, const FillLayer* layer2)
-{
-    if (layer1 == layer2)
-        return true;
-
-    for (; layer1 && layer2; layer1 = layer1->next(), layer2 = layer2->next()) {
-        if (!arePointingToEqualData(layer1->image(), layer2->image()))
-            return false;
-    }
-
-    return !layer1 && !layer2;
-}
-
 TextStream& operator<<(TextStream& ts, FillSize fillSize)
 {
     return ts << fillSize.type << " " << fillSize.size;

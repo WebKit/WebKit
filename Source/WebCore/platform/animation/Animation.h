@@ -26,7 +26,7 @@
 
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
-#include "StyleScope.h"
+#include "StyleScopeOrdinal.h"
 #include "TimingFunction.h"
 
 namespace WebCore {

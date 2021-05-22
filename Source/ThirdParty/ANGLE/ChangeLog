@@ -1,3 +1,125 @@
+2021-05-08  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo] Remove linker warning on ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=225501
+
+        Reviewed by Darin Adler.
+
+        libANGLE is statically linked to libGLESv2.dll so that __declspec(dllimport) is not required here.
+
+        * include/platform/PlatformMethods.h:
+
+2021-05-06  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Only clear dirty state bits after all state has been successfully set
+        https://bugs.webkit.org/show_bug.cgi?id=225468
+        <rdar://77066752>
+
+        When running in release, if any ANGLE calls fail, we eventually return to this part of the code.
+        We can be left with an incomplete state, where we have an incomplete program or attachment, 
+        but a 'clean' state. This can lead to errors such as setting nil render pipeline states, leading to
+        crashes.
+
+        To mitigate this, hold off on setting state bits until we've completly set up a program.
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::setupDraw):
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+
+2021-05-03  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE]: Fix conversions tests and remove failing test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=225261
+        <rdar://77349615>
+                  
+        bool conversion workaround was being applied to all shaders. Correct shader translation to generate
+        better conversion code on platforms that don't need a workaround. 
+
+        Conversions for basic types like vec2, ivec2, uvec2 were only using the first components when workaround
+        was active. Correct swizzle logic to get all components when doing a conversion.
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.cpp:
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.cpp:
+        (sh::CoerceSimple):
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.h:
+
+2021-04-30  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE]: fix webgl/2.0.0/deqp/functional/gles3/negativebufferapi 
+        https://bugs.webkit.org/show_bug.cgi?id=225222
+        <rdar://77349908>
+
+        Arbitrary alignments are not allowed in Metal. Update UBO alignment to 
+        a platform-dependant offset to match specifications.
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::ensureCapsInitialized const):
+
+2021-04-29  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal-ANGLE: Shared memory texture tests failing in iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222685
+        <rdar://75001722>
+
+        Using replaceRegion to perform texture uploads on simulator causes issues on some workflows.
+        As a workaround, use a GPU-driven upload instead of a CPU driven upload. 
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+
+2021-04-29  Kyle Piddington  <kpiddington@apple.com>
+
+        [ANGLE-Metal] Fix 17 textureshadow tests
+        https://bugs.webkit.org/show_bug.cgi?id=224965
+        <rdar://77053085> 
+
+        Depth24Stencil8 copies were being incorrectly managed when dealing with D24S8 emulation.
+        Fix conversion functions 
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/mtl_format_utils.h:
+        * src/libANGLE/renderer/metal/mtl_format_utils.mm:
+        (rx::mtl::priv::OffsetDataPointer):
+        (rx::mtl::LoadS8D24S8ToD32FX24S8):
+        (rx::mtl::DEPTH24_STENCIL8_to_D32_FLOAT_X24S8_UINT):
+        (rx::mtl::GetLoadFunctionsMap):
+        (rx::mtl::FormatTable::initialize):
+        (): Deleted.
+
+2021-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Stop building libANGLE.a
+        https://bugs.webkit.org/show_bug.cgi?id=225162
+        <rdar://problem/57349384>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Now that everyone's linking against the dylib, we don't need to build the static library any more.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * src/empty.cpp: Removed.
+
+2021-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE should be compiled with thread-safe statics
+        https://bugs.webkit.org/show_bug.cgi?id=224854
+
+        Reviewed by Kenneth Russell.
+
+        Compile ANGLE with normal thread-safe c++ local statics.
+        No known threading failures. Based on ad-hoc risk vs benefit
+        evaluation of today and after future merges, it appears
+        better to err in the side of caution.
+
+        * Configurations/Base.xcconfig:
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac-specific CMake files

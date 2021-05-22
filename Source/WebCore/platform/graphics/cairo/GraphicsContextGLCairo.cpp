@@ -113,8 +113,8 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
         return;
 
     // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
-    size_t totalBytes = imageData->data()->byteLength();
-    uint8_t* pixels = imageData->data()->data();
+    size_t totalBytes = imageData->data().byteLength();
+    uint8_t* pixels = imageData->data().data();
     for (size_t i = 0; i < totalBytes; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
 
@@ -129,7 +129,7 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
     auto imageSize = imageData->size();
 
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
-        imageData->data()->data(), CAIRO_FORMAT_ARGB32, imageData->width(), imageData->height(), imageData->width() * 4));
+        imageData->data().data(), CAIRO_FORMAT_ARGB32, imageData->width(), imageData->height(), imageData->width() * 4));
 
     auto image = NativeImage::create(WTFMove(imageSurface));
 

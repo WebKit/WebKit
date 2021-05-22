@@ -185,6 +185,9 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThread(Locker<Lock>& locke
     gpuConnection.addClient(*this);
     m_connection = makeRef(gpuConnection.connection());
     m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
+
+    if (m_loggingLevel)
+        m_connection->send(Messages::LibWebRTCCodecsProxy::SetRTCLoggingLevel(*m_loggingLevel), 0);
 }
 
 // May be called on any thread.
@@ -528,6 +531,13 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
             decoder->connection = m_connection.get();
         }
     });
+}
+
+void LibWebRTCCodecs::setLoggingLevel(WTFLogLevel level)
+{
+    m_loggingLevel = level;
+    if (m_connection)
+        m_connection->send(Messages::LibWebRTCCodecsProxy::SetRTCLoggingLevel(level), 0);
 }
 
 }

@@ -28,6 +28,7 @@
 #include "BatchedTransitionOptimizer.h"
 #include "CodeCache.h"
 #include "Debugger.h"
+#include "VMTrapsInlines.h"
 
 namespace JSC {
 
@@ -65,6 +66,7 @@ static GlobalPropertyLookUpStatus hasRestrictedGlobalProperty(JSGlobalObject* gl
 
 JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
 {
+    DeferTermination deferScope(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(scope);
     ASSERT(globalObject == scope->globalObject(vm));

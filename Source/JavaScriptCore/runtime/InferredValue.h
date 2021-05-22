@@ -81,9 +81,7 @@ public:
     // state if you also add a watchpoint.
     WatchpointState state() const
     {
-        WTF::loadLoadFence();
         uintptr_t data = m_data;
-        WTF::loadLoadFence();
         if (isFat(data))
             return fat(data)->state();
         return decodeState(data);

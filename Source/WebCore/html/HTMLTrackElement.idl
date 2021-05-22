@@ -37,8 +37,8 @@
     const unsigned short NONE = 0;
     const unsigned short LOADING = 1;
     const unsigned short LOADED = 2;
-    // Reflect is used for ERROR because it conflicts with a windows define.
-    [Reflect=TRACK_ERROR] const unsigned short ERROR = 3;
+    // Using ERROR as enum identifier breaks Windows build due to #define conflict.
+    [ImplementedAs=TRACK_ERROR] const unsigned short ERROR = 3;
     readonly attribute unsigned short readyState;
 
     readonly attribute TextTrack track;

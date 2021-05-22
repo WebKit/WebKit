@@ -41,12 +41,6 @@ extern "C" void cache_simulate_memory_warning_event(uint64_t);
 
 namespace WTF {
 
-#if RELEASE_LOG_DISABLED
-WTFLogChannel LogPerformanceLogging = { WTFLogChannelState::On, "PerformanceLogging", WTFLogLevel::Error };
-#else
-WTFLogChannel LogPerformanceLogging = { WTFLogChannelState::On, "PerformanceLogging", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
-#endif
-
 void MemoryPressureHandler::platformReleaseMemory(Critical critical)
 {
     if (critical == Critical::Yes && (!isUnderMemoryPressure() || m_isSimulatingMemoryPressure)) {
@@ -104,7 +98,7 @@ void MemoryPressureHandler::install()
                 break;
             }
             if (m_shouldLogMemoryMemoryPressureEvents)
-                RELEASE_LOG(PerformanceLogging, "Received memory pressure event %lu vm pressure %d", status, isUnderMemoryPressure());
+                RELEASE_LOG(MemoryPressure, "Received memory pressure event %lu vm pressure %d", status, isUnderMemoryPressure());
         });
         dispatch_resume(memoryPressureEventSource);
     });

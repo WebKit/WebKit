@@ -231,7 +231,7 @@ Author: jbedard@apple.com <jbedard@apple.com>
 Date: {}
 Revision: 4
 Identifier: 3@trunk
-'''.format(datetime.fromtimestamp(1601686700).strftime('%a %b %d %H:%M:%S %Y')),
+'''.format(datetime.fromtimestamp(1601684700).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
 

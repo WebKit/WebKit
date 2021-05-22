@@ -745,6 +745,11 @@ void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalida
     }
 }
 
+static bool shouldAlwaysHaveFocusVisibleWhenFocused(const Element& element)
+{
+    return element.isTextField() || element.isContentEditable();
+}
+
 void Element::setFocus(bool flag, FocusVisibility visibility)
 {
     if (flag == focused())
@@ -764,14 +769,18 @@ void Element::setFocus(bool flag, FocusVisibility visibility)
     for (auto* element = this; element; element = element->parentElementInComposedTree())
         element->setHasFocusWithin(flag);
 
-    // Elements that support keyboard input (form inputs and contenteditable) always match :focus-visible when focused.
-    setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || isTextField() || isContentEditable()));
+    setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || shouldAlwaysHaveFocusVisibleWhenFocused(*this)));
 }
 
 void Element::setHasFocusVisible(bool flag)
 {
     if (!document().settings().focusVisibleEnabled())
         return;
+
+#if ASSERT_ENABLED
+    ASSERT(!flag || focused());
+    ASSERT(!focused() || !shouldAlwaysHaveFocusVisibleWhenFocused(*this) || flag);
+#endif
 
     if (hasFocusVisible() == flag)
         return;
@@ -927,7 +936,8 @@ void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& ar
         isHorizontal ? alignX : alignY,
         isHorizontal ? alignY : alignX,
         ShouldAllowCrossOriginScrolling::No,
-        options.behavior.valueOr(ScrollBehavior::Auto)
+        options.behavior.valueOr(ScrollBehavior::Auto),
+        SmoothScrollFeatureEnablement::Default
     };
     renderer()->scrollRectToVisible(absoluteBounds, insideFixed, visibleOptions);
 }

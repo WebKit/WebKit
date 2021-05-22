@@ -47,7 +47,7 @@
     static undefined supplementalMethod4();
 
     const unsigned short SUPPLEMENTALCONSTANT1 = 1;
-    [Reflect=CONST_IMPL] const unsigned short SUPPLEMENTALCONSTANT2 = 2;
+    [ImplementedAs=CONST_IMPL] const unsigned short SUPPLEMENTALCONSTANT2 = 2;
 
     [JSBuiltin] undefined builtinFunction();
     [JSBuiltin] attribute unsigned short builtinAttribute;

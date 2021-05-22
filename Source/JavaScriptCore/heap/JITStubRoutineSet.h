@@ -31,8 +31,6 @@
 #include <wtf/Range.h>
 #include <wtf/Vector.h>
 
-using WTF::Range;
-
 namespace JSC {
 
 class GCAwareJITStubRoutine;
@@ -61,10 +59,13 @@ public:
 
     void prepareForConservativeScan();
     
-    void deleteUnmarkedJettisonedStubRoutines();
+    void deleteUnmarkedJettisonedStubRoutines(Seconds timeSlice);
 
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&);
-    
+
+    static bool mayHaveRoutinesToDelete() { return s_mayHaveRoutinesToDelete; }
+    static void notifyHaveRoutinesToDelete() { s_mayHaveRoutinesToDelete = true; }
+
 private:
     void markSlow(uintptr_t address);
     
@@ -73,7 +74,9 @@ private:
         GCAwareJITStubRoutine* routine;
     };
     Vector<Routine> m_routines;
-    Range<uintptr_t> m_range { 0, 0 };
+    WTF::Range<uintptr_t> m_range { 0, 0 };
+
+    static bool s_mayHaveRoutinesToDelete;
 };
 
 #else // !ENABLE(JIT)
@@ -90,8 +93,11 @@ public:
     void clearMarks() { }
     void mark(void*) { }
     void prepareForConservativeScan() { }
-    void deleteUnmarkedJettisonedStubRoutines() { }
+    void deleteUnmarkedJettisonedStubRoutines(Seconds) { }
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&) { }
+
+    static bool mayHaveRoutinesToDelete() { return false; }
+    static void notifyHaveRoutinesToDelete() { }
 };
 
 #endif // !ENABLE(JIT)

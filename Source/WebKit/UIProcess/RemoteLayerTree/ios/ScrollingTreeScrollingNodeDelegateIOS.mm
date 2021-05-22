@@ -106,16 +106,17 @@
     unsigned originalHorizontalSnapPosition = _scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex();
     unsigned originalVerticalSnapPosition = _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex();
 
+    WebCore::FloatSize viewportSize(static_cast<float>(CGRectGetWidth([scrollView bounds])), static_cast<float>(CGRectGetHeight([scrollView bounds])));
     const auto& snapOffsetsInfo = _scrollingTreeNodeDelegate->scrollingNode().snapOffsetsInfo();
     if (!snapOffsetsInfo.horizontalSnapOffsets.isEmpty()) {
-        auto [potentialSnapPosition, index] = snapOffsetsInfo.closestSnapOffset(WebCore::ScrollEventAxis::Horizontal, horizontalTarget, velocity.x);
+        auto [potentialSnapPosition, index] = snapOffsetsInfo.closestSnapOffset(WebCore::ScrollEventAxis::Horizontal, viewportSize, horizontalTarget, velocity.x);
         _scrollingTreeNodeDelegate->scrollingNode().setCurrentHorizontalSnapPointIndex(index);
         if (horizontalTarget >= 0 && horizontalTarget <= scrollView.contentSize.width)
             targetContentOffset->x = potentialSnapPosition;
     }
 
     if (!snapOffsetsInfo.verticalSnapOffsets.isEmpty()) {
-        auto [potentialSnapPosition, index] = snapOffsetsInfo.closestSnapOffset(WebCore::ScrollEventAxis::Vertical, verticalTarget, velocity.x);
+        auto [potentialSnapPosition, index] = snapOffsetsInfo.closestSnapOffset(WebCore::ScrollEventAxis::Vertical, viewportSize, verticalTarget, velocity.x);
         _scrollingTreeNodeDelegate->scrollingNode().setCurrentVerticalSnapPointIndex(index);
         if (verticalTarget >= 0 && verticalTarget <= scrollView.contentSize.height)
             targetContentOffset->y = potentialSnapPosition;

@@ -47,6 +47,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 GST_DEBUG_CATEGORY(webkitMediaThunderDebugCategory);
 #define GST_CAT_DEFAULT webkitMediaThunderDebugCategory
@@ -349,8 +350,10 @@ public:
         if (!requestType.isEmpty() && requestType.length() != payload.length())
             offset = typePosition + 6;
 
-        if (requestType.length() == 1)
-            m_type = makeOptional(static_cast<WebCore::MediaKeyMessageType>(requestType.toInt()));
+        if (requestType.length() == 1) {
+            // FIXME: There are simpler ways to convert a single digit to a number than calling parseInteger.
+            m_type = makeOptional(static_cast<WebCore::MediaKeyMessageType>(parseInteger<int>(requestType).valueOr(0)));
+        }
 
         m_payload = SharedBuffer::create(payload.characters8() + offset, payload.length() - offset);
 

@@ -317,8 +317,8 @@ public:
     bool hasEventTargetData() const { return hasNodeFlag(NodeFlag::HasEventTargetData); }
     void setHasEventTargetData(bool flag) { setNodeFlag(NodeFlag::HasEventTargetData, flag); }
 
-    WEBCORE_EXPORT bool isContentEditable();
-    bool isContentRichlyEditable();
+    WEBCORE_EXPORT bool isContentEditable() const;
+    bool isContentRichlyEditable() const;
 
     WEBCORE_EXPORT void inspect();
 

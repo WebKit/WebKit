@@ -164,6 +164,8 @@ private:
     void didPreventDefaultForEvent() final;
 #endif
 
+    void didHandleOrPreventMouseDownOrMouseUpEvent() final;
+
 #if PLATFORM(IOS_FAMILY)
     void didReceiveMobileDocType(bool) final;
     void setNeedsScrollNotifications(WebCore::Frame&, bool) final;
@@ -330,6 +332,7 @@ private:
 
     void themeColorChanged() const final;
     void pageExtendedBackgroundColorDidChange() const final;
+    void sampledPageTopColorChanged() const final;
     
     void wheelEventHandlersChanged(bool) final;
 

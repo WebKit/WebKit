@@ -49,10 +49,7 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/TextEncoding.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
-#include <wtf/text/WTFString.h>
 
 #if PLATFORM(GTK)
 #include "WebInspectorUIProxyClient.h"
