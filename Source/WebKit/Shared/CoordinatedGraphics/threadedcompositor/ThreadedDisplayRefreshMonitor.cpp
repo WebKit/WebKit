@@ -59,7 +59,7 @@ bool ThreadedDisplayRefreshMonitor::requestRefreshCallback()
 
     bool previousFrameDone { false };
     {
-        auto locker = holdLock(lock());
+        Locker locker { lock() };
         setIsScheduled(true);
         previousFrameDone = isPreviousFrameDone();
     }
@@ -75,7 +75,7 @@ bool ThreadedDisplayRefreshMonitor::requestRefreshCallback()
 
 bool ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback()
 {
-    auto locker = holdLock(lock());
+    Locker locker { lock() };
     return isScheduled() && isPreviousFrameDone();
 }
 
@@ -91,7 +91,7 @@ void ThreadedDisplayRefreshMonitor::invalidate()
     m_displayRefreshTimer.stop();
     bool wasScheduled = false;
     {
-        auto locker = holdLock(lock());
+        Locker locker { lock() };
         wasScheduled = isScheduled();
     }
     if (wasScheduled) {
@@ -106,7 +106,7 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
 {
     bool shouldHandleDisplayRefreshNotification { false };
     {
-        auto locker = holdLock(lock());
+        Locker locker { lock() };
         shouldHandleDisplayRefreshNotification = isScheduled() && isPreviousFrameDone();
         if (shouldHandleDisplayRefreshNotification)
             setIsPreviousFrameDone(false);
@@ -120,7 +120,7 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
     // Retrieve the scheduled status for this DisplayRefreshMonitor.
     bool hasBeenRescheduled { false };
     {
-        auto locker = holdLock(lock());
+        Locker locker { lock() };
         hasBeenRescheduled = isScheduled();
     }
 

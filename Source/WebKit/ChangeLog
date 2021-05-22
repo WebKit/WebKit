@@ -1,3 +1,36 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in WebKit/WebKitLegacy/Tools as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226127
+
+        Reviewed by Alex Christensen.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::close):
+        (WebKit::LibWebRTCCodecsProxy::createH264Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createH265Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createVP9Decoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseDecoder):
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseEncoder):
+        (WebKit::LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure const):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::enqueueMatchingMessages):
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+        (IPC::Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::requestRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::invalidate):
+        (WebKit::ThreadedDisplayRefreshMonitor::displayRefreshCallback):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::copy):
+        (WebKit::MediaSampleCursor::getSampleMap const):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (prepareDataForPrintingOnSecondaryThread):
+
 2021-05-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Expand sandbox with missing sysctl-read handles for core CPU and cache features

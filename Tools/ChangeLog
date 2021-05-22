@@ -1,3 +1,28 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in WebKit/WebKitLegacy/Tools as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226127
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/JavaScriptThreading.cpp:
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_lock_guard):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_lock_guard):
+        * TestWebKitAPI/Tests/WTF/Condition.cpp:
+        * TestWebKitAPI/Tests/WTF/ThreadGroup.cpp:
+        (TestWebKitAPI::testThreadGroup):
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AXThread::dispatch):
+        (WTR::AXThread::dispatchFunctionsFromAXThread):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AXThread::initializeRunLoop):
+
 2021-05-21  Aakash Jain  <aakash_jain@apple.com>
 
         Run layout tests in stress mode for 10 iterations on regular EWS layout-test queues

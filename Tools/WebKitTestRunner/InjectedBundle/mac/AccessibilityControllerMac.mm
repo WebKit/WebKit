@@ -121,7 +121,7 @@ void AXThread::initializeRunLoop()
 {
     // Initialize the run loop.
     {
-        auto locker = holdLock(m_initializeRunLoopMutex);
+        Locker locker { m_initializeRunLoopMutex };
 
         m_threadRunLoop = CFRunLoopGetCurrent();
 

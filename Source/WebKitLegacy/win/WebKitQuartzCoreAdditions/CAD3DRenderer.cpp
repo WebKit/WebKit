@@ -118,7 +118,7 @@ CAD3DRenderer::CAD3DRenderer()
 
 CComPtr<IDirect3DSwapChain9> CAD3DRenderer::swapChain(CWindow window, const CGSize& size)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     bool useDefaultSwapChain = false;
 
@@ -385,7 +385,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderAndPresent(const CGRect& bounds
     ASSERT_ARG(swapChain, swapChain);
     ASSERT_ARG(context, context);
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     CGRect unusedDirtyRect;
     RenderResult result = renderInternal(bounds, swapChain, postProcessingContext, context, unusedDirtyRect, nextRenderTime);
@@ -425,7 +425,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderToImage(const CGRect& bounds, I
     ASSERT_ARG(swapChain, swapChain);
     ASSERT_ARG(context, context);
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     CGRect dirtyRect;
     RenderResult result = renderInternal(bounds, swapChain, postProcessingContext, context, dirtyRect, nextRenderTime);

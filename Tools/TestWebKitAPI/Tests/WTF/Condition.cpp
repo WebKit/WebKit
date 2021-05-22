@@ -118,7 +118,7 @@ void runTest(
                     notify(notifyStyle, fullCondition, shouldNotify);
 
                     {
-                        auto locker = holdLock(receivedLock);
+                        Locker locker { receivedLock };
                         received.append(result);
                     }
                 }
@@ -155,7 +155,7 @@ void runTest(
         thread->waitForCompletion();
 
     {
-        auto locker = holdLock(lock);
+        Locker locker { lock };
         shouldContinue = false;
     }
     emptyCondition.notifyAll();

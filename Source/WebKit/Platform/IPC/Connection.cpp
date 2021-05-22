@@ -151,7 +151,7 @@ void Connection::SyncMessageState::enqueueMatchingMessages(Connection& connectio
         }
         connectionAndMessages = WTFMove(rest);
     };
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     enqueueMatchingMessagesInContainer(m_messagesBeingDispatched);
     enqueueMatchingMessagesInContainer(m_messagesToDispatchWhileWaitingForSyncReply);
 }
@@ -171,7 +171,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
 
     bool shouldDispatch;
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         shouldDispatch = m_didScheduleDispatchMessagesWorkSet.add(&connection).isNewEntry;
         ASSERT(connection.m_incomingMessagesLock.isHeld());
         if (message->shouldMaintainOrderingWithAsyncMessages()) {
@@ -198,7 +198,7 @@ void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, u
     ASSERT(RunLoop::isMain());
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         if (m_messagesBeingDispatched.isEmpty())
             m_messagesBeingDispatched = std::exchange(m_messagesToDispatchWhileWaitingForSyncReply, { });
         else {
@@ -220,7 +220,7 @@ void Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMe
     ASSERT(RunLoop::isMain());
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         ASSERT(m_didScheduleDispatchMessagesWorkSet.contains(&connection));
         m_didScheduleDispatchMessagesWorkSet.remove(&connection);
         ASSERT(m_messagesBeingDispatched.isEmpty());

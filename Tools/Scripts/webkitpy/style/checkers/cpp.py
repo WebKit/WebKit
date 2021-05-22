@@ -2838,7 +2838,7 @@ def check_lock_guard(clean_lines, line_number, file_state, error):
     if not using_std_lock_guard_search:
         return
 
-    error(line_number, 'runtime/lock_guard', 4, "Use 'auto locker = holdLock(mutex)' instead of 'std::lock_guard<>'.")
+    error(line_number, 'runtime/lock_guard', 4, "Use 'Locker locker { lock }' instead of 'std::lock_guard<>'.")
 
 
 def check_ctype_functions(clean_lines, line_number, file_state, error):

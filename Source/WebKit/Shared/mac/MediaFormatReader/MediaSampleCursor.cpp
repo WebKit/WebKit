@@ -116,7 +116,7 @@ RefPtr<MediaSampleCursor> MediaSampleCursor::createAtPresentationTime(Allocator&
 
 RefPtr<MediaSampleCursor> MediaSampleCursor::copy(Allocator&& allocator, const MediaSampleCursor& cursor)
 {
-    auto locker = holdLock(cursor.m_locatorLock);
+    Locker locker { cursor.m_locatorLock };
     return adoptRef(new (allocator) MediaSampleCursor(WTFMove(allocator), cursor));
 }
 
@@ -233,7 +233,7 @@ template<typename Function>
 OSStatus MediaSampleCursor::getSampleMap(Function&& function) const
 {
     OSStatus status = noErr;
-    auto locker = holdLock(m_locatorLock);
+    Locker locker { m_locatorLock };
     m_trackReader->waitForSample([&](SampleMap& samples, bool hasAllSamples) {
         if (!samples.size())
             ERROR_LOG(LOGIDENTIFIER, "track ", m_trackReader->trackID(), " finished parsing with no samples.");
