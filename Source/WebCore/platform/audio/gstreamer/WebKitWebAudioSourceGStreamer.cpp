@@ -31,8 +31,8 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
 #include <gst/pbutils/missing-plugins.h>
-#include <wtf/Condition.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -84,9 +84,9 @@ struct _WebKitWebAudioSrcPrivate {
     Lock dispatchToRenderThreadLock;
     Function<void(Function<void()>&&)> dispatchToRenderThreadFunction;
 
-    bool dispatchDone;
-    Lock dispatchLock;
-    Condition dispatchCondition;
+    bool dispatchDone WTF_GUARDED_BY_LOCK(dispatchLock);
+    CheckedLock dispatchLock;
+    CheckedCondition dispatchCondition;
 
     _WebKitWebAudioSrcPrivate()
     {
@@ -339,7 +339,7 @@ static void webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>&& element, 
     auto* priv = src->priv;
 
     auto notifyDispatchOnExit = makeScopeExit([priv] {
-        LockHolder lock(priv->dispatchLock);
+        Locker locker { priv->dispatchLock };
         priv->dispatchDone = true;
         priv->dispatchCondition.notifyOne();
     });
@@ -404,7 +404,7 @@ static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
     }
 
     {
-        LockHolder lock(priv->dispatchLock);
+        Locker locker { priv->dispatchLock };
         priv->dispatchDone = false;
     }
 
@@ -421,7 +421,7 @@ static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
     }
 
     {
-        LockHolder lock(priv->dispatchLock);
+        Locker locker { priv->dispatchLock };
         if (!priv->dispatchDone)
             priv->dispatchCondition.wait(priv->dispatchLock);
     }
@@ -468,7 +468,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     }
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         {
-            LockHolder lock(priv->dispatchLock);
+            Locker locker { priv->dispatchLock };
             priv->dispatchDone = false;
             priv->dispatchCondition.notifyAll();
         }

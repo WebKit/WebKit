@@ -51,7 +51,7 @@ TextureMapperPlatformLayerProxy::TextureMapperPlatformLayerProxy()
 
 TextureMapperPlatformLayerProxy::~TextureMapperPlatformLayerProxy()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     if (m_targetLayer)
         m_targetLayer->setContentsLayer(nullptr);
 }
@@ -67,7 +67,7 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
     ASSERT(targetLayer);
     Function<void()> updateFunction;
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         m_compositor = compositor;
         m_targetLayer = targetLayer;
         if (m_targetLayer && m_currentBuffer)
@@ -93,7 +93,7 @@ void TextureMapperPlatformLayerProxy::invalidate()
     ASSERT(m_compositorThread == &Thread::current());
     Function<void()> updateFunction;
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         m_compositor = nullptr;
         m_targetLayer = nullptr;
 
@@ -174,7 +174,7 @@ void TextureMapperPlatformLayerProxy::scheduleReleaseUnusedBuffers()
 
 void TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     if (m_usedBuffers.isEmpty())
         return;
 
@@ -190,7 +190,7 @@ void TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired()
 void TextureMapperPlatformLayerProxy::swapBuffer()
 {
     ASSERT(m_compositorThread == &Thread::current());
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     if (!m_targetLayer || !m_pendingBuffer)
         return;
 
@@ -218,11 +218,11 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
 
     m_compositorThreadUpdateFunction =
         [this, shouldWait] {
-            LockHolder locker(m_lock);
+            Locker locker { m_lock };
 
             auto maybeNotifySynchronousOperation = WTF::makeScopeExit([this, shouldWait]() {
                 if (shouldWait) {
-                    LockHolder holder(m_wasBufferDroppedLock);
+                    Locker locker { m_wasBufferDroppedLock };
                     m_wasBufferDropped = true;
                     m_wasBufferDroppedCondition.notifyAll();
                 }
@@ -241,14 +241,15 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
         };
 
     if (shouldWait) {
-        LockHolder holder(m_wasBufferDroppedLock);
+        Locker locker { m_wasBufferDroppedLock };
         m_wasBufferDropped = false;
     }
 
     m_compositorThreadUpdateTimer->startOneShot(0_s);
     if (shouldWait) {
-        LockHolder holder(m_wasBufferDroppedLock);
+        Locker locker { m_wasBufferDroppedLock };
         m_wasBufferDroppedCondition.wait(m_wasBufferDroppedLock, [this] {
+            assertIsHeld(m_wasBufferDroppedLock);
             return m_wasBufferDropped;
         });
     }
@@ -256,7 +257,7 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
 
 bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(Function<void()>&& updateFunction)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     m_compositorThreadUpdateFunction = WTFMove(updateFunction);
 
     if (!m_compositorThreadUpdateTimer)
@@ -270,7 +271,7 @@ void TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired()
 {
     Function<void()> updateFunction;
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         if (!m_compositorThreadUpdateFunction)
             return;
         updateFunction = WTFMove(m_compositorThreadUpdateFunction);

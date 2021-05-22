@@ -1,3 +1,60 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedCondition in more places
+        https://bugs.webkit.org/show_bug.cgi?id=226113
+
+        Reviewed by Darin Adler.
+
+        Use CheckedCondition in more places to benefit from Clang Thread Safety
+        Analysis.
+
+        * Modules/webdatabase/DatabaseTask.cpp:
+        (WebCore::DatabaseTaskSynchronizer::waitForTaskCompletion):
+        (WebCore::DatabaseTaskSynchronizer::taskCompleted):
+        * Modules/webdatabase/DatabaseTask.h:
+        (WebCore::DatabaseTaskSynchronizer::WTF_GUARDED_BY_LOCK):
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcRenderAndPushFrames):
+        (webKitWebAudioSrcRenderIteration):
+        (webKitWebAudioSrcChangeState):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::setHasEOS):
+        (WebCore::ImageDecoderGStreamer::notifySample):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::handleMessage):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::preparePipeline):
+        (WebCore::ImageDecoderGStreamer::pushEncodedData):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.h:
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::repaint):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::waitForCDMAttachment):
+        (WebCore::MediaPlayerPrivateGStreamer::cdmInstanceAttached):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::WTF_GUARDED_BY_LOCK):
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.cpp:
+        (WebCore::MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer):
+        * platform/graphics/nicosia/NicosiaImageBufferPipe.cpp:
+        (Nicosia::NicosiaImageBufferPipeSource::handle):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp:
+        (Nicosia::GCGLLayer::swapBuffersIfNeeded):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::~TextureMapperPlatformLayerProxy):
+        (WebCore::TextureMapperPlatformLayerProxy::activateOnCompositingThread):
+        (WebCore::TextureMapperPlatformLayerProxy::invalidate):
+        (WebCore::TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired):
+        (WebCore::TextureMapperPlatformLayerProxy::swapBuffer):
+        (WebCore::TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture):
+        (WebCore::TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread):
+        (WebCore::TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+        (WebCore::TextureMapperPlatformLayerProxy::WTF_RETURNS_LOCK):
+        (WebCore::TextureMapperPlatformLayerProxy::WTF_GUARDED_BY_LOCK):
+
 2021-05-21  Diego Pino Garcia  <dpino@igalia.com>
 
         Set CanvasImageSmoothing.imageSmoothingQuality value to 'low' as default

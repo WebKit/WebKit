@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
-#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
@@ -42,7 +42,7 @@ public:
 
     void open()
     {
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_lock };
         if (m_open)
             return;
 
@@ -53,7 +53,7 @@ public:
 
     void close()
     {
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_lock };
         if (!m_open)
             return;
 
@@ -64,16 +64,19 @@ public:
 
     bool isOpen()
     {
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_lock };
         return m_open;
     }
 
     bool enqueue(const T& value)
     {
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_lock };
 
         // Wait for an empty place to be available in the queue.
-        m_condition.wait(m_mutex, [this]() { return !m_open || m_queue.size() < BufferSize; });
+        m_condition.wait(m_lock, [this] {
+            assertIsHeld(m_lock);
+            return !m_open || m_queue.size() < BufferSize;
+        });
 
         // The queue is closing, exit immediately.
         if (!m_open)
@@ -89,10 +92,13 @@ public:
 
     bool dequeue(T& value)
     {
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_lock };
 
         // Wait for an item to be added.
-        m_condition.wait(m_mutex, [this]() { return !m_open || m_queue.size(); });
+        m_condition.wait(m_lock, [this] {
+            assertIsHeld(m_lock);
+            return !m_open || m_queue.size();
+        });
 
         // The queue is closing, exit immediately.
         if (!m_open)
@@ -113,11 +119,11 @@ private:
         static_assert(!((BufferSize - 1) & BufferSize), "BufferSize must be power of 2.");
     }
 
-    Lock m_mutex;
-    Condition m_condition;
+    CheckedLock m_lock;
+    CheckedCondition m_condition;
 
-    bool m_open { true };
-    Deque<T, BufferSize> m_queue;
+    bool m_open WTF_GUARDED_BY_LOCK(m_lock) { true };
+    Deque<T, BufferSize> m_queue WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 }

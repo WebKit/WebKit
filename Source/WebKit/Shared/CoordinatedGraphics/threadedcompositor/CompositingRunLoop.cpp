@@ -85,13 +85,13 @@ void CompositingRunLoop::performTask(Function<void ()>&& function)
 void CompositingRunLoop::performTaskSync(Function<void ()>&& function)
 {
     ASSERT(RunLoop::isMain());
-    LockHolder locker(m_dispatchSyncConditionMutex);
+    Locker locker { m_dispatchSyncConditionLock };
     m_runLoop->dispatch([this, function = WTFMove(function)] {
         function();
-        LockHolder locker(m_dispatchSyncConditionMutex);
+        Locker locker { m_dispatchSyncConditionLock };
         m_dispatchSyncCondition.notifyOne();
     });
-    m_dispatchSyncCondition.wait(m_dispatchSyncConditionMutex);
+    m_dispatchSyncCondition.wait(m_dispatchSyncConditionLock);
 }
 
 void CompositingRunLoop::suspend()

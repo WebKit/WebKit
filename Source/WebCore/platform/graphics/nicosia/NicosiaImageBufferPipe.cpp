@@ -95,7 +95,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
         auto proxyOperation = [this] (TextureMapperPlatformLayerProxy& proxy) mutable {
             return proxy.scheduleUpdateOnCompositorThread([this] () mutable {
                 auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
-                LockHolder holder(proxy.lock());
+                Locker locker { proxy.lock() };
 
                 if (!proxy.isActive())
                     return;

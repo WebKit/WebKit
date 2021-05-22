@@ -68,18 +68,18 @@ public:
     template<typename F>
     void notifyAndWait(T notificationType, F&& callbackFunctor)
     {
-        Lock mutex;
-        Condition condition;
+        CheckedLock lock;
+        CheckedCondition condition;
 
-        notify(notificationType, [functor = WTFMove(callbackFunctor), &condition, &mutex] {
+        notify(notificationType, [functor = WTFMove(callbackFunctor), &condition, &lock] {
             functor();
-            LockHolder holder(mutex);
+            Locker locker { lock };
             condition.notifyOne();
         });
 
         if (!isMainThread()) {
-            LockHolder holder(mutex);
-            condition.wait(mutex);
+            Locker locker { lock };
+            condition.wait(lock);
         }
     }
 

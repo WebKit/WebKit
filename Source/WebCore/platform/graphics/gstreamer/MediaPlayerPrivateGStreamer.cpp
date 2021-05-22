@@ -252,7 +252,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
 #if ENABLE(ENCRYPTED_MEDIA)
     {
-        LockHolder lock(m_cdmAttachmentMutex);
+        Locker cdmAttachmentLocker { m_cdmAttachmentLock };
         m_cdmAttachmentCondition.notifyAll();
     }
 #endif
@@ -2921,7 +2921,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
     auto proxyOperation =
         [this, internalCompositingOperation](TextureMapperPlatformLayerProxy& proxy)
         {
-            LockHolder holder(proxy.lock());
+            Locker locker { proxy.lock() };
 
             if (!proxy.isActive())
                 return;
@@ -2939,7 +2939,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
     auto proxyOperation =
         [this, internalCompositingOperation](TextureMapperPlatformLayerProxy& proxy)
         {
-            LockHolder holder(proxy.lock());
+            Locker locker { proxy.lock() };
 
             if (!proxy.isActive())
                 return;
@@ -2964,7 +2964,7 @@ void MediaPlayerPrivateGStreamer::repaint()
 
     m_player->repaint();
 
-    LockHolder lock(m_drawMutex);
+    Locker locker { m_drawLock };
     m_drawCondition.notifyOne();
 }
 
@@ -3103,17 +3103,17 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
     }
 
     if (!m_canRenderingBeAccelerated) {
-        LockHolder locker(m_drawMutex);
+        Locker locker { m_drawLock };
         if (m_isBeingDestroyed)
             return;
         m_drawTimer.startOneShot(0_s);
-        m_drawCondition.wait(m_drawMutex);
+        m_drawCondition.wait(m_drawLock);
         return;
     }
 
 #if USE(TEXTURE_MAPPER_GL)
     if (m_isUsingFallbackVideoSink) {
-        LockHolder lock(m_drawMutex);
+        Locker locker { m_drawLock };
         auto proxyOperation =
             [this](TextureMapperPlatformLayerProxy& proxy)
             {
@@ -3127,7 +3127,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
             return;
 #endif
         m_drawTimer.startOneShot(0_s);
-        m_drawCondition.wait(m_drawMutex);
+        m_drawCondition.wait(m_drawLock);
     } else
         pushTextureToCompositor();
 #endif // USE(TEXTURE_MAPPER_GL)
@@ -3149,7 +3149,7 @@ void MediaPlayerPrivateGStreamer::cancelRepaint(bool destroying)
     // This function is also used when destroying the player (destroying parameter is true), to release the gstreamer thread from
     // m_drawCondition and to ensure that new triggerRepaint calls won't wait on m_drawCondition.
     if (!m_canRenderingBeAccelerated) {
-        LockHolder locker(m_drawMutex);
+        Locker locker { m_drawLock };
         m_drawTimer.stop();
         m_isBeingDestroyed = destroying;
         m_drawCondition.notifyOne();
@@ -3180,10 +3180,14 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     bool shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux;
     auto proxyOperation = [shouldWait, pipeline = pipeline()](TextureMapperPlatformLayerProxy& proxy) {
         GST_DEBUG_OBJECT(pipeline, "Flushing video sample %s", shouldWait ? "synchronously" : "");
-        LockHolder locker(!shouldWait ? &proxy.lock() : nullptr);
-
-        if (proxy.isActive())
-            proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
+        if (shouldWait) {
+            if (proxy.isActive())
+                proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
+        } else {
+            Locker locker { proxy.lock() };
+            if (proxy.isActive())
+                proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
+        }
     };
 
 #if USE(NICOSIA)
@@ -3407,7 +3411,7 @@ void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
     auto proxyOperation =
         [this](TextureMapperPlatformLayerProxy& proxy)
         {
-            LockHolder holder(proxy.lock());
+            Locker locker { proxy.lock() };
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
             std::unique_ptr<GStreamerHolePunchClient> holePunchClient = makeUnique<GStreamerHolePunchClient>(m_videoSink.get());
             layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
@@ -3576,8 +3580,9 @@ bool MediaPlayerPrivateGStreamer::waitForCDMAttachment()
 
     bool didCDMAttach = false;
     {
-        auto cdmAttachmentLocker = holdLock(m_cdmAttachmentMutex);
-        didCDMAttach = m_cdmAttachmentCondition.waitFor(m_cdmAttachmentMutex, 4_s, [this]() {
+        Locker cdmAttachmentLocker { m_cdmAttachmentLock };
+        didCDMAttach = m_cdmAttachmentCondition.waitFor(m_cdmAttachmentLock, 4_s, [this]() {
+            assertIsHeld(m_cdmAttachmentLock);
             return isCDMAttached();
         });
     }
@@ -3624,7 +3629,7 @@ void MediaPlayerPrivateGStreamer::cdmInstanceAttached(CDMInstance& instance)
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "CDM proxy instance %p dispatched as context", m_cdmInstance->proxy().get());
 
-    LockHolder lock(m_cdmAttachmentMutex);
+    Locker cdmAttachmentLocker { m_cdmAttachmentLock };
     // We must notify all waiters, since several demuxers can be simultaneously waiting for a CDM.
     m_cdmAttachmentCondition.notifyAll();
 }

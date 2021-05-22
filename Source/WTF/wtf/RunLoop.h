@@ -28,8 +28,8 @@
 #pragma once
 
 #include <functional>
+#include <wtf/CheckedCondition.h>
 #include <wtf/CheckedLock.h>
-#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
@@ -145,7 +145,7 @@ public:
         Ref<RunLoop> m_runLoop;
 
 #if USE(WINDOWS_EVENT_LOOP)
-        bool isActive(const AbstractLocker&) const;
+        bool isActiveWithLock() const WTF_REQUIRES_LOCK(m_runLoop->m_loopLock);
         void timerFired();
         MonotonicTime m_nextFireDate;
         Seconds m_interval;
@@ -159,8 +159,8 @@ public:
         bool m_isRepeating { false };
         Seconds m_interval { 0 };
 #elif USE(GENERIC_EVENT_LOOP)
-        bool isActive(const AbstractLocker&) const;
-        void stop(const AbstractLocker&);
+        bool isActiveWithLock() const WTF_REQUIRES_LOCK(m_runLoop->m_loopLock);
+        void stopWithLock() WTF_REQUIRES_LOCK(m_runLoop->m_loopLock);
 
         class ScheduledTask;
         RefPtr<ScheduledTask> m_scheduledTask;
@@ -228,7 +228,7 @@ private:
     LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     HWND m_runLoopMessageWindow;
 
-    Lock m_loopLock;
+    CheckedLock m_loopLock;
 #elif USE(COCOA_EVENT_LOOP)
     static void performWork(void*);
     RetainPtr<CFRunLoopRef> m_runLoop;
@@ -243,9 +243,9 @@ private:
     WeakHashSet<Observer> m_observers;
 #elif USE(GENERIC_EVENT_LOOP)
     void schedule(Ref<TimerBase::ScheduledTask>&&);
-    void schedule(const AbstractLocker&, Ref<TimerBase::ScheduledTask>&&);
-    void wakeUp(const AbstractLocker&);
-    void scheduleAndWakeUp(const AbstractLocker&, Ref<TimerBase::ScheduledTask>&&);
+    void scheduleWithLock(Ref<TimerBase::ScheduledTask>&&) WTF_REQUIRES_LOCK(m_loopLock);
+    void wakeUpWithLock() WTF_REQUIRES_LOCK(m_loopLock);
+    void scheduleAndWakeUpWithLock(Ref<TimerBase::ScheduledTask>&&) WTF_REQUIRES_LOCK(m_loopLock);
 
     enum class RunMode {
         Iterate,
@@ -261,9 +261,9 @@ private:
 
     friend class TimerBase;
 
-    Lock m_loopLock;
+    CheckedLock m_loopLock;
     Condition m_readyToRun;
-    Condition m_stopCondition;
+    CheckedCondition m_stopCondition;
     Vector<RefPtr<TimerBase::ScheduledTask>> m_schedules;
     Vector<Status*> m_mainLoops;
     bool m_shutdown { false };

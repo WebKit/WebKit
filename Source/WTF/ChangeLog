@@ -1,3 +1,39 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedCondition in more places
+        https://bugs.webkit.org/show_bug.cgi?id=226113
+
+        Reviewed by Darin Adler.
+
+        Use CheckedCondition in more places to benefit from Clang Thread Safety
+        Analysis.
+
+        * wtf/RunLoop.h:
+        * wtf/SynchronizedFixedQueue.h:
+        * wtf/WTFSemaphore.h:
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::concurrentApply):
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::populateTasks):
+        (WTF::RunLoop::runImpl):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::wakeUpWithLock):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::schedule):
+        (WTF::RunLoop::scheduleAndWakeUpWithLock):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive const):
+        (WTF::RunLoop::TimerBase::secondsUntilFire const):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive const):
+        (WTF::RunLoop::TimerBase::secondsUntilFire const):
+
 2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Adopt QLItem in WKImageExtractionPreviewController

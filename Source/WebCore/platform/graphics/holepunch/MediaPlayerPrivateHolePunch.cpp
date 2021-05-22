@@ -75,7 +75,7 @@ void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
     auto proxyOperation =
         [this](TextureMapperPlatformLayerProxy& proxy)
         {
-            LockHolder holder(proxy.lock());
+            Locker locker { proxy.lock() };
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
             proxy.pushNextBuffer(WTFMove(layerBuffer));
         };

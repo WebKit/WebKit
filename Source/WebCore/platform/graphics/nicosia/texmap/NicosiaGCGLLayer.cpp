@@ -105,10 +105,10 @@ void GCGLLayer::swapBuffersIfNeeded()
         } else
             layerBuffer->textureGL().setPendingContents(WTFMove(image));
 
-        LockHolder holder(proxy.lock());
+        Locker locker { proxy.lock() };
         proxy.pushNextBuffer(WTFMove(layerBuffer));
 #else
-        LockHolder holder(proxy.lock());
+        Locker locker { proxy.lock() };
         proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
 #endif
     }
