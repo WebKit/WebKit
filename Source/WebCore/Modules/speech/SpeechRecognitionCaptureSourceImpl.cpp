@@ -80,49 +80,70 @@ SpeechRecognitionCaptureSourceImpl::~SpeechRecognitionCaptureSourceImpl()
     m_source->stop();
 }
 
-void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
+#if PLATFORM(COCOA)
+bool SpeechRecognitionCaptureSourceImpl::updateDataSource(const CAAudioStreamDescription& audioDescription)
 {
+    ASSERT(!isMainThread());
+
+    if (!m_dataSourceLock.tryLock())
+        return false;
+
+    Locker locker { AdoptLockTag { }, m_dataSourceLock };
+
+    auto dataSource = AudioSampleDataSource::create(audioDescription.sampleRate() * 1, m_source.get());
+    if (dataSource->setInputFormat(audioDescription)) {
+        callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+            if (weakThis)
+                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format" }));
+        });
+        return false;
+    }
+
+    if (dataSource->setOutputFormat(audioDescription)) {
+        callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+            if (weakThis)
+                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format" }));
+        });
+        return false;
+    }
+
+    m_dataSource = WTFMove(dataSource);
+    return true;
+}
+
+void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(const MediaTime& time, const CAAudioStreamDescription& audioDescription, size_t sampleCount)
+{
+    ASSERT(isMainThread());
+
+    auto data = WebAudioBufferList { audioDescription, static_cast<uint32_t>(sampleCount) };
+    {
+        Locker locker { m_dataSourceLock };
+        m_dataSource->pullSamples(*data.list(), sampleCount, time.timeValue(), 0, AudioSampleDataSource::Copy);
+    }
+
+    m_dataCallback(time, data, audioDescription, sampleCount);
+}
+#endif
+
+// FIXME: It is unclear why it is safe to use m_dataSource without locking in this function.
+void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+{
+    ASSERT(!isMainThread());
 #if PLATFORM(COCOA)
     DisableMallocRestrictionsForCurrentThreadScope scope;
 
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     auto audioDescription = toCAAudioStreamDescription(description);
     if (!m_dataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
-        auto dataSource = AudioSampleDataSource::create(description.sampleRate() * 1, m_source.get());
-        if (dataSource->setInputFormat(audioDescription)) {
-            callOnMainThread([this, weakThis = makeWeakPtr(this)] {
-                if (weakThis)
-                    m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format" }));
-            });
-            return;
-        }
-
-        if (dataSource->setOutputFormat(audioDescription)) {
-            callOnMainThread([this, weakThis = makeWeakPtr(this)] {
-                if (weakThis)
-                    m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format" }));
-            });
-            return;
-        }
-        
-        if (auto locker = tryHoldLock(m_dataSourceLock))
-            m_dataSource = WTFMove(dataSource);
-        else
+        if (!updateDataSource(audioDescription))
             return;
     }
 
     m_dataSource->pushSamples(time, data, sampleCount);
-    callOnMainThread([this, weakThis = makeWeakPtr(this), time, audioDescription, sampleCount] {
-        if (!weakThis)
-            return;
 
-        auto data = WebAudioBufferList { audioDescription, static_cast<uint32_t>(sampleCount) };
-        {
-            Locker locker { m_dataSourceLock };
-            m_dataSource->pullSamples(*data.list(), sampleCount, time.timeValue(), 0, AudioSampleDataSource::Copy);
-        }
-
-        m_dataCallback(time, data, audioDescription, sampleCount);
+    callOnMainThread([weakThis = makeWeakPtr(this), time, audioDescription, sampleCount] {
+        if (weakThis)
+            weakThis->pullSamplesAndCallDataCallback(time, audioDescription, sampleCount);
     });
 #else
     m_dataCallback(time, data, description, sampleCount);

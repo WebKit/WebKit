@@ -1,5 +1,22 @@
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
+        Use CheckedLock in SpeechRecognitionCaptureSourceImpl
+        https://bugs.webkit.org/show_bug.cgi?id=226131
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock in SpeechRecognitionCaptureSourceImpl to benefit from Clang Thread
+        Safety Analysis. Note that audioSamplesAvailable() does not grab the lock before using
+        m_dataSource, only when setting the data member. It is unclear why it is safe so I
+        used WTF_IGNORES_THREAD_SAFETY_ANALYSIS and added a FIXME comment.
+
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp:
+        (WebCore::SpeechRecognitionCaptureSourceImpl::updateDataSource):
+        (WebCore::SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback):
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.h:
+
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
         Replace LockHolder with Locker in local variables
         https://bugs.webkit.org/show_bug.cgi?id=226133
 
