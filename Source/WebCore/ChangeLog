@@ -1,3 +1,16 @@
+2021-05-22  Rob Buis  <rbuis@igalia.com>
+
+        Detect invalid InlinePathData in StrokeInlinePath
+        https://bugs.webkit.org/show_bug.cgi?id=225691
+
+        Reviewed by Ryosuke Niwa.
+
+        Detect invalid InlinePathData in StrokeInlinePath.
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::StrokeInlinePath::StrokeInlinePath):
+        (WebCore::DisplayList::StrokeInlinePath::path const): Deleted.
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Remove WTF::holdLock() / WTF::holdLockIf()
