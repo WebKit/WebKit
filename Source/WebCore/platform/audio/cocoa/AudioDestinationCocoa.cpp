@@ -151,13 +151,11 @@ void AudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& comple
 void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
 {
     ASSERT(isMainThread());
-    {
-        Locker locker { m_isPlayingLock };
-        if (m_isPlaying == isPlaying)
-            return;
 
-        m_isPlaying = isPlaying;
-    }
+    if (m_isPlaying == isPlaying)
+        return;
+
+    m_isPlaying = isPlaying;
 
     {
         Locker locker { m_callbackLock };
@@ -238,8 +236,7 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
 
 void AudioDestinationCocoa::renderOnRenderingTheadIfPlaying(size_t framesToRender)
 {
-    auto locker = tryHoldLock(m_isPlayingLock);
-    if (locker && m_isPlaying)
+    if (m_isPlaying)
         renderOnRenderingThead(framesToRender);
 }
 

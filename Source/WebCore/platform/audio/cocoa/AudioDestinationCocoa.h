@@ -96,8 +96,7 @@ private:
 
     float m_contextSampleRate;
 
-    Lock m_isPlayingLock;
-    bool m_isPlaying { false };
+    std::atomic<bool> m_isPlaying;
 };
 
 } // namespace WebCore

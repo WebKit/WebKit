@@ -1,5 +1,22 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Fix locking issue for AudioDestinationCocoa::m_isPlaying
+        https://bugs.webkit.org/show_bug.cgi?id=226129
+
+        Reviewed by Jer Noble.
+
+        Fix locking issue for AudioDestinationCocoa::m_isPlaying. The AudioDestinationCocoa::isPlaying()
+        getter fails to lock. isPlaying() may get called from the main thread and the audio rendering
+        thread. Since we cannot grab a lock on the rendering thread, use std::atomic<bool> type for
+        m_isPlaying.
+
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::setIsPlaying):
+        (WebCore::AudioDestinationCocoa::renderOnRenderingTheadIfPlaying):
+        * platform/audio/cocoa/AudioDestinationCocoa.h:
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Stop using holdLock() in WebCore as it is not compatible with Clang thread safety analysis
         https://bugs.webkit.org/show_bug.cgi?id=226119
 
