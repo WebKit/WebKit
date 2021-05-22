@@ -39,7 +39,7 @@ void FontInfo::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << static_cast<bool>(fontAttributeDictionary);
     if (fontAttributeDictionary)
-        IPC::encode(encoder, fontAttributeDictionary.get());
+        encoder << fontAttributeDictionary;
 #else
     UNUSED_PARAM(encoder);
 #endif
@@ -55,7 +55,7 @@ bool FontInfo::decode(IPC::Decoder& decoder, FontInfo& fontInfo)
     if (!hasFontAttributeDictionary)
         return true;
 
-    if (!IPC::decode(decoder, fontInfo.fontAttributeDictionary))
+    if (!decoder.decode(fontInfo.fontAttributeDictionary))
         return false;
 #else
     UNUSED_PARAM(decoder);

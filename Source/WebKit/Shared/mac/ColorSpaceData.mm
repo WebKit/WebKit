@@ -33,77 +33,28 @@
 
 namespace WebKit {
 
-enum EncodedDataType {
-    Null,
-    Name,
-    Data,
-};
-
 void ColorSpaceData::encode(IPC::Encoder& encoder) const
 {
-    if (cgColorSpace) {
-        // Try to encode the name.
-        if (RetainPtr<CFStringRef> name = adoptCF(CGColorSpaceCopyName(cgColorSpace.get()))) {
-            encoder << Name;
-            IPC::encode(encoder, name.get());
-            return;
-        }
-
-        // Failing that, just encode the ICC data.
-        if (RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCData(cgColorSpace.get()))) {
-            encoder << Data;
-            IPC::encode(encoder, profileData.get());
-            return;
-        }
-    }
-
-    // The color space was null or failed to be encoded.
-    encoder << Null;
+    encoder << static_cast<bool>(cgColorSpace);
+    if (cgColorSpace)
+        encoder << cgColorSpace;
 }
 
 bool ColorSpaceData::decode(IPC::Decoder& decoder, ColorSpaceData& colorSpaceData)
 {
-    EncodedDataType dataType;
-    if (!decoder.decode(dataType))
+    bool hasCGColorSpace;
+    if (!decoder.decode(hasCGColorSpace))
         return false;
 
-    switch (dataType) {
-    case Null:
-        colorSpaceData.cgColorSpace = nullptr;
+    if (!hasCGColorSpace)
         return true;
-    case Name: {
-        RetainPtr<CFStringRef> name;
-        if (!IPC::decode(decoder, name))
-            return false;
 
-        colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithName(name.get()));
-        return true;
-    }
-    case Data: {
-        RetainPtr<CFDataRef> data;
-        if (!IPC::decode(decoder, data))
-            return false;
-
-        colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithICCData(data.get()));
-        return true;
-    }
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
+    RetainPtr<CGColorSpaceRef> colorSpace;
+    if (!decoder.decode(colorSpace))
+        return false;
+    
+    colorSpaceData.cgColorSpace = WTFMove(colorSpace);
+    return true;
 }
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::EncodedDataType> {
-    using values = EnumValues<
-        WebKit::EncodedDataType,
-        WebKit::EncodedDataType::Null,
-        WebKit::EncodedDataType::Name,
-        WebKit::EncodedDataType::Data
-    >;
-};
-
-} // namespace WTF

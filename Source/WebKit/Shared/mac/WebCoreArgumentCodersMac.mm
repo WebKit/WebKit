@@ -51,11 +51,11 @@ void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const Web
     switch (certificateInfo.type()) {
 #if HAVE(SEC_TRUST_SERIALIZATION)
     case WebCore::CertificateInfo::Type::Trust:
-        IPC::encode(encoder, certificateInfo.trust());
+        encoder << certificateInfo.trust();
         break;
 #endif
     case WebCore::CertificateInfo::Type::CertificateChain:
-        IPC::encode(encoder, certificateInfo.certificateChain());
+        encoder << certificateInfo.certificateChain();
         break;
     case WebCore::CertificateInfo::Type::None:
         // Do nothing.
@@ -73,7 +73,7 @@ bool ArgumentCoder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::
 #if HAVE(SEC_TRUST_SERIALIZATION)
     case WebCore::CertificateInfo::Type::Trust: {
         RetainPtr<SecTrustRef> trust;
-        if (!IPC::decode(decoder, trust) || !trust)
+        if (!decoder.decode(trust) || !trust)
             return false;
 
         certificateInfo = WebCore::CertificateInfo(WTFMove(trust));
@@ -82,7 +82,7 @@ bool ArgumentCoder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::
 #endif
     case WebCore::CertificateInfo::Type::CertificateChain: {
         RetainPtr<CFArrayRef> certificateChain;
-        if (!IPC::decode(decoder, certificateChain) || !certificateChain)
+        if (!decoder.decode(certificateChain) || !certificateChain)
             return false;
 
         certificateInfo = WebCore::CertificateInfo(WTFMove(certificateChain));
@@ -166,7 +166,7 @@ static void encodeNSError(Encoder& encoder, NSError *nsError)
         CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFStringRef)NSURLErrorFailingURLPeerTrustErrorKey, peerTrust);
 #endif
 
-    IPC::encode(encoder, filteredUserInfo.get());
+    encoder << static_cast<CFDictionaryRef>(filteredUserInfo.get());
 
     if (id underlyingError = [userInfo objectForKey:NSUnderlyingErrorKey]) {
         ASSERT([underlyingError isKindOfClass:[NSError class]]);
@@ -192,7 +192,7 @@ static RetainPtr<NSError> decodeNSError(Decoder& decoder)
         return nil;
 
     RetainPtr<CFDictionaryRef> userInfo;
-    if (!IPC::decode(decoder, userInfo) || !userInfo)
+    if (!decoder.decode(userInfo) || !userInfo)
         return nil;
 
     bool hasUnderlyingError = false;
@@ -377,13 +377,13 @@ void ArgumentCoder<WebCore::ContentFilterUnblockHandler>::encode(Encoder& encode
 {
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
     contentFilterUnblockHandler.encode(archiver.get());
-    IPC::encode(encoder, (__bridge CFDataRef)archiver.get().encodedData);
+    encoder << (__bridge CFDataRef)archiver.get().encodedData;
 }
 
 bool ArgumentCoder<WebCore::ContentFilterUnblockHandler>::decode(Decoder& decoder, WebCore::ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
     RetainPtr<CFDataRef> data;
-    if (!IPC::decode(decoder, data) || !data)
+    if (!decoder.decode(data) || !data)
         return false;
 
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)data.get() error:nullptr]);

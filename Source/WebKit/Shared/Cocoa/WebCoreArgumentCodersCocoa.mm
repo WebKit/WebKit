@@ -431,7 +431,7 @@ void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<We
     auto ctFont = platformData.font();
     auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
     auto attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
-    IPC::encode(encoder, attributes.get());
+    encoder << attributes;
 
     const auto& creationData = platformData.creationData();
     encoder << static_cast<bool>(creationData);
@@ -499,8 +499,9 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     if (!syntheticOblique.hasValue())
         return WTF::nullopt;
 
-    RetainPtr<CFDictionaryRef> attributes;
-    if (!IPC::decode(decoder, attributes))
+    Optional<RetainPtr<CFDictionaryRef>> attributes;
+    decoder >> attributes;
+    if (!attributes)
         return WTF::nullopt;
 
     Optional<bool> includesCreationData;
@@ -525,7 +526,7 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
         auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
         if (!baseFontDescriptor)
             return WTF::nullopt;
-        auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes.get()));
+        auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes->get()));
         auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
 
         auto creationData = FontPlatformData::CreationData { fontFaceData.value(), itemInCollection.value() };
@@ -545,7 +546,7 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     RetainPtr<CTFontDescriptorRef> fontDescriptor = findFontDescriptor(referenceURL.value(), postScriptName.value());
     if (!fontDescriptor)
         return WTF::nullopt;
-    fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes.get()));
+    fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes->get()));
     auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
 
     return FontPlatformData(ctFont.get(), size.value(), syntheticBold.value(), syntheticOblique.value(), orientation.value(), widthVariant.value(), textRenderingMode.value());

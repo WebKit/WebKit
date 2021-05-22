@@ -129,7 +129,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
 #if PLATFORM(COCOA)
-    IPC::encode(encoder, networkATSContext.get());
+    encoder << networkATSContext;
 #endif
 
 #if PLATFORM(WAYLAND)
@@ -387,7 +387,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(COCOA)
-    if (!IPC::decode(decoder, parameters.networkATSContext))
+    if (!decoder.decode(parameters.networkATSContext))
         return false;
 #endif
 

@@ -1,3 +1,106 @@
+2021-05-21  Sam Weinig  <weinig@apple.com>
+
+        Make CGColorSpaceRef argument coding match other CF objects and use CGColorSpaceCreateWithPropertyList for fallback
+        https://bugs.webkit.org/show_bug.cgi?id=226112
+
+        Reviewed by Darin Adler.
+
+        This is a precursor to some color space type unification. This change:
+        
+        - Modernizes CF arugment coders to use ArgumentCoder specialization. It also means
+          we now support encoding CF types both as plain types and RetainPtr<> types, with
+          decoding being kept only supporing RetainPtr<>s, as decoding into non-smart pointer
+          is not very useful.
+        - Move CGColorSpaceRef coding to ArgumentCodersCF and use CGColorSpaceCopyPropertyList
+          and CGColorSpaceCreateWithPropertyList as the fallback coding (if there is no name),
+          matching what other libraries on macOS and iOS do.
+        - Switch ColorSpaceData to be a struct wrapping an Optional<RetainPtr<CGColorSpaceRef>>
+          and use the new shared coding. This will be replaced entirely in subsequent changes
+          so I didn't want to change this too much now.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::encodeDataInternal):
+        (IPC::decodeDataInternal):
+        (IPC::encodeDateInternal):
+        (IPC::decodeDateInternal):
+        (IPC::encodeNumberInternal):
+        (IPC::decodeNumberInternal):
+        (IPC::encodeSecureCodingInternal):
+        (IPC::decodeSecureCodingInternal):
+        (IPC::encodeStringInternal):
+        (IPC::decodeStringInternal):
+        (IPC::encodeURLInternal):
+        (IPC::decodeURLInternal):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<Ref<Font>>::encodePlatformData):
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData):
+        * Shared/FontInfo.cpp:
+        (WebKit::FontInfo::encode const):
+        (WebKit::FontInfo::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode const):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef):
+        (IPC::ArgumentCoder<CFTypeRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFTypeRef>>::decode):
+        (IPC::ArgumentCoder<CFArrayRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFArrayRef>>::decode):
+        (IPC::ArgumentCoder<CFBooleanRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFBooleanRef>>::decode):
+        (IPC::ArgumentCoder<CFDataRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFDataRef>>::decode):
+        (IPC::ArgumentCoder<CFDateRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFDateRef>>::decode):
+        (IPC::ArgumentCoder<CFDictionaryRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFDictionaryRef>>::decode):
+        (IPC::ArgumentCoder<CFNumberRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFNumberRef>>::decode):
+        (IPC::ArgumentCoder<CFStringRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFStringRef>>::decode):
+        (IPC::ArgumentCoder<CFURLRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFURLRef>>::decode):
+        (IPC::ArgumentCoder<CGColorSpaceRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CGColorSpaceRef>>::decode):
+        (IPC::ArgumentCoder<SecCertificateRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<SecCertificateRef>>::decode):
+        (IPC::ArgumentCoder<SecKeychainItemRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<SecKeychainItemRef>>::decode):
+        (IPC::ArgumentCoder<SecAccessControlRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<SecAccessControlRef>>::decode):
+        (IPC::ArgumentCoder<SecTrustRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<SecTrustRef>>::decode):
+        (IPC::encode): Deleted.
+        (IPC::decode): Deleted.
+        * Shared/cf/ArgumentCodersCF.h:
+        (IPC::CFRetainPtrArgumentCoder::encode):
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::encode const):
+        (WebKit::ColorSpaceData::decode):
+        (): Deleted.
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::encode const):
+        (WebKit::SecItemRequestData::decode):
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::encode const):
+        (WebKit::SecItemResponseData::decode):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::encode):
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::decode):
+        (IPC::encodeNSError):
+        (IPC::decodeNSError):
+        (IPC::ArgumentCoder<WebCore::ContentFilterUnblockHandler>::encode):
+        (IPC::ArgumentCoder<WebCore::ContentFilterUnblockHandler>::decode):
+
 2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Adopt QLItem in WKImageExtractionPreviewController
