@@ -357,7 +357,7 @@ void SQLTransactionBackend::doCleanup()
 
     m_frontend.releaseOriginLockIfNeeded();
 
-    Locker locker { m_frontend.m_statementMutex };
+    LockHolder locker(m_frontend.m_statementMutex);
     m_frontend.m_statementQueue.clear();
 
     if (m_frontend.m_sqliteTransaction) {

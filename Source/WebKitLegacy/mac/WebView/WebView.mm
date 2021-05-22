@@ -3957,7 +3957,7 @@ IGNORE_WARNINGS_END
 
     WebCore::IntRect newRect;
     {
-        Locker locker { _private->pendingFixedPositionLayoutRectMutex };
+        LockHolder locker(_private->pendingFixedPositionLayoutRectMutex);
         if (CGRectIsNull(_private->pendingFixedPositionLayoutRect))
             return;
         newRect = WebCore::enclosingIntRect(_private->pendingFixedPositionLayoutRect);
@@ -3971,7 +3971,7 @@ IGNORE_WARNINGS_END
 - (void)_setCustomFixedPositionLayoutRectInWebThread:(CGRect)rect synchronize:(BOOL)synchronize
 {
     {
-        Locker locker { _private->pendingFixedPositionLayoutRectMutex };
+        LockHolder locker(_private->pendingFixedPositionLayoutRectMutex);
         _private->pendingFixedPositionLayoutRect = rect;
     }
     if (!synchronize)
@@ -3985,7 +3985,7 @@ IGNORE_WARNINGS_END
 {
     ASSERT(WebThreadIsLocked());
     {
-        Locker locker { _private->pendingFixedPositionLayoutRectMutex };
+        LockHolder locker(_private->pendingFixedPositionLayoutRectMutex);
         _private->pendingFixedPositionLayoutRect = rect;
     }
     [self _synchronizeCustomFixedPositionLayoutRect];
@@ -3993,7 +3993,7 @@ IGNORE_WARNINGS_END
 
 - (BOOL)_fetchCustomFixedPositionLayoutRect:(NSRect*)rect
 {
-    Locker locker { _private->pendingFixedPositionLayoutRectMutex };
+    LockHolder locker(_private->pendingFixedPositionLayoutRectMutex);
     if (CGRectIsNull(_private->pendingFixedPositionLayoutRect))
         return false;
 

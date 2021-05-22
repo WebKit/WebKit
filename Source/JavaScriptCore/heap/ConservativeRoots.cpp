@@ -142,7 +142,7 @@ private:
 void ConservativeRoots::add(
     void* begin, void* end, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
-    Locker locker { codeBlocks.getLock() };
+    LockHolder locker(codeBlocks.getLock());
     CompositeMarkHook markHook(jitStubRoutines, codeBlocks, locker);
     genericAddSpan(begin, end, markHook);
 }

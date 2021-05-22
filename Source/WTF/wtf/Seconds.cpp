@@ -86,7 +86,7 @@ void sleep(Seconds value)
 
     Lock fakeLock;
     Condition fakeCondition;
-    Locker fakeLocker { fakeLock };
+    LockHolder fakeLocker(fakeLock);
     fakeCondition.waitFor(fakeLock, value);
 }
 

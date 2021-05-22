@@ -166,7 +166,7 @@ void StorageAreaSync::syncTimerFired()
 
     bool partialSync = false;
     {
-        Locker locker { m_syncLock };
+        LockHolder locker(m_syncLock);
 
         // Do not schedule another sync if we're still trying to complete the
         // previous one. But, if we're shutting down, schedule it anyway.
@@ -469,7 +469,7 @@ void StorageAreaSync::performSync()
     bool clearItems;
     HashMap<String, String> items;
     {
-        Locker locker { m_syncLock };
+        LockHolder locker(m_syncLock);
 
         ASSERT(m_syncScheduled);
 
@@ -484,7 +484,7 @@ void StorageAreaSync::performSync()
     sync(clearItems, items);
 
     {
-        Locker locker { m_syncLock };
+        LockHolder locker(m_syncLock);
         m_syncInProgress = false;
     }
 

@@ -66,7 +66,7 @@ void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&,
 {
     ASSERT(!isMainThread());
 
-    Locker locker { m_parsersLock };
+    LockHolder lock(m_parsersLock);
     auto result = m_parsers.ensure(clientID, [this, clientID] {
         return MessageParser([this, clientID](Vector<uint8_t>&& data) {
             if (auto event = RemoteInspectorConnectionClient::extractEvent(clientID, WTFMove(data))) {

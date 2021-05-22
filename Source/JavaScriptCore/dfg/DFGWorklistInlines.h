@@ -44,7 +44,7 @@ void iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Func& func)
 template<typename Func, typename Visitor>
 void Worklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Func& func)
 {
-    Locker locker { *m_lock };
+    LockHolder locker(*m_lock);
     for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
         Plan* plan = iter->value.get();
         if (plan->vm() != &vm)

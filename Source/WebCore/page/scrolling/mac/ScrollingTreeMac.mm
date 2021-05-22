@@ -161,7 +161,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
     if (!rootScrollingNode)
         return nullptr;
 
-    Locker locker { m_layerHitTestMutex };
+    LockHolder lockHolder(m_layerHitTestMutex);
 
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
     FloatPoint scrollOrigin = rootScrollingNode->scrollOrigin();
@@ -204,7 +204,7 @@ OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesFor
     if (!rootScrollingNode)
         return { };
 
-    Locker locker { m_layerHitTestMutex };
+    LockHolder lockHolder(m_layerHitTestMutex);
 
     auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
 

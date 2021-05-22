@@ -58,7 +58,7 @@ DatabaseThread::~DatabaseThread()
 
 void DatabaseThread::start()
 {
-    Locker locker { m_threadCreationMutex };
+    LockHolder lock(m_threadCreationMutex);
 
     if (m_thread)
         return;
@@ -91,7 +91,7 @@ void DatabaseThread::databaseThread()
 {
     {
         // Wait for DatabaseThread::start() to complete.
-        Locker locker { m_threadCreationMutex };
+        LockHolder lock(m_threadCreationMutex);
         LOG(StorageAPI, "Started DatabaseThread %p", this);
     }
 
@@ -110,7 +110,7 @@ void DatabaseThread::databaseThread()
     // inconsistent or locked state.
     DatabaseSet openSetCopy;
     {
-        Locker locker { m_openDatabaseSetMutex };
+        LockHolder lock(m_openDatabaseSetMutex);
         if (m_openDatabaseSet.size() > 0) {
             // As the call to close will modify the original set, we must take a copy to iterate over.
             openSetCopy.swap(m_openDatabaseSet);
@@ -134,7 +134,7 @@ void DatabaseThread::databaseThread()
 
 void DatabaseThread::recordDatabaseOpen(Database& database)
 {
-    Locker locker { m_openDatabaseSetMutex };
+    LockHolder lock(m_openDatabaseSetMutex);
 
     ASSERT(m_thread == &Thread::current());
     ASSERT(!m_openDatabaseSet.contains(&database));
@@ -143,7 +143,7 @@ void DatabaseThread::recordDatabaseOpen(Database& database)
 
 void DatabaseThread::recordDatabaseClosed(Database& database)
 {
-    Locker locker { m_openDatabaseSetMutex };
+    LockHolder lock(m_openDatabaseSetMutex);
 
     ASSERT(m_thread == &Thread::current());
     ASSERT(m_queue.killed() || m_openDatabaseSet.contains(&database));
@@ -172,7 +172,7 @@ void DatabaseThread::unscheduleDatabaseTasks(Database& database)
 
 bool DatabaseThread::hasPendingDatabaseActivity() const
 {
-    Locker locker { m_openDatabaseSetMutex };
+    LockHolder lock(m_openDatabaseSetMutex);
     for (auto& database : m_openDatabaseSet) {
         if (database->hasPendingCreationEvent() || database->hasPendingTransaction())
             return true;

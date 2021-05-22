@@ -164,13 +164,13 @@ public:
     ThreadCountHolder(EntryPlan& plan)
         : m_plan(plan)
     {
-        Locker locker { m_plan.m_lock };
+        LockHolder locker(m_plan.m_lock);
         m_plan.m_numberOfActiveThreads++;
     }
 
     ~ThreadCountHolder()
     {
-        Locker locker { m_plan.m_lock };
+        LockHolder locker(m_plan.m_lock);
         m_plan.m_numberOfActiveThreads--;
 
         if (!m_plan.m_numberOfActiveThreads && !m_plan.hasWork())

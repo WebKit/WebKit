@@ -1209,7 +1209,7 @@ static StructHandlers* createStructHandlerMap()
 static StructTagHandler* handerForStructTag(const char* encodedType)
 {
     static Lock handerForStructTagLock;
-    Locker lockHolder { handerForStructTagLock };
+    LockHolder lockHolder(&handerForStructTagLock);
 
     static StructHandlers* structHandlers = createStructHandlerMap();
 

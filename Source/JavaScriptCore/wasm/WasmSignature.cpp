@@ -167,7 +167,7 @@ struct ParameterTypes {
 RefPtr<Signature> SignatureInformation::signatureFor(const Vector<Type, 1>& results, const Vector<Type>& args)
 {
     SignatureInformation& info = singleton();
-    Locker locker { info.m_lock };
+    LockHolder lock(info.m_lock);
 
     auto addResult = info.m_signatureSet.template add<ParameterTypes>(ParameterTypes { results, args });
     return makeRef(*addResult.iterator->key);
@@ -176,7 +176,7 @@ RefPtr<Signature> SignatureInformation::signatureFor(const Vector<Type, 1>& resu
 void SignatureInformation::tryCleanup()
 {
     SignatureInformation& info = singleton();
-    Locker locker { info.m_lock };
+    LockHolder lock(info.m_lock);
 
     info.m_signatureSet.removeIf([&] (auto& hash) {
         const auto& signature = hash.key;

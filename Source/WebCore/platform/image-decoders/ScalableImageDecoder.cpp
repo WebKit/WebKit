@@ -170,7 +170,7 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(SharedBuffer& data, Al
 
 bool ScalableImageDecoder::frameIsCompleteAtIndex(size_t index) const
 {
-    Locker locker { m_mutex };
+    LockHolder lockHolder(m_mutex);
     if (index >= m_frameBufferCache.size())
         return false;
 
@@ -180,7 +180,7 @@ bool ScalableImageDecoder::frameIsCompleteAtIndex(size_t index) const
 
 bool ScalableImageDecoder::frameHasAlphaAtIndex(size_t index) const
 {
-    Locker locker { m_mutex };
+    LockHolder lockHolder(m_mutex);
     if (m_frameBufferCache.size() <= index)
         return true;
 
@@ -192,7 +192,7 @@ bool ScalableImageDecoder::frameHasAlphaAtIndex(size_t index) const
 
 unsigned ScalableImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel) const
 {
-    Locker locker { m_mutex };
+    LockHolder lockHolder(m_mutex);
     if (m_frameBufferCache.size() <= index)
         return 0;
     // FIXME: Use the dimension of the requested frame.
@@ -201,7 +201,7 @@ unsigned ScalableImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel)
 
 Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const
 {
-    Locker locker { m_mutex };
+    LockHolder lockHolder(m_mutex);
     if (index >= m_frameBufferCache.size())
         return 0_s;
 
@@ -221,7 +221,7 @@ Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const
 
 PlatformImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
-    Locker locker { m_mutex };
+    LockHolder lockHolder(m_mutex);
     // Zero-height images can cause problems for some ports. If we have an empty image dimension, just bail.
     if (size().isEmpty())
         return nullptr;

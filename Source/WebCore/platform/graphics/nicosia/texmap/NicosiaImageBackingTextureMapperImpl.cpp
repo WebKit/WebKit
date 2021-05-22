@@ -46,7 +46,7 @@ ImageBackingTextureMapperImpl::~ImageBackingTextureMapperImpl() = default;
 
 void ImageBackingTextureMapperImpl::flushUpdate()
 {
-    Locker locker { m_update.lock };
+    LockHolder locker(m_update.lock);
 
     // If the update happens for the same image and there's no buffer, keep the current one
     // so it can be received by the CoordinatedGraphicsScene. In that case we only need to update
@@ -61,7 +61,7 @@ void ImageBackingTextureMapperImpl::flushUpdate()
 
 auto ImageBackingTextureMapperImpl::takeUpdate() -> Update
 {
-    Locker locker { m_update.lock };
+    LockHolder locker(m_update.lock);
     return WTFMove(m_update.update);
 }
 

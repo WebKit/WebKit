@@ -81,7 +81,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
     }
 
     {
-        Locker locker { m_adapterMutex };
+        LockHolder locker(m_adapterMutex);
         const auto& sample = data.getSample();
         auto* buffer = gst_sample_get_buffer(sample.get());
         gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
@@ -101,7 +101,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
     size_t outChunkSampleCount = LibWebRTCAudioFormat::chunkSampleCount;
     size_t outBufferSize = outChunkSampleCount * m_outputStreamDescription.bpf;
 
-    Locker locker { m_adapterMutex };
+    LockHolder locker(m_adapterMutex);
     size_t inChunkSampleCount = gst_audio_converter_get_in_frames(m_sampleConverter.get(), outChunkSampleCount);
     size_t inBufferSize = inChunkSampleCount * m_inputStreamDescription.bpf;
 

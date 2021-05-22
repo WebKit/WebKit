@@ -214,7 +214,7 @@ void Thread::detach()
 auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 {
     RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::current(), "We do not support suspending the current thread itself.");
-    Locker locker { globalSuspendLock };
+    LockHolder locker(globalSuspendLock);
     DWORD result = SuspendThread(m_handle);
     if (result != (DWORD)-1)
         return { };
@@ -224,13 +224,13 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 // During resume, suspend or resume should not be executed from the other threads.
 void Thread::resume()
 {
-    Locker locker { globalSuspendLock };
+    LockHolder locker(globalSuspendLock);
     ResumeThread(m_handle);
 }
 
 size_t Thread::getRegisters(PlatformRegisters& registers)
 {
-    Locker locker { globalSuspendLock };
+    LockHolder locker(globalSuspendLock);
     registers.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(m_handle, &registers);
     return sizeof(CONTEXT);

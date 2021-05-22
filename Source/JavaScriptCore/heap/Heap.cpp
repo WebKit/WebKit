@@ -335,7 +335,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     size_t memoryAboveCriticalThreshold = static_cast<size_t>(static_cast<double>(m_ramSize) * (1.0 - Options::criticalGCMemoryThreshold()));
     m_maxEdenSizeWhenCritical = memoryAboveCriticalThreshold / 4;
 
-    Locker locker { *m_threadLock };
+    LockHolder locker(*m_threadLock);
     m_thread = adoptRef(new HeapThread(locker, *this));
 }
 
@@ -401,7 +401,7 @@ void Heap::lastChanceToFinalize()
     
     if (m_collectContinuouslyThread) {
         {
-            Locker locker { m_collectContinuouslyLock };
+            LockHolder locker(m_collectContinuouslyLock);
             m_shouldStopCollectingContinuously = true;
             m_collectContinuouslyCondition.notifyOne();
         }
@@ -443,7 +443,7 @@ void Heap::lastChanceToFinalize()
     // Carefully bring the thread down.
     bool stopped = false;
     {
-        Locker locker { *m_threadLock };
+        LockHolder locker(*m_threadLock);
         stopped = m_thread->tryStop(locker);
         m_threadShouldStop = true;
         if (!stopped)
@@ -1111,7 +1111,7 @@ void Heap::collectAsync(GCRequest request)
 
     bool alreadyRequested = false;
     {
-        Locker locker { *m_threadLock };
+        LockHolder locker(*m_threadLock);
         for (const GCRequest& previousRequest : m_requests) {
             if (request.subsumedBy(previousRequest)) {
                 alreadyRequested = true;
@@ -1250,7 +1250,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
     m_currentGCStartTime = MonotonicTime::now();
     
     {
-        Locker locker { *m_threadLock };
+        LockHolder locker(*m_threadLock);
         RELEASE_ASSERT(!m_requests.isEmpty());
         m_currentRequest = m_requests.first();
     }
@@ -1301,7 +1301,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         [this] () {
             SlotVisitor* visitor;
             {
-                Locker locker { m_parallelSlotVisitorLock };
+                LockHolder locker(m_parallelSlotVisitorLock);
                 RELEASE_ASSERT_WITH_MESSAGE(!m_availableParallelSlotVisitors.isEmpty(), "Parallel SlotVisitors are allocated apriori");
                 visitor = m_availableParallelSlotVisitors.takeLast();
             }
@@ -1314,7 +1314,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
             }
 
             {
-                Locker locker { m_parallelSlotVisitorLock };
+                LockHolder locker(m_parallelSlotVisitorLock);
                 m_availableParallelSlotVisitors.append(visitor);
             }
         });
@@ -1872,7 +1872,7 @@ void Heap::waitForCollector(const Func& func)
     for (;;) {
         bool done;
         {
-            Locker locker { *m_threadLock };
+            LockHolder locker(*m_threadLock);
             done = func(locker);
             if (!done) {
                 setMutatorWaiting();
@@ -2128,7 +2128,7 @@ Heap::Ticket Heap::requestCollection(GCRequest request)
     ASSERT(vm().currentThreadIsHoldingAPILock());
     RELEASE_ASSERT(vm().atomStringTable() == Thread::current().atomStringTable());
     
-    Locker locker { *m_threadLock };
+    LockHolder locker(*m_threadLock);
     // We may be able to steal the conn. That only works if the collector is definitely not running
     // right now. This is an optimization that prevents the collector thread from ever starting in most
     // cases.
@@ -2968,9 +2968,9 @@ void Heap::notifyIsSafeToCollect()
                 MonotonicTime initialTime = MonotonicTime::now();
                 Seconds period = Seconds::fromMilliseconds(Options::collectContinuouslyPeriodMS());
                 while (true) {
-                    Locker locker { m_collectContinuouslyLock };
+                    LockHolder locker(m_collectContinuouslyLock);
                     {
-                        Locker locker { *m_threadLock };
+                        LockHolder locker(*m_threadLock);
                         if (m_requests.isEmpty()) {
                             m_requests.append(WTF::nullopt);
                             m_lastGrantedTicket++;

@@ -129,7 +129,7 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
 {
     ASSERT_ARG(target, target);
     {
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
 
         if (!updateTargetMap(target))
             return;
@@ -163,7 +163,7 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
         // In case debuggers fail to respond, or we cannot connect to webinspectord, automatically continue after a short period of time.
         int64_t debuggerTimeoutDelay = 10;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, debuggerTimeoutDelay * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            Locker locker { m_mutex };
+            LockHolder lock(m_mutex);
             if (m_automaticInspectionCandidateTargetIdentifier == targetIdentifier) {
                 WTFLogAlways("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", m_automaticInspectionCandidateTargetIdentifier);
                 m_automaticInspectionPaused = false;
@@ -174,7 +174,7 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
     target->pauseWaitingForAutomaticInspection();
 
     {
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
 
         ASSERT(m_automaticInspectionCandidateTargetIdentifier);
         m_automaticInspectionCandidateTargetIdentifier = 0;
@@ -195,7 +195,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 
 void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const String& message)
 {
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
 
     if (!m_relayConnection)
         return;
@@ -215,7 +215,7 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
 
 void RemoteInspector::start()
 {
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
 
     if (m_enabled)
         return;
@@ -270,7 +270,7 @@ void RemoteInspector::stopInternal(StopSource source)
 
 void RemoteInspector::setupXPCConnectionIfNeeded()
 {
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
 
     if (m_relayConnection)
         return;
@@ -294,7 +294,7 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
 
 void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef> auditData)
 {
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
 
     if (m_parentProcessIdentifier || m_parentProcessAuditData)
         return;
@@ -310,7 +310,7 @@ void RemoteInspector::setParentProcessInformation(pid_t pid, RetainPtr<CFDataRef
 
 void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*, NSString *messageName, NSDictionary *userInfo)
 {
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
 
     if ([messageName isEqualToString:WIRPermissionDenied]) {
         stopInternal(StopSource::XPCMessage);
@@ -345,7 +345,7 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
 
 void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* relayConnection)
 {
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
 
     ASSERT(relayConnection == m_relayConnection);
     if (relayConnection != m_relayConnection)
@@ -484,7 +484,7 @@ void RemoteInspector::pushListingsSoon()
 
     m_pushScheduled = true;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
         if (m_pushScheduled)
             pushListingsNow();
     });
@@ -615,7 +615,7 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
     dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(^{
         RemoteControllableTarget* target = nullptr;
         {
-            Locker locker { m_mutex };
+            LockHolder lock(m_mutex);
 
             auto findResult = m_targetMap.find(targetIdentifier);
             if (findResult == m_targetMap.end())
@@ -639,7 +639,7 @@ void RemoteInspector::receivedProxyApplicationSetupMessage(NSDictionary *)
         // Wait a bit for the information, but give up after a second.
         m_shouldSendParentProcessInformation = true;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            Locker locker { m_mutex };
+            LockHolder lock(m_mutex);
             if (m_shouldSendParentProcessInformation)
                 stopInternal(StopSource::XPCMessage);
         });

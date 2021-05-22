@@ -578,7 +578,7 @@ size_t SlotVisitor::performIncrementOfDraining(size_t bytesRequested)
 
 bool SlotVisitor::didReachTermination()
 {
-    Locker locker { m_heap.m_markingMutex };
+    LockHolder locker(m_heap.m_markingMutex);
     return didReachTermination(locker);
 }
 

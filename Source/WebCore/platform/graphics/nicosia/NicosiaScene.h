@@ -62,7 +62,7 @@ public:
     template<typename F>
     void accessState(const F& functor)
     {
-        Locker locker { m_scene.lock };
+        LockHolder locker(m_scene.lock);
         functor(m_scene.state);
     }
 

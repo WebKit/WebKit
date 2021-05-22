@@ -60,7 +60,7 @@ TEST(WTF_WorkQueue, Simple)
     int initialRefCount = queue->refCount();
     EXPECT_EQ(1, initialRefCount);
 
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     queue->dispatch([&](void) {
         m_functionCallOrder.append(simpleTestLabel);
         calledSimpleTest = true;
@@ -73,7 +73,7 @@ TEST(WTF_WorkQueue, Simple)
     });
 
     queue->dispatch([&](void) {
-        Locker locker { m_lock };
+        LockHolder locker(m_lock);
         m_functionCallOrder.append(thirdTestLabel);
         calledThirdTest = true;
 
@@ -114,7 +114,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     EXPECT_EQ(1U, queue1->refCount());
     EXPECT_EQ(1U, queue2->refCount());
 
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     
     queue1->dispatch([&](void) {
         m_functionCallOrder.append(simpleTestLabel);
@@ -124,7 +124,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     queue2->dispatch([&](void) {
         std::this_thread::sleep_for(50ms);
 
-        Locker locker { m_lock };
+        LockHolder locker(m_lock);
 
         // Will fail if queue2 took the mutex before queue1.
         EXPECT_TRUE(calledThirdTest);
@@ -135,7 +135,7 @@ TEST(WTF_WorkQueue, TwoQueues)
     });
 
     queue1->dispatch([&](void) {
-        Locker locker { m_lock };
+        LockHolder locker(m_lock);
         m_functionCallOrder.append(thirdTestLabel);
         calledThirdTest = true;
         
@@ -171,17 +171,17 @@ TEST(WTF_WorkQueue, DispatchAfter)
 
     auto queue = WorkQueue::create("com.apple.WebKit.Test.dispatchAfter");
 
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
 
     queue->dispatch([&](void) {
-        Locker locker { m_lock };
+        LockHolder locker(m_lock);
         m_functionCallOrder.append(simpleTestLabel);
         calledSimpleTest = true;
         m_testCompleted.notifyOne();
     });
 
     queue->dispatchAfter(500_ms, [&](void) {
-        Locker locker { m_lock };
+        LockHolder locker(m_lock);
         m_functionCallOrder.append(dispatchAfterLabel);
         calledDispatchAfterTest = true;
         m_dispatchAfterTestCompleted.notifyOne();
@@ -211,11 +211,11 @@ TEST(WTF_WorkQueue, DestroyOnSelf)
     bool completed = false;
 
     {
-        Locker locker { lock };
+        LockHolder locker(lock);
         {
             auto queue = WorkQueue::create("com.apple.WebKit.Test.dispatchAfter");
             queue->dispatchAfter(500_ms, [&](void) {
-                Locker locker { lock };
+                LockHolder locker(lock);
                 dispatchAfterTestStarted.wait(lock, [&] {
                     return started;
                 });
@@ -227,7 +227,7 @@ TEST(WTF_WorkQueue, DestroyOnSelf)
         dispatchAfterTestStarted.notifyOne();
     }
     {
-        Locker locker { lock };
+        LockHolder locker(lock);
         dispatchAfterTestCompleted.wait(lock, [&] {
             return completed;
         });

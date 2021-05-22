@@ -129,7 +129,7 @@ void loadConstantImpl(BasicBlock* block, T value, B3::Air::Opcode move, Tmp tmp,
     static Lock lock;
     static StdMap<T, T*>* map; // I'm not messing with HashMap's problems with integers.
 
-    Locker locker { lock };
+    LockHolder locker(lock);
     if (!map)
         map = new StdMap<T, T*>();
 
@@ -2469,7 +2469,7 @@ void run(const char* filter)
                     for (;;) {
                         RefPtr<SharedTask<void()>> task;
                         {
-                            Locker locker { lock };
+                            LockHolder locker(lock);
                             if (tasks.isEmpty())
                                 return;
                             task = tasks.takeFirst();

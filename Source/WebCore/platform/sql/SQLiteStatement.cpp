@@ -64,7 +64,7 @@ SQLiteStatement::~SQLiteStatement()
 
 int SQLiteStatement::step()
 {
-    Locker databaseLock { m_database.databaseMutex() };
+    LockHolder databaseLock(m_database.databaseMutex());
 
     int error = sqlite3_step(m_statement);
     if (error != SQLITE_DONE && error != SQLITE_ROW)

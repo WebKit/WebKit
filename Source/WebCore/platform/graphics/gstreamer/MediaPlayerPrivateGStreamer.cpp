@@ -3551,7 +3551,7 @@ InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMess
 
     InitData initData;
     {
-        Locker locker { m_protectionMutex };
+        LockHolder lock(m_protectionMutex);
         ProtectionSystemEvents protectionSystemEvents(message);
         GST_TRACE_OBJECT(pipeline(), "found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
 
@@ -3666,7 +3666,7 @@ void MediaPlayerPrivateGStreamer::attemptToDecryptWithLocalInstance()
 void MediaPlayerPrivateGStreamer::handleProtectionEvent(GstEvent* event)
 {
     {
-        Locker locker { m_protectionMutex };
+        LockHolder lock(m_protectionMutex);
         if (m_handledProtectionEvents.contains(GST_EVENT_SEQNUM(event))) {
             GST_DEBUG_OBJECT(pipeline(), "event %u already handled", GST_EVENT_SEQNUM(event));
             return;

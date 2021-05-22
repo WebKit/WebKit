@@ -54,7 +54,7 @@ static void RemoteTargetHandleRunSourceGlobal(void*)
 
     RemoteTargetQueue queueCopy;
     {
-        Locker locker { rwiQueueMutex };
+        LockHolder lock(rwiQueueMutex);
         std::swap(queueCopy, *rwiQueue);
     }
 
@@ -68,7 +68,7 @@ static void RemoteTargetQueueTaskOnGlobalQueue(Function<void ()>&& function)
     ASSERT(rwiQueue);
 
     {
-        Locker locker { rwiQueueMutex };
+        LockHolder lock(rwiQueueMutex);
         rwiQueue->append(WTFMove(function));
     }
 
@@ -99,7 +99,7 @@ static void RemoteTargetHandleRunSourceWithInfo(void* info)
 
     RemoteTargetQueue queueCopy;
     {
-        Locker locker { connectionToTarget->queueMutex() };
+        LockHolder lock(connectionToTarget->queueMutex());
         queueCopy = connectionToTarget->takeQueue();
     }
 
@@ -158,7 +158,7 @@ void RemoteConnectionToTarget::dispatchAsyncOnTarget(Function<void ()>&& callbac
 
 bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automaticallyPause)
 {
-    Locker locker { m_targetMutex };
+    LockHolder lock(m_targetMutex);
 
     if (!m_target)
         return false;
@@ -166,7 +166,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     auto targetIdentifier = this->targetIdentifier().valueOr(0);
 
     dispatchAsyncOnTarget([this, targetIdentifier, isAutomaticInspection, automaticallyPause, strongThis = makeRef(*this)]() {
-        Locker locker { m_targetMutex };
+        LockHolder lock(m_targetMutex);
 
         if (!m_target || !m_target->remoteControlAllowed()) {
             RemoteInspector::singleton().setupFailed(targetIdentifier);
@@ -191,7 +191,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
 
 void RemoteConnectionToTarget::targetClosed()
 {
-    Locker locker { m_targetMutex };
+    LockHolder lock(m_targetMutex);
 
     m_target = nullptr;
 }
@@ -201,7 +201,7 @@ void RemoteConnectionToTarget::close()
     auto targetIdentifier = m_target ? m_target->targetIdentifier() : 0;
     
     dispatchAsyncOnTarget([this, targetIdentifier, strongThis = makeRef(*this)]() {
-        Locker locker { m_targetMutex };
+        LockHolder lock(m_targetMutex);
         if (m_target) {
             if (m_connected)
                 m_target->disconnect(*this);
@@ -218,7 +218,7 @@ void RemoteConnectionToTarget::sendMessageToTarget(NSString *message)
     dispatchAsyncOnTarget([this, strongMessage = retainPtr(message), strongThis = makeRef(*this)]() {
         RemoteControllableTarget* target = nullptr;
         {
-            Locker locker { m_targetMutex };
+            LockHolder lock(m_targetMutex);
             if (!m_target)
                 return;
             target = m_target;
@@ -274,7 +274,7 @@ void RemoteConnectionToTarget::queueTaskOnPrivateRunLoop(Function<void ()>&& fun
     ASSERT(m_runLoop);
 
     {
-        Locker lock { m_queueMutex };
+        LockHolder lock(m_queueMutex);
         m_queue.append(WTFMove(function));
     }
 

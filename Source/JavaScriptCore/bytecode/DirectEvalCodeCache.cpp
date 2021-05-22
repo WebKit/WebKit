@@ -35,20 +35,20 @@ void DirectEvalCodeCache::setSlow(JSGlobalObject* globalObject, JSCell* owner, c
     if (!evalExecutable->allowDirectEvalCache())
         return;
 
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     m_cacheMap.set(CacheKey(evalSource, callSiteIndex), WriteBarrier<DirectEvalExecutable>(globalObject->vm(), owner, evalExecutable));
 }
 
 void DirectEvalCodeCache::clear()
 {
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     m_cacheMap.clear();
 }
 
 template<typename Visitor>
 void DirectEvalCodeCache::visitAggregateImpl(Visitor& visitor)
 {
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     EvalCacheMap::iterator end = m_cacheMap.end();
     for (EvalCacheMap::iterator ptr = m_cacheMap.begin(); ptr != end; ++ptr)
         visitor.append(ptr->value);

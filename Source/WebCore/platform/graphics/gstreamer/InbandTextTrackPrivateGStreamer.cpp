@@ -83,7 +83,7 @@ void InbandTextTrackPrivateGStreamer::disconnect()
 void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
 {
     {
-        Locker locker { m_sampleMutex };
+        LockHolder lock(m_sampleMutex);
         m_pendingSamples.append(sample);
     }
 
@@ -105,7 +105,7 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
 {
     Vector<GRefPtr<GstSample> > samples;
     {
-        Locker locker { m_sampleMutex };
+        LockHolder lock(m_sampleMutex);
         m_pendingSamples.swap(samples);
     }
 

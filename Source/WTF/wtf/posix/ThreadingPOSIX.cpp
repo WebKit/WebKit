@@ -383,7 +383,7 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
     // Your issuing thread (A) attempts to suspend the target thread (B). Then, you will suspend the thread (C) additionally.
     // This case frequently happens if you stop threads to perform stack scanning. But thread (B) may hold the lock of thread (C).
     // In that case, dead lock happens. Using global lock here avoids this dead lock.
-    Locker locker { globalSuspendLock };
+    LockHolder locker(globalSuspendLock);
 #if OS(DARWIN)
     kern_return_t result = thread_suspend(m_platformThread);
     if (result != KERN_SUCCESS)
@@ -414,7 +414,7 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 void Thread::resume()
 {
     // During resume, suspend or resume should not be executed from the other threads.
-    Locker locker { globalSuspendLock };
+    LockHolder locker(globalSuspendLock);
 #if OS(DARWIN)
     thread_resume(m_platformThread);
 #else
@@ -472,7 +472,7 @@ static ThreadStateMetadata threadStateMetadata()
 
 size_t Thread::getRegisters(PlatformRegisters& registers)
 {
-    Locker locker { globalSuspendLock };
+    LockHolder locker(globalSuspendLock);
 #if OS(DARWIN)
     auto metadata = threadStateMetadata();
     kern_return_t result = thread_get_state(m_platformThread, metadata.flavor, (thread_state_t)&registers, &metadata.userCount);

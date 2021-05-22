@@ -534,7 +534,7 @@ void Engine::writeSizeFile(const String& path, uint64_t size, CompletionHandler<
         return completionHandler();
 
     m_ioQueue->dispatch([path = path.isolatedCopy(), size, completionHandler = WTFMove(completionHandler)]() mutable {
-        Locker locker { globalSizeFileLock };
+        LockHolder locker(globalSizeFileLock);
         auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
 
         if (FileSystem::isHandleValid(fileHandle)) {
@@ -554,7 +554,7 @@ Optional<uint64_t> Engine::readSizeFile(const String& path)
 {
     ASSERT(!RunLoop::isMain());
 
-    Locker locker { globalSizeFileLock };
+    LockHolder locker(globalSizeFileLock);
     auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
     auto closeFileHandle = makeScopeExit([&] {
         FileSystem::closeFile(fileHandle);
@@ -698,7 +698,7 @@ void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandle
     ASSERT(RunLoop::isMain());
 
     m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        Locker locker { globalSizeFileLock };
+        LockHolder locker(globalSizeFileLock);
         for (auto& fileName : FileSystem::listDirectory(path)) {
             auto filePath = FileSystem::pathByAppendingComponent(path, fileName);
             if (FileSystem::fileType(filePath) == FileSystem::FileType::Directory)
@@ -759,7 +759,7 @@ void Engine::deleteNonEmptyDirectoryOnBackgroundThread(const String& path, Compl
     ASSERT(RunLoop::isMain());
 
     m_ioQueue->dispatch([path = path.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        Locker locker { globalSizeFileLock };
+        LockHolder locker(globalSizeFileLock);
         FileSystem::deleteNonEmptyDirectory(path);
 
         RunLoop::main().dispatch(WTFMove(completionHandler));

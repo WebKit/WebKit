@@ -61,7 +61,7 @@ bool CommonData::invalidate()
         return false;
 
     if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
-        Locker locker { pcCodeBlockMapLock };
+        LockHolder locker(pcCodeBlockMapLock);
         auto& map = pcCodeBlockMap(locker);
         for (auto& jumpReplacement : m_jumpReplacements)
             map.remove(jumpReplacement.dataLocation());
@@ -77,7 +77,7 @@ bool CommonData::invalidate()
 CommonData::~CommonData()
 {
     if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
-        Locker locker { pcCodeBlockMapLock };
+        LockHolder locker(pcCodeBlockMapLock);
         auto& map = pcCodeBlockMap(locker);
         for (auto& jumpReplacement : m_jumpReplacements)
             map.remove(jumpReplacement.dataLocation());
@@ -86,7 +86,7 @@ CommonData::~CommonData()
 
 void CommonData::installVMTrapBreakpoints(CodeBlock* owner)
 {
-    Locker locker { pcCodeBlockMapLock };
+    LockHolder locker(pcCodeBlockMapLock);
     if (!isStillValid || hasVMTrapsBreakpointsInstalled)
         return;
     hasVMTrapsBreakpointsInstalled = true;
@@ -112,7 +112,7 @@ void CommonData::installVMTrapBreakpoints(CodeBlock* owner)
 CodeBlock* codeBlockForVMTrapPC(void* pc)
 {
     ASSERT(isJITPC(pc));
-    Locker locker { pcCodeBlockMapLock };
+    LockHolder locker(pcCodeBlockMapLock);
     auto& map = pcCodeBlockMap(locker);
     auto result = map.find(pc);
     if (result == map.end())

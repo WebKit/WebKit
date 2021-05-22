@@ -71,26 +71,26 @@ class VideoRenderRequestScheduler {
 public:
     void start()
     {
-        Locker locker { m_sampleMutex };
+        LockHolder locker(m_sampleMutex);
         m_unlocked = false;
     }
 
     void stop()
     {
-        Locker locker { m_sampleMutex };
+        LockHolder locker(m_sampleMutex);
         m_sample = nullptr;
         m_unlocked = true;
     }
 
     void drain()
     {
-        Locker locker { m_sampleMutex };
+        LockHolder locker(m_sampleMutex);
         m_sample = nullptr;
     }
 
     bool requestRender(WebKitVideoSink* sink, GstBuffer* buffer)
     {
-        Locker locker { m_sampleMutex };
+        LockHolder locker(m_sampleMutex);
         if (m_unlocked)
             return true;
 

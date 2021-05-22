@@ -139,7 +139,7 @@ void CLoopStack::releaseExcessCapacity()
 
 void CLoopStack::addToCommittedByteCount(long byteCount)
 {
-    Locker locker { stackStatisticsMutex };
+    LockHolder locker(stackStatisticsMutex);
     ASSERT(static_cast<long>(committedBytesCount) + byteCount > -1);
     committedBytesCount += byteCount;
 }
@@ -159,7 +159,7 @@ bool CLoopStack::isSafeToRecurse() const
 
 size_t CLoopStack::committedByteCount()
 {
-    Locker locker { stackStatisticsMutex };
+    LockHolder locker(stackStatisticsMutex);
     return committedBytesCount;
 }
 

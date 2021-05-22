@@ -70,7 +70,7 @@ void RemoteInspector::didClose(RemoteInspectorSocketEndpoint&, ConnectionID)
     m_clientConnection = WTF::nullopt;
 
     RunLoop::current().dispatch([=] {
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
         stopInternal(StopSource::API);
     });
 }
@@ -86,7 +86,7 @@ void RemoteInspector::sendWebInspectorEvent(const String& event)
 
 void RemoteInspector::start()
 {
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
 
     if (m_enabled)
         return;
@@ -182,7 +182,7 @@ void RemoteInspector::pushListingsSoon()
     m_pushScheduled = true;
 
     RunLoop::current().dispatch([=] {
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
         if (m_pushScheduled)
             pushListingsNow();
     });
@@ -233,7 +233,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
 {
     RemoteControllableTarget* target;
     {
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
         target = m_targetMap.get(targetIdentifier);
         if (!target)
             return;
@@ -246,7 +246,7 @@ void RemoteInspector::setup(TargetID targetIdentifier)
         return;
     }
 
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
     m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
 
     updateHasActiveDebugSession();
@@ -303,7 +303,7 @@ void RemoteInspector::setupInspectorClient(const Event&)
 
     m_readyToPushListings = true;
 
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
     pushListingsNow();
 }
 
@@ -326,7 +326,7 @@ void RemoteInspector::frontendDidClose(const Event& event)
 
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
         RemoteControllableTarget* target = m_targetMap.get(event.targetID.value());
         if (!target)
             return;
@@ -348,7 +348,7 @@ void RemoteInspector::sendMessageToBackend(const Event& event)
 
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
-        Locker locker { m_mutex };
+        LockHolder lock(m_mutex);
         connectionToTarget = m_targetConnectionMap.get(event.targetID.value());
         if (!connectionToTarget)
             return;
@@ -383,7 +383,7 @@ void RemoteInspector::startAutomationSession(const Event& event)
 
     m_readyToPushListings = true;
 
-    Locker locker { m_mutex };
+    LockHolder lock(m_mutex);
     pushListingsNow();
 }
 

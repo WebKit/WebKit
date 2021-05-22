@@ -231,7 +231,7 @@ bool CARingBufferStorageVector::allocate(size_t byteCount, const CAAudioStreamDe
 
 void CARingBufferStorageVector::flush()
 {
-    Locker locker { m_currentFrameBoundsLock };
+    LockHolder locker(m_currentFrameBoundsLock);
     for (auto& timeBounds : m_timeBoundsQueue) {
         timeBounds.m_startFrame = 0;
         timeBounds.m_endFrame = 0;
@@ -305,7 +305,7 @@ void CARingBuffer::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
 
 void CARingBufferStorageVector::setCurrentFrameBounds(uint64_t startTime, uint64_t endTime)
 {
-    Locker locker { m_currentFrameBoundsLock };
+    LockHolder locker(m_currentFrameBoundsLock);
     uint32_t nextPtr = m_timeBoundsQueuePtr.load() + 1;
     uint32_t index = nextPtr & kGeneralRingTimeBoundsQueueMask;
 

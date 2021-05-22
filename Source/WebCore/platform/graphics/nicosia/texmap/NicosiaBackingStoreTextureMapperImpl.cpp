@@ -101,7 +101,7 @@ void BackingStoreTextureMapperImpl::flushUpdate()
 
     // Incrementally store updates as they are being flushed from the layer-side.
     {
-        Locker locker { m_update.lock };
+        LockHolder locker(m_update.lock);
         m_update.pending.tilesToCreate.appendVector(m_layerState.update.tilesToCreate);
         m_update.pending.tilesToUpdate.appendVector(m_layerState.update.tilesToUpdate);
         m_update.pending.tilesToRemove.appendVector(m_layerState.update.tilesToRemove);
@@ -112,7 +112,7 @@ void BackingStoreTextureMapperImpl::flushUpdate()
 
 auto BackingStoreTextureMapperImpl::takeUpdate() -> TileUpdate
 {
-    Locker locker { m_update.lock };
+    LockHolder locker(m_update.lock);
     return WTFMove(m_update.pending);
 }
 

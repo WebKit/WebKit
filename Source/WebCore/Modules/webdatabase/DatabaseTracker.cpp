@@ -159,7 +159,7 @@ ExceptionOr<void> DatabaseTracker::hasAdequateQuotaForOrigin(const SecurityOrigi
 
 ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context, const String& name, uint64_t estimatedSize)
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
 
     // FIXME: What guarantees this context.securityOrigin() is non-null?
     auto origin = context.securityOrigin();
@@ -207,7 +207,7 @@ ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context
 // hence should not be a performance critical path anyway. 
 ExceptionOr<void> DatabaseTracker::retryCanEstablishDatabase(DatabaseContext& context, const String& name, uint64_t estimatedSize)
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
 
     // FIXME: What guarantees context.securityOrigin() is non-null?
     auto origin = context.securityOrigin();
@@ -271,7 +271,7 @@ uint64_t DatabaseTracker::maximumSize(Database& database)
 {
     // The maximum size for a database is the full quota for its origin, minus the current usage within the origin,
     // plus the current usage of the given database
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
     auto origin = database.securityOrigin();
 
     auto quota = quotaNoLock(origin);
@@ -360,13 +360,13 @@ String DatabaseTracker::fullPathForDatabaseNoLock(const SecurityOriginData& orig
 
 String DatabaseTracker::fullPathForDatabase(const SecurityOriginData& origin, const String& name, bool createIfNotExists)
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
     return fullPathForDatabaseNoLock(origin, name, createIfNotExists).isolatedCopy();
 }
 
 Vector<SecurityOriginData> DatabaseTracker::origins()
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
 
     openTrackerDatabase(DontCreateIfDoesNotExist);
     if (!m_database.isOpen())
@@ -421,7 +421,7 @@ Vector<String> DatabaseTracker::databaseNames(const SecurityOriginData& origin)
 {
     Vector<String> names;
     {
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
         names = databaseNamesNoLock(origin);
     }
     return isolatedCopy(names);
@@ -434,7 +434,7 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
     int64_t expectedUsage;
 
     {
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
 
         openTrackerDatabase(DontCreateIfDoesNotExist);
         if (!m_database.isOpen())
@@ -469,7 +469,7 @@ void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const
     String originIdentifier = origin.databaseIdentifier();
     int64_t guid = 0;
 
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
 
     openTrackerDatabase(CreateIfDoesNotExist);
     if (!m_database.isOpen())
@@ -519,7 +519,7 @@ void DatabaseTracker::setDatabaseDetails(const SecurityOriginData& origin, const
 
 void DatabaseTracker::doneCreatingDatabase(Database& database)
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
     doneCreatingDatabase(database.securityOrigin(), database.stringIdentifierIsolatedCopy());
 }
 
@@ -527,7 +527,7 @@ Vector<Ref<Database>> DatabaseTracker::openDatabases()
 {
     Vector<Ref<Database>> openDatabases;
     {
-        Locker openDatabaseMapLock { m_openDatabaseMapGuard };
+        LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
 
         if (m_openDatabaseMap) {
             for (auto& nameMap : m_openDatabaseMap->values()) {
@@ -543,7 +543,7 @@ Vector<Ref<Database>> DatabaseTracker::openDatabases()
 
 void DatabaseTracker::addOpenDatabase(Database& database)
 {
-    Locker openDatabaseMapLock { m_openDatabaseMapGuard };
+    LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
 
     if (!m_openDatabaseMap)
         m_openDatabaseMap = makeUnique<DatabaseOriginMap>();
@@ -570,7 +570,7 @@ void DatabaseTracker::addOpenDatabase(Database& database)
 
 void DatabaseTracker::removeOpenDatabase(Database& database)
 {
-    Locker openDatabaseMapLock { m_openDatabaseMapGuard };
+    LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
 
     if (!m_openDatabaseMap) {
         ASSERT_NOT_REACHED();
@@ -609,7 +609,7 @@ void DatabaseTracker::removeOpenDatabase(Database& database)
 
 RefPtr<OriginLock> DatabaseTracker::originLockFor(const SecurityOriginData& origin)
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
     String databaseIdentifier = origin.databaseIdentifier();
 
     // The originLockMap is accessed from multiple DatabaseThreads since
@@ -688,13 +688,13 @@ uint64_t DatabaseTracker::quotaNoLock(const SecurityOriginData& origin)
 
 uint64_t DatabaseTracker::quota(const SecurityOriginData& origin)
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
     return quotaNoLock(origin);
 }
 
 void DatabaseTracker::setQuota(const SecurityOriginData& origin, uint64_t quota)
 {
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
 
     if (quotaNoLock(origin) == quota)
         return;
@@ -824,7 +824,7 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
 {
     Vector<String> databaseNames;
     {
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
         openTrackerDatabase(DontCreateIfDoesNotExist);
         if (!m_database.isOpen())
             return false;
@@ -876,7 +876,7 @@ bool DatabaseTracker::deleteOrigin(const SecurityOriginData& origin, DeletionMod
     }
 
     {
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
         deleteOriginLockFor(origin);
         doneDeletingOrigin(origin);
 
@@ -1063,7 +1063,7 @@ void DatabaseTracker::doneDeletingOrigin(const SecurityOriginData& origin)
 bool DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const String& name)
 {
     {
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
         openTrackerDatabase(DontCreateIfDoesNotExist);
         if (!m_database.isOpen())
             return false;
@@ -1078,12 +1078,12 @@ bool DatabaseTracker::deleteDatabase(const SecurityOriginData& origin, const Str
     // We drop the lock here because holding locks during a call to deleteDatabaseFile will deadlock.
     if (FileSystem::fileExists(fullPathForDatabase(origin, name, false)) && !deleteDatabaseFile(origin, name, DeletionMode::Default)) {
         LOG_ERROR("Unable to delete file for database %s in origin %s", name.utf8().data(), origin.databaseIdentifier().utf8().data());
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
         doneDeletingDatabase(origin, name);
         return false;
     }
 
-    Locker lockDatabase { m_openDatabaseMapGuard };
+    LockHolder lockDatabase(m_databaseGuard);
 
     auto statement = m_database.prepareStatement("DELETE FROM Databases WHERE origin=? AND name=?"_s);
     if (!statement) {
@@ -1121,7 +1121,7 @@ bool DatabaseTracker::deleteDatabaseFile(const SecurityOriginData& origin, const
 
 #ifndef NDEBUG
     {
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
         ASSERT(isDeletingDatabaseOrOriginFor(origin, name));
     }
 #endif
@@ -1132,7 +1132,7 @@ bool DatabaseTracker::deleteDatabaseFile(const SecurityOriginData& origin, const
     // Database::markAsDeletedAndClose(), since that can cause a deadlock
     // during the synchronous DatabaseThread call it triggers.
     {
-        Locker openDatabaseMapLock { m_openDatabaseMapGuard };
+        LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
         if (m_openDatabaseMap) {
             if (auto* nameMap = m_openDatabaseMap->get(origin)) {
                 if (auto* databaseSet = nameMap->get(name)) {
@@ -1174,7 +1174,7 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
     
     {
         // Acquire the lock before calling openTrackerDatabase.
-        Locker lockDatabase { m_openDatabaseMapGuard };
+        LockHolder lockDatabase(m_databaseGuard);
         openTrackerDatabase(DontCreateIfDoesNotExist);
     }
 
@@ -1189,7 +1189,7 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
     // Database::markAsDeletedAndClose(), since that can cause a deadlock
     // during the synchronous DatabaseThread call it triggers.
     {
-        Locker openDatabaseMapLock { m_openDatabaseMapGuard };
+        LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
         if (m_openDatabaseMap) {
             for (auto& openDatabase : *m_openDatabaseMap) {
                 auto& origin = openDatabase.key;

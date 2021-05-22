@@ -74,7 +74,7 @@ void CodeBlockSet::iterateViaSubspaces(VM& vm, const Functor& functor)
 template<typename Functor>
 void CodeBlockSet::iterateCurrentlyExecuting(const Functor& functor)
 {
-    Locker locker { m_lock };
+    LockHolder locker(&m_lock);
     for (CodeBlock* codeBlock : m_currentlyExecuting)
         functor(codeBlock);
 }

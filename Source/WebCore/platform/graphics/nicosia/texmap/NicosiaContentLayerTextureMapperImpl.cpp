@@ -52,26 +52,26 @@ ContentLayerTextureMapperImpl::ContentLayerTextureMapperImpl(Client& client)
 ContentLayerTextureMapperImpl::~ContentLayerTextureMapperImpl()
 {
 #if ASSERT_ENABLED
-    Locker locker { m_client.lock };
+    LockHolder locker(m_client.lock);
     ASSERT(!m_client.client);
 #endif
 }
 
 void ContentLayerTextureMapperImpl::invalidateClient()
 {
-    Locker locker { m_client.lock };
+    LockHolder locker(m_client.lock);
     m_client.client = nullptr;
 }
 
 bool ContentLayerTextureMapperImpl::flushUpdate()
 {
-    Locker locker { m_client.lock };
+    LockHolder locker(m_client.lock);
     return std::exchange(m_client.pendingUpdate, false);
 }
 
 void ContentLayerTextureMapperImpl::swapBuffersIfNeeded()
 {
-    Locker locker { m_client.lock };
+    LockHolder locker(m_client.lock);
     if (m_client.client)
         m_client.client->swapBuffersIfNeeded();
 }

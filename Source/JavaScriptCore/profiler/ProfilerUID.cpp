@@ -37,7 +37,7 @@ UID UID::create()
     static Lock lock;
     static uint64_t counter;
     
-    Locker locker { lock };
+    LockHolder locker(lock);
     UID result;
     result.m_uid = ++counter;
     return result;

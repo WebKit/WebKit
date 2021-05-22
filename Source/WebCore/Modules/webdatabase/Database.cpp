@@ -282,7 +282,7 @@ void Database::performClose()
     ASSERT(databaseThread().getThread() == &Thread::current());
 
     {
-        Locker locker { m_transactionInProgressMutex };
+        LockHolder locker(m_transactionInProgressMutex);
 
         // Clean up transactions that have not been scheduled yet:
         // Transaction phase 1 cleanup. See comment on "What happens if a
@@ -544,14 +544,14 @@ void Database::scheduleTransactionStep(SQLTransaction& transaction)
 
 void Database::inProgressTransactionCompleted()
 {
-    Locker locker { m_transactionInProgressMutex };
+    LockHolder locker(m_transactionInProgressMutex);
     m_transactionInProgress = false;
     scheduleTransaction();
 }
 
 bool Database::hasPendingTransaction()
 {
-    Locker locker { m_transactionInProgressMutex };
+    LockHolder locker(m_transactionInProgressMutex);
     return m_transactionInProgress || !m_transactionQueue.isEmpty();
 }
 
@@ -681,7 +681,7 @@ void Database::resetAuthorizer()
 void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
 {
     ASSERT(isMainThread());
-    Locker locker { m_transactionInProgressMutex };
+    LockHolder locker(m_transactionInProgressMutex);
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
             m_document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = makeRef(*errorCallback)]() {

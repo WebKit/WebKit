@@ -131,7 +131,7 @@ MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, ThunkGenerator generator)
 {
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     CTIStubMap::AddResult entry = m_ctiStubMap.add(generator, MacroAssemblerCodeRef<JITThunkPtrTag>());
     if (entry.isNewEntry) {
         // Compilation thread can only retrieve existing entries.
@@ -143,7 +143,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, ThunkGenerator 
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::existingCTIStub(ThunkGenerator generator)
 {
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     return existingCTIStub(generator, NoLockingNecessary);
 }
 
@@ -159,7 +159,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::existingCTIStub(ThunkGenerator 
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiSlowPathFunctionStub(VM& vm, SlowPathFunction slowPathFunction)
 {
-    Locker locker { m_lock };
+    LockHolder locker(m_lock);
     auto key = bitwise_cast<ThunkGenerator>(slowPathFunction);
     CTIStubMap::AddResult entry = m_ctiStubMap.add(key, MacroAssemblerCodeRef<JITThunkPtrTag>());
     if (entry.isNewEntry) {

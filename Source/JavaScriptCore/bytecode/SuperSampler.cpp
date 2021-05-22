@@ -53,7 +53,7 @@ void initializeSuperSampler()
             for (;;) {
                 for (int ms = 0; ms < printingPeriod; ms += sleepQuantum) {
                     if (g_superSamplerEnabled) {
-                        Locker locker { lock };
+                        LockHolder locker(lock);
                         if (g_superSamplerCount)
                             in++;
                         else
@@ -70,7 +70,7 @@ void initializeSuperSampler()
 
 void resetSuperSamplerState()
 {
-    Locker locker { lock };
+    LockHolder locker(lock);
     in = 0;
     out = 0;
 }
@@ -80,7 +80,7 @@ void printSuperSamplerState()
     if (!Options::useSuperSampler())
         return;
 
-    Locker locker { lock };
+    LockHolder locker(lock);
     double percentage = 100.0 * in / (in + out);
     if (percentage != percentage)
         percentage = 0.0;
@@ -89,13 +89,13 @@ void printSuperSamplerState()
 
 void enableSuperSampler()
 {
-    Locker locker { lock };
+    LockHolder locker(lock);
     g_superSamplerEnabled = true;
 }
 
 void disableSuperSampler()
 {
-    Locker locker { lock };
+    LockHolder locker(lock);
     g_superSamplerEnabled = false;
 }
 

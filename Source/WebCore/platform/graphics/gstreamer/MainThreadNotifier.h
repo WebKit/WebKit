@@ -86,7 +86,7 @@ public:
     void cancelPendingNotifications(unsigned mask = 0)
     {
         ASSERT(m_isValid.load());
-        Locker locker { m_pendingNotificationsLock };
+        LockHolder locker(m_pendingNotificationsLock);
         if (mask)
             m_pendingNotifications &= ~mask;
         else
@@ -107,7 +107,7 @@ private:
 
     bool addPendingNotification(T notificationType)
     {
-        Locker locker { m_pendingNotificationsLock };
+        LockHolder locker(m_pendingNotificationsLock);
         if (notificationType & m_pendingNotifications)
             return false;
         m_pendingNotifications |= notificationType;
@@ -116,7 +116,7 @@ private:
 
     bool removePendingNotification(T notificationType)
     {
-        Locker locker { m_pendingNotificationsLock };
+        LockHolder locker(m_pendingNotificationsLock);
         if (notificationType & m_pendingNotifications) {
             m_pendingNotifications &= ~notificationType;
             return true;

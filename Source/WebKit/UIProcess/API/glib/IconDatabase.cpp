@@ -188,7 +188,7 @@ void IconDatabase::populatePageURLToIconURLMap()
     }
 
     auto result = query->step();
-    Locker locker { m_pageURLToIconURLMapLock };
+    LockHolder lockHolder(m_pageURLToIconURLMapLock);
     while (result == SQLITE_ROW) {
         m_pageURLToIconURLMap.set(query->columnText(0), query->columnText(1));
         result = query->step();
@@ -260,7 +260,7 @@ void IconDatabase::clearLoadedIconsTimerFired()
 {
     ASSERT(isMainRunLoop());
 
-    Locker locker { m_loadedIconsLock };
+    LockHolder lockHolder(m_loadedIconsLock);
     auto now = MonotonicTime::now();
     Vector<String> iconsToRemove;
     for (auto iter : m_loadedIcons) {
@@ -492,7 +492,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
             bool expired = false;
             String cachedIconURL;
             {
-                Locker locker { m_pageURLToIconURLMapLock };
+                LockHolder lockHolder(m_pageURLToIconURLMapLock);
                 cachedIconURL = m_pageURLToIconURLMap.get(pageURL);
             }
             if (cachedIconURL == iconURL)
@@ -506,7 +506,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
                 } else {
                     result = true;
                     if (!canWriteToDatabase || setIconIDForPageURL(iconID.value(), pageURL)) {
-                        Locker locker { m_pageURLToIconURLMapLock };
+                        LockHolder lockHolder(m_pageURLToIconURLMapLock);
                         m_pageURLToIconURLMap.set(pageURL, iconURL);
                         changed = true;
                     }
@@ -514,13 +514,13 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
             } else if (!canWriteToDatabase) {
                 bool foundInMemoryCache;
                 {
-                    Locker locker { m_loadedIconsLock };
+                    LockHolder lockHolder(m_loadedIconsLock);
                     foundInMemoryCache = m_loadedIcons.contains(iconURL);
                 }
 
                 if (foundInMemoryCache) {
                     result = true;
-                    Locker locker { m_pageURLToIconURLMapLock };
+                    LockHolder lockHolder(m_pageURLToIconURLMapLock);
                     m_pageURLToIconURLMap.set(pageURL, iconURL);
                     changed = true;
                 }
@@ -542,14 +542,14 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
         Vector<uint8_t> iconData;
         String iconURL;
         {
-            Locker locker { m_pageURLToIconURLMapLock };
+            LockHolder lockHolder(m_pageURLToIconURLMapLock);
             iconURL = m_pageURLToIconURLMap.get(pageURL);
         }
         if (m_db.isOpen() && !iconURL.isEmpty()) {
             bool expired;
             iconID = iconIDForIconURL(iconURL, expired);
             if (iconID) {
-                Locker locker { m_loadedIconsLock };
+                LockHolder lockHolder(m_loadedIconsLock);
                 if (!m_loadedIcons.contains(iconURL)) {
                     iconData = this->iconData(iconID.value());
                     m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, { }));
@@ -566,13 +566,13 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 return;
             }
 
-            Locker locker { m_loadedIconsLock };
+            LockHolder lockHolder(m_loadedIconsLock);
             auto it = m_loadedIcons.find(iconURL);
             if (it != m_loadedIcons.end() && it->value.first) {
                 auto icon = it->value.first;
                 it->value.second = MonotonicTime::now();
                 startClearLoadedIconsTimer();
-                locker.unlockEarly();
+                lockHolder.unlockEarly();
                 completionHandler(WTFMove(icon));
                 return;
             }
@@ -596,7 +596,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
 
             auto icon = addResult.iterator->value.first;
             startClearLoadedIconsTimer();
-            locker.unlockEarly();
+            lockHolder.unlockEarly();
             completionHandler(WTFMove(icon));
         });
     });
@@ -606,7 +606,7 @@ String IconDatabase::iconURLForPageURL(const String& pageURL)
 {
     ASSERT(isMainRunLoop());
 
-    Locker locker { m_pageURLToIconURLMapLock };
+    LockHolder lockHolder(m_pageURLToIconURLMapLock);
     return m_pageURLToIconURLMap.get(pageURL);
 }
 
@@ -618,7 +618,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
     if (m_allowDatabaseWrite == AllowDatabaseWrite::No || allowDatabaseWrite == AllowDatabaseWrite::No) {
         bool result = true;
         {
-            Locker locker { m_loadedIconsLock };
+            LockHolder lockHolder(m_loadedIconsLock);
             auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, { }));
             if (iconDataSize) {
                 RefPtr<NativeImage> nativeImage;
@@ -632,7 +632,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
         startClearLoadedIconsTimer();
         m_workQueue->dispatch([this, protectedThis = makeRef(*this), result, iconURL = iconURL.isolatedCopy(), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             {
-                Locker locker { m_pageURLToIconURLMapLock };
+                LockHolder lockHolder(m_pageURLToIconURLMapLock);
                 m_pageURLToIconURLMap.set(pageURL, iconURL);
             }
             RunLoop::main().dispatch([result, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -659,7 +659,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
             if (iconID) {
                 result = true;
                 if (setIconIDForPageURL(iconID.value(), pageURL)) {
-                    Locker locker { m_pageURLToIconURLMapLock };
+                    LockHolder lockHolder(m_pageURLToIconURLMapLock);
                     m_pageURLToIconURLMap.set(pageURL, iconURL);
                 }
             }
@@ -678,12 +678,12 @@ void IconDatabase::clear(CompletionHandler<void()>&& completionHandler)
     ASSERT(isMainRunLoop());
 
     {
-        Locker locker { m_loadedIconsLock };
+        LockHolder lockHolder(m_loadedIconsLock);
         m_loadedIcons.clear();
     }
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         {
-            Locker locker { m_pageURLToIconURLMapLock };
+            LockHolder lockHolder(m_pageURLToIconURLMapLock);
             m_pageURLToIconURLMap.clear();
         }
 

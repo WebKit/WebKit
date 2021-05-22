@@ -63,28 +63,28 @@ void CurlSSLHandle::clearCACertInfo()
 
 void CurlSSLHandle::allowAnyHTTPSCertificatesForHost(const String& host)
 {
-    Locker locker { m_allowedHostsLock };
+    LockHolder mutex(m_allowedHostsLock);
 
     m_allowedHosts.addVoid(host);
 }
 
 bool CurlSSLHandle::canIgnoreAnyHTTPSCertificatesForHost(const String& host) const
 {
-    Locker locker { m_allowedHostsLock };
+    LockHolder mutex(m_allowedHostsLock);
 
     return m_allowedHosts.contains(host);
 }
 
 void CurlSSLHandle::setClientCertificateInfo(const String& hostName, const String& certificate, const String& key)
 {
-    Locker locker { m_allowedClientHostsLock };
+    LockHolder mutex(m_allowedClientHostsLock);
 
     m_allowedClientHosts.set(hostName, ClientCertificate { certificate, key });
 }
 
 Optional<CurlSSLHandle::ClientCertificate> CurlSSLHandle::getSSLClientCertificate(const String& hostName) const
 {
-    Locker locker { m_allowedClientHostsLock };
+    LockHolder mutex(m_allowedClientHostsLock);
 
     auto it = m_allowedClientHosts.find(hostName);
     if (it == m_allowedClientHosts.end())
