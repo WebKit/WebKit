@@ -1,3 +1,17 @@
+2021-05-19  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug that incorrect timestamp is reported for Git repositories.
+        https://bugs.webkit.org/show_bug.cgi?id=225987
+
+        Reviewed by Ryosuke Niwa.
+
+        'datetime.fromtimestamp' will use the current timezone.
+        However, '/api/report-commits' will interprete it as a timestamp string from UTC.
+        In order to keep the consistency, we should always use 'datetime.utcfromtimestamp'.
+
+        * tools/sync-commits.py: Use 'datetime.utcfromtimestamp' instead of 'datetime.fromtimestamp'.
+        (GitRepository._revision_from_tokens):
+
 2021-05-20  Zhifei Fang  <zhifei_fang@apple.com>
 
         Need to use default git pull to remove the fake svn commit when syncing with SVN

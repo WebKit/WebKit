@@ -274,7 +274,7 @@ class GitRepository(Repository):
             'revision': current_revision,
             'revisionIdentifier': revision_identifier,
             'previousCommit': previous_revision,
-            'time': datetime.fromtimestamp(commit_time).strftime(r'%Y-%m-%dT%H:%M:%S.%f'),
+            'time': datetime.utcfromtimestamp(commit_time).strftime(r'%Y-%m-%dT%H:%M:%S.%f'),
             'author': {'account': author_email, 'name': author_name},
             'message': message,
         }
