@@ -465,6 +465,15 @@ void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+void PageClientImpl::requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion)
+{
+    [m_contentView requestImageExtraction:imageURL imageData:imageData completionHandler:WTFMove(completion)];
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
+
 #if HAVE(PASTEBOARD_DATA_OWNER)
 
 WebCore::DataOwnerType PageClientImpl::dataOwnerForPasteboard(PasteboardAccessIntent intent) const

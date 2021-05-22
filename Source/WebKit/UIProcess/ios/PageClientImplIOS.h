@@ -119,6 +119,11 @@ private:
     void doneDeferringTouchStart(bool preventNativeGestures) override;
     void doneDeferringTouchEnd(bool preventNativeGestures) override;
 #endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&) final;
+#endif
+
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
     Ref<WebCore::ValidationBubble> createValidationBubble(const String& message, const WebCore::ValidationBubble::Settings&) final;
 

@@ -95,6 +95,10 @@ enum class TextIndicatorDismissalAnimation : uint8_t;
 #if ENABLE(DRAG_SUPPORT)
 struct DragItem;
 #endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
+#endif
 }
 
 namespace WebKit {
@@ -725,6 +729,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(IMAGE_EXTRACTION)
 - (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
+- (void)requestImageExtraction:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&)completion;
 #endif
 
 @end

@@ -1,3 +1,19 @@
+2021-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Implement page client hook for requesting image extraction results
+        https://bugs.webkit.org/show_bug.cgi?id=226144
+        rdar://78355604
+
+        Reviewed by Tim Horton.
+
+        Add a method stub for `PageClientImpl::requestImageExtraction`, which currently just invokes the completion
+        handler with empty results. See bug for more details.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestImageExtraction):
+        * UIProcess/ios/WKContentViewInteraction.h:
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Adopt CheckedLock in more places
