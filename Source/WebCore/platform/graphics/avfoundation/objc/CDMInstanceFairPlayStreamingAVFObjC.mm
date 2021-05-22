@@ -851,7 +851,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
                 return false;
 
             auto keyIDVector = base64Decode(keyIDString);
-            if (keyIDVector)
+            if (!keyIDVector)
                 return false;
 
             auto keyID = SharedBuffer::create(WTFMove(*keyIDVector));

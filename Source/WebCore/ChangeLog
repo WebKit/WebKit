@@ -1,3 +1,15 @@
+2021-05-21  Sam Weinig  <weinig@apple.com>
+
+        All Netflix playback fails after r277740
+        https://bugs.webkit.org/show_bug.cgi?id=226120
+        <rdar://problem/78333782>
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        Add missing !.
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Use CheckedCondition in more places
