@@ -33,15 +33,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
+void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&&)
 {
     notImplemented();
-}
-
-HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
-{
-    notImplemented();
-    return HTTPCookieAcceptPolicyAlways;
 }
 
 }
