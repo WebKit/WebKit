@@ -183,7 +183,7 @@ void AudioSourceProviderAVFObjC::destroyMixIfNeeded()
         return;
     ASSERT(m_tapStorage);
     {
-        auto locker = holdLock(m_tapStorage->lock);
+        Locker locker { m_tapStorage->lock };
         if (m_avPlayerItem)
             [m_avPlayerItem setAudioMix:nil];
         [m_avAudioMix setInputParameters:@[ ]];
@@ -207,7 +207,7 @@ void AudioSourceProviderAVFObjC::createMixIfNeeded()
     ASSERT(!m_tap);
 
     auto tapStorage = adoptRef(new TapStorage(this));
-    auto locker = holdLock(tapStorage->lock);
+    Locker locker { tapStorage->lock };
 
     MTAudioProcessingTapCallbacks callbacks = {
         0,
@@ -262,7 +262,7 @@ void AudioSourceProviderAVFObjC::prepareCallback(MTAudioProcessingTapRef tap, CM
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
-    auto locker = holdLock(tapStorage->lock);
+    Locker locker { tapStorage->lock };
 
     if (tapStorage->_this)
         tapStorage->_this->prepare(maxFrames, processingFormat);
@@ -273,7 +273,7 @@ void AudioSourceProviderAVFObjC::unprepareCallback(MTAudioProcessingTapRef tap)
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
-    auto locker = holdLock(tapStorage->lock);
+    Locker locker { tapStorage->lock };
 
     if (tapStorage->_this)
         tapStorage->_this->unprepare();
@@ -284,7 +284,7 @@ void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CM
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
 
-    auto locker = holdLock(tapStorage->lock);
+    Locker locker { tapStorage->lock };
 
     if (tapStorage->_this)
         tapStorage->_this->process(tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);

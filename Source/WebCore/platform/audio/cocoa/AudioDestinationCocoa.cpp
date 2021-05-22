@@ -107,7 +107,7 @@ void AudioDestinationCocoa::start(Function<void(Function<void()>&&)>&& dispatchT
     ASSERT(isMainThread());
     LOG(Media, "AudioDestinationCocoa::start");
     {
-        auto locker = holdLock(m_dispatchToRenderThreadLock);
+        Locker locker { m_dispatchToRenderThreadLock };
         m_dispatchToRenderThread = WTFMove(dispatchToRenderThread);
     }
     startRendering(WTFMove(completionHandler));
@@ -131,7 +131,7 @@ void AudioDestinationCocoa::stop(CompletionHandler<void(bool)>&& completionHandl
     LOG(Media, "AudioDestinationCocoa::stop");
     stopRendering(WTFMove(completionHandler));
     {
-        auto locker = holdLock(m_dispatchToRenderThreadLock);
+        Locker locker { m_dispatchToRenderThreadLock };
         m_dispatchToRenderThread = nullptr;
     }
 }
@@ -152,7 +152,7 @@ void AudioDestinationCocoa::setIsPlaying(bool isPlaying)
 {
     ASSERT(isMainThread());
     {
-        auto locker = holdLock(m_isPlayingLock);
+        Locker locker { m_isPlayingLock };
         if (m_isPlaying == isPlaying)
             return;
 

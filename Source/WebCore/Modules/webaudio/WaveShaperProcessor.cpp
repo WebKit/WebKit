@@ -51,7 +51,7 @@ std::unique_ptr<AudioDSPKernel> WaveShaperProcessor::createKernel()
 void WaveShaperProcessor::setCurve(Float32Array* curve)
 {
     // This synchronizes with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     m_curve = curve;
 }
@@ -59,7 +59,7 @@ void WaveShaperProcessor::setCurve(Float32Array* curve)
 void WaveShaperProcessor::setOversample(OverSampleType oversample)
 {
     // This synchronizes with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     m_oversample = oversample;
 

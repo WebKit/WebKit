@@ -70,7 +70,7 @@ public:
         m_hasPreparedForDestruction = true;
 
         {
-            auto locker = holdLock(paintDefinitionLock());
+            Locker locker { paintDefinitionLock() };
             paintDefinitionMap().clear();
         }
         WorkletGlobalScope::prepareForDestruction();
@@ -84,7 +84,7 @@ private:
     ~PaintWorkletGlobalScope()
     {
 #if ASSERT_ENABLED
-        auto locker = holdLock(paintDefinitionLock());
+        Locker locker { paintDefinitionLock() };
         ASSERT(paintDefinitionMap().isEmpty());
 #endif
     }

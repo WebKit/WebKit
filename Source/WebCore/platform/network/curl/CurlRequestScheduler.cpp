@@ -67,7 +67,7 @@ void CurlRequestScheduler::cancel(CurlRequestSchedulerClient* client)
 void CurlRequestScheduler::callOnWorkerThread(WTF::Function<void()>&& task)
 {
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         m_taskQueue.append(WTFMove(task));
     }
 
@@ -79,7 +79,7 @@ void CurlRequestScheduler::startThreadIfNeeded()
     ASSERT(isMainThread());
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         if (m_runThread)
             return;
     }
@@ -88,14 +88,14 @@ void CurlRequestScheduler::startThreadIfNeeded()
         m_thread->waitForCompletion();
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         m_runThread = true;
     }
 
     m_thread = Thread::create("curlThread", [this] {
         workerThread();
 
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         m_runThread = false;
     }, ThreadType::Network);
 }
@@ -104,7 +104,7 @@ void CurlRequestScheduler::stopThreadIfNoMoreJobRunning()
 {
     ASSERT(!isMainThread());
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     if (m_activeJobs.size() || m_taskQueue.size())
         return;
 
@@ -114,7 +114,7 @@ void CurlRequestScheduler::stopThreadIfNoMoreJobRunning()
 void CurlRequestScheduler::stopThread()
 {
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         m_runThread = false;
     }
 
@@ -131,7 +131,7 @@ void CurlRequestScheduler::executeTasks()
     Vector<WTF::Function<void()>> taskQueue;
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         taskQueue = WTFMove(m_taskQueue);
     }
 
@@ -150,7 +150,7 @@ void CurlRequestScheduler::workerThread()
 
     while (true) {
         {
-            auto locker = holdLock(m_mutex);
+            Locker locker { m_mutex };
             if (!m_runThread)
                 break;
         }
@@ -219,7 +219,7 @@ void CurlRequestScheduler::startTransfer(CurlRequestSchedulerClient* client)
         m_clientMaps.set(handle, client);
     };
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     m_activeJobs.add(client);
     m_taskQueue.append(WTFMove(task));
 }
@@ -240,7 +240,7 @@ void CurlRequestScheduler::cancelTransfer(CurlRequestSchedulerClient* client)
 
 void CurlRequestScheduler::finalizeTransfer(CurlRequestSchedulerClient* client, Function<void()> completionHandler)
 {
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
 
     if (!m_activeJobs.contains(client))
         return;

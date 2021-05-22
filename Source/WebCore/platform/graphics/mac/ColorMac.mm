@@ -144,7 +144,7 @@ NSColor *nsColor(const Color& color)
     }
 
     static Lock cachedColorLock;
-    auto holder = holdLock(cachedColorLock);
+    Locker locker { cachedColorLock };
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<NSColor>, 32>> cache;
     return cache.get().get(color).get();

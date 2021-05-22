@@ -89,7 +89,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
     if (!buffer)
         return;
 
-    auto locker = holdLock(m_imageBufferLock);
+    Locker locker { m_imageBufferLock };
 
     if (!m_imageBuffer) {
         auto proxyOperation = [this] (TextureMapperPlatformLayerProxy& proxy) mutable {
@@ -103,7 +103,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
                 auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
 
                 {
-                    auto locker = holdLock(m_imageBufferLock);
+                    Locker locker { m_imageBufferLock };
 
                     if (!m_imageBuffer)
                         return;

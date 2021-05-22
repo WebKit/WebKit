@@ -102,7 +102,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
     }
 
     // Synchronize with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     m_sourceNumberOfChannels = numberOfChannels;
     m_sourceSampleRate = sourceSampleRate;

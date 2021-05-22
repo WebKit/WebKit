@@ -153,7 +153,7 @@ void HTMLCollection::invalidateNamedElementCache(Document& document) const
     ASSERT(hasNamedElementCache());
     document.collectionWillClearIdNameMap(*this);
     {
-        auto locker = holdLock(m_namedElementCacheAssignmentLock);
+        Locker locker { m_namedElementCacheAssignmentLock };
         m_namedElementCache = nullptr;
     }
 }

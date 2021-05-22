@@ -131,7 +131,7 @@ void CurlRequest::cancel()
     ASSERT(isMainThread());
 
     {
-        auto locker = holdLock(m_statusMutex);
+        Locker locker { m_statusMutex };
         if (m_cancelled)
             return;
 
@@ -152,13 +152,13 @@ void CurlRequest::cancel()
 
 bool CurlRequest::isCancelled()
 {
-    auto locker = holdLock(m_statusMutex);
+    Locker locker { m_statusMutex };
     return m_cancelled;
 }
 
 bool CurlRequest::isCompletedOrCancelled()
 {
-    auto locker = holdLock(m_statusMutex);
+    Locker locker { m_statusMutex };
     return m_completed || m_cancelled;
 }
 
@@ -479,7 +479,7 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     }
 
     {
-        auto locker = holdLock(m_statusMutex);
+        Locker locker { m_statusMutex };
         m_completed = true;
     }
 }

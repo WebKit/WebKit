@@ -86,7 +86,7 @@ void CurlStreamScheduler::callOnWorkerThread(WTF::Function<void()>&& task)
     ASSERT(isMainThread());
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         m_taskQueue.append(WTFMove(task));
     }
 
@@ -106,7 +106,7 @@ void CurlStreamScheduler::callClientOnMainThread(CurlStreamID streamID, WTF::Fun
 void CurlStreamScheduler::startThreadIfNeeded()
 {
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         if (m_runThread)
             return;
     }
@@ -128,7 +128,7 @@ void CurlStreamScheduler::stopThreadIfNoMoreJobRunning()
     if (m_streamList.size())
         return;
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     if (m_taskQueue.size())
         return;
 
@@ -142,7 +142,7 @@ void CurlStreamScheduler::executeTasks()
     Vector<WTF::Function<void()>> taskQueue;
 
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         taskQueue = WTFMove(m_taskQueue);
     }
 

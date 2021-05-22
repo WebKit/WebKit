@@ -131,7 +131,7 @@ void AudioBuffer::invalidate()
 
 void AudioBuffer::releaseMemory()
 {
-    auto locker = holdLock(m_channelsLock);
+    Locker locker { m_channelsLock };
     m_channels.clear();
     m_channelWrappers.clear();
 }
@@ -252,7 +252,7 @@ size_t AudioBuffer::memoryCost() const
     // from being changed while we iterate it, but calling channel->byteLength() is safe
     // because it doesn't involve chasing any pointers that can be nullified while the
     // AudioBuffer is alive.
-    auto locker = holdLock(m_channelsLock);
+    Locker locker { m_channelsLock };
     size_t cost = 0;
     for (auto& channel : m_channels)
         cost += channel->byteLength();

@@ -182,7 +182,7 @@ GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink, bool 
 
     GST_TRACE("Storing audio sample %" GST_PTR_FORMAT, sample.get());
     {
-        auto locker = holdLock(m_adapterMutex);
+        Locker locker { m_adapterMutex };
         GQuark quark = g_quark_from_static_string("channel-id");
         int channelId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink), quark));
         GST_DEBUG("Channel ID: %d", channelId);
@@ -384,7 +384,7 @@ void AudioSourceProviderGStreamer::deinterleavePadsConfigured()
 
 void AudioSourceProviderGStreamer::clearAdapters()
 {
-    auto locker = holdLock(m_adapterMutex);
+    Locker locker { m_adapterMutex };
     for (auto& adapter : m_adapters.values())
         gst_adapter_clear(adapter.get());
 }

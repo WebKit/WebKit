@@ -1321,7 +1321,7 @@ static NotificationQueue& notificationQueue()
 
 void DatabaseTracker::scheduleNotifyDatabaseChanged(const SecurityOriginData& origin, const String& name)
 {
-    auto locker = holdLock(notificationLock);
+    Locker locker { notificationLock };
     notificationQueue().append(std::make_pair(origin.isolatedCopy(), name.isolatedCopy()));
     scheduleForNotification();
 }
@@ -1348,7 +1348,7 @@ void DatabaseTracker::notifyDatabasesChanged()
 
     NotificationQueue notifications;
     {
-        auto locker = holdLock(notificationLock);
+        Locker locker { notificationLock };
         notifications.swap(notificationQueue());
         notificationScheduled = false;
     }

@@ -419,7 +419,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     Locker contextLocker { context().graphLock() };
     
     // This synchronizes with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
     
     if (buffer) {
         m_wasBufferSet = true;
@@ -477,7 +477,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     context().sourceNodeWillBeginPlayback(*this);
 
     // This synchronizes with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     m_isGrain = true;
     m_grainOffset = grainOffset;

@@ -109,7 +109,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
         // Mutex protection is necessary to ensure that we don't change m_globalScope
         // while WorkerThread::stop() is accessing it. Note that WorkerThread::stop() can
         // be called before we've finished creating the WorkerGlobalScope.
-        auto locker = holdLock(m_threadCreationAndGlobalScopeLock);
+        Locker locker { m_threadCreationAndGlobalScopeLock };
         m_globalScope = createGlobalScope();
 
         // When running out of memory, createGlobalScope() may return null because we could not allocate a JSC::VM.
@@ -158,7 +158,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     {
         // Mutex protection is necessary to ensure that we don't change m_globalScope
         // while WorkerThread::stop is accessing it.
-        auto locker = holdLock(m_threadCreationAndGlobalScopeLock);
+        Locker locker { m_threadCreationAndGlobalScopeLock };
 
         // Delay the destruction of the WorkerGlobalScope context until after we've unlocked the
         // m_threadCreationAndWorkerGlobalScopeMutex. This is needed because destructing the
@@ -187,7 +187,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 void WorkerOrWorkletThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
-    auto locker = holdLock(m_threadCreationAndGlobalScopeLock);
+    Locker locker { m_threadCreationAndGlobalScopeLock };
 
     if (m_thread)
         return;

@@ -133,7 +133,7 @@ ReverbConvolver::~ReverbConvolver()
 
         // Wake up thread so it can return
         {
-            auto locker = holdLock(m_backgroundThreadLock);
+            Locker locker { m_backgroundThreadLock };
             m_moreInputBuffered = true;
             m_backgroundThreadConditionVariable.notifyOne();
         }

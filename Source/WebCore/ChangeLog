@@ -1,3 +1,285 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in WebCore as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226119
+
+        Reviewed by Sam Weinig.
+
+        Stop using holdLock() in WebCore as it is not compatible with Clang thread safety analysis
+        (WTF::CheckedLock). Use the Locker constructor directly instead.
+
+        This is a step towards getting rid of holdLock() entirely.
+
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp:
+        (WebCore::SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable):
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::releaseMemory):
+        (WebCore::AudioBuffer::memoryCost const):
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        (WebCore::AudioBufferSourceNode::startPlaying):
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::~AudioWorkletNode):
+        (WebCore::AudioWorkletNode::initializeAudioParameters):
+        (WebCore::AudioWorkletNode::setProcessor):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::setBuffer):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::setPeriodicWave):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::setPanningModel):
+        (WebCore::PannerNode::setPosition):
+        (WebCore::PannerNode::setOrientation):
+        (WebCore::PannerNode::setDistanceModel):
+        (WebCore::PannerNode::setRefDistance):
+        (WebCore::PannerNode::setMaxDistance):
+        (WebCore::PannerNode::setRolloffFactor):
+        (WebCore::PannerNode::setConeOuterGain):
+        (WebCore::PannerNode::setConeOuterAngle):
+        (WebCore::PannerNode::setConeInnerAngle):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::uninitialize):
+        (WebCore::ScriptProcessorNode::process):
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::setCurve):
+        (WebCore::WaveShaperProcessor::setOversample):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::performOpenAndVerify):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::addProposedDatabase):
+        (WebCore::DatabaseManager::removeProposedDatabase):
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged):
+        (WebCore::DatabaseTracker::notifyDatabasesChanged):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildrenImpl):
+        * bindings/js/JSPaintWorkletGlobalScopeCustom.cpp:
+        (WebCore::JSPaintWorkletGlobalScope::visitAdditionalChildren):
+        * css/CSSPaintImageValue.cpp:
+        (WebCore::CSSPaintImageValue::image):
+        * css/DOMCSSPaintWorklet.cpp:
+        (WebCore::PaintWorklet::addModule):
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::clear):
+        (WebCore::EventListenerMap::replace):
+        (WebCore::EventListenerMap::add):
+        (WebCore::EventListenerMap::remove):
+        (WebCore::EventListenerMap::removeFirstEventListenerCreatedFromMarkup):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::visitJSEventListeners):
+        * dom/Node.cpp:
+        (WebCore::Node::ensureEventTargetData):
+        (WebCore::Node::clearEventTargetData):
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::memoryCost const):
+        (WebCore::CanvasBase::externalMemoryCost const):
+        (WebCore::CanvasBase::setImageBuffer const):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::invalidateNamedElementCache const):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::memoryCost const):
+        (WebCore::HTMLCollection::setNamedItemCache const):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::pushBufferToPlaceholder):
+        (WebCore::OffscreenCanvas::commitToPlaceholderCanvas):
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::deleteVertexArrayOES):
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::bindFramebuffer):
+        (WebCore::WebGL2RenderingContext::deleteFramebuffer):
+        (WebCore::WebGL2RenderingContext::vertexAttribIPointer):
+        (WebCore::WebGL2RenderingContext::deleteQuery):
+        (WebCore::WebGL2RenderingContext::beginQuery):
+        (WebCore::WebGL2RenderingContext::endQuery):
+        (WebCore::WebGL2RenderingContext::deleteSampler):
+        (WebCore::WebGL2RenderingContext::bindSampler):
+        (WebCore::WebGL2RenderingContext::deleteSync):
+        (WebCore::WebGL2RenderingContext::deleteTransformFeedback):
+        (WebCore::WebGL2RenderingContext::bindTransformFeedback):
+        (WebCore::WebGL2RenderingContext::beginTransformFeedback):
+        (WebCore::WebGL2RenderingContext::setIndexedBufferBinding):
+        (WebCore::WebGL2RenderingContext::deleteVertexArray):
+        (WebCore::WebGL2RenderingContext::bindVertexArray):
+        (WebCore::WebGL2RenderingContext::addMembersToOpaqueRoots):
+        * html/canvas/WebGLContextGroup.cpp:
+        (WebCore::WebGLContextGroup::detachAndRemoveAllObjects):
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::initializeAttachments):
+        (WebCore::WebGLFramebuffer::setAttachmentInternal):
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::runDestructor):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::attachShader):
+        (WebCore::WebGLRenderingContextBase::bindBuffer):
+        (WebCore::WebGLRenderingContextBase::bindFramebuffer):
+        (WebCore::WebGLRenderingContextBase::bindRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::bindTexture):
+        (WebCore::WebGLRenderingContextBase::deleteBuffer):
+        (WebCore::WebGLRenderingContextBase::deleteFramebuffer):
+        (WebCore::WebGLRenderingContextBase::deleteProgram):
+        (WebCore::WebGLRenderingContextBase::deleteRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::deleteShader):
+        (WebCore::WebGLRenderingContextBase::deleteTexture):
+        (WebCore::WebGLRenderingContextBase::detachShader):
+        (WebCore::WebGLRenderingContextBase::useProgram):
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+        (WebCore::WebGLRenderingContextBase::detachAndRemoveAllObjects):
+        (WebCore::WebGLRenderingContextBase::addMembersToOpaqueRoots):
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::~ReverbConvolver):
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::start):
+        (WebCore::AudioDestinationCocoa::stop):
+        (WebCore::AudioDestinationCocoa::setIsPlaying):
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::handleSample):
+        (WebCore::AudioSourceProviderGStreamer::clearAdapters):
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkitWebAudioSourceSetDispatchToRenderThreadFunction):
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::requestRefreshCallback):
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::cachedFontPlatformData):
+        (WebCore::FontCache::fontForPlatformData):
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::inactiveFontCount):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::destroyMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::createMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::prepareCallback):
+        (WebCore::AudioSourceProviderAVFObjC::unprepareCallback):
+        (WebCore::AudioSourceProviderAVFObjC::processCallback):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::cachedCGColor):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::hasFirstVideoSampleReachedSink const):
+        (WebCore::MediaPlayerPrivateGStreamer::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::paint):
+        (WebCore::MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamer::waitForCDMAttachment):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcConstructed):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcSetContext):
+        (webKitWebSrcCreate):
+        (webKitWebSrcMakeRequest):
+        (webKitWebSrcStop):
+        (webKitWebSrcGetSize):
+        (webKitWebSrcIsSeekable):
+        (webKitWebSrcDoSeek):
+        (webKitWebSrcQuery):
+        (webKitWebSrcUnLock):
+        (webKitWebSrcUnLockStop):
+        (webKitWebSrcSetMediaPlayer):
+        (webKitSrcPassedCORSAccessCheck):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed):
+        (CachedResourceStreamingClient::loadFailed):
+        (CachedResourceStreamingClient::loadFinished):
+        (webKitSrcWouldTaintOrigin):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (isCDMProxyAvailable):
+        (attachCDMProxy):
+        * platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp:
+        (WebCore::MediaSourceTrackGStreamer::isReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::notifyWhenReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::enqueueObject):
+        (WebCore::MediaSourceTrackGStreamer::clearQueue):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcActivateMode):
+        (webKitMediaSrcPadLinked):
+        (webKitMediaSrcLoop):
+        (webKitMediaSrcStreamFlush):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::nsColor):
+        * platform/graphics/nicosia/NicosiaImageBufferPipe.cpp:
+        (Nicosia::NicosiaImageBufferPipeSource::handle):
+        * platform/ios/wak/WebCoreThread.mm:
+        (HandleDelegateSource):
+        (WebThreadAdoptAndRelease):
+        (WebCoreObjCDeallocOnWebThreadImpl):
+        (WebCoreObjCDeallocWithWebThreadLockImpl):
+        (HandleWebThreadReleaseSource):
+        * platform/ios/wak/WebCoreThreadRun.cpp:
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::topPrivatelyControlledDomain):
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::videoSampleAvailable):
+        (WebCore::MediaRecorderPrivateMock::audioSamplesAvailable):
+        (WebCore::MediaRecorderPrivateMock::fetchData):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::appendData):
+        (WebCore::MediaRecorderPrivateWriter::takeData):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::addAudioSampleObserver):
+        (WebCore::RealtimeMediaSource::removeAudioSampleObserver):
+        (WebCore::RealtimeMediaSource::addVideoSampleObserver):
+        (WebCore::RealtimeMediaSource::removeVideoSampleObserver):
+        (WebCore::RealtimeMediaSource::videoSampleAvailable):
+        (WebCore::RealtimeMediaSource::audioSamplesAvailable):
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::~RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::AddSink):
+        (WebCore::RealtimeOutgoingAudioSource::RemoveSink):
+        (WebCore::RealtimeOutgoingAudioSource::sendAudioFrames):
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::~RealtimeOutgoingVideoSource):
+        (WebCore::RealtimeOutgoingVideoSource::AddOrUpdateSink):
+        (WebCore::RealtimeOutgoingVideoSource::RemoveSink):
+        (WebCore::RealtimeOutgoingVideoSource::sendFrame):
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::addClient):
+        (WebCore::BaseAudioSharedUnit::removeClient):
+        (WebCore::BaseAudioSharedUnit::forEachClient const):
+        (WebCore::BaseAudioSharedUnit::clearClients):
+        (WebCore::BaseAudioSharedUnit::audioSamplesAvailable):
+        * platform/mediastream/mac/WebAudioSourceProviderCocoa.mm:
+        (WebCore::WebAudioSourceProviderCocoa::prepare):
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::loaderRunLoop):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::cancel):
+        (WebCore::CurlRequest::isCancelled):
+        (WebCore::CurlRequest::isCompletedOrCancelled):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        * platform/network/curl/CurlRequestScheduler.cpp:
+        (WebCore::CurlRequestScheduler::callOnWorkerThread):
+        (WebCore::CurlRequestScheduler::startThreadIfNeeded):
+        (WebCore::CurlRequestScheduler::stopThreadIfNoMoreJobRunning):
+        (WebCore::CurlRequestScheduler::stopThread):
+        (WebCore::CurlRequestScheduler::executeTasks):
+        (WebCore::CurlRequestScheduler::workerThread):
+        (WebCore::CurlRequestScheduler::startTransfer):
+        (WebCore::CurlRequestScheduler::finalizeTransfer):
+        * platform/network/curl/CurlStreamScheduler.cpp:
+        (WebCore::CurlStreamScheduler::callOnWorkerThread):
+        (WebCore::CurlStreamScheduler::startThreadIfNeeded):
+        (WebCore::CurlStreamScheduler::stopThreadIfNoMoreJobRunning):
+        (WebCore::CurlStreamScheduler::executeTasks):
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyProperty):
+        * workers/WorkerOrWorkletThread.cpp:
+        (WebCore::WorkerOrWorkletThread::workerOrWorkletThread):
+        (WebCore::WorkerOrWorkletThread::start):
+        * worklets/PaintWorkletGlobalScope.cpp:
+        (WebCore::PaintWorkletGlobalScope::registerPaint):
+        * worklets/PaintWorkletGlobalScope.h:
+
 2021-05-21  Sam Weinig  <weinig@apple.com>
 
         All Netflix playback fails after r277740

@@ -118,7 +118,7 @@ void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& 
 
         auto data = WebAudioBufferList { audioDescription, static_cast<uint32_t>(sampleCount) };
         {
-            auto locker = holdLock(m_dataSourceLock);
+            Locker locker { m_dataSourceLock };
             m_dataSource->pullSamples(*data.list(), sampleCount, time.timeValue(), 0, AudioSampleDataSource::Copy);
         }
 

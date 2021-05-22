@@ -147,7 +147,7 @@ ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
         Locker contextLocker { context().graphLock() };
 
         // Synchronize with process().
-        auto locker = holdLock(m_processLock);
+        Locker locker { m_processLock };
 
         m_reverb = WTFMove(reverb);
         m_buffer = WTFMove(buffer);

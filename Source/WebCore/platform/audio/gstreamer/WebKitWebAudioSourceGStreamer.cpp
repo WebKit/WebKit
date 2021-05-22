@@ -489,7 +489,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
 
 void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc* src, Function<void(Function<void()>&&)>&& function)
 {
-    auto locker = holdLock(src->priv->dispatchToRenderThreadLock);
+    Locker locker { src->priv->dispatchToRenderThreadLock };
     src->priv->dispatchToRenderThreadFunction = WTFMove(function);
 }
 

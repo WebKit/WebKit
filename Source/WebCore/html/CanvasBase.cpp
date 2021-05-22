@@ -103,7 +103,7 @@ size_t CanvasBase::memoryCost() const
     // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
     // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
     // from being changed while we access it.
-    auto locker = holdLock(m_imageBufferAssignmentLock);
+    Locker locker { m_imageBufferAssignmentLock };
     if (!m_imageBuffer)
         return 0;
     return m_imageBuffer->memoryCost();
@@ -114,7 +114,7 @@ size_t CanvasBase::externalMemoryCost() const
     // externalMemoryCost() may be invoked concurrently from a GC thread, and we need to be careful
     // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
     // from being changed while we access it.
-    auto locker = holdLock(m_imageBufferAssignmentLock);
+    Locker locker { m_imageBufferAssignmentLock };
     if (!m_imageBuffer)
         return 0;
     return m_imageBuffer->externalMemoryCost();
@@ -188,7 +188,7 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
 {
     RefPtr<ImageBuffer> returnBuffer;
     {
-        auto locker = holdLock(m_imageBufferAssignmentLock);
+        Locker locker { m_imageBufferAssignmentLock };
         m_contextStateSaver = nullptr;
         returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
     }

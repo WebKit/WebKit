@@ -2239,7 +2239,7 @@ EventTargetData& Node::ensureEventTargetData()
     JSC::VM* vm = commonVMOrNull();
     RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
 
-    auto locker = holdLock(s_eventTargetDataMapLock);
+    Locker locker { s_eventTargetDataMapLock };
     setHasEventTargetData(true);
     return *eventTargetDataMap().add(this, makeUnique<EventTargetData>()).iterator->value;
 }
@@ -2248,7 +2248,7 @@ void Node::clearEventTargetData()
 {
     JSC::VM* vm = commonVMOrNull();
     RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
-    auto locker = holdLock(s_eventTargetDataMapLock);
+    Locker locker { s_eventTargetDataMapLock };
     eventTargetDataMap().remove(this);
 }
 

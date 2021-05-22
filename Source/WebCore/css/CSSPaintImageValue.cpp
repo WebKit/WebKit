@@ -54,7 +54,7 @@ RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const Floa
     auto* selectedGlobalScope = renderElement.document().paintWorkletGlobalScopeForName(m_name);
     if (!selectedGlobalScope)
         return nullptr;
-    auto locker = holdLock(selectedGlobalScope->paintDefinitionLock());
+    Locker locker { selectedGlobalScope->paintDefinitionLock() };
     auto* registration = selectedGlobalScope->paintDefinitionMap().get(m_name);
 
     if (!registration)

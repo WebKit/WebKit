@@ -1029,7 +1029,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 }
 bool MediaPlayerPrivateGStreamer::hasFirstVideoSampleReachedSink() const
 {
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
     return !!m_sample;
 }
 
@@ -2893,7 +2893,7 @@ private:
 
 void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
 {
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
@@ -3074,7 +3074,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
 
     bool shouldTriggerResize;
     {
-        auto sampleLocker = holdLock(m_sampleMutex);
+        Locker sampleLocker { m_sampleMutex };
         shouldTriggerResize = !m_sample;
         m_sample = sample;
     }
@@ -3164,7 +3164,7 @@ void MediaPlayerPrivateGStreamer::repaintCancelledCallback(MediaPlayerPrivateGSt
 #if USE(GSTREAMER_GL)
 void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 {
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
 
     if (m_sample) {
         // Allocate a new copy of the sample which has to be released. The copy is necessary so that
@@ -3211,7 +3211,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!m_visible)
         return;
 
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
@@ -3280,7 +3280,7 @@ bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsCont
     if (premultiplyAlpha)
         return false;
 
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
 
     if (!GST_IS_SAMPLE(m_sample.get()))
         return false;

@@ -312,7 +312,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
 static bool isCDMProxyAvailable(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    auto locker = holdLock(priv->mutex);
+    Locker locker { priv->mutex };
     return priv->cdmProxy;
 }
 
@@ -345,7 +345,7 @@ static void attachCDMProxy(WebKitMediaCommonEncryptionDecrypt* self, CDMProxy* p
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
     WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
 
-    auto locker = holdLock(priv->mutex);
+    Locker locker { priv->mutex };
     GST_ERROR_OBJECT(self, "Attaching CDMProxy %p", proxy);
     priv->cdmProxy = proxy;
     klass->cdmProxyAttached(self, priv->cdmProxy);

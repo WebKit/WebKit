@@ -210,7 +210,7 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
     const FontFeatureSettings* features, FontSelectionSpecifiedCapabilities capabilities, bool checkingAlternateName)
 {
 #if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(m_fontLock);
+    Locker locker { m_fontLock };
 #endif
 
 #if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
@@ -276,7 +276,7 @@ RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, co
 Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 {
 #if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(m_fontLock);
+    Locker locker { m_fontLock };
 #endif
 
     auto addResult = m_fontDataCaches->data.ensure(platformData, [&] {
@@ -313,7 +313,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     pruneSystemFallbackFonts();
 
 #if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(m_fontLock);
+    Locker locker { m_fontLock };
 #endif
 
     while (purgeCount) {
@@ -449,7 +449,7 @@ size_t FontCache::fontCount()
 size_t FontCache::inactiveFontCount()
 {
 #if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(m_fontLock);
+    Locker locker { m_fontLock };
 #endif
     unsigned count = 0;
     for (auto& font : m_fontDataCaches->data.values()) {

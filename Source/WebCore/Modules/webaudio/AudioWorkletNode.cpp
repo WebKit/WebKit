@@ -144,7 +144,7 @@ AudioWorkletNode::~AudioWorkletNode()
 {
     ASSERT(isMainThread());
     {
-        auto locker = holdLock(m_processLock);
+        Locker locker { m_processLock };
         if (m_processor) {
             if (auto* workletProxy = context().audioWorklet().proxy())
                 workletProxy->postTaskForModeToWorkletGlobalScope([m_processor = WTFMove(m_processor)](ScriptExecutionContext&) { }, WorkerRunLoop::defaultMode());
@@ -158,7 +158,7 @@ void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescript
     ASSERT(isMainThread());
     ASSERT(m_parameters->map().isEmpty());
 
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     for (auto& descriptor : descriptors) {
         auto parameter = AudioParam::create(context(), descriptor.name, descriptor.defaultValue, descriptor.minValue, descriptor.maxValue, descriptor.automationRate);
@@ -180,7 +180,7 @@ void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
 {
     ASSERT(!isMainThread());
     if (processor) {
-        auto locker = holdLock(m_processLock);
+        Locker locker { m_processLock };
         m_processor = WTFMove(processor);
         m_workletThread = &Thread::current();
     } else

@@ -63,28 +63,28 @@ RealtimeMediaSource::RealtimeMediaSource(Type type, String&& name, String&& devi
 void RealtimeMediaSource::addAudioSampleObserver(AudioSampleObserver& observer)
 {
     ASSERT(isMainThread());
-    auto locker = holdLock(m_audioSampleObserversLock);
+    Locker locker { m_audioSampleObserversLock };
     m_audioSampleObservers.add(&observer);
 }
 
 void RealtimeMediaSource::removeAudioSampleObserver(AudioSampleObserver& observer)
 {
     ASSERT(isMainThread());
-    auto locker = holdLock(m_audioSampleObserversLock);
+    Locker locker { m_audioSampleObserversLock };
     m_audioSampleObservers.remove(&observer);
 }
 
 void RealtimeMediaSource::addVideoSampleObserver(VideoSampleObserver& observer)
 {
     ASSERT(isMainThread());
-    auto locker = holdLock(m_videoSampleObserversLock);
+    Locker locker { m_videoSampleObserversLock };
     m_videoSampleObservers.add(&observer);
 }
 
 void RealtimeMediaSource::removeVideoSampleObserver(VideoSampleObserver& observer)
 {
     ASSERT(isMainThread());
-    auto locker = holdLock(m_videoSampleObserversLock);
+    Locker locker { m_videoSampleObserversLock };
     m_videoSampleObservers.remove(&observer);
 }
 
@@ -206,7 +206,7 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
 
     updateHasStartedProducingData();
 
-    auto locker = holdLock(m_videoSampleObserversLock);
+    Locker locker { m_videoSampleObserversLock };
     for (auto* observer : m_videoSampleObservers)
         observer->videoSampleAvailable(mediaSample);
 }
@@ -215,7 +215,7 @@ void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const Pla
 {
     updateHasStartedProducingData();
 
-    auto locker = holdLock(m_audioSampleObserversLock);
+    Locker locker { m_audioSampleObserversLock };
     for (auto* observer : m_audioSampleObservers)
         observer->audioSamplesAvailable(time, audioData, description, numberOfFrames);
 }

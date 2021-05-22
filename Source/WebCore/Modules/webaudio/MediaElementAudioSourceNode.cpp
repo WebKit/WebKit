@@ -98,7 +98,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
         m_sourceSampleRate = sourceSampleRate;
 
         // Synchronize with process().
-        auto locker = holdLock(m_processLock);
+        Locker locker { m_processLock };
 
         if (sourceSampleRate != sampleRate()) {
             double scaleFactor = sourceSampleRate / sampleRate();

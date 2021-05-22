@@ -102,7 +102,7 @@ void WebAudioSourceProviderCocoa::prepare(const AudioStreamBasicDescription& for
 {
     DisableMallocRestrictionsForCurrentThreadScope scope;
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     LOG(Media, "WebAudioSourceProviderCocoa::prepare(%p)", this);
 

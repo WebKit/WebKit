@@ -63,7 +63,7 @@ void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* array
     if (!m_context)
         return;
 
-    auto locker = holdLock(m_context->objectGraphLock());
+    Locker locker { m_context->objectGraphLock() };
 
     if (!arrayObject || m_context->isContextLost())
         return;
@@ -88,7 +88,7 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
     if (!m_context)
         return;
 
-    auto locker = holdLock(m_context->objectGraphLock());
+    Locker locker { m_context->objectGraphLock() };
 
     if (m_context->isContextLost())
         return;

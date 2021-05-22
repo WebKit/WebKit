@@ -694,7 +694,7 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
 
 void WebGL2RenderingContext::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("bindFramebuffer", buffer))
         return;
@@ -724,7 +724,7 @@ void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
 
 void WebGL2RenderingContext::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!deleteObject(locker, framebuffer))
         return;
@@ -1711,7 +1711,7 @@ void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint index, Uint32List&& list
 
 void WebGL2RenderingContext::vertexAttribIPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLsizei stride, GCGLint64 offset)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (isContextLostOrPending())
         return;
@@ -1910,7 +1910,7 @@ RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
 
 void WebGL2RenderingContext::deleteQuery(WebGLQuery* query)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (isContextLostOrPending() || !query || !query->object() || !validateWebGLObject("deleteQuery", query))
         return;
@@ -1945,7 +1945,7 @@ bool WebGL2RenderingContext::validateQueryTarget(const char* functionName, GCGLe
 
 void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     GCGLenum targetKey;
     if (!validateWebGLObject("beginQuery", &query) || !validateQueryTarget("beginQuery", target, &targetKey))
@@ -1970,7 +1970,7 @@ void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 
 void WebGL2RenderingContext::endQuery(GCGLenum target)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     GCGLenum targetKey;
     if (isContextLostOrPending() || !scriptExecutionContext() || !validateQueryTarget("beginQuery", target, &targetKey))
@@ -2041,7 +2041,7 @@ RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
 
 void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (isContextLostOrPending())
         return;
@@ -2067,7 +2067,7 @@ GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
 
 void WebGL2RenderingContext::bindSampler(GCGLuint unit, WebGLSampler* sampler)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (isContextLostOrPending())
         return;
@@ -2159,7 +2159,7 @@ GCGLboolean WebGL2RenderingContext::isSync(WebGLSync* sync)
 
 void WebGL2RenderingContext::deleteSync(WebGLSync* sync)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     deleteObject(locker, sync);
 }
@@ -2230,7 +2230,7 @@ RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
 
 void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* feedbackObject)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     // We have to short-circuit the deletion process if the transform feedback is
     // active. This requires duplication of some validation logic.
@@ -2265,7 +2265,7 @@ GCGLboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback* 
 
 void WebGL2RenderingContext::bindTransformFeedback(GCGLenum target, WebGLTransformFeedback* feedbackObject)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("bindTransformFeedback", feedbackObject))
         return;
@@ -2326,7 +2326,7 @@ void WebGL2RenderingContext::beginTransformFeedback(GCGLenum primitiveMode)
 
     m_context->beginTransformFeedback(primitiveMode);
 
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
     m_boundTransformFeedback->setProgram(locker, *m_currentProgram);
     m_boundTransformFeedback->setActive(true);
     m_boundTransformFeedback->setPaused(false);
@@ -2424,7 +2424,7 @@ void WebGL2RenderingContext::resumeTransformFeedback()
 
 bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject(functionName, buffer))
         return false;
@@ -2616,7 +2616,7 @@ RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
 
 void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObject)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     // validateWebGLObject generates an error if the object has already been
     // deleted, so we must replicate most of its checks here.
@@ -2635,7 +2635,7 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
         // bindVertexArray grabs the lock internally.
         locker.unlockEarly();
         bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
-        locker = holdLock(objectGraphLock());
+        locker = Locker { objectGraphLock() };
     }
 
     arrayObject->deleteObject(locker, graphicsContextGL());
@@ -2656,7 +2656,7 @@ GCGLboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayO
 
 void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* arrayObject)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("bindVertexArray", arrayObject))
         return;
@@ -3096,7 +3096,7 @@ void WebGL2RenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& v
 {
     WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
 
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
     visitor.addOpaqueRoot(m_readFramebufferBinding.get());
     if (m_readFramebufferBinding)
         m_readFramebufferBinding->addMembersToOpaqueRoots(locker, visitor);

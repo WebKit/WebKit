@@ -100,7 +100,7 @@ void WebGLContextGroup::detachAndRemoveAllObjects()
         return;
     }
 
-    auto locker = holdLock(objectGraphLockForAContext());
+    Locker locker { objectGraphLockForAContext() };
     while (!m_groupObjects.isEmpty())
         (*m_groupObjects.begin())->detachContextGroup(locker);
 }

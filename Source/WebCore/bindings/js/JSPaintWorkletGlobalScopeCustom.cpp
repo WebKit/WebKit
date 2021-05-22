@@ -34,7 +34,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSPaintWorkletGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
-    auto locker = holdLock(wrapped().paintDefinitionLock());
+    Locker locker { wrapped().paintDefinitionLock() };
     for (auto& registered : wrapped().paintDefinitionMap().values()) {
         registered->paintCallback->visitJSFunction(visitor);
         visitor.appendUnbarriered(registered->paintConstructor);

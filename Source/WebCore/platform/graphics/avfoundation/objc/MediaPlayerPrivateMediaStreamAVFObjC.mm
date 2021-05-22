@@ -403,7 +403,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 {
-    auto locker = holdLock(m_sampleBufferDisplayLayerLock);
+    Locker locker { m_sampleBufferDisplayLayerLock };
 
     m_canEnqueueDisplayLayer = false;
     if (m_sampleBufferDisplayLayer)
@@ -1062,7 +1062,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::CurrentFramePainter::reset()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()
 {
-    auto locker = holdLock(m_sampleBufferDisplayLayerLock);
+    Locker locker { m_sampleBufferDisplayLayerLock };
     if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
 }

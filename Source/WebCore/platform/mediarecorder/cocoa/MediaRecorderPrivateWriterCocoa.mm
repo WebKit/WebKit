@@ -543,7 +543,7 @@ void MediaRecorderPrivateWriter::completeFetchData()
 
 void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
 {
-    auto locker = holdLock(m_dataLock);
+    Locker locker { m_dataLock };
     if (!m_data) {
         m_data = SharedBuffer::create(data, size);
         return;
@@ -553,7 +553,7 @@ void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
 
 RefPtr<SharedBuffer> MediaRecorderPrivateWriter::takeData()
 {
-    auto locker = holdLock(m_dataLock);
+    Locker locker { m_dataLock };
     auto data = WTFMove(m_data);
     return data;
 }

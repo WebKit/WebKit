@@ -69,7 +69,7 @@ void MediaRecorderPrivateMock::resumeRecording(CompletionHandler<void()>&& compl
 
 void MediaRecorderPrivateMock::videoSampleAvailable(MediaSample&)
 {
-    auto locker = holdLock(m_bufferLock);
+    Locker locker { m_bufferLock };
     m_buffer.append("Video Track ID: ");
     m_buffer.append(m_videoTrackID);
     generateMockCounterString();
@@ -80,7 +80,7 @@ void MediaRecorderPrivateMock::audioSamplesAvailable(const WTF::MediaTime&, cons
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    auto locker = holdLock(m_bufferLock);
+    Locker locker { m_bufferLock };
     m_buffer.append("Audio Track ID: ");
     m_buffer.append(m_audioTrackID);
     generateMockCounterString();
@@ -95,7 +95,7 @@ void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
 {
     RefPtr<SharedBuffer> buffer;
     {
-        auto locker = holdLock(m_bufferLock);
+        Locker locker { m_bufferLock };
         Vector<uint8_t> value(m_buffer.length());
         memcpy(value.data(), m_buffer.characters8(), m_buffer.length());
         m_buffer.clear();

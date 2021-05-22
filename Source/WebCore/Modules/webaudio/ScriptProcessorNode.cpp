@@ -126,7 +126,7 @@ void ScriptProcessorNode::uninitialize()
         return;
 
     for (unsigned i = 0; i < bufferCount; ++i) {
-        auto locker = holdLock(m_bufferLocks[i]);
+        Locker locker { m_bufferLocks[i] };
         m_inputBuffers[i] = nullptr;
         m_outputBuffers[i] = nullptr;
     }
@@ -222,7 +222,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
             });
         } else {
             callOnMainThread([this, bufferIndex, protector = makeRef(*this)] {
-                auto locker = holdLock(m_bufferLocks[bufferIndex]);
+                Locker locker { m_bufferLocks[bufferIndex] };
                 fireProcessEvent(bufferIndex);
             });
         }

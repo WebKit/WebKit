@@ -433,7 +433,7 @@ void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
 void OffscreenCanvas::pushBufferToPlaceholder()
 {
     callOnMainThread([placeholderData = makeRef(*m_placeholderData)] () mutable {
-        auto locker = holdLock(placeholderData->bufferLock);
+        Locker locker { placeholderData->bufferLock };
         if (placeholderData->canvas && placeholderData->pendingCommitBuffer)
             placeholderData->canvas->setImageBufferAndMarkDirty(WTFMove(placeholderData->pendingCommitBuffer));
         placeholderData->pendingCommitBuffer = nullptr;
@@ -456,7 +456,7 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
             m_placeholderData->bufferPipeSource->handle(WTFMove(bufferCopy));
     }
 
-    auto locker = holdLock(m_placeholderData->bufferLock);
+    Locker locker { m_placeholderData->bufferLock };
     bool shouldPushBuffer = !m_placeholderData->pendingCommitBuffer;
     m_placeholderData->pendingCommitBuffer = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB, imageBuffer->context());
     if (m_placeholderData->pendingCommitBuffer && shouldPushBuffer)
