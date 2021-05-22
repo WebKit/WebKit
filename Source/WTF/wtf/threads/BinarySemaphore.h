@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/Condition.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TimeWithDynamicClockType.h>
 
@@ -52,9 +52,9 @@ public:
     }
 
 private:
-    bool m_isSet { false };
-    Lock m_lock;
-    Condition m_condition;
+    bool m_isSet WTF_GUARDED_BY_LOCK(m_lock) { false };
+    CheckedLock m_lock;
+    CheckedCondition m_condition;
 };
 
 } // namespace WTF

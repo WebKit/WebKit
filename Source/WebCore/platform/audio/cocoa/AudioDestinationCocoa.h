@@ -91,8 +91,8 @@ private:
     std::unique_ptr<MultiChannelResampler> m_resampler;
     AudioIOPosition m_outputTimestamp;
 
-    Lock m_dispatchToRenderThreadLock;
-    Function<void(Function<void()>&&)> m_dispatchToRenderThread;
+    CheckedLock m_dispatchToRenderThreadLock;
+    Function<void(Function<void()>&&)> m_dispatchToRenderThread WTF_GUARDED_BY_LOCK(m_dispatchToRenderThreadLock);
 
     float m_contextSampleRate;
 

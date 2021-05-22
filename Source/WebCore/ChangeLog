@@ -1,5 +1,72 @@
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
+        Adopt CheckedLock in more places
+        https://bugs.webkit.org/show_bug.cgi?id=226138
+
+        Reviewed by Darin Adler.
+
+        Adopt CheckedLock in more places to benefit from Clang Thread Safety Analysis.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::performClose):
+        (WebCore::Database::scheduleTransaction):
+        (WebCore::Database::inProgressTransactionCompleted):
+        (WebCore::Database::hasPendingTransaction):
+        (WebCore::Database::runTransaction):
+        * Modules/webdatabase/Database.h:
+        (WebCore::Database::WTF_GUARDED_BY_LOCK):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::addProposedDatabase):
+        (WebCore::DatabaseManager::removeProposedDatabase):
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::recordDatabaseOpen):
+        (WebCore::DatabaseThread::recordDatabaseClosed):
+        (WebCore::DatabaseThread::hasPendingDatabaseActivity const):
+        * Modules/webdatabase/DatabaseThread.h:
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::clear):
+        (WebCore::SQLCallbackWrapper::unwrap):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::enqueueStatement):
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase):
+        (WebCore::SQLTransaction::getNextStatement):
+        * Modules/webdatabase/SQLTransaction.h:
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        (WebCore::SQLTransactionBackend::doCleanup):
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        (WebCore::AXIsolatedTree::WTF_GUARDED_BY_LOCK):
+        * platform/AbortableTaskQueue.h:
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::render):
+        * platform/audio/cocoa/AudioDestinationCocoa.h:
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h:
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::provideInput):
+        (WebCore::AudioSourceProviderGStreamer::handleSample):
+        (WebCore::AudioSourceProviderGStreamer::clearAdapters):
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcRenderIteration):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::addToMap):
+        (WebCore::AVFWrapper::removeFromMap const):
+        (WebCore::AVFWrapper::avfWrapperForCallbackContext):
+        (WebCore::AVFWrapper::periodicTimeObserverCallback):
+        (WebCore::AVFWrapper::processNotification):
+        (WebCore::AVFWrapper::loadPlayableCompletionCallback):
+        (WebCore::AVFWrapper::loadMetadataCompletionCallback):
+        (WebCore::AVFWrapper::seekCompletedCallback):
+        (WebCore::AVFWrapper::processCue):
+        (WebCore::AVFWrapper::legibleOutputCallback):
+        (WebCore::AVFWrapper::processShouldWaitForLoadingOfResource):
+        (WebCore::AVFWrapper::resourceLoaderShouldWaitForLoadingOfRequestedResource):
+
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
         Use CheckedLock in SpeechRecognitionCaptureSourceImpl
         https://bugs.webkit.org/show_bug.cgi?id=226131
 

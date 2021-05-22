@@ -219,10 +219,10 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
     }
 
     // When there is a AudioWorklet, we do rendering on the AudioWorkletThread.
-    auto locker = tryHoldLock(m_dispatchToRenderThreadLock);
-    if (!locker)
+    if (!m_dispatchToRenderThreadLock.tryLock())
         return -1;
 
+    Locker locker { AdoptLockTag { }, m_dispatchToRenderThreadLock };
     if (!m_dispatchToRenderThread)
         renderOnRenderingTheadIfPlaying(framesToRender);
     else {

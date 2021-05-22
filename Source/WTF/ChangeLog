@@ -1,5 +1,20 @@
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
+        Adopt CheckedLock in more places
+        https://bugs.webkit.org/show_bug.cgi?id=226138
+
+        Reviewed by Darin Adler.
+
+        Adopt CheckedLock in more places to benefit from Clang Thread Safety Analysis.
+
+        * wtf/Assertions.cpp:
+        * wtf/TimingScope.cpp:
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::waitUntil):
+        * wtf/threads/BinarySemaphore.h:
+
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
         Replace LockHolder with Locker in local variables
         https://bugs.webkit.org/show_bug.cgi?id=226133
 

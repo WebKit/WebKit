@@ -81,8 +81,8 @@ struct _WebKitWebAudioSrcPrivate {
 
     bool hasRenderedAudibleFrame { false };
 
-    Lock dispatchToRenderThreadLock;
-    Function<void(Function<void()>&&)> dispatchToRenderThreadFunction;
+    CheckedLock dispatchToRenderThreadLock;
+    Function<void(Function<void()>&&)> dispatchToRenderThreadFunction WTF_GUARDED_BY_LOCK(dispatchToRenderThreadLock);
 
     bool dispatchDone WTF_GUARDED_BY_LOCK(dispatchLock);
     CheckedLock dispatchLock;
@@ -408,9 +408,10 @@ static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
         priv->dispatchDone = false;
     }
 
-    auto locker = tryHoldLock(priv->dispatchToRenderThreadLock);
-    if (!locker)
+    if (!priv->dispatchToRenderThreadLock.tryLock())
         return;
+
+    Locker locker { AdoptLockTag { }, priv->dispatchToRenderThreadLock };
 
     if (!priv->dispatchToRenderThreadFunction)
         webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTFMove(*channelBufferList));

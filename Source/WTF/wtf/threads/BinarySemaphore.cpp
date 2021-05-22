@@ -38,7 +38,10 @@ void BinarySemaphore::signal()
 bool BinarySemaphore::waitUntil(const TimeWithDynamicClockType& absoluteTime)
 {
     Locker locker { m_lock };
-    bool satisfied = m_condition.waitUntil(m_lock, absoluteTime, [&] { return m_isSet; });
+    bool satisfied = m_condition.waitUntil(m_lock, absoluteTime, [&] {
+        assertIsHeld(m_lock);
+        return m_isSet;
+    });
     if (satisfied)
         m_isSet = false;
     return satisfied;

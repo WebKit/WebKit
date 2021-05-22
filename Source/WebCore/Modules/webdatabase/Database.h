@@ -30,8 +30,8 @@
 
 #include "ExceptionOr.h"
 #include "SQLiteDatabase.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
-#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -139,7 +139,7 @@ private:
     bool getActualVersionForTransaction(String& version);
     void setEstimatedSize(unsigned long long);
 
-    void scheduleTransaction();
+    void scheduleTransaction() WTF_REQUIRES_LOCK(m_transactionInProgressLock);
 
     void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
@@ -169,10 +169,10 @@ private:
 
     Ref<DatabaseAuthorizer> m_databaseAuthorizer;
 
-    Deque<Ref<SQLTransaction>> m_transactionQueue;
-    Lock m_transactionInProgressMutex;
-    bool m_transactionInProgress { false };
-    bool m_isTransactionQueueEnabled { true };
+    Deque<Ref<SQLTransaction>> m_transactionQueue WTF_GUARDED_BY_LOCK(m_transactionInProgressLock);
+    CheckedLock m_transactionInProgressLock;
+    bool m_transactionInProgress WTF_GUARDED_BY_LOCK(m_transactionInProgressLock) { false };
+    bool m_isTransactionQueueEnabled WTF_GUARDED_BY_LOCK(m_transactionInProgressLock) { true };
 
     friend class ChangeVersionWrapper;
     friend class DatabaseManager;

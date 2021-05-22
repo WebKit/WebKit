@@ -29,7 +29,7 @@
 #pragma once
 
 #include "ScriptExecutionContext.h"
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 
 namespace WebCore {
 
@@ -58,7 +58,7 @@ public:
         ScriptExecutionContext* scriptExecutionContextPtr;
         T* callback;
         {
-            Locker locker { m_mutex };
+            Locker locker { m_lock };
             if (!m_callback) {
                 ASSERT(!m_scriptExecutionContext);
                 return;
@@ -83,19 +83,20 @@ public:
 
     RefPtr<T> unwrap()
     {
-        Locker locker { m_mutex };
+        Locker locker { m_lock };
         ASSERT(!m_callback || m_scriptExecutionContext->isContextThread());
         m_scriptExecutionContext = nullptr;
         return WTFMove(m_callback);
     }
 
     // Useful for optimizations only, please test the return value of unwrap to be sure.
-    bool hasCallback() const { return m_callback; }
+    // FIXME: This is not thread-safe.
+    bool hasCallback() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { return m_callback; }
 
 private:
-    Lock m_mutex;
-    RefPtr<T> m_callback;
-    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    CheckedLock m_lock;
+    RefPtr<T> m_callback WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<ScriptExecutionContext> m_scriptExecutionContext WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebCore

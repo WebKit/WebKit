@@ -361,7 +361,7 @@ public:
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
     // Focused node updates in AXObjectCache use setFocusNodeID.
-    void setRootNode(AXIsolatedObject*);
+    void setRootNode(AXIsolatedObject*) WTF_REQUIRES_LOCK(m_changeLogLock);
     void setFocusedNodeID(AXID);
 
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
@@ -381,7 +381,7 @@ private:
     // Call on main thread
     Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper);
     // Called on main thread to update both m_nodeMap and m_pendingChildrenUpdates.
-    void updateChildrenIDs(AXID parentID, Vector<AXID>&& childrenIDs);
+    void updateChildrenIDs(AXID parentID, Vector<AXID>&& childrenIDs) WTF_REQUIRES_LOCK(m_changeLogLock);
 
     AXIsolatedTreeID m_treeID;
     AXObjectCache* m_axObjectCache { nullptr };
@@ -393,15 +393,15 @@ private:
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
 
     // Written to by main thread under lock, accessed and applied by AX thread.
-    RefPtr<AXIsolatedObject> m_rootNode;
-    Vector<NodeChange> m_pendingAppends; // Nodes to be added to the tree and platform-wrapped.
-    Vector<AXPropertyChange> m_pendingPropertyChanges;
-    Vector<AXID> m_pendingNodeRemovals; // Nodes to be removed from the tree.
-    Vector<AXID> m_pendingSubtreeRemovals; // Nodes whose subtrees are to be removed from the tree.
-    Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates;
-    AXID m_pendingFocusedNodeID { InvalidAXID };
+    RefPtr<AXIsolatedObject> m_rootNode WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    Vector<NodeChange> m_pendingAppends WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes to be added to the tree and platform-wrapped.
+    Vector<AXPropertyChange> m_pendingPropertyChanges WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    Vector<AXID> m_pendingNodeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes to be removed from the tree.
+    Vector<AXID> m_pendingSubtreeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes whose subtrees are to be removed from the tree.
+    Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock) { InvalidAXID };
     AXID m_focusedNodeID { InvalidAXID };
-    Lock m_changeLogLock;
+    CheckedLock m_changeLogLock;
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const
