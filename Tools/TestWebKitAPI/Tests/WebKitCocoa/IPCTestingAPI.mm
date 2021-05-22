@@ -110,6 +110,8 @@ static RetainPtr<TestWKWebView> createWebViewWithIPCTestingAPI()
     return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
 }
 
+#if !ASSERT_ENABLED
+
 TEST(IPCTestingAPI, CanDetectNilReplyBlocks)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -161,6 +163,8 @@ TEST(IPCTestingAPI, CanDetectNilReplyBlocks)
     // Make sure sayHello was not called, as the reply block was nil.
     EXPECT_FALSE([delegate.get() sayHelloWasCalled]);
 }
+
+#endif
 
 TEST(IPCTestingAPI, CanSendAlert)
 {

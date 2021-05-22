@@ -1,3 +1,14 @@
+2021-05-22  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        [ Debug ] TestWebKitAPI.IPCTestingAPI.CanDetectNilReplyBlocks (API-tests) is a constant crash
+        https://bugs.webkit.org/show_bug.cgi?id=226125
+
+        Reviewed by Ryosuke Niwa.
+
+        Turn this test off for Debug.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Replace LockHolder with Locker in local variables
