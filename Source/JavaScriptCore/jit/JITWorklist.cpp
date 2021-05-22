@@ -47,7 +47,7 @@ public:
     {
         m_jit.compileAndLinkWithoutFinalizing(JITCompilationCanFail);
         
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         m_isFinishedCompiling = true;
     }
     
@@ -79,7 +79,7 @@ public:
     
     bool isFinishedCompiling()
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         return m_isFinishedCompiling;
     }
     
@@ -138,13 +138,13 @@ private:
             
             // Make sure that the main thread realizes that we just compiled something. Notifying
             // a condition is basically free if nobody is waiting.
-            LockHolder locker(*m_worklist.m_lock);
+            Locker locker { *m_worklist.m_lock };
             m_worklist.m_condition->notifyAll(locker);
         }
         
         m_myPlans.clear();
         
-        LockHolder locker(*m_worklist.m_lock);
+        Locker locker { *m_worklist.m_lock };
         m_worklist.m_numAvailableThreads++;
         return WorkResult::Continue;
     }
@@ -168,7 +168,7 @@ JITWorklist::JITWorklist()
     : m_lock(Box<Lock>::create())
     , m_condition(AutomaticThreadCondition::create())
 {
-    LockHolder locker(*m_lock);
+    Locker locker { *m_lock };
     m_thread = new Thread(locker, *this);
 }
 
@@ -184,7 +184,7 @@ bool JITWorklist::completeAllForVM(VM& vm)
     for (;;) {
         Vector<RefPtr<Plan>, 32> myPlans;
         {
-            LockHolder locker(*m_lock);
+            Locker locker { *m_lock };
             for (;;) {
                 bool didFindUnfinishedPlan = false;
                 m_plans.removeAllMatching(
@@ -223,7 +223,7 @@ void JITWorklist::poll(VM& vm)
     DeferGC deferGC(vm.heap);
     Plans myPlans;
     {
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         m_plans.removeAllMatching(
             [&] (RefPtr<Plan>& plan) {
                 if (&plan->vm() != &vm)
@@ -256,7 +256,7 @@ void JITWorklist::compileLater(CodeBlock* codeBlock, BytecodeIndex loopOSREntryB
     codeBlock->jitSoon();
 
     {
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         
         if (m_planned.contains(codeBlock))
             return;
@@ -295,7 +295,7 @@ void JITWorklist::finalizePlans(Plans& myPlans)
     for (RefPtr<Plan>& plan : myPlans) {
         plan->finalize(true);
         
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         m_planned.remove(plan->codeBlock());
     }
 }

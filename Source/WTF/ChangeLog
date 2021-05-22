@@ -1,5 +1,54 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::~AutomaticThread):
+        (WTF::AutomaticThread::join):
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::ParallelHelperClient):
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::setTask):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::doSomeHelping):
+        (WTF::ParallelHelperClient::runTask):
+        (WTF::ParallelHelperPool::~ParallelHelperPool):
+        (WTF::ParallelHelperPool::ensureThreads):
+        (WTF::ParallelHelperPool::doSomeHelping):
+        * wtf/Seconds.cpp:
+        (WTF::sleep):
+        * wtf/TimeWithDynamicClockType.cpp:
+        (WTF::sleep):
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        (WTF::WorkerPool::~WorkerPool):
+        (WTF::WorkerPool::postTask):
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        * wtf/win/DbgHelperWin.cpp:
+        (WTF::DbgHelper::SymFromAddress):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Use CheckedCondition in more places
         https://bugs.webkit.org/show_bug.cgi?id=226113
 

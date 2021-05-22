@@ -131,7 +131,7 @@ void LegacyTileCache::setTilesOpaque(bool opaque)
     if (m_tilesOpaque == opaque)
         return;
 
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
 
     m_tilesOpaque = opaque;
     m_zoomedOutTileGrid->updateTileOpacity();
@@ -144,7 +144,7 @@ void LegacyTileCache::doLayoutTiles()
     if (isTileCreationSuspended())
         return;
 
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
     LegacyTileGrid* activeGrid = activeTileGrid();
     // Even though we aren't actually creating tiles in the inactive grid, we
     // still need to drop invalid tiles in response to a layout.
@@ -184,7 +184,7 @@ void LegacyTileCache::setCurrentScale(float scale)
     if (!keepsZoomedOutTiles() && !isTileInvalidationSuspended()) {
         // Tile invalidation is normally suspended during zooming by UIKit but some applications
         // using custom scrollviews may zoom without triggering the callbacks. Invalidate the tiles explicitly.
-        LockHolder locker(m_tileMutex);
+        Locker locker { m_tileMutex };
         activeTileGrid()->dropAllTiles();
         activeTileGrid()->createTiles(CoverVisibleOnly);
     }
@@ -209,7 +209,7 @@ void LegacyTileCache::commitScaleChange()
     ASSERT(m_pendingZoomedOutScale || m_pendingScale);
     ASSERT(m_tilingMode != Disabled);
     
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
 
     if (m_pendingZoomedOutScale) {
         m_zoomedOutTileGrid->setScale(m_pendingZoomedOutScale);
@@ -298,7 +298,7 @@ void LegacyTileCache::layoutTilesNow()
     if (m_tilingMode == Zooming)
         m_tilingMode = Minimal;
 
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
     LegacyTileGrid* activeGrid = activeTileGrid();
     if (activeGrid->checkDoSingleTileLayout()) {
         m_tilingMode = savedTilingMode;
@@ -311,14 +311,14 @@ void LegacyTileCache::layoutTilesNow()
 void LegacyTileCache::layoutTilesNowForRect(const IntRect& rect)
 {
     ASSERT(WebThreadIsLockedOrDisabled());
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
 
     activeTileGrid()->addTilesCoveringRect(rect);
 }
 
 void LegacyTileCache::removeAllNonVisibleTiles()
 {
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
     removeAllNonVisibleTilesInternal();
 }
 
@@ -340,7 +340,7 @@ void LegacyTileCache::removeAllNonVisibleTilesInternal()
 
 void LegacyTileCache::removeAllTiles()
 {
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
     m_zoomedOutTileGrid->dropAllTiles();
     if (m_zoomedInTileGrid)
         m_zoomedInTileGrid->dropAllTiles();
@@ -348,7 +348,7 @@ void LegacyTileCache::removeAllTiles()
 
 void LegacyTileCache::removeForegroundTiles()
 {
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
     if (!keepsZoomedOutTiles())
         m_zoomedOutTileGrid->dropAllTiles();
     if (m_zoomedInTileGrid)
@@ -357,13 +357,13 @@ void LegacyTileCache::removeForegroundTiles()
 
 void LegacyTileCache::setContentReplacementImage(RetainPtr<CGImageRef> contentReplacementImage)
 {
-    LockHolder locker(m_contentReplacementImageMutex);
+    Locker locker { m_contentReplacementImageMutex };
     m_contentReplacementImage = contentReplacementImage;
 }
 
 RetainPtr<CGImageRef> LegacyTileCache::contentReplacementImage() const
 {
-    LockHolder locker(m_contentReplacementImageMutex);
+    Locker locker { m_contentReplacementImageMutex };
     return m_contentReplacementImage;
 }
 
@@ -410,7 +410,7 @@ void LegacyTileCache::tileCreationTimerFired()
 {
     if (isTileCreationSuspended())
         return;
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
     createTilesInActiveGrid(CoverSpeculative);
 }
 
@@ -611,7 +611,7 @@ void LegacyTileCache::scheduleRenderingUpdateForPendingRepaint()
 
 void LegacyTileCache::setNeedsDisplayInRect(const IntRect& dirtyRect)
 {
-    LockHolder locker(m_savedDisplayRectMutex);
+    Locker locker { m_savedDisplayRectMutex };
     bool addedFirstRect = m_savedDisplayRects.isEmpty();
     m_savedDisplayRects.append(dirtyRect);
     if (!addedFirstRect)
@@ -683,7 +683,7 @@ void LegacyTileCache::updateTilingMode()
         if (m_tilingMode == Disabled)
             return;
 
-        LockHolder locker(m_tileMutex);
+        Locker locker { m_tileMutex };
         createTilesInActiveGrid(CoverVisibleOnly);
 
         if (!m_savedDisplayRects.isEmpty())
@@ -701,7 +701,7 @@ void LegacyTileCache::setTilingMode(TilingMode tilingMode)
     if ((m_pendingZoomedOutScale || m_pendingScale) && m_tilingMode != Disabled)
         commitScaleChange();
     else if (wasZooming) {
-        LockHolder locker(m_tileMutex);
+        Locker locker { m_tileMutex };
         bringActiveTileGridToFront();
     }
 
@@ -744,7 +744,7 @@ void LegacyTileCache::doPendingRepaints()
         return;
     if (isTileInvalidationSuspended())
         return;
-    LockHolder locker(m_tileMutex);
+    Locker locker { m_tileMutex };
     flushSavedDisplayRects();
 }
 
@@ -755,7 +755,7 @@ void LegacyTileCache::flushSavedDisplayRects()
 
     Vector<IntRect> rects;
     {
-        LockHolder locker(m_savedDisplayRectMutex);
+        Locker locker { m_savedDisplayRectMutex };
         m_savedDisplayRects.swap(rects);
     }
     size_t size = rects.size();
@@ -778,7 +778,7 @@ void LegacyTileCache::prepareToDraw()
     [[m_window contentView] viewWillDraw];
 
     if (!m_savedDisplayRects.isEmpty()) {
-        LockHolder locker(m_tileMutex);
+        Locker locker { m_tileMutex };
         flushSavedDisplayRects();
     }
 }

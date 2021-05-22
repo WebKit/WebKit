@@ -127,7 +127,7 @@ auto VMInspector::isValidExecutableMemory(const VMInspector::Locker&, void* mach
             return FunctorStatus::Continue; // Skip this VM.
         }
 
-        LockHolder executableAllocatorLocker(lock);
+        Locker executableAllocatorLocker { lock };
         if (allocator.isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
             found = true;
             return FunctorStatus::Done;

@@ -58,7 +58,7 @@ Database::~Database()
 
 Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     return ensureBytecodesFor(locker, codeBlock);
 }
 
@@ -80,7 +80,7 @@ Bytecodes* Database::ensureBytecodesFor(const AbstractLocker&, CodeBlock* codeBl
 
 void Database::notifyDestruction(CodeBlock* codeBlock)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     
     m_bytecodesMap.remove(codeBlock);
     m_compilationMap.remove(codeBlock);
@@ -88,7 +88,7 @@ void Database::notifyDestruction(CodeBlock* codeBlock)
 
 void Database::addCompilation(CodeBlock* codeBlock, Ref<Compilation>&& compilation)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     ASSERT(!isCompilationThread());
 
     m_compilations.append(compilation.copyRef());
@@ -174,7 +174,7 @@ void Database::registerToSaveAtExit(const char* filename)
 
 void Database::logEvent(CodeBlock* codeBlock, const char* summary, const CString& detail)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     
     Bytecodes* bytecodes = ensureBytecodesFor(locker, codeBlock);
     Compilation* compilation = m_compilationMap.get(codeBlock);
@@ -186,14 +186,14 @@ void Database::addDatabaseToAtExit()
     if (++didRegisterAtExit == 1)
         atexit(atExitCallback);
     
-    LockHolder holder(registrationLock);
+    Locker locker { registrationLock };
     m_nextRegisteredDatabase = firstDatabase;
     firstDatabase = this;
 }
 
 void Database::removeDatabaseFromAtExit()
 {
-    LockHolder holder(registrationLock);
+    Locker locker { registrationLock };
     for (Database** current = &firstDatabase; *current; current = &(*current)->m_nextRegisteredDatabase) {
         if (*current != this)
             continue;
@@ -212,7 +212,7 @@ void Database::performAtExitSave() const
 
 Database* Database::removeFirstAtExitDatabase()
 {
-    LockHolder holder(registrationLock);
+    Locker locker { registrationLock };
     Database* result = firstDatabase;
     if (result) {
         firstDatabase = result->m_nextRegisteredDatabase;

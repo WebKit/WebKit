@@ -191,7 +191,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
         return GST_FLOW_OK;
     }
 
-    LockHolder locker(priv->mutex);
+    Locker locker { priv->mutex };
 
     if (priv->isFlushing) {
         GST_DEBUG_OBJECT(self, "Decryption aborted because of flush");
@@ -289,7 +289,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     GST_TRACE_OBJECT(self, "decrypting");
 
     // Temporarily release the lock while we don't need to access priv. The lower level API is used
-    // in order to avoid creating several scopes with different LockHolder instances in each one.
+    // in order to avoid creating several scopes with different Locker instances in each one.
     priv->mutex.unlock();
 
     bool didDecryptionSucceed = klass->decrypt(self, ivBuffer, keyIDBuffer, buffer, subSampleCount, subSamplesBuffer);
@@ -393,7 +393,7 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
     case GST_EVENT_FLUSH_START:
         GST_DEBUG_OBJECT(self, "Flush-start");
         {
-            LockHolder locker(priv->mutex);
+            Locker locker { priv->mutex };
             bool isCdmProxyAttached = priv->cdmProxy;
             priv->isFlushing = true;
             if (isCdmProxyAttached) {
@@ -406,7 +406,7 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
     case GST_EVENT_FLUSH_STOP:
         GST_DEBUG_OBJECT(self, "Flush-stop");
         {
-            LockHolder locker(priv->mutex);
+            Locker locker { priv->mutex };
             priv->isFlushing = false;
         }
         break;
@@ -420,7 +420,7 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
 bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    LockHolder locker(priv->mutex);
+    Locker locker { priv->mutex };
     return priv->isFlushing;
 }
 
@@ -459,7 +459,7 @@ static void setContext(GstElement* element, GstContext* context)
 
     if (gst_context_has_context_type(context, "drm-cdm-proxy")) {
         const GValue* value = gst_structure_get_value(gst_context_get_structure(context), "cdm-proxy");
-        LockHolder locker(priv->mutex);
+        Locker locker { priv->mutex };
         priv->cdmProxy = value ? reinterpret_cast<CDMProxy*>(g_value_get_pointer(value)) : nullptr;
         GST_DEBUG_OBJECT(self, "received new CDMInstance %p", priv->cdmProxy.get());
         klass->cdmProxyAttached(self, priv->cdmProxy);

@@ -64,7 +64,7 @@ void Plan::runCompletionTasks(const AbstractLocker&)
 
 void Plan::addCompletionTask(Context* context, CompletionTask&& task)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     if (!isComplete())
         m_completionTasks.append(std::make_pair(context, WTFMove(task)));
     else
@@ -73,7 +73,7 @@ void Plan::addCompletionTask(Context* context, CompletionTask&& task)
 
 void Plan::waitForCompletion()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     if (!isComplete()) {
         m_completed.wait(m_lock);
     }
@@ -81,7 +81,7 @@ void Plan::waitForCompletion()
 
 bool Plan::tryRemoveContextAndCancelIfLast(Context& context)
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
 
     if (ASSERT_ENABLED) {
         // We allow the first completion task to not have a Context.

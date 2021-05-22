@@ -49,7 +49,7 @@ static void initializeSymbols(HANDLE hProc)
 
 bool SymFromAddress(HANDLE hProc, DWORD64 address, DWORD64* displacement, SYMBOL_INFO* symbolInfo)
 {
-    LockHolder lock(callMutex);
+    Locker locker { callMutex };
     initializeSymbols(hProc);
 
     bool success = ::SymFromAddr(hProc, address, displacement, symbolInfo);

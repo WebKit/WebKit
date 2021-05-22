@@ -72,7 +72,7 @@ public:
 
     void setData(SharedBuffer& data, bool allDataReceived) override
     {
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_mutex };
         if (m_encodedDataStatus == EncodedDataStatus::Error)
             return;
 

@@ -1,5 +1,62 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::InProcessIDBServer):
+        (InProcessIDBServer::deleteDatabase):
+        (InProcessIDBServer::openDatabase):
+        (InProcessIDBServer::abortTransaction):
+        (InProcessIDBServer::commitTransaction):
+        (InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        (InProcessIDBServer::createObjectStore):
+        (InProcessIDBServer::deleteObjectStore):
+        (InProcessIDBServer::renameObjectStore):
+        (InProcessIDBServer::clearObjectStore):
+        (InProcessIDBServer::createIndex):
+        (InProcessIDBServer::deleteIndex):
+        (InProcessIDBServer::renameIndex):
+        (InProcessIDBServer::putOrAdd):
+        (InProcessIDBServer::getRecord):
+        (InProcessIDBServer::getAllRecords):
+        (InProcessIDBServer::getCount):
+        (InProcessIDBServer::deleteRecord):
+        (InProcessIDBServer::openCursor):
+        (InProcessIDBServer::iterateCursor):
+        (InProcessIDBServer::establishTransaction):
+        (InProcessIDBServer::databaseConnectionPendingClose):
+        (InProcessIDBServer::databaseConnectionClosed):
+        (InProcessIDBServer::abortOpenAndUpgradeNeeded):
+        (InProcessIDBServer::didFireVersionChangeEvent):
+        (InProcessIDBServer::openDBRequestCancelled):
+        (InProcessIDBServer::getAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::closeAndDeleteDatabasesModifiedSince):
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::syncTimerFired):
+        (WebKit::StorageAreaSync::performSync):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::finishedImportingOriginIdentifiers):
+        (WebKit::StorageTracker::syncImportOriginIdentifiers):
+        (WebKit::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebKit::StorageTracker::setOriginDetails):
+        (WebKit::StorageTracker::syncSetOriginDetails):
+        (WebKit::StorageTracker::origins):
+        (WebKit::StorageTracker::deleteAllOrigins):
+        (WebKit::StorageTracker::syncDeleteAllOrigins):
+        (WebKit::StorageTracker::deleteOrigin):
+        (WebKit::StorageTracker::syncDeleteOrigin):
+        (WebKit::StorageTracker::canDeleteOrigin):
+        (WebKit::StorageTracker::cancelDeletingOrigin):
+        (WebKit::StorageTracker::diskUsageForOrigin):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Adopt CheckedLock in StorageAreaSync
         https://bugs.webkit.org/show_bug.cgi?id=226099
 

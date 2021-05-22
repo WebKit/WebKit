@@ -1,5 +1,263 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::AsyncAudioDecoder):
+        (WebCore::AsyncAudioDecoder::runLoop):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::performClose):
+        (WebCore::Database::inProgressTransactionCompleted):
+        (WebCore::Database::hasPendingTransaction):
+        (WebCore::Database::runTransaction):
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::start):
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::recordDatabaseOpen):
+        (WebCore::DatabaseThread::recordDatabaseClosed):
+        (WebCore::DatabaseThread::hasPendingDatabaseActivity const):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::retryCanEstablishDatabase):
+        (WebCore::DatabaseTracker::maximumSize):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNames):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::doneCreatingDatabase):
+        (WebCore::DatabaseTracker::openDatabases):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::originLockFor):
+        (WebCore::DatabaseTracker::quota):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        (WebCore::DatabaseTracker::removeDeletedOpenedDatabases):
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::clear):
+        (WebCore::SQLCallbackWrapper::unwrap):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::enqueueStatement):
+        (WebCore::SQLTransaction::checkAndHandleClosedDatabase):
+        (WebCore::SQLTransaction::getNextStatement):
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        (WebCore::SQLTransactionBackend::doCleanup):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::clear):
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::createSubtree):
+        (WebCore::AXIsolatedTree::updateNode):
+        (WebCore::AXIsolatedTree::updateNodeProperty):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::focusedNode):
+        (WebCore::AXIsolatedTree::rootNode):
+        (WebCore::AXIsolatedTree::setFocusedNodeID):
+        (WebCore::AXIsolatedTree::removeNode):
+        (WebCore::AXIsolatedTree::removeSubtree):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+        (ScrollingTreeMac::scrollingNodeForPoint):
+        (ScrollingTreeMac::eventListenerRegionTypesForPoint const):
+        * platform/AbortableTaskQueue.h:
+        * platform/audio/cocoa/CARingBuffer.cpp:
+        (WebCore::CARingBufferStorageVector::flush):
+        (WebCore::CARingBufferStorageVector::setCurrentFrameBounds):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::addToMap):
+        (WebCore::AVFWrapper::removeFromMap const):
+        (WebCore::AVFWrapper::periodicTimeObserverCallback):
+        (WebCore::AVFWrapper::processNotification):
+        (WebCore::AVFWrapper::loadPlayableCompletionCallback):
+        (WebCore::AVFWrapper::loadMetadataCompletionCallback):
+        (WebCore::AVFWrapper::seekCompletedCallback):
+        (WebCore::AVFWrapper::processCue):
+        (WebCore::AVFWrapper::legibleOutputCallback):
+        (WebCore::AVFWrapper::processShouldWaitForLoadingOfResource):
+        (WebCore::AVFWrapper::resourceLoaderShouldWaitForLoadingOfRequestedResource):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (-[WebCoreSharedBufferResourceLoaderDelegate setExpectedContentSize:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate updateData:complete:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+        (WebCore::ImageDecoderAVFObjC::setTrack):
+        (WebCore::ImageDecoderAVFObjC::createFrameImageAtIndex):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::createFrameImageAtIndex):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::handleSample):
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfSample):
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::handleProtectionEvent):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::start):
+        (VideoRenderRequestScheduler::stop):
+        (VideoRenderRequestScheduler::drain):
+        (VideoRenderRequestScheduler::requestRender):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (transformInPlace):
+        (sinkEventHandler):
+        (webKitMediaCommonEncryptionDecryptIsFlushing):
+        (setContext):
+        * platform/graphics/nicosia/NicosiaBuffer.cpp:
+        (Nicosia::Buffer::beginPainting):
+        (Nicosia::Buffer::completePainting):
+        (Nicosia::Buffer::waitUntilPaintingComplete):
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::PlatformLayer::setSceneIntegration):
+        (Nicosia::PlatformLayer::createUpdateScope):
+        (Nicosia::CompositionLayer::updateState):
+        (Nicosia::CompositionLayer::flushState):
+        (Nicosia::CompositionLayer::commitState):
+        (Nicosia::CompositionLayer::accessPending):
+        (Nicosia::CompositionLayer::accessCommitted):
+        * platform/graphics/nicosia/NicosiaScene.h:
+        (Nicosia::Scene::accessState):
+        * platform/graphics/nicosia/NicosiaSceneIntegration.cpp:
+        (Nicosia::SceneIntegration::setClient):
+        (Nicosia::SceneIntegration::invalidate):
+        (Nicosia::SceneIntegration::requestUpdate):
+        * platform/graphics/nicosia/texmap/NicosiaBackingStoreTextureMapperImpl.cpp:
+        (Nicosia::BackingStoreTextureMapperImpl::flushUpdate):
+        (Nicosia::BackingStoreTextureMapperImpl::takeUpdate):
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.cpp:
+        (Nicosia::ContentLayerTextureMapperImpl::~ContentLayerTextureMapperImpl):
+        (Nicosia::ContentLayerTextureMapperImpl::invalidateClient):
+        (Nicosia::ContentLayerTextureMapperImpl::flushUpdate):
+        (Nicosia::ContentLayerTextureMapperImpl::swapBuffersIfNeeded):
+        * platform/graphics/nicosia/texmap/NicosiaImageBackingTextureMapperImpl.cpp:
+        (Nicosia::ImageBackingTextureMapperImpl::flushUpdate):
+        (Nicosia::ImageBackingTextureMapperImpl::takeUpdate):
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp:
+        (WebCore::TextureMapperGCGLPlatformLayer::swapBuffersIfNeeded):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::load):
+        (WebCore::MediaPlayerPrivateMediaFoundation::naturalSize const):
+        (WebCore::MediaPlayerPrivateMediaFoundation::addListener):
+        (WebCore::MediaPlayerPrivateMediaFoundation::removeListener):
+        (WebCore::MediaPlayerPrivateMediaFoundation::notifyDeleted):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setNaturalSize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::onMediaPlayerDeleted):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStart):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockStop):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockPause):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockRestart):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::OnClockSetRate):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::ProcessMessage):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::GetCurrentMediaType):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::InitServicePointers):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::ReleaseServicePointers):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::SetVideoWindow):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::GetVideoWindow):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::SetVideoPosition):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::GetVideoPosition):
+        (WebCore::MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::RepaintVideo):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoSamplePool::getSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoSamplePool::returnSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoSamplePool::areSamplesPending):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoSamplePool::initialize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoSamplePool::clear):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::scheduleSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::processSamplesInQueue):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::processSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoScheduler::schedulerThreadProcPrivate):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::setVideoWindow):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::setDestinationRect):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::createVideoSamples):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::checkDeviceState):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame):
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::createD3DDevice):
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::frameIsCompleteAtIndex const):
+        (WebCore::ScalableImageDecoder::frameHasAlphaAtIndex const):
+        (WebCore::ScalableImageDecoder::frameBytesAtIndex const):
+        (WebCore::ScalableImageDecoder::frameDurationAtIndex const):
+        (WebCore::ScalableImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/ScalableImageDecoder.h:
+        * platform/ios/LegacyTileCache.mm:
+        (WebCore::LegacyTileCache::setTilesOpaque):
+        (WebCore::LegacyTileCache::doLayoutTiles):
+        (WebCore::LegacyTileCache::setCurrentScale):
+        (WebCore::LegacyTileCache::commitScaleChange):
+        (WebCore::LegacyTileCache::layoutTilesNow):
+        (WebCore::LegacyTileCache::layoutTilesNowForRect):
+        (WebCore::LegacyTileCache::removeAllNonVisibleTiles):
+        (WebCore::LegacyTileCache::removeAllTiles):
+        (WebCore::LegacyTileCache::removeForegroundTiles):
+        (WebCore::LegacyTileCache::setContentReplacementImage):
+        (WebCore::LegacyTileCache::contentReplacementImage const):
+        (WebCore::LegacyTileCache::tileCreationTimerFired):
+        (WebCore::LegacyTileCache::setNeedsDisplayInRect):
+        (WebCore::LegacyTileCache::updateTilingMode):
+        (WebCore::LegacyTileCache::setTilingMode):
+        (WebCore::LegacyTileCache::doPendingRepaints):
+        (WebCore::LegacyTileCache::flushSavedDisplayRects):
+        (WebCore::LegacyTileCache::prepareToDraw):
+        * platform/ios/LegacyTileLayerPool.mm:
+        (WebCore::LegacyTileLayerPool::addLayer):
+        (WebCore::LegacyTileLayerPool::takeLayerWithSize):
+        (WebCore::LegacyTileLayerPool::setCapacity):
+        (WebCore::LegacyTileLayerPool::prune):
+        (WebCore::LegacyTileLayerPool::drain):
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow setExposedScrollViewRect:]):
+        (-[WAKWindow exposedScrollViewRect]):
+        * platform/ios/wak/WebCoreThread.mm:
+        (RunWebThread):
+        (StartWebThread):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::openNextStream):
+        (WebCore::formFinalize):
+        (WebCore::formClose):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setRequestPaused):
+        (WebCore::CurlRequest::setCallbackPaused):
+        (WebCore::CurlRequest::pausedStatusChanged):
+        (WebCore::CurlRequest::enableDownloadToFile):
+        (WebCore::CurlRequest::getDownloadedFilePath):
+        (WebCore::CurlRequest::writeDataToDownloadFileIfEnabled):
+        (WebCore::CurlRequest::closeDownloadFile):
+        (WebCore::CurlRequest::cleanupDownloadFile):
+        * platform/network/curl/CurlSSLHandle.cpp:
+        (WebCore::CurlSSLHandle::allowAnyHTTPSCertificatesForHost):
+        (WebCore::CurlSSLHandle::canIgnoreAnyHTTPSCertificatesForHost const):
+        (WebCore::CurlSSLHandle::setClientCertificateInfo):
+        (WebCore::CurlSSLHandle::getSSLClientCertificate const):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::close):
+        (WebCore::SQLiteDatabase::maximumSize):
+        (WebCore::SQLiteDatabase::setMaximumSize):
+        (WebCore::SQLiteDatabase::pageSize):
+        (WebCore::SQLiteDatabase::freeSpaceSize):
+        (WebCore::SQLiteDatabase::totalSize):
+        (WebCore::SQLiteDatabase::runIncrementalVacuumCommand):
+        (WebCore::SQLiteDatabase::interrupt):
+        (WebCore::SQLiteDatabase::setAuthorizer):
+        (WebCore::constructAndPrepareStatement):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::step):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Fix locking issue for AudioDestinationCocoa::m_isPlaying
         https://bugs.webkit.org/show_bug.cgi?id=226129
 

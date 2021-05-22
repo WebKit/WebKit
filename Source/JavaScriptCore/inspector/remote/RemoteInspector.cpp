@@ -60,7 +60,7 @@ void RemoteInspector::registerTarget(RemoteControllableTarget* target)
 {
     ASSERT_ARG(target, target);
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     auto targetIdentifier = nextAvailableTargetIdentifier();
     target->setTargetIdentifier(targetIdentifier);
@@ -83,7 +83,7 @@ void RemoteInspector::unregisterTarget(RemoteControllableTarget* target)
 {
     ASSERT_ARG(target, target);
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     auto targetIdentifier = target->targetIdentifier();
     if (!targetIdentifier)
@@ -105,7 +105,7 @@ void RemoteInspector::updateTarget(RemoteControllableTarget* target)
 {
     ASSERT_ARG(target, target);
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     if (!updateTargetMap(target))
         return;
@@ -146,7 +146,7 @@ void RemoteInspector::updateClientCapabilities()
 {
     ASSERT(isMainThread());
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     if (!m_client)
         m_clientCapabilities = WTF::nullopt;
@@ -166,7 +166,7 @@ void RemoteInspector::setClient(RemoteInspector::Client* client)
     ASSERT((m_client && !client) || (!m_client && client));
 
     {
-        LockHolder lock(m_mutex);
+        Locker locker { m_mutex };
         m_client = client;
     }
 
@@ -177,7 +177,7 @@ void RemoteInspector::setClient(RemoteInspector::Client* client)
 
 void RemoteInspector::setupFailed(TargetID targetIdentifier)
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     m_targetConnectionMap.remove(targetIdentifier);
 
@@ -191,7 +191,7 @@ void RemoteInspector::setupFailed(TargetID targetIdentifier)
 
 void RemoteInspector::setupCompleted(TargetID targetIdentifier)
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     if (targetIdentifier == m_automaticInspectionCandidateTargetIdentifier)
         m_automaticInspectionPaused = false;
@@ -211,7 +211,7 @@ void RemoteInspector::clientCapabilitiesDidChange()
 
 void RemoteInspector::stop()
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_mutex };
 
     stopInternal(StopSource::API);
 }

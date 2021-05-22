@@ -229,7 +229,7 @@ void SQLiteDatabase::close()
         // ASSERT(m_openingThread == &Thread::current());
         sqlite3* db = m_db;
         {
-            LockHolder locker(m_databaseClosingMutex);
+            Locker locker { m_databaseClosingMutex };
             m_db = 0;
         }
         if (m_useWAL) {
@@ -273,7 +273,7 @@ int64_t SQLiteDatabase::maximumSize()
     int64_t maxPageCount = 0;
 
     {
-        LockHolder locker(m_authorizerLock);
+        Locker locker { m_authorizerLock };
         enableAuthorizer(false);
         auto statement = prepareStatement("PRAGMA max_page_count"_s);
         maxPageCount = statement ? statement->columnInt64(0) : 0;
@@ -293,7 +293,7 @@ void SQLiteDatabase::setMaximumSize(int64_t size)
     ASSERT(currentPageSize || !m_db);
     int64_t newMaxPageCount = currentPageSize ? size / currentPageSize : 0;
     
-    LockHolder locker(m_authorizerLock);
+    Locker locker { m_authorizerLock };
     enableAuthorizer(false);
 
     auto statement = prepareStatementSlow(makeString("PRAGMA max_page_count = ", newMaxPageCount));
@@ -309,7 +309,7 @@ int SQLiteDatabase::pageSize()
     // Since the page size of a database is locked in at creation and therefore cannot be dynamic, 
     // we can cache the value for future use
     if (m_pageSize == -1) {
-        LockHolder locker(m_authorizerLock);
+        Locker locker { m_authorizerLock };
         enableAuthorizer(false);
         
         auto statement = prepareStatement("PRAGMA page_size"_s);
@@ -326,7 +326,7 @@ int64_t SQLiteDatabase::freeSpaceSize()
     int64_t freelistCount = 0;
 
     {
-        LockHolder locker(m_authorizerLock);
+        Locker locker { m_authorizerLock };
         enableAuthorizer(false);
         // Note: freelist_count was added in SQLite 3.4.1.
         auto statement = prepareStatement("PRAGMA freelist_count"_s);
@@ -342,7 +342,7 @@ int64_t SQLiteDatabase::totalSize()
     int64_t pageCount = 0;
 
     {
-        LockHolder locker(m_authorizerLock);
+        Locker locker { m_authorizerLock };
         enableAuthorizer(false);
         auto statement = prepareStatement("PRAGMA page_count"_s);
         pageCount = statement ? statement->columnInt64(0) : 0;
@@ -423,7 +423,7 @@ int SQLiteDatabase::runVacuumCommand()
 
 int SQLiteDatabase::runIncrementalVacuumCommand()
 {
-    LockHolder locker(m_authorizerLock);
+    Locker locker { m_authorizerLock };
     enableAuthorizer(false);
 
     if (!executeCommand("PRAGMA incremental_vacuum"_s))
@@ -435,7 +435,7 @@ int SQLiteDatabase::runIncrementalVacuumCommand()
 
 void SQLiteDatabase::interrupt()
 {
-    LockHolder locker(m_databaseClosingMutex);
+    Locker locker { m_databaseClosingMutex };
     if (m_db)
         sqlite3_interrupt(m_db);
 }
@@ -557,7 +557,7 @@ void SQLiteDatabase::setAuthorizer(DatabaseAuthorizer& authorizer)
         return;
     }
 
-    LockHolder locker(m_authorizerLock);
+    Locker locker { m_authorizerLock };
 
     m_authorizer = &authorizer;
     
@@ -641,7 +641,7 @@ void SQLiteDatabase::releaseMemory()
 
 static Expected<sqlite3_stmt*, int> constructAndPrepareStatement(SQLiteDatabase& database, const char* query, size_t queryLength)
 {
-    LockHolder databaseLock(database.databaseMutex());
+    Locker databaseLock { database.databaseMutex() };
     LOG(SQLDatabase, "SQL - prepare - %s", query);
 
     // Pass the length of the string including the null character to sqlite3_prepare_v2;

@@ -668,7 +668,7 @@ static void* RunWebThread(void*)
     perCalloutAutoreleasepoolEnabled = _CFRunLoopSetPerCalloutAutoreleasepoolEnabled(YES);
 
     {
-        LockHolder locker(startupLock);
+        Locker locker { startupLock };
         startupCondition.notifyOne();
     }
 
@@ -722,7 +722,7 @@ static void StartWebThread()
 
     // Wait for the web thread to startup completely before we continue.
     {
-        LockHolder locker(startupLock);
+        Locker locker { startupLock };
 
         // Propagate the mainThread's fenv to workers & the web thread.
         FloatingPointEnvironment::singleton().saveMainThreadEnvironment();

@@ -125,7 +125,7 @@ void BBQPlan::work(CompilationEffort effort)
         // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they
         // will update. It's also ok if they publish their code before we reset the instruction caches because after we release
         // the lock our code is ready to be published too.
-        LockHolder holder(m_codeBlock->m_lock);
+        Locker locker { m_codeBlock->m_lock };
 
         m_codeBlock->m_bbqCallees[m_functionIndex] = callee.copyRef();
 

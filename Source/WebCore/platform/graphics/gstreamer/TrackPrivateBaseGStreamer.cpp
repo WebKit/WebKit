@@ -159,7 +159,7 @@ void TrackPrivateBaseGStreamer::tagsChanged()
 
     GST_DEBUG("Inspecting track at index %d with tags: %" GST_PTR_FORMAT, m_index, tags.get());
     {
-        LockHolder lock(m_tagMutex);
+        Locker locker { m_tagMutex };
         m_tags.swap(tags);
     }
 
@@ -198,7 +198,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 
     GRefPtr<GstTagList> tags;
     {
-        LockHolder lock(m_tagMutex);
+        Locker locker { m_tagMutex };
         tags.swap(m_tags);
     }
 

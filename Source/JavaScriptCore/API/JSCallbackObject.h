@@ -95,21 +95,21 @@ public:
         
         void setPrivateProperty(VM& vm, JSCell* owner, const Identifier& propertyName, JSValue value)
         {
-            LockHolder locker(m_lock);
+            Locker locker { m_lock };
             WriteBarrier<Unknown> empty;
             m_propertyMap.add(propertyName.impl(), empty).iterator->value.set(vm, owner, value);
         }
         
         void deletePrivateProperty(const Identifier& propertyName)
         {
-            LockHolder locker(m_lock);
+            Locker locker { m_lock };
             m_propertyMap.remove(propertyName.impl());
         }
 
         template<typename Visitor>
         void visitChildren(Visitor& visitor)
         {
-            LockHolder locker(m_lock);
+            Locker locker { m_lock };
             for (auto& pair : m_propertyMap) {
                 if (pair.value)
                     visitor.append(pair.value);

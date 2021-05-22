@@ -94,7 +94,7 @@ public:
         ASSERT(isMainThread());
 
         {
-            LockHolder lockHolder(m_mutex);
+            Locker locker { m_mutex };
             m_aborting = true;
             cancelAllTasks();
         }
@@ -108,7 +108,7 @@ public:
     {
         ASSERT(isMainThread());
 
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_mutex };
         ASSERT(m_aborting);
         m_aborting = false;
     }
@@ -123,7 +123,7 @@ public:
     {
         ASSERT(!isMainThread());
 
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_mutex };
         if (m_aborting)
             return;
 
@@ -143,14 +143,14 @@ public:
         // Don't deadlock the main thread with itself.
         ASSERT(!isMainThread());
 
-        LockHolder lockHolder(m_mutex);
+        Locker locker { m_mutex };
         if (m_aborting)
             return WTF::nullopt;
 
         Optional<R> response = WTF::nullopt;
         postTask([this, &response, &mainThreadTaskHandler]() {
             R responseValue = mainThreadTaskHandler();
-            LockHolder lockHolder(m_mutex);
+            Locker locker { m_mutex };
             if (!m_aborting)
                 response = WTFMove(responseValue);
             m_abortedOrResponseSet.notifyAll();
@@ -197,7 +197,7 @@ private:
             if (isCancelled())
                 return;
 
-            LockHolder lock(m_taskQueue->m_mutex);
+            Locker lock { m_taskQueue->m_mutex };
             ASSERT(this == m_taskQueue->m_channel.first().ptr());
             m_taskQueue->m_channel.removeFirst();
             lock.unlockEarly();

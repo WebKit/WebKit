@@ -58,13 +58,13 @@ public:
 
     void setSceneIntegration(RefPtr<SceneIntegration>&& sceneIntegration)
     {
-        LockHolder locker(m_state.lock);
+        Locker locker { m_state.lock };
         m_state.sceneIntegration = WTFMove(sceneIntegration);
     }
 
     std::unique_ptr<SceneIntegration::UpdateScope> createUpdateScope()
     {
-        LockHolder locker(m_state.lock);
+        Locker locker { m_state.lock };
         if (m_state.sceneIntegration)
             return m_state.sceneIntegration->createUpdateScope();
         return nullptr;
@@ -208,14 +208,14 @@ public:
     template<typename T>
     void updateState(const T& functor)
     {
-        LockHolder locker(PlatformLayer::m_state.lock);
+        Locker locker { PlatformLayer::m_state.lock };
         functor(m_state.pending);
     }
 
     template<typename T>
     void flushState(const T& functor)
     {
-        LockHolder locker(PlatformLayer::m_state.lock);
+        Locker locker { PlatformLayer::m_state.lock };
         auto& pending = m_state.pending;
         auto& staging = m_state.staging;
 
@@ -293,7 +293,7 @@ public:
     template<typename T>
     void commitState(const T& functor)
     {
-        LockHolder locker(PlatformLayer::m_state.lock);
+        Locker locker { PlatformLayer::m_state.lock };
         m_state.committed = m_state.staging;
         m_state.staging.delta = { };
 
@@ -303,14 +303,14 @@ public:
     template<typename T>
     void accessPending(const T& functor)
     {
-        LockHolder locker(PlatformLayer::m_state.lock);
+        Locker locker { PlatformLayer::m_state.lock };
         functor(m_state.pending);
     }
 
     template<typename T>
     void accessCommitted(const T& functor)
     {
-        LockHolder locker(PlatformLayer::m_state.lock);
+        Locker locker { PlatformLayer::m_state.lock };
         functor(m_state.committed);
     }
 
