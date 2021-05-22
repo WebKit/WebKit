@@ -101,8 +101,6 @@ function installDependenciesWithApt {
         curl \
         gdb \
         fonts-liberation \
-        libapache2-mod-php \
-        php-json \
         libcgi-pm-perl \
         psmisc \
         pulseaudio-utils \
@@ -230,7 +228,6 @@ function installDependenciesWithPacman {
         curl \
         gdb \
         perl-cgi \
-        php-apache \
         psmisc \
         pulseaudio \
         python2 \
@@ -357,8 +354,6 @@ function installDependenciesWithDnf {
         liberation-fonts \
         mod_ssl \
         perl-CGI \
-        php \
-        php-json \
         psmisc \
         pulseaudio-utils \
         python2-psutil \

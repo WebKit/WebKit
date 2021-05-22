@@ -1,3 +1,23 @@
+2021-05-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Tools][run-webkit-tests] Remove more leftover tests webserver PHP remains
+        https://bugs.webkit.org/show_bug.cgi?id=226089
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove leftover PHP module configurations used on Linux now that PHP is not used anymore.
+
+        * http/conf/archlinux-httpd.conf: Removed PHP module configuration.
+        * http/conf/debian-httpd-2.4-php7.0.conf: Removed.
+        * http/conf/debian-httpd-2.4-php7.1.conf: Removed.
+        * http/conf/debian-httpd-2.4-php7.2.conf: Removed.
+        * http/conf/debian-httpd-2.4-php7.4.conf: Removed.
+        * http/conf/debian-httpd-2.4.conf: Renamed from LayoutTests/http/conf/debian-httpd-2.4-php7.3.conf
+        and removed PHP module configuration.
+        * http/conf/fedora-httpd-2.2.conf: Removed PHP module configuration.
+        * http/conf/fedora-httpd-2.4-php7.conf: Removed.
+        * http/conf/fedora-httpd-2.4.conf: Removed PHP module configuration.
+
 2021-05-21  Diego Pino Garcia  <dpino@igalia.com>
 
         Set CanvasImageSmoothing.imageSmoothingQuality value to 'low' as default
