@@ -68,7 +68,7 @@ StackStats::PerThreadStats::PerThreadStats()
 
 StackStats::CheckPoint::CheckPoint()
 {
-    auto locker = holdLock(StackStats::s_sharedMutex);
+    Locker locker { StackStats::s_sharedMutex };
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
@@ -121,7 +121,7 @@ StackStats::CheckPoint::CheckPoint()
 
 StackStats::CheckPoint::~CheckPoint()
 {
-    auto locker = holdLock(StackStats::s_sharedMutex);
+    Locker locker { StackStats::s_sharedMutex };
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
 
@@ -148,7 +148,7 @@ StackStats::CheckPoint::~CheckPoint()
 
 void StackStats::probe()
 {
-    auto locker = holdLock(StackStats::s_sharedMutex);
+    Locker locker { StackStats::s_sharedMutex };
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
@@ -203,7 +203,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
     // probe first, we can avoid re-entering the lock.
     StackStats::probe();
 
-    auto locker = holdLock(StackStats::s_sharedMutex);
+    Locker locker { StackStats::s_sharedMutex };
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
@@ -264,7 +264,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
 
 StackStats::LayoutCheckPoint::~LayoutCheckPoint()
 {
-    auto locker = holdLock(StackStats::s_sharedMutex);
+    Locker locker { StackStats::s_sharedMutex };
 
     // Pop to the previous layout checkpoint:
     StackStats::s_topLayoutCheckPoint = m_prev;

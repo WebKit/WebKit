@@ -168,7 +168,7 @@ bool Thread::establishHandle(NewThreadContext* data, Optional<size_t> stackSize,
 
 void Thread::changePriority(int delta)
 {
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     SetThreadPriority(m_handle, THREAD_PRIORITY_NORMAL + delta);
 }
 
@@ -176,7 +176,7 @@ int Thread::waitForCompletion()
 {
     HANDLE handle;
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         handle = m_handle;
     }
 
@@ -184,7 +184,7 @@ int Thread::waitForCompletion()
     if (joinResult == WAIT_FAILED)
         LOG_ERROR("Thread %p was found to be deadlocked trying to quit", this);
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     ASSERT(joinableState() == Joinable);
 
     // The thread has already exited, do nothing.
@@ -206,7 +206,7 @@ void Thread::detach()
     // FlsCallback automatically. FlsCallback will call CloseHandle to clean up
     // resource. So in this function, we just mark the thread as detached to
     // avoid calling waitForCompletion for this thread.
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     if (!hasExited())
         didBecomeDetached();
 }
@@ -260,7 +260,7 @@ ThreadIdentifier Thread::currentID()
 
 void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier threadID)
 {
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     m_handle = handle;
     m_id = threadID;
 }

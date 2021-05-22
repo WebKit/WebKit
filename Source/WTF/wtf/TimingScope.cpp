@@ -50,7 +50,7 @@ public:
     
     const CallData& addToTotal(const char* name, Seconds duration)
     {
-        auto locker = holdLock(lock);
+        Locker locker { lock };
         auto& result = totals.add(name, CallData()).iterator->value;
         ++result.callCount;
         result.maxDuration = std::max(result.maxDuration, duration);

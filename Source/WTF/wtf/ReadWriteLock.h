@@ -43,11 +43,11 @@ public:
 
     // It's easiest to read lock like this:
     // 
-    //     auto locker = holdLock(rwLock.read());
+    //     Locker locker { rwLock.read() };
     //
     // It's easiest to write lock like this:
     // 
-    //     auto locker = holdLock(rwLock.write());
+    //     Locker locker { rwLock.write() };
     //
     WTF_EXPORT_PRIVATE void readLock();
     WTF_EXPORT_PRIVATE void readUnlock();

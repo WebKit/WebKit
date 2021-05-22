@@ -86,7 +86,7 @@ MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator& allocator, MetaAllocator
 
 MetaAllocatorHandle::~MetaAllocatorHandle()
 {
-    auto locker = holdLock(allocator().m_lock);
+    Locker locker { allocator().m_lock };
     allocator().release(locker, *this);
 }
 

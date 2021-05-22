@@ -62,7 +62,7 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 {
     Config::AssertNotFrozenScope assertScope;
     static Lock lock;
-    auto locker = holdLock(lock);
+    Locker locker { lock };
 
     size_t signalIndex = static_cast<size_t>(signal);
     size_t nextFree = numberOfHandlers[signalIndex];
@@ -299,7 +299,7 @@ static ThreadGroup& activeThreads()
 
 void registerThreadForMachExceptionHandling(Thread& thread)
 {
-    auto locker = holdLock(activeThreads().getLock());
+    Locker locker { activeThreads().getLock() };
     if (activeThreads().add(locker, thread) == ThreadGroupAddResult::NewlyAdded)
         setExceptionPorts(locker, thread);
 }
@@ -358,7 +358,7 @@ void activateSignalHandlersFor(Signal signal)
     ASSERT(signal < Signal::Unknown);
     ASSERT(!handlers.useMach || signal != Signal::Usr);
 
-    auto locker = holdLock(activeThreads().getLock());
+    Locker locker { activeThreads().getLock() };
     if (handlers.useMach) {
         activeExceptions |= toMachMask(signal);
 

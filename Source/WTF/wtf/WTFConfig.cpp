@@ -93,7 +93,7 @@ void setPermissionsOfConfigPage()
 void Config::permanentlyFreeze()
 {
     static Lock configLock;
-    auto locker = holdLock(configLock);
+    Locker locker { configLock };
 
     RELEASE_ASSERT(roundUpToMultipleOf(pageSize(), ConfigSizeToProtect) == ConfigSizeToProtect);
 

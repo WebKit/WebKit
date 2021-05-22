@@ -42,14 +42,14 @@ public:
 
     void signal()
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         m_value++;
         m_condition.notifyOne();
     }
 
     bool waitUntil(const TimeWithDynamicClockType& timeout)
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         bool satisfied = m_condition.waitUntil(m_lock, timeout,
             [&] {
                 return m_value;

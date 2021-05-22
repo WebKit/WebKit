@@ -34,7 +34,7 @@ namespace WTF {
 MessageStatus sendMessageScoped(Thread& thread, const ThreadMessage& message)
 {
     static Lock messageLock;
-    auto lockholder = holdLock(messageLock);
+    Locker locker { messageLock };
 
     auto result = thread.suspend();
     if (!result)

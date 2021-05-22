@@ -1,5 +1,85 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Stop using holdLock() in WTF as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226117
+
+        Reviewed by Darin Adler.
+
+        Stop using holdLock() in WTF as it is not compatible with Clang thread safety analysis
+        (WTF::CheckedLock) and use the Locker constructor instead.
+
+        This is a step towards getting rid of holdLock() completely.
+
+        * benchmarks/ConditionSpeedTest.cpp:
+        * wtf/ConcurrentPtrHashSet.cpp:
+        (WTF::ConcurrentPtrHashSet::deleteOldTables):
+        (WTF::ConcurrentPtrHashSet::clear):
+        (WTF::ConcurrentPtrHashSet::containsImplSlow const):
+        (WTF::ConcurrentPtrHashSet::sizeSlow const):
+        (WTF::ConcurrentPtrHashSet::resizeIfNecessary):
+        * wtf/CountingLock.h:
+        * wtf/HashTable.cpp:
+        (WTF::HashTableStats::recordCollisionAtCount):
+        (WTF::HashTableStats::dumpStats):
+        * wtf/HashTable.h:
+        (WTF::invalidateIterators):
+        (WTF::addIterator):
+        (WTF::removeIterator):
+        * wtf/LockedPrintStream.cpp:
+        (WTF::LockedPrintStream::vprintf):
+        (WTF::LockedPrintStream::flush):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::~MetaAllocatorHandle):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/ReadWriteLock.h:
+        * wtf/StackShotProfiler.h:
+        (WTF::StackShotProfiler::profile):
+        (WTF::StackShotProfiler::run):
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::LayoutCheckPoint::~LayoutCheckPoint):
+        * wtf/ThreadGroup.cpp:
+        (WTF::ThreadGroup::~ThreadGroup):
+        (WTF::ThreadGroup::add):
+        * wtf/ThreadMessage.cpp:
+        (WTF::sendMessageScoped):
+        * wtf/Threading.cpp:
+        (WTF::Thread::didExit):
+        (WTF::Thread::addToThreadGroup):
+        (WTF::Thread::removeFromThreadGroup):
+        (WTF::Thread::numberOfThreadGroups):
+        * wtf/TimingScope.cpp:
+        * wtf/WTFConfig.cpp:
+        (WTF::Config::permanentlyFreeze):
+        * wtf/WTFSemaphore.h:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::signal):
+        (WTF::Thread::establishPlatformSpecificHandle):
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::signal):
+        (WTF::BinarySemaphore::waitUntil):
+        * wtf/threads/Signals.cpp:
+        (WTF::SignalHandlers::add):
+        (WTF::registerThreadForMachExceptionHandling):
+        (WTF::activateSignalHandlersFor):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::platformLanguage):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::establishPlatformSpecificHandle):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         [Cocoa] Unable to upload files that are stored in the cloud (without a local copy)
         https://bugs.webkit.org/show_bug.cgi?id=226090
         <rdar://77775887>

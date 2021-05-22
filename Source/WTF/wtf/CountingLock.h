@@ -133,7 +133,7 @@ public:
     //             if (m_lock.validate(count))
     //                 return value; // success!
     //         }
-    //         auto locker = holdLock(m_lock);
+    //         Locker locker { m_lock };
     //         int value = m_things;
     //         return value;
     //     }
@@ -203,7 +203,7 @@ public:
     //             if (m_lock.fencelessValidate(count, Dependency::fence(value)))
     //                 return value; // success!
     //         }
-    //         auto locker = holdLock(m_lock);
+    //         Locker locker { m_lock };
     //         int value = m_things;
     //         return value;
     //     }

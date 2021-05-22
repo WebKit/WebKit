@@ -41,7 +41,7 @@ static Lock hashTableStatsMutex;
 
 void HashTableStats::recordCollisionAtCount(unsigned count)
 {
-    auto locker = holdLock(hashTableStatsMutex);
+    Locker locker { hashTableStatsMutex };
 
     if (count > maxCollisions)
         maxCollisions = count;
@@ -51,7 +51,7 @@ void HashTableStats::recordCollisionAtCount(unsigned count)
 
 void HashTableStats::dumpStats()
 {
-    auto locker = holdLock(hashTableStatsMutex);
+    Locker locker { hashTableStatsMutex };
 
     dataLogF("\nWTF::HashTable statistics\n\n");
     dataLogF("%u accesses\n", numAccesses.load());
