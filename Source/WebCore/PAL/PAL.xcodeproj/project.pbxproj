@@ -207,6 +207,8 @@
 		F44291601FA5261E002CC93E /* FileSizeFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = F442915F1FA5261E002CC93E /* FileSizeFormatter.h */; };
 		F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44291621FA52670002CC93E /* FileSizeFormatter.cpp */; };
 		F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */; };
+		F4C85A4E2658551A005B89CC /* QuickLookUISoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4C85A4C26585519005B89CC /* QuickLookUISoftLink.mm */; };
+		F4C85A4F2658551A005B89CC /* QuickLookUISoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C85A4D2658551A005B89CC /* QuickLookUISoftLink.h */; };
 		F4DDD01B264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4DDD019264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm */; };
 		F4DDD01C264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DDD01A264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h */; };
 /* End PBXBuildFile section */
@@ -422,6 +424,8 @@
 		F442915F1FA5261E002CC93E /* FileSizeFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSizeFormatter.h; sourceTree = "<group>"; };
 		F44291621FA52670002CC93E /* FileSizeFormatter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileSizeFormatter.cpp; sourceTree = "<group>"; };
 		F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSizeFormatterCocoa.mm; sourceTree = "<group>"; };
+		F4C85A4C26585519005B89CC /* QuickLookUISoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLookUISoftLink.mm; sourceTree = "<group>"; };
+		F4C85A4D2658551A005B89CC /* QuickLookUISoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookUISoftLink.h; sourceTree = "<group>"; };
 		F4DDD019264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		F4DDD01A264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -747,6 +751,8 @@
 			children = (
 				44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */,
 				44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */,
+				F4C85A4D2658551A005B89CC /* QuickLookUISoftLink.h */,
+				F4C85A4C26585519005B89CC /* QuickLookUISoftLink.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -947,6 +953,7 @@
 				0C7785A01F45130F00F4EBB6 /* QuickLookMacSPI.h in Headers */,
 				4450FCA021F5F602004DFA56 /* QuickLookSoftLink.h in Headers */,
 				0C5AF9201F43A4C7002EAC02 /* QuickLookSPI.h in Headers */,
+				F4C85A4F2658551A005B89CC /* QuickLookUISoftLink.h in Headers */,
 				442956CD218A72DF0080DB54 /* RevealSPI.h in Headers */,
 				570AB8F120AE2E8D00B8BE87 /* SecKeyProxySPI.h in Headers */,
 				0C2DA1581F3BEB4900DBC317 /* ServersSPI.h in Headers */,
@@ -1085,6 +1092,7 @@
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,
 				4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */,
+				F4C85A4E2658551A005B89CC /* QuickLookUISoftLink.mm in Sources */,
 				A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */,
 				A3AB6E521F3D1DC5009C14B1 /* SleepDisabler.cpp in Sources */,
 				A3AB6E601F3D1E39009C14B1 /* SleepDisablerCocoa.cpp in Sources */,

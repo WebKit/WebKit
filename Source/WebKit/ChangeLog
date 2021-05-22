@@ -1,3 +1,30 @@
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Adopt QLItem in WKImageExtractionPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=226114
+        rdar://76657718
+
+        Reviewed by Tim Horton.
+
+        Adopt `QLItem` in `WKImageExtractionPreviewController`, and use it in place of `WKImageExtractionPreviewItem`.
+        This allows us to vend image previews based solely on image data, rather than a file on disk.
+
+        * UIProcess/mac/WKImageExtractionPreviewController.h:
+        * UIProcess/mac/WKImageExtractionPreviewController.mm:
+        (-[WKImageExtractionPreviewController initWithPage:imageData:title:imageURL:]):
+        (-[WKImageExtractionPreviewController provideDataForItem:]):
+        (-[WKImageExtractionPreviewController previewPanel:previewItemAtIndex:]):
+        (-[WKImageExtractionPreviewItem initWithFileURL:title:imageURL:pageURL:]): Deleted.
+        (-[WKImageExtractionPreviewItem dealloc]): Deleted.
+        (-[WKImageExtractionPreviewItem previewItemURL]): Deleted.
+        (-[WKImageExtractionPreviewItem previewItemTitle]): Deleted.
+        (-[WKImageExtractionPreviewItem previewOptions]): Deleted.
+        (-[WKImageExtractionPreviewController initWithPage:fileURL:title:imageURL:]): Deleted.
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController willDestroyView:]):
+
+        Adopt the new QuickLookUI softlinking header in PAL.
+
 2021-05-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Expand IOKit method filters to cover items encountered during testing

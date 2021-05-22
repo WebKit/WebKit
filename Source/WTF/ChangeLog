@@ -1,3 +1,16 @@
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Adopt QLItem in WKImageExtractionPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=226114
+        rdar://76657718
+
+        Reviewed by Tim Horton.
+
+        Introduce `SOFT_LINK_FRAMEWORK_IN_UMBRELLA_FOR_SOURCE_WITH_EXPORT`, so that we can soft link frameworks that are
+        embedded inside other umbrella frameworks in PAL.
+
+        * wtf/cocoa/SoftLinking.h:
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Stop using holdLock() in WTF as it is not compatible with Clang thread safety analysis

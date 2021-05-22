@@ -1,3 +1,22 @@
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Adopt QLItem in WKImageExtractionPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=226114
+        rdar://76657718
+
+        Reviewed by Tim Horton.
+
+        Add a PAL softlinking header for QuickLookUI on macOS.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/mac/QuickLookUISoftLink.h: Added.
+        * pal/mac/QuickLookUISoftLink.mm: Added.
+        * pal/spi/mac/QuickLookMacSPI.h:
+
+        Add staging declarations for some new QuickLook SPI; these method declarations should be moved into the non-
+        internal-SDK section in the (near) future, once it is safe to do so.
+
 2021-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Plumb data detector results through some platform objects

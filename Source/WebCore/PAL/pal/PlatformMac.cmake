@@ -20,6 +20,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/UsageTrackingSoftLink.h
 
     mac/LookupSoftLink.h
+    mac/QuickLookUISoftLink.h
 
     spi/cf/CFLocaleSPI.h
     spi/cf/CFNetworkConnectionCacheSPI.h

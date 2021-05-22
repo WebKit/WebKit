@@ -1,3 +1,16 @@
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Adopt QLItem in WKImageExtractionPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=226114
+        rdar://76657718
+
+        Reviewed by Tim Horton.
+
+        Adopt the new QuickLookUI softlinking header in PAL.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController webViewClosed]):
+
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
         Replace more static Locks with CheckedLocks in WebKit / WebKitLegacy

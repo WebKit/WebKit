@@ -29,80 +29,39 @@
 #if ENABLE(IMAGE_EXTRACTION) && PLATFORM(MAC)
 
 #import "WebPageProxy.h"
-#import <wtf/FileSystem.h>
+#import <pal/mac/QuickLookUISoftLink.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/WeakPtr.h>
-
-@implementation WKImageExtractionPreviewItem {
-    RetainPtr<NSURL> _fileURL;
-    RetainPtr<NSString> _title;
-    RetainPtr<NSURL> _imageURL;
-    RetainPtr<NSURL> _pageURL;
-}
-
-- (instancetype)initWithFileURL:(NSURL *)fileURL title:(NSString *)title imageURL:(NSURL *)imageURL pageURL:(NSURL *)pageURL
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _fileURL = fileURL;
-    _title = adoptNS([title copy]);
-    _imageURL = imageURL;
-    _pageURL = pageURL;
-
-    return self;
-}
-
-- (void)dealloc
-{
-    FileSystem::deleteFile([_fileURL path]);
-
-    [super dealloc];
-}
-
-#pragma mark - QLPreviewItem
-
-- (NSURL *)previewItemURL
-{
-    return _fileURL.get();
-}
-
-- (NSString *)previewItemTitle
-{
-    return _title.get();
-}
-
-- (NSDictionary *)previewOptions
-{
-    if (!_imageURL && !_pageURL)
-        return nil;
-
-    auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
-    if (_imageURL)
-        [previewOptions setObject:_imageURL.get() forKey:@"imageURL"];
-    if (_pageURL)
-        [previewOptions setObject:_pageURL.get() forKey:@"pageURL"];
-    return previewOptions.autorelease();
-}
-
-@end
 
 @implementation WKImageExtractionPreviewController {
-    WeakPtr<WebKit::WebPageProxy> _page;
-    RetainPtr<WKImageExtractionPreviewItem> _previewItem;
+    RetainPtr<QLItem> _item;
+    RetainPtr<NSData> _imageData;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page fileURL:(NSURL *)fileURL title:(NSString *)title imageURL:(NSURL *)imageURL
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)imageData title:(NSString *)title imageURL:(NSURL *)imageURL
 {
     if (!(self = [super init]))
         return nil;
 
-    _page = makeWeakPtr(page);
-
-    // FIXME: We should turn `_previewItem` into a QLItem once the fix for rdar://74299451 is available.
-    _previewItem = adoptNS([[WKImageExtractionPreviewItem alloc] initWithFileURL:fileURL title:title imageURL:imageURL pageURL:URL { URL { }, page.currentURL() }]);
+    _imageData = imageData;
+    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:(id)self contentType:UTTypePNG previewTitle:title]);
+    if ([_item respondsToSelector:@selector(setPreviewOptions:)]) {
+        auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
+        if (imageURL)
+            [previewOptions setObject:imageURL forKey:@"imageURL"];
+        if (NSURL *pageURL = URL { URL { }, page.currentURL() })
+            [previewOptions setObject:pageURL forKey:@"pageURL"];
+        [_item setPreviewOptions:previewOptions.get()];
+    }
 
     return self;
+}
+
+#pragma mark - QLPreviewItemDataProvider
+
+- (NSData *)provideDataForItem:(QLItem *)item
+{
+    ASSERT(item == _item);
+    return _imageData.get();
 }
 
 #pragma mark - QLPreviewPanelDataSource
@@ -115,7 +74,7 @@
 - (id <QLPreviewItem>)previewPanel:(QLPreviewPanel *)panel previewItemAtIndex:(NSInteger)index
 {
     ASSERT(!index);
-    return _previewItem.get();
+    return _item.get();
 }
 
 #if USE(APPLE_INTERNAL_SDK)

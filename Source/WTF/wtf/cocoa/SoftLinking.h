@@ -117,6 +117,22 @@ static void* lib##Library() \
         return frameworkLibrary; \
     }
 
+#define SOFT_LINK_FRAMEWORK_IN_UMBRELLA_FOR_SOURCE_WITH_EXPORT(functionNamespace, umbrella, framework, export) \
+    namespace functionNamespace { \
+    export void* framework##Library(bool isOptional = false); \
+    void* framework##Library(bool isOptional) \
+    { \
+        static void* frameworkLibrary; \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            frameworkLibrary = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+            if (!isOptional) \
+                RELEASE_ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
+        }); \
+        return frameworkLibrary; \
+    } \
+    }
+
 #define SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(umbrella, framework) \
     static void* framework##Library() \
     { \

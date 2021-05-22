@@ -56,14 +56,10 @@
 #import <WebCore/TextIterator.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
+#import <pal/mac/QuickLookUISoftLink.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
-#import <pal/spi/mac/QuickLookMacSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
-SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
 @interface WebImmediateActionController () <QLPreviewMenuItemDelegate>
 @end
@@ -93,7 +89,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     _webView = nil;
 
     id animationController = [_immediateActionRecognizer animationController];
-    if ([animationController isKindOfClass:NSClassFromString(@"QLPreviewMenuItem")]) {
+    if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClass()]) {
         QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
         menuItem.delegate = nil;
     }
