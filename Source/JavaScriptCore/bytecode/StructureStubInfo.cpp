@@ -300,7 +300,7 @@ template<typename Visitor>
 void StructureStubInfo::visitAggregateImpl(Visitor& visitor)
 {
     {
-        auto locker = holdLock(m_bufferedStructuresLock);
+        Locker locker { m_bufferedStructuresLock };
         for (auto& bufferedStructure : m_bufferedStructures)
             bufferedStructure.byValId().visitAggregate(visitor);
     }
@@ -329,7 +329,7 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
 {
     VM& vm = codeBlock->vm();
     {
-        auto locker = holdLock(m_bufferedStructuresLock);
+        Locker locker { m_bufferedStructuresLock };
         m_bufferedStructures.removeIf(
             [&] (auto& entry) -> bool {
                 return !vm.heap.isMarked(entry.structure());

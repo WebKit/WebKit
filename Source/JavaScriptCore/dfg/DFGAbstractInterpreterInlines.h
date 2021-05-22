@@ -2255,7 +2255,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     JSValue value;
                     {
                         // ArrayStorage's Butterfly can be half-broken state.
-                        auto locker = holdLock(array->cellLock());
+                        Locker locker { array->cellLock() };
 
                         WTF::loadLoadFence();
                         Butterfly* butterfly = array->butterfly();

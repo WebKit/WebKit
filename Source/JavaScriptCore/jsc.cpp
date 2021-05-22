@@ -1801,7 +1801,7 @@ Message::~Message()
 Worker::Worker(Workers& workers)
     : m_workers(workers)
 {
-    auto locker = holdLock(m_workers.m_lock);
+    Locker locker { m_workers.m_lock };
     m_workers.m_workers.append(this);
     
     *currentWorker() = this;
@@ -1809,7 +1809,7 @@ Worker::Worker(Workers& workers)
 
 Worker::~Worker()
 {
-    auto locker = holdLock(m_workers.m_lock);
+    Locker locker { m_workers.m_lock };
     RELEASE_ASSERT(isOnList());
     remove();
 }
@@ -1821,7 +1821,7 @@ void Worker::enqueue(const AbstractLocker&, RefPtr<Message> message)
 
 RefPtr<Message> Worker::dequeue()
 {
-    auto locker = holdLock(m_workers.m_lock);
+    Locker locker { m_workers.m_lock };
     while (m_messages.isEmpty())
         m_workers.m_condition.wait(m_workers.m_lock);
     return m_messages.takeFirst();
@@ -1856,7 +1856,7 @@ Workers::~Workers()
 template<typename Func>
 void Workers::broadcast(const Func& func)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     for (Worker* worker = m_workers.begin(); worker != m_workers.end(); worker = worker->next()) {
         if (worker != &Worker::current())
             func(locker, *worker);
@@ -1866,14 +1866,14 @@ void Workers::broadcast(const Func& func)
 
 void Workers::report(const String& string)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_reports.append(string.isolatedCopy());
     m_condition.notifyAll();
 }
 
 String Workers::tryGetReport()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     if (m_reports.isEmpty())
         return String();
     return m_reports.takeFirst();
@@ -1881,7 +1881,7 @@ String Workers::tryGetReport()
 
 String Workers::getReport()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     while (m_reports.isEmpty())
         m_condition.wait(m_lock);
     return m_reports.takeFirst();
@@ -1982,7 +1982,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
                 [&] (VM&, GlobalObject* globalObject, bool& success) {
                     // Notify the thread that started us that we have registered a worker.
                     {
-                        auto locker = holdLock(didStartLock);
+                        Locker locker { didStartLock };
                         didStart = true;
                         didStartCondition.notifyOne();
                     }
@@ -1999,7 +1999,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
         })->detach();
     
     {
-        auto locker = holdLock(didStartLock);
+        Locker locker { didStartLock };
         while (!didStart)
             didStartCondition.wait(didStartLock);
     }
@@ -2389,7 +2389,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryLiveCount, (JSGlobalObject*
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
-    auto locker = holdLock(finalizationRegistry->cellLock());
+    Locker locker { finalizationRegistry->cellLock() };
     return JSValue::encode(jsNumber(finalizationRegistry->liveCount(locker)));
 }
 
@@ -2402,7 +2402,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryDeadCount, (JSGlobalObject*
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
-    auto locker = holdLock(finalizationRegistry->cellLock());
+    Locker locker { finalizationRegistry->cellLock() };
     return JSValue::encode(jsNumber(finalizationRegistry->deadCount(locker)));
 }
 

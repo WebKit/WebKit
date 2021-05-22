@@ -73,14 +73,14 @@ void CodeBlockSet::dump(PrintStream& out) const
 
 void CodeBlockSet::add(CodeBlock* codeBlock)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     auto result = m_codeBlocks.add(codeBlock);
     RELEASE_ASSERT(result);
 }
 
 void CodeBlockSet::remove(CodeBlock* codeBlock)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     bool result = m_codeBlocks.remove(codeBlock);
     RELEASE_ASSERT(result);
 }

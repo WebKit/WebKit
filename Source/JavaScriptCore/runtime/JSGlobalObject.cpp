@@ -383,7 +383,7 @@ JSC_DEFINE_HOST_FUNCTION(disableSamplingProfiler, (JSGlobalObject* globalObject,
         profiler = &globalObject->vm().ensureSamplingProfiler(Stopwatch::create());
 
     {
-        auto locker = holdLock(profiler->getLock());
+        Locker locker { profiler->getLock() };
         profiler->pause(locker);
     }
 

@@ -124,7 +124,7 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
 
     std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(globalObject, vm, this, useCurrentFrame);
     {
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         m_stackTrace = WTFMove(stackTrace);
     }
     vm.heap.writeBarrier(this);

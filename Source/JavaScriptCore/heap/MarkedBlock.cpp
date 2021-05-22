@@ -114,7 +114,7 @@ void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
 
 void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
 {
-    auto locker = holdLock(blockFooter().m_lock);
+    Locker locker { blockFooter().m_lock };
     
     if (MarkedBlockInternal::verbose)
         dataLog(RawPointer(this), ": MarkedBlock::Handle::stopAllocating!\n");
@@ -173,7 +173,7 @@ void MarkedBlock::Handle::lastChanceToFinalize()
 void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
 {
     {
-        auto locker = holdLock(blockFooter().m_lock);
+        Locker locker { blockFooter().m_lock };
         
         if (MarkedBlockInternal::verbose)
             dataLog(RawPointer(this), ": MarkedBlock::Handle::resumeAllocating!\n");
@@ -197,14 +197,14 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
 void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
 {
     ASSERT(vm().heap.objectSpace().isMarking());
-    auto locker = holdLock(footer().m_lock);
+    Locker locker { footer().m_lock };
     
     if (!areMarksStale(markingVersion))
         return;
     
     BlockDirectory* directory = handle().directory();
 
-    if (handle().directory()->isAllocated(holdLock(directory->bitvectorLock()), &handle())
+    if (handle().directory()->isAllocated(Locker { directory->bitvectorLock() }, &handle())
         || !marksConveyLivenessDuringMarking(markingVersion)) {
         if (MarkedBlockInternal::verbose)
             dataLog(RawPointer(this), ": Clearing marks without doing anything else.\n");
@@ -239,7 +239,7 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
     footer().m_markingVersion = markingVersion;
     
     // This means we're the first ones to mark any object in this block.
-    directory->setIsMarkingNotEmpty(holdLock(directory->bitvectorLock()), &handle(), true);
+    directory->setIsMarkingNotEmpty(Locker { directory->bitvectorLock() }, &handle(), true);
 }
 
 void MarkedBlock::resetAllocated()
@@ -285,7 +285,7 @@ bool MarkedBlock::isMarked(const void* p)
 
 void MarkedBlock::Handle::didConsumeFreeList()
 {
-    auto locker = holdLock(blockFooter().m_lock);
+    Locker locker { blockFooter().m_lock };
     if (MarkedBlockInternal::verbose)
         dataLog(RawPointer(this), ": MarkedBlock::Handle::didConsumeFreeList!\n");
     ASSERT(isFreeListed());
@@ -306,7 +306,7 @@ void MarkedBlock::clearHasAnyMarked()
 void MarkedBlock::noteMarkedSlow()
 {
     BlockDirectory* directory = handle().directory();
-    directory->setIsMarkingRetired(holdLock(directory->bitvectorLock()), &handle(), true);
+    directory->setIsMarkingRetired(Locker { directory->bitvectorLock() }, &handle(), true);
 }
 
 void MarkedBlock::Handle::removeFromDirectory()
@@ -369,7 +369,7 @@ void MarkedBlock::Handle::dumpState(PrintStream& out)
 {
     CommaPrinter comma;
     directory()->forEachBitVectorWithName(
-        holdLock(directory()->bitvectorLock()),
+        Locker { directory()->bitvectorLock() },
         [&](auto vectorRef, const char* name) {
             out.print(comma, name, ":", vectorRef[index()] ? "YES" : "no");
         });

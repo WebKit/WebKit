@@ -48,7 +48,7 @@ inline void CodeBlockSet::mark(const AbstractLocker&, CodeBlock* codeBlock)
 template<typename Functor>
 void CodeBlockSet::iterate(const Functor& functor)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     iterate(locker, functor);
 }
 

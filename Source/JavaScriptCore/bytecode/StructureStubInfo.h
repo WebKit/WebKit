@@ -249,7 +249,7 @@ private:
             // the prototype is fixed.
             bool isNewlyAdded = false;
             {
-                auto locker = holdLock(m_bufferedStructuresLock);
+                Locker locker { m_bufferedStructuresLock };
                 isNewlyAdded = m_bufferedStructures.add({ structure, impl }).isNewEntry;
             }
             if (isNewlyAdded)
@@ -264,7 +264,7 @@ private:
 
     void clearBufferedStructures()
     {
-        auto locker = holdLock(m_bufferedStructuresLock);
+        Locker locker { m_bufferedStructuresLock };
         m_bufferedStructures.clear();
     }
 

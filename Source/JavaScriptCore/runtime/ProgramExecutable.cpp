@@ -219,7 +219,7 @@ void ProgramExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_unlinkedProgramCodeBlock);
     visitor.append(thisObject->m_programCodeBlock);
     if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
-        auto locker = holdLock(thisObject->cellLock());
+        Locker locker { thisObject->cellLock() };
         for (auto& entry : *map)
             visitor.append(entry.value);
     }

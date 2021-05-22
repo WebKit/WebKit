@@ -384,7 +384,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
         // butterfly with contiguous shape for new array storage butterfly. When converting the butterfly
         // with contiguous shape to array storage, we always allocate a new one. Holding this lock for contiguous
         // butterflies is unnecessary since contiguous shaped butterfly never becomes broken state.
-        locker = holdLock(cellLock());
+        locker = Locker { cellLock() };
         break;
     default:
         break;

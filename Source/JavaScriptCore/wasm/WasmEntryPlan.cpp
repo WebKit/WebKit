@@ -89,13 +89,13 @@ bool EntryPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLengt
 
     m_streamingParser.addBytes(source, sourceLength);
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         if (failed())
             return false;
     }
 
     if (m_streamingParser.finalize() != StreamingParser::State::Finished) {
-        fail(holdLock(m_lock), m_streamingParser.errorMessage());
+        fail(Locker { m_lock }, m_streamingParser.errorMessage());
         return false;
     }
 
@@ -129,7 +129,7 @@ void EntryPlan::prepare()
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {
             case BindingFailure::OutOfMemory:
-                return fail(holdLock(m_lock), makeString("Out of executable memory at import ", String::number(importIndex)));
+                return fail(Locker { m_lock }, makeString("Out of executable memory at import ", String::number(importIndex)));
             }
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -201,7 +201,7 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
 
         uint32_t functionIndex;
         {
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             if (m_currentIndex >= m_numberOfFunctions) {
                 if (hasWork())
                     moveToState(State::Compiled);

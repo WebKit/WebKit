@@ -35,7 +35,7 @@ uint64_t* Context::scratchBufferForSize(size_t size)
     if (!size)
         return nullptr;
 
-    auto locker = holdLock(m_scratchBufferLock);
+    Locker locker { m_scratchBufferLock };
     if (size > m_sizeOfLastScratchBuffer) {
         m_sizeOfLastScratchBuffer = size * 2;
 

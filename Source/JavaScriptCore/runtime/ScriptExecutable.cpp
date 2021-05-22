@@ -455,7 +455,7 @@ JSArray* ScriptExecutable::createTemplateObject(JSGlobalObject* globalObject, JS
     TemplateObjectMap& templateObjectMap = ensureTemplateObjectMap(vm);
     TemplateObjectMap::AddResult result;
     {
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         result = templateObjectMap.add(descriptor->endOffset(), WriteBarrier<JSArray>());
     }
     if (JSArray* array = result.iterator->value.get())

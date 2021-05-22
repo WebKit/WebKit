@@ -80,7 +80,7 @@ void BBQPlan::work(CompilationEffort effort)
             parseAndValidateModule();
             if (!hasWork()) {
                 ASSERT(m_state == State::Validated);
-                complete(holdLock(m_lock));
+                complete(Locker { m_lock });
                 break;
             }
             FALLTHROUGH;
@@ -103,7 +103,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-        Base::fail(holdLock(m_lock), makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
+        Base::fail(Locker { m_lock }, makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
         return;
     }
 
@@ -143,7 +143,7 @@ void BBQPlan::work(CompilationEffort effort)
 
         {
             LLIntCallee& llintCallee = m_codeBlock->m_llintCallees->at(m_functionIndex).get();
-            auto locker = holdLock(llintCallee.tierUpCounter().m_lock);
+            Locker locker { llintCallee.tierUpCounter().m_lock };
             llintCallee.setReplacement(callee.copyRef());
             llintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
         }
@@ -151,7 +151,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     dataLogLnIf(WasmBBQPlanInternal::verbose, "Finished BBQ ", m_functionIndex);
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     moveToState(State::Completed);
     runCompletionTasks(locker);
 }
@@ -168,7 +168,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     m_wasmInternalFunctions[functionIndex] = compileFunction(functionIndex, m_compilationContexts[functionIndex], m_unlinkedWasmToWasmCalls[functionIndex], m_tierUpCounts[functionIndex].get());
 
     if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature& signature = SignatureInformation::get(signatureIndex);
         auto result = m_embedderToWasmInternalFunctions.add(functionIndex, createJSToWasmWrapper(*m_compilationContexts[functionIndex].embedderEntrypointJIT, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex));
@@ -199,7 +199,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
         parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedWasmToWasmCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, UINT32_MAX, tierUp);
 
     if (UNLIKELY(!parseAndCompileResult)) {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
             fail(locker, makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.

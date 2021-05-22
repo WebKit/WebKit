@@ -419,7 +419,7 @@ void Heap::lastChanceToFinalize()
 
     bool isCollecting;
     {
-        auto locker = holdLock(*m_threadLock);
+        Locker locker { *m_threadLock };
         RELEASE_ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
         isCollecting = m_lastServedTicket < m_lastGrantedTicket;
     }
@@ -1237,7 +1237,7 @@ NEVER_INLINE bool Heap::runNotRunningPhase(GCConductor conn)
 {
     // Check m_requests since the mutator calls this to poll what's going on.
     {
-        auto locker = holdLock(*m_threadLock);
+        Locker locker { *m_threadLock };
         if (m_requests.isEmpty())
             return false;
     }
@@ -1481,7 +1481,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     m_scheduler->endCollection();
         
     {
-        auto locker = holdLock(m_markingMutex);
+        Locker locker { m_markingMutex };
         m_parallelMarkersShouldExit = true;
         m_markingConditionVariable.notifyAll();
     }
@@ -1558,7 +1558,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     }
     
     {
-        auto locker = holdLock(*m_threadLock);
+        Locker locker { *m_threadLock };
         m_requests.removeFirst();
         m_lastServedTicket++;
         clearMutatorWaiting();
@@ -1991,7 +1991,7 @@ void Heap::finishRelinquishingConn()
     
     sanitizeStackForVM(m_vm);
     
-    auto locker = holdLock(*m_threadLock);
+    Locker locker { *m_threadLock };
     if (!m_requests.isEmpty())
         m_threadCondition->notifyOne(locker);
     ParkingLot::unparkAll(&m_worldState);
@@ -2730,7 +2730,7 @@ static ALWAYS_INLINE void visitSamplingProfiler(VM& vm, Visitor& visitor)
 {
     SamplingProfiler* samplingProfiler = vm.samplingProfiler();
     if (UNLIKELY(samplingProfiler)) {
-        auto locker = holdLock(samplingProfiler->getLock());
+        Locker locker { samplingProfiler->getLock() };
         samplingProfiler->processUnverifiedStackTraces(locker);
         samplingProfiler->visit(visitor);
         if (Options::logGC() == GCLogging::Verbose)
@@ -3070,7 +3070,7 @@ void Heap::removeHeapFinalizerCallback(const HeapFinalizerCallback& callback)
 
 void Heap::setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>> task)
 {
-    auto locker = holdLock(m_markingMutex);
+    Locker locker { m_markingMutex };
     m_bonusVisitorTask = task;
     m_markingConditionVariable.notifyAll();
 }
@@ -3090,7 +3090,7 @@ void Heap::runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>> task)
     // The constraint solver expects return of this function to imply termination of the task in all
     // threads. This ensures that property.
     {
-        auto locker = holdLock(m_markingMutex);
+        Locker locker { m_markingMutex };
         while (task->refCount() > initialRefCount)
             m_markingConditionVariable.wait(m_markingMutex);
     }

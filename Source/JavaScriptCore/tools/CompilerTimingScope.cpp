@@ -44,7 +44,7 @@ public:
     
     Seconds addToTotal(const char* compilerName, const char* name, Seconds duration)
     {
-        auto locker = holdLock(lock);
+        Locker locker { lock };
 
         for (auto& tuple : totals) {
             if (String(std::get<0>(tuple)) == String(compilerName) && String(std::get<1>(tuple)) == String(name)) {

@@ -1,3 +1,310 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in JSC as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226116
+
+        Reviewed by Mark Lam.
+
+        Stop using holdLock() in JSC as it is not compatible with Clang thread safety analysis
+        (WTF::CheckedLock). Use the Locker constructor instead.
+
+        I'll eventually get rid of the holdLock() definition once I have managed to get rid of
+        all its usages.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVMWrapperCache addWrapper:forJSContextGroupRef:]):
+        (+[JSVMWrapperCache wrapperForJSContextGroupRef:]):
+        (-[JSVirtualMachine addExternalRememberedObject:]):
+        (-[JSVirtualMachine addManagedReference:withOwner:]):
+        (-[JSVirtualMachine removeManagedReference:withOwner:]):
+        (scanExternalObjectGraph):
+        (scanExternalRememberedSet):
+        * API/glib/JSCVirtualMachine.cpp:
+        (addWrapper):
+        (removeWrapper):
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * assembler/PerfLog.cpp:
+        (JSC::PerfLog::PerfLog):
+        (JSC::PerfLog::log):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitAggregateImpl):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        (JSC::StructureStubInfo::clearBufferedStructures):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::visitChildrenImpl):
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::~BlockDirectory):
+        (JSC::BlockDirectory::removeBlock):
+        (JSC::BlockDirectory::stopAllocatingForGood):
+        (JSC::BlockDirectory::parallelNotEmptyBlockSource):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::remove):
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterate):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocatorForSlow):
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::runNotRunningPhase):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::finishRelinquishingConn):
+        (JSC::visitSamplingProfiler):
+        (JSC::Heap::setBonusVisitorTask):
+        (JSC::Heap::runTaskInParallel):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        (JSC::HeapSnapshotBuilder::analyzeNode):
+        (JSC::HeapSnapshotBuilder::analyzeEdge):
+        (JSC::HeapSnapshotBuilder::analyzePropertyNameEdge):
+        (JSC::HeapSnapshotBuilder::analyzeVariableNameEdge):
+        (JSC::HeapSnapshotBuilder::analyzeIndexEdge):
+        (JSC::HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell):
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeAlignedMemory):
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::parallelNotEmptyMarkedBlockSource):
+        (JSC::IsoCellSet::addSlow):
+        (JSC::IsoCellSet::didRemoveBlock):
+        (JSC::IsoCellSet::sweepToFreeList):
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        * heap/IsoSubspacePerVM.cpp:
+        (JSC::IsoSubspacePerVM::forVM):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::LocalAllocator):
+        (JSC::LocalAllocator::~LocalAllocator):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+        (JSC::MarkedBlock::noteMarkedSlow):
+        (JSC::MarkedBlock::Handle::dumpState):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::isLive):
+        * heap/MarkingConstraint.cpp:
+        (JSC::MarkingConstraint::doParallelWork):
+        * heap/MarkingConstraintSolver.cpp:
+        (JSC::MarkingConstraintSolver::addParallelTask):
+        (JSC::MarkingConstraintSolver::runExecutionThread):
+        * heap/ParallelSourceAdapter.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::updateMutatorIsStopped):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::performIncrementOfDraining):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::drainInParallelPassively):
+        (JSC::SlotVisitor::waitForTermination):
+        (JSC::SlotVisitor::donateAll):
+        (JSC::SlotVisitor::didRace):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::parallelDirectorySource):
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachMarkedCellInParallel):
+        * inspector/JSInjectedScriptHost.cpp:
+        * jit/ExecutableAllocator.cpp:
+        * jsc.cpp:
+        (Worker::Worker):
+        (Worker::~Worker):
+        (Worker::dequeue):
+        (Workers::broadcast):
+        (Workers::report):
+        (Workers::tryGetReport):
+        (Workers::getReport):
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::doWork):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::visitChildrenImpl):
+        * runtime/FileBasedFuzzerAgentBase.cpp:
+        (JSC::FileBasedFuzzerAgentBase::getPrediction):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::visitChildrenImpl):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::detach):
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        * runtime/JSCell.h:
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::visitChildrenImpl):
+        (JSC::JSFinalizationRegistry::finalizeUnconditionally):
+        (JSC::JSFinalizationRegistry::takeDeadHoldingsValue):
+        (JSC::JSFinalizationRegistry::registerTarget):
+        (JSC::JSFinalizationRegistry::unregister):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildrenImpl):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::visitChildrenImpl):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::Manager::timerDidFire):
+        (JSC::JSRunLoopTimer::Manager::registerVM):
+        (JSC::JSRunLoopTimer::Manager::unregisterVM):
+        (JSC::JSRunLoopTimer::Manager::scheduleTimer):
+        (JSC::JSRunLoopTimer::Manager::cancelTimer):
+        (JSC::JSRunLoopTimer::Manager::timeUntilFire):
+        (JSC::JSRunLoopTimer::timerDidFire):
+        (JSC::JSRunLoopTimer::setTimeUntilFire):
+        (JSC::JSRunLoopTimer::cancelTimer):
+        (JSC::JSRunLoopTimer::addTimerSetNotification):
+        (JSC::JSRunLoopTimer::removeTimerSetNotification):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findVariableIndex):
+        (JSC::JSSegmentedVariableObject::addVariables):
+        (JSC::JSSegmentedVariableObject::visitChildrenImpl):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::visitChildrenImpl):
+        * runtime/NarrowingNumberPredictionFuzzerAgent.cpp:
+        (JSC::NarrowingNumberPredictionFuzzerAgent::getPrediction):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::visitChildrenImpl):
+        * runtime/RandomizingFuzzerAgent.cpp:
+        (JSC::RandomizingFuzzerAgent::getPrediction):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::RegExp::deleteCode):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::createTemplateObject):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::add):
+        (JSC::SparseArrayValueMap::remove):
+        (JSC::SparseArrayValueMap::getConcurrently):
+        (JSC::SparseArrayValueMap::visitChildrenImpl):
+        * runtime/Structure.cpp:
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::setBrandTransition):
+        * runtime/StructureCache.cpp:
+        (JSC::StructureCache::createEmptyStructure):
+        (JSC::StructureCache::emptyObjectStructureConcurrently):
+        * runtime/VM.cpp:
+        (JSC::waitForVMDestruction):
+        (JSC::VM::~VM):
+        (JSC::VM::gatherScratchBufferRoots):
+        (JSC::VM::scratchBufferForSize):
+        (JSC::VM::clearScratchBuffers):
+        (JSC::VM::addLoopHintExecutionCounter):
+        (JSC::VM::getLoopHintExecutionCounter):
+        (JSC::VM::removeLoopHintExecutionCounter):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        (JSC::VMTraps::willDestroyVM):
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::handleTraps):
+        (JSC::VMTraps::takeTopPriorityTrap):
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<BucketType>::visitOutputConstraints):
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::finishCreation):
+        * runtime/WeakMapImplInlines.h:
+        (JSC::WeakMapImpl<WeakMapBucket>::rehash):
+        * runtime/WideningNumberPredictionFuzzerAgent.cpp:
+        (JSC::WideningNumberPredictionFuzzerAgent::getPrediction):
+        * tools/CompilerTimingScope.cpp:
+        * tools/FunctionOverrides.cpp:
+        (JSC::FunctionOverrides::FunctionOverrides):
+        (JSC::FunctionOverrides::reinstallOverrides):
+        (JSC::FunctionOverrides::initializeOverrideFor):
+        * tools/Integrity.cpp:
+        (JSC::Integrity::Random::reloadAndCheckShouldAuditSlow):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::add):
+        (JSC::VMInspector::remove):
+        (JSC::VMInspector::codeBlockForMachinePC):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        * wasm/WasmCalleeRegistry.h:
+        (JSC::Wasm::CalleeRegistry::registerCallee):
+        (JSC::Wasm::CalleeRegistry::unregisterCallee):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        (JSC::Wasm::CodeBlock::waitUntilFinished):
+        (JSC::Wasm::CodeBlock::compileAsync):
+        * wasm/WasmContext.cpp:
+        (JSC::Wasm::Context::scratchBufferForSize):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::parseAndValidateModule):
+        (JSC::Wasm::EntryPlan::prepare):
+        (JSC::Wasm::EntryPlan::compileFunctions):
+        * wasm/WasmEntryPlan.h:
+        (JSC::Wasm::EntryPlan::tryReserveCapacity):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::setFunctionWrapper):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        (JSC::Wasm::LLIntPlan::completeInStreaming):
+        (JSC::Wasm::LLIntPlan::didCompileFunctionInStreaming):
+        (JSC::Wasm::LLIntPlan::didFailInStreaming):
+        * wasm/WasmMachineThreads.cpp:
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::growShared):
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::triggerOMGReplacementCompile):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmSignatureInlines.h:
+        (JSC::Wasm::SignatureInformation::get):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmStreamingCompiler.cpp:
+        (JSC::Wasm::StreamingCompiler::didCompileFunction):
+        (JSC::Wasm::StreamingCompiler::finalize):
+        (JSC::Wasm::StreamingCompiler::fail):
+        (JSC::Wasm::StreamingCompiler::cancel):
+        * wasm/WasmStreamingPlan.cpp:
+        (JSC::Wasm::StreamingPlan::work):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::Table::visitAggregateImpl):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::Thunks::stub):
+        (JSC::Wasm::Thunks::existingStub):
+        * wasm/WasmWorklist.cpp:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildrenImpl):
+
 2021-05-21  Mark Lam  <mark.lam@apple.com>
 
         Remove the unnecessary use of CompileOpStrictEqType.

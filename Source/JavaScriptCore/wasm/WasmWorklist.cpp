@@ -119,7 +119,7 @@ private:
             return complete(locker);
         }
 
-        return complete(holdLock(*worklist.m_lock));
+        return complete(Locker { *worklist.m_lock });
     }
 
     const char* name() const final

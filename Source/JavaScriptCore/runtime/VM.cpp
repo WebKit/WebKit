@@ -585,12 +585,12 @@ static ReadWriteLock s_destructionLock;
 
 void waitForVMDestruction()
 {
-    auto locker = holdLock(s_destructionLock.write());
+    Locker locker { s_destructionLock.write() };
 }
 
 VM::~VM()
 {
-    auto destructionLocker = holdLock(s_destructionLock.read());
+    Locker destructionLocker { s_destructionLock.read() };
     
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
@@ -1129,7 +1129,7 @@ void VM::updateStackLimits()
 #if ENABLE(DFG_JIT)
 void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
 {
-    auto lock = holdLock(m_scratchBufferLock);
+    Locker locker { m_scratchBufferLock };
     for (auto* scratchBuffer : m_scratchBuffers) {
         if (scratchBuffer->activeLength()) {
             void* bufferStart = scratchBuffer->dataBuffer();
@@ -1493,7 +1493,7 @@ ScratchBuffer* VM::scratchBufferForSize(size_t size)
     if (!size)
         return nullptr;
 
-    auto locker = holdLock(m_scratchBufferLock);
+    Locker locker { m_scratchBufferLock };
 
     if (size > m_sizeOfLastScratchBuffer) {
         // Protect against a N^2 memory usage pathology by ensuring
@@ -1513,7 +1513,7 @@ ScratchBuffer* VM::scratchBufferForSize(size_t size)
 
 void VM::clearScratchBuffers()
 {
-    auto lock = holdLock(m_scratchBufferLock);
+    Locker locker { m_scratchBufferLock };
     for (auto* scratchBuffer : m_scratchBuffers)
         scratchBuffer->setActiveLength(0);
 }
@@ -1687,7 +1687,7 @@ void VM::setCrashOnVMCreation(bool shouldCrash)
 
 void VM::addLoopHintExecutionCounter(const Instruction* instruction)
 {
-    auto locker = holdLock(m_loopHintExecutionCountLock);
+    Locker locker { m_loopHintExecutionCountLock };
     auto addResult = m_loopHintExecutionCounts.add(instruction, std::pair<unsigned, std::unique_ptr<uint64_t>>(0, nullptr));
     if (addResult.isNewEntry) {
         auto ptr = WTF::makeUniqueWithoutFastMallocCheck<uint64_t>();
@@ -1699,14 +1699,14 @@ void VM::addLoopHintExecutionCounter(const Instruction* instruction)
 
 uint64_t* VM::getLoopHintExecutionCounter(const Instruction* instruction)
 {
-    auto locker = holdLock(m_loopHintExecutionCountLock);
+    Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);
     return iter->value.second.get();
 }
 
 void VM::removeLoopHintExecutionCounter(const Instruction* instruction)
 {
-    auto locker = holdLock(m_loopHintExecutionCountLock);
+    Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);
     RELEASE_ASSERT(!!iter->value.first);
     --iter->value.first;

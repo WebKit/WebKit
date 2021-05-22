@@ -117,7 +117,7 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<InstructionStream> ins
 {
     ASSERT(instructions);
     {
-        auto locker = holdLock(m_codeBlock->cellLock());
+        Locker locker { m_codeBlock->cellLock() };
         m_codeBlock->m_instructions = WTFMove(instructions);
         m_codeBlock->m_metadata->finalize();
 

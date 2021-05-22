@@ -117,7 +117,7 @@ Ref<SharedTask<void(Visitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Fu
             }
 
             {
-                auto locker = holdLock(m_lock);
+                Locker locker { m_lock };
                 if (!m_needToVisitPreciseAllocations)
                     return;
                 m_needToVisitPreciseAllocations = false;

@@ -38,7 +38,7 @@ const ClassInfo JSSegmentedVariableObject::s_info = { "SegmentedVariableObject",
 
 ScopeOffset JSSegmentedVariableObject::findVariableIndex(void* variableAddress)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     
     for (unsigned i = m_variables.size(); i--;) {
         if (&m_variables[i] != variableAddress)
@@ -51,7 +51,7 @@ ScopeOffset JSSegmentedVariableObject::findVariableIndex(void* variableAddress)
 
 ScopeOffset JSSegmentedVariableObject::addVariables(unsigned numberOfVariablesToAdd, JSValue initialValue)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     
     size_t oldSize = m_variables.size();
     m_variables.grow(oldSize + numberOfVariablesToAdd);
@@ -71,7 +71,7 @@ void JSSegmentedVariableObject::visitChildrenImpl(JSCell* cell, Visitor& visitor
     
     // FIXME: We could avoid locking here if SegmentedVector was lock-free. It could be made lock-free
     // relatively easily.
-    auto locker = holdLock(thisObject->cellLock());
+    Locker locker { thisObject->cellLock() };
     for (unsigned i = thisObject->m_variables.size(); i--;)
         visitor.appendHidden(thisObject->m_variables[i]);
 }

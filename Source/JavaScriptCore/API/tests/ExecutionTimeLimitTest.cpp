@@ -505,12 +505,12 @@ int testExecutionTimeLimit()
                 startTimeRef = CPUTime::forCurrentThread();
                 JSEvaluateScript(contextRef, scriptRef, nullptr, nullptr, 1, &exceptionRef);
                 endTimeRef = CPUTime::forCurrentThread();
-                auto locker = WTF::holdLock(syncLockRef);
+                Locker locker { syncLockRef };
                 didSynchronizeRef = true;
                 synchronizeRef.notifyAll();
             });
 
-            auto locker = holdLock(syncLock);
+            Locker locker { syncLock };
             synchronize.wait(syncLock, [&] { return didSynchronize; });
 
             if (((endTime - startTime) < timeAfterWatchdogShouldHaveFired) && dispatchTerminateCallbackCalled)

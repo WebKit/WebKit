@@ -62,14 +62,14 @@ static HashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap()
 
 static void addWrapper(JSContextGroupRef group, JSCVirtualMachine* vm)
 {
-    auto locker = holdLock(wrapperCacheMutex);
+    Locker locker { wrapperCacheMutex };
     ASSERT(!wrapperMap().contains(group));
     wrapperMap().set(group, vm);
 }
 
 static void removeWrapper(JSContextGroupRef group)
 {
-    auto locker = holdLock(wrapperCacheMutex);
+    Locker locker { wrapperCacheMutex };
     ASSERT(wrapperMap().contains(group));
     wrapperMap().remove(group);
 }

@@ -164,7 +164,7 @@ PerfLog::PerfLog()
     header.timestamp = generateTimestamp();
     header.pid = getCurrentProcessID();
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     write(locker, &header, sizeof(JITDump::FileHeader));
     flush(locker);
 }
@@ -188,7 +188,7 @@ void PerfLog::log(CString&& name, const uint8_t* executableAddress, size_t size)
     }
 
     PerfLog& logger = singleton();
-    auto locker = holdLock(logger.m_lock);
+    Locker locker { logger.m_lock };
 
     JITDump::CodeLoadRecord record;
     record.header.timestamp = generateTimestamp();

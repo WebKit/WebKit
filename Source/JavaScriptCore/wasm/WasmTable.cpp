@@ -85,7 +85,7 @@ Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
     if (delta == 0)
         return length();
 
-    auto locker = holdLock(m_owner->cellLock());
+    Locker locker { m_owner->cellLock() };
 
     using Checked = Checked<uint32_t, RecordOverflow>;
     Checked newLengthChecked = length();
@@ -170,7 +170,7 @@ template<typename Visitor>
 void Table::visitAggregateImpl(Visitor& visitor)
 {
     RELEASE_ASSERT(m_owner);
-    auto locker = holdLock(m_owner->cellLock());
+    Locker locker { m_owner->cellLock() };
     for (unsigned i = 0; i < m_length; ++i)
         visitor.append(m_jsValues.get()[i]);
 }

@@ -112,7 +112,7 @@ Thunks& Thunks::singleton()
 
 MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(ThunkGenerator generator)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     return stub(locker, generator);
 }
 
@@ -133,7 +133,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(const AbstractLocker& locker,
 
 MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::existingStub(ThunkGenerator generator)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     auto iter = m_stubs.find(generator);
     if (iter != m_stubs.end())

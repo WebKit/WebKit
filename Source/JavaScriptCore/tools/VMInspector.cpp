@@ -54,13 +54,13 @@ VMInspector& VMInspector::instance()
 
 void VMInspector::add(VM* vm)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_vmList.append(vm);
 }
 
 void VMInspector::remove(VM* vm)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_vmList.remove(vm);
 }
 
@@ -171,7 +171,7 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
             return FunctorStatus::Continue; // Skip this VM.
         }
 
-        auto locker = holdLock(codeBlockSetLock);
+        Locker locker { codeBlockSetLock };
         vm.heap.forEachCodeBlockIgnoringJITPlans(locker, [&] (CodeBlock* cb) {
             JITCode* jitCode = cb->jitCode().get();
             if (!jitCode) {

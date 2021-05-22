@@ -45,7 +45,7 @@ BlockDirectory::BlockDirectory(size_t cellSize)
 
 BlockDirectory::~BlockDirectory()
 {
-    auto locker = holdLock(m_localAllocatorsLock);
+    Locker locker { m_localAllocatorsLock };
     while (!m_localAllocators.isEmpty())
         m_localAllocators.begin()->remove();
 }
@@ -168,7 +168,7 @@ void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock wil
     m_freeBlockIndices.append(block->index());
     
     forEachBitVector(
-        holdLock(m_bitvectorLock),
+        Locker { m_bitvectorLock },
         [&](auto vectorRef) {
             vectorRef[block->index()] = false;
         });
@@ -216,7 +216,7 @@ void BlockDirectory::stopAllocatingForGood()
             allocator->stopAllocatingForGood();
         });
 
-    auto locker = holdLock(m_localAllocatorsLock);
+    Locker locker { m_localAllocatorsLock };
     while (!m_localAllocators.isEmpty())
         m_localAllocators.begin()->remove();
 }
@@ -333,7 +333,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlock
         {
             if (m_done)
                 return nullptr;
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             m_index = m_directory.m_bits.markingNotEmpty().findBit(m_index, true);
             if (m_index >= m_directory.m_blocks.size()) {
                 m_done = true;

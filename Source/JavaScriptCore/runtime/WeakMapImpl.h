@@ -210,7 +210,7 @@ public:
 
         Base::finishCreation(vm);
 
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         makeAndSetNewBuffer(locker, initialCapacity);
     }
 

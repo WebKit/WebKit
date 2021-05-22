@@ -41,7 +41,7 @@ public:
     
     ~AutoremovingIsoSubspace() final
     {
-        auto locker = holdLock(m_perVM.m_lock);
+        Locker locker { m_perVM.m_lock };
         m_perVM.m_subspacePerVM.remove(&space().heap().vm());
     }
 
@@ -61,7 +61,7 @@ IsoSubspacePerVM::~IsoSubspacePerVM()
 
 IsoSubspace& IsoSubspacePerVM::forVM(VM& vm)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     auto result = m_subspacePerVM.add(&vm, nullptr);
     if (result.isNewEntry) {
         SubspaceParameters params = m_subspaceParameters(vm);

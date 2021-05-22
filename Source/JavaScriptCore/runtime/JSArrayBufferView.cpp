@@ -225,7 +225,7 @@ JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(JSGlobalObject* globalO
 
 void JSArrayBufferView::detach()
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     RELEASE_ASSERT(hasArrayBuffer());
     RELEASE_ASSERT(!isShared());
     m_length = 0;
@@ -309,7 +309,7 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
         structure->outOfLineCapacity(), false, 0, 0));
 
     {
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
         m_vector.setWithoutBarrier(buffer->data(), m_length);
         WTF::storeStoreFence();

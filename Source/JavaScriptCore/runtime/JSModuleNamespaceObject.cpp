@@ -60,7 +60,7 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
     m_moduleRecord.set(vm, this, moduleRecord);
     m_names = FixedVector<Identifier>(resolutions.size());
     {
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         unsigned index = 0;
         for (const auto& pair : resolutions) {
             m_names[index] = pair.first;
@@ -95,7 +95,7 @@ void JSModuleNamespaceObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleRecord);
     {
-        auto locker = holdLock(thisObject->cellLock());
+        Locker locker { thisObject->cellLock() };
         for (auto& pair : thisObject->m_exports)
             visitor.appendHidden(pair.value.moduleRecord);
     }

@@ -59,7 +59,7 @@ void* IsoAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_debugHeap.memalign(MarkedBlock::blockSize, MarkedBlock::blockSize, true);
 #else
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     m_firstUncommitted = m_committed.findBit(m_firstUncommitted, false);
     if (m_firstUncommitted < m_blocks.size()) {
@@ -87,7 +87,7 @@ void IsoAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     m_debugHeap.free(basePtr);
 #else
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     auto iter = m_blockIndices.find(basePtr);
     RELEASE_ASSERT(iter != m_blockIndices.end());

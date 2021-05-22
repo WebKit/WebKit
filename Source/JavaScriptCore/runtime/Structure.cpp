@@ -710,7 +710,7 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
     transition->m_prototype.set(vm, transition, prototype);
 
     PropertyTable* table = structure->copyPropertyTableForPinning(vm);
-    transition->pin(holdLock(transition->m_lock), vm, table);
+    transition->pin(Locker { transition->m_lock }, vm, table);
     transition->setMaxOffset(vm, structure->maxOffset());
     
     transition->checkOffsetConsistency();
@@ -802,7 +802,7 @@ Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, Dicti
     Structure* transition = create(vm, structure, deferred);
 
     PropertyTable* table = structure->copyPropertyTableForPinning(vm);
-    transition->pin(holdLock(transition->m_lock), vm, table);
+    transition->pin(Locker { transition->m_lock }, vm, table);
     transition->setMaxOffset(vm, structure->maxOffset());
     transition->setDictionaryKind(kind);
     transition->setHasBeenDictionary(true);
@@ -879,7 +879,7 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
         // table doesn't know how to take into account such wholesale edits.
 
         PropertyTable* table = structure->copyPropertyTableForPinning(vm);
-        transition->pinForCaching(holdLock(transition->m_lock), vm, table);
+        transition->pinForCaching(Locker { transition->m_lock }, vm, table);
         transition->setMaxOffset(vm, structure->maxOffset());
         
         table = transition->propertyTableOrNull();
@@ -902,9 +902,9 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
     
     if (structure->isDictionary()) {
         PropertyTable* table = transition->ensurePropertyTable(vm);
-        transition->pin(holdLock(transition->m_lock), vm, table);
+        transition->pin(Locker { transition->m_lock }, vm, table);
     } else {
-        auto locker = holdLock(structure->m_lock);
+        Locker locker { structure->m_lock };
         structure->m_transitionTable.add(vm, transition);
     }
 
@@ -1543,9 +1543,9 @@ Structure* Structure::setBrandTransition(VM& vm, Structure* structure, Symbol* b
 
     if (structure->isDictionary()) {
         PropertyTable* table = transition->ensurePropertyTable(vm);
-        transition->pin(holdLock(transition->m_lock), vm, table);
+        transition->pin(Locker { transition->m_lock }, vm, table);
     } else {
-        auto locker = holdLock(structure->m_lock);
+        Locker locker { structure->m_lock };
         structure->m_transitionTable.add(vm, transition);
     }
 

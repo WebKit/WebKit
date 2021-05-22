@@ -152,7 +152,7 @@ void MarkingConstraintSolver::execute(MarkingConstraint& constraint)
 
 void MarkingConstraintSolver::addParallelTask(RefPtr<SharedTask<void(SlotVisitor&)>> task, MarkingConstraint& constraint)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_toExecuteInParallel.append(TaskWithConstraint(WTFMove(task), &constraint));
 }
 
@@ -164,7 +164,7 @@ void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, Scheduler
         unsigned indexToRun = UINT_MAX;
         TaskWithConstraint task;
         {
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
                         
             for (;;) {
                 auto tryParallelWork = [&] () -> bool {
@@ -241,7 +241,7 @@ void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, Scheduler
         }
         
         {
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             
             if (doParallelWorkMode) {
                 if (!m_toExecuteInParallel.isEmpty()

@@ -242,7 +242,7 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
 
 void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode);
     if (hasError(m_constructionErrorCode)) {
@@ -293,7 +293,7 @@ int RegExp::match(JSGlobalObject* globalObject, const String& s, unsigned startO
 bool RegExp::matchConcurrently(
     VM& vm, const String& s, unsigned startOffset, int& position, Vector<int>& ovector)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
 
     if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
@@ -306,7 +306,7 @@ bool RegExp::matchConcurrently(
 
 void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode);
     if (hasError(m_constructionErrorCode)) {
@@ -356,7 +356,7 @@ MatchResult RegExp::match(JSGlobalObject* globalObject, const String& s, unsigne
 
 bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, MatchResult& result)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
 
     if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
@@ -367,7 +367,7 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
 
 void RegExp::deleteCode()
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     
     if (!hasCode())
         return;

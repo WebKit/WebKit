@@ -66,12 +66,12 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     ASSERT(m_codeType == static_cast<unsigned>(codeType));
     ASSERT(m_didOptimize == static_cast<unsigned>(TriState::Indeterminate));
     if (info.needsClassFieldInitializer() == NeedsClassFieldInitializer::Yes) {
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         createRareDataIfNecessary(locker);
         m_rareData->m_needsClassFieldInitializer = static_cast<unsigned>(NeedsClassFieldInitializer::Yes);
     }
     if (info.privateBrandRequirement() == PrivateBrandRequirement::Needed) {
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         createRareDataIfNecessary(locker);
         m_rareData->m_privateBrandRequirement = static_cast<unsigned>(PrivateBrandRequirement::Needed);
     }
@@ -83,7 +83,7 @@ void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    auto locker = holdLock(thisObject->cellLock());
+    Locker locker { thisObject->cellLock() };
     if (visitor.isFirstVisit())
         thisObject->m_age = std::min<unsigned>(static_cast<unsigned>(thisObject->m_age) + 1, maxAge);
     for (auto& barrier : thisObject->m_functionDecls)

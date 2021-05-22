@@ -59,7 +59,7 @@ Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockS
         {
             if (m_done)
                 return nullptr;
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             auto bits = m_directory.m_bits.markingNotEmpty() & m_set.m_blocksWithBits;
             m_index = bits.findBit(m_index, true);
             if (m_index >= m_directory.m_blocks.size()) {
@@ -82,7 +82,7 @@ Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockS
 
 NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(unsigned blockIndex)
 {
-    auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);
+    Locker locker { m_subspace.m_directory.m_bitvectorLock };
     auto& bitsPtrRef = m_bits[blockIndex];
     auto* bits = bitsPtrRef.get();
     if (!bits) {
@@ -103,7 +103,7 @@ void IsoCellSet::didResizeBits(unsigned newSize)
 void IsoCellSet::didRemoveBlock(unsigned blockIndex)
 {
     {
-        auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);
+        Locker locker { m_subspace.m_directory.m_bitvectorLock };
         m_blocksWithBits[blockIndex] = false;
     }
     m_bits[blockIndex] = nullptr;
@@ -135,7 +135,7 @@ void IsoCellSet::sweepToFreeList(MarkedBlock::Handle* block)
         {
             // Holding the bitvector lock happens to be enough because that's what we also hold in
             // other places where we manipulate this bitvector.
-            auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);
+            Locker locker { m_subspace.m_directory.m_bitvectorLock };
             m_blocksWithBits[block->index()] = false;
         }
         m_bits[block->index()] = nullptr;

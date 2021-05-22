@@ -73,7 +73,7 @@ void HeapSnapshotBuilder::buildSnapshot()
     }
 
     {
-        auto locker = holdLock(m_buildingNodeMutex);
+        Locker locker { m_buildingNodeMutex };
         m_appendedCells.clear();
         m_snapshot->finalize();
     }
@@ -90,7 +90,7 @@ void HeapSnapshotBuilder::analyzeNode(JSCell* cell)
     if (previousSnapshotHasNodeForCell(cell, identifier))
         return;
 
-    auto locker = holdLock(m_buildingNodeMutex);
+    Locker locker { m_buildingNodeMutex };
     auto addResult = m_appendedCells.add(cell);
     if (!addResult.isNewEntry)
         return;
@@ -106,7 +106,7 @@ void HeapSnapshotBuilder::analyzeEdge(JSCell* from, JSCell* to, RootMarkReason r
     if (from == to)
         return;
 
-    auto locker = holdLock(m_buildingEdgeMutex);
+    Locker locker { m_buildingEdgeMutex };
 
     if (m_snapshotType == SnapshotType::GCDebuggingSnapshot && !from) {
         if (rootMarkReason == RootMarkReason::None && m_snapshotType == SnapshotType::GCDebuggingSnapshot)
@@ -125,7 +125,7 @@ void HeapSnapshotBuilder::analyzePropertyNameEdge(JSCell* from, JSCell* to, Uniq
     ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
-    auto locker = holdLock(m_buildingEdgeMutex);
+    Locker locker { m_buildingEdgeMutex };
 
     m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Property, propertyName));
 }
@@ -135,7 +135,7 @@ void HeapSnapshotBuilder::analyzeVariableNameEdge(JSCell* from, JSCell* to, Uniq
     ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
-    auto locker = holdLock(m_buildingEdgeMutex);
+    Locker locker { m_buildingEdgeMutex };
 
     m_edges.append(HeapSnapshotEdge(from, to, EdgeType::Variable, variableName));
 }
@@ -145,7 +145,7 @@ void HeapSnapshotBuilder::analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t in
     ASSERT(m_profiler.activeHeapAnalyzer() == this);
     ASSERT(to);
 
-    auto locker = holdLock(m_buildingEdgeMutex);
+    Locker locker { m_buildingEdgeMutex };
 
     m_edges.append(HeapSnapshotEdge(from, to, index));
 }
@@ -155,7 +155,7 @@ void HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell(JSCell* cell, c
     if (!reason || !*reason || m_snapshotType != SnapshotType::GCDebuggingSnapshot)
         return;
 
-    auto locker = holdLock(m_buildingEdgeMutex);
+    Locker locker { m_buildingEdgeMutex };
 
     m_rootData.ensure(cell, [] () -> RootData {
         return { };

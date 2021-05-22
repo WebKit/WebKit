@@ -136,7 +136,7 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void
     // Prevent two VMs from suspending each other's threads at the same time,
     // which can cause deadlock: <rdar://problem/20300842>.
     static Lock suspendLock;
-    auto suspendLocker = holdLock(suspendLock);
+    Locker suspendLocker { suspendLock };
 
     *size = 0;
 
@@ -204,7 +204,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
     size_t size;
     size_t capacity = 0;
     void* buffer = nullptr;
-    auto locker = holdLock(m_threadGroup->getLock());
+    Locker locker { m_threadGroup->getLock() };
     while (!tryCopyOtherThreadStacks(locker, buffer, capacity, &size, *currentThread))
         growBuffer(size, &buffer, &capacity);
 

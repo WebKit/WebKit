@@ -54,7 +54,7 @@ void StreamingPlan::work(CompilationEffort)
 {
     m_plan->compileFunction(m_functionIndex);
     dataLogLnIf(WasmStreamingPlanInternal::verbose, "Finished Streaming ", m_functionIndex);
-    complete(holdLock(m_lock));
+    complete(Locker { m_lock });
 }
 
 } } // namespace JSC::Wasm

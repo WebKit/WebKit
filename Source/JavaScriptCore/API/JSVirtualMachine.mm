@@ -69,13 +69,13 @@ static NSMapTable *wrapperCache()
 
 + (void)addWrapper:(JSVirtualMachine *)wrapper forJSContextGroupRef:(JSContextGroupRef)group
 {
-    auto locker = holdLock(wrapperCacheMutex);
+    Locker locker { wrapperCacheMutex };
     NSMapInsert(wrapperCache(), group, (__bridge void*)wrapper);
 }
 
 + (JSVirtualMachine *)wrapperForJSContextGroupRef:(JSContextGroupRef)group
 {
-    auto locker = holdLock(wrapperCacheMutex);
+    Locker locker { wrapperCacheMutex };
     return (__bridge JSVirtualMachine *)NSMapGet(wrapperCache(), group);
 }
 
@@ -156,7 +156,7 @@ static id getInternalObjcObject(id object)
 
 - (void)addExternalRememberedObject:(id)object
 {
-    auto locker = holdLock(m_externalDataMutex);
+    Locker locker { m_externalDataMutex };
     ASSERT([self isOldExternalObject:object]);
     [m_externalRememberedSet setObject:@YES forKey:object];
 }
@@ -176,7 +176,7 @@ static id getInternalObjcObject(id object)
     if ([self isOldExternalObject:owner] && ![self isOldExternalObject:object])
         [self addExternalRememberedObject:owner];
  
-    auto externalDataMutexLocker = holdLock(m_externalDataMutex);
+    Locker externalDataMutexLocker { m_externalDataMutex };
     RetainPtr<NSMapTable> ownedObjects = [m_externalObjectGraph objectForKey:owner];
     if (!ownedObjects) {
         NSPointerFunctionsOptions weakIDOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
@@ -203,7 +203,7 @@ static id getInternalObjcObject(id object)
     
     JSC::JSLockHolder locker(toJS(m_group));
     
-    auto externalDataMutexLocker = holdLock(m_externalDataMutex);
+    Locker externalDataMutexLocker { m_externalDataMutex };
     NSMapTable *ownedObjects = [m_externalObjectGraph objectForKey:owner];
     if (!ownedObjects)
         return;
@@ -341,7 +341,7 @@ static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visit
             if (lockAcquired)
                 appendOwnedObjects();
             else {
-                auto locker = holdLock(externalDataMutex);
+                Locker locker { externalDataMutex };
                 appendOwnedObjects();
             }
         }
@@ -361,7 +361,7 @@ void scanExternalRememberedSet(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor)
         if (!virtualMachine)
             return;
         Lock& externalDataMutex = [virtualMachine externalDataMutex];
-        auto locker = holdLock(externalDataMutex);
+        Locker locker { externalDataMutex };
         NSMapTable *externalObjectGraph = [virtualMachine externalObjectGraph];
         NSMapTable *externalRememberedSet = [virtualMachine externalRememberedSet];
         for (id key in externalRememberedSet) {

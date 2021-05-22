@@ -87,7 +87,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
     Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileResult = parseAndCompileBytecode(function.data.data(), function.data.size(), signature, m_moduleInformation.get(), functionIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
             fail(locker, makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
@@ -191,18 +191,18 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
 
 void LLIntPlan::completeInStreaming()
 {
-    complete(holdLock(m_lock));
+    complete(Locker { m_lock });
 }
 
 void LLIntPlan::didCompileFunctionInStreaming()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     moveToState(EntryPlan::State::Compiled);
 }
 
 void LLIntPlan::didFailInStreaming(String&& message)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     if (!m_errorMessage)
         fail(locker, WTFMove(message));
 }

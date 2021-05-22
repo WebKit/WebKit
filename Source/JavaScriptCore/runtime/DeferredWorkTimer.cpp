@@ -45,7 +45,7 @@ DeferredWorkTimer::DeferredWorkTimer(VM& vm)
 void DeferredWorkTimer::doWork(VM& vm)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto locker = holdLock(m_taskLock);
+    Locker locker { m_taskLock };
     cancelTimer();
     if (!m_runTasks)
         return;

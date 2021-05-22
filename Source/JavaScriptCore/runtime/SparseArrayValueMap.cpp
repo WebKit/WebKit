@@ -69,7 +69,7 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
     AddResult result;
     size_t increasedCapacity = 0;
     {
-        auto locker = holdLock(cellLock());
+        Locker locker { cellLock() };
         result = m_map.add(i, SparseArrayEntry());
         size_t capacity = m_map.capacity();
         if (capacity > m_reportedCapacity) {
@@ -84,13 +84,13 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
 
 void SparseArrayValueMap::remove(iterator it)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     m_map.remove(it);
 }
 
 void SparseArrayValueMap::remove(unsigned i)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     m_map.remove(i);
 }
 
@@ -142,7 +142,7 @@ bool SparseArrayValueMap::putDirect(JSGlobalObject* globalObject, JSObject* arra
 
 JSValue SparseArrayValueMap::getConcurrently(unsigned i)
 {
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     auto iterator = m_map.find(i);
     if (iterator == m_map.end())
         return JSValue();
@@ -217,7 +217,7 @@ void SparseArrayValueMap::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
     {
-        auto locker = holdLock(thisObject->cellLock());
+        Locker locker { thisObject->cellLock() };
         for (auto& entry : thisObject->m_map)
             visitor.append(entry.value.asValue());
     }

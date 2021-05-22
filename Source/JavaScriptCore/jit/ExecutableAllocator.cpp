@@ -464,7 +464,7 @@ public:
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
     {
 #if ENABLE(JUMP_ISLANDS)
-        auto locker = holdLock(getLock());
+        Locker locker { getLock() };
 
         unsigned start = 0;
         if (Options::useRandomizingExecutableIslandAllocation())
@@ -535,7 +535,7 @@ public:
 
     MetaAllocator::Statistics currentStatistics()
     {
-        auto locker = holdLock(getLock());
+        Locker locker { getLock() };
         MetaAllocator::Statistics result { 0, 0, 0 };
         forEachAllocator([&] (Allocator& allocator) {
             auto allocatorStats = allocator.currentStatistics(locker);
@@ -581,7 +581,7 @@ public:
 
     void* makeIsland(uintptr_t jumpLocation, uintptr_t newTarget, bool concurrently)
     {
-        auto locker = holdLock(getLock());
+        Locker locker { getLock() };
         return islandForJumpLocation(locker, jumpLocation, newTarget, concurrently);
     }
 

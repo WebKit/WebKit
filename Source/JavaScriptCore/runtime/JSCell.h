@@ -123,7 +123,7 @@ public:
 
     // We use this abstraction to make it easier to grep for places where we lock cells.
     // to lock a cell you can just do:
-    // auto locker = holdLock(cell->cellLocker());
+    // Locker locker { cell->cellLocker() };
     JSCellLock& cellLock() { return *reinterpret_cast<JSCellLock*>(this); }
     
     JSType type() const;

@@ -95,7 +95,7 @@ Ref<SharedTask<BlockDirectory*()>> Subspace::parallelDirectorySource()
         
         BlockDirectory* run() final
         {
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             BlockDirectory* result = m_directory;
             if (result)
                 m_directory = result->nextDirectoryInSubspace();
