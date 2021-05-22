@@ -172,13 +172,28 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
+        "hw.activecpu" ;; <rdar://problem/56795575>
         "hw.availcpu"
+        "hw.cacheconfig" ;; <rdar://problem/78213563>
+        "hw.cachelinesize" ;; <rdar://problem/56795575>
+        "hw.cachesize" ;; <rdar://problem/78213563>
         "hw.cpusubfamily"
         "hw.cputhreadtype"
-        "hw.ncpu"
+        "hw.l1dcachesize" ;; <rdar://problem/56795575>
+        "hw.l1icachesize" ;; <rdar://problem/56795575>
+        "hw.l2cachesize" ;; <rdar://problem/56795575>
+        "hw.l3cachesize" ;; <rdar://problem/56795575>
+        "hw.logicalcpu" ;; <rdar://problem/56795575>
+        "hw.logicalcpu_max" ;; <rdar://problem/56795575>
         "hw.memsize"
         "hw.model" ;; Needed for bundle loading
-        "hw.perflevel1.cpusperl2"
+        "hw.ncpu"
+        "hw.nperflevels" ;; <rdar://problem/76783596>
+        "hw.pagesize" ;; <rdar://problem/76783596>
+        "hw.pagesize_compat" ;; <rdar://problem/76783596>
+        "hw.physicalcpu" ;; <rdar://problem/58416475>
+        "hw.physicalcpu_max" ;; <rdar://problem/58416475>
+        "hw.physmem" ;; <rdar://problem/76782530>
         "kern.hostname"
         "kern.hv_vmm_present"
         "kern.maxfilesperproc"
@@ -193,6 +208,8 @@
         "vm.footprint_suspend")
     (sysctl-name-prefix "kern.proc.pid.")
     (sysctl-name-regex #"^net.routetable")
+    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
 
 (allow sysctl-write

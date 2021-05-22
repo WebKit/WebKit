@@ -110,16 +110,30 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
+        "hw.activecpu" ;; <rdar://problem/56795575>
         "hw.byteorder"
         "hw.busfrequency_max"
+        "hw.cacheconfig" ;; <rdar://problem/78213563>
+        "hw.cachelinesize" ;; <rdar://problem/56795575>
+        "hw.cachesize" ;; <rdar://problem/78213563>
         "hw.cpusubfamily"
         "hw.cputhreadtype"
         "hw.cputype"
+        "hw.l1dcachesize" ;; <rdar://problem/56795575>
+        "hw.l1icachesize" ;; <rdar://problem/56795575>
+        "hw.l2cachesize" ;; <rdar://problem/56795575>
+        "hw.l3cachesize" ;; <rdar://problem/56795575>
+        "hw.logicalcpu" ;; <rdar://problem/56795575>
+        "hw.logicalcpu_max" ;; <rdar://problem/56795575>
         "hw.machine"
         "hw.memsize"
         "hw.model"
         "hw.ncpu"
-        "hw.perflevel1.cpusperl2"
+        "hw.nperflevels" ;; <rdar://problem/76783596>
+        "hw.pagesize" ;; <rdar://problem/76783596>
+        "hw.pagesize_compat" ;; <rdar://problem/76783596>
+        "hw.physicalcpu" ;; <rdar://problem/58416475>
+        "hw.physicalcpu_max" ;; <rdar://problem/58416475>
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
         "kern.hostname"
@@ -139,9 +153,10 @@
     (sysctl-name-regex #"^hw.(busfrequency|cachelinesize|cpufrequency(|_max)|pagesize|tbfrequency)(|_compat)")
     (sysctl-name-regex #"^hw.l.+cachesize")
     (sysctl-name-regex #"^hw.(logical|physical)cpu_max")
-    (sysctl-name-regex #"^hw.optional\.")
     (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
     (sysctl-name-regex #"^net.routetable")
+    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
 
 (allow sysctl-write

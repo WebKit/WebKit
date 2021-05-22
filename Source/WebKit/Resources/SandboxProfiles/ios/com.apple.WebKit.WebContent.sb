@@ -927,23 +927,31 @@
         "hw.activecpu" ;; Needed by JSC engine.
         "hw.availcpu"
         "hw.byteorder"
+        "hw.cacheconfig" ;; <rdar://problem/78213563>
         "hw.cachelinesize"
         "hw.cachelinesize_compat"
+        "hw.cachesize" ;; <rdar://problem/78213563>
         "hw.cpufamily" ;; <rdar://problem/58416475>
         "hw.cpusubfamily"
         "hw.cputhreadtype"
         "hw.cputype"
+        "hw.l1dcachesize" ;; <rdar://problem/15721872>
+        "hw.l1icachesize" ;; <rdar://problem/15721872>
         "hw.l2cachesize"
+        "hw.l3cachesize" ;; <rdar://problem/15721872>
         "hw.logicalcpu"
         "hw.logicalcpu_max"
         "hw.ncpu"
         "hw.machine"
         "hw.memsize"
         "hw.model"
+        "hw.ncpu" ;; <rdar://problem/76782530>
+        "hw.nperflevels" ;; <rdar://problem/76782530>
+        "hw.pagesize" ;; <rdar://problem/76782530>
         "hw.pagesize_compat"
-        "hw.perflevel1.cpusperl2"
         "hw.physicalcpu"
         "hw.physicalcpu_max"
+        "hw.physmem" ;; <rdar://problem/76782530>
         "hw.product"
         "hw.vectorunit"
         "kern.bootargs"
@@ -961,6 +969,8 @@
         "sysctl.name2oid"
         "vm.footprint_suspend")
     (sysctl-name-regex #"^net.routetable") ;; <rdar://problem/57665153>
+    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/70973527>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
 )
 
 (allow iokit-get-properties

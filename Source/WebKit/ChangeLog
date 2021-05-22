@@ -1,3 +1,24 @@
+2021-05-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Expand sandbox with missing sysctl-read handles for core CPU and cache features
+        https://bugs.webkit.org/show_bug.cgi?id=226126
+        <rdar://problem/78218756>
+
+        Reviewed by Per Arne Vollan.
+
+        Update our sandbox profiles to permit read access to a set of CPU and cache features that have been requested by
+        our sandbox and system framework teams. These have been judged to be safe to expose to our processes, and will
+        allow frameworks to make optimal use of the system WebKit is running on.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-05-21  Sam Weinig  <weinig@apple.com>
 
         Make CGColorSpaceRef argument coding match other CF objects and use CGColorSpaceCreateWithPropertyList for fallback
