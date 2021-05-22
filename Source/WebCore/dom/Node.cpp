@@ -2227,7 +2227,7 @@ EventTargetData* Node::eventTargetDataConcurrently()
     // world is stopped. We don't have to hold the lock when the world is stopped, because a stopped world
     // means that we will never mutate the event target data map.
     JSC::VM* vm = commonVMOrNull();
-    auto locker = holdLockIf(s_eventTargetDataMapLock, vm && vm->heap.worldIsRunning());
+    Locker locker { vm && vm->heap.worldIsRunning() ? &s_eventTargetDataMapLock : nullptr };
     return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
 }
 

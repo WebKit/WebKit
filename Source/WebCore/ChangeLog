@@ -1,5 +1,19 @@
 2021-05-21  Chris Dumez  <cdumez@apple.com>
 
+        Remove WTF::holdLock() / WTF::holdLockIf()
+        https://bugs.webkit.org/show_bug.cgi?id=226135
+
+        Reviewed by Darin Adler.
+
+        Remove WTF::holdLock() / WTF::holdLockIf() because they are not compatible with
+        Clang Thread Safety Analysis. All call sites have been converted to use the Locker
+        constructor directly.
+
+        * dom/Node.cpp:
+        (WebCore::Node::eventTargetDataConcurrently):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
         Replace LockHolder with Locker in local variables
         https://bugs.webkit.org/show_bug.cgi?id=226133
 

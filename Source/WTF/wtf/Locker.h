@@ -136,24 +136,6 @@ private:
     T* m_lockable;
 };
 
-// Use this lock scope like so:
-// auto locker = holdLock(lock);
-template<typename LockType>
-Locker<LockType> holdLock(LockType&) WARN_UNUSED_RETURN;
-template<typename LockType>
-Locker<LockType> holdLock(LockType& lock)
-{
-    return Locker<LockType>(lock);
-}
-
-template<typename LockType>
-Locker<LockType> holdLockIf(LockType&, bool predicate) WARN_UNUSED_RETURN;
-template<typename LockType>
-Locker<LockType> holdLockIf(LockType& lock, bool predicate)
-{
-    return Locker<LockType>(predicate ? &lock : nullptr);
-}
-
 template<typename LockType>
 Locker<LockType> tryHoldLock(LockType&) WARN_UNUSED_RETURN;
 template<typename LockType>
@@ -187,6 +169,4 @@ using WTF::AbstractLocker;
 using WTF::Locker;
 using WTF::NoLockingNecessaryTag;
 using WTF::NoLockingNecessary;
-using WTF::holdLock;
-using WTF::holdLockIf;
 using WTF::DropLockForScope;

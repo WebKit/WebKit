@@ -35,7 +35,7 @@ namespace JSC {
 template<typename LockType>
 auto lockDuringMarking(Heap& heap, LockType& passedLock)
 {
-    return holdLockIf(passedLock, heap.mutatorShouldBeFenced());
+    return Locker { heap.mutatorShouldBeFenced() ? &passedLock : nullptr };
 }
 
 } // namespace JSC
