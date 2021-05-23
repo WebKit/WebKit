@@ -75,8 +75,11 @@
             "testShouldNotSwitchMagicallyToTheTopWindow": {
                 "expected": {"all": {"slow": true}}
             },
+            "testShouldFocusOnTheReplacementWhenAFrameFollowsALinkToA_TopTargetedPage": {
+                "expected": {"all": {"status": ["FAIL"], "reason": "Marked fail upstream through annotations for remote and safari."}}
+            },
             "testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs": {
-                "expected": {"wpe": {"status": ["FAIL"], "reason": "Marked fail upstream through annotations for gtk and safari"}}
+                "expected": {"all": {"status": ["FAIL"], "reason": "Marked fail upstream through annotations for gtk and safari."}}
             }
         }
     },
@@ -181,6 +184,12 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
             },
             "testShouldFireKeyPressEvents": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "testWillSimulateAKeyPressWhenEnteringTextIntoInputElements" : {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "testWillSimulateAKeyPressWhenEnteringTextIntoTextAreas" : {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
             }
         }
@@ -808,6 +817,12 @@
     },
     "imported/w3c/webdriver/tests/element_send_keys/events.py": {
         "subtests": {
+            "test_form_control_send_text[input]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_form_control_send_text[textarea]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
             "test_not_blurred[input]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             },
