@@ -254,9 +254,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sampl
     if (!m_visible)
         return;
 
-    auto locker = tryHoldLock(m_sampleBufferDisplayLayerLock);
-    if (!locker)
+    if (!m_sampleBufferDisplayLayerLock.tryLock())
         return;
+    Locker locker { AdoptLock, m_sampleBufferDisplayLayerLock };
 
     if (!m_canEnqueueDisplayLayer || !m_sampleBufferDisplayLayer || m_sampleBufferDisplayLayer->didFail())
         return;

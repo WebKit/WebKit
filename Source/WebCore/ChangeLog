@@ -1,3 +1,52 @@
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226145
+
+        Reviewed by Darin Adler.
+
+        Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis.
+        Instead, use the following pattern which is supported:
+        ```
+        if (lock.tryLock()) {
+            Locker locker { AdoptLock, lock };
+            // ...
+        }
+        ```
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::process):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::process):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::process):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::process):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::process):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::process):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::process):
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::process):
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::process):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::purgeTimerFired):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::provideInput):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        * platform/mediastream/mac/WebAudioSourceProviderCocoa.mm:
+        (WebCore::WebAudioSourceProviderCocoa::provideInput):
+        * workers/WorkerOrWorkletThread.cpp:
+        (WebCore::WorkerOrWorkletThread::stop):
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Adopt CheckedLock in more places

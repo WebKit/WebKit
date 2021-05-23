@@ -1707,7 +1707,8 @@ NEVER_INLINE void Heap::resumeThePeriphery()
             bool remove = false;
             if (visitor.hasAcknowledgedThatTheMutatorIsResumed())
                 remove = true;
-            else if (auto locker = tryHoldLock(visitor.rightToRun())) {
+            else if (visitor.rightToRun().tryLock()) {
+                Locker locker { AdoptLock, visitor.rightToRun() };
                 visitor.updateMutatorIsStopped(locker);
                 remove = true;
             }

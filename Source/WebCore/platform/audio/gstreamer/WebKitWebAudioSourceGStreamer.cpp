@@ -411,7 +411,7 @@ static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
     if (!priv->dispatchToRenderThreadLock.tryLock())
         return;
 
-    Locker locker { AdoptLockTag { }, priv->dispatchToRenderThreadLock };
+    Locker locker { AdoptLock, priv->dispatchToRenderThreadLock };
 
     if (!priv->dispatchToRenderThreadFunction)
         webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTFMove(*channelBufferList));

@@ -137,10 +137,10 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
     }
 
     if (JITCode::isOptimizingJIT(foundCodeBlock->jitType())) {
-        auto locker = tryHoldLock(*m_lock);
-        if (!locker)
+        if (!m_lock->tryLock())
             return; // Let the SignalSender try again later.
 
+        Locker locker { AdoptLock, *m_lock };
         if (!needHandling(VMTraps::AsyncEvents)) {
             // Too late. Someone else already handled the trap.
             return;

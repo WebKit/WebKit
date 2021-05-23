@@ -329,7 +329,7 @@ Optional<float> AudioParamTimeline::valueForContextTime(BaseAudioContext& contex
     {
         if (!m_eventsLock.tryLock())
             return WTF::nullopt;
-        Locker locker { AdoptLockTag { }, m_eventsLock };
+        Locker locker { AdoptLock, m_eventsLock };
         if (!m_events.size() || Seconds { context.currentTime() } < m_events[0].time())
             return WTF::nullopt;
     }
@@ -351,7 +351,7 @@ float AudioParamTimeline::valuesForFrameRange(size_t startFrame, size_t endFrame
         std::fill_n(values, numberOfValues, defaultValue);
         return defaultValue;
     }
-    Locker locker { AdoptLockTag { }, m_eventsLock };
+    Locker locker { AdoptLock, m_eventsLock };
 
     float value = valuesForFrameRangeImpl(startFrame, endFrame, defaultValue, values, numberOfValues, sampleRate, controlRate);
 
@@ -988,7 +988,7 @@ bool AudioParamTimeline::hasValues(size_t startFrame, double sampleRate) const
 {
     if (!m_eventsLock.tryLock())
         return true;
-    Locker locker { AdoptLockTag { }, m_eventsLock };
+    Locker locker { AdoptLock, m_eventsLock };
 
     // Return false if there are no events in the time range.
     auto endFrame = startFrame + AudioUtilities::renderQuantumSize;

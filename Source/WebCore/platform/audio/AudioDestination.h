@@ -97,7 +97,7 @@ inline void AudioDestination::clearCallback()
 inline void AudioDestination::callRenderCallback(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess, const AudioIOPosition& outputPosition)
 {
     if (m_callbackLock.tryLock()) {
-        Locker locker { AdoptLockTag { }, m_callbackLock };
+        Locker locker { AdoptLock, m_callbackLock };
         if (m_callback) {
             m_callback->render(sourceBus, destinationBus, framesToProcess, outputPosition);
             return;

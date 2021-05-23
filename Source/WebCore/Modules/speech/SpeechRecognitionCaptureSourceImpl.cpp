@@ -88,7 +88,7 @@ bool SpeechRecognitionCaptureSourceImpl::updateDataSource(const CAAudioStreamDes
     if (!m_dataSourceLock.tryLock())
         return false;
 
-    Locker locker { AdoptLockTag { }, m_dataSourceLock };
+    Locker locker { AdoptLock, m_dataSourceLock };
 
     auto dataSource = AudioSampleDataSource::create(audioDescription.sampleRate() * 1, m_source.get());
     if (dataSource->setInputFormat(audioDescription)) {

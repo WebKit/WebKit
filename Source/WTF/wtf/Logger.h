@@ -325,7 +325,7 @@ private:
         if (!observerLock().tryLock())
             return;
 
-        Locker locker { AdoptLockTag { }, observerLock() };
+        Locker locker { AdoptLock, observerLock() };
         for (Observer& observer : observers())
             observer.didLogMessage(channel, level, { ConsoleLogValue<Argument>::toValue(arguments)... });
     }
@@ -356,7 +356,7 @@ private:
         if (!observerLock().tryLock())
             return;
 
-        Locker locker { AdoptLockTag { }, observerLock() };
+        Locker locker { AdoptLock, observerLock() };
         for (Observer& observer : observers())
             observer.didLogMessage(channel, level, { ConsoleLogValue<Argument>::toValue(arguments)... });
     }

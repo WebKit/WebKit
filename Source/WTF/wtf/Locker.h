@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
@@ -54,11 +55,15 @@ protected:
 
 template<typename T> class DropLockForScope;
 
+using AdoptLockTag = std::adopt_lock_t;
+constexpr AdoptLockTag AdoptLock;
+
 template<typename T>
 class Locker : public AbstractLocker {
 public:
     explicit Locker(T& lockable) : m_lockable(&lockable) { lock(); }
     explicit Locker(T* lockable) : m_lockable(lockable) { lock(); }
+    explicit Locker(AdoptLockTag, T& lockable) : m_lockable(&lockable) { }
 
     // You should be wary of using this constructor. It's only applicable
     // in places where there is a locking protocol for a particular object
@@ -137,14 +142,6 @@ private:
 };
 
 template<typename LockType>
-Locker<LockType> tryHoldLock(LockType&) WARN_UNUSED_RETURN;
-template<typename LockType>
-Locker<LockType> tryHoldLock(LockType& lock)
-{
-    return Locker<LockType>::tryLock(lock);
-}
-
-template<typename LockType>
 class DropLockForScope : private AbstractLocker {
     WTF_FORBID_HEAP_ALLOCATION(DropLockForScope);
 public:
@@ -166,6 +163,7 @@ private:
 }
 
 using WTF::AbstractLocker;
+using WTF::AdoptLock;
 using WTF::Locker;
 using WTF::NoLockingNecessaryTag;
 using WTF::NoLockingNecessary;

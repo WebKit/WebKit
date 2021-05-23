@@ -191,11 +191,19 @@ void AudioWorkletNode::process(size_t framesToProcess)
 {
     ASSERT(!isMainThread());
 
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker || !m_processor || &Thread::current() != m_workletThread) {
-        // We're not ready yet or we are getting destroyed. In this case, we output silence.
+    auto zeroOutput = [&] {
         for (unsigned i = 0; i < numberOfOutputs(); ++i)
             output(i)->bus()->zero();
+    };
+
+    if (!m_processLock.tryLock()) {
+        zeroOutput();
+        return;
+    }
+    Locker locker { AdoptLock, m_processLock };
+    if (!m_processor || &Thread::current() != m_workletThread) {
+        // We're not ready yet or we are getting destroyed. In this case, we output silence.
+        zeroOutput();
         return;
     }
 

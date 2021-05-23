@@ -65,8 +65,12 @@ void WebAudioSourceProviderCocoa::setClient(AudioSourceProviderClient* client)
 
 void WebAudioSourceProviderCocoa::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    auto locker = tryHoldLock(m_lock);
-    if (!locker || !m_dataSource || !m_audioBufferList) {
+    if (!m_lock.tryLock()) {
+        bus->zero();
+        return;
+    }
+    Locker locker { AdoptLock, m_lock };
+    if (!m_dataSource || !m_audioBufferList) {
         bus->zero();
         return;
     }

@@ -92,12 +92,12 @@ void ConvolverNode::process(size_t framesToProcess)
     ASSERT(outputBus);
 
     // Synchronize with possible dynamic changes to the impulse response.
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker) {
-        // Too bad - tryHoldLock() failed. We must be in the middle of setting a new impulse response.
+    if (!m_processLock.tryLock()) {
+        // Too bad - tryLock() failed. We must be in the middle of setting a new impulse response.
         outputBus->zero();
         return;
     }
+    Locker locker { AdoptLock, m_processLock };
 
     if (!isInitialized() || !m_reverb.get())
         outputBus->zero();

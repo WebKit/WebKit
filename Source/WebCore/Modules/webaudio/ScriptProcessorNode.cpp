@@ -158,13 +158,13 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     unsigned bufferIndex = this->bufferIndex();
     ASSERT(bufferIndex < bufferCount);
 
-    auto locker = tryHoldLock(m_bufferLocks[bufferIndex]);
-    if (!locker) {
+    if (!m_bufferLocks[bufferIndex].tryLock()) {
         // We're late in handling the previous request. The main thread must be
         // very busy. The best we can do is clear out the buffer ourself here.
         outputBus->zero();
         return;
     }
+    Locker locker { AdoptLock, m_bufferLocks[bufferIndex] };
     
     AudioBuffer* inputBuffer = m_inputBuffers[bufferIndex].get();
     AudioBuffer* outputBuffer = m_outputBuffers[bufferIndex].get();

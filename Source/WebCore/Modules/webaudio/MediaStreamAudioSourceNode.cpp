@@ -139,15 +139,15 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
         return;
     }
 
-    // Use tryHoldLock() to avoid contention in the real-time audio thread.
+    // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the MediaStream must be in the middle of
     // a format change, so we output silence in this case.
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker) {
+    if (!m_processLock.tryLock()) {
         // We failed to acquire the lock.
         outputBus->zero();
         return;
     }
+    Locker locker { AdoptLock, m_processLock };
     if (m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
         outputBus->zero();
         return;

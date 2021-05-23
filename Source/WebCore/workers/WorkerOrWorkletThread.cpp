@@ -207,8 +207,7 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
     // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
     // WorkerThread::workerThread() while we're accessing it. Note also that stop() can
     // be called before m_workerGlobalScope is fully created.
-    auto locker = tryHoldLock(m_threadCreationAndGlobalScopeLock);
-    if (!locker) {
+    if (!m_threadCreationAndGlobalScopeLock.tryLock()) {
         // The thread is still starting, spin the runloop and try again to avoid deadlocks if the worker thread
         // needs to interact with the main thread during startup.
         callOnMainThread([this, stoppedCallback = WTFMove(stoppedCallback)]() mutable {
@@ -216,6 +215,7 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
         });
         return;
     }
+    Locker locker { AdoptLock, m_threadCreationAndGlobalScopeLock };
 
     // If the thread is suspended, resume it now so that we can dispatch the cleanup tasks below.
     if (m_isSuspended)

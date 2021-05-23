@@ -202,9 +202,9 @@ void ReverbConvolver::process(const AudioChannel* sourceChannel, AudioChannel* d
     // signal from time to time, since we'll get to it the next time we're called.  We're called repeatedly
     // and frequently (around every 3ms).  The background thread is processing well into the future and has a considerable amount of 
     // leeway here...
-    auto locker = tryHoldLock(m_backgroundThreadLock);
-    if (!locker)
+    if (!m_backgroundThreadLock.tryLock())
         return;
+    Locker locker { AdoptLock, m_backgroundThreadLock };
 
     m_moreInputBuffered = true;
     m_backgroundThreadConditionVariable.notifyOne();

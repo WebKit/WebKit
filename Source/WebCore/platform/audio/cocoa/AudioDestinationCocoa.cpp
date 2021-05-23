@@ -222,7 +222,7 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
     if (!m_dispatchToRenderThreadLock.tryLock())
         return -1;
 
-    Locker locker { AdoptLockTag { }, m_dispatchToRenderThreadLock };
+    Locker locker { AdoptLock, m_dispatchToRenderThreadLock };
     if (!m_dispatchToRenderThread)
         renderOnRenderingTheadIfPlaying(framesToRender);
     else {

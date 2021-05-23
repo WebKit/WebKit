@@ -144,7 +144,7 @@ void AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary()
     if (!m_pendingRenderSourcesLock.tryLock())
         return;
 
-    Locker locker { AdoptLockTag { }, m_pendingRenderSourcesLock };
+    Locker locker { AdoptLock, m_pendingRenderSourcesLock };
     if (!m_hasPendingRenderSources)
         return;
 

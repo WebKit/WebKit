@@ -327,7 +327,7 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
     if (!decoder->decodedImageCallbackLock.tryLock())
         return;
 
-    Locker locker { AdoptLockTag { }, decoder->decodedImageCallbackLock };
+    Locker locker { AdoptLock, decoder->decodedImageCallbackLock };
 
     if (!decoder->decodedImageCallback)
         return;
@@ -495,7 +495,7 @@ void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::Da
     if (!encoder->encodedImageCallbackLock.tryLock())
         return;
 
-    Locker locker { AdoptLockTag { }, encoder->encodedImageCallbackLock };
+    Locker locker { AdoptLock, encoder->encodedImageCallbackLock };
 
     if (!encoder->encodedImageCallback)
         return;

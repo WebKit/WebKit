@@ -135,8 +135,10 @@ private:
     void purgeTimerFired()
     {
         ASSERT(isMainThread());
-        if (auto locker = tryHoldLock(lock()))
+        if (lock().tryLock()) {
             clearScratchBuffer();
+            lock().unlock();
+        }
     }
 
     void clearScratchBuffer()
@@ -694,7 +696,7 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
 {
     RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto locker = tryHoldLock(ScratchBuffer::lock());
+    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
     if (locker) {
         layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
         if (!layerImageBuffer)
@@ -754,7 +756,7 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
 {
     RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto locker = tryHoldLock(ScratchBuffer::lock());
+    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
     if (locker) {
         layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
         if (!layerImageBuffer)

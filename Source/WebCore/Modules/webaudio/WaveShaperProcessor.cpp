@@ -83,13 +83,13 @@ void WaveShaperProcessor::process(const AudioBus* source, AudioBus* destination,
     if (!channelCountMatches)
         return;
 
-    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker) {
-        // Too bad - tryHoldLock() failed. We must be in the middle of a setCurve() call.
+    // The audio thread can't block on this lock, so we use tryLock() instead.
+    if (!m_processLock.tryLock()) {
+        // Too bad - tryLock() failed. We must be in the middle of a setCurve() call.
         destination->zero();
         return;
     }
+    Locker locker { AdoptLock, m_processLock };
 
     // For each channel of our input, process using the corresponding WaveShaperDSPKernel into the output channel.
     for (unsigned i = 0; i < m_kernels.size(); ++i)

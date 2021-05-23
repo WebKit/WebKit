@@ -162,7 +162,7 @@ void AudioSourceProviderGStreamer::provideInput(AudioBus* bus, size_t framesToPr
     if (!m_adapterLock.tryLock())
         return;
 
-    Locker locker { AdoptLockTag { }, m_adapterLock };
+    Locker locker { AdoptLock, m_adapterLock };
     for (auto& it : m_adapters)
         copyGStreamerBuffersToAudioChannel(it.value.get(), bus, it.key - 1, framesToProcess);
 }

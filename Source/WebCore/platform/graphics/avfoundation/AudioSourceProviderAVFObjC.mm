@@ -94,7 +94,7 @@ AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
 
 void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    // Protect access to m_ringBuffer by using tryHoldLock(). If we failed
+    // Protect access to m_ringBuffer by using tryLock(). If we failed
     // to aquire, a re-configure is underway, and m_ringBuffer is unsafe to access.
     // Emit silence.
     if (!m_tapStorage) {
@@ -102,8 +102,13 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
         return;
     }
 
-    auto locker = tryHoldLock(m_tapStorage->lock);
-    if (!locker || !m_ringBuffer) {
+    if (!m_tapStorage->lock.tryLock()) {
+        bus->zero();
+        return;
+    }
+    Locker locker { AdoptLock, m_tapStorage->lock };
+
+    if (!m_ringBuffer) {
         bus->zero();
         return;
     }
