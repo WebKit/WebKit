@@ -370,7 +370,8 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
         [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
 }
 
-void MediaRecorderPrivateWriter::clear()
+// FIXME: This modifies m_data without grabbing m_dataLock.
+void MediaRecorderPrivateWriter::clear() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     m_pendingAudioSampleQueue.clear();
     m_pendingVideoSampleQueue.clear();

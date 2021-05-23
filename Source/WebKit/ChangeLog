@@ -1,3 +1,26 @@
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock in even more places
+        https://bugs.webkit.org/show_bug.cgi?id=226152
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock in even more places to benefit from Clang Thread Safety Analysis.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * NetworkProcess/glib/DNSCache.h:
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::locateIterator const):
+        (WebKit::MediaSampleCursor::locateMediaSample const):
+        (WebKit::MediaSampleCursor::locateTiming const):
+        (WebKit::MediaSampleCursor::stepInOrderedMap):
+        (WebKit::MediaSampleCursor::stepInPresentationTime):
+        (WebKit::MediaSampleCursor::getMediaSample const):
+        (WebKit::MediaSampleCursor::getTiming const):
+        (WebKit::MediaSampleCursor::getPlayableHorizon const):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.h:
+
 2021-05-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Implement page client hook for requesting image extraction results

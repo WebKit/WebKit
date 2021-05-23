@@ -345,7 +345,6 @@ private:
     GRefPtr<GstCaps> m_restrictionCaps;
     webrtc::EncodedImage m_encodedFrame;
 
-    Lock m_bufferMapLock;
     GRefPtr<GstElement> m_sink;
 };
 

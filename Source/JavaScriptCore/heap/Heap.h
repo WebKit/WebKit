@@ -42,6 +42,7 @@
 #include "Synchronousness.h"
 #include "WeakHandleOwner.h"
 #include <wtf/AutomaticThread.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/ConcurrentPtrHashSet.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
@@ -648,7 +649,7 @@ private:
     // one GC to the next. GC marking threads claim these at the start of marking, and return
     // them at the end.
     Vector<std::unique_ptr<SlotVisitor>> m_parallelSlotVisitors;
-    Vector<SlotVisitor*> m_availableParallelSlotVisitors;
+    Vector<SlotVisitor*> m_availableParallelSlotVisitors WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
     
     HandleSet m_handleSet;
     std::unique_ptr<CodeBlockSet> m_codeBlocks;
@@ -656,7 +657,7 @@ private:
     CFinalizerOwner m_cFinalizerOwner;
     LambdaFinalizerOwner m_lambdaFinalizerOwner;
     
-    Lock m_parallelSlotVisitorLock;
+    CheckedLock m_parallelSlotVisitorLock;
     bool m_isSafeToCollect { false };
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };

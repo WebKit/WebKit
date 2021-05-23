@@ -1,3 +1,31 @@
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock in even more places
+        https://bugs.webkit.org/show_bug.cgi?id=226152
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock in even more places to benefit from Clang Thread Safety Analysis.
+
+        * API/JSVirtualMachine.mm:
+        (WTF_REQUIRES_LOCK):
+        * API/glib/JSCVirtualMachine.cpp:
+        * bytecode/StructureStubInfo.h:
+        * bytecode/SuperSampler.cpp:
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::codeBlockForVMTrapPC):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::WTF_GUARDED_BY_LOCK):
+        * disassembler/Disassembler.cpp:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::parallelNotEmptyBlockSource):
+        * heap/Heap.h:
+        * heap/IsoSubspacePerVM.h:
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+
 2021-05-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed. Fix JSC Debug tests for r277926. 

@@ -38,6 +38,7 @@
 #include "Operands.h"
 #include "ProfilerCompilation.h"
 #include "RecordedStatuses.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -137,8 +138,8 @@ private:
     CodeBlock* m_profiledDFGCodeBlock;
 
     Operands<Optional<JSValue>> m_mustHandleValues;
-    bool m_mustHandleValuesMayIncludeGarbage { true };
-    Lock m_mustHandleValueCleaningLock;
+    bool m_mustHandleValuesMayIncludeGarbage WTF_GUARDED_BY_LOCK(m_mustHandleValueCleaningLock) { true };
+    CheckedLock m_mustHandleValueCleaningLock;
 
     bool m_willTryToTierUp { false };
 

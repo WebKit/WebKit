@@ -28,8 +28,8 @@
 
 #include <functional>
 #include <sqlite3.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Expected.h>
-#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -162,7 +162,7 @@ public:
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 
-    void enableAuthorizer(bool enable);
+    void enableAuthorizer(bool enable) WTF_REQUIRES_LOCK(m_authorizerLock);
     void useWALJournalMode();
 
     int pageSize();
@@ -180,8 +180,8 @@ private:
 
     bool m_useWAL { false };
 
-    Lock m_authorizerLock;
-    RefPtr<DatabaseAuthorizer> m_authorizer;
+    CheckedLock m_authorizerLock;
+    RefPtr<DatabaseAuthorizer> m_authorizer WTF_GUARDED_BY_LOCK(m_authorizerLock);
 
     Lock m_lockingMutex;
     RefPtr<Thread> m_openingThread { nullptr };

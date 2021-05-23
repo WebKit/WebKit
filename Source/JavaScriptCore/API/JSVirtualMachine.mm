@@ -38,12 +38,12 @@
 #import "SigillCrashAnalyzer.h"
 #import "SlotVisitorInlines.h"
 #import <mutex>
-#import <wtf/Lock.h>
+#import <wtf/CheckedLock.h>
 #import <wtf/RetainPtr.h>
 
 static NSMapTable *globalWrapperCache = 0;
 
-static Lock wrapperCacheMutex;
+static CheckedLock wrapperCacheMutex;
 
 static void initWrapperCache()
 {
@@ -53,7 +53,7 @@ static void initWrapperCache()
     globalWrapperCache = [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
 }
 
-static NSMapTable *wrapperCache()
+static NSMapTable *wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheMutex)
 {
     if (!globalWrapperCache)
         initWrapperCache();

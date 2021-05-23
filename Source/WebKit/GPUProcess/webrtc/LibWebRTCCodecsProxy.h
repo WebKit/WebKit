@@ -32,6 +32,7 @@
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
 #include <WebCore/ImageTransferSessionVT.h>
+#include <wtf/CheckedLock.h>
 
 namespace IPC {
 class Connection;
@@ -87,9 +88,9 @@ private:
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 
-    mutable Lock m_lock;
-    HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders;
-    HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders;
+    mutable CheckedLock m_lock;
+    HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
+    HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
 
     Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;

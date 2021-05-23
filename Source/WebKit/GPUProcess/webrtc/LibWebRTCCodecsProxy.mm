@@ -115,7 +115,9 @@ void LibWebRTCCodecsProxy::releaseDecoder(RTCDecoderIdentifier identifier)
         webrtc::releaseLocalDecoder(decoder);
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data)
+// For performance reasons, this function accesses m_decoders without locking. This is safe because this function runs on the libWebRTCCodecsQueue
+// and m_decoders only get modified on this queue.
+void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_decoders.contains(identifier));
@@ -127,7 +129,9 @@ void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t
         m_gpuConnectionToWebProcess.connection().send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
 }
 
-void LibWebRTCCodecsProxy::setFrameSize(RTCDecoderIdentifier identifier, uint16_t width, uint16_t height)
+// For performance reasons, this function accesses m_decoders without locking. This is safe because this function runs on the libWebRTCCodecsQueue
+// and m_decoders only get modified on this queue.
+void LibWebRTCCodecsProxy::setFrameSize(RTCDecoderIdentifier identifier, uint16_t width, uint16_t height) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_decoders.contains(identifier));
@@ -164,7 +168,9 @@ void LibWebRTCCodecsProxy::releaseEncoder(RTCEncoderIdentifier identifier)
         webrtc::releaseLocalEncoder(encoder);
 }
 
-void LibWebRTCCodecsProxy::initializeEncoder(RTCEncoderIdentifier identifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
+// For performance reasons, this function accesses m_encoders without locking. This is safe because this function runs on the libWebRTCCodecsQueue
+// and m_encoders only get modified on this queue.
+void LibWebRTCCodecsProxy::initializeEncoder(RTCEncoderIdentifier identifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_encoders.contains(identifier));
@@ -191,7 +197,9 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::MediaSample::
     return webrtc::kVideoRotation_0;
 }
 
-void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore::RemoteVideoSample&& sample, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
+// For performance reasons, this function accesses m_encoders without locking. This is safe because this function runs on the libWebRTCCodecsQueue
+// and m_encoders only get modified on this queue.
+void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore::RemoteVideoSample&& sample, uint32_t timeStamp, bool shouldEncodeAsKeyFrame) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_encoders.contains(identifier));
@@ -208,7 +216,9 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore:
 #endif
 }
 
-void LibWebRTCCodecsProxy::setEncodeRates(RTCEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate)
+// For performance reasons, this function accesses m_encoders without locking. This is safe because this function runs on the libWebRTCCodecsQueue
+// and m_encoders only get modified on this queue.
+void LibWebRTCCodecsProxy::setEncodeRates(RTCEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(!isMainRunLoop());
     auto encoder = m_encoders.get(identifier);

@@ -31,6 +31,7 @@
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/CheckedLock.h>
 
 namespace JSC {
 class JSObject;
@@ -60,8 +61,8 @@ public:
         const Vector<String> inputArguments;
     };
 
-    HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() { ASSERT(m_paintDefinitionLock.isLocked()); return m_paintDefinitionMap; }
-    Lock& paintDefinitionLock() { return m_paintDefinitionLock; }
+    HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
+    CheckedLock& paintDefinitionLock() WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }
 
     void prepareForDestruction() final
     {
@@ -91,10 +92,16 @@ private:
 
     bool isPaintWorkletGlobalScope() const final { return true; }
 
-    HashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap;
-    Lock m_paintDefinitionLock;
+    HashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap WTF_GUARDED_BY_LOCK(m_paintDefinitionLock);
+    CheckedLock m_paintDefinitionLock;
     bool m_hasPreparedForDestruction { false };
 };
+
+inline auto PaintWorkletGlobalScope::paintDefinitionMap() -> HashMap<String, std::unique_ptr<PaintDefinition>>&
+{
+    ASSERT(m_paintDefinitionLock.isLocked());
+    return m_paintDefinitionMap;
+}
 
 } // namespace WebCore
 

@@ -38,6 +38,7 @@
 #include "StructureStubClearingWatchpoint.h"
 #include "StubInfoSummary.h"
 #include <wtf/Box.h>
+#include <wtf/CheckedLock.h>
 
 namespace JSC {
 
@@ -339,7 +340,7 @@ private:
     // Note that it's always safe to clear this. If we clear it prematurely, then if we see the same
     // structure again during this buffering countdown, we will create an AccessCase object for it.
     // That's not so bad - we'll get rid of the redundant ones once we regenerate.
-    HashSet<BufferedStructure, BufferedStructure::Hash, BufferedStructure::KeyTraits> m_bufferedStructures;
+    HashSet<BufferedStructure, BufferedStructure::Hash, BufferedStructure::KeyTraits> m_bufferedStructures WTF_GUARDED_BY_LOCK(m_bufferedStructuresLock);
 public:
     CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
@@ -391,7 +392,7 @@ public:
     bool propertyIsInt32 : 1;
     bool propertyIsSymbol : 1;
 private:
-    Lock m_bufferedStructuresLock;
+    CheckedLock m_bufferedStructuresLock;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

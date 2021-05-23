@@ -42,8 +42,8 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -276,11 +276,11 @@ private:
     String m_name;
     WeakHashSet<Observer> m_observers;
 
-    mutable Lock m_audioSampleObserversLock;
-    HashSet<AudioSampleObserver*> m_audioSampleObservers;
+    mutable CheckedLock m_audioSampleObserversLock;
+    HashSet<AudioSampleObserver*> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);
 
-    mutable Lock m_videoSampleObserversLock;
-    HashSet<VideoSampleObserver*> m_videoSampleObservers;
+    mutable CheckedLock m_videoSampleObserversLock;
+    HashSet<VideoSampleObserver*> m_videoSampleObservers WTF_GUARDED_BY_LOCK(m_videoSampleObserversLock);
 
     // Set on the main thread from constraints.
     IntSize m_size;

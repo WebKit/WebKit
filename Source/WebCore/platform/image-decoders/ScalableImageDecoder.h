@@ -33,7 +33,7 @@
 #include "ScalableImageDecoderFrame.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -72,7 +72,7 @@ public:
 
     void setData(SharedBuffer& data, bool allDataReceived) override
     {
-        Locker locker { m_mutex };
+        Locker locker { m_lock };
         if (m_encodedDataStatus == EncodedDataStatus::Error)
             return;
 
@@ -196,8 +196,8 @@ public:
 
 protected:
     RefPtr<SharedBuffer::DataSegment> m_data;
-    Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache;
-    mutable Lock m_mutex;
+    Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache WTF_GUARDED_BY_LOCK(m_lock);
+    mutable CheckedLock m_lock;
     bool m_premultiplyAlpha;
     bool m_ignoreGammaAndColorProfile;
     ImageOrientation m_orientation;

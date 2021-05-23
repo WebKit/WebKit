@@ -1,5 +1,36 @@
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
+        Use CheckedLock in even more places
+        https://bugs.webkit.org/show_bug.cgi?id=226152
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock in even more places to benefit from Clang Thread Safety Analysis.
+
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::frameIsCompleteAtIndex const):
+        (WebCore::ScalableImageDecoder::frameHasAlphaAtIndex const):
+        (WebCore::ScalableImageDecoder::frameBytesAtIndex const):
+        (WebCore::ScalableImageDecoder::frameDurationAtIndex const):
+        (WebCore::ScalableImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/ScalableImageDecoder.h:
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.h:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/sql/SQLiteDatabase.h:
+        * worklets/PaintWorkletGlobalScope.h:
+
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
         Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis
         https://bugs.webkit.org/show_bug.cgi?id=226145
 

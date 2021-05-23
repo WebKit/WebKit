@@ -145,6 +145,7 @@ Optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(Ordere
     using Iterator = typename OrderedMap::iterator;
     return WTF::switchOn(m_locator,
         [&](const MediaTime& presentationTime) -> Optional<Iterator> {
+            assertIsHeld(m_locatorLock);
             auto iterator = upperBound(samples, presentationTime);
             if (iterator == samples.begin())
                 m_locator = WTFMove(iterator);
@@ -155,6 +156,7 @@ Optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(Ordere
             return locateIterator(samples, hasAllSamples);
         },
         [&](const auto& otherIterator) {
+            assertIsHeld(m_locatorLock);
             m_locator = otherIterator->second->presentationTime();
             return locateIterator(samples, hasAllSamples);
         },
@@ -169,6 +171,7 @@ MediaSample* MediaSampleCursor::locateMediaSample(SampleMap& samples, bool hasAl
     ASSERT(m_locatorLock.isLocked());
     return WTF::switchOn(m_locator,
         [&](const MediaTime&) -> MediaSample* {
+            assertIsHeld(m_locatorLock);
             auto iterator = locateIterator(samples.presentationOrder(), hasAllSamples);
             if (!iterator)
                 return nullptr;
@@ -185,6 +188,7 @@ MediaSampleCursor::Timing MediaSampleCursor::locateTiming(SampleMap& samples, bo
     ASSERT(m_locatorLock.isLocked());
     return WTF::switchOn(m_locator,
         [&](const MediaTime& presentationTime) {
+            assertIsHeld(m_locatorLock);
             if (locateMediaSample(samples, hasAllSamples))
                 return locateTiming(samples, hasAllSamples);
             auto& clampedPresentationTime = std::min(presentationTime, m_trackReader->duration());
@@ -208,6 +212,7 @@ template<typename OrderedMap>
 OSStatus MediaSampleCursor::stepInOrderedMap(int64_t stepsToTake, int64_t& stepsTaken)
 {
     return getSampleMap([&](SampleMap& samples, bool hasAllSamples) -> OSStatus {
+        assertIsHeld(m_locatorLock);
         auto& orderedMap = orderedSamples<OrderedMap>(samples);
         if (auto iterator = locateIterator(orderedMap, hasAllSamples)) {
             auto stepsRemaining = stepIterator(stepsToTake, *iterator, orderedMap);
@@ -222,6 +227,7 @@ OSStatus MediaSampleCursor::stepInOrderedMap(int64_t stepsToTake, int64_t& steps
 OSStatus MediaSampleCursor::stepInPresentationTime(const MediaTime& delta, Boolean& wasPinned)
 {
     return getSampleMap([&](SampleMap& samples, bool hasAllSamples) -> OSStatus {
+        assertIsHeld(m_locatorLock);
         auto timing = locateTiming(samples, hasAllSamples);
         wasPinned = stepTime(delta, timing.presentationTime, samples.presentationOrder(), hasAllSamples, m_trackReader->duration());
         m_locator = timing.presentationTime;
@@ -247,6 +253,7 @@ template<typename Function>
 OSStatus MediaSampleCursor::getMediaSample(Function&& function) const
 {
     return getSampleMap([&](SampleMap& samples, bool hasAllSamples) -> OSStatus {
+        assertIsHeld(m_locatorLock);
         auto sample = locateMediaSample(samples, hasAllSamples);
         if (!sample)
             return kMTPluginSampleCursorError_LocationNotAvailable;
@@ -260,6 +267,7 @@ template<typename Function>
 OSStatus MediaSampleCursor::getTiming(Function&& function) const
 {
     return getSampleMap([&](SampleMap& samples, bool hasAllSamples) {
+        assertIsHeld(m_locatorLock);
         auto timing = locateTiming(samples, hasAllSamples);
         DEBUG_LOG(LOGIDENTIFIER, "decodeTime: ", timing.decodeTime, ", presentationTime: ", timing.presentationTime, ", duration: ", timing.duration);
         function(timing);
@@ -382,6 +390,7 @@ OSStatus MediaSampleCursor::copySampleLocation(MTPluginSampleCursorStorageRange*
 OSStatus MediaSampleCursor::getPlayableHorizon(CMTime* playableHorizon) const
 {
     return getSampleMap([&](SampleMap& samples, bool hasAllSamples) {
+        assertIsHeld(m_locatorLock);
         MediaSample& lastSample = *samples.decodeOrder().rbegin()->second;
         auto timing = locateTiming(samples, hasAllSamples);
         *playableHorizon = PAL::toCMTime(lastSample.presentationTime() + lastSample.duration() - timing.presentationTime);

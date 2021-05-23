@@ -30,9 +30,9 @@
 #include "RemoteControllableTarget.h"
 #include "RemoteInspectorMessageParser.h"
 #include "RemoteInspectorSocketEndpoint.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Lock.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -65,8 +65,8 @@ protected:
 
     static Optional<Event> extractEvent(ConnectionID, Vector<uint8_t>&&);
 
-    HashMap<ConnectionID, MessageParser> m_parsers;
-    Lock m_parsersLock;
+    HashMap<ConnectionID, MessageParser> m_parsers WTF_GUARDED_BY_LOCK(m_parsersLock);
+    CheckedLock m_parsersLock;
 };
 
 } // namespace Inspector

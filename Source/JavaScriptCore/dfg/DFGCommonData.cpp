@@ -34,6 +34,7 @@
 #include "InlineCallFrame.h"
 #include "JSCJSValueInlines.h"
 #include "TrackedReferences.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace DFG {
@@ -44,8 +45,8 @@ void CommonData::shrinkToFit()
     m_jumpReplacements.shrinkToFit();
 }
 
-static Lock pcCodeBlockMapLock;
-inline HashMap<void*, CodeBlock*>& pcCodeBlockMap(AbstractLocker&)
+static CheckedLock pcCodeBlockMapLock;
+inline HashMap<void*, CodeBlock*>& pcCodeBlockMap() WTF_REQUIRES_LOCK(pcCodeBlockMapLock)
 {
     static LazyNeverDestroyed<HashMap<void*, CodeBlock*>> pcCodeBlockMap;
     static std::once_flag onceKey;
@@ -62,7 +63,7 @@ bool CommonData::invalidate()
 
     if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
         Locker locker { pcCodeBlockMapLock };
-        auto& map = pcCodeBlockMap(locker);
+        auto& map = pcCodeBlockMap();
         for (auto& jumpReplacement : m_jumpReplacements)
             map.remove(jumpReplacement.dataLocation());
         hasVMTrapsBreakpointsInstalled = false;
@@ -78,7 +79,7 @@ CommonData::~CommonData()
 {
     if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
         Locker locker { pcCodeBlockMapLock };
-        auto& map = pcCodeBlockMap(locker);
+        auto& map = pcCodeBlockMap();
         for (auto& jumpReplacement : m_jumpReplacements)
             map.remove(jumpReplacement.dataLocation());
     }
@@ -91,7 +92,7 @@ void CommonData::installVMTrapBreakpoints(CodeBlock* owner)
         return;
     hasVMTrapsBreakpointsInstalled = true;
 
-    auto& map = pcCodeBlockMap(locker);
+    auto& map = pcCodeBlockMap();
 #if !defined(NDEBUG)
     // We need to be able to handle more than one invalidation point at the same pc
     // but we want to make sure we don't forget to remove a pc from the map.
@@ -113,7 +114,7 @@ CodeBlock* codeBlockForVMTrapPC(void* pc)
 {
     ASSERT(isJITPC(pc));
     Locker locker { pcCodeBlockMapLock };
-    auto& map = pcCodeBlockMap(locker);
+    auto& map = pcCodeBlockMap();
     auto result = map.find(pc);
     if (result == map.end())
         return nullptr;
