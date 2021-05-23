@@ -615,6 +615,14 @@ ALWAYS_INLINE bool JSObject::getPrivateFieldSlot(JSObject* object, JSGlobalObjec
     return true;
 }
 
+inline bool JSObject::hasPrivateField(JSGlobalObject* globalObject, PropertyName propertyName)
+{
+    ASSERT(propertyName.isPrivateName());
+    VM& vm = getVM(globalObject);
+    unsigned attributes;
+    return structure(vm)->get(vm, propertyName, attributes) != invalidOffset;
+}
+
 inline bool JSObject::getPrivateField(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = getVM(globalObject);
@@ -676,25 +684,28 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
     }
 }
 
-inline bool JSObject::checkPrivateBrand(JSGlobalObject* globalObject, JSValue brand)
+inline bool JSObject::hasPrivateBrand(JSGlobalObject* globalObject, JSValue brand)
 {
-    ASSERT(brand.isSymbol());
+    ASSERT(brand.isSymbol() && asSymbol(brand)->uid().isPrivate());
+    VM& vm = getVM(globalObject);
+    Structure* structure = this->structure(vm);
+    return structure->isBrandedStructure() && jsCast<BrandedStructure*>(structure)->checkBrand(asSymbol(brand));
+}
+
+inline void JSObject::checkPrivateBrand(JSGlobalObject* globalObject, JSValue brand)
+{
+    ASSERT(brand.isSymbol() && asSymbol(brand)->uid().isPrivate());
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Structure* structure = this->structure(vm);
-    if (!structure->isBrandedStructure() || !jsCast<BrandedStructure*>(structure)->checkBrand(asSymbol(brand))) {
+    if (!structure->isBrandedStructure() || !jsCast<BrandedStructure*>(structure)->checkBrand(asSymbol(brand)))
         throwException(globalObject, scope, createPrivateMethodAccessError(globalObject));
-        RELEASE_AND_RETURN(scope, false);
-    }
-    EXCEPTION_ASSERT(!scope.exception());
-
-    return true;
 }
 
 inline void JSObject::setPrivateBrand(JSGlobalObject* globalObject, JSValue brand)
 {
-    ASSERT(brand.isSymbol());
+    ASSERT(brand.isSymbol() && asSymbol(brand)->uid().isPrivate());
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 

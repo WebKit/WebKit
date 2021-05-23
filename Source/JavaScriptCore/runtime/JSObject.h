@@ -179,10 +179,12 @@ public:
     JS_EXPORT_PRIVATE bool getOwnPropertyDescriptor(JSGlobalObject*, PropertyName, PropertyDescriptor&);
 
     static bool getPrivateFieldSlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    inline bool hasPrivateField(JSGlobalObject*, PropertyName);
     inline bool getPrivateField(JSGlobalObject*, PropertyName, PropertySlot&);
     inline void setPrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     inline void definePrivateField(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    inline bool checkPrivateBrand(JSGlobalObject*, JSValue brand);
+    inline bool hasPrivateBrand(JSGlobalObject*, JSValue brand);
+    inline void checkPrivateBrand(JSGlobalObject*, JSValue brand);
     inline void setPrivateBrand(JSGlobalObject*, JSValue brand);
 
     unsigned getArrayLength() const

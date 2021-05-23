@@ -1282,6 +1282,48 @@ void SpeculativeJIT::compileInByVal(Node* node)
     blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::compileHasPrivateName(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand key(this, node->child2());
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg keyGPR = key.gpr();
+
+    speculateSymbol(node->child2(), keyGPR);
+
+    base.use();
+    key.use();
+
+    flushRegisters();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(operationHasPrivateName, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, CCallHelpers::CellValue(keyGPR));
+    m_jit.exceptionCheck();
+    blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
+}
+
+void SpeculativeJIT::compileHasPrivateBrand(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand brand(this, node->child2());
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg brandGPR = brand.gpr();
+
+    speculateSymbol(node->child2(), brandGPR);
+
+    base.use();
+    brand.use();
+
+    flushRegisters();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(operationHasPrivateBrand, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, CCallHelpers::CellValue(brandGPR));
+    m_jit.exceptionCheck();
+    blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
+}
+
 void SpeculativeJIT::compilePushWithScope(Node* node)
 {
     SpeculateCellOperand currentScope(this, node->child1());

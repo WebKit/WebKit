@@ -4233,7 +4233,18 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
         JSTextPosition exprStart = tokenStartPosition();
         int initialAssignments = m_parserState.assignmentCount;
         JSTokenType leadingTokenTypeForUnaryExpression = m_token.m_type;
-        TreeExpression current = parseUnaryExpression(context);
+
+        TreeExpression current = 0;
+        if (Options::usePrivateIn() && match(PRIVATENAME)) {
+            const Identifier* ident = m_token.m_data.ident;
+            ASSERT(ident);
+            semanticFailIfFalse(usePrivateName(ident), "Cannot reference private names outside of class");
+            currentScope()->useVariable(ident, false);
+            next();
+            semanticFailIfTrue(m_token.m_type != INTOKEN, "Bare private name can only be used as the left-hand side of an `in` expression");
+            current = context.createPrivateIdentifierNode(location, *ident);
+        } else
+            current = parseUnaryExpression(context);
         failIfFalse(current, "Cannot parse expression");
 
         context.appendBinaryExpressionInfo(operandStackDepth, current, exprStart, lastTokenEndPosition(), lastTokenEndPosition(), initialAssignments != m_parserState.assignmentCount);

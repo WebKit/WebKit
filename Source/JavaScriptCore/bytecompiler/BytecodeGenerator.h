@@ -840,12 +840,14 @@ namespace JSC {
         RegisterID* emitDefinePrivateField(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPrivateFieldPut(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitGetPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property);
+        RegisterID* emitHasPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property);
 
         void emitCreatePrivateBrand(RegisterID* dst, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         void emitInstallPrivateBrand(RegisterID* target);
         void emitInstallPrivateClassBrand(RegisterID* target);
 
         RegisterID* emitGetPrivateBrand(RegisterID* dst, RegisterID* scope, bool isStatic);
+        RegisterID* emitHasPrivateBrand(RegisterID* dst, RegisterID* base, RegisterID* brand, bool isStatic);
         void emitCheckPrivateBrand(RegisterID* base, RegisterID* brand, bool isStatic);
 
         void emitSuperSamplerBegin();

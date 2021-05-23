@@ -706,6 +706,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToPropertyKey:
     case InByVal:
     case InById:
+    case HasPrivateName:
+    case HasPrivateBrand:
     case HasOwnProperty:
     case ValueNegate:
     case SetFunctionName:

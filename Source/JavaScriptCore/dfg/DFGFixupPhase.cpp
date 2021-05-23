@@ -2106,6 +2106,13 @@ private:
             break;
         }
 
+        case HasPrivateName:
+        case HasPrivateBrand: {
+            fixEdge<CellUse>(node->child1());
+            fixEdge<SymbolUse>(node->child2());
+            break;
+        }
+
         case HasOwnProperty: {
             fixEdge<ObjectUse>(node->child1());
             if (node->child2()->shouldSpeculateString())

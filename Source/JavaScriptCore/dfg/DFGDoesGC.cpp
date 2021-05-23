@@ -307,6 +307,8 @@ bool doesGC(Graph& graph, Node* node)
     case InStructureProperty:
     case InById:
     case InByVal:
+    case HasPrivateName:
+    case HasPrivateBrand:
     case InstanceOf:
     case InstanceOfCustom:
     case VarargsLength:

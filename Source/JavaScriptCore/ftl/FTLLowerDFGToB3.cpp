@@ -962,6 +962,12 @@ private:
         case InByVal:
             compileInByVal();
             break;
+        case HasPrivateName:
+            compileHasPrivateName();
+            break;
+        case HasPrivateBrand:
+            compileHasPrivateBrand();
+            break;
         case CheckPrivateBrand:
             compileCheckPrivateBrand();
             break;
@@ -12212,6 +12218,18 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         setJSValue(vmCall(Int64, operationInByVal, weakPointer(globalObject), lowCell(m_node->child1()), lowJSValue(m_node->child2())));
+    }
+    
+    void compileHasPrivateName()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        setJSValue(vmCall(Int64, operationHasPrivateName, weakPointer(globalObject), lowCell(m_node->child1()), lowSymbol(m_node->child2())));
+    }
+
+    void compileHasPrivateBrand()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        setJSValue(vmCall(Int64, operationHasPrivateBrand, weakPointer(globalObject), lowCell(m_node->child1()), lowSymbol(m_node->child2())));
     }
 
     void compileInById()

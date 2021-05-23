@@ -591,6 +591,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NewStringObject:
     case InByVal:
     case InById:
+    case HasPrivateName:
+    case HasPrivateBrand:
     case HasOwnProperty:
     case PushWithScope:
     case CreateActivation:

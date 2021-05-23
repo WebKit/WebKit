@@ -1,3 +1,13 @@
+2021-05-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Support Ergonomic Brand Checks proposal (`#x in obj`)
+        https://bugs.webkit.org/show_bug.cgi?id=221093
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        * stress/private-in.js: Added.
+        * test262/config.yaml: Add feature flag.
+
 2021-05-21  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Unskip type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value on MIPS

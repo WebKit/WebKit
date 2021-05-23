@@ -2011,6 +2011,8 @@ if not JSVALUE64
 end
 
 slowPathOp(in_by_val)
+slowPathOp(has_private_name)
+slowPathOp(has_private_brand)
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
 slowPathOp(less)

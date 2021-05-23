@@ -281,6 +281,8 @@ void JIT::privateCompileMainPass()
 
         switch (opcodeID) {
         DEFINE_SLOW_OP(in_by_val)
+        DEFINE_SLOW_OP(has_private_name)
+        DEFINE_SLOW_OP(has_private_brand)
         DEFINE_SLOW_OP(less)
         DEFINE_SLOW_OP(lesseq)
         DEFINE_SLOW_OP(greater)

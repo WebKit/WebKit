@@ -243,6 +243,8 @@ inline CapabilityLevel canCompile(Node* node)
     case Unreachable:
     case InByVal:
     case InById:
+    case HasPrivateName:
+    case HasPrivateBrand:
     case HasOwnProperty:
     case IsCellWithType:
     case MapHash:

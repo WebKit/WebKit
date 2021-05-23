@@ -1204,19 +1204,15 @@ private:
             setPrediction(SpecObjectOther);
             break;
 
-        case InByVal:
-        case InById:
-            setPrediction(SpecBoolean);
-            break;
-
-        case HasOwnProperty:
-            setPrediction(SpecBoolean);
-            break;
-
         case GetEnumerableLength: {
             setPrediction(SpecInt32Only);
             break;
         }
+        case InByVal:
+        case InById:
+        case HasPrivateName:
+        case HasPrivateBrand:
+        case HasOwnProperty:
         case HasOwnStructureProperty:
         case InStructureProperty:
         case HasIndexedProperty:

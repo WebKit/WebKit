@@ -4952,6 +4952,14 @@ void SpeculativeJIT::compile(Node* node)
         compileInByVal(node);
         break;
 
+    case HasPrivateName:
+        compileHasPrivateName(node);
+        break;
+
+    case HasPrivateBrand:
+        compileHasPrivateBrand(node);
+        break;
+
     case HasOwnProperty: {
         SpeculateCellOperand object(this, node->child1());
         GPRTemporary uniquedStringImpl(this);

@@ -454,6 +454,20 @@ op :in_by_id,
         property: unsigned,
     }
 
+op :has_private_name,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+    }
+
+op :has_private_brand,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        brand: VirtualRegister,
+    }
+
 op :get_by_id,
     args: {
         dst: VirtualRegister,
@@ -608,7 +622,6 @@ op :check_private_brand,
         structureID: StructureID,
         brand: WriteBarrier[JSCell],
     }
-    
 
 op :put_by_val,
     args: {

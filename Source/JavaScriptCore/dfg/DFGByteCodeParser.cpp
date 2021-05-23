@@ -8257,6 +8257,22 @@ void ByteCodeParser::parseBlock(unsigned limit)
             set(bytecode.m_dst, addToGraph(InById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), base));
             NEXT_OPCODE(op_in_by_id);
         }
+        
+        case op_has_private_name: {
+            // FIXME: Improve this once InByVal has been optimized.
+            // https://bugs.webkit.org/show_bug.cgi?id=226146
+            auto bytecode = currentInstruction->as<OpHasPrivateName>();
+            set(bytecode.m_dst, addToGraph(HasPrivateName, get(bytecode.m_base), get(bytecode.m_property)));
+            NEXT_OPCODE(op_has_private_name);
+        }
+
+        case op_has_private_brand: {
+            // FIXME: Improve this once InByVal has been optimized.
+            // https://bugs.webkit.org/show_bug.cgi?id=226146
+            auto bytecode = currentInstruction->as<OpHasPrivateBrand>();
+            set(bytecode.m_dst, addToGraph(HasPrivateBrand, get(bytecode.m_base), get(bytecode.m_brand)));
+            NEXT_OPCODE(op_has_private_brand);
+        }
 
         case op_get_enumerable_length: {
             auto bytecode = currentInstruction->as<OpGetEnumerableLength>();

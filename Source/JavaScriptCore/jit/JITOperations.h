@@ -178,6 +178,8 @@ JSC_DECLARE_JIT_OPERATION(operationInById, EncodedJSValue, (JSGlobalObject*, Str
 JSC_DECLARE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 
 JSC_DECLARE_JIT_OPERATION(operationInByVal, EncodedJSValue, (JSGlobalObject*, JSCell*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationHasPrivateName, EncodedJSValue, (JSGlobalObject*, JSCell*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationHasPrivateBrand, EncodedJSValue, (JSGlobalObject*, JSCell*, EncodedJSValue));
 
 JSC_DECLARE_JIT_OPERATION(operationPutByIdStrict, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationPutByIdNonStrict, void, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));

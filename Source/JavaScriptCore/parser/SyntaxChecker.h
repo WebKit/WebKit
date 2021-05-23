@@ -85,7 +85,7 @@ public:
         TemplateStringResult, TemplateStringListResult,
         TemplateExpressionListResult, TemplateExpr,
         TaggedTemplateExpr, YieldExpr, AwaitExpr,
-        ModuleNameResult,
+        ModuleNameResult, PrivateIdentifier,
         ImportSpecifierResult, ImportSpecifierListResult,
         ExportSpecifierResult, ExportSpecifierListResult,
 
@@ -168,6 +168,7 @@ public:
     ALWAYS_INLINE bool isNewTarget(ExpressionType type) { return type == NewTargetExpr; }
     ALWAYS_INLINE bool isImportMeta(ExpressionType type) { return type == ImportMetaExpr; }
     ExpressionType createResolve(const JSTokenLocation&, const Identifier&, int, int) { return ResolveExpr; }
+    ExpressionType createPrivateIdentifierNode(const JSTokenLocation&, const Identifier&) { return PrivateIdentifier; }
     ExpressionType createObjectLiteral(const JSTokenLocation&) { return ObjectLiteralExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&, int) { return ObjectLiteralExpr; }
     ExpressionType createArray(const JSTokenLocation&, int) { return ArrayLiteralExpr; }

@@ -1,3 +1,96 @@
+2021-05-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Support Ergonomic Brand Checks proposal (`#x in obj`)
+        https://bugs.webkit.org/show_bug.cgi?id=221093
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        This patch implements the following Stage 3 proposal (behind a runtime option):
+        https://github.com/tc39/proposal-private-fields-in-in
+
+        Specifically, it extends the `in` keyword to allow the LHS to be a private name,
+        thereby allowing users to implement Array.isArray-esque brand checks for their own classes
+        *without* having to wrap a private member get in a try-catch.
+
+        For example:
+        ```
+        class C {
+            #x;
+            static isC(obj) { return #x in obj; }
+        }
+        ```
+
+        This is done by adding two new bytecode ops, HasPrivateName and HasPrivateBrand. For the moment,
+        these are implemented without fast paths, as we should do so for InByVal first and then have these follow suit.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitHasPrivateName):
+        (JSC::BytecodeGenerator::emitHasPrivateBrand):
+        (JSC::BytecodeGenerator::emitCheckPrivateBrand):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasPrivateName):
+        (JSC::DFG::SpeculativeJIT::compileHasPrivateBrand):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasPrivateBrand):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createPrivateIdentifierNode):
+        * parser/NodeConstructors.h:
+        (JSC::PrivateIdentifierNode::PrivateIdentifierNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isPrivateIdentifier const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createPrivateIdentifierNode):
+        * parser/VariableEnvironment.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::hasPrivateField):
+        (JSC::JSObject::hasPrivateBrand):
+        (JSC::JSObject::checkPrivateBrand):
+        * runtime/OptionsList.h:
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Replace LockHolder with Locker in local variables

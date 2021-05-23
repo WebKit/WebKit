@@ -2724,6 +2724,12 @@ RegisterID* BytecodeGenerator::emitGetPrivateName(RegisterID* dst, RegisterID* b
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitHasPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property)
+{
+    OpHasPrivateName::emit(this, dst, base, property);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
     OpPutByValDirect::emit(this, base, property, value, ecmaMode());
@@ -2796,12 +2802,25 @@ RegisterID* BytecodeGenerator::emitPrivateFieldPut(RegisterID* base, RegisterID*
     return value;
 }
 
+RegisterID* BytecodeGenerator::emitHasPrivateBrand(RegisterID* dst, RegisterID* base, RegisterID* brand, bool isStatic)
+{
+    if (isStatic) {
+        Ref<Label> isObjectLabel = newLabel();
+        emitJumpIfTrue(emitIsObject(newTemporary(), base), isObjectLabel.get());
+        emitThrowTypeError("Cannot access static private method or accessor of a non-Object");
+        emitLabel(isObjectLabel.get());
+        emitEqualityOp<OpStricteq>(dst, base, brand);
+    } else
+        OpHasPrivateBrand::emit(this, dst, base, brand);
+    return dst;
+}
+
 void BytecodeGenerator::emitCheckPrivateBrand(RegisterID* base, RegisterID* brand, bool isStatic)
 {
     if (isStatic) {
         Ref<Label> brandCheckOkLabel = newLabel();
         emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), base, brand), brandCheckOkLabel.get());
-        emitThrowTypeError("Cannot access static private method or acessor");
+        emitThrowTypeError("Cannot access static private method or accessor");
         emitLabel(brandCheckOkLabel.get());
         return;
     

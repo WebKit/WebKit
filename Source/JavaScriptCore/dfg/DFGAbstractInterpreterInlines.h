@@ -4212,6 +4212,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case HasPrivateName:
+    case HasPrivateBrand: {
+        clobberWorld();
+        filter(node->child1(), SpecObject);
+        filter(node->child2(), SpecSymbol);
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+    }
+
     case HasOwnProperty: {
         clobberWorld();
         setNonCellTypeForNode(node, SpecBoolean);
