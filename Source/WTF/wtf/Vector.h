@@ -1076,6 +1076,7 @@ NEVER_INLINE T* Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>:
             if (UNLIKELY(!success))
                 return nullptr;
         }
+        UNUSED_PARAM(success);
         return ptr;
     }
     size_t index = ptr - begin();
@@ -1084,6 +1085,7 @@ NEVER_INLINE T* Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>:
         if (UNLIKELY(!success))
             return nullptr;
     }
+    UNUSED_PARAM(success);
     return begin() + index;
 }
 
@@ -1097,6 +1099,7 @@ inline U* Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::expan
         if (UNLIKELY(!success))
             return nullptr;
     }
+    UNUSED_PARAM(success);
     return ptr;
 }
 
@@ -1208,6 +1211,7 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reserveCap
             return false;
         }
     }
+    UNUSED_PARAM(success);
     ASSERT(begin());
 
     asanSetInitialBufferSizeTo(size());
@@ -1351,6 +1355,7 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::constructA
         if (UNLIKELY(!success))
             return false;
     }
+    UNUSED_PARAM(success);
     ASSERT(begin());
 
     asanBufferSizeWillChangeTo(m_size + 1);
