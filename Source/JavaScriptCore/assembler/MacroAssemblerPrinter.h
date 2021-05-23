@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 namespace JSC {
 
 #if ENABLE(ASSEMBLER)
-#if ENABLE(MASM_PROBE)
 
 // What is MacroAssembler::print()?
 // ===============================
@@ -241,7 +240,6 @@ inline void MacroAssembler::print(Printer::PrintRecordList* printRecordList)
     probe(tagCFunction<JITProbePtrTag>(Printer::printCallback), printRecordList);
 }
 
-#endif // ENABLE(MASM_PROBE)
 #endif // ENABLE(ASSEMBLER)
 
 } // namespace JSC

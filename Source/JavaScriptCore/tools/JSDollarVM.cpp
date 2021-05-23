@@ -2613,7 +2613,7 @@ JSC_DEFINE_HOST_FUNCTION(functionIsHavingABadTime, (JSGlobalObject* globalObject
 // options are not frozen. For the jsc shell, the --disableOptionsFreezingForTesting
 // argument needs to be passed in on the command line.
 
-#if ENABLE(MASM_PROBE)
+#if ENABLE(ASSEMBLER)
 static void callWithStackSizeProbeFunction(Probe::State* state)
 {
     JSGlobalObject* globalObject = bitwise_cast<JSGlobalObject*>(state->arg);
@@ -2631,7 +2631,7 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
     MarkedArgumentBuffer args;
     call(globalObject, function, callData, jsUndefined(), args);
 }
-#endif // ENABLE(MASM_PROBE)
+#endif // ENABLE(ASSEMBLER)
 
 JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASAN, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -2649,7 +2649,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     if (!isSupportedByPlatform)
         return throwVMError(globalObject, throwScope, "Not supported for this platform");
 
-#if ENABLE(MASM_PROBE)
+#if ENABLE(ASSEMBLER)
     if (g_jscConfig.isPermanentlyFrozen() || !g_jscConfig.disabledFreezingForTesting)
         return throwVMError(globalObject, throwScope, "Options are frozen");
 
@@ -2721,10 +2721,10 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     throwScope.release();
     return encodedJSUndefined();
 
-#else // not ENABLE(MASM_PROBE)
+#else // not ENABLE(ASSEMBLER)
     UNUSED_PARAM(callFrame);
     return throwVMError(globalObject, throwScope, "Not supported for this platform");
-#endif // ENABLE(MASM_PROBE)
+#endif // ENABLE(ASSEMBLER)
 }
 
 // Creates a new global object.

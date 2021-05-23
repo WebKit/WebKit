@@ -34,8 +34,6 @@
 
 namespace JSC {
 
-#if ENABLE(MASM_PROBE)
-
 extern "C" JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampolineId, ctiMasmProbeTrampoline);
 
@@ -573,7 +571,6 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     load32(Address(sp, offsetof(RARestorationRecord, ra)), ra);
     add32(TrustedImm32(sizeof(RARestorationRecord)), sp);
 }
-#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

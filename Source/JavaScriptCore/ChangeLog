@@ -1,3 +1,42 @@
+2021-05-23  Mark Lam  <mark.lam@apple.com>
+
+        Remove ENABLE(MASM_PROBE) flag.
+        https://bugs.webkit.org/show_bug.cgi?id=226154
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssembler.cpp:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerMIPS.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerPrinter.cpp:
+        * assembler/MacroAssemblerPrinter.h:
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/ProbeContext.cpp:
+        * assembler/ProbeContext.h:
+        * assembler/ProbeFrame.h:
+        * assembler/ProbeStack.cpp:
+        * assembler/ProbeStack.h:
+        * assembler/testmasm.cpp:
+        (JSC::isSpecialGPR):
+        (JSC::testClearBits64WithMask):
+        (JSC::testClearBits64WithMaskTernary):
+        (JSC::testShiftAndAdd):
+        (JSC::testProbeModifiesStackValues):
+        (JSC::run):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirPrintSpecial.cpp:
+        * b3/air/AirPrintSpecial.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES):
+
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
         Use CheckedLock in even more places

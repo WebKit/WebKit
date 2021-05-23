@@ -1,3 +1,15 @@
+2021-05-23  Mark Lam  <mark.lam@apple.com>
+
+        Remove ENABLE(MASM_PROBE) flag.
+        https://bugs.webkit.org/show_bug.cgi?id=226154
+
+        Reviewed by Yusuke Suzuki.
+
+        The MacroAssembler::probe() mechanism is now available on all supported platforms.
+        There's no longer a need for the ENABLE(MASM_PROBE) flag.
+
+        * wtf/PlatformEnable.h:
+
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
         Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis

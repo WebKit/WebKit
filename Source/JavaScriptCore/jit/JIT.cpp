@@ -270,14 +270,12 @@ void JIT::privateCompileMainPass()
             updateTopCallFrame();
 
         unsigned bytecodeOffset = m_bytecodeIndex.offset();
-#if ENABLE(MASM_PROBE)
         if (UNLIKELY(Options::traceBaselineJITExecution())) {
             CodeBlock* codeBlock = m_codeBlock;
             probeDebug([=] (Probe::Context& ctx) {
                 dataLogLn("JIT [", bytecodeOffset, "] ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }
-#endif
 
         switch (opcodeID) {
         DEFINE_SLOW_OP(in_by_val)
@@ -533,7 +531,6 @@ void JIT::privateCompileSlowCases()
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeIndex.offset(), label());
 
-#if ENABLE(MASM_PROBE)
         if (UNLIKELY(Options::traceBaselineJITExecution())) {
             OpcodeID opcodeID = currentInstruction->opcodeID();
             unsigned bytecodeOffset = m_bytecodeIndex.offset();
@@ -542,7 +539,6 @@ void JIT::privateCompileSlowCases()
                 dataLogLn("JIT [", bytecodeOffset, "] SLOW ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }
-#endif
 
         switch (currentInstruction->opcodeID()) {
         DEFINE_SLOWCASE_OP(op_add)

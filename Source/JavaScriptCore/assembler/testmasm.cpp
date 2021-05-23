@@ -130,7 +130,6 @@ static Vector<int64_t> int64Operands()
 }
 #endif
 
-#if ENABLE(MASM_PROBE)
 namespace WTF {
 
 static void printInternal(PrintStream& out, void* value)
@@ -139,7 +138,6 @@ static void printInternal(PrintStream& out, void* value)
 }
 
 } // namespace WTF
-#endif // ENABLE(MASM_PROBE)
 
 namespace JSC {
 namespace Probe {
@@ -153,9 +151,7 @@ using namespace JSC;
 
 namespace {
 
-#if ENABLE(MASM_PROBE)
 using CPUState = Probe::CPUState;
-#endif
 
 Lock crashLock;
 
@@ -194,7 +190,6 @@ template<typename T> T nextID(T id) { return static_cast<T>(id + 1); }
         CRASH();                                                        \
     } while (false)
 
-#if ENABLE(MASM_PROBE)
 bool isPC(MacroAssembler::RegisterID id)
 {
 #if CPU(ARM_THUMB2)
@@ -228,7 +223,6 @@ bool isSpecialGPR(MacroAssembler::RegisterID id)
 #endif
     return false;
 }
-#endif // ENABLE(MASM_PROBE)
 
 MacroAssemblerCodeRef<JSEntryPtrTag> compile(Generator&& generate)
 {
@@ -517,7 +511,6 @@ void testClearBits64WithMask()
         CHECK_EQ(invoke<uint64_t>(test, word, value), 0);
     }
 
-#if ENABLE(MASM_PROBE)
     uint64_t savedMask = 0;
     auto test2 = compile([&] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
@@ -546,7 +539,6 @@ void testClearBits64WithMask()
         uint64_t word = 0;
         CHECK_EQ(invoke<uint64_t>(test2, word, value), 0);
     }
-#endif
 }
 
 void testClearBits64WithMaskTernary()
@@ -572,7 +564,6 @@ void testClearBits64WithMaskTernary()
         CHECK_EQ(invoke<uint64_t>(test, word, value), 0);
     }
 
-#if ENABLE(MASM_PROBE)
     uint64_t savedMask = 0;
     auto test2 = compile([&] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
@@ -603,7 +594,6 @@ void testClearBits64WithMaskTernary()
         uint64_t word = 0;
         CHECK_EQ(invoke<uint64_t>(test2, word, value), 0);
     }
-#endif
 }
 
 static void testCountTrailingZeros64Impl(bool wordCanBeZero)
@@ -696,14 +686,12 @@ void testShiftAndAdd()
             jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(index)), indexGPR);
             jit.shiftAndAdd(baseGPR, indexGPR, shift, destGPR);
 
-#if ENABLE(MASM_PROBE)
             jit.probeDebug([=] (Probe::Context& context) {
                 if (baseReg != destReg)
                     CHECK_EQ(context.gpr<intptr_t>(baseGPR), basePointer);
                 if (indexReg != destReg)
                     CHECK_EQ(context.gpr<intptr_t>(indexGPR), index);
             });
-#endif
             jit.move(destGPR, GPRInfo::returnValueGPR);
 
             jit.popPair(scratchGPR, GPRInfo::argumentGPR3);
@@ -1740,7 +1728,6 @@ void testMoveDoubleConditionallyFloatSameArg(MacroAssembler::DoubleCondition con
 
 #endif // CPU(X86_64) || CPU(ARM64)
 
-#if ENABLE(MASM_PROBE)
 void testProbeReadsArgumentRegisters()
 {
     bool probeWasCalled = false;
@@ -2254,7 +2241,6 @@ void testProbeModifiesStackValues()
 
     CHECK_EQ(probeCallCount, 3);
 }
-#endif // ENABLE(MASM_PROBE)
 
 void testOrImmMem()
 {
@@ -2687,7 +2673,6 @@ void run(const char* filter)
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveDoubleConditionallyFloatSameArg);
 #endif
 
-#if ENABLE(MASM_PROBE)
     RUN(testProbeReadsArgumentRegisters());
     RUN(testProbeWritesArgumentRegisters());
     RUN(testProbePreservesGPRS());
@@ -2695,7 +2680,6 @@ void run(const char* filter)
     RUN(testProbeModifiesStackPointerToNBytesBelowSP());
     RUN(testProbeModifiesProgramCounter());
     RUN(testProbeModifiesStackValues());
-#endif // ENABLE(MASM_PROBE)
 
     RUN(testByteSwap());
     RUN(testMoveDoubleConditionally32());

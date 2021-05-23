@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #include "MacroAssemblerPrinter.h"
 
 #if ENABLE(ASSEMBLER)
-#if ENABLE(MASM_PROBE)
 
 #include "MacroAssembler.h"
 #include <inttypes.h>
@@ -186,5 +185,4 @@ void printCallback(Probe::Context& probeContext)
 } // namespace Printer
 } // namespace JSC
 
-#endif // ENABLE(MASM_PROBE)
 #endif // ENABLE(ASSEMBLER)

@@ -665,14 +665,9 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-#if ENABLE(JIT) && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS))
-#define ENABLE_MASM_PROBE 1
-#endif
-
 /* FIXME: This should be turned into an #error invariant */
-/* If the baseline jit is not available, then disable upper tiers as well.
-   The MacroAssembler::probe() is also required for supporting the upper tiers. */
-#if !ENABLE(JIT) || !ENABLE(MASM_PROBE)
+/* If the baseline jit is not available, then disable upper tiers as well. */
+#if !ENABLE(JIT)
 #undef ENABLE_DFG_JIT
 #undef ENABLE_FTL_JIT
 #define ENABLE_DFG_JIT 0
