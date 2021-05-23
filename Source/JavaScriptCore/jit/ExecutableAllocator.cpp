@@ -644,7 +644,7 @@ private:
 
                 MacroAssembler jit;
                 auto jump = jit.jump();
-                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::Thunk, JITCompilationMustSucceed, false);
+                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::JumpIsland, JITCompilationMustSucceed, false);
                 RELEASE_ASSERT(linkBuffer.isValid());
 
                 // We use this to appease the assertion that we're not finalizing on a compiler thread. In this situation, it's

@@ -56,7 +56,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
 
     jit.jumpToExceptionHandler(vm);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleException");
 }
@@ -72,7 +72,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenera
     CCallHelpers::Call operation = jit.call(OperationPtrTag);
     jit.jumpToExceptionHandler(vm);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback");
 }
@@ -89,7 +89,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
 
     CCallHelpers::Jump continuation = jit.jump();
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     auto handler = vm.jitStubs->existingCTIStub(handleExceptionGenerator, NoLockingNecessary);
     RELEASE_ASSERT(handler);
     patchBuffer.link(continuation, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
@@ -131,7 +131,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
     }
 #endif
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(handleException, CodeLocationLabel(vm.jitStubs->existingCTIStub(handlerGenerator, NoLockingNecessary).retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "CheckException");
 }
@@ -333,7 +333,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
     // Here we don't know anything, so revert to the full slow path.
     slowPathFor(jit, vm, operationVirtualCall);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::VirtualThunk);
     return FINALIZE_CODE(
         patchBuffer, JITStubRoutinePtrTag,
         "Virtual %s slow path thunk",
@@ -1372,7 +1372,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     jit.emitFunctionEpilogue();
     jit.ret();
     
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::BoundFunctionThunk);
     linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm)));
     return FINALIZE_CODE(
         linkBuffer, JITThunkPtrTag, "Specialized thunk for bound function calls with no arguments");

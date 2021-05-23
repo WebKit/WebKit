@@ -1,3 +1,111 @@
+2021-05-22  Mark Lam  <mark.lam@apple.com>
+
+        Enhance Link Buffer stats to have more fine grain profiles, and to collect count information.
+        https://bugs.webkit.org/show_bug.cgi?id=226151
+        rdar://problem/78359436
+
+        Reviewed by Yusuke Suzuki.
+
+        And also add a total of the sizes.
+        Also added $vm.clearLinkBufferStats() which resets all the stats to 0.
+
+        Here's an example of that the new stats look like:
+
+            Cummulative LinkBuffer profile sizes:
+                       BaselineJIT: 61092032 (58.261902 MB) count 11621 avg size 5257
+                               DFG: 35387904 (33.748535 MB) count 11143 avg size 3175
+                       InlineCache: 19639155 (18.729358 MB) count 283890 avg size 69
+                      VirtualThunk: 14256800 (13.596344 MB) count 43900 avg size 324
+                        DFGOSRExit: 7636736 (7.282959 MB) count 5235 avg size 1458
+                               FTL: 4927616 (4.699341 MB) count 5269 avg size 935
+                              Wasm: 2134688 (2.035797 MB) count 847 avg size 2520
+                           YarrJIT: 1320928 (1.259735 MB) count 2075 avg size 636
+                        FTLOSRExit: 1084096 (1.033875 MB) count 417 avg size 2599
+                         WasmThunk: 41408 (40.437500 KB) count 252 avg size 164
+                          FTLThunk: 25088 (24.500000 KB) count 426 avg size 58
+                     ExtraCTIThunk: 5984 (5.843750 KB) count 95 avg size 62
+                  SpecializedThunk: 3456 (3.375000 KB) count 19 avg size 181
+                             Thunk: 1760 (1.718750 KB) count 10 avg size 176
+                BoundFunctionThunk: 864 count 3 avg size 288
+                        LLIntThunk: 608 count 18 avg size 33
+                          DFGThunk: 608 count 1 avg size 608
+                       DFGOSREntry: 160 count 1 avg size 160
+                        JumpIsland: 0
+                            CSSJIT: 0
+                     Uncategorized: 0
+                             Total: 147559891 (140.724078 MB)
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::performFinalization):
+        (JSC::LinkBuffer::clearProfileStatistics):
+        (JSC::LinkBuffer::dumpProfileStatistics):
+        * assembler/LinkBuffer.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/ExecutableAllocator.cpp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_get_by_val_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_private_name_prepareCallGenerator):
+        (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+        (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+        (JSC::JIT::slow_op_del_by_id_prepareCallGenerator):
+        (JSC::JIT::slow_op_del_by_val_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_by_id_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_by_id_with_this_prepareCallGenerator):
+        (JSC::JIT::slow_op_put_by_id_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::generateThunk):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::handleExceptionGenerator):
+        (JSC::handleExceptionWithCallFrameRollbackGenerator):
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+        (JSC::checkExceptionGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::boundFunctionCallGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::generateThunkWithJumpToPrologue):
+        (JSC::LLInt::generateThunkWithJumpToLLIntReturnPoint):
+        (JSC::LLInt::getHostCallReturnValueThunk):
+        (JSC::LLInt::createJSGateThunk):
+        (JSC::LLInt::createWasmGateThunk):
+        (JSC::LLInt::createTailCallGate):
+        (JSC::LLInt::loopOSREntryGateThunk):
+        (JSC::LLInt::entryOSREntryGateThunk):
+        (JSC::LLInt::wasmOSREntryGateThunk):
+        (JSC::LLInt::exceptionHandlerGateThunk):
+        (JSC::LLInt::returnFromLLIntGateThunk):
+        (JSC::LLInt::tagGateThunk):
+        (JSC::LLInt::untagGateThunk):
+        (JSC::LLInt::jitCagePtrThunk):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2021-05-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Support Ergonomic Brand Checks proposal (`#x in obj`)

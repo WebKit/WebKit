@@ -506,7 +506,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     reifyInlinedCallFrames(jit, exit);
     adjustAndJumpToTarget(vm, jit, exit);
     
-    LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::FTLOSRExit);
     exit.m_code = FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer, OSRExitPtrTag,

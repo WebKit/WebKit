@@ -203,7 +203,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame))
 
         OSRExit::compileExit(jit, vm, exit, operands, recovery);
 
-        LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::Thunk);
+        LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::DFGOSRExit);
         exit.m_code = FINALIZE_CODE_IF(
             shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseDFGOSRExit(),
             patchBuffer, OSRExitPtrTag,

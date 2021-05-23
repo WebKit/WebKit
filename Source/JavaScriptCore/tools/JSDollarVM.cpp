@@ -1917,6 +1917,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionDumpRegisters);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpCell);
 static JSC_DECLARE_HOST_FUNCTION(functionIndexingMode);
 static JSC_DECLARE_HOST_FUNCTION(functionInlineCapacity);
+static JSC_DECLARE_HOST_FUNCTION(functionClearLinkBufferStats);
 static JSC_DECLARE_HOST_FUNCTION(functionLinkBufferStats);
 static JSC_DECLARE_HOST_FUNCTION(functionValue);
 static JSC_DECLARE_HOST_FUNCTION(functionGetPID);
@@ -2516,6 +2517,17 @@ JSC_DEFINE_HOST_FUNCTION(functionInlineCapacity, (JSGlobalObject* globalObject, 
         return JSValue::encode(jsNumber(object->structure(vm)->inlineCapacity()));
 
     return encodedJSUndefined();
+}
+
+// Clears the LinkBuffer profile statistics.
+// Usage: $vm.clearLinkBufferStats()
+JSC_DEFINE_HOST_FUNCTION(functionClearLinkBufferStats, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+#if ENABLE(ASSEMBLER)
+    LinkBuffer::clearProfileStatistics();
+#endif
+    return JSValue::encode(jsUndefined());
 }
 
 // Dumps the LinkBuffer profile statistics as a string.
@@ -3636,6 +3648,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "indexingMode", functionIndexingMode, 1);
     addFunction(vm, "inlineCapacity", functionInlineCapacity, 1);
+    addFunction(vm, "clearLinkBufferStats", functionClearLinkBufferStats, 0);
     addFunction(vm, "linkBufferStats", functionLinkBufferStats, 0);
     addFunction(vm, "value", functionValue, 1);
     addFunction(vm, "getpid", functionGetPID, 0);

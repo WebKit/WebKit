@@ -89,12 +89,25 @@ public:
     v(BaselineJIT) \
     v(DFG) \
     v(FTL) \
+    v(DFGOSREntry) \
+    v(DFGOSRExit) \
+    v(FTLOSRExit) \
     v(InlineCache) \
+    v(JumpIsland) \
     v(Thunk) \
+    v(LLIntThunk) \
+    v(DFGThunk) \
+    v(FTLThunk) \
+    v(BoundFunctionThunk) \
+    v(SpecializedThunk) \
+    v(VirtualThunk) \
+    v(WasmThunk) \
+    v(ExtraCTIThunk) \
     v(Wasm) \
     v(YarrJIT) \
     v(CSSJIT) \
-    v(Uncategorized)
+    v(Uncategorized) \
+    v(Total) \
 
 #define DECLARE_LINKBUFFER_PROFILE(name) name,
     enum class Profile {
@@ -105,6 +118,7 @@ public:
 #define COUNT_LINKBUFFER_PROFILE(name) + 1
     static constexpr unsigned numberOfProfiles = FOR_EACH_LINKBUFFER_PROFILE(COUNT_LINKBUFFER_PROFILE);
 #undef COUNT_LINKBUFFER_PROFILE
+    static constexpr unsigned numberOfProfilesExcludingTotal = numberOfProfiles - 1;
 
     LinkBuffer(MacroAssembler& macroAssembler, void* ownerUID, Profile profile = Profile::Uncategorized, JITCompilationEffort effort = JITCompilationMustSucceed)
         : m_size(0)
@@ -323,6 +337,7 @@ public:
     bool wasAlreadyDisassembled() const { return m_alreadyDisassembled; }
     void didAlreadyDisassemble() { m_alreadyDisassembled = true; }
 
+    JS_EXPORT_PRIVATE static void clearProfileStatistics();
     JS_EXPORT_PRIVATE static void dumpProfileStatistics(Optional<PrintStream*> = WTF::nullopt);
 
 private:
@@ -406,6 +421,7 @@ private:
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
 
     static size_t s_profileCummulativeLinkedSizes[numberOfProfiles];
+    static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];
 };
 
 #if OS(LINUX)

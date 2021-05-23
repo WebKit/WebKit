@@ -86,7 +86,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
 
     auto handler = vm.jitStubs->existingCTIStub(popThunkStackPreservesAndHandleExceptionGenerator, NoLockingNecessary);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(call, FunctionPtr<OperationPtrTag>(slowPathFunction));
     patchBuffer.link(exceptionCheck, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "SlowPathCall");

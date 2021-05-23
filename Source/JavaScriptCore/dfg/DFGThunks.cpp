@@ -89,7 +89,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 
     jit.farJump(MacroAssembler::AbsoluteAddress(&vm.osrExitJumpDestination), OSRExitPtrTag);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::DFGThunk);
     
     patchBuffer.link(functionCall, FunctionPtr<OperationPtrTag>(operationCompileOSRExit));
 
@@ -134,7 +134,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm)
 
     jit.farJump(GPRInfo::regT1, GPRInfo::callFrameRegister);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::DFGOSREntry);
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "DFG OSR entry thunk");
 }
 
