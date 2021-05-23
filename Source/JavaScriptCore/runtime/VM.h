@@ -851,7 +851,7 @@ public:
 
     NativeExecutable* getBoundFunction(bool isJSFunction, bool canConstruct);
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
+    MacroAssemblerCodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind, Optional<NoLockingNecessaryTag> = WTF::nullopt);
 
     static ptrdiff_t exceptionOffset()
     {

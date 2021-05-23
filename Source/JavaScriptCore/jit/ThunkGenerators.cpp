@@ -263,7 +263,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM& vm)
 // path virtual call so that we can enable fast tail calls for megamorphic
 // virtual calls by using the shuffler.
 // https://bugs.webkit.org/show_bug.cgi?id=148831
-MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo& callLinkInfo)
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mode, CodeSpecializationKind kind)
 {
     // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
     // The return address is on the stack, or in the link register. We will hence
@@ -271,7 +271,9 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
     // make a C++ function call to the appropriate JIT operation.
 
     CCallHelpers jit;
-    
+
+    bool isTailCall = mode == CallMode::Tail;
+
     CCallHelpers::JumpList slowCase;
     
     // This is a slow path execution, and regT2 contains the CallLinkInfo. Count the
@@ -284,7 +286,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
     // the DFG knows that the value is definitely a cell, or definitely a function.
     
 #if USE(JSVALUE64)
-    if (callLinkInfo.isTailCall()) {
+    if (isTailCall) {
         // Tail calls could have clobbered the GPRInfo::notCellMaskRegister because they
         // restore callee saved registers before getthing here. So, let's materialize
         // the NotCellMask in a temp register and use the temp instead.
@@ -303,9 +305,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT4, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT4);
     hasExecutable.link(&jit);
     jit.loadPtr(
-        CCallHelpers::Address(
-            GPRInfo::regT4, ExecutableBase::offsetOfJITCodeWithArityCheckFor(
-                callLinkInfo.specializationKind())),
+        CCallHelpers::Address(GPRInfo::regT4, ExecutableBase::offsetOfJITCodeWithArityCheckFor(kind)),
         GPRInfo::regT4);
     slowCase.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4));
     
@@ -315,7 +315,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
     // Make a tail call. This will return back to JIT code.
     JSInterfaceJIT::Label callCode(jit.label());
     emitPointerValidation(jit, GPRInfo::regT4, JSEntryPtrTag);
-    if (callLinkInfo.isTailCall()) {
+    if (isTailCall) {
         jit.preserveReturnAddressAfterCall(GPRInfo::regT0);
         jit.prepareForTailCallSlow(GPRInfo::regT4);
     }
@@ -324,7 +324,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
     // NullSetterFunctionType does not get the fast path support. But it is OK since using NullSetterFunctionType is extremely rare.
     notJSFunction.link(&jit);
     slowCase.append(jit.branchIfNotType(GPRInfo::regT0, InternalFunctionType));
-    void* executableAddress = vm.getCTIInternalFunctionTrampolineFor(callLinkInfo.specializationKind()).executableAddress();
+    void* executableAddress = vm.getCTIInternalFunctionTrampolineFor(kind, NoLockingNecessary).executableAddress();
     jit.move(CCallHelpers::TrustedImmPtr(executableAddress), GPRInfo::regT4);
     jit.jump().linkTo(callCode, &jit);
 
@@ -335,9 +335,62 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::VirtualThunk);
     return FINALIZE_CODE(
-        patchBuffer, JITStubRoutinePtrTag,
+        patchBuffer, JITThunkPtrTag,
         "Virtual %s slow path thunk",
-        callLinkInfo.callMode() == CallMode::Regular ? "call" : callLinkInfo.callMode() == CallMode::Tail ? "tail call" : "construct");
+        mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Regular, CodeForCall);
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularConstruct(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Regular, CodeForConstruct);
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Tail, CodeForCall);
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailConstruct(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Tail, CodeForConstruct);
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructCall(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Construct, CodeForCall);
+}
+
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructConstruct(VM& vm)
+{
+    return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct);
+}
+
+MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo& callLinkInfo)
+{
+    auto mode = callLinkInfo.callMode();
+    auto kind = callLinkInfo.specializationKind();
+    auto generator = [&] () -> ThunkGenerator {
+        switch (mode) {
+        case CallMode::Regular:
+            if (kind == CodeForCall)
+                return virtualThunkForRegularCall;
+            return virtualThunkForRegularConstruct;
+        case CallMode::Tail:
+            if (kind == CodeForCall)
+                return virtualThunkForTailCall;
+            return virtualThunkForTailConstruct;
+        case CallMode::Construct:
+            if (kind == CodeForCall)
+                return virtualThunkForConstructCall;
+            return virtualThunkForConstructConstruct;
+        }
+    };
+    return vm.getCTIStub(generator()).retagged<JITStubRoutinePtrTag>();
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };

@@ -59,8 +59,8 @@ public:
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
-    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&, Optional<NoLockingNecessaryTag> = WTF::nullopt);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&, Optional<NoLockingNecessaryTag> = WTF::nullopt);
 
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> existingCTIStub(ThunkGenerator);

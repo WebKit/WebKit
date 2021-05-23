@@ -1,5 +1,37 @@
 2021-05-22  Mark Lam  <mark.lam@apple.com>
 
+        Use singleton thunks for virtual calls.
+        https://bugs.webkit.org/show_bug.cgi?id=226149
+        rdar://problem/78357604
+
+        Reviewed by Yusuke Suzuki.
+
+        Change virtualThunkFor() to return 1 of 6 possible singleton thunks.
+        These thunks are cached via vm.jitStubs->ctiStubs().
+
+        This change saves us ~16M of executable JIT memory (for the unique thunks) on a
+        single run of Speedometer2.  On an M1 Mac, switching to singleton thunks here also
+        appears to be a 1.012x speed up on Speedometer2.  Performance is neutral on
+        JetStream2.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        * jit/JITThunks.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::virtualThunkForRegularCall):
+        (JSC::virtualThunkForRegularConstruct):
+        (JSC::virtualThunkForTailCall):
+        (JSC::virtualThunkForTailConstruct):
+        (JSC::virtualThunkForConstructCall):
+        (JSC::virtualThunkForConstructConstruct):
+        * runtime/VM.cpp:
+        (JSC::VM::getCTIInternalFunctionTrampolineFor):
+        * runtime/VM.h:
+
+2021-05-22  Mark Lam  <mark.lam@apple.com>
+
         Enhance Link Buffer stats to have more fine grain profiles, and to collect count information.
         https://bugs.webkit.org/show_bug.cgi?id=226151
         rdar://problem/78359436

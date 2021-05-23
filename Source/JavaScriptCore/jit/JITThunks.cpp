@@ -117,15 +117,19 @@ MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTa
     return ctiStub(vm, nativeTailCallWithoutSavedTagsGenerator).code();
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm)
+MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm, Optional<NoLockingNecessaryTag> noLockingNecessary)
 {
     ASSERT(Options::useJIT());
+    if (noLockingNecessary)
+        return existingCTIStub(internalFunctionCallGenerator, NoLockingNecessary).code();
     return ctiStub(vm, internalFunctionCallGenerator).code();
 }
 
-MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm)
+MacroAssemblerCodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm, Optional<NoLockingNecessaryTag> noLockingNecessary)
 {
     ASSERT(Options::useJIT());
+    if (noLockingNecessary)
+        return existingCTIStub(internalFunctionConstructGenerator, NoLockingNecessary).code();
     return ctiStub(vm, internalFunctionConstructGenerator).code();
 }
 
