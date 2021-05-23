@@ -1,3 +1,11 @@
+2021-05-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed. Fix JSC Debug tests for r277926. 
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeCTIThunks):
+        Address oversight, made visible by the assertion added in r277850.
+
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
         Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis

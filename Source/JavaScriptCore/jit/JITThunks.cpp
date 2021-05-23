@@ -279,6 +279,8 @@ void JITThunks::preinitializeCTIThunks(VM& vm)
 
     // From the BaselineJIT DEFINE_SLOW_OP list:
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(in_by_val);
+    INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(has_private_name);
+    INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(has_private_brand);
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(less);
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(lesseq);
     INIT_BASELINE_SLOW_PATH_CALL_ROUTINE(greater);
