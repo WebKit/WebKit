@@ -444,9 +444,7 @@ void PageClientImpl::pinnedStateDidChange()
     
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSPoint windowCoord = [[m_view window] convertScreenToBase:point];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSPoint windowCoord = [m_view.window convertPointFromScreen:point];
     return IntPoint([m_view convertPoint:windowCoord fromView:nil]);
 }
     
@@ -454,9 +452,7 @@ IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     NSRect tempRect = rect;
     tempRect = [m_view convertRect:tempRect toView:nil];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    tempRect.origin = [[m_view window] convertBaseToScreen:tempRect.origin];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    tempRect.origin = [m_view.window convertPointToScreen:tempRect.origin];
     return enclosingIntRect(tempRect);
 }
 

@@ -1,3 +1,16 @@
+2021-05-24  Dana Estra  <destra@apple.com>
+
+        Remove deprecated API usage in PageClientImplMac
+        https://bugs.webkit.org/show_bug.cgi?id=226184
+
+        Reviewed by Devin Rousso.
+
+        Covered by existing tests.
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::screenToRootView):
+        (WebKit::PageClientImpl::rootViewToScreen):
+
 2021-05-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Settings: Increase contrast isn't detected in browser until an additional setting is applied
