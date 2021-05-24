@@ -1,3 +1,222 @@
+2021-05-24  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Update WebXR WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=224935
+        <rdar://problem/77323099>
+
+        Reviewed by Sergio Villar Senin.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webxr/META.yml:
+        * web-platform-tests/webxr/anchors/META.yml: Added.
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_create_move.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_delay_creation.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_failure.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_pause_resume_stop.https.html:
+        * web-platform-tests/webxr/anchors/ar_anchor_states.https.html:
+        * web-platform-tests/webxr/anchors/w3c-import.log:
+        * web-platform-tests/webxr/ar-module/META.yml: Added.
+        * web-platform-tests/webxr/ar-module/w3c-import.log:
+        * web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https-expected.txt:
+        * web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersive-ar.https.html:
+        * web-platform-tests/webxr/ar-module/xrSession_environmentBlendMode.https.html:
+        * web-platform-tests/webxr/ar-module/xrSession_interactionMode.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_dataUnavailable.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_inactiveFrame.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_incorrectUsage.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_luminance_alpha_dataValid.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/depth_sensing_cpu_staleView.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/cpu/w3c-import.log: Added.
+        * web-platform-tests/webxr/depth-sensing/dataUnavailableTests.js: Added.
+        (return.session.requestReferenceSpace.then):
+        (const.dataUnavailableTestFunctionGenerator):
+        * web-platform-tests/webxr/depth-sensing/depth_sensing_notEnabled.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_dataUnavailable.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_inactiveFrame.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_incorrectUsage.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/depth_sensing_gpu_staleView.https.html: Added.
+        * web-platform-tests/webxr/depth-sensing/gpu/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/ar-module/w3c-import.log.
+        * web-platform-tests/webxr/depth-sensing/inactiveFrameTests.js: Added.
+        (return.session.requestReferenceSpace.then):
+        (const.inactiveFrameTestFunctionGenerator):
+        * web-platform-tests/webxr/depth-sensing/staleViewsTests.js: Added.
+        (return.session.requestReferenceSpace.then):
+        (const.staleViewsTestFunctionGenerator):
+        * web-platform-tests/webxr/depth-sensing/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/w3c-import.log.
+        * web-platform-tests/webxr/dom-overlay/META.yml: Added.
+        * web-platform-tests/webxr/dom-overlay/ar_dom_overlay.https.html:
+        * web-platform-tests/webxr/dom-overlay/idlharness.https.window.js:
+        (async idl_array):
+        * web-platform-tests/webxr/dom-overlay/nested_fullscreen.https.html: Added.
+        * web-platform-tests/webxr/dom-overlay/w3c-import.log:
+        * web-platform-tests/webxr/events_input_source_recreation.https-expected.txt:
+        * web-platform-tests/webxr/events_input_source_recreation.https.html:
+        * web-platform-tests/webxr/events_input_sources_change.https-expected.txt:
+        * web-platform-tests/webxr/events_input_sources_change.https.html:
+        * web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html:
+        * web-platform-tests/webxr/events_referenceSpace_reset_inline.https.html:
+        * web-platform-tests/webxr/events_session_select.https-expected.txt:
+        * web-platform-tests/webxr/events_session_select.https.html:
+        * web-platform-tests/webxr/events_session_select_subframe.https-expected.txt:
+        * web-platform-tests/webxr/events_session_select_subframe.https.html:
+        * web-platform-tests/webxr/events_session_squeeze.https-expected.txt:
+        * web-platform-tests/webxr/events_session_squeeze.https.html:
+        * web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html:
+        * web-platform-tests/webxr/gamepads-module/META.yml: Added.
+        * web-platform-tests/webxr/gamepads-module/w3c-import.log:
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_disconnect.https.html:
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_input_registered.https.html:
+        * web-platform-tests/webxr/getInputPose_handedness.https-expected.txt:
+        * web-platform-tests/webxr/getInputPose_handedness.https.html:
+        * web-platform-tests/webxr/getInputPose_pointer.https.html:
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html:
+        * web-platform-tests/webxr/hand-input/META.yml: Added.
+        * web-platform-tests/webxr/hand-input/idlharness.https.window.html: Added.
+        * web-platform-tests/webxr/hand-input/idlharness.https.window.js: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/idlharness.https.window.js.
+        (async idl_array):
+        * web-platform-tests/webxr/hand-input/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/w3c-import.log.
+        * web-platform-tests/webxr/hit-test/META.yml: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_source_cancel.https.html: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_inputSources.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_refSpaces.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_regular.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_transient.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_transientInputSources.https.html:
+        * web-platform-tests/webxr/hit-test/w3c-import.log:
+        * web-platform-tests/webxr/layers/META.yml: Added.
+        * web-platform-tests/webxr/layers/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/dom-overlay/w3c-import.log.
+        * web-platform-tests/webxr/layers/xrWebGLBinding_constructor.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/w3c-import.log: Added.
+        * web-platform-tests/webxr/light-estimation/xrFrame_getLightEstimate_oldSession.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrFrame_getLightEstimate_staleFrame.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrFrame_getLightEstimate_valid.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrSession_getLightProbe_ended.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrSession_getLightProbe_notEnabled.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrSession_getLightProbe_valid.https.html: Added.
+        * web-platform-tests/webxr/light-estimation/xrWebGLBinding_getReflectionCubeMap.https.html: Added.
+        * web-platform-tests/webxr/navigator_xr_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/navigator_xr_sameObject.https.html:
+        * web-platform-tests/webxr/render_state_update.https-expected.txt:
+        * web-platform-tests/webxr/render_state_update.https.html:
+        * web-platform-tests/webxr/render_state_vertical_fov_immersive.https-expected.txt:
+        * web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html:
+        * web-platform-tests/webxr/render_state_vertical_fov_inline.https.html:
+        * web-platform-tests/webxr/resources/w3c-import.log:
+        * web-platform-tests/webxr/resources/webxr_math_utils.js:
+        (let.flip_quaternion):
+        * web-platform-tests/webxr/resources/webxr_test_asserts.js:
+        (const.get_mismatched_component):
+        (const.assert_point_approx_equals):
+        (const.assert_orientation_approx_equals):
+        (const.assert_point_significantly_not_equals):
+        (const.assert_transform_approx_equals):
+        * web-platform-tests/webxr/resources/webxr_test_constants.js:
+        * web-platform-tests/webxr/resources/webxr_test_constants_fake_depth.js: Added.
+        (const.convertDepthBufferToArrayBuffer):
+        (const.createDepthSensingData):
+        (const.getExpectedValueAt):
+        * web-platform-tests/webxr/resources/webxr_util.js:
+        (async return):
+        (async loadChromiumResources):
+        * web-platform-tests/webxr/w3c-import.log:
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https-expected.txt:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https.html:
+        * web-platform-tests/webxr/webxr_feature_policy.https.html:
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https-expected.txt:
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html:
+        * web-platform-tests/webxr/xrDevice_disconnect_ends.https.html:
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html:
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https-expected.txt:
+        * web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html:
+        * web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getPose.https.html:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https.html:
+        * web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html: Added.
+        * web-platform-tests/webxr/xrFrame_lifetime.https.html:
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrFrame_session_sameObject.https.html:
+        * web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_add_remove.https.html:
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https.html:
+        * web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_profiles.https.html:
+        * web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrInputSource_sameObject.https.html:
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https-expected.txt:
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https.html:
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_constructor.https.html:
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_inverse.https.html:
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https.html:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html:
+        * web-platform-tests/webxr/xrSession_end.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_end.https.html:
+        * web-platform-tests/webxr/xrSession_input_events_end.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html:
+        * web-platform-tests/webxr/xrSession_requestSessionDuringEnd.https.html: Added.
+        * web-platform-tests/webxr/xrSession_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_sameObject.https.html:
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https-expected.txt:
+        * web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html:
+        * web-platform-tests/webxr/xrSession_visibilityState.https.html:
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https.html:
+        * web-platform-tests/webxr/xrView_eyes.https-expected.txt:
+        * web-platform-tests/webxr/xrView_eyes.https.html:
+        * web-platform-tests/webxr/xrView_match.https-expected.txt:
+        * web-platform-tests/webxr/xrView_match.https.html:
+        * web-platform-tests/webxr/xrView_oneframeupdate.https-expected.txt:
+        * web-platform-tests/webxr/xrView_oneframeupdate.https.html:
+        * web-platform-tests/webxr/xrView_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrView_sameObject.https.html:
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https.html:
+        * web-platform-tests/webxr/xrViewport_valid.https-expected.txt:
+        * web-platform-tests/webxr/xrViewport_valid.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https-expected.txt:
+        * web-platform-tests/webxr/xrWebGLLayer_viewports.https.html:
+        * web-platform-tests/webxr/xr_viewport_scale.https.html: Added.
+
 2021-05-21  Rob Buis  <rbuis@igalia.com>
 
         grid track size should reject unitless length
