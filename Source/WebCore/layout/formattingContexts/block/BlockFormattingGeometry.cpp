@@ -48,7 +48,7 @@ BlockFormattingGeometry::BlockFormattingGeometry(const BlockFormattingContext& b
 {
 }
 
-ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues)
+ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     ASSERT(layoutBox.isInFlow() && !layoutBox.isReplacedBox());
     ASSERT(layoutBox.isOverflowVisible());
@@ -119,7 +119,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAn
     return compute(overriddenVerticalValues);
 }
 
-ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues)
+ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
@@ -219,7 +219,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
     return contentWidthAndMargin;
 }
 
-ContentWidthAndMargin BlockFormattingGeometry::inFlowReplacedContentWidthAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues)
+ContentWidthAndMargin BlockFormattingGeometry::inFlowReplacedContentWidthAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     ASSERT(replacedBox.isInFlow());
 
@@ -262,7 +262,7 @@ Point BlockFormattingGeometry::staticPosition(const Box& layoutBox, const Horizo
     return { staticHorizontalPosition(layoutBox, horizontalConstraints), staticVerticalPosition(layoutBox, verticalConstraints) };
 }
 
-ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues)
+ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
@@ -290,7 +290,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(con
     return contentHeightAndMargin;
 }
 
-ContentWidthAndMargin BlockFormattingGeometry::inFlowContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues)
+ContentWidthAndMargin BlockFormattingGeometry::inFlowContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     ASSERT(layoutBox.isInFlow());
 
@@ -299,7 +299,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowContentWidthAndMargin(const
     return inFlowReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
 }
 
-ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, Optional<LayoutUnit> availableWidthFloatAvoider)
+ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, Optional<LayoutUnit> availableWidthFloatAvoider) const
 {
     auto compute = [&] (auto constraintsForWidth, Optional<LayoutUnit> usedWidth) {
         if (layoutBox.isFloatingPositioned())
@@ -333,7 +333,7 @@ ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(con
     return contentWidthAndMargin;
 }
 
-IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(const Box& layoutBox)
+IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(const Box& layoutBox) const
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
@@ -373,8 +373,9 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
             return { };
         }
 
+        auto& layoutState = this->layoutState();
         if (layoutBox.establishesFormattingContext()) {
-            auto intrinsicWidthConstraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), layoutState())->computedIntrinsicWidthConstraints();
+            auto intrinsicWidthConstraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
             if (logicalWidth.isMinContent())
                 return { intrinsicWidthConstraints.minimum, intrinsicWidthConstraints.minimum };
             if (logicalWidth.isMaxContent())
@@ -383,7 +384,7 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
         }
 
         auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-        auto& formattingState = layoutState().formattingStateForBox(layoutBox);
+        auto& formattingState = layoutState.formattingStateForBox(layoutBox);
         for (auto& child : childrenOfType<Box>(downcast<ContainerBox>(layoutBox))) {
             if (child.isOutOfFlowPositioned() || (child.isFloatAvoider() && !child.hasFloatClear()))
                 continue;

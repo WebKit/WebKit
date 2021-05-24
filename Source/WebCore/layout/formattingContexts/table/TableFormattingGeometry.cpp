@@ -109,7 +109,7 @@ Edges TableFormattingGeometry::computedCellBorder(const TableGrid::Cell& cell) c
     return border;
 }
 
-Optional<LayoutUnit> TableFormattingGeometry::computedColumnWidth(const ContainerBox& columnBox)
+Optional<LayoutUnit> TableFormattingGeometry::computedColumnWidth(const ContainerBox& columnBox) const
 {
     // Check both style and <col>'s width attribute.
     // FIXME: Figure out what to do with calculated values, like <col style="width: 10%">.
@@ -118,7 +118,7 @@ Optional<LayoutUnit> TableFormattingGeometry::computedColumnWidth(const Containe
     return columnBox.columnWidth();
 }
 
-IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCell(const TableGrid::Cell& cell)
+IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCell(const TableGrid::Cell& cell) const
 {
     auto& cellBox = cell.box();
     auto& style = cellBox.style();
@@ -127,8 +127,10 @@ IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForC
         // Even fixed width cells expand to their minimum content width
         // <td style="width: 10px">test_content</td> will size to max(minimum content width, computed width).
         auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-        if (cellBox.hasChild())
-            intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, layoutState())->computedIntrinsicWidthConstraints();
+        if (cellBox.hasChild()) {
+            auto& layoutState = this->layoutState();
+            intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
+        }
         if (auto fixedWidth = fixedValue(style.logicalWidth()))
             return { std::max(intrinsicWidthConstraints.minimum, *fixedWidth), std::max(intrinsicWidthConstraints.minimum, *fixedWidth) };
         return intrinsicWidthConstraints;
@@ -145,7 +147,7 @@ IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForC
 }
 
 
-InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ContainerBox& cellBox)
+InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ContainerBox& cellBox) const
 {
     // The baseline of a cell is defined as the baseline of the first in-flow line box in the cell,
     // or the first in-flow table-row in the cell, whichever comes first.

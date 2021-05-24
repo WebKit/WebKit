@@ -44,7 +44,7 @@ public:
     InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
 
     ContentHeightAndMargin inlineBlockContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
-    ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
+    ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
     bool inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox&, const LineBox&) const;
 

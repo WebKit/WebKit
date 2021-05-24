@@ -1,5 +1,80 @@
 2021-05-24  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] FormattingGeometry functions should all be const
+        https://bugs.webkit.org/show_bug.cgi?id=226147
+
+        Reviewed by Simon Fraser.
+
+        While the const_cast is unfortunate, those functions do not mutate *this*.
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::hasFormattingState const):
+        * layout/LayoutState.h:
+        * layout/formattingContexts/FormattingGeometry.cpp:
+        (WebCore::Layout::FormattingGeometry::computedWidthValue const):
+        (WebCore::Layout::FormattingGeometry::computedWidth const):
+        (WebCore::Layout::FormattingGeometry::computedMinWidth const):
+        (WebCore::Layout::FormattingGeometry::computedMaxWidth const):
+        (WebCore::Layout::FormattingGeometry::shrinkToFitWidth const):
+        (WebCore::Layout::FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingGeometry::outOfFlowReplacedHorizontalGeometry const):
+        (WebCore::Layout::FormattingGeometry::floatingNonReplacedContentWidthAndMargin const):
+        (WebCore::Layout::FormattingGeometry::floatingReplacedContentWidthAndMargin const):
+        (WebCore::Layout::FormattingGeometry::outOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingGeometry::floatingContentWidthAndMargin const):
+        (WebCore::Layout::FormattingGeometry::inlineReplacedContentWidthAndMargin const):
+        (WebCore::Layout::FormattingGeometry::constraintsForOutOfFlowContent const):
+        (WebCore::Layout::FormattingGeometry::computedWidthValue): Deleted.
+        (WebCore::Layout::FormattingGeometry::computedWidth): Deleted.
+        (WebCore::Layout::FormattingGeometry::computedMinWidth): Deleted.
+        (WebCore::Layout::FormattingGeometry::computedMaxWidth): Deleted.
+        (WebCore::Layout::FormattingGeometry::shrinkToFitWidth): Deleted.
+        (WebCore::Layout::FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry): Deleted.
+        (WebCore::Layout::FormattingGeometry::outOfFlowReplacedHorizontalGeometry): Deleted.
+        (WebCore::Layout::FormattingGeometry::floatingNonReplacedContentWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingGeometry::floatingReplacedContentWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingGeometry::outOfFlowHorizontalGeometry): Deleted.
+        (WebCore::Layout::FormattingGeometry::floatingContentWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingGeometry::inlineReplacedContentWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingGeometry::constraintsForOutOfFlowContent): Deleted.
+        * layout/formattingContexts/FormattingGeometry.h:
+        (WebCore::Layout::FormattingGeometry::layoutState const):
+        (WebCore::Layout::FormattingGeometry::layoutState): Deleted.
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp:
+        (WebCore::Layout::BlockFormattingGeometry::inFlowNonReplacedContentHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingGeometry::inFlowNonReplacedContentWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingGeometry::inFlowReplacedContentWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingGeometry::inFlowContentHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingGeometry::inFlowContentWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingGeometry::computedContentWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingGeometry::intrinsicWidthConstraints const):
+        (WebCore::Layout::BlockFormattingGeometry::inFlowNonReplacedContentHeightAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingGeometry::inFlowNonReplacedContentWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingGeometry::inFlowReplacedContentWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingGeometry::inFlowContentHeightAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingGeometry::inFlowContentWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingGeometry::computedContentWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingGeometry::intrinsicWidthConstraints): Deleted.
+        * layout/formattingContexts/block/BlockFormattingGeometry.h:
+        * layout/formattingContexts/flex/FlexFormattingGeometry.cpp:
+        (WebCore::Layout::FlexFormattingGeometry::intrinsicWidthConstraints const):
+        (WebCore::Layout::FlexFormattingGeometry::intrinsicWidthConstraints): Deleted.
+        * layout/formattingContexts/flex/FlexFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::InlineFormattingGeometry::inlineBlockContentWidthAndMargin const):
+        (WebCore::Layout::InlineFormattingGeometry::inlineBlockContentWidthAndMargin): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h:
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::computedColumnWidth const):
+        (WebCore::Layout::TableFormattingGeometry::intrinsicWidthConstraintsForCell const):
+        (WebCore::Layout::TableFormattingGeometry::usedBaselineForCell const):
+        (WebCore::Layout::TableFormattingGeometry::computedColumnWidth): Deleted.
+        (WebCore::Layout::TableFormattingGeometry::intrinsicWidthConstraintsForCell): Deleted.
+        (WebCore::Layout::TableFormattingGeometry::usedBaselineForCell): Deleted.
+        * layout/formattingContexts/table/TableFormattingGeometry.h:
+
+2021-05-24  Alan Bujtas  <zalan@apple.com>
+
         [LFC][TFC] Add a helper function to compute the intrinsic vertical paddings for the cell
         https://bugs.webkit.org/show_bug.cgi?id=226130
 

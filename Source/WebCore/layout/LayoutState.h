@@ -65,6 +65,8 @@ public:
     FlexFormattingState& establishedFlexFormattingState(const ContainerBox& formattingContextRoot) const;
 
     FormattingState& formattingStateForBox(const Box&) const;
+
+    bool hasFormattingState(const ContainerBox& formattingRoot) const;
     bool hasInlineFormattingState(const ContainerBox& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }
 
 #ifndef NDEBUG

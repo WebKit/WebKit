@@ -689,7 +689,7 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
     return std::max(previousLineLogicalBottom, InlineLayoutUnit(positionWithClearance->position));
 }
 
-ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues)
+ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     ASSERT(formattingContextRoot.isInFlow());
 

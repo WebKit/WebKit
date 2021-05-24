@@ -39,7 +39,7 @@ FlexFormattingGeometry::FlexFormattingGeometry(const FlexFormattingContext& flex
 {
 }
 
-IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(const ContainerBox& flexItem)
+IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(const ContainerBox& flexItem) const
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
@@ -62,7 +62,8 @@ IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(cons
             return { *width, *width };
 
         ASSERT(flexItem.establishesFormattingContext());
-        auto intrinsicWidthConstraints = LayoutContext::createFormattingContext(flexItem, layoutState())->computedIntrinsicWidthConstraints();
+        auto& layoutState = this->layoutState();
+        auto intrinsicWidthConstraints = LayoutContext::createFormattingContext(flexItem, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
         if (logicalWidth.isMinContent())
             return { intrinsicWidthConstraints.minimum, intrinsicWidthConstraints.minimum };
         if (logicalWidth.isMaxContent())
