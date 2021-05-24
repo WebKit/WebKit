@@ -175,8 +175,6 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
         return createRenderer<RenderListItem>(element, WTFMove(style));
     case DisplayType::Flex:
     case DisplayType::InlineFlex:
-    case DisplayType::WebKitFlex:
-    case DisplayType::WebKitInlineFlex:
         return createRenderer<RenderFlexibleBox>(element, WTFMove(style));
     case DisplayType::Grid:
     case DisplayType::InlineGrid:

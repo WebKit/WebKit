@@ -101,7 +101,6 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Docume
     case DisplayType::Table:
     case DisplayType::Box:
     case DisplayType::Flex:
-    case DisplayType::WebKitFlex:
     case DisplayType::Grid:
     case DisplayType::FlowRoot:
         return display;
@@ -116,7 +115,6 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Docume
     case DisplayType::InlineBox:
         return DisplayType::Box;
     case DisplayType::InlineFlex:
-    case DisplayType::WebKitInlineFlex:
         return DisplayType::Flex;
     case DisplayType::InlineGrid:
         return DisplayType::Grid;

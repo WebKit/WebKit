@@ -466,14 +466,14 @@ table-caption
 -webkit-box
 -webkit-inline-box
 flex
--webkit-flex
 inline-flex
--webkit-inline-flex
 contents
 grid
 inline-grid
 flow-root
 flow
+-webkit-inline-flex
+-webkit-flex
 //none
 //
 // CSS_PROP_CURSOR:

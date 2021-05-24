@@ -315,7 +315,6 @@ bool Box::isInlineLevelBox() const
     return display == DisplayType::Inline
         || display == DisplayType::InlineBox
         || display == DisplayType::InlineFlex
-        || display == DisplayType::WebKitInlineFlex
         || display == DisplayType::InlineGrid
         || isInlineBlockBox()
         || isInlineTableBox();

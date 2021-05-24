@@ -404,8 +404,6 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
         // Prefixed values
         CSSValueWebkitInlineBox,
         CSSValueWebkitBox,
-        CSSValueWebkitInlineFlex,
-        CSSValueWebkitFlex,
         // No layout support for the full <display-listitem> syntax, so treat it as <display-legacy>
         CSSValueListItem
     >(range);
@@ -416,6 +414,14 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
     // Empty value, stop parsing
     if (range.atEnd())
         return nullptr;
+
+    // Convert -webkit-flex/-webkit-inline-flex to flex/inline-flex
+    CSSValueID nextValueID = range.peek().id();
+    if (nextValueID == CSSValueWebkitInlineFlex || nextValueID == CSSValueWebkitFlex) {
+        consumeIdent(range);
+        return CSSValuePool::singleton().createValue(
+            nextValueID == CSSValueWebkitInlineFlex ? CSSValueInlineFlex : CSSValueFlex);
+    }
 
     // Parse [ <display-outside> || <display-inside> ]
     Optional<CSSValueID> parsedDisplayOutside;
