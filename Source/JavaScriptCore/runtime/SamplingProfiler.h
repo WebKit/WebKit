@@ -172,7 +172,7 @@ public:
     void noticeVMEntry();
     void shutdown();
     template<typename Visitor> void visit(Visitor&);
-    Lock& getLock() { return m_lock; }
+    UncheckedLock& getLock() { return m_lock; }
     void setTimingInterval(Seconds interval) { m_timingInterval = interval; }
     JS_EXPORT_PRIVATE void start();
     void start(const AbstractLocker&);
@@ -200,7 +200,7 @@ private:
     void timerLoop();
     void takeSample(const AbstractLocker&, Seconds& stackTraceProcessingTime);
 
-    Lock m_lock;
+    UncheckedLock m_lock;
     bool m_isPaused;
     bool m_isShutDown;
     bool m_needsReportAtExit { false };

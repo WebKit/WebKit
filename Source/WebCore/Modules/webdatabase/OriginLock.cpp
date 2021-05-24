@@ -43,7 +43,7 @@ OriginLock::OriginLock(String originPath)
 
 OriginLock::~OriginLock() = default;
 
-void OriginLock::lock()
+void OriginLock::lock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     m_mutex.lock();
 
@@ -59,7 +59,7 @@ void OriginLock::lock()
 #endif
 }
 
-void OriginLock::unlock()
+void OriginLock::unlock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
 #if USE(FILE_LOCK)
     // If the file descriptor was uninitialized, then that means the directory

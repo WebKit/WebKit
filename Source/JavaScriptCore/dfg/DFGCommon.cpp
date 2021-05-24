@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 const char* const tierName = "DFG ";
 
-static Lock crashLock;
+static UncheckedLock crashLock;
 
 void startCrashing()
 {

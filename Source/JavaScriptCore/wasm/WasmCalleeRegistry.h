@@ -41,7 +41,7 @@ public:
     static void initialize();
     static CalleeRegistry& singleton();
 
-    Lock& getLock() { return m_lock; }
+    UncheckedLock& getLock() { return m_lock; }
 
     void registerCallee(Callee* callee)
     {
@@ -70,7 +70,7 @@ public:
     CalleeRegistry() = default;
 
 private:
-    Lock m_lock;
+    UncheckedLock m_lock;
     HashSet<Callee*> m_calleeSet;
 };
 

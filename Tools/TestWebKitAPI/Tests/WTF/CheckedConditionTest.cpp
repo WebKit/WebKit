@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 
 namespace TestWebKitAPI {
 

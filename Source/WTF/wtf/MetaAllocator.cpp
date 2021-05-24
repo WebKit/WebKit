@@ -62,7 +62,7 @@ void MetaAllocatorTracker::release(MetaAllocatorHandle& handle)
     m_allocations.remove(&handle);
 }
 
-void MetaAllocator::release(const LockHolder&, MetaAllocatorHandle& handle)
+void MetaAllocator::release(const UncheckedLockHolder&, MetaAllocatorHandle& handle)
 {
     if (handle.sizeInBytes()) {
         MemoryPtr start = handle.start();
@@ -124,7 +124,7 @@ void MetaAllocatorHandle::dump(PrintStream& out) const
     out.print(RawPointer(start().untaggedPtr()), "...", RawPointer(end().untaggedPtr()));
 }
 
-MetaAllocator::MetaAllocator(Lock& lock, size_t allocationGranule, size_t pageSize)
+MetaAllocator::MetaAllocator(UncheckedLock& lock, size_t allocationGranule, size_t pageSize)
     : m_allocationGranule(allocationGranule)
     , m_pageSize(pageSize)
     , m_bytesAllocated(0)
@@ -154,7 +154,7 @@ MetaAllocator::MetaAllocator(Lock& lock, size_t allocationGranule, size_t pageSi
     ASSERT(static_cast<size_t>(1) << m_logAllocationGranule == m_allocationGranule);
 }
 
-RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(const LockHolder&, size_t sizeInBytes)
+RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(const UncheckedLockHolder&, size_t sizeInBytes)
 {
     if (!sizeInBytes)
         return nullptr;
@@ -198,7 +198,7 @@ RefPtr<MetaAllocatorHandle> MetaAllocator::allocate(const LockHolder&, size_t si
     return handle;
 }
 
-MetaAllocator::Statistics MetaAllocator::currentStatistics(const LockHolder&)
+MetaAllocator::Statistics MetaAllocator::currentStatistics(const UncheckedLockHolder&)
 {
     Statistics result;
     result.bytesAllocated = m_bytesAllocated;

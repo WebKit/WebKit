@@ -70,7 +70,7 @@ private:
     bool m_eagerFailed { false };
     bool m_finalized { false };
     bool m_threadedCompilationStarted { false };
-    Lock m_lock;
+    UncheckedLock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
     JSPromise* m_promise; // Raw pointer, but held by DeferredWorkTimer.
     Ref<Wasm::ModuleInformation> m_info;

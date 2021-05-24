@@ -163,7 +163,7 @@ void VMTraps::invalidateCodeBlocksOnStack(CallFrame* topCallFrame)
     invalidateCodeBlocksOnStack(codeBlockSetLocker, topCallFrame);
 }
     
-void VMTraps::invalidateCodeBlocksOnStack(Locker<Lock>&, CallFrame* topCallFrame)
+void VMTraps::invalidateCodeBlocksOnStack(Locker<UncheckedLock>&, CallFrame* topCallFrame)
 {
     if (!m_needToInvalidatedCodeBlocks)
         return;
@@ -437,7 +437,7 @@ void VMTraps::undoDeferTerminationSlow(DeferAction deferAction)
 }
 
 VMTraps::VMTraps()
-    : m_lock(Box<Lock>::create())
+    : m_lock(Box<UncheckedLock>::create())
     , m_condition(AutomaticThreadCondition::create())
 {
 }

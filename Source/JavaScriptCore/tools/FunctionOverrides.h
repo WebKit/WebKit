@@ -61,7 +61,7 @@ private:
     void clear(const AbstractLocker&) { m_entries.clear(); }
 
     HashMap<String, String> m_entries;
-    Lock m_lock;
+    UncheckedLock m_lock;
 };
 
 } // namespace JSC

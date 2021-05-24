@@ -122,7 +122,7 @@ void ParallelHelperClient::runTask(const RefPtr<SharedTask<void ()>>& task)
 }
 
 ParallelHelperPool::ParallelHelperPool(CString&& threadName)
-    : m_lock(Box<Lock>::create())
+    : m_lock(Box<UncheckedLock>::create())
     , m_workAvailableCondition(AutomaticThreadCondition::create())
     , m_threadName(WTFMove(threadName))
 {

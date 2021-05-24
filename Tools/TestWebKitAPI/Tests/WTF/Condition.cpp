@@ -46,7 +46,7 @@ enum NotifyStyle {
 };
 
 template<typename Functor>
-void wait(Condition& condition, std::unique_lock<Lock>& locker, const Functor& predicate, Seconds timeout)
+void wait(UncheckedCondition& condition, std::unique_lock<UncheckedLock>& locker, const Functor& predicate, Seconds timeout)
 {
     if (timeout == Seconds::infinity())
         condition.wait(locker, predicate);
@@ -59,7 +59,7 @@ void wait(Condition& condition, std::unique_lock<Lock>& locker, const Functor& p
     }
 }
 
-void notify(NotifyStyle notifyStyle, Condition& condition, bool shouldNotify)
+void notify(NotifyStyle notifyStyle, UncheckedCondition& condition, bool shouldNotify)
 {
     switch (notifyStyle) {
     case AlwaysNotifyOne:
@@ -83,9 +83,9 @@ void runTest(
 {
     Deque<unsigned> queue;
     bool shouldContinue = true;
-    Lock lock;
-    Condition emptyCondition;
-    Condition fullCondition;
+    UncheckedLock lock;
+    UncheckedCondition emptyCondition;
+    UncheckedCondition fullCondition;
 
     Vector<Ref<Thread>> consumerThreads;
     Vector<Ref<Thread>> producerThreads;
@@ -101,7 +101,7 @@ void runTest(
                     unsigned result;
                     unsigned shouldNotify = false;
                     {
-                        std::unique_lock<Lock> locker(lock);
+                        std::unique_lock<UncheckedLock> locker(lock);
                         wait(
                             emptyCondition, locker, 
                             [&] () {
@@ -134,7 +134,7 @@ void runTest(
                 for (unsigned i = 0; i < numMessagesPerProducer; ++i) {
                     bool shouldNotify = false;
                     {
-                        std::unique_lock<Lock> locker(lock);
+                        std::unique_lock<UncheckedLock> locker(lock);
                         wait(
                             fullCondition, locker,
                             [&] () {

@@ -153,7 +153,7 @@ namespace {
 
 using CPUState = Probe::CPUState;
 
-Lock crashLock;
+UncheckedLock crashLock;
 
 typedef WTF::Function<void(CCallHelpers&)> Generator;
 

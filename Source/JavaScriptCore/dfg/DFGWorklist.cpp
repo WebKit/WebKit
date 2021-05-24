@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 
 class Worklist::ThreadBody final : public AutomaticThread {
 public:
-    ThreadBody(const AbstractLocker& locker, Worklist& worklist, ThreadData& data, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, int relativePriority)
+    ThreadBody(const AbstractLocker& locker, Worklist& worklist, ThreadData& data, Box<UncheckedLock> lock, Ref<AutomaticThreadCondition>&& condition, int relativePriority)
         : AutomaticThread(locker, lock, WTFMove(condition), ThreadType::Compiler)
         , m_worklist(worklist)
         , m_data(data)
@@ -181,7 +181,7 @@ static CString createWorklistName(CString&& tierName)
 Worklist::Worklist(CString&& tierName)
     : m_threadName(createWorklistName(WTFMove(tierName)))
     , m_planEnqueued(AutomaticThreadCondition::create())
-    , m_lock(Box<Lock>::create())
+    , m_lock(Box<UncheckedLock>::create())
 {
 }
 

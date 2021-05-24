@@ -54,7 +54,7 @@ public:
     // AudioSourceProviderClient
     void setFormat(size_t numberOfChannels, float sampleRate) override;
 
-    Lock& processLock() { return m_processLock; }
+    UncheckedLock& processLock() { return m_processLock; }
 
 private:
     MediaElementAudioSourceNode(BaseAudioContext&, Ref<HTMLMediaElement>&&);
@@ -70,7 +70,7 @@ private:
     bool wouldTaintOrigin();
 
     Ref<HTMLMediaElement> m_mediaElement;
-    Lock m_processLock;
+    UncheckedLock m_processLock;
 
     unsigned m_sourceNumberOfChannels { 0 };
     double m_sourceSampleRate { 0 };

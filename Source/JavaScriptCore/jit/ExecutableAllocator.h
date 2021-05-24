@@ -77,7 +77,7 @@ public:
 
     static size_t committedByteCount() { return 0; }
 
-    Lock& getLock() const
+    UncheckedLock& getLock() const
     {
         return m_lock;
     }
@@ -87,7 +87,7 @@ protected:
     ~ExecutableAllocatorBase() = default;
 
 private:
-    mutable Lock m_lock;
+    mutable UncheckedLock m_lock;
 };
 
 #if ENABLE(JIT)
@@ -176,7 +176,7 @@ public:
 
     static size_t committedByteCount();
 
-    Lock& getLock() const;
+    UncheckedLock& getLock() const;
 
 #if ENABLE(JUMP_ISLANDS)
     JS_EXPORT_PRIVATE void* getJumpIslandTo(void* from, void* newDestination);

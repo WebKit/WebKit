@@ -89,7 +89,7 @@ private:
     LockType m_lock;
 };
 
-using RecursiveLock = RecursiveLockAdapter<Lock>;
+using RecursiveLock = RecursiveLockAdapter<UncheckedLock>;
 
 } // namespace WTF
 

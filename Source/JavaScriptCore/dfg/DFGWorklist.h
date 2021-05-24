@@ -110,10 +110,10 @@ private:
     // be completed.
     Vector<RefPtr<Plan>, 16> m_readyPlans;
     Ref<AutomaticThreadCondition> m_planEnqueued;
-    Condition m_planCompiled;
+    UncheckedCondition m_planCompiled;
 
-    Lock m_suspensionLock;
-    Box<Lock> m_lock;
+    UncheckedLock m_suspensionLock;
+    Box<UncheckedLock> m_lock;
 };
 
 JS_EXPORT_PRIVATE unsigned setNumberOfDFGCompilerThreads(unsigned);

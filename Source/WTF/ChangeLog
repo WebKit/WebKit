@@ -1,3 +1,66 @@
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Make CheckedLock the default Lock
+        https://bugs.webkit.org/show_bug.cgi?id=226157
+
+        Reviewed by Darin Adler.
+
+        Make CheckedLock the default Lock so that we get more benefits from Clang
+        Thread Safety Analysis. Note that CheckedLock 100% relies on the existing
+        Lock implementation and merely adds the clang anotations for thread
+        safety.
+
+        That this patch does is:
+        1. Rename the Lock class to UncheckedLock
+        2. Rename the CheckedLock class to Lock
+        3. Rename the Condition class to UncheckedCondition
+        4. Rename the CheckedCondition class to Condition
+        5. Update the types of certain variables from Lock / Condition to
+           UncheckedLock / UncheckedCondition if I got a build failure. Build
+           failures are usually caused by the following facts:
+           - Locker<CheckedLock> doesn't subclass AbstractLocker which a lot of
+             JSC code passes as argument
+           - Locker<CheckedLock> has no move constructor
+           - Locker<CheckedLock> cannot be constructed from a lock pointer, only
+             a reference
+        
+        For now, CheckedLock and CheckedCondition remain as aliases to Lock and
+        Condition, in their respective CheckedLock.h / CheckedCondition.h headers.
+        I will drop them in a follow-up to reduce patch size.
+
+        I will also follow-up to try and get rid of as much usage of UncheckedLock
+        and UncheckedCondition as possible. I did not try very hard in this patch
+        to reduce patch size.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::wait):
+        (WTF::AutomaticThreadCondition::waitFor):
+        (WTF::AutomaticThread::AutomaticThread):
+        * wtf/AutomaticThread.h:
+        * wtf/CheckedCondition.h:
+        * wtf/CheckedLock.h:
+        * wtf/Condition.h:
+        * wtf/Lock.cpp:
+        (WTF::UncheckedLock::lockSlow):
+        (WTF::UncheckedLock::unlockSlow):
+        (WTF::UncheckedLock::unlockFairlySlow):
+        (WTF::UncheckedLock::safepointSlow):
+        * wtf/Lock.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_LOCK):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/MetaAllocator.h:
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        * wtf/ParallelHelperPool.h:
+        * wtf/RecursiveLockAdapter.h:
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        * wtf/WorkerPool.h:
+
 2021-05-23  Mark Lam  <mark.lam@apple.com>
 
         Remove ENABLE(MASM_PROBE) flag.

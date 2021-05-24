@@ -199,7 +199,7 @@ AXThread& AXThread::singleton()
 void AXThread::createThreadIfNeeded()
 {
     // Wait for the thread to initialize the run loop.
-    std::unique_lock<Lock> lock(m_initializeRunLoopMutex);
+    Locker lock { m_initializeRunLoopMutex };
 
     if (!m_thread) {
         m_thread = Thread::create("WKTR: AccessibilityController", [this] {
@@ -208,7 +208,7 @@ void AXThread::createThreadIfNeeded()
         });
     }
 
-    m_initializeRunLoopConditionVariable.wait(lock, [this] {
+    m_initializeRunLoopConditionVariable.wait(m_initializeRunLoopMutex, [this] {
 #if PLATFORM(COCOA)
         return m_threadRunLoop;
 #else

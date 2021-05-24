@@ -56,8 +56,8 @@ struct _WebKitMediaCommonEncryptionDecryptPrivate {
     RefPtr<CDMProxy> cdmProxy;
 
     // Protect the access to the structure members.
-    Lock mutex;
-    Condition condition;
+    UncheckedLock mutex;
+    UncheckedCondition condition;
 
     bool isFlushing { false };
     std::unique_ptr<CDMProxyDecryptionClientImplementation> cdmProxyDecryptionClientImplementation;

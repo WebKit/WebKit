@@ -33,14 +33,14 @@ namespace WTF {
 
 static constexpr bool profileLockContention = false;
 
-void Lock::lockSlow()
+void UncheckedLock::lockSlow()
 {
     if (profileLockContention)
         STACK_SHOT_PROFILE(4, 2, 5);
     DefaultLockAlgorithm::lockSlow(m_byte);
 }
 
-void Lock::unlockSlow()
+void UncheckedLock::unlockSlow()
 {
     // Heap allocations are forbidden on the certain threads (e.g. audio rendering thread) for performance reasons so we need to
     // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorith may cause allocations.
@@ -49,7 +49,7 @@ void Lock::unlockSlow()
     DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Unfair);
 }
 
-void Lock::unlockFairlySlow()
+void UncheckedLock::unlockFairlySlow()
 {
     // Heap allocations are forbidden on the certain threads (e.g. audio rendering thread) for performance reasons so we need to
     // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorith may cause allocations.
@@ -58,7 +58,7 @@ void Lock::unlockFairlySlow()
     DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Fair);
 }
 
-void Lock::safepointSlow()
+void UncheckedLock::safepointSlow()
 {
     DefaultLockAlgorithm::safepointSlow(m_byte);
 }

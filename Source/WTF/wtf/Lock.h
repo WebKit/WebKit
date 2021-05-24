@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <mutex>
 #include <wtf/LockAlgorithm.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ThreadSafetyAnalysis.h>
 
 namespace TestWebKitAPI {
 struct LockInspector;
@@ -47,11 +49,11 @@ typedef LockAlgorithm<uint8_t, 1, 2> DefaultLockAlgorithm;
 // at worst one call to unlock() per millisecond will do a direct hand-off to the thread that is at
 // the head of the queue. When there are collisions, each collision increases the fair unlock delay
 // by one millisecond in the worst case.
-class Lock {
-    WTF_MAKE_NONCOPYABLE(Lock);
+class UncheckedLock {
+    WTF_MAKE_NONCOPYABLE(UncheckedLock);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    constexpr Lock() = default;
+    constexpr UncheckedLock() = default;
 
     void lock()
     {
@@ -131,9 +133,83 @@ private:
     Atomic<uint8_t> m_byte { 0 };
 };
 
+// A lock type with support for thread safety analysis.
+// To annotate a member variable or a global variable with thread ownership information,
+// use lock capability annotations defined in ThreadSafetyAnalysis.h.
+//
+// Example:
+//   class MyValue : public ThreadSafeRefCounted<MyValue>
+//   {
+//   public:
+//       void setValue(int value) { Locker holdLock { m_lock }; m_value = value;  }
+//       void maybeSetOtherValue(int value)
+//       {
+//           if (!m_lock.tryLock())
+//              return;
+//           Locker locker { AdoptLock, m_otherLock };
+//           m_otherValue = value;
+//       }
+//   private:
+//       Lock m_lock;
+//       int m_value WTF_GUARDED_BY_LOCK(m_lock) { 77 };
+//       int m_otherValue WTF_GUARDED_BY_LOCK(m_lock) { 88 };
+//   };
+class WTF_CAPABILITY_LOCK Lock : UncheckedLock {
+    WTF_MAKE_NONCOPYABLE(Lock);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    constexpr Lock() = default;
+    void lock() WTF_ACQUIRES_LOCK() { UncheckedLock::lock(); }
+    bool tryLock() WTF_ACQUIRES_LOCK_IF(true) { return UncheckedLock::tryLock(); }
+    bool try_lock() WTF_ACQUIRES_LOCK_IF(true) { return UncheckedLock::try_lock(); } // NOLINT: Intentional deviation to support std::scoped_lock.
+    void unlock() WTF_RELEASES_LOCK() { UncheckedLock::unlock(); }
+    void unlockFairly() WTF_RELEASES_LOCK() { UncheckedLock::unlockFairly(); }
+    void safepoint() { UncheckedLock::safepoint(); }
+    bool isHeld() const { return UncheckedLock::isHeld(); }
+    bool isLocked() const { return UncheckedLock::isLocked(); }
+    friend class Condition;
+    friend struct TestWebKitAPI::LockInspector;
+};
+
+// Asserts that the lock is held.
+// This can be used in cases where the annotations cannot be added to the function
+// declaration.
+inline void assertIsHeld(const Lock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { ASSERT_UNUSED(lock, lock.isHeld()); }
+
+// Locker specialization to use with Lock.
+// Non-movable simple scoped lock holder.
+// Example: Locker locker { m_lock };
+template <>
+class WTF_CAPABILITY_SCOPED_LOCK Locker<Lock> {
+public:
+    explicit Locker(Lock& lock) WTF_ACQUIRES_LOCK(lock)
+        : m_lock(lock)
+    {
+        m_lock.lock();
+    }
+    Locker(AdoptLockTag, Lock& lock) WTF_REQUIRES_LOCK(lock)
+        : m_lock(lock)
+    {
+    }
+    ~Locker() WTF_RELEASES_LOCK()
+    {
+        m_lock.unlock();
+    }
+    Locker(const Locker<Lock>&) = delete;
+    Locker& operator=(const Locker<Lock>&) = delete;
+private:
+    Lock& m_lock;
+};
+
+Locker(Lock&) -> Locker<Lock>;
+Locker(AdoptLockTag, Lock&) -> Locker<Lock>;
+
 using LockHolder = Locker<Lock>;
+using UncheckedLockHolder = Locker<UncheckedLock>;
 
 } // namespace WTF
 
+using WTF::UncheckedLock;
 using WTF::Lock;
 using WTF::LockHolder;
+using WTF::UncheckedLockHolder;

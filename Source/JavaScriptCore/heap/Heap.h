@@ -722,8 +722,8 @@ private:
     Atomic<unsigned> m_worldState;
     bool m_worldIsStopped { false };
     Lock m_visitRaceLock;
-    Lock m_markingMutex;
-    Condition m_markingConditionVariable;
+    UncheckedLock m_markingMutex;
+    UncheckedCondition m_markingConditionVariable;
 
     MonotonicTime m_beforeGC;
     MonotonicTime m_afterGC;
@@ -746,7 +746,7 @@ private:
 
     uint64_t m_mutatorExecutionVersion { 0 };
     uint64_t m_phaseVersion { 0 };
-    Box<Lock> m_threadLock;
+    Box<UncheckedLock> m_threadLock;
     Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
 
@@ -768,8 +768,8 @@ private:
 #endif
 
     bool m_parallelMarkersShouldExit { false };
-    Lock m_collectContinuouslyLock;
-    Condition m_collectContinuouslyCondition;
+    UncheckedLock m_collectContinuouslyLock;
+    UncheckedCondition m_collectContinuouslyCondition;
 };
 
 } // namespace JSC

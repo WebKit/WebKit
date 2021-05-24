@@ -426,7 +426,7 @@ public:
     // currently latched into the context - without traversing all of
     // the latched objects to find the current one, which would be
     // prohibitively expensive.
-    Lock& objectGraphLock();
+    UncheckedLock& objectGraphLock();
 
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
@@ -540,7 +540,7 @@ protected:
 
     RefPtr<GraphicsContextGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
-    Lock m_objectGraphLock;
+    UncheckedLock m_objectGraphLock;
 
     bool m_restoreAllowed { false };
     SuspendableTimer m_restoreTimer;

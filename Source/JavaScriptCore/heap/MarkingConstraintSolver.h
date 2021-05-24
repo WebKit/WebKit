@@ -95,8 +95,8 @@ private:
     BitVector m_executed;
     Deque<TaskWithConstraint, 32> m_toExecuteInParallel;
     Vector<unsigned, 32> m_toExecuteSequentially;
-    Lock m_lock;
-    Condition m_condition;
+    UncheckedLock m_lock;
+    UncheckedCondition m_condition;
     bool m_pickNextIsStillActive { true };
     unsigned m_numThreadsThatMayProduceWork { 0 };
     Vector<VisitCounter, 16> m_visitCounters;

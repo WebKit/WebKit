@@ -436,7 +436,7 @@ void SlotVisitor::donateKnownParallel(MarkStackArray& from, MarkStackArray& to)
 
     // If we're contending on the lock, be conservative and assume that another
     // thread is already donating.
-    std::unique_lock<Lock> lock(m_heap.m_markingMutex, std::try_to_lock);
+    std::unique_lock<UncheckedLock> lock(m_heap.m_markingMutex, std::try_to_lock);
     if (!lock.owns_lock())
         return;
 

@@ -2211,7 +2211,7 @@ static EventTargetDataMap& eventTargetDataMap()
     return map;
 }
 
-static Lock s_eventTargetDataMapLock;
+static UncheckedLock s_eventTargetDataMapLock;
 
 EventTargetData* Node::eventTargetData()
 {

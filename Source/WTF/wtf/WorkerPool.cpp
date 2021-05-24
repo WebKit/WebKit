@@ -32,7 +32,7 @@ class WorkerPool::Worker final : public AutomaticThread {
 public:
     friend class WorkerPool;
 
-    Worker(const AbstractLocker& locker, WorkerPool& pool, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, Seconds timeout)
+    Worker(const AbstractLocker& locker, WorkerPool& pool, Box<UncheckedLock> lock, Ref<AutomaticThreadCondition>&& condition, Seconds timeout)
         : AutomaticThread(locker, lock, WTFMove(condition), timeout)
         , m_pool(pool)
     {
@@ -82,7 +82,7 @@ private:
 };
 
 WorkerPool::WorkerPool(ASCIILiteral name, unsigned numberOfWorkers, Seconds timeout)
-    : m_lock(Box<Lock>::create())
+    : m_lock(Box<UncheckedLock>::create())
     , m_condition(AutomaticThreadCondition::create())
     , m_timeout(timeout)
     , m_name(name)

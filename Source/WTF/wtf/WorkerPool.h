@@ -57,7 +57,7 @@ private:
 
     bool shouldSleep(const AbstractLocker&);
 
-    Box<Lock> m_lock;
+    Box<UncheckedLock> m_lock;
     Ref<AutomaticThreadCondition> m_condition;
     Seconds m_timeout;
     MonotonicTime m_lastTimeoutTime { MonotonicTime::nan() };

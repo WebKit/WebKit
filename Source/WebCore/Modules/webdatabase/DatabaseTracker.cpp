@@ -1285,8 +1285,8 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
     return SQLiteFileSystem::deleteDatabaseFile(path);
 }
 
-static Lock openDatabaseLock;
-Lock& DatabaseTracker::openDatabaseMutex()
+static UncheckedLock openDatabaseLock;
+UncheckedLock& DatabaseTracker::openDatabaseMutex()
 {
     return openDatabaseLock;
 }

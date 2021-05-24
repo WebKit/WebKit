@@ -54,7 +54,7 @@ public:
     void clearCurrentlyExecuting();
 
     bool contains(const AbstractLocker&, void* candidateCodeBlock);
-    Lock& getLock() { return m_lock; }
+    UncheckedLock& getLock() { return m_lock; }
 
     // This is expected to run only when we're not adding to the set for now. If
     // this needs to run concurrently in the future, we'll need to lock around this.
@@ -78,7 +78,7 @@ public:
 private:
     HashSet<CodeBlock*> m_codeBlocks;
     HashSet<CodeBlock*> m_currentlyExecuting;
-    Lock m_lock;
+    UncheckedLock m_lock;
 };
 
 } // namespace JSC

@@ -1,3 +1,95 @@
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Make CheckedLock the default Lock
+        https://bugs.webkit.org/show_bug.cgi?id=226157
+
+        Reviewed by Darin Adler.
+
+        Make CheckedLock the default Lock so that we get more benefits from Clang
+        Thread Safety Analysis. Note that CheckedLock 100% relies on the existing
+        Lock implementation and merely adds the clang anotations for thread 
+        safety.
+
+        That this patch does is:
+        1. Rename the Lock class to UncheckedLock
+        2. Rename the CheckedLock class to Lock
+        3. Rename the Condition class to UncheckedCondition
+        4. Rename the CheckedCondition class to Condition
+        5. Update the types of certain variables from Lock / Condition to
+           UncheckedLock / UncheckedCondition if I got a build failure. Build 
+           failures are usually caused by the following facts:
+           - Locker<CheckedLock> doesn't subclass AbstractLocker which a lot of
+             JSC code passes as argument
+           - Locker<CheckedLock> has no move constructor
+           - Locker<CheckedLock> cannot be constructed from a lock pointer, only
+             a reference
+
+        For now, CheckedLock and CheckedCondition remain as aliases to Lock and 
+        Condition, in their respective CheckedLock.h / CheckedCondition.h headers.
+        I will drop them in a follow-up to reduce patch size.
+
+        I will also follow-up to try and get rid of as much usage of UncheckedLock
+        and UncheckedCondition as possible. I did not try very hard in this patch
+        to reduce patch size. 
+
+        * assembler/testmasm.cpp:
+        * dfg/DFGCommon.cpp:
+        * dfg/DFGThreadData.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::Worklist):
+        * dfg/DFGWorklist.h:
+        * dynbench.cpp:
+        * heap/BlockDirectory.h:
+        (JSC::BlockDirectory::bitvectorLock):
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::getLock):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/Heap.h:
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::directoryLock):
+        * heap/MarkingConstraintSolver.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::donateKnownParallel):
+        * heap/SlotVisitor.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::getLock const):
+        (JSC::dumpJITMemory):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocatorBase::getLock const):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::JITWorklist):
+        * jit/JITWorklist.h:
+        * jsc.cpp:
+        * profiler/ProfilerDatabase.h:
+        * runtime/ConcurrentJSLock.h:
+        * runtime/DeferredWorkTimer.h:
+        * runtime/JSLock.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::CFrameWalker::CFrameWalker):
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::getLock):
+        * runtime/VM.h:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        (JSC::VMTraps::VMTraps):
+        * runtime/VMTraps.h:
+        * tools/FunctionOverrides.h:
+        * tools/VMInspector.cpp:
+        (JSC::ensureIsSafeToLock):
+        * tools/VMInspector.h:
+        (JSC::VMInspector::getLock):
+        * wasm/WasmCalleeRegistry.h:
+        (JSC::Wasm::CalleeRegistry::getLock):
+        * wasm/WasmPlan.h:
+        * wasm/WasmStreamingCompiler.h:
+        * wasm/WasmThunks.h:
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::Worklist):
+        * wasm/WasmWorklist.h:
+
 2021-05-23  Mark Lam  <mark.lam@apple.com>
 
         Remove some now invalid tests in testmasm.

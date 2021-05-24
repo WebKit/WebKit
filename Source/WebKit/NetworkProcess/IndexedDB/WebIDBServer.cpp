@@ -119,7 +119,7 @@ void WebIDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, co
     });
 }
 
-void WebIDBServer::suspend()
+void WebIDBServer::suspend() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(RunLoop::isMain());
 
@@ -132,7 +132,7 @@ void WebIDBServer::suspend()
         m_server->stopDatabaseActivitiesOnMainThread();
 }
 
-void WebIDBServer::resume()
+void WebIDBServer::resume() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(RunLoop::isMain());
 

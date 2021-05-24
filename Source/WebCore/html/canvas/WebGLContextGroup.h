@@ -45,7 +45,7 @@ public:
 
     bool hasAContext() const;
     GraphicsContextGL& getAGraphicsContextGL();
-    Lock& objectGraphLockForAContext();
+    UncheckedLock& objectGraphLockForAContext();
 
     void loseContextGroup(WebGLRenderingContextBase::LostContextMode);
 

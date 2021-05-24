@@ -122,7 +122,7 @@ public:
     }
 
     static ScratchBuffer& singleton();
-    static Lock& lock();
+    static UncheckedLock& lock();
 
 private:
     void scheduleScratchBufferPurge()
@@ -168,9 +168,9 @@ ScratchBuffer& ScratchBuffer::singleton()
     return scratchBuffer;
 }
 
-Lock& ScratchBuffer::lock()
+UncheckedLock& ScratchBuffer::lock()
 {
-    static Lock lock;
+    static UncheckedLock lock;
     return lock;
 }
 
@@ -696,7 +696,7 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
 {
     RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
+    auto locker = Locker<UncheckedLock>::tryLock(ScratchBuffer::lock());
     if (locker) {
         layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
         if (!layerImageBuffer)
@@ -756,7 +756,7 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
 {
     RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
+    auto locker = Locker<UncheckedLock>::tryLock(ScratchBuffer::lock());
     if (locker) {
         layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
         if (!layerImageBuffer)

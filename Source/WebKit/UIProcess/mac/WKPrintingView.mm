@@ -414,13 +414,13 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
         *range = NSMakeRange(1, _printingPageRects.size());
     else if (!RunLoop::isMain()) {
         ASSERT(![self _isPrintingPreview]);
-        std::unique_lock<Lock> lock(_printingCallbackMutex);
+        Locker lock { _printingCallbackMutex };
 
         RunLoop::main().dispatch([self] {
             prepareDataForPrintingOnSecondaryThread(self);
         });
 
-        _printingCallbackCondition.wait(lock);
+        _printingCallbackCondition.wait(_printingCallbackMutex);
         *range = NSMakeRange(1, _printingPageRects.size());
     } else {
         ASSERT([self _isPrintingPreview]);

@@ -50,7 +50,7 @@ private:
     void* m_marker { nullptr };
     uint64_t m_codeIndex { 0 };
     int m_fd { -1 };
-    Lock m_lock;
+    UncheckedLock m_lock;
 };
 
 } // namespace JSC

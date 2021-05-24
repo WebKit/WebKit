@@ -148,9 +148,9 @@ void ReverbConvolver::backgroundThreadEntry()
         // Wait for realtime thread to give us more input
         m_moreInputBuffered = false;        
         {
-            std::unique_lock<Lock> lock(m_backgroundThreadLock);
+            Locker locker { m_backgroundThreadLock };
 
-            m_backgroundThreadConditionVariable.wait(lock, [this] { return m_moreInputBuffered || m_wantsToExit; });
+            m_backgroundThreadConditionVariable.wait(m_backgroundThreadLock, [this] { return m_moreInputBuffered || m_wantsToExit; });
         }
 
         // Process all of the stages until their read indices reach the input buffer's write index

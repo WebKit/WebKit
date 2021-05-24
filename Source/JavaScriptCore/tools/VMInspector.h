@@ -43,14 +43,14 @@ public:
         TimedOut
     };
 
-    typedef WTF::Locker<Lock> Locker;
+    typedef WTF::Locker<UncheckedLock> Locker;
 
     static VMInspector& instance();
 
     void add(VM*);
     void remove(VM*);
 
-    Lock& getLock() { return m_lock; }
+    UncheckedLock& getLock() { return m_lock; }
 
     enum class FunctorStatus {
         Continue,
@@ -103,7 +103,7 @@ private:
         }
     }
 
-    Lock m_lock;
+    UncheckedLock m_lock;
     DoublyLinkedList<VM> m_vmList;
 };
 

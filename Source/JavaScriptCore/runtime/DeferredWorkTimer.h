@@ -72,7 +72,7 @@ public:
 private:
     DeferredWorkTimer(VM&);
 
-    Lock m_taskLock;
+    UncheckedLock m_taskLock;
     bool m_runTasks { true };
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };

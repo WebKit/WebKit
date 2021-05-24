@@ -107,7 +107,7 @@ public:
     }
 
 private:
-    Lock m_sampleMutex;
+    UncheckedLock m_sampleMutex;
     GRefPtr<GstSample> m_sample;
 
     // If this is true all processing should finish ASAP

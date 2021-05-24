@@ -40,7 +40,7 @@ using namespace JSC;
 
 namespace {
 
-Lock crashLock;
+UncheckedLock crashLock;
 const char* nameFilter;
 unsigned requestedIterationCount;
 

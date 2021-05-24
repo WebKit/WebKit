@@ -47,7 +47,7 @@ private:
     
     Worklist* m_worklist;
     RefPtr<AutomaticThread> m_thread;
-    Lock m_rightToRun;
+    UncheckedLock m_rightToRun;
     Safepoint* m_safepoint;
 };
 

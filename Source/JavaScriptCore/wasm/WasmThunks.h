@@ -55,7 +55,7 @@ private:
     Thunks() = default;
 
     HashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> m_stubs;
-    Lock m_lock;
+    UncheckedLock m_lock;
 };
 
 } } // namespace JSC::Wasm

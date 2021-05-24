@@ -81,8 +81,8 @@ public:
     // One known-good case for one-true-condition is when the communication involves just two
     // threads. In such cases, the thread doing the notifyAll() can wake up at most one thread -
     // its partner.
-    WTF_EXPORT_PRIVATE void wait(Lock&);
-    WTF_EXPORT_PRIVATE bool waitFor(Lock&, Seconds);
+    WTF_EXPORT_PRIVATE void wait(UncheckedLock&);
+    WTF_EXPORT_PRIVATE bool waitFor(UncheckedLock&, Seconds);
     
 private:
     friend class AutomaticThread;
@@ -93,7 +93,7 @@ private:
     void remove(const AbstractLocker&, AutomaticThread*);
     bool contains(const AbstractLocker&, AutomaticThread*);
     
-    Condition m_condition;
+    UncheckedCondition m_condition;
     Vector<AutomaticThread*> m_threads;
 };
 
@@ -131,9 +131,9 @@ public:
 protected:
     // This logically creates the thread, but in reality the thread won't be created until someone
     // calls AutomaticThreadCondition::notifyOne() or notifyAll().
-    AutomaticThread(const AbstractLocker&, Box<Lock>, Ref<AutomaticThreadCondition>&&, Seconds timeout = 10_s);
+    AutomaticThread(const AbstractLocker&, Box<UncheckedLock>, Ref<AutomaticThreadCondition>&&, Seconds timeout = 10_s);
 
-    AutomaticThread(const AbstractLocker&, Box<Lock>, Ref<AutomaticThreadCondition>&&, ThreadType, Seconds timeout = 10_s);
+    AutomaticThread(const AbstractLocker&, Box<UncheckedLock>, Ref<AutomaticThreadCondition>&&, ThreadType, Seconds timeout = 10_s);
     
     // To understand PollResult and WorkResult, imagine that poll() and work() are being called like
     // so:
@@ -183,15 +183,15 @@ private:
     
     void start(const AbstractLocker&);
     
-    Box<Lock> m_lock;
+    Box<UncheckedLock> m_lock;
     Ref<AutomaticThreadCondition> m_condition;
     Seconds m_timeout;
     ThreadType m_threadType { ThreadType::Unknown };
     bool m_isRunning { true };
     bool m_isWaiting { false };
     bool m_hasUnderlyingThread { false };
-    Condition m_waitCondition;
-    Condition m_isRunningCondition;
+    UncheckedCondition m_waitCondition;
+    UncheckedCondition m_isRunningCondition;
 };
 
 } // namespace WTF

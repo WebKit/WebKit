@@ -165,7 +165,7 @@ private:
 };
 
 JITWorklist::JITWorklist()
-    : m_lock(Box<Lock>::create())
+    : m_lock(Box<UncheckedLock>::create())
     , m_condition(AutomaticThreadCondition::create())
 {
     Locker locker { *m_lock };

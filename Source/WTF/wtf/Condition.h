@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ParkingLot.h>
 #include <wtf/TimeWithDynamicClockType.h>
@@ -39,16 +40,16 @@ namespace WTF {
 // notifyAll() require just a load and branch for the fast case where no thread is waiting.
 // This condition variable, when used with WTF::Lock, can outperform a system condition variable
 // and lock by up to 58x.
-class Condition final {
-    WTF_MAKE_NONCOPYABLE(Condition);
+class UncheckedCondition final {
+    WTF_MAKE_NONCOPYABLE(UncheckedCondition);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // Condition will accept any kind of time and convert it internally, but this typedef tells
-    // you what kind of time Condition would be able to use without conversions. However, if you
+    // UncheckedCondition will accept any kind of time and convert it internally, but this typedef tells
+    // you what kind of time UncheckedCondition would be able to use without conversions. However, if you
     // are unlikely to be affected by the cost of conversions, it is better to use MonotonicTime.
     using Time = ParkingLot::Time;
 
-    constexpr Condition() = default;
+    constexpr UncheckedCondition() = default;
 
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
     // parking, and relock it upon wakeup. Returns true if we woke up due to some call to
@@ -172,9 +173,61 @@ private:
     Atomic<bool> m_hasWaiters { false };
 };
 
+// A condition variable type for Lock.
+// For predicates that access the guarded variables, use assertIsHeld(lock).
+class Condition final {
+    WTF_MAKE_NONCOPYABLE(Condition);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    constexpr Condition() = default;
+
+    bool waitUntil(Lock& lock, const TimeWithDynamicClockType& timeout) WTF_REQUIRES_LOCK(lock)
+    {
+        return m_condition.waitUntil(uncheckedCast(lock), timeout);
+    }
+    template<typename Functor>
+    bool waitUntil(Lock& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
+    {
+        return m_condition.waitUntil(uncheckedCast(lock), timeout, predicate);
+    }
+    template<typename Functor>
+    bool waitFor(Lock& lock, Seconds relativeTimeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
+    {
+        return m_condition.waitFor(uncheckedCast(lock), relativeTimeout, predicate);
+    }
+    bool waitFor(Lock& lock, Seconds relativeTimeout) WTF_REQUIRES_LOCK(lock)
+    {
+        return m_condition.waitFor(uncheckedCast(lock), relativeTimeout);
+    }
+    void wait(Lock& lock) WTF_REQUIRES_LOCK(lock)
+    {
+        m_condition.wait(uncheckedCast(lock));
+    }
+    template<typename Functor>
+    void wait(Lock& lock, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
+    {
+        m_condition.wait(uncheckedCast(lock), predicate);
+    }
+    bool notifyOne()
+    {
+        return m_condition.notifyOne();
+    }
+    void notifyAll()
+    {
+        m_condition.notifyAll();
+    }
+private:
+    static UncheckedLock& uncheckedCast(Lock& lock) { return static_cast<UncheckedLock&>(lock); }
+    UncheckedCondition m_condition;
+};
+
+using StaticUncheckedCondition = UncheckedCondition;
 using StaticCondition = Condition;
 
 } // namespace WTF
 
 using WTF::Condition;
+using WTF::UncheckedCondition;
 using WTF::StaticCondition;
+using WTF::StaticUncheckedCondition;
+

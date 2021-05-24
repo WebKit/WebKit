@@ -140,7 +140,7 @@ struct WebKitWebSrcPrivate {
 
         // Properties used for GStreamer data-flow in create().
         bool isFlushing { false };
-        Condition responseCondition; // Must be signaled after any updates on HTTP requests, and when flushing.
+        UncheckedCondition responseCondition; // Must be signaled after any updates on HTTP requests, and when flushing.
         GRefPtr<GstAdapter> adapter;
         bool isDurationSet;
         uint64_t readPosition;

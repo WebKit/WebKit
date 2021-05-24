@@ -94,8 +94,8 @@ protected:
 
     String m_errorMessage;
     MemoryMode m_mode { MemoryMode::BoundsChecking };
-    Lock m_lock;
-    Condition m_completed;
+    UncheckedLock m_lock;
+    UncheckedCondition m_completed;
 };
 
 

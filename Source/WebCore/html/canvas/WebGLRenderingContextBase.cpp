@@ -7990,7 +7990,7 @@ void WebGLRenderingContextBase::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor
     // roots for extensions.
 }
 
-Lock& WebGLRenderingContextBase::objectGraphLock()
+UncheckedLock& WebGLRenderingContextBase::objectGraphLock()
 {
     return m_objectGraphLock;
 }

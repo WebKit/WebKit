@@ -77,12 +77,12 @@ void AutomaticThreadCondition::notifyAll(const AbstractLocker& locker)
     }
 }
 
-void AutomaticThreadCondition::wait(Lock& lock)
+void AutomaticThreadCondition::wait(UncheckedLock& lock)
 {
     m_condition.wait(lock);
 }
 
-bool AutomaticThreadCondition::waitFor(Lock& lock, Seconds time)
+bool AutomaticThreadCondition::waitFor(UncheckedLock& lock, Seconds time)
 {
     return m_condition.waitFor(lock, time);
 }
@@ -104,12 +104,12 @@ bool AutomaticThreadCondition::contains(const AbstractLocker&, AutomaticThread* 
     return m_threads.contains(thread);
 }
 
-AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, Seconds timeout)
+AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<UncheckedLock> lock, Ref<AutomaticThreadCondition>&& condition, Seconds timeout)
     : AutomaticThread(locker, lock, WTFMove(condition), ThreadType::Unknown, timeout)
 {
 }
 
-AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, ThreadType type, Seconds timeout)
+AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<UncheckedLock> lock, Ref<AutomaticThreadCondition>&& condition, ThreadType type, Seconds timeout)
     : m_lock(lock)
     , m_condition(WTFMove(condition))
     , m_timeout(timeout)

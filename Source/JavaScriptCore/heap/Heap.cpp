@@ -302,7 +302,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_sharedCollectorMarkStack(makeUnique<MarkStackArray>())
     , m_sharedMutatorMarkStack(makeUnique<MarkStackArray>())
     , m_helperClient(&heapHelperPool())
-    , m_threadLock(Box<Lock>::create())
+    , m_threadLock(Box<UncheckedLock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
 {
     m_worldState.store(0);

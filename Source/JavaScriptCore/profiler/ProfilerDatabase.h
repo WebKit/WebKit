@@ -88,7 +88,7 @@ private:
     bool m_shouldSaveAtExit;
     CString m_atExitSaveFilename;
     Database* m_nextRegisteredDatabase;
-    Lock m_lock;
+    UncheckedLock m_lock;
 };
 
 } } // namespace JSC::Profiler

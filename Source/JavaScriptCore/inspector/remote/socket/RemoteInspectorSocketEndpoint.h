@@ -182,7 +182,7 @@ protected:
     bool isListening(ConnectionID);
     int pollingTimeout();
 
-    mutable Lock m_connectionsLock;
+    mutable UncheckedLock m_connectionsLock;
     HashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients;
     HashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners;
 

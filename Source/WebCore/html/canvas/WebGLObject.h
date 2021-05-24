@@ -29,11 +29,7 @@
 
 #include "GraphicsTypesGL.h"
 #include <wtf/RefCounted.h>
-
-namespace WTF {
-class AbstractLocker;
-class Lock;
-}
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -71,7 +67,7 @@ public:
     // WEBGL_shared_objects extension specification never shipped (and
     // is unlikely to), this basically returns the same result for
     // both context objects and shared objects.
-    virtual WTF::Lock& objectGraphLockForContext() = 0;
+    virtual UncheckedLock& objectGraphLockForContext() = 0;
 
 protected:
     WebGLObject() = default;

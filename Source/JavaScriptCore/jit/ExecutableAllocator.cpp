@@ -485,7 +485,7 @@ public:
 #endif // ENABLE(JUMP_ISLANDS)
     }
 
-    Lock& getLock() { return m_lock; }
+    UncheckedLock& getLock() { return m_lock; }
 
     // Non atomic
     size_t bytesAllocated() 
@@ -547,7 +547,7 @@ public:
     }
 
 #if ENABLE(JUMP_ISLANDS)
-    void handleWillBeReleased(const LockHolder& locker, MetaAllocatorHandle& handle)
+    void handleWillBeReleased(const UncheckedLockHolder& locker, MetaAllocatorHandle& handle)
     {
         if (m_islandsForJumpSourceLocation.isEmpty())
             return;
@@ -599,7 +599,7 @@ private:
         return result;
     }
 
-    void freeJumpIslands(const LockHolder&, Islands* islands)
+    void freeJumpIslands(const UncheckedLockHolder&, Islands* islands)
     {
         for (CodeLocationLabel<ExecutableMemoryPtrTag> jumpIsland : islands->jumpIslands) {
             uintptr_t untaggedJumpIsland = bitwise_cast<uintptr_t>(jumpIsland.dataLocation());
@@ -610,14 +610,14 @@ private:
         islands->jumpIslands.clear();
     }
 
-    void freeIslands(const LockHolder& locker, Islands* islands)
+    void freeIslands(const UncheckedLockHolder& locker, Islands* islands)
     {
         freeJumpIslands(locker, islands);
         m_islandsForJumpSourceLocation.remove(islands);
         delete islands;
     }
 
-    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently)
+    void* islandForJumpLocation(const UncheckedLockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently)
     {
         Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
         if (islands) {
@@ -746,7 +746,7 @@ private:
             return islandsPerPage;
         }
 
-        void release(const LockHolder& locker, MetaAllocatorHandle& handle) final
+        void release(const UncheckedLockHolder& locker, MetaAllocatorHandle& handle) final
         {
             m_fixedAllocator.handleWillBeReleased(locker, handle);
             Base::release(locker, handle);
@@ -847,7 +847,7 @@ private:
     };
 #endif // ENABLE(JUMP_ISLANDS)
 
-    Lock m_lock;
+    UncheckedLock m_lock;
     PageReservation m_reservation;
 #if ENABLE(JUMP_ISLANDS)
     std::array<RegionAllocator, maxNumberOfRegions> m_allocators;
@@ -961,7 +961,7 @@ bool ExecutableAllocator::isValidExecutableMemory(const AbstractLocker& locker, 
     return allocator->isInAllocatedMemory(locker, address);
 }
 
-Lock& ExecutableAllocator::getLock() const
+UncheckedLock& ExecutableAllocator::getLock() const
 {
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
@@ -1038,7 +1038,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     static uint8_t* buffer;
     static constexpr size_t bufferSize = fixedExecutableMemoryPoolSize;
     static size_t offset = 0;
-    static Lock dumpJITMemoryLock;
+    static UncheckedLock dumpJITMemoryLock;
     static bool needsToFlush = false;
     static auto flush = [](const AbstractLocker&) {
         if (fd == -1) {

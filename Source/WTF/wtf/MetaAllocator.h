@@ -65,7 +65,7 @@ public:
     using FreeSpacePtr = MetaAllocatorPtr<FreeSpacePtrTag>;
     using MemoryPtr = MetaAllocatorHandle::MemoryPtr;
 
-    WTF_EXPORT_PRIVATE MetaAllocator(Lock&, size_t allocationGranule, size_t pageSize = WTF::pageSize());
+    WTF_EXPORT_PRIVATE MetaAllocator(UncheckedLock&, size_t allocationGranule, size_t pageSize = WTF::pageSize());
     
     WTF_EXPORT_PRIVATE virtual ~MetaAllocator();
     
@@ -74,7 +74,7 @@ public:
         Locker locker { m_lock };
         return allocate(locker, sizeInBytes);
     }
-    WTF_EXPORT_PRIVATE RefPtr<MetaAllocatorHandle> allocate(const LockHolder&, size_t sizeInBytes);
+    WTF_EXPORT_PRIVATE RefPtr<MetaAllocatorHandle> allocate(const UncheckedLockHolder&, size_t sizeInBytes);
 
     void trackAllocations(MetaAllocatorTracker* tracker)
     {
@@ -98,7 +98,7 @@ public:
         Locker locker { m_lock };
         return currentStatistics(locker);
     }
-    WTF_EXPORT_PRIVATE Statistics currentStatistics(const LockHolder&);
+    WTF_EXPORT_PRIVATE Statistics currentStatistics(const UncheckedLockHolder&);
 
     // Add more free space to the allocator. Call this directly from
     // the constructor if you wish to operate the allocator within a
@@ -134,7 +134,7 @@ protected:
     // as there are Handles that refer to it.
 
     // Release a MetaAllocatorHandle.
-    WTF_EXPORT_PRIVATE virtual void release(const LockHolder&, MetaAllocatorHandle&);
+    WTF_EXPORT_PRIVATE virtual void release(const UncheckedLockHolder&, MetaAllocatorHandle&);
 private:
     
     friend class MetaAllocatorHandle;
@@ -197,7 +197,7 @@ private:
     size_t m_bytesReserved;
     size_t m_bytesCommitted;
     
-    Lock& m_lock;
+    UncheckedLock& m_lock;
 
     MetaAllocatorTracker* m_tracker { nullptr };
 

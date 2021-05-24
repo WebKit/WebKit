@@ -184,8 +184,8 @@ struct Stream : public ThreadSafeRefCounted<Stream> {
         GstSegment segment;
         GRefPtr<GstCaps> pendingInitialCaps;
         GRefPtr<GstCaps> previousCaps; // Caps from enqueued samples are compared to these to push CAPS events as needed.
-        Condition padLinkedOrFlushedCondition;
-        Condition queueChangedOrFlushedCondition;
+        UncheckedCondition padLinkedOrFlushedCondition;
+        UncheckedCondition queueChangedOrFlushedCondition;
         bool isFlushing { false };
 
         // Flushes before any buffer has been popped from the queue and sent downstream can be avoided just

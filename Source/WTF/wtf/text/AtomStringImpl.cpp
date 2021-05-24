@@ -45,7 +45,7 @@ class AtomStringTableLocker : public LockHolder {
     static Lock s_stringTableLock;
 public:
     AtomStringTableLocker()
-        : LockHolder(&s_stringTableLock)
+        : LockHolder(s_stringTableLock)
     {
     }
 };

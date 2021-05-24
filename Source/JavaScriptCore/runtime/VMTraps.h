@@ -236,7 +236,7 @@ private:
 
     void invalidateCodeBlocksOnStack();
     void invalidateCodeBlocksOnStack(CallFrame* topCallFrame);
-    void invalidateCodeBlocksOnStack(Locker<Lock>& codeBlockSetLocker, CallFrame* topCallFrame);
+    void invalidateCodeBlocksOnStack(Locker<UncheckedLock>& codeBlockSetLocker, CallFrame* topCallFrame);
 
     void addSignalSender(SignalSender*);
     void removeSignalSender(SignalSender*);
@@ -247,7 +247,7 @@ private:
 
     static constexpr BitField NeedExceptionHandlingMask = ~(1 << NeedExceptionHandling);
 
-    Box<Lock> m_lock;
+    Box<UncheckedLock> m_lock;
     Ref<AutomaticThreadCondition> m_condition;
     Atomic<BitField> m_trapBits { 0 };
     bool m_needToInvalidatedCodeBlocks { false };

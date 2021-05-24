@@ -58,7 +58,7 @@ public:
     static void destroy(JSC::JSCell*);
 
 public:
-    Lock& gcLock() { return m_gcLock; }
+    UncheckedLock& gcLock() { return m_gcLock; }
 
     JSDOMStructureMap& structures(const AbstractLocker&) { return m_structures; }
     JSDOMConstructorMap& constructors(const AbstractLocker&) { return m_constructors; }
@@ -121,7 +121,7 @@ protected:
 
     Ref<DOMWrapperWorld> m_world;
     uint8_t m_worldIsNormal;
-    Lock m_gcLock;
+    UncheckedLock m_gcLock;
     JSC::WriteBarrier<JSC::JSProxy> m_proxy;
 
 private:

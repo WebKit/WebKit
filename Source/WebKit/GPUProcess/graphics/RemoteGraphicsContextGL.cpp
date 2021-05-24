@@ -212,7 +212,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(Optional<WebCore::Pi
     assertIsCurrent(m_streamThread);
     // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
     // as are the messages that call these.
-    Lock mutex;
+    Lock lock;
     Condition conditionVariable;
     bool isFinished = false;
     m_renderingBackend->dispatch([&, contextAttributes = m_context->contextAttributes()]() mutable {
@@ -226,11 +226,11 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(Optional<WebCore::Pi
             // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.
             imageBuffer->flushContext();
         }
-        Locker locker { mutex };
+        Locker locker { lock };
         isFinished = true;
         conditionVariable.notifyOne();
     });
-    std::unique_lock<Lock> lock(mutex);
+    Locker locker { lock };
     conditionVariable.wait(lock, [&] {
         return isFinished;
     });

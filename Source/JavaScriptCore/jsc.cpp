@@ -257,8 +257,8 @@ public:
 private:
     friend class Worker;
     
-    Lock m_lock;
-    Condition m_condition;
+    UncheckedLock m_lock;
+    UncheckedCondition m_condition;
     SentinelLinkedList<Worker, BasicRawSentinelNode<Worker>> m_workers;
     Deque<String> m_reports;
 };

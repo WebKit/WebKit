@@ -93,7 +93,7 @@ public:
 
     void updatePercentageOfPagedOutPages(WTF::SimpleStats&);
     
-    Lock& bitvectorLock() { return m_bitvectorLock; }
+    UncheckedLock& bitvectorLock() { return m_bitvectorLock; }
 
 #define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
     bool is ## capitalBitName(const AbstractLocker&, size_t index) const { return m_bits.is ## capitalBitName(index); } \
@@ -155,7 +155,7 @@ private:
     // Mutator uses this to guard resizing the bitvectors. Those things in the GC that may run
     // concurrently to the mutator must lock this when accessing the bitvectors.
     BlockDirectoryBits m_bits;
-    Lock m_bitvectorLock;
+    UncheckedLock m_bitvectorLock;
     Lock m_localAllocatorsLock;
     CellAttributes m_attributes;
 

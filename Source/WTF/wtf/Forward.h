@@ -25,6 +25,7 @@
 
 namespace WTF {
 
+class AbstractLocker;
 class AtomString;
 class AtomStringImpl;
 class BinarySemaphore;
@@ -32,6 +33,7 @@ class CString;
 class CrashOnOverflow;
 class FunctionDispatcher;
 class Hasher;
+class Lock;
 class Logger;
 class MonotonicTime;
 class OrdinalNumber;
@@ -46,6 +48,7 @@ class TextPosition;
 class TextStream;
 class UniquedStringImpl;
 class URL;
+class UncheckedLock;
 class WallTime;
 
 struct AnyThreadsAccessTraits;
@@ -115,6 +118,7 @@ template<class, class> class expected;
 template<class> class unexpected;
 }}} // namespace std::experimental::fundamentals_v3
 
+using WTF::AbstractLocker;
 using WTF::AtomString;
 using WTF::AtomStringImpl;
 using WTF::BinarySemaphore;
@@ -128,6 +132,7 @@ using WTF::HashMap;
 using WTF::HashSet;
 using WTF::Hasher;
 using WTF::LazyNeverDestroyed;
+using WTF::Lock;
 using WTF::Logger;
 using WTF::NeverDestroyed;
 using WTF::OptionSet;
@@ -150,6 +155,7 @@ using WTF::StringView;
 using WTF::TextPosition;
 using WTF::TextStream;
 using WTF::URL;
+using WTF::UncheckedLock;
 using WTF::UniqueRef;
 using WTF::Variant;
 using WTF::Vector;

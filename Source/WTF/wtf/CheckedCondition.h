@@ -25,58 +25,12 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
 #include <wtf/Condition.h>
 
 namespace WTF {
 
-// A condition variable type for CheckedLock.
-// For predicates that access the guarded variables, use assertIsHeld(lock).
-class CheckedCondition final {
-    WTF_MAKE_NONCOPYABLE(CheckedCondition);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    constexpr CheckedCondition() = default;
-
-    bool waitUntil(CheckedLock& lock, const TimeWithDynamicClockType& timeout) WTF_REQUIRES_LOCK(lock)
-    {
-        return m_condition.waitUntil(uncheckedCast(lock), timeout);
-    }
-    template<typename Functor>
-    bool waitUntil(CheckedLock& lock, const TimeWithDynamicClockType& timeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
-    {
-        return m_condition.waitUntil(uncheckedCast(lock), timeout, predicate);
-    }
-    template<typename Functor>
-    bool waitFor(CheckedLock& lock, Seconds relativeTimeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
-    {
-        return m_condition.waitFor(uncheckedCast(lock), relativeTimeout, predicate);
-    }
-    bool waitFor(CheckedLock& lock, Seconds relativeTimeout) WTF_REQUIRES_LOCK(lock)
-    {
-        return m_condition.waitFor(uncheckedCast(lock), relativeTimeout);
-    }
-    void wait(CheckedLock& lock) WTF_REQUIRES_LOCK(lock)
-    {
-        m_condition.wait(uncheckedCast(lock));
-    }
-    template<typename Functor>
-    void wait(CheckedLock& lock, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
-    {
-        m_condition.wait(uncheckedCast(lock), predicate);
-    }
-    bool notifyOne()
-    {
-        return m_condition.notifyOne();
-    }
-    void notifyAll()
-    {
-        m_condition.notifyAll();
-    }
-private:
-    static Lock& uncheckedCast(CheckedLock& lock) { return static_cast<Lock&>(lock); }
-    Condition m_condition;
-};
+// FIXME: Update code base to use Condition and remove this header.
+using CheckedCondition = Condition;
 
 } // namespace WTF
 

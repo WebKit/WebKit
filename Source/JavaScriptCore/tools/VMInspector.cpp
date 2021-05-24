@@ -89,7 +89,7 @@ auto VMInspector::lock(Seconds timeout) -> Expected<Locker, Error>
 }
 
 #if ENABLE(JIT)
-static bool ensureIsSafeToLock(Lock& lock)
+static bool ensureIsSafeToLock(UncheckedLock& lock)
 {
     unsigned maxRetries = 2;
     unsigned tryCount = 0;

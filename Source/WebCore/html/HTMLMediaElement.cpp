@@ -6626,7 +6626,7 @@ void HTMLMediaElement::createMediaPlayer()
 
 #if ENABLE(WEB_AUDIO)
     auto protectedAudioSourceNode = makeRefPtr(m_audioSourceNode);
-    Locker<Lock> audioSourceNodeLocker(m_audioSourceNode ? &m_audioSourceNode->processLock() : nullptr);
+    Locker audioSourceNodeLocker(m_audioSourceNode ? &m_audioSourceNode->processLock() : nullptr);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
