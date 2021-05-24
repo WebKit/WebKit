@@ -1,3 +1,55 @@
+2021-05-24  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement OpenXR input sources
+        https://bugs.webkit.org/show_bug.cgi?id=224931
+
+        Reviewed by Sergio Villar Senin.
+
+        * Sources.txt: Add OpenXRInput and OpenXRInputSource files
+
+        * platform/xr/openxr/OpenXRInput.cpp: Entry point to query and sync input in OpenXR.
+        (PlatformXR::OpenXRInput::create):
+        (PlatformXR::OpenXRInput::OpenXRInput):
+        (PlatformXR::OpenXRInput::initialize):
+        (PlatformXR::OpenXRInput::getInputSources const):
+        (PlatformXR::OpenXRInput::updateInteractionProfile):
+        * platform/xr/openxr/OpenXRInput.h: Added.
+
+        * platform/xr/openxr/OpenXRInputMappings.h: Mapping definition for supported input profiles.
+        (PlatformXR::buttonTypeToString):
+        (PlatformXR::axisTypetoString):
+
+        * platform/xr/openxr/OpenXRInputSource.cpp: Handles tracking and status of a specific input source.
+        (PlatformXR::OpenXRInputSource::create):
+        (PlatformXR::OpenXRInputSource::~OpenXRInputSource):
+        (PlatformXR::OpenXRInputSource::initialize):
+        (PlatformXR::OpenXRInputSource::suggestBindings const):
+        (PlatformXR::OpenXRInputSource::getInputSource const):
+        (PlatformXR::OpenXRInputSource::updateInteractionProfile):
+        (PlatformXR::OpenXRInputSource::createSpaceAction const):
+        (PlatformXR::OpenXRInputSource::createAction const):
+        (PlatformXR::OpenXRInputSource::createButtonActions const):
+        (PlatformXR::OpenXRInputSource::createBinding const):
+        (PlatformXR::OpenXRInputSource::getPose const):
+        (PlatformXR::OpenXRInputSource::getButton const):
+        (PlatformXR::OpenXRInputSource::getAxis const):
+        (PlatformXR::OpenXRInputSource::getActionState const):
+        * platform/xr/openxr/OpenXRInputSource.h: Added.
+        (PlatformXR::OpenXRInputSource::OpenXRInputSource):
+        (PlatformXR::OpenXRInputSource::actionSet const):
+
+        * platform/xr/openxr/OpenXRUtils.h:
+        (PlatformXR::XrPoseIdentity): Creates a identity pose.
+        (PlatformXR::handenessToString): Convert from handeness enum to string.
+
+        * platform/xr/openxr/PlatformXROpenXR.cpp: Handle input sources in the OpenXR render loop.
+        (PlatformXR::OpenXRDevice::initializeTrackingAndRendering):
+        (PlatformXR::OpenXRDevice::requestFrame):
+        (PlatformXR::OpenXRDevice::pollEvents):
+        (PlatformXR::OpenXRDevice::resetSession):
+        (PlatformXR::OpenXRDevice::updateInteractionProfile):
+        * platform/xr/openxr/PlatformXROpenXR.h:
+
 2021-05-24  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r256715): XSLTProcessor does not parse script when transforming to document

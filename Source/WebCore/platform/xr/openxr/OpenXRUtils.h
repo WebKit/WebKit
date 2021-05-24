@@ -64,10 +64,22 @@ inline String resultToString(XrResult value, XrInstance instance)
     return makeString("<unknown ", int(value), ">");
 }
 
-#define RETURN_IF_FAILED(result, call, instance, ...)                                           \
-    if (XR_FAILED(result)) {                                                                    \
-        LOG(XR, "%s %s: %s\n", __func__, call, resultToString(result, instance).utf8().data()); \
-        return __VA_ARGS__;                                                                     \
+#define RETURN_IF_FAILED(call, label, instance, ...)                                                      \
+    {                                                                                                     \
+        auto xrResult = call;                                                                             \
+        if (XR_FAILED(xrResult)) {                                                                        \
+            LOG(XR, "%s %s: %s\n", __func__, label, resultToString(xrResult, instance).utf8().data());    \
+            return __VA_ARGS__;                                                                           \
+        }                                                                                                 \
+    }
+
+#define RETURN_RESULT_IF_FAILED(call, instance, ...)                                                                  \
+    {                                                                                                                 \
+        auto xrResult = call;                                                                                         \
+        if (XR_FAILED(xrResult)) {                                                                                    \
+            LOG(XR, "%s %s: %s\n", __func__, #call, resultToString(xrResult, instance).utf8().data());                \
+            return xrResult;                                                                                          \
+        }                                                                                                             \
     }
 
 #define LOG_IF_FAILED(result, call, instance, ...)                                           \
@@ -91,6 +103,13 @@ inline Device::FrameData::View xrViewToPose(XrView view)
     return pose;
 }
 
+inline XrPosef XrPoseIdentity()
+{
+    XrPosef pose;
+    pose.orientation.w = 1.0;
+    return pose;
+}
+
 inline XrViewConfigurationType toXrViewConfigurationType(SessionMode mode)
 {
     switch (mode) {
@@ -102,6 +121,19 @@ inline XrViewConfigurationType toXrViewConfigurationType(SessionMode mode)
     };
     ASSERT_NOT_REACHED();
     return XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO;
+}
+
+inline String handenessToString(XRHandedness handeness)
+{
+    switch (handeness) {
+    case XRHandedness::Left:
+        return "left";
+    case XRHandedness::Right:
+        return "right";
+    default:
+        ASSERT_NOT_REACHED();
+        return "";
+    }
 }
 
 } // namespace PlatformXR

@@ -33,6 +33,7 @@
 namespace PlatformXR {
 
 class OpenXRExtensions;
+class OpenXRInput;
 
 // https://www.khronos.org/registry/OpenXR/specs/1.0/html/xrspec.html#system
 // A system represents a collection of related devices in the runtime, often made up of several individual
@@ -78,6 +79,7 @@ private:
     void handleSessionStateChange();
     void waitUntilStopping();
     void updateStageParameters();
+    void updateInteractionProfile();
     LayerHandle generateLayerHandle() { return ++m_handleIndex; }
 
     XrInstance m_instance;
@@ -93,6 +95,8 @@ private:
     Vector<XrView> m_frameViews;
     HashMap<LayerHandle, std::unique_ptr<OpenXRLayer>> m_layers;
     LayerHandle m_handleIndex { 0 };
+    std::unique_ptr<OpenXRInput> m_input;
+    bool didNotifyInputInitialization { false };
 
     using ViewConfigurationPropertiesMap = HashMap<XrViewConfigurationType, XrViewConfigurationProperties, IntHash<XrViewConfigurationType>, WTF::StrongEnumHashTraits<XrViewConfigurationType>>;
     ViewConfigurationPropertiesMap m_viewConfigurationProperties;
