@@ -452,11 +452,7 @@ GstElement* createPlatformAudioSink()
         //   runtime requirements are not fullfilled.
         // - the sink was created for the WPE port, audio mixing was not requested and no
         //   WPEBackend-FDO audio receiver has been registered at runtime.
-        audioSink = gst_element_factory_make("autoaudiosink", nullptr);
-    }
-    if (!audioSink) {
-        GST_WARNING("GStreamer's autoaudiosink not found. Please check your gst-plugins-good installation");
-        return nullptr;
+        audioSink = makeGStreamerElement("autoaudiosink", nullptr);
     }
 
     return audioSink;
@@ -506,6 +502,21 @@ bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState target
 GstBuffer* gstBufferNewWrappedFast(void* data, size_t length)
 {
     return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), data, length, 0, length, data, fastFree);
+}
+
+GstElement* makeGStreamerElement(const char* factoryName, const char* name)
+{
+    auto* element = gst_element_factory_make(factoryName, name);
+    RELEASE_ASSERT_WITH_MESSAGE(element, "GStreamer element %s not found. Please install it", factoryName);
+    return element;
+}
+
+GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads)
+{
+    GUniqueOutPtr<GError> error;
+    auto* bin = gst_parse_bin_from_description(description, ghostUnlinkedPads, &error.outPtr());
+    RELEASE_ASSERT_WITH_MESSAGE(bin, "Unable to create bin for description: \"%s\". Error: %s", description, error->message);
+    return bin;
 }
 
 }

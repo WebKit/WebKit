@@ -77,7 +77,7 @@ public:
     {
         GUniquePtr<char> name(g_strdup_printf("%s_dec_%s_%p", Name(), factoryName, this));
 
-        return gst_element_factory_make(factoryName, name.get());
+        return makeGStreamerElement(factoryName, name.get());
     }
 
     void handleError(GError* error)

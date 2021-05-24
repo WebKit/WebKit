@@ -242,7 +242,7 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
     GST_DEBUG_OBJECT(m_pipeline.get(), "New decodebin pad %" GST_PTR_FORMAT " caps: %" GST_PTR_FORMAT, pad, padCaps.get());
     RELEASE_ASSERT(doCapsHaveType(padCaps.get(), "video"));
 
-    GstElement* sink = gst_element_factory_make("appsink", nullptr);
+    GstElement* sink = makeGStreamerElement("appsink", nullptr);
     static GstAppSinkCallbacks callbacks = {
         nullptr,
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
@@ -262,7 +262,7 @@ void ImageDecoderGStreamer::InnerDecoder::connectDecoderPad(GstPad* pad)
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw, format=(string)RGBA"));
     g_object_set(sink, "sync", false, "caps", caps.get(), nullptr);
 
-    GstElement* videoconvert = gst_element_factory_make("videoconvert", nullptr);
+    GstElement* videoconvert = makeGStreamerElement("videoconvert", nullptr);
 
     gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), videoconvert, sink, nullptr);
     gst_element_link(videoconvert, sink);
@@ -387,10 +387,10 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
         return GST_BUS_DROP;
     }, this, nullptr);
 
-    GstElement* source = gst_element_factory_make("giostreamsrc", nullptr);
+    GstElement* source = makeGStreamerElement("giostreamsrc", nullptr);
     g_object_set(source, "stream", m_memoryStream.get(), nullptr);
 
-    m_decodebin = gst_element_factory_make("decodebin3", nullptr);
+    m_decodebin = makeGStreamerElement("decodebin3", nullptr);
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 
     gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), source, m_decodebin.get(), nullptr);

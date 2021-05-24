@@ -208,7 +208,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcRenderIteration), src, nullptr));
     gst_task_set_lock(priv->task.get(), &priv->mutex);
 
-    priv->interleave = gst_element_factory_make("audiointerleave", nullptr);
+    priv->interleave = makeGStreamerElement("audiointerleave", nullptr);
 
     if (!priv->interleave) {
         GST_ERROR_OBJECT(src, "Failed to create audiointerleave");
@@ -221,7 +221,7 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     // appsrc ! . which is plugged to a new interleave request sinkpad.
     for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++) {
         GUniquePtr<gchar> appsrcName(g_strdup_printf("webaudioSrc%u", channelIndex));
-        GRefPtr<GstElement> appsrc = gst_element_factory_make("appsrc", appsrcName.get());
+        GRefPtr<GstElement> appsrc = makeGStreamerElement("appsrc", appsrcName.get());
         GRefPtr<GstCaps> monoCaps = adoptGRef(getGStreamerMonoAudioCaps(priv->sampleRate));
 
         GstAudioInfo info;

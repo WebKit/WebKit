@@ -66,7 +66,7 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     WebKitGLVideoSink* sink = WEBKIT_GL_VIDEO_SINK(object);
 
-    sink->priv->appSink = gst_element_factory_make("appsink", "webkit-gl-video-appsink");
+    sink->priv->appSink = makeGStreamerElement("appsink", "webkit-gl-video-appsink");
     ASSERT(sink->priv->appSink);
     g_object_set(sink->priv->appSink.get(), "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
 
@@ -81,10 +81,10 @@ static void webKitGLVideoSinkConstructed(GObject* object)
     if (imxVideoConvertG2D)
         gst_bin_add(GST_BIN_CAST(sink), imxVideoConvertG2D);
 
-    GstElement* upload = gst_element_factory_make("glupload", nullptr);
-    GstElement* colorconvert = gst_element_factory_make("glcolorconvert", nullptr);
+    GstElement* upload = makeGStreamerElement("glupload", nullptr);
+    GstElement* colorconvert = makeGStreamerElement("glcolorconvert", nullptr);
 
-    GstElement* videoFlip = gst_element_factory_make("glvideoflip", nullptr);
+    GstElement* videoFlip = makeGStreamerElement("glvideoflip", nullptr);
     sink->priv->handlesRotationTags = videoFlip;
 
     if (videoFlip) {

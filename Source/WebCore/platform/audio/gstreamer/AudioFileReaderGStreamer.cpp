@@ -255,7 +255,7 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
     // in an appsink so we can pull the data from each
     // channel. Pipeline looks like:
     // ... deinterleave ! appsink.
-    GstElement* sink = gst_element_factory_make("appsink", nullptr);
+    GstElement* sink = makeGStreamerElement("appsink", nullptr);
 
     m_channels++;
 
@@ -300,10 +300,10 @@ void AudioFileReader::plugDeinterleave(GstPad* pad)
     // A decodebin pad was added, plug in a deinterleave element to
     // separate each planar channel. Sub pipeline looks like
     // ... decodebin2 ! audioconvert ! audioresample ! capsfilter ! deinterleave.
-    GstElement* audioConvert  = gst_element_factory_make("audioconvert", nullptr);
-    GstElement* audioResample = gst_element_factory_make("audioresample", nullptr);
+    GstElement* audioConvert  = makeGStreamerElement("audioconvert", nullptr);
+    GstElement* audioResample = makeGStreamerElement("audioresample", nullptr);
     GstElement* capsFilter = gst_element_factory_make("capsfilter", nullptr);
-    m_deInterleave = gst_element_factory_make("deinterleave", "deinterleave");
+    m_deInterleave = makeGStreamerElement("deinterleave", "deinterleave");
 
     g_object_set(m_deInterleave.get(), "keep-positions", TRUE, nullptr);
     g_signal_connect_swapped(m_deInterleave.get(), "pad-added", G_CALLBACK(deinterleavePadAddedCallback), this);
@@ -358,7 +358,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     GstElement* source;
     if (m_data) {
         ASSERT(m_dataSize);
-        source = gst_element_factory_make("giostreamsrc", nullptr);
+        source = makeGStreamerElement("giostreamsrc", nullptr);
         GRefPtr<GInputStream> memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, nullptr));
         g_object_set(source, "stream", memoryStream.get(), nullptr);
     } else {
@@ -366,7 +366,7 @@ void AudioFileReader::decodeAudioForBusCreation()
         g_object_set(source, "location", m_filePath, nullptr);
     }
 
-    m_decodebin = gst_element_factory_make("decodebin", "decodebin");
+    m_decodebin = makeGStreamerElement("decodebin", "decodebin");
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 
     gst_bin_add_many(GST_BIN(m_pipeline.get()), source, m_decodebin.get(), nullptr);

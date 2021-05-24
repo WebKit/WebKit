@@ -133,8 +133,7 @@ public:
             m_videoTrack = VideoTrackPrivateMediaStream::create(track);
 
         bool isCaptureTrack = track.isCaptureTrack();
-        m_src = gst_element_factory_make("appsrc", nullptr);
-        RELEASE_ASSERT_WITH_MESSAGE(GST_IS_APP_SRC(m_src.get()), "GStreamer appsrc element not found. Please make sure to install gst-plugins-base");
+        m_src = makeGStreamerElement("appsrc", nullptr);
 
         g_object_set(m_src.get(), "is-live", TRUE, "format", GST_FORMAT_TIME, "emit-signals", TRUE, "min-percent", 100,
             "do-timestamp", isCaptureTrack, nullptr);

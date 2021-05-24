@@ -81,7 +81,7 @@ static void webkitTextSinkConstructed(GObject* object)
     auto* sink = WEBKIT_TEXT_SINK(object);
     auto* priv = sink->priv;
 
-    priv->appSink = gst_element_factory_make("appsink", nullptr);
+    priv->appSink = makeGStreamerElement("appsink", nullptr);
     gst_bin_add(GST_BIN_CAST(sink), priv->appSink.get());
 
     auto pad = adoptGRef(gst_element_get_static_pad(priv->appSink.get(), "sink"));

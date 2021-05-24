@@ -302,6 +302,10 @@ bool webkitGstSetElementStateSynchronously(GstElement*, GstState, Function<bool(
 
 GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 
+// These functions should be used for elements not provided by WebKit itself and not provided by GStreamer -core.
+GstElement* makeGStreamerElement(const char* factoryName, const char* name);
+GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS

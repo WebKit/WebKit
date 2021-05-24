@@ -40,10 +40,7 @@ GStreamerVideoCapturer::GStreamerVideoCapturer(const char* sourceFactory)
 GstElement* GStreamerVideoCapturer::createConverter()
 {
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/97#note_56575
-    auto converter = gst_parse_bin_from_description("videoscale ! videoconvert ! videorate drop-only=1 average-period=1", TRUE, nullptr);
-    ASSERT(converter);
-
-    return converter;
+    return makeGStreamerBin("videoscale ! videoconvert ! videorate drop-only=1 average-period=1", true);
 }
 
 GstVideoInfo GStreamerVideoCapturer::getBestFormat()

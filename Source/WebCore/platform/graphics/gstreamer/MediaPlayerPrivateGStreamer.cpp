@@ -2708,7 +2708,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     static Atomic<uint32_t> pipelineId;
 
-    m_pipeline = gst_element_factory_make(playbinName, makeString(type, elementId, '-', pipelineId.exchangeAdd(1)).ascii().data());
+    m_pipeline = makeGStreamerElement(playbinName, makeString(type, elementId, '-', pipelineId.exchangeAdd(1)).ascii().data());
     if (!m_pipeline) {
         GST_WARNING("%s not found, make sure to install gst-plugins-base", playbinName);
         loadingFailed(MediaPlayer::NetworkState::FormatError, MediaPlayer::ReadyState::HaveNothing, true);
@@ -2796,7 +2796,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (!m_canRenderingBeAccelerated) {
         // If not using accelerated compositing, let GStreamer handle
         // the image-orientation tag.
-        GstElement* videoFlip = gst_element_factory_make("videoflip", nullptr);
+        GstElement* videoFlip = makeGStreamerElement("videoflip", nullptr);
         if (videoFlip) {
             gst_util_set_object_arg(G_OBJECT(videoFlip), "method", "automatic");
             g_object_set(m_pipeline.get(), "video-filter", videoFlip, nullptr);
@@ -3401,7 +3401,7 @@ GstElement* MediaPlayerPrivateGStreamer::createHolePunchVideoSink()
 {
     // Here goes the platform-dependant code to create the videoSink. As a default
     // we use a fakeVideoSink so nothing is drawn to the page.
-    GstElement* videoSink =  gst_element_factory_make("fakevideosink", nullptr);
+    GstElement* videoSink =  makeGStreamerElement("fakevideosink", nullptr);
 
     return videoSink;
 }
@@ -3431,7 +3431,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
     acceleratedRenderingStateChanged();
 
     if (!m_player->isVideoPlayer()) {
-        m_videoSink = gst_element_factory_make("fakevideosink", nullptr);
+        m_videoSink = makeGStreamerElement("fakevideosink", nullptr);
         return m_videoSink.get();
     }
 
