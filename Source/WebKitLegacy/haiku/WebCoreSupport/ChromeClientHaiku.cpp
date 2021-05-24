@@ -45,7 +45,7 @@
 
 #include "ColorChooserHaiku.h"
 #include "DateTimeChooserHaiku.h"
-#include "FileIconLoader.h"
+#include <WebCore/FileIconLoader.h>
 #include "FrameLoaderClientHaiku.h"
 #include "WebFrame.h"
 #include "WebView.h"

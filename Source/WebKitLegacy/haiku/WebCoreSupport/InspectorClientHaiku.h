@@ -30,7 +30,7 @@
 #ifndef InspectorClientHaiku_h
 #define InspectorClientHaiku_h
 
-#include "InspectorClient.h"
+#include <WebCore/InspectorClient.h>
 
 namespace WebCore {
     class Node;

@@ -37,7 +37,6 @@
 #include "DumpRenderTreeClient.h"
 #include "FrameNetworkingContextHaiku.h"
 #include "IconDatabase.h"
-#include "PluginData.h"
 
 #include "WebCore/AuthenticationChallenge.h"
 #include "WebCore/BackForwardController.h"
@@ -56,6 +55,7 @@
 #include "WebCore/MIMETypeRegistry.h"
 #include "WebCore/NotImplemented.h"
 #include "WebCore/Page.h"
+#include "WebCore/PluginData.h"
 #include "WebCore/ProgressTracker.h"
 #include "WebCore/RenderFrame.h"
 #include "WebCore/ResourceRequest.h"

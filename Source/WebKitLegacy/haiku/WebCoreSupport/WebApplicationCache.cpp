@@ -26,7 +26,8 @@
 #include "WebApplicationCache.h"
 
 #include <wtf/RetainPtr.h>
-#include <ApplicationCache.h>
+
+#include "WebCore/ApplicationCache.h"
 #include "WebCore/ApplicationCacheStorage.h"
 #include "WebCore/SecurityOrigin.h"
 

@@ -42,7 +42,6 @@
 #include "NotificationClientHaiku.h"
 #include "PageStorageSessionProvider.h"
 #include "PlatformStrategiesHaiku.h"
-#include "PluginInfoProvider.h"
 #include "ProgressTrackerHaiku.h"
 
 #include "WebCore/BackForwardController.h"
@@ -76,6 +75,7 @@
 #include "WebCore/PlatformKeyboardEvent.h"
 #include "WebCore/PlatformMouseEvent.h"
 #include "WebCore/PlatformWheelEvent.h"
+#include "WebCore/PluginInfoProvider.h"
 #include "WebCore/PointerLockController.h"
 #include "WebCore/ProgressTracker.h"
 #include "WebCore/ProgressTrackerClient.h"
