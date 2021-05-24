@@ -567,8 +567,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 #endif // ENABLE(FTL_JIT)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
-
-        jitStubs->preinitializeCTIThunks(*this);
     }
 #endif // ENABLE(JIT)
 
@@ -888,14 +886,13 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
     return getOrCreate(m_fastBoundExecutable);
 }
 
-MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind, Optional<NoLockingNecessaryTag> noLockingNecessary)
+MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
 {
-    UNUSED_PARAM(noLockingNecessary);
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         if (kind == CodeForCall)
-            return jitStubs->ctiInternalFunctionCall(*this, noLockingNecessary).retagged<JSEntryPtrTag>();
-        return jitStubs->ctiInternalFunctionConstruct(*this, noLockingNecessary).retagged<JSEntryPtrTag>();
+            return jitStubs->ctiInternalFunctionCall(*this).retagged<JSEntryPtrTag>();
+        return jitStubs->ctiInternalFunctionConstruct(*this).retagged<JSEntryPtrTag>();
     }
 #endif
     if (kind == CodeForCall)

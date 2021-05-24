@@ -84,7 +84,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
 #endif
     jit.ret();
 
-    auto handler = vm.jitStubs->existingCTIStub(popThunkStackPreservesAndHandleExceptionGenerator, NoLockingNecessary);
+    auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(call, FunctionPtr<OperationPtrTag>(slowPathFunction));

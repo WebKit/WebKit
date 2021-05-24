@@ -1,3 +1,47 @@
+2021-05-24  Saam Barati  <sbarati@apple.com>
+
+        Allow CTI stubs to be generated off the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=226180
+
+        Reviewed by Mark Lam.
+
+        We make this work by tracking if we're a compiler thread when generating
+        the CTI stub. If so, it means that the main thread needs to issue a
+        crossModifyingCodeFence when it's going to run the CTI stub for the first
+        time.
+        
+        This patch also does away with pre-generating thunks. Thunks can now generate
+        other thunks while they're running. To do this, we make JITThunks lock a
+        recursive lock. The reason this is ok is that we don't have any recursive
+        thunks in the thunk graph. It's a DAG.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        (JSC::JITThunks::ctiStubImpl):
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::ctiSlowPathFunctionStub):
+        (JSC::JITThunks::existingCTIStub): Deleted.
+        (JSC::JITThunks::preinitializeCTIThunks): Deleted.
+        * jit/JITThunks.h:
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::generateThunk):
+        * jit/ThunkGenerators.cpp:
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+        (JSC::checkExceptionGenerator):
+        (JSC::virtualThunkFor):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::getCTIInternalFunctionTrampolineFor):
+        * runtime/VM.h:
+
 2021-05-24  Darin Adler  <darin@apple.com>
 
         Remove StringBuilder::appendLiteral

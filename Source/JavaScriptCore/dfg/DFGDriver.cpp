@@ -78,14 +78,6 @@ static CompilationResult compileImpl(
     if (logCompilationChanges(mode))
         dataLog("DFG(Driver) compiling ", *codeBlock, " with ", mode, ", instructions size = ", codeBlock->instructionsSize(), "\n");
     
-    // Make sure that any stubs that the DFG is going to use are initialized. We want to
-    // make sure that all JIT code generation does finalization on the main thread.
-    vm.getCTIStub(arityFixupGenerator);
-    vm.getCTIStub(osrExitGenerationThunkGenerator);
-    vm.getCTIStub(throwExceptionFromCallSlowPathGenerator);
-    vm.getCTIStub(linkCallThunkGenerator);
-    vm.getCTIStub(linkPolymorphicCallThunkGenerator);
-    
     if (vm.typeProfiler())
         vm.typeProfilerLog()->processLogEntries(vm, "Preparing for DFG compilation."_s);
     
