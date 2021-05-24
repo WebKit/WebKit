@@ -60,8 +60,8 @@ namespace WebKit {
 using namespace WebCore;
 
 WebResourceLoadStatisticsStore::State WebResourceLoadStatisticsStore::suspendedState { WebResourceLoadStatisticsStore::State::Running };
-CheckedLock WebResourceLoadStatisticsStore::suspendedStateLock;
-CheckedCondition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
+Lock WebResourceLoadStatisticsStore::suspendedStateLock;
+Condition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
 
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
 {

@@ -30,8 +30,8 @@
 #include "IDBCursorDirection.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStoreInfo.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/IsoMalloc.h>
+#include <wtf/Lock.h>
 
 namespace JSC {
 class CallFrame;
@@ -134,7 +134,7 @@ private:
 
     bool m_deleted { false };
 
-    mutable CheckedLock m_referencedIndexLock;
+    mutable Lock m_referencedIndexLock;
     HashMap<String, std::unique_ptr<IDBIndex>> m_referencedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
     HashMap<uint64_t, std::unique_ptr<IDBIndex>> m_deletedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
 };

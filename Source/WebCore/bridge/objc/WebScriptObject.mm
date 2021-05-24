@@ -49,8 +49,8 @@
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/JSValueInternal.h>
-#import <wtf/CheckedLock.h>
 #import <wtf/HashMap.h>
+#import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Threading.h>
 #import <wtf/text/WTFString.h>
@@ -70,7 +70,7 @@ using JSC::makeSource;
 
 namespace WebCore {
 
-static CheckedLock wrapperCacheLock;
+static Lock wrapperCacheLock;
 static CreateWrapperFunction createDOMWrapperFunction;
 static DisconnectWindowWrapperFunction disconnectWindowWrapperFunction;
 

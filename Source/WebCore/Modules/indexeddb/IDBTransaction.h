@@ -36,9 +36,9 @@
 #include "IDBTransactionMode.h"
 #include "IndexedDB.h"
 #include "Timer.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -254,7 +254,7 @@ private:
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
-    mutable CheckedLock m_referencedObjectStoreLock;
+    mutable Lock m_referencedObjectStoreLock;
     HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores WTF_GUARDED_BY_LOCK(m_referencedObjectStoreLock);
     HashMap<uint64_t, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores;
 

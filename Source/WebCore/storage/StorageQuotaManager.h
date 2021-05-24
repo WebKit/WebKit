@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
@@ -57,7 +57,7 @@ private:
 
     void updateQuotaBasedOnUsage();
 
-    CheckedLock m_quotaCountDownLock;
+    Lock m_quotaCountDownLock;
     uint64_t m_quotaCountDown WTF_GUARDED_BY_LOCK(m_quotaCountDownLock) { 0 };
     uint64_t m_quota { 0 };
     uint64_t m_usage { 0 };

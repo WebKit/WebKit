@@ -24,8 +24,8 @@
  */
 
 #import <dispatch/dispatch.h>
-#import <wtf/CheckedLock.h>
 #import <wtf/Function.h>
+#import <wtf/Lock.h>
 #import <wtf/MessageQueue.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -38,7 +38,7 @@ class SynchronousLoaderMessageQueue;
 }
 
 @interface WebCoreResourceHandleAsOperationQueueDelegate : NSObject <NSURLConnectionDelegate> {
-    CheckedLock m_lock;
+    Lock m_lock;
     WebCore::ResourceHandle* m_handle WTF_GUARDED_BY_LOCK(m_lock);
 
     // Synchronous delegates on operation queue wait until main thread sends an asynchronous response.

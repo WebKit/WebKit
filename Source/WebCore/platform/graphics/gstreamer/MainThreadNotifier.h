@@ -68,8 +68,8 @@ public:
     template<typename F>
     void notifyAndWait(T notificationType, F&& callbackFunctor)
     {
-        CheckedLock lock;
-        CheckedCondition condition;
+        Lock lock;
+        Condition condition;
 
         notify(notificationType, [functor = WTFMove(callbackFunctor), &condition, &lock] {
             functor();

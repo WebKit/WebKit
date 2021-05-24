@@ -29,7 +29,6 @@ set(TestWTF_SOURCES
     Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp
     Tests/WTF/CheckedArithmeticOperations.cpp
-    Tests/WTF/CheckedLockTest.cpp
     Tests/WTF/CompactRefPtrTuple.cpp
     Tests/WTF/CompactUniquePtrTuple.cpp
     Tests/WTF/ConcurrentPtrHashSet.cpp

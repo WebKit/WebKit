@@ -76,7 +76,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebSocket);
 
-CheckedLock WebSocket::s_allActiveWebSocketsLock;
+Lock WebSocket::s_allActiveWebSocketsLock;
 
 const size_t maxReasonSizeInBytes = 123;
 
@@ -194,7 +194,7 @@ HashSet<WebSocket*>& WebSocket::allActiveWebSockets()
     return activeWebSockets;
 }
 
-CheckedLock& WebSocket::allActiveWebSocketsLock()
+Lock& WebSocket::allActiveWebSocketsLock()
 {
     return s_allActiveWebSocketsLock;
 }

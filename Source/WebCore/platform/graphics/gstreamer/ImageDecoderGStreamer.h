@@ -26,9 +26,9 @@
 #include "MIMETypeRegistry.h"
 #include "SampleMap.h"
 #include "SharedBuffer.h"
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
@@ -116,8 +116,8 @@ private:
         GRefPtr<GstElement> m_decodebin;
         RunLoop& m_runLoop;
 
-        CheckedCondition m_messageCondition;
-        CheckedLock m_messageLock;
+        Condition m_messageCondition;
+        Lock m_messageLock;
         bool m_messageDispatched WTF_GUARDED_BY_LOCK(m_messageLock) { false };
     };
 
@@ -134,11 +134,11 @@ private:
     Optional<IntSize> m_size;
     String m_mimeType;
     RefPtr<ImageDecoderGStreamer::InnerDecoder> m_innerDecoder;
-    CheckedCondition m_sampleCondition;
-    CheckedLock m_sampleLock;
+    Condition m_sampleCondition;
+    Lock m_sampleLock;
     GRefPtr<GstSample> m_sample WTF_GUARDED_BY_LOCK(m_sampleLock);
-    CheckedCondition m_handlerCondition;
-    CheckedLock m_handlerLock;
+    Condition m_handlerCondition;
+    Lock m_handlerLock;
 };
 }
 #endif

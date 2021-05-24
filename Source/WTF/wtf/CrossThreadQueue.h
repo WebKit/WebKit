@@ -27,8 +27,7 @@
 
 #include <limits>
 #include <wtf/Assertions.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
@@ -53,9 +52,9 @@ public:
     bool isEmpty() const;
 
 private:
-    mutable CheckedLock m_lock;
+    mutable Lock m_lock;
     Deque<DataType> m_queue WTF_GUARDED_BY_LOCK(m_lock);
-    CheckedCondition m_condition;
+    Condition m_condition;
     bool m_killed WTF_GUARDED_BY_LOCK(m_lock) { false };
 };
 

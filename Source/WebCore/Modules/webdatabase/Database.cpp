@@ -53,7 +53,7 @@
 #include "SecurityOrigin.h"
 #include "VoidCallback.h"
 #include "WindowEventLoop.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -153,7 +153,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 }
 
 // FIXME: move all guid-related functions to a DatabaseVersionTracker class.
-static CheckedLock guidLock;
+static Lock guidLock;
 
 static HashMap<DatabaseGUID, String>& guidToVersionMap() WTF_REQUIRES_LOCK(guidLock)
 {

@@ -31,8 +31,8 @@
 #include <mutex>
 #include <stdio.h>
 #include <string.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/Compiler.h>
+#include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/PrintStream.h>
@@ -368,7 +368,7 @@ public:
     String getAndResetAccumulatedLogs();
 
 private:
-    CheckedLock accumulatorLock;
+    Lock accumulatorLock;
     StringBuilder loggingAccumulator WTF_GUARDED_BY_LOCK(accumulatorLock);
 };
 

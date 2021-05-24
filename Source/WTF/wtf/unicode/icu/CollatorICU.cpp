@@ -35,7 +35,7 @@
 
 #include <mutex>
 #include <unicode/ucol.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/text/StringView.h>
 
 #if OS(DARWIN) && USE(CF)
@@ -45,7 +45,7 @@
 
 namespace WTF {
 
-static CheckedLock cachedCollatorLock;
+static Lock cachedCollatorLock;
 static UCollator* cachedCollator WTF_GUARDED_BY_LOCK(cachedCollatorLock);
 static char* cachedCollatorLocale;
 static bool cachedCollatorShouldSortLowercaseFirst;

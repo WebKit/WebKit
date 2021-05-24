@@ -32,8 +32,8 @@
 #import "SubresourceLoader.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/CheckedLock.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/Lock.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -573,7 +573,7 @@ public:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
 
 private:
-    CheckedLock m_taskLock;
+    Lock m_taskLock;
     WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task WTF_GUARDED_BY_LOCK(m_taskLock);
 };
 

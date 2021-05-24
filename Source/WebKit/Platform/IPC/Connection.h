@@ -33,12 +33,12 @@
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "Timeout.h"
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
@@ -404,30 +404,30 @@ private:
     bool m_didReceiveInvalidMessage { false };
 
     // Incoming messages.
-    CheckedLock m_incomingMessagesLock;
+    Lock m_incomingMessagesLock;
     Deque<std::unique_ptr<Decoder>> m_incomingMessages WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
     std::unique_ptr<MessagesThrottler> m_incomingMessagesThrottler;
     MessageReceiveQueueMap m_receiveQueues WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
     // Outgoing messages.
-    CheckedLock m_outgoingMessagesLock;
+    Lock m_outgoingMessagesLock;
     Deque<UniqueRef<Encoder>> m_outgoingMessages WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
 
-    CheckedCondition m_waitForMessageCondition;
-    CheckedLock m_waitForMessageLock;
+    Condition m_waitForMessageCondition;
+    Lock m_waitForMessageLock;
 
     struct WaitForMessageState;
     WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { nullptr }; // NOLINT
 
     class SyncMessageState;
 
-    CheckedLock m_syncReplyStateLock;
+    Lock m_syncReplyStateLock;
     bool m_shouldWaitForSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock) { true };
     bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageLock) { true };
     struct PendingSyncReply;
     Vector<PendingSyncReply> m_pendingSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock);
 
-    CheckedLock m_incomingSyncMessageCallbackLock;
+    Lock m_incomingSyncMessageCallbackLock;
     HashMap<uint64_t, WTF::Function<void()>> m_incomingSyncMessageCallbacks WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
     RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
     uint64_t m_nextIncomingSyncMessageCallbackID WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock) { 0 };

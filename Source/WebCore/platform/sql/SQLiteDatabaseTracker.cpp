@@ -27,13 +27,13 @@
 #include "SQLiteDatabaseTracker.h"
 
 #include <mutex>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
 namespace SQLiteDatabaseTracker {
 
-static CheckedLock transactionInProgressLock;
+static Lock transactionInProgressLock;
 static SQLiteDatabaseTrackerClient* s_staticSQLiteDatabaseTrackerClient WTF_GUARDED_BY_LOCK(transactionInProgressLock) { nullptr };
 static unsigned s_transactionInProgressCounter WTF_GUARDED_BY_LOCK(transactionInProgressLock) { 0 };
 

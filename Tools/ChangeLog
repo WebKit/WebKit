@@ -1,3 +1,24 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CheckedConditionTest.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/CheckedLockTest.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/Condition.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Lock.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/MetaAllocator.cpp:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AXThread::createThreadIfNeeded):
+
 2021-05-24  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Be resilient against remote failure when determining the native architecture

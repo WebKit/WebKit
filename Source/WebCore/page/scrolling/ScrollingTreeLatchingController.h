@@ -28,7 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollTypes.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
@@ -62,7 +62,7 @@ public:
 private:
     bool latchedNodeIsRelevant() const;
 
-    mutable CheckedLock m_latchedNodeLock;
+    mutable Lock m_latchedNodeLock;
     Optional<ScrollingNodeAndProcessingSteps> m_latchedNodeAndSteps WTF_GUARDED_BY_LOCK(m_latchedNodeLock);
     Optional<OptionSet<WheelEventProcessingSteps>> m_processingStepsForCurrentGesture;
     MonotonicTime m_lastLatchedNodeInterationTime;

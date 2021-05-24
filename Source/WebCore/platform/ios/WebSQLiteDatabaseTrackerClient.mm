@@ -31,7 +31,7 @@
 #import "WebBackgroundTaskController.h"
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
-#import <wtf/CheckedLock.h>
+#import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -85,7 +85,7 @@ void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(PAL::HysteresisState stat
 
 }
 
-static CheckedLock transactionBackgroundTaskIdentifierLock;
+static Lock transactionBackgroundTaskIdentifierLock;
 
 static NSUInteger transactionBackgroundTaskIdentifier WTF_GUARDED_BY_LOCK(transactionBackgroundTaskIdentifierLock);
 

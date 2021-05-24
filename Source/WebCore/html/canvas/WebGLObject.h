@@ -28,8 +28,8 @@
 #if ENABLE(WEBGL)
 
 #include "GraphicsTypesGL.h"
-#include <wtf/RefCounted.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

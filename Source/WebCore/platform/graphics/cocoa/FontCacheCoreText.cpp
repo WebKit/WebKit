@@ -35,8 +35,8 @@
 
 #include <CoreText/SFNTLayoutTypes.h>
 
-#include <wtf/CheckedLock.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -910,7 +910,7 @@ private:
     {
     }
 
-    CheckedLock m_familyNameToFontDescriptorsLock;
+    Lock m_familyNameToFontDescriptorsLock;
     HashMap<String, std::unique_ptr<InstalledFontFamily>> m_familyNameToFontDescriptors WTF_GUARDED_BY_LOCK(m_familyNameToFontDescriptorsLock);
     HashMap<String, InstalledFont> m_postScriptNameToFontDescriptors;
     AllowUserInstalledFonts m_allowUserInstalledFonts;

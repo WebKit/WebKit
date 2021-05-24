@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-CheckedLock AXIsolatedTree::s_cacheLock;
+Lock AXIsolatedTree::s_cacheLock;
 
 static unsigned newTreeID()
 {

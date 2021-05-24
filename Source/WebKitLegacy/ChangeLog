@@ -1,3 +1,14 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * Storage/StorageAreaSync.h:
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Replace LockHolder with Locker in local variables

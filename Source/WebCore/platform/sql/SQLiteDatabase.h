@@ -28,8 +28,8 @@
 
 #include <functional>
 #include <sqlite3.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/Expected.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -180,7 +180,7 @@ private:
 
     bool m_useWAL { false };
 
-    CheckedLock m_authorizerLock;
+    Lock m_authorizerLock;
     RefPtr<DatabaseAuthorizer> m_authorizer WTF_GUARDED_BY_LOCK(m_authorizerLock);
 
     Lock m_lockingMutex;

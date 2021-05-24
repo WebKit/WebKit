@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 
 namespace WTF {
 
@@ -61,8 +61,8 @@ public:
     WriteLock& write();
 
 private:
-    CheckedLock m_lock;
-    CheckedCondition m_cond;
+    Lock m_lock;
+    Condition m_cond;
     bool m_isWriteLocked WTF_GUARDED_BY_LOCK(m_lock) { false };
     unsigned m_numReaders WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     unsigned m_numWaitingWriters WTF_GUARDED_BY_LOCK(m_lock) { 0 };

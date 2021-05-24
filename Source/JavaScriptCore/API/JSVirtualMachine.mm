@@ -38,12 +38,12 @@
 #import "SigillCrashAnalyzer.h"
 #import "SlotVisitorInlines.h"
 #import <mutex>
-#import <wtf/CheckedLock.h>
+#import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 
 static NSMapTable *globalWrapperCache = 0;
 
-static CheckedLock wrapperCacheMutex;
+static Lock wrapperCacheMutex;
 
 static void initWrapperCache()
 {

@@ -30,9 +30,9 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/InstanceCounted.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -106,7 +106,7 @@ private:
     WebCore::PageIdentifier m_webPageID;
     WebCore::ResourceRequest m_request WTF_GUARDED_BY_LOCK(m_requestLock);
     Ref<API::FrameInfo> m_frameInfo;
-    mutable CheckedLock m_requestLock;
+    mutable Lock m_requestLock;
     bool m_stopped { false };
     bool m_responseSent { false };
     bool m_dataSent { false };

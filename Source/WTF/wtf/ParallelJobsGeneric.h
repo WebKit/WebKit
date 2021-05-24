@@ -30,8 +30,8 @@
 
 #if ENABLE(THREADING_GENERIC)
 
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 
@@ -65,8 +65,8 @@ public:
         }
 
     private:
-        mutable CheckedLock m_lock;
-        CheckedCondition m_threadCondition;
+        mutable Lock m_lock;
+        Condition m_threadCondition;
 
         RefPtr<Thread> m_thread;
         bool m_running { false };

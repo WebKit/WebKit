@@ -29,8 +29,8 @@
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SampleMap.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 
 DECLARE_CORE_MEDIA_TRAITS(TrackReader);
 
@@ -106,8 +106,8 @@ private:
     const CMMediaType m_mediaType;
     const MediaTime m_duration;
     std::atomic<Enabled> m_isEnabled { Enabled::Unknown };
-    mutable CheckedCondition m_sampleStorageCondition;
-    mutable CheckedLock m_sampleStorageLock;
+    mutable Condition m_sampleStorageCondition;
+    mutable Lock m_sampleStorageLock;
     mutable std::unique_ptr<SampleStorage> m_sampleStorage WTF_GUARDED_BY_LOCK(m_sampleStorageLock);
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

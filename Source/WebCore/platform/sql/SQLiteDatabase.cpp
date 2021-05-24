@@ -36,8 +36,8 @@
 #include <mutex>
 #include <sqlite3.h>
 #include <thread>
-#include <wtf/CheckedLock.h>
 #include <wtf/FileSystem.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -72,7 +72,7 @@ static void initializeSQLiteIfNecessary()
     });
 }
 
-static CheckedLock isDatabaseOpeningForbiddenLock;
+static Lock isDatabaseOpeningForbiddenLock;
 static bool isDatabaseOpeningForbidden WTF_GUARDED_BY_LOCK(isDatabaseOpeningForbiddenLock) { false };
 
 void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)

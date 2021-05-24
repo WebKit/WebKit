@@ -27,7 +27,7 @@
 #include "LegacySchemeRegistry.h"
 
 #include "RuntimeApplicationChecks.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URLParser.h>
@@ -65,7 +65,7 @@ static NeverDestroyed<URLSchemesMap> makeNeverDestroyedSchemeSet(const Vector<St
     return set;
 }
 
-static CheckedLock schemeRegistryLock;
+static Lock schemeRegistryLock;
 
 static const URLSchemesMap& allBuiltinSchemes()
 {

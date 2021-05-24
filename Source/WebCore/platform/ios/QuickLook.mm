@@ -30,7 +30,6 @@
 
 #import "ResourceRequest.h"
 #import <pal/spi/cocoa/NSFileManagerSPI.h>
-#import <wtf/CheckedLock.h>
 #import <wtf/FileSystem.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
@@ -47,7 +46,7 @@ NSSet *QLPreviewGetSupportedMIMETypesSet()
     return set.get().get();
 }
 
-static CheckedLock qlPreviewConverterDictionaryLock;
+static Lock qlPreviewConverterDictionaryLock;
 
 static NSMutableDictionary *QLPreviewConverterDictionary() WTF_REQUIRES_LOCK(qlPreviewConverterDictionaryLock)
 {

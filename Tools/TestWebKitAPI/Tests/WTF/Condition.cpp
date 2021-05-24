@@ -249,5 +249,14 @@ TEST(WTF_Condition, TimeoutTimesOut)
     EXPECT_FALSE(result);
 }
 
+TEST(WTF_Condition, Basic)
+{
+    Lock lock;
+    Condition condition;
+    Locker locker { lock }; // Comment this to ensure that thread safety analysis creates a compile error.
+    bool result = condition.waitFor(lock, 0_s);
+    EXPECT_FALSE(result);
+}
+
 } // namespace TestWebKitAPI
 

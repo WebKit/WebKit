@@ -94,7 +94,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGPUDevice);
 
-CheckedLock WebGPUDevice::s_instancesLock;
+Lock WebGPUDevice::s_instancesLock;
 
 RefPtr<WebGPUDevice> WebGPUDevice::tryCreate(ScriptExecutionContext& context, Ref<const WebGPUAdapter>&& adapter)
 {
@@ -112,7 +112,7 @@ HashSet<WebGPUDevice*>& WebGPUDevice::instances()
     return instances;
 }
 
-CheckedLock& WebGPUDevice::instancesLock()
+Lock& WebGPUDevice::instancesLock()
 {
     return s_instancesLock;
 }

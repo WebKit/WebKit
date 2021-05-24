@@ -32,9 +32,9 @@
 #include "NetworkCacheFileSystem.h"
 #include "NetworkCacheIOChannel.h"
 #include <mutex>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/FileSystem.h>
+#include <wtf/Lock.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
@@ -162,8 +162,8 @@ public:
     const OptionSet<TraverseFlag> flags;
     const TraverseHandler handler;
 
-    CheckedLock activeLock;
-    CheckedCondition activeCondition;
+    Lock activeLock;
+    Condition activeCondition;
     unsigned activeCount WTF_GUARDED_BY_LOCK(activeLock) { 0 };
 };
 

@@ -31,8 +31,8 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
 #include <gst/pbutils/missing-plugins.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/Scope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -81,12 +81,12 @@ struct _WebKitWebAudioSrcPrivate {
 
     bool hasRenderedAudibleFrame { false };
 
-    CheckedLock dispatchToRenderThreadLock;
+    Lock dispatchToRenderThreadLock;
     Function<void(Function<void()>&&)> dispatchToRenderThreadFunction WTF_GUARDED_BY_LOCK(dispatchToRenderThreadLock);
 
     bool dispatchDone WTF_GUARDED_BY_LOCK(dispatchLock);
-    CheckedLock dispatchLock;
-    CheckedCondition dispatchCondition;
+    Lock dispatchLock;
+    Condition dispatchCondition;
 
     _WebKitWebAudioSrcPrivate()
     {

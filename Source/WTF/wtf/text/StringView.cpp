@@ -30,8 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unicode/ubrk.h>
 #include <unicode/unorm2.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/Optional.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -360,7 +360,7 @@ StringView::UnderlyingString::UnderlyingString(const StringImpl& string)
 {
 }
 
-static CheckedLock underlyingStringsLock;
+static Lock underlyingStringsLock;
 
 static HashMap<const StringImpl*, StringView::UnderlyingString*>& underlyingStrings() WTF_REQUIRES_LOCK(underlyingStringsLock)
 {

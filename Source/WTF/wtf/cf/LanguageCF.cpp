@@ -30,7 +30,7 @@
 #include <mutex>
 #include <unicode/uloc.h>
 #include <wtf/Assertions.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cf/CFBundleSPI.h>
@@ -38,7 +38,7 @@
 
 namespace WTF {
 
-static CheckedLock preferredLanguagesLock;
+static Lock preferredLanguagesLock;
 
 #if PLATFORM(MAC)
 static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)

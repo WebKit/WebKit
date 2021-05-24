@@ -30,8 +30,8 @@
 #include "URLParser.h"
 #include <stdio.h>
 #include <unicode/uidna.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
@@ -268,7 +268,7 @@ static void assertProtocolIsGood(StringView protocol)
 
 #endif
 
-static CheckedLock defaultPortForProtocolMapForTestingLock;
+static Lock defaultPortForProtocolMapForTestingLock;
 
 using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
 static DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMapForTesting() WTF_REQUIRES_LOCK(defaultPortForProtocolMapForTestingLock)

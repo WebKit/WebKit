@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-CheckedLock WebGLProgram::s_instancesLock;
+Lock WebGLProgram::s_instancesLock;
 
 HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances()
 {
@@ -53,7 +53,7 @@ HashMap<WebGLProgram*, WebGLRenderingContextBase*>& WebGLProgram::instances()
     return instances;
 }
 
-CheckedLock& WebGLProgram::instancesLock()
+Lock& WebGLProgram::instancesLock()
 {
     return s_instancesLock;
 }

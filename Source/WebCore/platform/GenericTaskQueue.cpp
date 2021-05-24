@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CheckedLock TaskDispatcher<Timer>::s_sharedLock;
+Lock TaskDispatcher<Timer>::s_sharedLock;
 
 TaskDispatcher<Timer>::TaskDispatcher()
 {

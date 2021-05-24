@@ -57,13 +57,13 @@
 #include "WorkerScriptLoader.h"
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 using namespace Inspector;
 
-static CheckedLock allWorkerGlobalScopeIdentifiersLock;
+static Lock allWorkerGlobalScopeIdentifiersLock;
 static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers() WTF_REQUIRES_LOCK(allWorkerGlobalScopeIdentifiersLock)
 {
     static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;

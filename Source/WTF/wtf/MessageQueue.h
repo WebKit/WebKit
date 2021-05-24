@@ -31,9 +31,9 @@
 
 #include <limits>
 #include <wtf/Assertions.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 
@@ -78,8 +78,8 @@ namespace WTF {
         bool isEmpty();
 
     private:
-        mutable CheckedLock m_lock;
-        CheckedCondition m_condition;
+        mutable Lock m_lock;
+        Condition m_condition;
         Deque<std::unique_ptr<DataType>> m_queue WTF_GUARDED_BY_LOCK(m_lock);
         bool m_killed WTF_GUARDED_BY_LOCK(m_lock);
     };

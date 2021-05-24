@@ -34,7 +34,7 @@
 #include "InlineCallFrame.h"
 #include "JSCJSValueInlines.h"
 #include "TrackedReferences.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace DFG {
@@ -45,7 +45,7 @@ void CommonData::shrinkToFit()
     m_jumpReplacements.shrinkToFit();
 }
 
-static CheckedLock pcCodeBlockMapLock;
+static Lock pcCodeBlockMapLock;
 inline HashMap<void*, CodeBlock*>& pcCodeBlockMap() WTF_REQUIRES_LOCK(pcCodeBlockMapLock)
 {
     static LazyNeverDestroyed<HashMap<void*, CodeBlock*>> pcCodeBlockMap;

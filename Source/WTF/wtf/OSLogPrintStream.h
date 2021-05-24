@@ -27,7 +27,7 @@
 
 #if OS(DARWIN)
 
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/text/CString.h>
@@ -49,7 +49,7 @@ public:
 private:
     os_log_t m_log;
     os_log_type_t m_logType;
-    CheckedLock m_stringLock;
+    Lock m_stringLock;
     // We need a buffer because os_log doesn't wait for a new line to print the characters.
     CString m_string WTF_GUARDED_BY_LOCK(m_stringLock);
     size_t m_offset { 0 };

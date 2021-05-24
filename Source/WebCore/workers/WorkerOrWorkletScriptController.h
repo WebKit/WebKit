@@ -30,8 +30,8 @@
 #include "WorkerThreadType.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/NakedPtr.h>
 
@@ -121,7 +121,7 @@ private:
     WorkerOrWorkletGlobalScope* m_globalScope;
     JSC::Strong<JSDOMGlobalObject> m_globalScopeWrapper;
     std::unique_ptr<WorkerConsoleClient> m_consoleClient;
-    mutable CheckedLock m_scheduledTerminationLock;
+    mutable Lock m_scheduledTerminationLock;
     bool m_isTerminatingExecution WTF_GUARDED_BY_LOCK(m_scheduledTerminationLock) { false };
 };
 

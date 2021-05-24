@@ -71,7 +71,7 @@ private:
 
     void dispatchOneTask();
 
-    static CheckedLock s_sharedLock;
+    static Lock s_sharedLock;
     Deque<Function<void()>> m_pendingTasks WTF_GUARDED_BY_LOCK(s_sharedLock);
 };
 

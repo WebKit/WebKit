@@ -1,3 +1,74 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.cpp:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::wait):
+        (WTF::AutomaticThreadCondition::waitFor):
+        (WTF::AutomaticThread::AutomaticThread):
+        * wtf/AutomaticThread.h:
+        * wtf/CMakeLists.txt:
+        * wtf/CheckedCondition.h: Removed.
+        * wtf/CheckedLock.h: Removed.
+        * wtf/Condition.h:
+        * wtf/CrossThreadQueue.h:
+        * wtf/CrossThreadTaskHandler.h:
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/FastMalloc.cpp:
+        * wtf/Forward.h:
+        * wtf/Language.cpp:
+        * wtf/Lock.cpp:
+        (WTF::UncheckedLock::lockSlow):
+        (WTF::UncheckedLock::unlockSlow):
+        (WTF::UncheckedLock::unlockFairlySlow):
+        (WTF::UncheckedLock::safepointSlow):
+        * wtf/Lock.h:
+        (WTF::WTF_ASSERTS_ACQUIRED_LOCK):
+        * wtf/Logger.cpp:
+        * wtf/Logger.h:
+        (WTF::Logger::WTF_RETURNS_LOCK):
+        * wtf/MessageQueue.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/MetaAllocator.h:
+        * wtf/OSLogPrintStream.h:
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        * wtf/ParallelHelperPool.h:
+        * wtf/ParallelJobsGeneric.h:
+        * wtf/ParallelVectorIterator.h:
+        * wtf/ReadWriteLock.h:
+        * wtf/RecursiveLockAdapter.h:
+        * wtf/RunLoop.h:
+        * wtf/SynchronizedFixedQueue.h:
+        * wtf/Threading.cpp:
+        (WTF::Thread::allThreadsLock):
+        * wtf/Threading.h:
+        * wtf/TimingScope.cpp:
+        * wtf/URL.cpp:
+        * wtf/WTFSemaphore.h:
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::concurrentApply):
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        * wtf/WorkerPool.h:
+        * wtf/cf/LanguageCF.cpp:
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::AtomStringTableLocker::AtomStringTableLocker):
+        * wtf/text/StringView.cpp:
+        * wtf/threads/BinarySemaphore.h:
+        * wtf/unicode/icu/CollatorICU.cpp:
+
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
         Make CheckedLock the default Lock

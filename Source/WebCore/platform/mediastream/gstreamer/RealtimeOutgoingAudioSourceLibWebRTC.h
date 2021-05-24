@@ -25,7 +25,7 @@
 #include "RealtimeOutgoingAudioSource.h"
 
 #include <gst/audio/audio.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ private:
     GstAudioInfo m_inputStreamDescription;
     GstAudioInfo m_outputStreamDescription;
 
-    CheckedLock m_adapterLock;
+    Lock m_adapterLock;
     GRefPtr<GstAdapter> m_adapter WTF_GUARDED_BY_LOCK(m_adapterLock);
     Vector<uint8_t> m_audioBuffer;
 };

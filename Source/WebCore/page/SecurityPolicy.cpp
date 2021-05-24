@@ -33,8 +33,8 @@
 #include "SecurityOrigin.h"
 #include "UserContentURLPattern.h"
 #include <memory>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
@@ -47,7 +47,7 @@ static SecurityPolicy::LocalLoadPolicy localLoadPolicy = SecurityPolicy::AllowLo
 typedef Vector<OriginAccessEntry> OriginAccessAllowlist;
 typedef HashMap<String, std::unique_ptr<OriginAccessAllowlist>> OriginAccessMap;
 
-static CheckedLock originAccessMapLock;
+static Lock originAccessMapLock;
 static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
 {
     ASSERT(originAccessMapLock.isHeld());
@@ -55,7 +55,7 @@ static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
     return originAccessMap;
 }
 
-static CheckedLock originAccessPatternLock;
+static Lock originAccessPatternLock;
 static Vector<UserContentURLPattern>& originAccessPatterns() WTF_REQUIRES_LOCK(originAccessPatternLock)
 {
     ASSERT(originAccessPatternLock.isHeld());

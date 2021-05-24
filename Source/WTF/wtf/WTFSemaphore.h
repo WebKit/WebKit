@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {
@@ -71,8 +71,8 @@ public:
 
 private:
     unsigned m_value WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    CheckedLock m_lock;
-    CheckedCondition m_condition;
+    Lock m_lock;
+    Condition m_condition;
 };
 
 

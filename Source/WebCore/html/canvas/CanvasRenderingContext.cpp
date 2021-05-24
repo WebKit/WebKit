@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
 
-CheckedLock CanvasRenderingContext::s_instancesLock;
+Lock CanvasRenderingContext::s_instancesLock;
 
 HashSet<CanvasRenderingContext*>& CanvasRenderingContext::instances()
 {
@@ -54,7 +54,7 @@ HashSet<CanvasRenderingContext*>& CanvasRenderingContext::instances()
     return instances;
 }
 
-CheckedLock& CanvasRenderingContext::instancesLock()
+Lock& CanvasRenderingContext::instancesLock()
 {
     return s_instancesLock;
 }

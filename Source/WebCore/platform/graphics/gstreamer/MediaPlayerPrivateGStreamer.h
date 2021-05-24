@@ -38,9 +38,9 @@
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Atomics.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
@@ -376,8 +376,8 @@ protected:
     ImageOrientation m_videoSourceOrientation;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    CheckedLock m_cdmAttachmentLock;
-    CheckedCondition m_cdmAttachmentCondition;
+    Lock m_cdmAttachmentLock;
+    Condition m_cdmAttachmentCondition;
     RefPtr<CDMInstanceProxy> m_cdmInstance;
 
     Lock m_protectionMutex; // Guards access to m_handledProtectionEvents.
@@ -475,8 +475,8 @@ private:
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     bool m_hasVideo { false };
     bool m_hasAudio { false };
-    CheckedCondition m_drawCondition;
-    CheckedLock m_drawLock;
+    Condition m_drawCondition;
+    Lock m_drawLock;
     RunLoop::Timer<MediaPlayerPrivateGStreamer> m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
     RunLoop::Timer<MediaPlayerPrivateGStreamer> m_readyTimerHandler;
 #if USE(TEXTURE_MAPPER_GL)

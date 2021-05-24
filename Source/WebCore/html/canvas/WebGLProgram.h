@@ -29,9 +29,9 @@
 
 #include "ContextDestructionObserver.h"
 #include "WebGLSharedObject.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -54,7 +54,7 @@ public:
     virtual ~WebGLProgram();
 
     static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances() WTF_REQUIRES_LOCK(instancesLock());
-    static CheckedLock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     void contextDestroyed() final;
 
@@ -98,7 +98,7 @@ private:
     void cacheActiveAttribLocations(GraphicsContextGL*);
     void cacheInfoIfNeeded();
 
-    static CheckedLock s_instancesLock;
+    static Lock s_instancesLock;
 
     Vector<GCGLint> m_activeAttribLocations;
 

@@ -30,7 +30,7 @@
 
 #include "AudioContext.h"
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -207,7 +207,7 @@ private:
 
     Vector<ParamEvent> m_events WTF_GUARDED_BY_LOCK(m_eventsLock);
 
-    mutable CheckedLock m_eventsLock;
+    mutable Lock m_eventsLock;
 };
 
 } // namespace WebCore

@@ -26,8 +26,8 @@
 #include "config.h"
 #include <wtf/Language.h>
 
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,7 +37,7 @@
 
 namespace WTF {
 
-static CheckedLock preferredLanguagesOverrideLock;
+static Lock preferredLanguagesOverrideLock;
 static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(preferredLanguagesOverrideLock)
 {
     static NeverDestroyed<Vector<String>> override;

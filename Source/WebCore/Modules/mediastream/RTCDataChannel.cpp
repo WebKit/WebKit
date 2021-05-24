@@ -37,8 +37,8 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -253,7 +253,7 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
     queueTaskToDispatchEvent(*this, TaskSource::Networking, WTFMove(event));
 }
 
-static CheckedLock s_rtcDataChannelLocalMapLock;
+static Lock s_rtcDataChannelLocalMapLock;
 static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap() WTF_REQUIRES_LOCK(s_rtcDataChannelLocalMapLock)
 {
     ASSERT(s_rtcDataChannelLocalMapLock.isHeld());

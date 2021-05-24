@@ -36,8 +36,7 @@
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
 
@@ -341,8 +340,8 @@ protected:
     }
 
     WebCore::DisplayList::FlushIdentifier m_sentFlushIdentifier;
-    CheckedLock m_receivedFlushIdentifierLock;
-    CheckedCondition m_receivedFlushIdentifierChangedCondition;
+    Lock m_receivedFlushIdentifierLock;
+    Condition m_receivedFlushIdentifierChangedCondition;
     WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 };

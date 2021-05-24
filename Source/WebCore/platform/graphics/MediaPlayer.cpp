@@ -37,7 +37,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformTimeRanges.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include "InbandTextTrackPrivate.h"
@@ -204,7 +204,7 @@ static MediaPlayerClient& nullMediaPlayerClient()
 
 static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&&);
 
-static CheckedLock mediaEngineVectorLock;
+static Lock mediaEngineVectorLock;
 
 static bool& haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
 {

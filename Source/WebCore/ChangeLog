@@ -1,3 +1,146 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/server/IDBSerializationContext.cpp:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        * Modules/mediastream/RTCRtpSFrameTransformer.h:
+        * Modules/mediastream/RTCRtpScriptTransform.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.h:
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.h:
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webdatabase/Database.cpp:
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseTask.h:
+        * Modules/webdatabase/DatabaseThread.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::openDatabaseMutex):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/OriginLock.cpp:
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        * Modules/webdatabase/SQLTransaction.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::instancesLock):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUPipeline.cpp:
+        (WebCore::WebGPUPipeline::instancesLock):
+        * Modules/webgpu/WebGPUPipeline.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::allActiveWebSocketsLock):
+        * Modules/websockets/WebSocket.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bridge/objc/WebScriptObject.mm:
+        * crypto/CryptoAlgorithmRegistry.h:
+        * dom/MessagePort.cpp:
+        * dom/Node.cpp:
+        * dom/ScriptExecutionContext.cpp:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::instancesLock):
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/WebGLContextGroup.cpp:
+        (WebCore::WebGLContextGroup::objectGraphLockForAContext):
+        * html/canvas/WebGLContextGroup.h:
+        * html/canvas/WebGLContextObject.cpp:
+        (WebCore::WebGLContextObject::objectGraphLockForContext):
+        * html/canvas/WebGLContextObject.h:
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::instancesLock):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::objectGraphLock):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLSharedObject.cpp:
+        (WebCore::WebGLSharedObject::objectGraphLockForContext):
+        * html/canvas/WebGLSharedObject.h:
+        * inspector/agents/WebHeapAgent.cpp:
+        * page/ResourceUsageThread.h:
+        * page/SecurityPolicy.cpp:
+        * page/WheelEventTestMonitor.h:
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::WTF_RETURNS_LOCK):
+        * page/scrolling/ScrollingTreeLatchingController.h:
+        * page/scrolling/ThreadedScrollingTree.h:
+        (WebCore::ThreadedScrollingTree::WTF_RETURNS_LOCK):
+        * page/scrolling/mac/ScrollingTreeMac.h:
+        * platform/AbortableTaskQueue.h:
+        * platform/GenericTaskQueue.cpp:
+        * platform/GenericTaskQueue.h:
+        * platform/LegacySchemeRegistry.cpp:
+        * platform/audio/AudioDestination.h:
+        * platform/audio/HRTFDatabaseLoader.h:
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::backgroundThreadEntry):
+        * platform/audio/cocoa/AudioDestinationCocoa.h:
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        * platform/audio/mac/FFTFrameMac.cpp:
+        * platform/encryptedmedia/CDMProxy.h:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::lock):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cg/SubimageCacheWithTimer.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.h:
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+        (WebCore::TextureMapperPlatformLayerProxy::WTF_RETURNS_LOCK):
+        * platform/image-decoders/ScalableImageDecoder.h:
+        * platform/ios/QuickLook.mm:
+        * platform/ios/WebSQLiteDatabaseTrackerClient.mm:
+        * platform/ios/wak/WebCoreThreadRun.cpp:
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.h:
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.h:
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::loaderRunLoop):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        * platform/network/mac/UTIUtilities.mm:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/sql/SQLiteDatabase.cpp:
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteDatabaseTracker.cpp:
+        * platform/text/TextEncodingRegistry.cpp:
+        * storage/StorageQuotaManager.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerOrWorkletScriptController.h:
+        * workers/WorkerOrWorkletThread.cpp:
+        (WebCore::WorkerOrWorkletThread::workerOrWorkletThreadsLock):
+        * workers/WorkerOrWorkletThread.h:
+        * worklets/PaintWorkletGlobalScope.h:
+
 2021-05-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Rename the geometry() helpers to formattingGeometry()

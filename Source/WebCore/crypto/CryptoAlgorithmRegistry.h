@@ -26,9 +26,9 @@
 #pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringHash.h>
 
@@ -63,7 +63,7 @@ private:
 
     void registerAlgorithm(const String& name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
 
-    CheckedLock m_lock;
+    Lock m_lock;
     HashMap<String, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_identifiers WTF_GUARDED_BY_LOCK(m_lock);
     HashMap<unsigned, std::pair<String, CryptoAlgorithmConstructor>> m_constructors WTF_GUARDED_BY_LOCK(m_lock);
 };

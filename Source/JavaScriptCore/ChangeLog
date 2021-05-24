@@ -1,3 +1,83 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * API/JSVirtualMachine.mm:
+        * API/glib/JSCVirtualMachine.cpp:
+        * assembler/PerfLog.h:
+        * assembler/testmasm.cpp:
+        * bytecode/StructureStubInfo.h:
+        * bytecode/SuperSampler.cpp:
+        * dfg/DFGCommon.cpp:
+        * dfg/DFGCommonData.cpp:
+        * dfg/DFGPlan.h:
+        * dfg/DFGThreadData.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::Worklist):
+        * dfg/DFGWorklist.h:
+        * disassembler/Disassembler.cpp:
+        * dynbench.cpp:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::parallelNotEmptyBlockSource):
+        * heap/BlockDirectory.h:
+        (JSC::BlockDirectory::bitvectorLock):
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::getLock):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/Heap.h:
+        * heap/IsoSubspacePerVM.h:
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::directoryLock):
+        * heap/MarkingConstraintSolver.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::donateKnownParallel):
+        * heap/SlotVisitor.h:
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::getLock const):
+        (JSC::dumpJITMemory):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocatorBase::getLock const):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::JITWorklist):
+        * jit/JITWorklist.h:
+        * jsc.cpp:
+        * profiler/ProfilerDatabase.h:
+        * runtime/ConcurrentJSLock.h:
+        * runtime/DeferredWorkTimer.h:
+        * runtime/JSLock.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::FrameWalker):
+        (JSC::CFrameWalker::CFrameWalker):
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::getLock):
+        * runtime/VM.h:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        (JSC::VMTraps::VMTraps):
+        * runtime/VMTraps.h:
+        * tools/FunctionOverrides.h:
+        * tools/VMInspector.cpp:
+        (JSC::ensureIsSafeToLock):
+        * tools/VMInspector.h:
+        (JSC::VMInspector::getLock):
+        * wasm/WasmCalleeRegistry.h:
+        (JSC::Wasm::CalleeRegistry::getLock):
+        * wasm/WasmPlan.h:
+        * wasm/WasmStreamingCompiler.h:
+        * wasm/WasmThunks.h:
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::Worklist):
+        * wasm/WasmWorklist.h:
+
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
         Make CheckedLock the default Lock

@@ -31,9 +31,9 @@
 #include "IntSize.h"
 #include "IntSizeHash.h"
 #include "Timer.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
@@ -103,7 +103,7 @@ private:
 
     void showPoolStatistics(const char*);
 
-    CheckedLock m_lock;
+    Lock m_lock;
     RunLoop::Timer<IOSurfacePool> m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceMap m_cachedSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceQueue m_inUseSurfaces WTF_GUARDED_BY_LOCK(m_lock);

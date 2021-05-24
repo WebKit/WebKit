@@ -34,8 +34,8 @@
 #include "WebGPUAdapter.h"
 #include "WebGPUQueue.h"
 #include "WebGPUSwapChainDescriptor.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -86,7 +86,7 @@ public:
     static RefPtr<WebGPUDevice> tryCreate(ScriptExecutionContext&, Ref<const WebGPUAdapter>&&);
 
     static HashSet<WebGPUDevice*>& instances() WTF_REQUIRES_LOCK(instancesLock());
-    static CheckedLock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
     GPUDevice& device() { return m_device.get(); }
@@ -127,7 +127,7 @@ private:
 
     void dispatchUncapturedError(GPUError&&);
 
-    static CheckedLock s_instancesLock;
+    static Lock s_instancesLock;
 
     ScriptExecutionContext& m_scriptExecutionContext;
 

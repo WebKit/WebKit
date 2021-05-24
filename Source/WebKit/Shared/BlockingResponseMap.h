@@ -26,9 +26,9 @@
 #ifndef BlockingResponseMap_h
 #define BlockingResponseMap_h
 
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 
 template<typename T>
@@ -75,8 +75,8 @@ public:
     }
 
 private:
-    CheckedLock m_responsesLock;
-    CheckedCondition m_condition;
+    Lock m_responsesLock;
+    Condition m_condition;
 
     HashMap<uint64_t, std::unique_ptr<T>> m_responses WTF_GUARDED_BY_LOCK(m_responsesLock);
     bool m_canceled;

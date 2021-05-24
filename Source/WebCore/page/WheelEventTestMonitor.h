@@ -30,9 +30,9 @@
 
 #include "PlatformWheelEvent.h"
 #include <functional>
-#include <wtf/CheckedLock.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -73,7 +73,7 @@ private:
     WTF::Function<void()> m_completionCallback;
     Page& m_page;
 
-    CheckedLock m_lock;
+    Lock m_lock;
     ScrollableAreaReasonMap m_deferCompletionReasons WTF_GUARDED_BY_LOCK(m_lock);
     bool m_expectWheelEndOrCancel WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_receivedWheelEndOrCancel WTF_GUARDED_BY_LOCK(m_lock) { false };

@@ -29,7 +29,7 @@
 
 #include "ExceptionOr.h"
 #include "RTCRtpTransformBackend.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -76,7 +76,7 @@ private:
     Vector<uint8_t> computeEncryptedDataSignature(const Vector<uint8_t>& nonce, const uint8_t* header, size_t headerSize, const uint8_t* data, size_t dataSize, const Vector<uint8_t>& key);
     void updateAuthenticationSize();
 
-    CheckedLock m_keyLock;
+    Lock m_keyLock;
     bool m_hasKey { false };
     Vector<uint8_t> m_authenticationKey;
     Vector<uint8_t> m_encryptionKey;

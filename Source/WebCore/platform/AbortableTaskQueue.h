@@ -20,10 +20,10 @@
 
 #pragma once
 
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 
@@ -232,8 +232,8 @@ private:
     }
 
     bool m_aborting WTF_GUARDED_BY_LOCK(m_lock) { false };
-    CheckedLock m_lock;
-    CheckedCondition m_abortedOrResponseSet;
+    Lock m_lock;
+    Condition m_abortedOrResponseSet;
     WTF::Deque<Ref<Task>> m_channel WTF_GUARDED_BY_LOCK(m_lock);
 };
 

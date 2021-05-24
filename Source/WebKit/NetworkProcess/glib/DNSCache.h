@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
@@ -61,7 +61,7 @@ private:
     void removeExpiredResponsesInMap(DNSCacheMap&);
     void pruneResponsesInMap(DNSCacheMap&);
 
-    CheckedLock m_lock;
+    Lock m_lock;
     DNSCacheMap m_dnsMap WTF_GUARDED_BY_LOCK(m_lock);
 #if GLIB_CHECK_VERSION(2, 59, 0)
     DNSCacheMap m_ipv4Map;

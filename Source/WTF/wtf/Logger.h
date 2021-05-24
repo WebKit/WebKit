@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -112,7 +112,7 @@ struct ConsoleLogValue<Argument, false> {
     }
 };
 
-WTF_EXPORT_PRIVATE extern CheckedLock loggerObserverLock;
+WTF_EXPORT_PRIVATE extern Lock loggerObserverLock;
 
 class Logger : public ThreadSafeRefCounted<Logger> {
     WTF_MAKE_NONCOPYABLE(Logger);
@@ -363,7 +363,7 @@ private:
 
     WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& observers() WTF_REQUIRES_LOCK(observerLock());
 
-    static CheckedLock& observerLock() WTF_RETURNS_LOCK(loggerObserverLock)
+    static Lock& observerLock() WTF_RETURNS_LOCK(loggerObserverLock)
     {
         return loggerObserverLock;
     }

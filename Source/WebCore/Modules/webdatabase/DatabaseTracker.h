@@ -33,10 +33,10 @@
 #include "SQLiteDatabase.h"
 #include "SecurityOriginData.h"
 #include "SecurityOriginHash.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 
@@ -162,11 +162,11 @@ private:
     using DatabaseNameMap = HashMap<String, DatabaseSet*>;
     using DatabaseOriginMap = HashMap<SecurityOriginData, DatabaseNameMap*>;
 
-    CheckedLock m_openDatabaseMapGuard;
+    Lock m_openDatabaseMapGuard;
     mutable std::unique_ptr<DatabaseOriginMap> m_openDatabaseMap WTF_GUARDED_BY_LOCK(m_openDatabaseMapGuard);
 
     // This lock protects m_database, m_originLockMap, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
-    CheckedLock m_databaseGuard;
+    Lock m_databaseGuard;
     SQLiteDatabase m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
     using OriginLockMap = HashMap<String, RefPtr<OriginLock>>;

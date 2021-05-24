@@ -31,8 +31,8 @@
 #include "MessageNames.h"
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionEncoder.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
 namespace IPC {
@@ -93,7 +93,7 @@ protected:
     size_t m_serverOffset { 0 };
     StreamConnectionBuffer m_buffer;
 
-    CheckedLock m_outOfStreamMessagesLock;
+    Lock m_outOfStreamMessagesLock;
     Deque<std::unique_ptr<Decoder>> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
 
     bool m_isDispatchingStreamMessage { false };
@@ -155,7 +155,7 @@ private:
     bool processSetStreamDestinationID(Decoder&&, RefPtr<Receiver>& currentReceiver);
     bool dispatchStreamMessage(Decoder&&, Receiver&);
     bool dispatchOutOfStreamMessage(Decoder&&);
-    CheckedLock m_receiversLock;
+    Lock m_receiversLock;
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<Receiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-CheckedLock WebGPUPipeline::s_instancesLock;
+Lock WebGPUPipeline::s_instancesLock;
 
 HashMap<WebGPUPipeline*, WebGPUDevice*>& WebGPUPipeline::instances()
 {
@@ -47,7 +47,7 @@ HashMap<WebGPUPipeline*, WebGPUDevice*>& WebGPUPipeline::instances()
     return instances;
 }
 
-CheckedLock& WebGPUPipeline::instancesLock()
+Lock& WebGPUPipeline::instancesLock()
 {
     return s_instancesLock;
 }

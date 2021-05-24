@@ -457,8 +457,6 @@
 		7AFEC6AE1EB22AC600DADE36 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
 		7AFEC6B01EB22B5900DADE36 /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
 		7B2739DC2624DAAA0040F182 /* ThreadSafetyAnalysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSafetyAnalysis.h; sourceTree = "<group>"; };
-		7B2739DD2624DAC30040F182 /* CheckedLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckedLock.h; sourceTree = "<group>"; };
-		7B2739F0263179C30040F182 /* CheckedCondition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckedCondition.h; sourceTree = "<group>"; };
 		7B2739F12632A8940040F182 /* ThreadAssertions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadAssertions.h; sourceTree = "<group>"; };
 		7C137941222326C700D7A824 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		7C137942222326D500D7A824 /* ieee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ieee.h; sourceTree = "<group>"; };
@@ -985,8 +983,6 @@
 				413FE8F51F8D2EAB00F6D7D7 /* CallbackAggregator.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
-				7B2739F0263179C30040F182 /* CheckedCondition.h */,
-				7B2739DD2624DAC30040F182 /* CheckedLock.h */,
 				0F66B2801DC97BAB004A1D3F /* ClockType.cpp */,
 				0F66B2811DC97BAB004A1D3F /* ClockType.h */,
 				0FC4EDE51696149600F65041 /* CommaPrinter.h */,
@@ -1097,6 +1093,8 @@
 				C2BCFC3E1F61D13000C9222C /* Language.cpp */,
 				C2BCFC3F1F61D13000C9222C /* Language.h */,
 				539EB0621D55284200C82EF7 /* LEBDecoder.h */,
+				337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */,
+				337B2D6926546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.h */,
 				A70DA0831799F04D00529A9B /* ListDump.h */,
 				A8A472C1151A825A004123FF /* ListHashSet.h */,
 				0FF4B4C41E88939C00DBBE86 /* Liveness.h */,
@@ -1251,8 +1249,6 @@
 				A8A4730C151A825B004123FF /* SizeLimits.cpp */,
 				0FA6F39220CC73A200A03DCD /* SmallSet.cpp */,
 				7936D6A91C99F8AE000D1AED /* SmallSet.h */,
-				337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */,
-				337B2D6926546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.h */,
 				A30D412D1F0DE13F00B71954 /* SoftLinking.h */,
 				93156C8D262C982200EAE27B /* SortedArrayMap.h */,
 				79038E05224B05A7004C0738 /* SpanningTree.h */,
@@ -1707,7 +1703,6 @@
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
 				1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */,
 				0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */,
-				337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */,
 				0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */,
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
@@ -1718,6 +1713,7 @@
 				C2BCFC401F61D13000C9222C /* Language.cpp in Sources */,
 				C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */,
 				1C503BE623AAE0AE0072E66B /* LanguageCocoa.mm in Sources */,
+				337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */,
 				E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */,
 				C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */,
 				0FE1646A1B6FFC9600400E7C /* Lock.cpp in Sources */,

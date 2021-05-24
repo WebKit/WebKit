@@ -29,7 +29,7 @@
 
 #include "RealtimeMediaSource.h"
 #include "SpeechRecognitionConnectionClientIdentifier.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 #if PLATFORM(COCOA)
 #include "AudioSampleDataSource.h"
@@ -78,7 +78,7 @@ private:
 
 #if PLATFORM(COCOA)
     RefPtr<AudioSampleDataSource> m_dataSource WTF_GUARDED_BY_LOCK(m_dataSourceLock); // Only modified on the audio thread but may get used on the main thread.
-    CheckedLock m_dataSourceLock;
+    Lock m_dataSourceLock;
 #endif
 };
 

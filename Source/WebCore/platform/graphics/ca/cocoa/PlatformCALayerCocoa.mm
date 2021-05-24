@@ -53,7 +53,7 @@
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/CheckedLock.h>
+#import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -76,7 +76,7 @@ namespace WebCore {
 
 using LayerToPlatformCALayerMap = HashMap<void*, PlatformCALayer*>;
 
-static CheckedLock layerToPlatformLayerMapLock;
+static Lock layerToPlatformLayerMapLock;
 static LayerToPlatformCALayerMap& layerToPlatformLayerMap() WTF_REQUIRES_LOCK(layerToPlatformLayerMapLock)
 {
     static NeverDestroyed<LayerToPlatformCALayerMap> layerMap;

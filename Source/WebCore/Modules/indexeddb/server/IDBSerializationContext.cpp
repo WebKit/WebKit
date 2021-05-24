@@ -29,13 +29,13 @@
 #include "DOMWrapperWorld.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSObjectInlines.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
 namespace IDBServer {
 
-static CheckedLock serializationContextMapLock;
+static Lock serializationContextMapLock;
 
 static HashMap<Thread*, IDBSerializationContext*>& serializationContextMap() WTF_REQUIRES_LOCK(serializationContextMapLock)
 {

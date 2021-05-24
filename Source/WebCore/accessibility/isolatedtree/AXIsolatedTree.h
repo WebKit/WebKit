@@ -29,8 +29,8 @@
 
 #include "AccessibilityObjectInterface.h"
 #include "PageIdentifier.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -374,7 +374,7 @@ private:
     AXIsolatedTree(AXObjectCache*);
     void clear();
 
-    static CheckedLock s_cacheLock;
+    static Lock s_cacheLock;
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache() WTF_REQUIRES_LOCK(s_cacheLock);
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
@@ -401,7 +401,7 @@ private:
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock) { InvalidAXID };
     AXID m_focusedNodeID { InvalidAXID };
-    CheckedLock m_changeLogLock;
+    Lock m_changeLogLock;
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const

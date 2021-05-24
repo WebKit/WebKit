@@ -42,11 +42,11 @@
 #include "Synchronousness.h"
 #include "WeakHandleOwner.h"
 #include <wtf/AutomaticThread.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/ConcurrentPtrHashSet.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/Markable.h>
 #include <wtf/ParallelHelperPool.h>
 #include <wtf/Threading.h>
@@ -657,7 +657,7 @@ private:
     CFinalizerOwner m_cFinalizerOwner;
     LambdaFinalizerOwner m_lambdaFinalizerOwner;
     
-    CheckedLock m_parallelSlotVisitorLock;
+    Lock m_parallelSlotVisitorLock;
     bool m_isSafeToCollect { false };
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };

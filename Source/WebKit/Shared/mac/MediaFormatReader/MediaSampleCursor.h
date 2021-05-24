@@ -29,7 +29,7 @@
 
 #include "CoreMediaWrapped.h"
 #include <WebCore/SampleMap.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Variant.h>
 
@@ -107,7 +107,7 @@ private:
 
     Ref<MediaTrackReader> m_trackReader;
     mutable Locator m_locator WTF_GUARDED_BY_LOCK(m_locatorLock);
-    mutable CheckedLock m_locatorLock;
+    mutable Lock m_locatorLock;
     Ref<const WTF::Logger> m_logger;
     const void* m_logIdentifier;
 };

@@ -27,8 +27,8 @@
 #include "SuperSampler.h"
 
 #include "Options.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/DataLog.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -36,7 +36,7 @@ namespace JSC {
 volatile uint32_t g_superSamplerCount;
 volatile bool g_superSamplerEnabled;
 
-static CheckedLock lock;
+static Lock lock;
 static double in WTF_GUARDED_BY_LOCK(lock);
 static double out WTF_GUARDED_BY_LOCK(lock);
 

@@ -30,8 +30,8 @@
 
 #include "ExceptionOr.h"
 #include "SQLiteDatabase.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -170,7 +170,7 @@ private:
     Ref<DatabaseAuthorizer> m_databaseAuthorizer;
 
     Deque<Ref<SQLTransaction>> m_transactionQueue WTF_GUARDED_BY_LOCK(m_transactionInProgressLock);
-    CheckedLock m_transactionInProgressLock;
+    Lock m_transactionInProgressLock;
     bool m_transactionInProgress WTF_GUARDED_BY_LOCK(m_transactionInProgressLock) { false };
     bool m_isTransactionQueueEnabled WTF_GUARDED_BY_LOCK(m_transactionInProgressLock) { true };
 

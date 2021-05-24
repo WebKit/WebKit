@@ -1,3 +1,46 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop CheckedLock / CheckedCondition aliases
+        https://bugs.webkit.org/show_bug.cgi?id=226176
+
+        Reviewed by Kate Cheney.
+
+        Drop CheckedLock / CheckedCondition aliases now that they are the default.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::paintPixelBufferToImageBuffer):
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.h:
+        * NetworkProcess/glib/DNSCache.h:
+        * Platform/IPC/Connection.cpp:
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+        * Platform/IPC/StreamServerConnection.h:
+        * Shared/BlockingResponseMap.h:
+        * Shared/Cocoa/XPCEndpointClient.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/mac/MediaFormatReader/MediaFormatReader.h:
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.h:
+        * Shared/mac/MediaFormatReader/MediaTrackReader.h:
+        * UIProcess/API/glib/IconDatabase.h:
+        * UIProcess/WebURLSchemeTask.h:
+        * UIProcess/mac/DisplayLink.h:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView knowsPageRange:]):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/Network/WebSocketStream.cpp:
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
         Make CheckedLock the default Lock

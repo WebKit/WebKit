@@ -108,7 +108,7 @@ private:
     BinarySemaphore m_waitForSyncReplySemaphore;
 
     // Protects m_didScheduleDispatchMessagesWorkSet and m_messagesToDispatchWhileWaitingForSyncReply.
-    CheckedLock m_lock;
+    Lock m_lock;
 
     // The set of connections for which we've scheduled a call to dispatchMessageAndResetDidScheduleDispatchMessagesForConnection.
     HashSet<RefPtr<Connection>> m_didScheduleDispatchMessagesWorkSet WTF_GUARDED_BY_LOCK(m_lock);
@@ -274,7 +274,7 @@ static HashMap<IPC::Connection::UniqueID, Connection*>& allConnections()
     return map;
 }
 
-static CheckedLock asyncReplyHandlerMapLock;
+static Lock asyncReplyHandlerMapLock;
 static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>& asyncReplyHandlerMap() WTF_REQUIRES_LOCK(asyncReplyHandlerMapLock)
 {
     ASSERT(asyncReplyHandlerMapLock.isHeld());

@@ -39,8 +39,8 @@
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 #include <wtf/Atomics.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackShot.h>
@@ -376,7 +376,7 @@ private:
         }
     };
 
-    CheckedLock m_lock;
+    Lock m_lock;
     HashMap<void*, std::unique_ptr<MallocSiteData>> m_addressMallocSiteData WTF_GUARDED_BY_LOCK(m_lock);
 };
 

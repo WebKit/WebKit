@@ -40,9 +40,9 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceLoadObserver.h>
-#include <wtf/CheckedCondition.h>
-#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Condition.h>
+#include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -363,9 +363,9 @@ private:
         WillSuspend,
         Suspended
     };
-    static CheckedLock suspendedStateLock;
+    static Lock suspendedStateLock;
     static State suspendedState WTF_GUARDED_BY_LOCK(suspendedStateLock);
-    static CheckedCondition suspendedStateChangeCondition;
+    static Condition suspendedStateChangeCondition;
 };
 
 } // namespace WebKit

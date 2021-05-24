@@ -51,10 +51,10 @@
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <memory>
-#include <wtf/CheckedLock.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -585,7 +585,7 @@ private:
     RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;
 #endif
 
-    CheckedLock m_sessionStorageQuotaManagersLock;
+    Lock m_sessionStorageQuotaManagersLock;
     HashMap<PAL::SessionID, std::unique_ptr<SessionStorageQuotaManager>> m_sessionStorageQuotaManagers WTF_GUARDED_BY_LOCK(m_sessionStorageQuotaManagersLock);
     bool m_quotaLoggingEnabled { false };
 

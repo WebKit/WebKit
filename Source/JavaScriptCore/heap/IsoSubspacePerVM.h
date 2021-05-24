@@ -26,9 +26,9 @@
 #pragma once
 
 #include "IsoSubspace.h"
-#include <wtf/CheckedLock.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 
 namespace JSC {
 
@@ -62,7 +62,7 @@ private:
     class AutoremovingIsoSubspace;
     friend class AutoremovingIsoSubspace;
 
-    CheckedLock m_lock;
+    Lock m_lock;
     HashMap<VM*, IsoSubspace*> m_subspacePerVM WTF_GUARDED_BY_LOCK(m_lock);
     Function<SubspaceParameters(VM&)> m_subspaceParameters;
 };

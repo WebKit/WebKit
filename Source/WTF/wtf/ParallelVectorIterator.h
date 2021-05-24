@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {
@@ -67,7 +67,7 @@ public:
         }
     }
 private:
-    CheckedLock m_lock;
+    Lock m_lock;
     VectorType& m_vector WTF_GUARDED_BY_LOCK(m_lock);
     size_t m_shardSize WTF_GUARDED_BY_LOCK(m_lock);
     size_t m_next WTF_GUARDED_BY_LOCK(m_lock) { 0 };

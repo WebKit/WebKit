@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <wtf/CheckedLock.h>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
@@ -56,7 +56,7 @@ private:
     AutodrainedPoolForRunLoop m_useAutodrainedPool { AutodrainedPoolForRunLoop::DoNotUse };
 
     Lock m_taskThreadCreationLock;
-    CheckedLock m_mainThreadReplyLock;
+    Lock m_mainThreadReplyLock;
     bool m_mainThreadReplyScheduled WTF_GUARDED_BY_LOCK(m_mainThreadReplyLock) { false };
 
     CrossThreadQueue<CrossThreadTask> m_taskQueue;

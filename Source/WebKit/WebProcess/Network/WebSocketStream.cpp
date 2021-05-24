@@ -34,13 +34,13 @@
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
-#include <wtf/CheckedLock.h>
+#include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static CheckedLock globalWebSocketStreamMapLock;
+static Lock globalWebSocketStreamMapLock;
 static HashMap<WebSocketIdentifier, WebSocketStream*>& globalWebSocketStreamMap() WTF_REQUIRES_LOCK(globalWebSocketStreamMapLock)
 {
     static NeverDestroyed<HashMap<WebSocketIdentifier, WebSocketStream*>> globalMap;

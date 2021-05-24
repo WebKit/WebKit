@@ -41,7 +41,7 @@
 
 namespace WTF {
 
-CheckedLock Thread::s_allThreadsLock;
+Lock Thread::s_allThreadsLock;
 
 static Optional<size_t> stackSize(ThreadType threadType)
 {
@@ -103,7 +103,7 @@ HashSet<Thread*>& Thread::allThreads()
     return allThreads;
 }
 
-CheckedLock& Thread::allThreadsLock()
+Lock& Thread::allThreadsLock()
 {
     return s_allThreadsLock;
 }
