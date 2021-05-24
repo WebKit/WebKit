@@ -1,3 +1,24 @@
+2021-05-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Delete unused jquery resources
+        https://bugs.webkit.org/show_bug.cgi?id=226043
+        <rdar://problem/78277881>
+
+        Reviewed by Dewei Zhu.
+
+        * jquery/resources/src/intro.js: Removed.
+        * jquery/resources/src/outro.js: Removed.
+        * jquery/resources/src/selector.js: Removed.
+        * jquery/resources/test/csp.php: Removed.
+        * jquery/resources/test/data/readywaitasset.js: Removed.
+        * jquery/resources/test/data/readywaitloader.js: Removed.
+        * jquery/resources/test/delegatetest.html: Removed.
+        * jquery/resources/test/localfile.html: Removed.
+        * jquery/resources/test/networkerror.html: Removed.
+        * jquery/resources/test/polluted.php: Removed.
+        * jquery/resources/test/readywait.html: Removed.
+        * jquery/resources/test/xhtml.php: Removed.
+
 2021-05-24  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Remove straggling PHP references
