@@ -1,3 +1,26 @@
+2021-05-24  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Be resilient against remote failure when determining the native architecture
+        https://bugs.webkit.org/show_bug.cgi?id=226009
+
+        Reviewed by Jonathan Bedard.
+
+        Change determineNativeArchitecture to not return an empty string if the
+        first remote host happens to be down. Instead, check every remote host in turn
+        until one responds.
+
+        Returning an empty string ended up passing an empty parameter to --arch when
+        invoking run-jsc-stress-tests, which resulted in an inappropriate set of tests
+        being selected, leading to occasional partial but massive test failures.
+
+        * Scripts/run-javascriptcore-tests:
+        (runTest):
+        (runJSCStressTests):
+        * Scripts/webkitdirs.pm:
+        (determineNativeArchitecture):
+        (determineArchitecture):
+        (nativeArchitecture):
+
 2021-05-23  Chris Dumez  <cdumez@apple.com>
 
         Make CheckedLock the default Lock

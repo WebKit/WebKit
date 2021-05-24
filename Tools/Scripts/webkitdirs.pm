@@ -355,18 +355,26 @@ sub determineConfiguration
     }
 }
 
-sub determineNativeArchitecture(;$$)
+sub determineNativeArchitecture($)
 {
-    my ($target, $port) = @_;
-    $target = '' if !defined $target;
-    $port = 0 if !defined $port;
-    return if defined $nativeArchitectureMap{"$target:$port"};
+    my ($remotes) = @_;
+    return if defined $nativeArchitectureMap{@{$remotes}};
 
     my $output;
-    if ($target eq "") {
+    if (@{$remotes} == 0) {
         $output = `uname -m` unless isWindows();
     } else {
-        $output = `ssh -o NoHostAuthenticationForLocalhost=yes -p $port $target 'uname  -m'`;
+        foreach my $remote (@{$remotes}) {
+            my @split = split(':', $remote->{"address"});
+            my $target = $split[0];
+            my $port = 22;
+            $port = $split[1] if scalar(@split) > 1;
+            $output = `ssh -o NoHostAuthenticationForLocalhost=yes -p $port $target 'uname  -m'`;
+            last if ($? == 0);
+        }
+        if (length($output) == 0) {
+            die "Could not determineNativeArchitecture";
+        }
     }
     chomp $output if defined $output;
     $output = "x86_64" if (not defined $output);
@@ -377,7 +385,7 @@ sub determineNativeArchitecture(;$$)
     }
 
     $output = "arm" if $output =~ m/^armv[78]l$/;
-    $nativeArchitectureMap{"$target:$port"} = $output;
+    $nativeArchitectureMap{@{$remotes}} = $output;
 }
 
 sub determineArchitecture
@@ -385,7 +393,7 @@ sub determineArchitecture
     return if defined $architecture;
 
     determineBaseProductDir();
-    $architecture = nativeArchitecture();
+    $architecture = nativeArchitecture([]);
     if (isAppleCocoaWebKit() && $architecture eq "arm64") {
         determineXcodeSDK();
         if ($xcodeSDK eq "macosx.internal") {
@@ -1139,13 +1147,11 @@ sub passedArchitecture
     return $passedArchitecture;
 }
 
-sub nativeArchitecture(;$$)
+sub nativeArchitecture($)
 {
-    my ($target, $port) = @_;
-    $target = '' if !defined $target;
-    $port = 0 if !defined $port;
-    determineNativeArchitecture($target, $port);
-    return $nativeArchitectureMap{"$target:$port"};
+    my ($remotes) = @_;
+    determineNativeArchitecture($remotes);
+    return $nativeArchitectureMap{@{$remotes}};
 }
 
 sub architecture()
