@@ -414,7 +414,7 @@ TEST(StringBuilderTest, ToAtomStringOnEmpty)
     }
     { // Cleared StringBuilder.
         StringBuilder builder;
-        builder.appendLiteral("WebKit");
+        builder.append("WebKit");
         builder.clear();
         AtomString atomString = builder.toAtomString();
         EXPECT_EQ(emptyAtom(), atomString);

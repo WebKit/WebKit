@@ -138,15 +138,15 @@ private:
     String type() const final { return "text/css"_s; }
 
     Ref<StyleSheetContents> m_contents;
-    bool m_isInlineStylesheet;
-    bool m_isDisabled;
-    bool m_mutatedRules;
+    bool m_isInlineStylesheet { false };
+    bool m_isDisabled { false };
+    bool m_mutatedRules { false };
     Optional<bool> m_isOriginClean;
     String m_title;
     RefPtr<MediaQuerySet> m_mediaQueries;
 
-    Node* m_ownerNode;
-    CSSImportRule* m_ownerRule;
+    Node* m_ownerNode { nullptr };
+    CSSImportRule* m_ownerRule { nullptr };
 
     TextPosition m_startPosition;
 

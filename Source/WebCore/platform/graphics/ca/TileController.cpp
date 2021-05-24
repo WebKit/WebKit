@@ -615,9 +615,9 @@ void TileController::tileRevalidationTimerFired()
     // If we are not visible get rid of the zoomed-out tiles.
     clearZoomedOutTileGrid();
 
-    TileGrid::TileValidationPolicy validationPolicy = (shouldAggressivelyRetainTiles() ? 0 : TileGrid::PruneSecondaryTiles) | TileGrid::UnparentAllTiles;
-
-    tileGrid().revalidateTiles(validationPolicy);
+    tileGrid().revalidateTiles(shouldAggressivelyRetainTiles()
+        ? OptionSet { TileGrid::PruneSecondaryTiles, TileGrid::UnparentAllTiles }
+        : OptionSet { TileGrid::UnparentAllTiles });
 }
 
 void TileController::didRevalidateTiles()

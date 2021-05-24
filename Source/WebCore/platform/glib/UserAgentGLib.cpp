@@ -78,16 +78,14 @@ static const String platformVersionForUAString()
 static String buildUserAgentString(const UserAgentQuirks& quirks)
 {
     StringBuilder uaString;
-    uaString.appendLiteral("Mozilla/5.0 ");
-    uaString.append('(');
+    uaString.append("Mozilla/5.0 (");
 
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsMacintoshPlatform));
     else {
-        uaString.append(platformForUAString());
-        uaString.appendLiteral("; ");
+        uaString.append(platformForUAString(), "; ");
 #if defined(USER_AGENT_BRANDING)
-        uaString.appendLiteral(USER_AGENT_BRANDING "; ");
+        uaString.append(USER_AGENT_BRANDING "; ");
 #endif
         uaString.append(platformVersionForUAString());
     }
@@ -97,21 +95,20 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
         return uaString.toString();
     }
 
-    uaString.appendLiteral(") AppleWebKit/605.1.15 (KHTML, like Gecko) ");
+    uaString.append(") AppleWebKit/605.1.15 (KHTML, like Gecko) ");
 
     // Note that Chrome UAs advertise *both* Chrome/X and Safari/X, but it does
     // not advertise Version/X.
     if (quirks.contains(UserAgentQuirks::NeedsChromeBrowser)) {
-        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsChromeBrowser));
-        uaString.appendLiteral(" ");
+        uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsChromeBrowser), ' ');
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
     } else
-        uaString.appendLiteral("Version/14.0 ");
+        uaString.append("Version/14.0 ");
 
     if (chassisType() == WTF::ChassisType::Mobile)
-        uaString.appendLiteral("Mobile ");
-    uaString.appendLiteral("Safari/605.1.15");
+        uaString.append("Mobile ");
+    uaString.append("Safari/605.1.15");
 
     return uaString.toString();
 }
@@ -169,4 +166,3 @@ String standardUserAgentForURL(const URL& url)
 }
 
 } // namespace WebCore
-

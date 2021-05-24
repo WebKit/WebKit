@@ -81,10 +81,6 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-#if ENABLE(TREE_DEBUGGING)
-#import <wtf/text/StringBuilder.h>
-#endif
-
 using namespace WebCore;
 
 // Cell Tables
@@ -3549,14 +3545,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 static void formatForDebugger(const VisiblePositionRange& range, char* buffer, unsigned length)
 {
-    StringBuilder result;
-    
-    result.appendLiteral("from ");
-    result.append(range.start.debugDescription());
-    result.appendLiteral(" to ");
-    result.append(range.end.debugDescription());
-    
-    strlcpy(buffer, result.toString().utf8().data(), length);
+    strlcpy(buffer, makeString("from ", range.start.debugDescription(), " to ", range.end.debugDescription()).utf8().data(), length);
 }
 #endif
 

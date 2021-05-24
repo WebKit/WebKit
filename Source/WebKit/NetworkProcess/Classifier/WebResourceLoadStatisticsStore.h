@@ -111,101 +111,34 @@ public:
     using StorageAccessScope = WebCore::StorageAccessScope;
     using RequestStorageAccessResult = WebCore::RequestStorageAccessResult;
 
-    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
-    {
-        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost, isEphemeral));
-    }
+    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession&, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral);
 
     ~WebResourceLoadStatisticsStore();
 
-struct ThirdPartyDataForSpecificFirstParty {
-    WebCore::RegistrableDomain firstPartyDomain;
-    bool storageAccessGranted;
-    Seconds timeLastUpdated;
+    struct ThirdPartyDataForSpecificFirstParty {
+        WebCore::RegistrableDomain firstPartyDomain;
+        bool storageAccessGranted;
+        Seconds timeLastUpdated;
 
-    String toString() const
-    {
-        return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0', "; Has been seen under ", firstPartyDomain.string(), " in the last 24 hours: ", WallTime::now().secondsSinceEpoch() - timeLastUpdated < 24_h ? '1' : '0');
-    }
+        String toString() const;
+        void encode(IPC::Encoder&) const;
+        static Optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder&);
 
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << firstPartyDomain;
-        encoder << storageAccessGranted;
-        encoder << timeLastUpdated;
-    }
+        // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
+        bool operator==(const ThirdPartyDataForSpecificFirstParty&) const;
+    };
 
-    static Optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder& decoder)
-    {
-        Optional<WebCore::RegistrableDomain> decodedDomain;
-        decoder >> decodedDomain;
-        if (!decodedDomain)
-            return WTF::nullopt;
+    struct ThirdPartyData {
+        WebCore::RegistrableDomain thirdPartyDomain;
+        Vector<ThirdPartyDataForSpecificFirstParty> underFirstParties;
 
-        Optional<bool> decodedStorageAccess;
-        decoder >> decodedStorageAccess;
-        if (!decodedStorageAccess)
-            return WTF::nullopt;
-        
-        Optional<Seconds> decodedTimeLastUpdated;
-        decoder >> decodedTimeLastUpdated;
-        if (!decodedTimeLastUpdated)
-            return WTF::nullopt;
-        
-        return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess), WTFMove(*decodedTimeLastUpdated) }};
-    }
+        String toString() const;
+        void encode(IPC::Encoder&) const;
+        static Optional<ThirdPartyData> decode(IPC::Decoder&);
 
-    bool operator==(ThirdPartyDataForSpecificFirstParty const other) const
-    {
-        return firstPartyDomain == other.firstPartyDomain && storageAccessGranted == other.storageAccessGranted;
-    }
-};
-
-struct ThirdPartyData {
-    WebCore::RegistrableDomain thirdPartyDomain;
-    Vector<ThirdPartyDataForSpecificFirstParty> underFirstParties;
-
-    String toString() const
-    {
-        StringBuilder stringBuilder;
-        stringBuilder.append("Third Party Registrable Domain: ", thirdPartyDomain.string(), "\n");
-        stringBuilder.appendLiteral("    {");
-
-        for (auto firstParty : underFirstParties) {
-            stringBuilder.appendLiteral("{ ");
-            stringBuilder.append(firstParty.toString());
-            stringBuilder.appendLiteral(" },");
-        }
-        stringBuilder.appendLiteral("}");
-        return stringBuilder.toString();
-    }
-
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << thirdPartyDomain;
-        encoder << underFirstParties;
-    }
-
-    static Optional<ThirdPartyData> decode(IPC::Decoder& decoder)
-    {
-        Optional<WebCore::RegistrableDomain> decodedDomain;
-        decoder >> decodedDomain;
-        if (!decodedDomain)
-            return WTF::nullopt;
-
-        Optional<Vector<ThirdPartyDataForSpecificFirstParty>> decodedFirstParties;
-        decoder >> decodedFirstParties;
-        if (!decodedFirstParties)
-            return WTF::nullopt;
-
-        return {{ WTFMove(*decodedDomain), WTFMove(*decodedFirstParties) }};
-    }
-
-    bool operator<(const ThirdPartyData &other) const
-    {
-        return underFirstParties.size() < other.underFirstParties.size();
-    }
-};
+        // FIXME: This sorts by number of underFirstParties, so it probably should be a named function, not operator<.
+        bool operator<(const ThirdPartyData&) const;
+    };
 
     void didDestroyNetworkSession(CompletionHandler<void()>&&);
 

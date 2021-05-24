@@ -1030,20 +1030,11 @@ Optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Registrab
 String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSet<RegistrableDomain>& domainList)
 {
     StringBuilder builder;
-    
     for (auto& topFrameResource : domainList) {
-        
         // Insert query will fail if top frame domain is not already in the database
-        auto result = ensureResourceStatisticsForRegistrableDomain(topFrameResource);
-        if (result.second) {
-            if (!builder.isEmpty())
-                builder.appendLiteral(", ");
-            builder.append('"');
-            builder.append(topFrameResource.string());
-            builder.append('"');
-        }
+        if (ensureResourceStatisticsForRegistrableDomain(topFrameResource).second)
+            builder.append(builder.isEmpty() ? "" : ", ", '"', topFrameResource.string(), '"');
     }
-
     return builder.toString();
 }
 
@@ -1260,14 +1251,8 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
 static String domainsToString(const HashSet<RegistrableDomain>& domains)
 {
     StringBuilder builder;
-    for (const auto& domainName : domains) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append('"');
-        builder.append(domainName.string());
-        builder.append('"');
-    }
-
+    for (const auto& domainName : domains)
+        builder.append(builder.isEmpty() ? "" : ", ", '"', domainName.string(), '"');
     return builder.toString();
 }
 
@@ -1336,11 +1321,8 @@ template <typename IteratorType>
 static String buildList(const WTF::IteratorRange<IteratorType>& values)
 {
     StringBuilder builder;
-    for (auto domainID : values) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domainID);
-    }
+    for (auto domainID : values)
+        builder.append(builder.isEmpty() ? "" : ", ", domainID);
     return builder.toString();
 }
 
@@ -1385,12 +1367,8 @@ HashMap<unsigned, ResourceLoadStatisticsDatabaseStore::NotVeryPrevalentResources
     }
 
     StringBuilder builder;
-    for (auto value : results.keys()) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(value);
-    }
-
+    for (auto value : results.keys())
+        builder.append(builder.isEmpty() ? "" : ", ", value);
     auto domainIDsOfInterest = builder.toString();
 
     auto subresourceUnderTopFrameDomainsStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN (", domainIDsOfInterest, ") GROUP BY subresourceDomainID"));
@@ -1952,17 +1930,15 @@ void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionH
     std::sort(domains.begin(), domains.end(), WTF::codePointCompareLessThan);
 
     StringBuilder result;
-    result.appendLiteral("Resource load statistics:\n\n");
+    result.append("Resource load statistics:\n\n");
     for (auto& domain : domains)
         resourceToString(result, domain);
 
     auto thirdPartyData = aggregatedThirdPartyData();
     if (!thirdPartyData.isEmpty()) {
         result.append("\nITP Data:\n");
-        for (auto thirdParty : thirdPartyData) {
-            result.append(thirdParty.toString());
-            result.append('\n');
-        }
+        for (auto thirdParty : thirdPartyData)
+            result.append(thirdParty.toString(), '\n');
     }
     completionHandler(result.toString());
 }
@@ -2748,17 +2724,12 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount(const Regi
 
 static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
 {
-    builder.appendLiteral("    ");
-    builder.append(label);
-    builder.appendLiteral(": ");
-    builder.append(flag ? "Yes" : "No");
+    builder.append("    ", label, ": ", flag ? "Yes" : "No");
 }
 
-static void appendNextEntry(StringBuilder& builder, String entry)
+static void appendNextEntry(StringBuilder& builder, const String& entry)
 {
-    builder.appendLiteral("        ");
-    builder.append(entry);
-    builder.append('\n');
+    builder.append("        ", entry, '\n');
 }
 
 String ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID(unsigned domainID) const
@@ -2821,9 +2792,7 @@ void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& 
     if (data->step() != SQLITE_ROW)
         return;
     
-    builder.appendLiteral("    ");
-    builder.append(tableName);
-    builder.appendLiteral(":\n");
+    builder.append("    ", tableName, ":\n");
     
     auto result = getDomainStringFromDomainID(data->columnInt(0));
     appendNextEntry(builder, result);
@@ -2850,18 +2819,16 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
         return;
     }
 
-    builder.appendLiteral("Registrable domain: ");
-    builder.append(domain);
-    builder.append('\n');
+    builder.append("Registrable domain: ", domain, '\n');
     
     // User interaction
     appendBoolean(builder, "hadUserInteraction", m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
     builder.append('\n');
-    builder.appendLiteral("    mostRecentUserInteraction: ");
+    builder.append("    mostRecentUserInteraction: ");
     if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex))))
-        builder.appendLiteral("within 24 hours");
+        builder.append("within 24 hours");
     else
-        builder.appendLiteral("-1");
+        builder.append("-1");
     builder.append('\n');
     appendBoolean(builder, "grandfathered", m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
     builder.append('\n');
@@ -3414,15 +3381,15 @@ String ResourceLoadStatisticsDatabaseStore::attributionToString(WebCore::SQLiteS
         if (attributionTriggerData != -1) {
             builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
             if (earliestTimeToSend == -1)
-                builder.appendLiteral("Not set");
+                builder.append("Not set");
             else {
                 auto secondsUntilSend = WallTime::fromRawSeconds(earliestTimeToSend) - WallTime::now();
                 builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
             }
         } else
-            builder.appendLiteral("\nNo attribution trigger data.");
+            builder.append("\nNo attribution trigger data.");
     } else
-        builder.appendLiteral("\nNo attribution trigger data.");
+        builder.append("\nNo attribution trigger data.");
     builder.append('\n');
 
     return builder.toString();
@@ -3450,9 +3417,8 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
     unsigned unattributedNumber = 0;
     StringBuilder builder;
     while (unattributedScopedStatement->step() == SQLITE_ROW) {
-        if (!unattributedNumber)
-            builder.appendLiteral("Unattributed Private Click Measurements:");
-        builder.append("\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
+        const char* prefix = unattributedNumber ? "" : "Unattributed Private Click Measurements:";
+        builder.append(prefix, "\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
             attributionToString(unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed));
     }
 
@@ -3465,13 +3431,9 @@ String ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString()
 
     unsigned attributedNumber = 0;
     while (attributedScopedStatement->step() == SQLITE_ROW) {
-        if (!attributedNumber) {
-            if (unattributedNumber)
-                builder.append('\n');
-            builder.appendLiteral("Attributed Private Click Measurements:\n");
-        } else
-            builder.append('\n');
-        builder.append("WebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
+        if (!attributedNumber)
+            builder.append(unattributedNumber ? "\n" : "", "Attributed Private Click Measurements:");
+        builder.append("\nWebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
             attributionToString(attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
     }
     return builder.toString();

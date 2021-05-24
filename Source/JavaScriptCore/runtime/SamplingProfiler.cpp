@@ -1049,7 +1049,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
             hash = stream.toString();
         } else
             hash = "<nil>"_s;
-        String frameDescription = makeString(frame.displayName(m_vm), '#', hash, ':', frame.sourceID());
+        auto frameDescription = makeString(frame.displayName(m_vm), '#', hash, ':', frame.sourceID());
         functionCounts.add(frameDescription, 0).iterator->value++;
         totalSamples++;
     }
@@ -1153,7 +1153,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         };
 
         StackFrame& frame = stackTrace.frames.first();
-        String frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode));
+        auto frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode));
         if (Optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
             frameDescription = makeString(frameDescription, " <-- ",
                 machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, WTF::nullopt));

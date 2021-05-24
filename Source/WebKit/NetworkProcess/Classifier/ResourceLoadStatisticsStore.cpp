@@ -54,35 +54,20 @@ constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
 static String domainsToString(const Vector<RegistrableDomain>& domains)
 {
     StringBuilder builder;
-    for (auto& domain : domains) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domain.string());
-    }
+    for (auto& domain : domains)
+        builder.append(builder.isEmpty() ? "" : ", ", domain.string());
     return builder.toString();
 }
 
 static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteDataFor& domainsToRemoveOrRestrictWebsiteDataFor)
 {
     StringBuilder builder;
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllCookiesFor) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domain.string());
-        builder.appendLiteral("(all data)");
-    }
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllButHttpOnlyCookiesFor) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domain.string());
-        builder.appendLiteral("(all but HttpOnly cookies)");
-    }
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllNonCookieWebsiteDataFor) {
-        if (!builder.isEmpty())
-            builder.appendLiteral(", ");
-        builder.append(domain.string());
-        builder.appendLiteral("(all but cookies)");
-    }
+    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllCookiesFor)
+        builder.append(builder.isEmpty() ? "" : ", ", domain.string(), "(all data)");
+    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllButHttpOnlyCookiesFor)
+        builder.append(builder.isEmpty() ? "" : ", ", domain.string(), "(all but HttpOnly cookies)");
+    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllNonCookieWebsiteDataFor)
+        builder.append(builder.isEmpty() ? "" : ", ", domain.string(), "(all but cookies)");
     return builder.toString();
 }
 
@@ -93,7 +78,6 @@ OperatingDate OperatingDate::fromWallTime(WallTime time)
     int yearDay = dayInYear(ms, year);
     int month = monthFromDayInYear(yearDay, isLeapYear(year));
     int monthDay = dayInMonthFromDayInYear(yearDay, isLeapYear(year));
-
     return OperatingDate { year, month, monthDay };
 }
 

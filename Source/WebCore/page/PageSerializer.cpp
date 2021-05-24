@@ -130,11 +130,8 @@ void PageSerializer::SerializerMarkupAccumulator::appendStartTag(StringBuilder& 
     if (!shouldIgnoreElement(element))
         MarkupAccumulator::appendStartTag(out, element, namespaces);
 
-    if (element.hasTagName(HTMLNames::headTag)) {
-        out.appendLiteral("<meta charset=\"");
-        out.append(m_document.charset());
-        out.appendLiteral("\">");
-    }
+    if (element.hasTagName(HTMLNames::headTag))
+        out.append("<meta charset=\"", m_document.charset(), "\">");
 
     // FIXME: For object (plugins) tags and video tag we could replace them by an image of their current contents.
 }
@@ -242,7 +239,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         if (!itemText.isEmpty()) {
             cssText.append(itemText);
             if (i < styleSheet->length() - 1)
-                cssText.appendLiteral("\n\n");
+                cssText.append("\n\n");
         }
         Document* document = styleSheet->ownerDocument();
         // Some rules have resources associated with them that we need to retrieve.
@@ -318,11 +315,10 @@ void PageSerializer::retrieveResourcesForProperties(const StyleProperties* style
 
 URL PageSerializer::urlForBlankFrame(Frame* frame)
 {
-    auto iter = m_blankFrameURLs.find(frame);
-    if (iter != m_blankFrameURLs.end())
-        return iter->value;
-    String url = makeString("wyciwyg://frame/", m_blankFrameCounter++);
-    URL fakeURL({ }, url);
+    auto iterator = m_blankFrameURLs.find(frame);
+    if (iterator != m_blankFrameURLs.end())
+        return iterator->value;
+    URL fakeURL { { }, makeString("wyciwyg://frame/", m_blankFrameCounter++) };
     m_blankFrameURLs.add(frame, fakeURL);
     return fakeURL;
 }

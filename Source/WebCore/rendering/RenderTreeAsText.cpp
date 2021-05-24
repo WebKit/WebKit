@@ -155,19 +155,16 @@ String quoteAndEscapeNonPrintables(StringView s)
     for (unsigned i = 0; i != s.length(); ++i) {
         UChar c = s[i];
         if (c == '\\') {
-            result.appendLiteral("\\\\");
+            result.append("\\\\");
         } else if (c == '"') {
-            result.appendLiteral("\\\"");
+            result.append("\\\"");
         } else if (c == '\n' || c == noBreakSpace)
             result.append(' ');
         else {
             if (c >= 0x20 && c < 0x7F)
                 result.append(c);
-            else {
-                result.appendLiteral("\\x{");
-                result.append(hex(c));
-                result.append('}');
-            }
+            else
+                result.append("\\x{", hex(c), '}');
         }
     }
     result.append('"');
@@ -824,11 +821,11 @@ static String nodePosition(Node* node)
     for (Node* n = node; n; n = parent) {
         parent = n->parentOrShadowHostNode();
         if (n != node)
-            result.appendLiteral(" of ");
+            result.append(" of ");
         if (parent) {
             if (body && n == body) {
                 // We don't care what offset body may be in the document.
-                result.appendLiteral("body");
+                result.append("body");
                 break;
             }
             if (n->isShadowRoot())
@@ -836,7 +833,7 @@ static String nodePosition(Node* node)
             else
                 result.append("child ", n->computeNodeIndex(), " {", getTagName(n), '}');
         } else
-            result.appendLiteral("document");
+            result.append("document");
     }
 
     return result.toString();

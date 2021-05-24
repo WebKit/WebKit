@@ -2729,7 +2729,7 @@ static void appendAttributes(StringBuilder& builder, const Element& element)
         builder.append(" id=\'", element.getIdAttribute(), '\'');
 
     if (element.hasClass()) {
-        builder.appendLiteral(" class=\'");
+        builder.append(" class=\'");
         size_t classNamesToDump = element.classNames().size();
         constexpr size_t maxNumClassNames = 7;
         bool addEllipsis = false;

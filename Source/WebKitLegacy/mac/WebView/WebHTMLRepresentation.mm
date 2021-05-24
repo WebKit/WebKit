@@ -372,23 +372,16 @@ static RegularExpression* regExpForLabels(NSArray *labels)
         for (i = 0; i < numLabels; i++) {
             String label = [labels objectAtIndex:i];
 
-            bool startsWithWordChar = false;
-            bool endsWithWordChar = false;
-            if (label.length() != 0) {
-                startsWithWordChar = wordRegExp.get().match(label.substring(0, 1)) >= 0;
-                endsWithWordChar = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
+            bool startsWithWordCharacter = false;
+            bool endsWithWordCharacter = false;
+            if (label.length()) {
+                startsWithWordCharacter = wordRegExp.get().match(label.substring(0, 1)) >= 0;
+                endsWithWordCharacter = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
             }
             
-            if (i != 0)
-                pattern.append('|');
             // Search for word boundaries only if label starts/ends with "word characters".
-            // If we always searched for word boundaries, this wouldn't work for languages
-            // such as Japanese.
-            if (startsWithWordChar)
-                pattern.appendLiteral("\\b");
-            pattern.append(label);
-            if (endsWithWordChar)
-                pattern.appendLiteral("\\b");
+            // If we always searched for word boundaries, this wouldn't work for languages such as Japanese.
+            pattern.append(i ? "|" : "", startsWithWordCharacter ? "\\b" : "", label, endsWithWordCharacter ? "\\b" : "");
         }
         pattern.append(')');
         result = new RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);

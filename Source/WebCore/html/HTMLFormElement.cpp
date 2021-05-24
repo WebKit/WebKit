@@ -245,7 +245,7 @@ bool HTMLFormElement::validateInteractively()
         for (auto& control : unhandledInvalidControls) {
             if (control->isConnected() && control->isFocusable())
                 continue;
-            String message = makeString("An invalid form control with name='", control->name(), "' is not focusable.");
+            auto message = makeString("An invalid form control with name='", control->name(), "' is not focusable.");
             document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);
         }
     }

@@ -89,19 +89,13 @@ bool StyleRuleKeyframe::setKeyText(const String& keyText)
 
 String StyleRuleKeyframe::cssText() const
 {
-    StringBuilder result;
-    result.append(keyText());
-    result.appendLiteral(" { ");
-    String decls = m_properties->asText();
-    result.append(decls);
-    if (!decls.isEmpty())
-        result.append(' ');
-    result.append('}');
-    return result.toString();
+    if (auto declarations = m_properties->asText(); !declarations.isEmpty())
+        return makeString(keyText(), " { ", declarations, " }");
+    return makeString(keyText(), " { }");
 }
 
 CSSKeyframeRule::CSSKeyframeRule(StyleRuleKeyframe& keyframe, CSSKeyframesRule* parent)
-    : CSSRule(0)
+    : CSSRule(nullptr)
     , m_keyframe(keyframe)
 {
     setParentRule(parent);

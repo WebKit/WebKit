@@ -888,7 +888,7 @@ static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<Str
     if (components.size() != 2)
         return false;
 
-    String wildcardedMIMEType = makeString(components[0], "/*");
+    auto wildcardedMIMEType = makeString(components[0], "/*");
     if (allowedMIMETypes.contains(wildcardedMIMEType))
         return true;
 

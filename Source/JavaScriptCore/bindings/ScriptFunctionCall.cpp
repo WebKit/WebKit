@@ -51,7 +51,7 @@ void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
     VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
-    m_arguments.append(jsString(vm, String(argument)));
+    m_arguments.append(jsString(vm, argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(JSValue argument)

@@ -2220,7 +2220,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         }
 
         // We don't already have a file for this blobURL, so commit our file as a unique filename
-        String storedFilename = makeString(potentialFileNameInteger, ".blob");
+        auto storedFilename = makeString(potentialFileNameInteger, ".blob");
         {
             auto sql = cachedStatement(SQL::AddBlobFilename, "INSERT INTO BlobFiles VALUES (?, ?);"_s);
             if (!sql

@@ -1759,7 +1759,7 @@ ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
 
     // FIXME: Using fixed precision here for width because of test results that contain numbers with specific precision. Would be nice to update the test results and move to default formatting.
     StringBuilder rectString;
-    rectString.appendLiteral("marker rects: ");
+    rectString.append("marker rects: ");
     for (const auto& rect : rects)
         rectString.append('(', rect.x(), ", ", rect.y(), ", ", FormattedNumber::fixedPrecision(rect.width()), ", ", rect.height(), ") ");
     return rectString.toString();
@@ -4701,18 +4701,18 @@ static void appendOffsets(StringBuilder& builder, const Vector<SnapOffset<Layout
 {
     bool justStarting = true;
 
-    builder.appendLiteral("{ ");
+    builder.append("{ ");
     for (auto& coordinate : snapOffsets) {
         if (!justStarting)
-            builder.appendLiteral(", ");
+            builder.append(", ");
         else
             justStarting = false;
         builder.append(coordinate.offset.toUnsigned());
         if (coordinate.stop == ScrollSnapStop::Always)
-            builder.appendLiteral(" (always)");
+            builder.append(" (always)");
 
     }
-    builder.appendLiteral(" }");
+    builder.append(" }");
 }
 
 void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
@@ -4733,15 +4733,14 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     auto* offsetInfo = scrollableArea->snapOffsetInfo();
     StringBuilder result;
     if (offsetInfo && !offsetInfo->horizontalSnapOffsets.isEmpty()) {
-        result.appendLiteral("horizontal = ");
+        result.append("horizontal = ");
         appendOffsets(result, offsetInfo->horizontalSnapOffsets);
     }
 
     if (offsetInfo && !offsetInfo->verticalSnapOffsets.isEmpty()) {
         if (result.length())
-            result.appendLiteral(", ");
-
-        result.appendLiteral("vertical = ");
+            result.append(", ");
+        result.append("vertical = ");
         appendOffsets(result, offsetInfo->verticalSnapOffsets);
     }
 

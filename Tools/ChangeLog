@@ -1,3 +1,22 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        Use append instead of appendLiteral.
+        * TestWebKitAPI/Tests/WebCore/FileMonitor.cpp:
+        (TestWebKitAPI::createCommand): Use makeString instead of StringBuilder.
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp:
+        (TestWebKitAPI::TEST_F): Made lots of fixes to code inside #if TEST_OUTPUT,
+        which hasn't compiled in a long time. Still not 100% there, but closer.
+        * TestWebKitAPI/Tests/WebCore/TextCodec.cpp:
+        (TestWebKitAPI::testDecode): Use append instead of appendLiteral.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::helpText const): Ditto.
+
 2021-05-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277940.

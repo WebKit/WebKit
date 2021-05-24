@@ -68,6 +68,7 @@ private:
     void mouseEnteredScrollbar(Scrollbar*) const override;
     void mouseExitedScrollbar(Scrollbar*) const override;
     void mouseIsDownInScrollbar(Scrollbar*, bool) const override;
+    const char* scrollbarPrefix(Scrollbar*) const;
 
     WTF::Function<void(const String&)> m_logger;
     Scrollbar* m_verticalScrollbar { nullptr };

@@ -1,3 +1,99 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList): Use append
+        instead of appendLiteral.
+        (WebKit::domainsToString): Ditto.
+        (WebKit::buildList): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics): Ditto.
+        (WebKit::appendBoolean): Ditto.
+        (WebKit::appendNextEntry): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::appendSubStatisticList const): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::resourceToString const): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributionToString): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString): Ditto.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics): Ditto.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp: Ditto.
+        (WebKit::domainsToString): Ditto.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::create): Moved this here from the header.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::toString const): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::encode const): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::decode): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::operator== const): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyData::toString const): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyData::encode const): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyData::decode): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::ThirdPartyData::operator< const): Ditto.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h: Moved member
+        functions of the nested structures into the implementation file and fixed
+        the indentation of the structures to indicate the nesting.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::continueCheckingRequest): Do not use a local
+        variable for the reuslt of makeString.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::newTestingSession): Ditto.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::dumpContentsToFile): Use append instead of appendLiteral
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::asJSON const): Ditto.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::makeVersionedDirectoryPath): Do not use a local variable for
+        the result of makeString.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::buildAcceptLanguages): Use append instead of appendLiteral.
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::acceptedExtensions const): Ditto.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName): Use auto for the result of makeString.
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::writeHeaders): Ditto.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeSandboxParameters): Do not use a local variable for the result of
+        makeString. Also, take advantage of the support for concatenating an NSString instead
+        of converting it to a WTF::String.
+
+        * Shared/mac/WebMemorySampler.mac.mm:
+        (WebKit::WebMemorySampler::sampleWebKit const): Use ASCIILiteral and remove explicit
+        conversion to String.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptCallback): Use append instead of appendLiteral.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::fileCanBeAcceptedForUpload): Use auto for result of makeString.
+
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp: Use makeString instead of
+        StringBuilder.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::requestStorageSpace): Use auto for result of makeString.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::loggingString): Use append instead of appendLiteral.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processDidFinishLaunching): Use auto for result of makeString.
+        (WebKit::WebProcessPool::startMemorySampler): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::dumpHistoryItem): Use append instead of appendLiteral.
+        (WebKit::WebPage::getContentsAsString): Ditto.
+
 2021-05-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277940.

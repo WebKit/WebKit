@@ -1009,9 +1009,9 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, Options::ID id
 
     if (wasOverridden && (dumpDefaultsOption == DumpDefaults)) {
         auto defaultOption = OptionReader::defaultFor(id);
-        builder.appendLiteral(" (default: ");
+        builder.append(" (default: ");
         defaultOption.dump(builder);
-        builder.appendLiteral(")");
+        builder.append(")");
     }
 
     if (needsDescription)

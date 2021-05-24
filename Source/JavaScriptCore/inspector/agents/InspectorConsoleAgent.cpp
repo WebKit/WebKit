@@ -138,7 +138,7 @@ void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, const
 
     if (!result.isNewEntry) {
         // FIXME: Send an enum to the frontend for localization?
-        String warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" already exists");
+        auto warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" already exists");
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, createScriptCallStackForConsole(globalObject, 1)));
     }
 }
@@ -154,14 +154,14 @@ void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, const S
     auto it = m_times.find(label);
     if (it == m_times.end()) {
         // FIXME: Send an enum to the frontend for localization?
-        String warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
+        auto warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, WTFMove(callStack)));
         return;
     }
 
     MonotonicTime startTime = it->value;
     Seconds elapsed = MonotonicTime::now() - startTime;
-    String message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
+    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(arguments), WTFMove(callStack)));
 }
 
@@ -176,14 +176,14 @@ void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, const 
     auto it = m_times.find(label);
     if (it == m_times.end()) {
         // FIXME: Send an enum to the frontend for localization?
-        String warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
+        auto warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, WTFMove(callStack)));
         return;
     }
 
     MonotonicTime startTime = it->value;
     Seconds elapsed = MonotonicTime::now() - startTime;
-    String message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
+    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(callStack)));
 
     m_times.remove(it);
@@ -210,7 +210,7 @@ void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const Strin
 
     // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 
-    String message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", result.iterator->value);
+    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", result.iterator->value);
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, createScriptCallStackForConsole(globalObject, 1)));
 }
 
@@ -219,7 +219,7 @@ void InspectorConsoleAgent::countReset(JSC::JSGlobalObject* globalObject, const 
     auto it = m_counts.find(label);
     if (it == m_counts.end()) {
         // FIXME: Send an enum to the frontend for localization?
-        String warning = makeString("Counter \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
+        auto warning = makeString("Counter \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, warning, createScriptCallStackForConsole(globalObject, 1)));
         return;
     }

@@ -48,7 +48,6 @@ public:
 private:
     void append(StringViewWithUnderlyingString&&);
     void append8Bit(const String&);
-    void appendLiteral(const Identifier&);
     unsigned joinedLength(JSGlobalObject*) const;
 
     LChar m_singleCharacterSeparator;
@@ -90,13 +89,6 @@ ALWAYS_INLINE void JSStringJoiner::append8Bit(const String& string)
     ASSERT(string.is8Bit());
     m_accumulatedStringsLength += string.length();
     m_strings.uncheckedAppend({ string, string });
-}
-
-ALWAYS_INLINE void JSStringJoiner::appendLiteral(const Identifier& literal)
-{
-    m_accumulatedStringsLength += literal.length();
-    ASSERT(literal.string().is8Bit());
-    m_strings.uncheckedAppend({ literal.string(), { } });
 }
 
 ALWAYS_INLINE void JSStringJoiner::appendEmptyString()

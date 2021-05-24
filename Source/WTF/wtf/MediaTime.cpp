@@ -36,7 +36,6 @@
 #include <wtf/JSONValues.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WTF {
@@ -565,15 +564,10 @@ void MediaTime::dump(PrintStream& out) const
 
 String MediaTime::toString() const
 {
-    StringBuilder builder;
-    builder.append('{');
-    if (!hasDoubleValue())
-        builder.append(m_timeValue, '/', m_timeScale, " = ");
-    builder.append(toDouble());
-    if (isInvalid())
-        builder.appendLiteral(", invalid");
-    builder.append('}');
-    return builder.toString();
+    const char* invalid = isInvalid() ? ", invalid" : "";
+    if (hasDoubleValue())
+        return makeString('{', toDouble(), invalid, '}');
+    return makeString('{', m_timeValue, '/', m_timeScale, " = ", toDouble(), invalid, '}');
 }
 
 Ref<JSON::Object> MediaTime::toJSONObject() const

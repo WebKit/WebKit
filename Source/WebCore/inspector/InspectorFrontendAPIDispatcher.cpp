@@ -114,17 +114,12 @@ JSDOMGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
 static String expressionForEvaluatingCommand(const String& command, Vector<Ref<JSON::Value>>&& arguments)
 {
     StringBuilder expression;
-    expression.appendLiteral("InspectorFrontendAPI.dispatch([\"");
-    expression.append(command);
-    expression.append('"');
-
+    expression.append("InspectorFrontendAPI.dispatch([\"", command, '"');
     for (auto& argument : arguments) {
-        expression.appendLiteral(", ");
+        expression.append(", ");
         argument->writeJSON(expression);
     }
-
-    expression.append(']');
-    expression.append(')');
+    expression.append("])");
     return expression.toString();
 }
 

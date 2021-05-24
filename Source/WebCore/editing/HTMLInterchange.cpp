@@ -65,7 +65,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                         break;
                     case 1:
                         if (i == 0 || i + 1 == in.length()) // at start or end of string
-                            s.appendLiteral(convertedSpaceString);
+                            s.append(convertedSpaceString);
                         else
                             s.append(' ');
                         break;

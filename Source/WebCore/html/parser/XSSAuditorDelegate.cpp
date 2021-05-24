@@ -37,11 +37,10 @@
 #include "NavigationScheduler.h"
 #include "PingLoader.h"
 #include <wtf/JSONValues.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
 
-
 namespace WebCore {
+
 using namespace Inspector;
 
 XSSAuditorDelegate::XSSAuditorDelegate(Document& document)
@@ -52,21 +51,13 @@ XSSAuditorDelegate::XSSAuditorDelegate(Document& document)
 
 static inline String buildConsoleError(const XSSInfo& xssInfo)
 {
-    StringBuilder message;
-    message.appendLiteral("The XSS Auditor ");
-    message.append(xssInfo.m_didBlockEntirePage ? "blocked access to" : "refused to execute a script in");
-    message.appendLiteral(" '");
-    message.append(xssInfo.m_originalURL);
-    message.appendLiteral("' because ");
-    message.append(xssInfo.m_didBlockEntirePage ? "the source code of a script" : "its source code");
-    message.appendLiteral(" was found within the request.");
-
-    if (xssInfo.m_didSendXSSProtectionHeader)
-        message.appendLiteral(" The server sent an 'X-XSS-Protection' header requesting this behavior.");
-    else
-        message.appendLiteral(" The auditor was enabled because the server did not send an 'X-XSS-Protection' header.");
-
-    return message.toString();
+    return makeString("The XSS Auditor ",
+        xssInfo.m_didBlockEntirePage ? "blocked access to" : "refused to execute a script in", " '",
+        xssInfo.m_originalURL, "' because ",
+        xssInfo.m_didBlockEntirePage ? "the source code of a script" : "its source code",
+        " was found within the request.",
+        xssInfo.m_didSendXSSProtectionHeader ? " The server sent an 'X-XSS-Protection' header requesting this behavior."
+            : " The auditor was enabled because the server did not send an 'X-XSS-Protection' header.");
 }
 
 Ref<FormData> XSSAuditorDelegate::generateViolationReport(const XSSInfo& xssInfo)

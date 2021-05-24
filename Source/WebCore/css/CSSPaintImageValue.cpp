@@ -39,12 +39,8 @@ namespace WebCore {
 
 String CSSPaintImageValue::customCSSText() const
 {
-    StringBuilder result;
-    result.appendLiteral("paint(");
-    result.append(m_name);
-    // FIXME: print args.
-    result.append(')');
-    return result.toString();
+    // FIXME: This should include the arguments too.
+    return makeString("paint(", m_name, ')');
 }
 
 RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const FloatSize& size)
@@ -71,8 +67,7 @@ RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const Floa
                 localRange.consume();
             else if (localRange.peek().getBlockType() == CSSParserToken::BlockStart) {
                 localRange.peek().serialize(builder);
-                builder.append(localRange.consumeBlock().serialize());
-                builder.append(')');
+                builder.append(localRange.consumeBlock().serialize(), ')');
             } else
                 localRange.consume().serialize(builder);
         }

@@ -523,25 +523,25 @@ void Value::escapeString(StringBuilder& builder, StringView string)
     for (UChar codeUnit : string.codeUnits()) {
         switch (codeUnit) {
         case '\b':
-            builder.appendLiteral("\\b");
+            builder.append("\\b");
             continue;
         case '\f':
-            builder.appendLiteral("\\f");
+            builder.append("\\f");
             continue;
         case '\n':
-            builder.appendLiteral("\\n");
+            builder.append("\\n");
             continue;
         case '\r':
-            builder.appendLiteral("\\r");
+            builder.append("\\r");
             continue;
         case '\t':
-            builder.appendLiteral("\\t");
+            builder.append("\\t");
             continue;
         case '\\':
-            builder.appendLiteral("\\\\");
+            builder.append("\\\\");
             continue;
         case '"':
-            builder.appendLiteral("\\\"");
+            builder.append("\\\"");
             continue;
         }
         // We escape < and > to prevent script execution.
@@ -598,13 +598,13 @@ void Value::writeJSON(StringBuilder& output) const
 {
     switch (m_type) {
     case Type::Null:
-        output.appendLiteral("null");
+        output.append("null");
         break;
     case Type::Boolean:
         if (m_value.boolean)
-            output.appendLiteral("true");
+            output.append("true");
         else
-            output.appendLiteral("false");
+            output.append("false");
         break;
     case Type::String:
         appendDoubleQuotedString(output, m_value.string);
@@ -612,7 +612,7 @@ void Value::writeJSON(StringBuilder& output) const
     case Type::Double:
     case Type::Integer: {
         if (!std::isfinite(m_value.number))
-            output.appendLiteral("null");
+            output.append("null");
         else
             output.append(m_value.number);
         break;

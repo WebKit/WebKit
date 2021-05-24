@@ -170,15 +170,15 @@ private:
     const Vector<char>& m_vector;
 };
 
-template<> class StringTypeAdapter<String, void> {
+template<> class StringTypeAdapter<StringImpl*, void> {
 public:
-    StringTypeAdapter(const String& string)
+    StringTypeAdapter(StringImpl* string)
         : m_string { string }
     {
     }
 
-    unsigned length() const { return m_string.length(); }
-    bool is8Bit() const { return m_string.isNull() || m_string.is8Bit(); }
+    unsigned length() const { return m_string ? m_string->length() : 0; }
+    bool is8Bit() const { return !m_string || m_string->is8Bit(); }
     template<typename CharacterType> void writeTo(CharacterType* destination) const
     {
         StringView { m_string }.getCharactersWithUpconvert(destination);
@@ -186,13 +186,56 @@ public:
     }
 
 private:
-    const String& m_string;
+    StringImpl* const m_string;
+};
+
+template<> class StringTypeAdapter<AtomStringImpl*, void> : public StringTypeAdapter<StringImpl*, void> {
+public:
+    StringTypeAdapter(AtomStringImpl* string)
+        : StringTypeAdapter<StringImpl*, void> { static_cast<StringImpl*>(string) }
+    {
+    }
+};
+
+template<> class StringTypeAdapter<String, void> : public StringTypeAdapter<StringImpl*, void> {
+public:
+    StringTypeAdapter(const String& string)
+        : StringTypeAdapter<StringImpl*, void> { string.impl() }
+    {
+    }
 };
 
 template<> class StringTypeAdapter<AtomString, void> : public StringTypeAdapter<String, void> {
 public:
     StringTypeAdapter(const AtomString& string)
         : StringTypeAdapter<String, void> { string.string() }
+    {
+    }
+};
+
+template<> class StringTypeAdapter<StringImpl&, void> {
+public:
+    StringTypeAdapter(StringImpl& string)
+        : m_string { string }
+    {
+    }
+
+    unsigned length() const { return m_string.length(); }
+    bool is8Bit() const { return m_string.is8Bit(); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    {
+        StringView { m_string }.getCharactersWithUpconvert(destination);
+        WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
+    }
+
+private:
+    StringImpl& m_string;
+};
+
+template<> class StringTypeAdapter<AtomStringImpl&, void> : public StringTypeAdapter<StringImpl&, void> {
+public:
+    StringTypeAdapter(StringImpl& string)
+        : StringTypeAdapter<StringImpl&, void> { string }
     {
     }
 };

@@ -71,7 +71,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
 
     unsigned i = 0;
     auto array = createNSArray(filters.operations(), [&] (auto& operationPtr) -> id {
-        String filterName = makeString("filter_", i++);
+        auto filterName = makeString("filter_", i++);
         auto& filterOperation = *operationPtr;
         switch (filterOperation.type()) {
         case FilterOperation::DEFAULT:

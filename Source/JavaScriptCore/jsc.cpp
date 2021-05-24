@@ -1366,7 +1366,7 @@ JSC_DEFINE_HOST_FUNCTION(functionJSCStack, (JSGlobalObject* globalObject, CallFr
 {
     VM& vm = globalObject->vm();
     StringBuilder trace;
-    trace.appendLiteral("--> Stack trace:\n");
+    trace.append("--> Stack trace:\n");
 
     FunctionJSCStackFunctor functor(trace);
     callFrame->iterate(vm, functor);

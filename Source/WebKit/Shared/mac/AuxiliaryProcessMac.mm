@@ -52,17 +52,17 @@
 #import <wtf/FileSystem.h>
 #import <wtf/RandomNumber.h>
 #import <wtf/Scope.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WallTime.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringBuilder.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <rootless.h>
 #endif
-
-#import <wtf/SoftLinking.h>
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
@@ -646,8 +646,7 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
             String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
             if (clientIdentifier.isNull())
                 clientIdentifier = parameters.clientIdentifier;
-            String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', clientIdentifier);
-            sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
+            sandboxParameters.setUserDirectorySuffix(makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier));
         }
     }
 

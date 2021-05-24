@@ -150,7 +150,7 @@ String MediaQuerySet::mediaText() const
     bool needComma = false;
     for (auto& query : m_queries) {
         if (needComma)
-            text.appendLiteral(", ");
+            text.append(", ");
         text.append(query.cssText());
         needComma = true;
     }

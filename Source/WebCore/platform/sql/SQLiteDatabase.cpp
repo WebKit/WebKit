@@ -150,7 +150,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     if (openMode != OpenMode::ReadOnly)
         useWALJournalMode();
 
-    String shmFileName = makeString(filename, "-shm"_s);
+    auto shmFileName = makeString(filename, "-shm"_s);
     if (FileSystem::fileExists(shmFileName)) {
         if (!FileSystem::isSafeToUseMemoryMapForPath(shmFileName)) {
             RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.latin1().data());

@@ -6280,8 +6280,8 @@ static void compositionToUnderlines(const Vector<DWORD>& clauses, const Vector<B
 #define APPEND_ARGUMENT_NAME(name) \
     if (lparam & name) { \
         if (needsComma) \
-            result.appendLiteral(", "); \
-        result.appendLiteral(#name); \
+            result.append(", "); \
+        result.append(#name); \
         needsComma = true; \
     }
 

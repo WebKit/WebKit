@@ -1,3 +1,90 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (PingPongStackOverflowObject_hasInstance): Use append instead of appendLiteral.
+
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptCallArgumentHandler::appendArgument): Remove unnecessary cast
+        from const char* to String, which defeats optimization and has no benefit.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::toString const): Use append instead of appendLiteral.
+        (JSC::RestParameterNode::toString const): Ditto.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json): Use append instead of appendLiteral.
+        Removed unnecesary use of appendQuotedJSONString to append the result of
+        snapshotTypeToString and edgeTypeToString, which return a const char* that
+        never contains characters that require special quoting consideration, so
+        can be appended efficiently with the normal append function.
+
+        * inspector/agents/InspectorAuditAgent.cpp:
+        (Inspector::InspectorAuditAgent::run): Use makeString instead of StringBuilder.
+
+        * inspector/agents/InspectorConsoleAgent.cpp: Use auto for the result of makeString.
+
+        * jsc.cpp: Use appned instead of appendLiteral.
+
+        * parser/ParserArena.cpp:
+        (JSC::IdentifierArena::makePrivateIdentifier): Use auto for the result of makeString.
+
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::printConsoleMessage): Use append instead of appendLiteral.
+        Also use variadic append when practical for better efficiency.
+        (JSC::ConsoleClient::printConsoleMessageWithArguments): Ditto.
+        * runtime/DateConversion.cpp:
+        (JSC::formatDateTime): Ditto.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedToString): Use makeString instead of StringBuilder.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::notAFunctionSourceAppender): Use append instead of appendLiteral.
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat): Ditto.
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat): Ditto.
+
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSCustomGetterFunction::create): Use auto and cut down on reference count
+        churn by using passing the StringImpl to makeString.
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSCustomSetterFunction::create): Ditto.
+
+        * runtime/JSGlobalObjectFunctions.cpp: Use more const and use variadic
+        append for better efficiency.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue): Use append instead of appendLiteral.
+        (JSC::Stringifier::Holder::appendNextProperty): Ditto.
+
+        * runtime/JSStringJoiner.h: Deleted unused appendLiteral function.
+        Unrelated to StringBuilder::appendLiteral, but dead code.
+
+        * runtime/Options.cpp:
+        (JSC::Options::dumpOption): Use append instead of appendLiteral.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::appendLineTerminatorEscape<UChar>): Ditto.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::reportTopFunctions): Use auto for the result of makeString.
+        (JSC::SamplingProfiler::reportTopBytecodes): Ditto.
+
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::typeInformationForExpressionAtOffset): Use append instead of
+        appendLiteral.
+
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::dumpTypes const): Use append instead of appendLiteral.
+        (JSC::TypeSet::toJSONString const): Ditto.
+        (JSC::StructureShape::propertyHash): Ditto.
+        (JSC::StructureShape::toJSONString const): Ditto.
+
 2021-05-24  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, revert r276610 because it causes a 1% PLT regression.

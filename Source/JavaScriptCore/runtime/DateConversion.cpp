@@ -69,14 +69,11 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         builder.append(WTF::weekdayName[(t.weekDay() + 6) % 7]);
 
         if (asUTCVariant) {
-            builder.appendLiteral(", ");
+            builder.append(", ");
             appendNumber<2>(builder, t.monthDay());
-            builder.append(' ');
-            builder.append(WTF::monthName[t.month()]);
+            builder.append(' ', WTF::monthName[t.month()]);
         } else {
-            builder.append(' ');
-            builder.append(WTF::monthName[t.month()]);
-            builder.append(' ');
+            builder.append(' ', WTF::monthName[t.month()], ' ');
             appendNumber<2>(builder, t.monthDay());
         }
         builder.append(' ');
@@ -92,7 +89,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
         appendNumber<2>(builder, t.minute());
         builder.append(':');
         appendNumber<2>(builder, t.second());
-        builder.appendLiteral(" GMT");
+        builder.append(" GMT");
 
         if (!asUTCVariant) {
             int offset = abs(t.utcOffsetInMinute());
@@ -110,11 +107,8 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
             char timeZoneName[70];
             strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
 #endif
-            if (timeZoneName[0]) {
-                builder.appendLiteral(" (");
-                builder.append(timeZoneName);
-                builder.append(')');
-            }
+            if (timeZoneName[0])
+                builder.append(" (", timeZoneName, ')');
         }
     }
 

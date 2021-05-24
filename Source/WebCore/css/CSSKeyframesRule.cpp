@@ -198,16 +198,9 @@ CSSKeyframeRule* CSSKeyframesRule::findRule(const String& s)
 String CSSKeyframesRule::cssText() const
 {
     StringBuilder result;
-    result.appendLiteral("@-webkit-keyframes ");
-    result.append(name());
-    result.appendLiteral(" { \n");
-
-    unsigned size = length();
-    for (unsigned i = 0; i < size; ++i) {
-        result.appendLiteral("  ");
-        result.append(m_keyframesRule->keyframes()[i]->cssText());
-        result.append('\n');
-    }
+    result.append("@-webkit-keyframes ", name(), " { \n");
+    for (unsigned i = 0, size = length(); i < size; ++i)
+        result.append("  ", m_keyframesRule->keyframes()[i]->cssText(), '\n');
     result.append('}');
     return result.toString();
 }

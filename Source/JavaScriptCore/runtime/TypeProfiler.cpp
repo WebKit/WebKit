@@ -85,20 +85,17 @@ String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDesc
 
     json.append('{');
 
-    json.appendLiteral("\"globalTypeSet\":");
+    json.append("\"globalTypeSet\":");
     if (location->m_globalTypeSet && location->m_globalVariableID != TypeProfilerNoGlobalIDExists)
         json.append(location->m_globalTypeSet->toJSONString());
     else
-        json.appendLiteral("null");
+        json.append("null");
     json.append(',');
 
     json.append("\"instructionTypeSet\":", location->m_instructionTypeSet->toJSONString(), ',');
 
-    json.appendLiteral("\"isOverflown\":");
-    if (location->m_instructionTypeSet->isOverflown() || (location->m_globalTypeSet && location->m_globalTypeSet->isOverflown()))
-        json.appendLiteral("true");
-    else
-        json.appendLiteral("false");
+    bool isOverflown = location->m_instructionTypeSet->isOverflown() || (location->m_globalTypeSet && location->m_globalTypeSet->isOverflown());
+    json.append("\"isOverflown\":", isOverflown ? "true" : "false");
 
     json.append('}');
 

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSTimingFunctionValue.h"
 
-#include <wtf/text/StringBuilder.h>
-
 namespace WebCore {
 
 String CSSCubicBezierTimingFunctionValue::customCSSText() const
@@ -42,33 +40,27 @@ bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctio
 
 String CSSStepsTimingFunctionValue::customCSSText() const
 {
-    StringBuilder builder;
-    builder.append("steps(", m_steps);
+    const char* position = "";
     if (m_stepPosition) {
         switch (m_stepPosition.value()) {
         case StepsTimingFunction::StepPosition::JumpStart:
-            builder.appendLiteral(", jump-start");
+            position = ", jump-start";
             break;
-
         case StepsTimingFunction::StepPosition::JumpNone:
-            builder.appendLiteral(", jump-none");
+            position = ", jump-none";
             break;
-
         case StepsTimingFunction::StepPosition::JumpBoth:
-            builder.appendLiteral(", jump-both");
+            position = ", jump-both";
             break;
-
         case StepsTimingFunction::StepPosition::Start:
-            builder.appendLiteral(", start");
+            position = ", start";
             break;
-
         case StepsTimingFunction::StepPosition::JumpEnd:
         case StepsTimingFunction::StepPosition::End:
             break;
         }
     }
-    builder.append(')');
-    return builder.toString();
+    return makeString("steps(", m_steps, position, ')');
 }
 
 bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& other) const
@@ -78,23 +70,12 @@ bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& othe
 
 String CSSSpringTimingFunctionValue::customCSSText() const
 {
-    StringBuilder builder;
-    builder.appendLiteral("spring(");
-    builder.append(FormattedNumber::fixedPrecision(m_mass));
-    builder.append(' ');
-    builder.append(FormattedNumber::fixedPrecision(m_stiffness));
-    builder.append(' ');
-    builder.append(FormattedNumber::fixedPrecision(m_damping));
-    builder.append(' ');
-    builder.append(FormattedNumber::fixedPrecision(m_initialVelocity));
-    builder.append(')');
-    return builder.toString();
+    return makeString("spring(", FormattedNumber::fixedPrecision(m_mass), ' ', FormattedNumber::fixedPrecision(m_stiffness), ' ', FormattedNumber::fixedPrecision(m_damping), ' ', FormattedNumber::fixedPrecision(m_initialVelocity), ')');
 }
 
 bool CSSSpringTimingFunctionValue::equals(const CSSSpringTimingFunctionValue& other) const
 {
     return m_mass == other.m_mass && m_stiffness == other.m_stiffness && m_damping == other.m_damping && m_initialVelocity == other.m_initialVelocity;
 }
-
 
 } // namespace WebCore

@@ -37,17 +37,16 @@ static void appendProxyServerString(StringBuilder& builder, const ProxyServer& p
 
     switch (proxyServer.type()) {
     case ProxyServer::Direct:
-        builder.appendLiteral("DIRECT");
-        return;
+        builder.append("DIRECT");
+        break;
     case ProxyServer::HTTP:
     case ProxyServer::HTTPS:
-        builder.appendLiteral("PROXY");
+        builder.append("PROXY ", proxyServer.hostName(), ':', proxyServer.port());
         break;
     case ProxyServer::SOCKS:
-        builder.appendLiteral("SOCKS");
+        builder.append("SOCKS ", proxyServer.hostName(), ':', proxyServer.port());
         break;
-    }    
-    builder.append(' ', proxyServer.hostName(), ':', proxyServer.port());
+    }
 }
 
 String toString(const Vector<ProxyServer>& proxyServers)
@@ -58,13 +57,10 @@ String toString(const Vector<ProxyServer>& proxyServers)
     StringBuilder stringBuilder;
     for (size_t i = 0; i < proxyServers.size(); ++i) {
         if (i)
-            stringBuilder.appendLiteral("; ");
-
+            stringBuilder.append("; ");
         appendProxyServerString(stringBuilder, proxyServers[i]);
     }
-
     return stringBuilder.toString();
 }
-
 
 } // namespace WebCore

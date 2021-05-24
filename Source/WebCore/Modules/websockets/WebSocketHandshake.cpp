@@ -54,7 +54,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -166,85 +165,53 @@ String WebSocketHandshake::clientLocation() const
 
 CString WebSocketHandshake::clientHandshakeMessage() const
 {
-    // Keep the following consistent with clientHandshakeRequest().
-    StringBuilder builder;
+    // Keep the following consistent with clientHandshakeRequest just below.
 
-    builder.appendLiteral("GET ");
-    builder.append(resourceName(m_url));
-    builder.appendLiteral(" HTTP/1.1\r\n");
-
-    Vector<String> fields;
-    fields.append("Upgrade: websocket");
-    fields.append("Connection: Upgrade");
-    fields.append("Host: " + hostName(m_url, m_secure));
-    fields.append("Origin: " + m_clientOrigin);
-    if (!m_clientProtocol.isEmpty())
-        fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
-
-    // Note: Cookies are not retrieved in the WebContent process. Instead, a proxy object is
+    // Cookies are not retrieved in the WebContent process. Instead, a proxy object is
     // added in the handshake, and is exchanged for actual cookies in the Network process.
 
-    // Add no-cache headers to avoid compatibility issue.
-    // There are some proxies that rewrite "Connection: upgrade"
-    // to "Connection: close" in the response if a request doesn't contain
-    // these headers.
-    fields.append("Pragma: no-cache");
-    fields.append("Cache-Control: no-cache");
+    // Add no-cache headers to avoid a compatibility issue. There are some proxies that
+    // rewrite "Connection: upgrade" to "Connection: close" in the response if a request
+    // doesn't contain these headers.
 
-    fields.append("Sec-WebSocket-Key: " + m_secWebSocketKey);
-    fields.append("Sec-WebSocket-Version: 13");
-    const String extensionValue = m_extensionDispatcher.createHeaderValue();
-    if (extensionValue.length())
-        fields.append("Sec-WebSocket-Extensions: " + extensionValue);
-
-    // Add a User-Agent header.
-    fields.append(makeString("User-Agent: ", m_userAgent));
-
-    // Fields in the handshake are sent by the client in a random order; the
-    // order is not meaningful.  Thus, it's ok to send the order we constructed
-    // the fields.
-
-    for (auto& field : fields) {
-        builder.append(field);
-        builder.appendLiteral("\r\n");
-    }
-
-    builder.appendLiteral("\r\n");
-
-    return builder.toString().utf8();
+    auto extensions = m_extensionDispatcher.createHeaderValue();
+    return makeString("GET ", resourceName(m_url), " HTTP/1.1\r\n"
+        "Upgrade: websocket\r\n"
+        "Connection: Upgrade\r\n"
+        "Host: ", hostName(m_url, m_secure), "\r\n"
+        "Origin: ", m_clientOrigin, "\r\n",
+        m_clientProtocol.isEmpty() ? "" : "Sec-WebSocket-Protocol: ", m_clientProtocol, m_clientProtocol.isEmpty() ? "" : "\r\n",
+        "Pragma: no-cache\r\n"
+        "Cache-Control: no-cache\r\n"
+        "Sec-WebSocket-Key: ", m_secWebSocketKey, "\r\n"
+        "Sec-WebSocket-Version: 13\r\n",
+        extensions.isEmpty() ? "" : "Sec-WebSocket-Extensions: ", extensions, extensions.isEmpty() ? "" : "\r\n",
+        "User-Agent: ", m_userAgent, "\r\n"
+        "\r\n").utf8();
 }
 
 ResourceRequest WebSocketHandshake::clientHandshakeRequest(const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const
 {
-    // Keep the following consistent with clientHandshakeMessage().
-    ResourceRequest request(m_url);
-    request.setHTTPMethod("GET");
+    // Keep the following consistent with clientHandshakeMessage just above.
 
-    request.setHTTPHeaderField(HTTPHeaderName::Connection, "Upgrade");
+    auto cookie = m_allowCookies ? cookieRequestHeaderFieldValue(httpURLForAuthenticationAndCookies()) : emptyString();
+    auto extensions = m_extensionDispatcher.createHeaderValue();
+    ResourceRequest request { m_url };
+    request.setHTTPMethod("GET"_s);
+    request.setHTTPHeaderField(HTTPHeaderName::Connection, "Upgrade"_s);
     request.setHTTPHeaderField(HTTPHeaderName::Host, hostName(m_url, m_secure));
     request.setHTTPHeaderField(HTTPHeaderName::Origin, m_clientOrigin);
     if (!m_clientProtocol.isEmpty())
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketProtocol, m_clientProtocol);
-
-    URL url = httpURLForAuthenticationAndCookies();
-    if (m_allowCookies) {
-        String cookie = cookieRequestHeaderFieldValue(url);
-        if (!cookie.isEmpty())
-            request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
-    }
-
+    if (!cookie.isEmpty())
+        request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
     request.setHTTPHeaderField(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
-
     request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketKey, m_secWebSocketKey);
-    request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketVersion, "13");
-    const String extensionValue = m_extensionDispatcher.createHeaderValue();
-    if (extensionValue.length())
-        request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensionValue);
-
-    // Add a User-Agent header.
+    request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketVersion, "13"_s);
+    if (!extensions.isEmpty())
+        request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensions);
     request.setHTTPUserAgent(m_userAgent);
-
     return request;
 }
 

@@ -1047,8 +1047,8 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     bool hasSecondLine = !elementRole.isEmpty();
 
     {
-        String firstLine = makeString(elementTagName, elementIDValue, elementClassValue, elementPseudoType, ' ', elementWidth, "px", ' ', multiplicationSign, ' ', elementHeight, "px");
-        String secondLine = makeString("Role ", elementRole);
+        auto firstLine = makeString(elementTagName, elementIDValue, elementClassValue, elementPseudoType, ' ', elementWidth, "px", ' ', multiplicationSign, ' ', elementHeight, "px");
+        auto secondLine = makeString("Role ", elementRole);
 
         float firstLineWidth = font.width(TextRun(firstLine));
         float secondLineWidth = font.width(TextRun(secondLine));

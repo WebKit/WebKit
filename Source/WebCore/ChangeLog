@@ -1,3 +1,379 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::packageFormData): Use auto for the result of makeString.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString const): Use append instead
+        of appendLiteral.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord): Use auto
+        for the result of makeString.
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::buildPreIndexStatement): Use makeString
+        instead of StringBuilder.
+        (WebCore::IDBServer::buildIndexStatement): Ditto.
+        (WebCore::IDBServer::buildObjectStoreStatement): Ditto.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::encodeProtocolString): Use append instead of appendLiteral.
+        * Modules/websockets/WebSocketExtensionDispatcher.cpp:
+        (WebCore::WebSocketExtensionDispatcher::appendAcceptedExtension): Ditto.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeMessage const): Use
+        makeString instead of StringBuilder.
+        (WebCore::WebSocketHandshake::clientHandshakeRequest const): Tweak
+        to match the function above more closely, and use ASCIILiteral.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (formatForDebugger): Use makeString instead of StringBuilder.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::prefixTreeVertexToString): Use
+        append instead of appendLiteral.
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildCircleString): Ditto.
+        (WebCore::buildEllipseString): Ditto.
+        (WebCore::buildPathString): Ditto.
+        (WebCore::buildPolygonString): Ditto.
+        (WebCore::buildInsetString): Ditto.
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSLinearGradientValue::customCSSText const): Ditto.
+        (WebCore::CSSRadialGradientValue::customCSSText const): Ditto.
+        (WebCore::CSSConicGradientValue::customCSSText const): Ditto.
+
+        * css/CSSGridIntegerRepeatValue.cpp:
+        (WebCore::CSSGridIntegerRepeatValue::customCSSText const):
+        Use makeString instead of StringBuilder.
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::customCSSText const): Use append
+        instead of appendLiteral.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::cssText const): Use makeString instead
+        of StringBuilder.
+        * css/CSSKeyframeRule.cpp:
+        (WebCore::StyleRuleKeyframe::cssText const): Ditto.
+
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::CSSKeyframesRule::cssText const): Use variadic append.
+
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::customCSSText const): Use
+        append instead of appendLiteral.
+        * css/CSSNamespaceRule.cpp:
+        (WebCore::CSSNamespaceRule::cssText const): Ditto.
+
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::cssText const): Use makeString instead of
+        StringBuilder.
+        * css/CSSPaintImageValue.cpp:
+        (WebCore::CSSPaintImageValue::customCSSText const): Ditto.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        Use append instead of appendLiteral.
+
+        * css/CSSSelector.cpp:
+        (WebCore::appendLangArgumentList): Use variadic append.
+        (WebCore::CSSSelector::selectorText const): Ditto. Also use
+        append instead of appendLiteral and make some improvements to
+        cut down on allocations a little.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::buildSelectorsText const): Use
+        append instead of appendLiteral.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet): Moved more of the
+        data member initialization to the class definition.
+        (WebCore::CSSStyleSheet::addRule): Use makeString instead of
+        StringBuilder.
+        * css/CSSStyleSheet.h: Moved initialization here.
+
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSStepsTimingFunctionValue::customCSSText const):
+        Use makeString instead of StringBuilder.
+        (WebCore::CSSSpringTimingFunctionValue::customCSSText const):
+        Ditto.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::mediaText const): Use append instead
+        of appendLiteral.
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::serialize const): Ditto.
+
+        * css/MediaQueryExpression.cpp:
+        (WebCore::MediaQueryExpression::serialize const): Use makeString
+        instead of StringBuilder.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getLayeredShorthandValue const):
+        Use append instead of appendLiteral.
+
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::serialize const): Removed a lot of
+        unnecessary braces. Use variadic append and append instead of appendLiteral.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Use auto for the result
+        of makeString.
+
+        * dom/Element.cpp:
+        (WebCore::appendAttributes): Use variadic append and append
+        instead of appendLiteral.
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::parseSandboxPolicy): Ditto.
+        * editing/HTMLInterchange.cpp:
+        (WebCore::convertHTMLTextToInterchangeFormat): Ditto.
+
+        * editing/TextIterator.cpp:
+        (WebCore::createSearcher): Use auto for the result of makeString.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag):
+        Use append instead of appendLiteral.
+        (WebCore::StyledMarkupAccumulator::appendStartTag): Ditto.
+        (WebCore::urlToMarkup): Ditto.
+        * html/FormController.cpp:
+        (WebCore::recordFormStructure): Ditto.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::reportValidity): Use auto for
+        the result of makeString.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively): Ditto.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::completeURLsInAttributeValue const):
+        Use append insteaed of appendLiteral.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::restrictionNames): Use auto for the result of makeString.
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getUniformLocation): Ditto.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemaining): Ditto.
+
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::buildConsoleError): Use makeString instead of StringBuilder.
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::rebuildDisplayTree): Ditto.
+
+        * inspector/InspectorFrontendAPIDispatcher.cpp:
+        (WebCore::expressionForEvaluatingCommand): Use append instead of appendLiteral.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::drawElementTitle): Use auto for the result of makeString.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::addRule): Use append instead of appendLiteral.
+
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        Use makeString instead of StringBuilder.
+
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::didReceiveResponse): Use auto for the result of makeString.
+        (WebCore::WebConsoleAgent::didFailLoading): Ditto.
+        * loader/MixedContentChecker.cpp:
+        (WebCore::logWarning): Ditto
+        (WebCore::MixedContentChecker::checkFormForMixedContent): Ditto
+
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::makeValidURL): Added. Used for various cases below that all construct
+        URLs in the same way with the same kinds of checks. Use makeString here instead
+        of StringBuilder.
+        (WebCore::attributionReportURL): Call makeValidURL.
+        (WebCore::PrivateClickMeasurement::tokenSignatureURL const): Ditto.
+        (WebCore::PrivateClickMeasurement::tokenPublicKeyURL const): Ditto.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::appendBoolean): Use append instead of appendLiteral.
+        (WebCore::appendHashSet): Ditto.
+        (WebCore::appendNavigatorAPIOptionSet): Ditto.
+        (WebCore::appendScreenAPIOptionSet): Ditto.
+        (WebCore::ResourceLoadStatistics::toString const): Ditto.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously): Use auto for
+        the result of makeString.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels): Use append instead of appendLiteral.
+        Also tweak coding style a bit.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::logMockScrollAnimatorMessage const): Use makeString
+        instead of StringBuilder.
+
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::SerializerMarkupAccumulator::appendStartTag):
+        Use append instead of appendLiteral.
+        (WebCore::PageSerializer::serializeCSSStyleSheet): Ditto.
+        (WebCore::PageSerializer::urlForBlankFrame): Use auto for the result of
+        makeString.
+
+        * page/PerformanceLoggingClient.cpp:
+        (WebCore::PerformanceLoggingClient::synchronousScrollingReasonsAsString):
+        Use makeString instead of StringBuilder.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformDraw): Use auto for the result of
+        makeString.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::consoleMessageForViolation): Use makeString instsead of StringBuilder.
+        (WebCore::ContentSecurityPolicy::allowRunningOrDisplayingInsecureContent): Ditto.
+        (WebCore::ContentSecurityPolicy::reportInvalidDirectiveValueCharacter const):
+        Get rid of local variable for result of makeString.
+        (WebCore::ContentSecurityPolicy::reportInvalidPathCharacter const): Ditto.
+        (WebCore::ContentSecurityPolicy::reportInvalidSourceExpression const): Ditto.
+
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::create): Get rid of local
+        variable for result of makeString.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText):
+        Use makeString instead of StringBulder.
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::toString const): Use append instead of appendLiteral.
+
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::createFromCSSText): Use makeString instead
+        of StringBuilder.
+
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation): Use auto
+        for the result of makeString.
+
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::buildUserAgentString): Use append instead of appendLiteral.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes): Use
+        append instead of appendLiteral.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): Got rid of local
+        variable for result of makeString.
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations): Use auto
+        for result of makeString.
+
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::tileRevalidationTimerFired): Update to
+        use OptionSet.
+
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::validationPolicyAsString): Use OptionSet.
+        (WebCore::TileGrid::setNeedsDisplayInRect): Use auto for iterator
+        and range-based for loop.
+        (WebCore::TileGrid::updateTileLayerProperties): Ditto.
+        (WebCore::TileGrid::blankPixelCount const): Ditto.
+        (WebCore::TileGrid::removeTiles): Use HashCountedSet.
+        (WebCore::TileGrid::revalidateTiles): Use OptionSet.
+        (WebCore::TileGrid::retainedTileBackingStoreMemory const): Use
+        ranged-based for loop.
+        (WebCore::TileGrid::drawTileMapContents const): Use range-based
+        for loop and use writeIntegerToBuffer instead of String::number.
+        (WebCore::TileGrid::platformCALayerRepaintCount const): Use
+        HashCountedSet.
+        (WebCore::TileGrid::platformCALayerIncrementRepaintCount): Ditto.
+        This cuts us down from 3 hash table lookups to 1.
+        (WebCore::TileGrid::removeUnparentedTilesNow): Removed local
+        variable to make code a little tighter.
+        * platform/graphics/ca/TileGrid.h: Use OptionSet and HashCountedSet.
+        Removed some type names.
+
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        (WebCore::PlatformCAFilters::setFiltersOnLayer): Use auto for
+        reuslt of makeString.
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText): Ditto.
+
+        * platform/mock/ScrollAnimatorMock.cpp:
+        (WebCore::ScrollAnimatorMock::scrollbarPrefix const): Added
+        helper function for use below.
+        (WebCore::ScrollAnimatorMock::mouseEnteredScrollbar const): Use
+        makeString instead of StringBuilder.
+        (WebCore::ScrollAnimatorMock::mouseExitedScrollbar const): Ditto.
+        (WebCore::ScrollAnimatorMock::mouseIsDownInScrollbar const): Ditto.
+        * platform/mock/ScrollAnimatorMock.h: Ditto.
+
+        * platform/network/ProxyServer.cpp:
+        (WebCore::appendProxyServerString): Use append instead of appendLiteral.
+        (WebCore::toString): Ditto.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::sanitizeSuggestedFilename): Get rid
+        of local variable with result of maekString in it.
+
+        * platform/playstation/UserAgentPlayStation.cpp:
+        (WebCore::platformForUAString): Deleted. No need for a global variable
+        to hold the result of something called only once.
+        (WebCore::platformVersionForUAString): Ditto.
+        (WebCore::buildUserAgentString): Deleted.
+        (WebCore::standardUserAgentStatic): Moved the logic from buildUserAgentString
+        here, using makeString instead of StringBuilder.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open): Use auto for result of makeString.
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::deleteDatabaseFile): Ditto.
+
+        * platform/text/DateTimeFormat.cpp:
+        (WebCore::DateTimeFormat::quoteAndAppendLiteral): Use append instead
+        of appendLiteral and StringView::substring instead of String::substring.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::replaceNewlinesWithWindowsStyleNewlines): Use append
+        instead of appendLiteral.
+
+        * platform/win/UserAgentWin.cpp:
+        (WebCore::standardUserAgent): Use makeString instead of StringBuildeer.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::name const): Ditto.
+        (WebCore::RenderLayer::debugDescription const): Ditto.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo): Use append instead of
+        appendLiteral.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables): Ditto.
+        (WebCore::nodePosition): Ditto.
+        * svg/SVGPathStringBuilder.cpp:
+        (WebCore::SVGPathStringBuilder::moveTo): Ditto.
+        (WebCore::SVGPathStringBuilder::lineTo): Ditto.
+        (WebCore::SVGPathStringBuilder::lineToHorizontal): Ditto.
+        (WebCore::SVGPathStringBuilder::lineToVertical): Ditto.
+        (WebCore::SVGPathStringBuilder::curveToCubic): Ditto.
+        (WebCore::SVGPathStringBuilder::curveToCubicSmooth): Ditto.
+        (WebCore::SVGPathStringBuilder::curveToQuadratic): Ditto.
+        (WebCore::SVGPathStringBuilder::curveToQuadraticSmooth): Ditto.
+        (WebCore::SVGPathStringBuilder::arcTo): Ditto.
+        (WebCore::SVGPathStringBuilder::closePath): Ditto.
+        * testing/Internals.cpp:
+        (WebCore::Internals::dumpMarkerRects): Ditto.
+        (WebCore::appendOffsets):
+        (WebCore::Internals::scrollSnapOffsets): Ditto.
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::validateWorkerResponse): Use auto
+        for reuslt of makeString.
+
 2021-05-24  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in ShadowBlur's ScratchBuffer

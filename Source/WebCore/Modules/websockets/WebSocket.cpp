@@ -108,11 +108,10 @@ static String encodeProtocolString(const String& protocol)
 {
     StringBuilder builder;
     for (size_t i = 0; i < protocol.length(); i++) {
-        if (protocol[i] < 0x20 || protocol[i] > 0x7E) {
-            builder.appendLiteral("\\u");
-            builder.append(hex(protocol[i], 4));
-        } else if (protocol[i] == 0x5c)
-            builder.appendLiteral("\\\\");
+        if (protocol[i] < 0x20 || protocol[i] > 0x7E)
+            builder.append("\\u", hex(protocol[i], 4));
+        else if (protocol[i] == 0x5c)
+            builder.append("\\\\");
         else
             builder.append(protocol[i]);
     }

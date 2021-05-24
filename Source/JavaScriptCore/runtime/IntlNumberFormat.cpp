@@ -380,32 +380,31 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md
 
     StringBuilder skeletonBuilder;
-    skeletonBuilder.appendLiteral("rounding-mode-half-up");
+    skeletonBuilder.append("rounding-mode-half-up");
 
     switch (m_style) {
     case Style::Decimal:
         // No skeleton is needed.
         break;
     case Style::Percent:
-        skeletonBuilder.appendLiteral(" percent scale/100");
+        skeletonBuilder.append(" percent scale/100");
         break;
     case Style::Currency: {
-        skeletonBuilder.appendLiteral(" currency/");
-        skeletonBuilder.append(currency);
+        skeletonBuilder.append(" currency/", currency);
 
         // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#unit-width
         switch (m_currencyDisplay) {
         case CurrencyDisplay::Code:
-            skeletonBuilder.appendLiteral(" unit-width-iso-code");
+            skeletonBuilder.append(" unit-width-iso-code");
             break;
         case CurrencyDisplay::Symbol:
             // Default option. Do not specify unit-width.
             break;
         case CurrencyDisplay::NarrowSymbol:
-            skeletonBuilder.appendLiteral(" unit-width-narrow");
+            skeletonBuilder.append(" unit-width-narrow");
             break;
         case CurrencyDisplay::Name:
-            skeletonBuilder.appendLiteral(" unit-width-full-name");
+            skeletonBuilder.append(" unit-width-full-name");
             break;
         }
         break;
@@ -414,25 +413,24 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         // The measure-unit stem takes one required option: the unit identifier of the unit to be formatted.
         // The full unit identifier is required: both the type and the subtype (for example, length-meter).
         // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#unit
-        skeletonBuilder.appendLiteral(" measure-unit/");
+        skeletonBuilder.append(" measure-unit/");
         auto numeratorUnit = wellFormedUnit->numerator;
         skeletonBuilder.append(numeratorUnit.type, '-', numeratorUnit.subType);
         if (auto denominatorUnitValue = wellFormedUnit->denominator) {
             auto denominatorUnit = denominatorUnitValue.value();
-            skeletonBuilder.appendLiteral(" per-measure-unit/");
-            skeletonBuilder.append(denominatorUnit.type, '-', denominatorUnit.subType);
+            skeletonBuilder.append(" per-measure-unit/", denominatorUnit.type, '-', denominatorUnit.subType);
         }
 
         // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#unit-width
         switch (m_unitDisplay) {
         case UnitDisplay::Short:
-            skeletonBuilder.appendLiteral(" unit-width-short");
+            skeletonBuilder.append(" unit-width-short");
             break;
         case UnitDisplay::Narrow:
-            skeletonBuilder.appendLiteral(" unit-width-narrow");
+            skeletonBuilder.append(" unit-width-narrow");
             break;
         case UnitDisplay::Long:
-            skeletonBuilder.appendLiteral(" unit-width-full-name");
+            skeletonBuilder.append(" unit-width-full-name");
             break;
         }
         break;
@@ -440,8 +438,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     }
 
     // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#integer-width
-    skeletonBuilder.appendLiteral(" integer-width/");
-    skeletonBuilder.append((WTF::ICU::majorVersion() >= 67) ? '*' : '+'); // Prior to ICU 67, use the symbol + instead of *.
+    skeletonBuilder.append(" integer-width/", WTF::ICU::majorVersion() >= 67 ? '*' : '+'); // Prior to ICU 67, use the symbol + instead of *.
     for (unsigned i = 0; i < m_minimumIntegerDigits; ++i)
         skeletonBuilder.append('0');
 
@@ -474,18 +471,18 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     case IntlNotation::Standard:
         break;
     case IntlNotation::Scientific:
-        skeletonBuilder.appendLiteral(" scientific");
+        skeletonBuilder.append(" scientific");
         break;
     case IntlNotation::Engineering:
-        skeletonBuilder.appendLiteral(" engineering");
+        skeletonBuilder.append(" engineering");
         break;
     case IntlNotation::Compact:
         switch (m_compactDisplay) {
         case CompactDisplay::Short:
-            skeletonBuilder.appendLiteral(" compact-short");
+            skeletonBuilder.append(" compact-short");
             break;
         case CompactDisplay::Long:
-            skeletonBuilder.appendLiteral(" compact-long");
+            skeletonBuilder.append(" compact-long");
             break;
         }
         break;
@@ -497,29 +494,29 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     switch (m_signDisplay) {
     case SignDisplay::Auto:
         if (useAccounting)
-            skeletonBuilder.appendLiteral(" sign-accounting");
+            skeletonBuilder.append(" sign-accounting");
         else
-            skeletonBuilder.appendLiteral(" sign-auto");
+            skeletonBuilder.append(" sign-auto");
         break;
     case SignDisplay::Never:
-        skeletonBuilder.appendLiteral(" sign-never");
+        skeletonBuilder.append(" sign-never");
         break;
     case SignDisplay::Always:
         if (useAccounting)
-            skeletonBuilder.appendLiteral(" sign-accounting-always");
+            skeletonBuilder.append(" sign-accounting-always");
         else
-            skeletonBuilder.appendLiteral(" sign-always");
+            skeletonBuilder.append(" sign-always");
         break;
     case SignDisplay::ExceptZero:
         if (useAccounting)
-            skeletonBuilder.appendLiteral(" sign-accounting-except-zero");
+            skeletonBuilder.append(" sign-accounting-except-zero");
         else
-            skeletonBuilder.appendLiteral(" sign-except-zero");
+            skeletonBuilder.append(" sign-except-zero");
         break;
     }
 
     if (!m_useGrouping)
-        skeletonBuilder.appendLiteral(" group-off");
+        skeletonBuilder.append(" group-off");
 
     String skeleton = skeletonBuilder.toString();
     dataLogLnIf(IntlNumberFormatInternal::verbose, skeleton);

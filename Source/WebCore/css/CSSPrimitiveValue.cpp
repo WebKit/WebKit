@@ -1097,22 +1097,12 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return "counter(" + String(m_value.string) + ')';
     case CSSUnitType::CSS_COUNTER: {
         StringBuilder result;
-        String separator = m_value.counter->separator();
-        if (separator.isEmpty())
-            result.appendLiteral("counter(");
-        else
-            result.appendLiteral("counters(");
-
-        result.append(m_value.counter->identifier());
-        if (!separator.isEmpty()) {
-            result.appendLiteral(", ");
+        auto separator = m_value.counter->separator();
+        auto listStyle = m_value.counter->listStyle();
+        result.append(separator.isEmpty() ? "counter(" : "counters(", m_value.counter->identifier(), separator.isEmpty() ? "" : ", ");
+        if (!separator.isEmpty())
             serializeString(separator, result);
-        }
-        String listStyle = m_value.counter->listStyle();
-        if (!listStyle.isEmpty())
-            result.append(", ", listStyle);
-        result.append(')');
-
+        result.append(listStyle.isEmpty() ? "" : ", ", listStyle, ')');
         return result.toString();
     }
     case CSSUnitType::CSS_RECT:

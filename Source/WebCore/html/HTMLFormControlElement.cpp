@@ -528,7 +528,7 @@ bool HTMLFormControlElement::reportValidity()
     }
 
     if (document().frame()) {
-        String message = makeString("An invalid form control with name='", name(), "' is not focusable.");
+        auto message = makeString("An invalid form control with name='", name(), "' is not focusable.");
         document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);
     }
 

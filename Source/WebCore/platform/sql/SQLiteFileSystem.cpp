@@ -79,8 +79,8 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String& path)
 
 bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
 {
-    String walFileName = makeString(fileName, "-wal"_s);
-    String shmFileName = makeString(fileName, "-shm"_s);
+    auto walFileName = makeString(fileName, "-wal"_s);
+    auto shmFileName = makeString(fileName, "-shm"_s);
 
     // Try to delete all three files whether or not they are there.
     FileSystem::deleteFile(fileName);

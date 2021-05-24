@@ -34,7 +34,6 @@
 #include "MediaFeatureNames.h"
 #include "MediaQueryParserContext.h"
 #include <wtf/text/TextStream.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -274,19 +273,8 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserToken
 
 String MediaQueryExpression::serialize() const
 {
-    if (!m_serializationCache.isNull())
-        return m_serializationCache;
-
-    StringBuilder result;
-    result.append('(');
-    result.append(m_mediaFeature.convertToASCIILowercase());
-    if (m_value) {
-        result.appendLiteral(": ");
-        result.append(m_value->cssText());
-    }
-    result.append(')');
-
-    m_serializationCache = result.toString();
+    if (m_serializationCache.isNull())
+        m_serializationCache = makeString('(', m_mediaFeature.convertToASCIILowercase(), m_value ? ": " : "", m_value ? m_value->cssText() : "", ')');
     return m_serializationCache;
 }
 

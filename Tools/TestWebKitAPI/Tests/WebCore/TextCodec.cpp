@@ -96,7 +96,7 @@ static const char* testDecode(const char* encodingName, std::initializer_list<co
         bool sawError = false;
         resultBuilder.append(escapeNonASCIIPrintableCharacters(codec->decode(vector.data(), vector.size(), last, false, sawError)));
         if (sawError)
-            resultBuilder.appendLiteral(" ERROR");
+            resultBuilder.append(" ERROR");
     }
     return escapeNonASCIIPrintableCharacters(resultBuilder.toString());
 }

@@ -566,7 +566,7 @@ String attributesOfElement(AccessibilityUIElement* element)
     builder.append(element->role()->string(), '\n');
 
     // For the parent we print its role and its name, if available.
-    builder.appendLiteral("AXParent: ");
+    builder.append("AXParent: ");
     RefPtr<AccessibilityUIElement> parent = element->parentElement();
     AtkObject* atkParent = parent ? parent->platformUIElement().get() : nullptr;
     if (atkParent) {
@@ -575,7 +575,7 @@ String attributesOfElement(AccessibilityUIElement* element)
         if (parentName && parentName[0])
             builder.append(": ", parentName);
     } else
-        builder.appendLiteral("(null)");
+        builder.append("(null)");
     builder.append('\n');
 
     builder.append("AXChildren: ", element->childrenCount(), '\n');
@@ -1394,7 +1394,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
         return JSStringCreateWithCharacters(0, 0);
 
     StringBuilder builder;
-    builder.appendLiteral("AXHelp: ");
+    builder.append("AXHelp: ");
 
     for (guint targetCount = 0; targetCount < targetList->len; targetCount++) {
         if (AtkObject* target = static_cast<AtkObject*>(g_ptr_array_index(targetList, targetCount))) {

@@ -5500,7 +5500,7 @@ void ArrayPatternNode::toString(StringBuilder& builder) const
             break;
 
         case BindingType::RestElement:
-            builder.appendLiteral("...");
+            builder.append("...");
             target.pattern->toString(builder);
             break;
         }
@@ -5820,7 +5820,7 @@ void RestParameterNode::collectBoundIdentifiers(Vector<Identifier>& identifiers)
 
 void RestParameterNode::toString(StringBuilder& builder) const
 {
-    builder.appendLiteral("...");
+    builder.append("...");
     m_pattern->toString(builder);
 }
 

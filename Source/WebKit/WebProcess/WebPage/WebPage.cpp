@@ -2072,7 +2072,7 @@ void WebPage::setPageZoomFactor(double zoomFactor)
 static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem, StringBuilder& stringBuilder, const String& directoryName)
 {
     if (isCurrentItem)
-        stringBuilder.appendLiteral("curr->  ");
+        stringBuilder.append("curr->  ");
     else {
         for (size_t i = 0; i < indent; ++i)
             stringBuilder.append(' ');
@@ -2085,23 +2085,19 @@ static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem
             start = 0;
         else
             start += directoryName.length();
-        stringBuilder.appendLiteral("(file test):");
-        stringBuilder.append(url.string().substring(start));
+        stringBuilder.append("(file test):", StringView { url.string() }.substring(start));
     } else
         stringBuilder.append(url.string());
-    
+
     auto& target = item.target();
-    if (target.length()) {
-        stringBuilder.appendLiteral(" (in frame \"");
-        stringBuilder.append(target);
-        stringBuilder.appendLiteral("\")");
-    }
-    
+    if (target.length())
+        stringBuilder.append(" (in frame \"", target, "\")");
+
     if (item.isTargetItem())
-        stringBuilder.appendLiteral("  **nav target**");
-    
+        stringBuilder.append("  **nav target**");
+
     stringBuilder.append('\n');
-    
+
     Vector<Ref<HistoryItem>> children;
     children.reserveInitialCapacity(item.children().size());
     for (auto& child : item.children())
@@ -3730,25 +3726,17 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
 void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CompletionHandler<void(const String&)>&& callback)
 {
     switch (includeChildFrames) {
-    case ContentAsStringIncludesChildFrames::No: {
-        String resultString = m_mainFrame->contentsAsString();
-        callback(resultString);
+    case ContentAsStringIncludesChildFrames::No:
+        callback(m_mainFrame->contentsAsString());
         break;
-    }
-    case ContentAsStringIncludesChildFrames::Yes: {
+    case ContentAsStringIncludesChildFrames::Yes:
         StringBuilder builder;
-        for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
-            if (auto* webFrame = WebFrame::fromCoreFrame(*frame)) {
-                if (!builder.isEmpty())
-                    builder.appendLiteral("\n\n");
-
-                builder.append(webFrame->contentsAsString());
-            }
+        for (auto frame = makeRefPtr(m_mainFrame->coreFrame()); frame; frame = frame->tree().traverseNextRendered()) {
+            if (auto webFrame = WebFrame::fromCoreFrame(*frame))
+                builder.append(builder.isEmpty() ? "" : "\n\n", webFrame->contentsAsString());
         }
-
         callback(builder.toString());
         break;
-    }
     }
 }
 
@@ -3770,8 +3758,7 @@ static Frame* frameWithSelection(Page* page)
         if (frame->selection().isRange())
             return frame;
     }
-
-    return 0;
+    return nullptr;
 }
 
 void WebPage::getSelectionAsWebArchiveData(CompletionHandler<void(const Optional<IPC::DataReference>&)>&& callback)

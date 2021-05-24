@@ -224,7 +224,7 @@ void Entry::setNeedsValidation(bool value)
 
 void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
 {
-    json.appendLiteral("{\n"
+    json.append("{\n"
         "\"hash\": ");
     json.appendQuotedJSONString(m_key.hashAsString());
     json.append(",\n"
@@ -236,7 +236,7 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
         "\"timestamp\": ", m_timeStamp.secondsSinceEpoch().milliseconds(), ",\n"
         "\"URL\": ");
     json.appendQuotedJSONString(m_response.url().string());
-    json.appendLiteral(",\n"
+    json.append(",\n"
         "\"bodyHash\": ");
     json.appendQuotedJSONString(info.bodyHash);
     json.append(",\n"
@@ -244,15 +244,12 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
         "\"headers\": {\n");
     bool firstHeader = true;
     for (auto& header : m_response.httpHeaderFields()) {
-        if (!firstHeader)
-            json.appendLiteral(",\n");
-        firstHeader = false;
-        json.appendLiteral("    ");
+        json.append(std::exchange(firstHeader, false) ? "" : ",\n", "    ");
         json.appendQuotedJSONString(header.key);
-        json.appendLiteral(": ");
+        json.append(": ");
         json.appendQuotedJSONString(header.value);
     }
-    json.appendLiteral("\n"
+    json.append("\n"
         "}\n"
         "}");
 }

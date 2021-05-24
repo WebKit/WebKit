@@ -384,9 +384,9 @@ inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar line
     else if (lineTerminator == '\r')
         builder.append('r');
     else if (lineTerminator == 0x2028)
-        builder.appendLiteral("u2028");
+        builder.append("u2028");
     else
-        builder.appendLiteral("u2029");
+        builder.append("u2029");
 }
 
 template <typename CharacterType>

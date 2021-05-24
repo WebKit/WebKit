@@ -3783,7 +3783,7 @@ static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSer
                 builder.append(':', exceptionDetails.lineNumber);
             if (exceptionDetails.columnNumber > 0)
                 builder.append(':', exceptionDetails.columnNumber);
-            builder.appendLiteral(": ");
+            builder.append(": ");
         }
         builder.append(exceptionDetails.message);
         g_task_return_new_error(task, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,

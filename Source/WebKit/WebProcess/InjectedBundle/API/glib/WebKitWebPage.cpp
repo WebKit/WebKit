@@ -59,7 +59,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -306,13 +305,9 @@ private:
 
         // Post on the console as well to be consistent with the inspector.
         if (!error.isCancellation()) {
-            StringBuilder errorMessage;
-            errorMessage.appendLiteral("Failed to load resource");
-            if (!error.localizedDescription().isEmpty()) {
-                errorMessage.appendLiteral(": ");
-                errorMessage.append(error.localizedDescription());
-            }
-            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, error.failingURL().string());
+            auto errorDescription = error.localizedDescription();
+            auto errorMessage = makeString("Failed to load resource", errorDescription.isEmpty() ? "" : ": ", errorDescription);
+            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, error.failingURL().string());
         }
     }
 

@@ -78,13 +78,14 @@ static bool isElementLargeEnoughForMainContent(const HTMLMediaElement&, MediaSes
 static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement&, bool shouldHitTestMainFrame);
 
 #if !RELEASE_LOG_DISABLED
+
 static String restrictionNames(MediaElementSession::BehaviorRestrictions restriction)
 {
     StringBuilder restrictionBuilder;
 #define CASE(restrictionType) \
     if (restriction & MediaElementSession::restrictionType) { \
         if (!restrictionBuilder.isEmpty()) \
-            restrictionBuilder.appendLiteral(", "); \
+            restrictionBuilder.append(", "); \
         restrictionBuilder.append(#restrictionType); \
     } \
 
@@ -107,6 +108,7 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
 
     return restrictionBuilder.toString();
 }
+
 #endif
 
 static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& element)

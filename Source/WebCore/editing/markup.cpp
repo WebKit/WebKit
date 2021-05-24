@@ -386,11 +386,11 @@ void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StylePr
     // wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
     ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
     if (isBlock)
-        out.appendLiteral("<div style=\"");
+        out.append("<div style=\"");
     else
-        out.appendLiteral("<span style=\"");
+        out.append("<span style=\"");
     appendAttributeValue(out, style->asText(), document.isHTMLDocument());
-    out.appendLiteral("\">");
+    out.append("\">");
 }
 
 const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
@@ -604,7 +604,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
         }
 
         if (!newInlineStyle->isEmpty()) {
-            out.appendLiteral(" style=\"");
+            out.append(" style=\"");
             appendAttributeValue(out, newInlineStyle->style()->asText(), documentIsHTML);
             out.append('"');
         }
@@ -1242,11 +1242,9 @@ String documentTypeString(const Document& document)
 String urlToMarkup(const URL& url, const String& title)
 {
     StringBuilder markup;
-    markup.appendLiteral("<a href=\"");
-    markup.append(url.string());
-    markup.appendLiteral("\">");
+    markup.append("<a href=\"", url.string(), "\">");
     MarkupAccumulator::appendCharactersReplacingEntities(markup, title, 0, title.length(), EntityMaskInPCDATA);
-    markup.appendLiteral("</a>");
+    markup.append("</a>");
     return markup.toString();
 }
 

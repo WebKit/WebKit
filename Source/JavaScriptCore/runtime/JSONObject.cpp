@@ -338,7 +338,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailedDueToUndefinedOrSymbolValue;
 
     if (value.isNull()) {
-        builder.appendLiteral("null");
+        builder.append("null");
         return StringifySucceeded;
     }
 
@@ -348,9 +348,9 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     if (value.isBoolean()) {
         if (value.isTrue())
-            builder.appendLiteral("true");
+            builder.append("true");
         else
-            builder.appendLiteral("false");
+            builder.append("false");
         return StringifySucceeded;
     }
 
@@ -367,7 +367,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         else {
             double number = value.asNumber();
             if (!std::isfinite(number))
-                builder.appendLiteral("null");
+                builder.append("null");
             else
                 builder.append(number);
         }
@@ -385,7 +385,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     JSObject* object = asObject(value);
     if (object->isCallable(vm)) {
         if (holder.isArray()) {
-            builder.appendLiteral("null");
+            builder.append("null");
             return StringifySucceeded;
         }
         return StringifyFailedDueToUndefinedOrSymbolValue;
@@ -567,7 +567,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
 
     switch (stringifyResult) {
         case StringifyFailed:
-            builder.appendLiteral("null");
+            builder.append("null");
             break;
         case StringifySucceeded:
             break;

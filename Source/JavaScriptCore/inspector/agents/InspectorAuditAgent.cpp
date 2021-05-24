@@ -32,7 +32,6 @@
 #include "ObjectConstructor.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -93,10 +92,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optiona
     if (injectedScript.hasNoValue())
         return makeUnexpected(errorString);
 
-    StringBuilder functionString;
-    functionString.appendLiteral("(function(WebInspectorAudit) { \"use strict\"; return eval(`(");
-    functionString.append(test.isolatedCopy().replace('`', "\\`"));
-    functionString.appendLiteral(")`)(WebInspectorAudit); })");
+    auto functionString = makeString("(function(WebInspectorAudit) { \"use strict\"; return eval(`(", String { test }.replace('`', "\\`"), ")`)(WebInspectorAudit); })");
 
     InjectedScript::ExecuteOptions options;
     options.objectGroup = "audit"_s;
@@ -112,7 +108,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optiona
 
     muteConsole();
 
-    injectedScript.execute(errorString, functionString.toString(), WTFMove(options), result, wasThrown, savedResultIndex);
+    injectedScript.execute(errorString, functionString, WTFMove(options), result, wasThrown, savedResultIndex);
 
     unmuteConsole();
 

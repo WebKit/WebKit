@@ -126,7 +126,7 @@ void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentif
     } else
         service = iterator->value;
 
-    String name = makeString(createCanonicalUUIDString(), ".local");
+    auto name = makeString(createCanonicalUUIDString(), ".local");
 
     auto ip = inet_addr(ipAddress.utf8().data());
 

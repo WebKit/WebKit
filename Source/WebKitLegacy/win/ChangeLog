@@ -1,3 +1,14 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accKeyboardShortcut): Use append instead of appnedLiteral.
+        * WebView.cpp: Ditto.
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Replace LockHolder with Locker in local variables

@@ -1,3 +1,50 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        The optimization done by appendLiteral has minimal value and is something we
+        can do without. It does not cut down the number of allocations, which is the
+        main cost of the StringBuilder class. Getting rid of the differently named
+        appendLiteral improves the design of the StringBuilder class for callers.
+        Our goal is to get as close as possible to a single append function.
+
+        If we decide we need an optimization for literals, we can come up with a
+        different way that is compatible with append. For example, we could assume
+        that any char array is a literal and check that at compile time in
+        StringConcatenate; that optimization would work for both makeString and
+        StringBuilder. Or we could use a strategy like ASCIILiteral.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::encodeForFileName): Streamline logic,
+        and use variadic append to make this more efficient.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::escapeString): Use append instead
+        of appendLiteral.
+        (WTF::JSONImpl::Value::writeJSON const): Ditto.
+
+        * wtf/Logger.h:
+        (WTF::Logger::log): Use auto for result of makeString.
+        (WTF::Logger::logVerbose): Ditto.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::toString const): Use makeString instead of StringBuilder.
+
+        * wtf/text/IntegerToStringConversion.h:
+        Made lengthOfIntegerAsString a constexpr function so we can use it to
+        compute the required size of arrays for conversion. Added using for both
+        lengthOfIntegerAsString and writeIntegerToBuffer so we can use them without
+        the WTF prefix as is customary for functions in WTF.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendLiteral): Deleted.
+
+        * wtf/text/StringConcatenate.h: Added support for appending StringImpl&,
+        StringImpl*, AtomStringImpl&, and AtomStringImpl*.
+
 2021-05-24  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, revert r276610 because it causes a 1% PLT regression.

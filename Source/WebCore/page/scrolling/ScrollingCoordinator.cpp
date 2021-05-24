@@ -41,7 +41,6 @@
 #include "ScrollAnimator.h"
 #include "Settings.h"
 #include <wtf/MainThread.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -383,29 +382,13 @@ String ScrollingCoordinator::scrollingTreeAsText(ScrollingStateTreeAsTextBehavio
 
 String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<SynchronousScrollingReason> reasons)
 {
-    StringBuilder stringBuilder;
-
-    if (reasons & SynchronousScrollingReason::ForcedOnMainThread)
-        stringBuilder.appendLiteral("Forced on main thread, ");
-
-    if (reasons & SynchronousScrollingReason::HasSlowRepaintObjects)
-        stringBuilder.appendLiteral("Has slow repaint objects, ");
-
-    if (reasons & SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
-        stringBuilder.appendLiteral("Has viewport constrained objects without supporting fixed layers, ");
-
-    if (reasons & SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects)
-        stringBuilder.appendLiteral("Has non-layer viewport-constrained objects, ");
-
-    if (reasons & SynchronousScrollingReason::IsImageDocument)
-        stringBuilder.appendLiteral("Is image document, ");
-
-    if (reasons & SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling)
-        stringBuilder.appendLiteral("Has slow repaint descendant scrollers, ");
-
-    if (stringBuilder.length())
-        stringBuilder.shrink(stringBuilder.length() - 2);
-    return stringBuilder.toString();
+    auto string = makeString(reasons.contains(SynchronousScrollingReason::ForcedOnMainThread) ? "Forced on main thread, " : "",
+        reasons.contains(SynchronousScrollingReason::HasSlowRepaintObjects) ? "Has slow repaint objects, " : "",
+        reasons.contains(SynchronousScrollingReason::HasViewportConstrainedObjectsWithoutSupportingFixedLayers) ? "Has viewport constrained objects without supporting fixed layers, " : "",
+        reasons.contains(SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects) ? "Has non-layer viewport-constrained objects, " : "",
+        reasons.contains(SynchronousScrollingReason::IsImageDocument) ? "Is image document, " : "",
+        reasons.contains(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling) ? "Has slow repaint descendant scrollers, " : "");
+    return string.isEmpty() ? string : string.left(string.length() - 2);
 }
 
 String ScrollingCoordinator::synchronousScrollingReasonsAsText() const

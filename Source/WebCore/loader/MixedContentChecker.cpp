@@ -55,7 +55,7 @@ bool MixedContentChecker::isMixedContent(SecurityOrigin& securityOrigin, const U
 static void logWarning(const Frame& frame, bool allowed, const String& action, const URL& target)
 {
     const char* errorString = allowed ? " was allowed to " : " was not allowed to ";
-    String message = makeString((allowed ? String() : "[blocked] "), "The page at ", frame.document()->url().stringCenterEllipsizedToLength(), errorString, action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
+    auto message = makeString((allowed ? String() : "[blocked] "), "The page at ", frame.document()->url().stringCenterEllipsizedToLength(), errorString, action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
     frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
@@ -111,7 +111,7 @@ void MixedContentChecker::checkFormForMixedContent(Frame& frame, SecurityOrigin&
     if (!isMixedContent(securityOrigin, url))
         return;
 
-    String message = makeString("The page at ", frame.document()->url().stringCenterEllipsizedToLength(), " contains a form which targets an insecure URL ", url.stringCenterEllipsizedToLength(), ".\n");
+    auto message = makeString("The page at ", frame.document()->url().stringCenterEllipsizedToLength(), " contains a form which targets an insecure URL ", url.stringCenterEllipsizedToLength(), ".\n");
     frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 
     frame.loader().client().didDisplayInsecureContent();

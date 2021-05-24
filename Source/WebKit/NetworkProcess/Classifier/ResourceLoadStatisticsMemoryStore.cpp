@@ -545,7 +545,7 @@ void ResourceLoadStatisticsMemoryStore::dumpResourceLoadStatistics(CompletionHan
     }
 
     StringBuilder result;
-    result.appendLiteral("Resource load statistics:\n\n");
+    result.append("Resource load statistics:\n\n");
     Vector<String> sortedMapEntries;
     for (auto& mapEntry : m_resourceStatisticsMap.values())
         sortedMapEntries.append(mapEntry->toString());

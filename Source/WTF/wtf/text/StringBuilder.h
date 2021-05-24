@@ -69,8 +69,6 @@ public:
     // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
     void append(const StringBuilder&);
 
-    template<unsigned characterCount> void appendLiteral(const char (&characters)[characterCount]) { appendCharacters(characters, characterCount - 1); }
-
     void appendCharacter(UChar) = delete;
     void appendCharacter(LChar) = delete;
     void appendCharacter(char) = delete;

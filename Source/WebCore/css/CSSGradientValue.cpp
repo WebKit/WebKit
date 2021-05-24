@@ -696,9 +696,9 @@ String CSSLinearGradientValue::customCSSText() const
         appendGradientStops(result, stops());
     } else if (gradientType() == CSSPrefixedLinearGradient) {
         if (isRepeating())
-            result.appendLiteral("-webkit-repeating-linear-gradient(");
+            result.append("-webkit-repeating-linear-gradient(");
         else
-            result.appendLiteral("-webkit-linear-gradient(");
+            result.append("-webkit-linear-gradient(");
 
         if (m_angle)
             result.append(m_angle->cssText());
@@ -706,14 +706,14 @@ String CSSLinearGradientValue::customCSSText() const
             appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
 
         for (auto& stop : stops()) {
-            result.appendLiteral(", ");
+            result.append(", ");
             writeColorStop(result, stop);
         }
     } else {
         if (isRepeating())
-            result.appendLiteral("repeating-linear-gradient(");
+            result.append("repeating-linear-gradient(");
         else
-            result.appendLiteral("linear-gradient(");
+            result.append("linear-gradient(");
 
         bool wroteSomething = false;
 
@@ -721,14 +721,14 @@ String CSSLinearGradientValue::customCSSText() const
             result.append(m_angle->cssText());
             wroteSomething = true;
         } else if (firstX() || (firstY() && firstY()->valueID() != CSSValueBottom)) {
-            result.appendLiteral("to ");
+            result.append("to ");
             appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
             wroteSomething = true;
         }
 
         for (auto& stop : stops()) {
             if (wroteSomething)
-                result.appendLiteral(", ");
+                result.append(", ");
             wroteSomething = true;
             writeColorStop(result, stop);
         }
@@ -891,44 +891,44 @@ String CSSRadialGradientValue::customCSSText() const
         appendGradientStops(result, stops());
     } else if (gradientType() == CSSPrefixedRadialGradient) {
         if (isRepeating())
-            result.appendLiteral("-webkit-repeating-radial-gradient(");
+            result.append("-webkit-repeating-radial-gradient(");
         else
-            result.appendLiteral("-webkit-radial-gradient(");
+            result.append("-webkit-radial-gradient(");
 
         if (firstX() || firstY())
             appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
         else
-            result.appendLiteral("center");
+            result.append("center");
 
         if (m_shape || m_sizingBehavior) {
-            result.appendLiteral(", ");
+            result.append(", ");
             if (m_shape)
                 result.append(m_shape->cssText(), ' ');
             else
-                result.appendLiteral("ellipse ");
+                result.append("ellipse ");
             if (m_sizingBehavior)
                 result.append(m_sizingBehavior->cssText());
             else
-                result.appendLiteral("cover");
+                result.append("cover");
         } else if (m_endHorizontalSize && m_endVerticalSize)
             result.append(", ", m_endHorizontalSize->cssText(), ' ', m_endVerticalSize->cssText());
 
         for (auto& stop : stops()) {
-            result.appendLiteral(", ");
+            result.append(", ");
             writeColorStop(result, stop);
         }
     } else {
         if (isRepeating())
-            result.appendLiteral("repeating-radial-gradient(");
+            result.append("repeating-radial-gradient(");
         else
-            result.appendLiteral("radial-gradient(");
+            result.append("radial-gradient(");
 
         bool wroteSomething = false;
 
         // The only ambiguous case that needs an explicit shape to be provided
         // is when a sizing keyword is used (or all sizing is omitted).
         if (m_shape && m_shape->valueID() != CSSValueEllipse && (m_sizingBehavior || (!m_sizingBehavior && !m_endHorizontalSize))) {
-            result.appendLiteral("circle");
+            result.append("circle");
             wroteSomething = true;
         }
 
@@ -949,18 +949,18 @@ String CSSRadialGradientValue::customCSSText() const
         if ((firstX() && !firstX()->isCenterPosition()) || (firstY() && !firstY()->isCenterPosition())) {
             if (wroteSomething)
                 result.append(' ');
-            result.appendLiteral("at ");
+            result.append("at ");
             appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
             wroteSomething = true;
         }
 
         if (wroteSomething)
-            result.appendLiteral(", ");
+            result.append(", ");
 
         bool wroteFirstStop = false;
         for (auto& stop : stops()) {
             if (wroteFirstStop)
-                result.appendLiteral(", ");
+                result.append(", ");
             wroteFirstStop = true;
             writeColorStop(result, stop);
         }
@@ -1219,10 +1219,7 @@ String CSSConicGradientValue::customCSSText() const
 {
     StringBuilder result;
 
-    if (isRepeating())
-        result.appendLiteral("repeating-conic-gradient(");
-    else
-        result.appendLiteral("conic-gradient(");
+    result.append(isRepeating() ? "repeating-conic-gradient(" : "conic-gradient(");
 
     bool wroteSomething = false;
 
@@ -1234,18 +1231,18 @@ String CSSConicGradientValue::customCSSText() const
     if ((firstX() && !firstX()->isCenterPosition()) || (firstY() && !firstY()->isCenterPosition())) {
         if (wroteSomething)
             result.append(' ');
-        result.appendLiteral("at ");
+        result.append("at ");
         appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
         wroteSomething = true;
     }
 
     if (wroteSomething)
-        result.appendLiteral(", ");
+        result.append(", ");
 
     bool wroteFirstStop = false;
     for (auto& stop : stops()) {
         if (wroteFirstStop)
-            result.appendLiteral(", ");
+            result.append(", ");
         wroteFirstStop = true;
         writeColorStop(result, stop);
     }

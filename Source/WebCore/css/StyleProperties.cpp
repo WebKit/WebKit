@@ -593,7 +593,7 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                 if (property == CSSPropertyBackgroundSize || property == CSSPropertyWebkitMaskSize) {
                     if (!foundPositionYCSSProperty)
                         continue;
-                    layerResult.appendLiteral("/ ");
+                    layerResult.append("/ ");
                 }
 
                 if (useRepeatXShorthand) {

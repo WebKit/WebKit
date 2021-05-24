@@ -147,25 +147,18 @@ String encodeForFileName(const String& inputString)
     StringBuilder result;
     result.reserveCapacity(length);
 
-    UChar previousCharacter;
-    UChar character = 0;
+    UChar previousCharacter = 0;
     UChar nextCharacter = inputString[0];
     for (unsigned i = 0; i < length; ++i) {
-        previousCharacter = character;
-        character = nextCharacter;
-        nextCharacter = i + 1 < length ? inputString[i + 1] : 0;
-
+        auto character = std::exchange(nextCharacter, i + 1 < length ? inputString[i + 1] : 0);
         if (shouldEscapeUChar(character, previousCharacter, nextCharacter)) {
-            if (character <= 255) {
-                result.append('%');
-                result.append(hex(static_cast<unsigned char>(character), 2));
-            } else {
-                result.appendLiteral("%+");
-                result.append(hex(static_cast<unsigned char>(character >> 8), 2));
-                result.append(hex(static_cast<unsigned char>(character), 2));
-            }
+            if (character <= 0xFF)
+                result.append('%', hex(character, 2));
+            else
+                result.append("%+", hex(static_cast<uint8_t>(character >> 8), 2), hex(static_cast<uint8_t>(character), 2));
         } else
             result.append(character);
+        previousCharacter = character;
     }
 
     return result.toString();

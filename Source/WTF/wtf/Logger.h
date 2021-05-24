@@ -307,7 +307,7 @@ private:
     template<typename... Argument>
     static inline void log(WTFLogChannel& channel, WTFLogLevel level, const Argument&... arguments)
     {
-        String logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
+        auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
         WTFLog(&channel, "%s", logMessage.utf8().data());
@@ -333,7 +333,7 @@ private:
     template<typename... Argument>
     static inline void logVerbose(WTFLogChannel& channel, WTFLogLevel level, const char* file, const char* function, int line, const Argument&... arguments)
     {
-        String logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
+        auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
         WTFLogVerbose(file, line, function, &channel, "%s", logMessage.utf8().data());

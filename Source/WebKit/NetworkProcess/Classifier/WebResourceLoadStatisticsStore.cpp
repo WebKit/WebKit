@@ -188,6 +188,11 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
     RELEASE_ASSERT(!m_statisticsStore);
 }
 
+Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
+{
+    return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost, isEphemeral));
+}
+
 void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1674,6 +1679,79 @@ void WebResourceLoadStatisticsStore::markAttributedPrivateClickMeasurementsAsExp
 
         postTaskReply(WTFMove(completionHandler));
     });
+}
+
+String WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::toString() const
+{
+    return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0', "; Has been seen under ", firstPartyDomain.string(), " in the last 24 hours: ", WallTime::now().secondsSinceEpoch() - timeLastUpdated < 24_h ? '1' : '0');
+}
+
+void WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::encode(IPC::Encoder& encoder) const
+{
+    encoder << firstPartyDomain;
+    encoder << storageAccessGranted;
+    encoder << timeLastUpdated;
+}
+
+auto WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::decode(IPC::Decoder& decoder) -> Optional<ThirdPartyDataForSpecificFirstParty>
+{
+    Optional<WebCore::RegistrableDomain> decodedDomain;
+    decoder >> decodedDomain;
+    if (!decodedDomain)
+        return WTF::nullopt;
+
+    Optional<bool> decodedStorageAccess;
+    decoder >> decodedStorageAccess;
+    if (!decodedStorageAccess)
+        return WTF::nullopt;
+
+    Optional<Seconds> decodedTimeLastUpdated;
+    decoder >> decodedTimeLastUpdated;
+    if (!decodedTimeLastUpdated)
+        return WTF::nullopt;
+
+    return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess), WTFMove(*decodedTimeLastUpdated) }};
+}
+
+bool WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::operator==(const ThirdPartyDataForSpecificFirstParty& other) const
+{
+    return firstPartyDomain == other.firstPartyDomain && storageAccessGranted == other.storageAccessGranted;
+}
+
+String WebResourceLoadStatisticsStore::ThirdPartyData::toString() const
+{
+    StringBuilder stringBuilder;
+    stringBuilder.append("Third Party Registrable Domain: ", thirdPartyDomain.string(), "\n    {");
+    for (auto firstParty : underFirstParties)
+        stringBuilder.append("{ ", firstParty.toString(), " },");
+    stringBuilder.append('}');
+    return stringBuilder.toString();
+}
+
+void WebResourceLoadStatisticsStore::ThirdPartyData::encode(IPC::Encoder& encoder) const
+{
+    encoder << thirdPartyDomain;
+    encoder << underFirstParties;
+}
+
+auto WebResourceLoadStatisticsStore::ThirdPartyData::decode(IPC::Decoder& decoder) -> Optional<ThirdPartyData>
+{
+    Optional<WebCore::RegistrableDomain> decodedDomain;
+    decoder >> decodedDomain;
+    if (!decodedDomain)
+        return WTF::nullopt;
+
+    Optional<Vector<ThirdPartyDataForSpecificFirstParty>> decodedFirstParties;
+    decoder >> decodedFirstParties;
+    if (!decodedFirstParties)
+        return WTF::nullopt;
+
+    return {{ WTFMove(*decodedDomain), WTFMove(*decodedFirstParties) }};
+}
+
+bool WebResourceLoadStatisticsStore::ThirdPartyData::operator<(const ThirdPartyData &other) const
+{
+    return underFirstParties.size() < other.underFirstParties.size();
 }
 
 } // namespace WebKit

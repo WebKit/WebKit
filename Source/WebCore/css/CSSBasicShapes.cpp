@@ -87,7 +87,7 @@ static Ref<CSSPrimitiveValue> buildSerializablePositionOffset(CSSPrimitiveValue*
 static String buildCircleString(const String& radius, const String& centerX, const String& centerY)
 {
     StringBuilder result;
-    result.appendLiteral("circle(");
+    result.append("circle(");
     if (!radius.isNull())
         result.append(radius);
     if (!centerX.isNull() || !centerY.isNull()) {
@@ -127,7 +127,7 @@ bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
 static String buildEllipseString(const String& radiusX, const String& radiusY, const String& centerX, const String& centerY)
 {
     StringBuilder result;
-    result.appendLiteral("ellipse(");
+    result.append("ellipse(");
     bool needsSeparator = false;
     if (!radiusX.isNull()) {
         result.append(radiusX);
@@ -190,9 +190,9 @@ static String buildPathString(const WindRule& windRule, const String& path, cons
 {
     StringBuilder result;
     if (windRule == WindRule::EvenOdd)
-        result.appendLiteral("path(evenodd, ");
+        result.append("path(evenodd, ");
     else
-        result.appendLiteral("path(");
+        result.append("path(");
 
     serializeString(path, result);
     result.append(')');
@@ -244,13 +244,13 @@ static String buildPolygonString(const WindRule& windRule, const Vector<String>&
     result.reserveCapacity(length);
 
     if (windRule == WindRule::EvenOdd)
-        result.appendLiteral(evenOddOpening);
+        result.append(evenOddOpening);
     else
-        result.appendLiteral(nonZeroOpening);
+        result.append(nonZeroOpening);
 
     for (size_t i = 0; i < points.size(); i += 2) {
         if (i)
-            result.appendLiteral(commaSeparator);
+            result.append(commaSeparator);
         result.append(points[i], ' ', points[i + 1]);
     }
 
@@ -322,14 +322,14 @@ static String buildInsetString(const String& top, const String& right, const Str
         areDefaultCornerRadii &= buildInsetRadii(verticalRadii, topLeftRadiusHeight, topRightRadiusHeight, bottomRightRadiusHeight, bottomLeftRadiusHeight);
 
         if (!areDefaultCornerRadii) {
-            result.appendLiteral(" round");
+            result.append(" round");
 
             for (auto& radius : horizontalRadii)
                 result.append(' ', radius);
 
             if (verticalRadii.size() != horizontalRadii.size()
                 || !WTF::VectorComparer<false, String>::compare(verticalRadii.data(), horizontalRadii.data(), verticalRadii.size())) {
-                result.appendLiteral(" /");
+                result.append(" /");
                 for (auto& radius : verticalRadii)
                     result.append(' ', radius);
             }

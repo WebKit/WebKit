@@ -179,8 +179,7 @@ static String makeCachePath(const String& baseCachePath)
 
 static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
 {
-    String versionSubdirectory = makeString(versionDirectoryPrefix, Storage::version);
-    return FileSystem::pathByAppendingComponent(baseDirectoryPath, versionSubdirectory);
+    return FileSystem::pathByAppendingComponent(baseDirectoryPath, makeString(versionDirectoryPrefix, Storage::version));
 }
 
 static String makeRecordsDirectoryPath(const String& baseDirectoryPath)

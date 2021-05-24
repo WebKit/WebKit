@@ -1052,9 +1052,9 @@ constexpr size_t maxUChar32Digits = 10;
 
 static void appendDecimal(UChar32 c, Vector<uint8_t>& result)
 {
-    uint8_t buffer[10];
-    WTF::writeIntegerToBuffer(static_cast<uint32_t>(c), buffer);
-    result.append(buffer, WTF::lengthOfIntegerAsString(c));
+    uint8_t buffer[lengthOfIntegerAsString(std::numeric_limits<decltype(c)>::max())];
+    writeIntegerToBuffer(c, buffer);
+    result.append(buffer, lengthOfIntegerAsString(c));
 }
 
 static void urlEncodedEntityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)

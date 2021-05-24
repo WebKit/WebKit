@@ -255,23 +255,17 @@ void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder&
         buffer.append(literal);
         return;
     }
-    
+
     if (literal.find('\'') == notFound) {
-        buffer.append('\'');
-        buffer.append(literal);
-        buffer.append('\'');
+        buffer.append('\'', literal, '\'');
         return;
     }
 
     for (unsigned i = 0; i < literal.length(); ++i) {
         if (literal[i] == '\'')
-            buffer.appendLiteral("''");
+            buffer.append("''");
         else {
-            String escaped = literal.substring(i);
-            escaped.replace('\'', "''");
-            buffer.append('\'');
-            buffer.append(escaped);
-            buffer.append('\'');
+            buffer.append('\'', String { literal.substring(i) }.replace('\'', "''"), '\'');
             return;
         }
     }

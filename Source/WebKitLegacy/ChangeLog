@@ -1,3 +1,14 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendLiteral
+        https://bugs.webkit.org/show_bug.cgi?id=226137
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::switchToNewTestingSession): Do not use local
+        for return value of makeString.
+
 2021-05-24  Chris Dumez  <cdumez@apple.com>
 
         Drop CheckedLock / CheckedCondition aliases

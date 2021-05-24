@@ -377,28 +377,19 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w");
     StringBuilder pattern;
     pattern.append('(');
-    unsigned int numLabels = labels.size();
-    unsigned int i;
-    for (i = 0; i < numLabels; i++) {
-        String label = labels[i];
+    for (unsigned i = 0, numLabels = labels.size(); i < numLabels; i++) {
+        auto& label = labels[i];
 
-        bool startsWithWordChar = false;
-        bool endsWithWordChar = false;
+        bool startsWithWordCharacter = false;
+        bool endsWithWordCharacter = false;
         if (label.length()) {
-            startsWithWordChar = wordRegExp.get().match(label.substring(0, 1)) >= 0;
-            endsWithWordChar = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
+            startsWithWordCharacter = wordRegExp.get().match(label.substring(0, 1)) >= 0;
+            endsWithWordCharacter = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
         }
 
-        if (i)
-            pattern.append('|');
         // Search for word boundaries only if label starts/ends with "word characters".
-        // If we always searched for word boundaries, this wouldn't work for languages
-        // such as Japanese.
-        if (startsWithWordChar)
-            pattern.appendLiteral("\\b");
-        pattern.append(label);
-        if (endsWithWordChar)
-            pattern.appendLiteral("\\b");
+        // If we always searched for word boundaries, this wouldn't work for languages such as Japanese.
+        pattern.append(i ? "|" : "", startsWithWordCharacter ? "\\b" : "", label, endsWithWordCharacter ? "\\b" : "");
     }
     pattern.append(')');
     return JSC::Yarr::RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);

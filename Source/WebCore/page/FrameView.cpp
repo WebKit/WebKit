@@ -1451,14 +1451,11 @@ bool FrameView::usesMockScrollAnimator() const
 
 void FrameView::logMockScrollAnimatorMessage(const String& message) const
 {
-    Document* document = frame().document();
+    auto document = frame().document();
     if (!document)
         return;
-    StringBuilder builder;
-    if (frame().isMainFrame())
-        builder.appendLiteral("Main");
-    builder.append("FrameView: ", message);
-    document->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, builder.toString());
+    document->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
+        makeString(frame().isMainFrame() ? "Main" : "", "FrameView: ", message));
 }
 
 String FrameView::debugDescription() const

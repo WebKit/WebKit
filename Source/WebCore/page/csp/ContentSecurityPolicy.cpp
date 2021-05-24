@@ -68,26 +68,11 @@ using namespace Inspector;
 
 static String consoleMessageForViolation(const char* effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const char* prefix, const char* subject = "it")
 {
-    StringBuilder result;
-    if (violatedDirective.directiveList().isReportOnly())
-        result.appendLiteral("[Report Only] ");
-    result.append(prefix);
-    if (!blockedURL.isEmpty()) {
-        result.append(' ');
-        result.append(blockedURL.stringCenterEllipsizedToLength());
-    }
-    result.appendLiteral(" because ");
-    result.append(subject);
-    if (violatedDirective.isDefaultSrc()) {
-        result.appendLiteral(" appears in neither the ");
-        result.append(effectiveViolatedDirective);
-        result.appendLiteral(" directive nor the default-src directive of the Content Security Policy.");
-    } else {
-        result.appendLiteral(" does not appear in the ");
-        result.append(effectiveViolatedDirective);
-        result.appendLiteral(" directive of the Content Security Policy.");
-    }
-    return result.toString();
+    return makeString(violatedDirective.directiveList().isReportOnly() ? "[Report Only] " : "",
+        prefix, blockedURL.isEmpty() ? "" : " ", blockedURL.stringCenterEllipsizedToLength(), " because ", subject,
+        violatedDirective.isDefaultSrc() ? " appears in neither the " : " does not appear in the ",
+        effectiveViolatedDirective,
+        violatedDirective.isDefaultSrc() ? " directive nor the default-src directive of the Content Security Policy." : " directive of the Content Security Policy.");
 }
 
 ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ContentSecurityPolicyClient* client)
@@ -138,22 +123,14 @@ void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSec
 bool ContentSecurityPolicy::allowRunningOrDisplayingInsecureContent(const URL& url)
 {
     bool allow = true;
-    bool isReportOnly = false;
     for (auto& policy : m_policies) {
         if (!policy->hasBlockAllMixedContentDirective())
             continue;
-
-        isReportOnly = policy->isReportOnly();
-
-        StringBuilder consoleMessage;
-        if (isReportOnly)
-            consoleMessage.appendLiteral("[Report Only] ");
-        consoleMessage.append("Blocked mixed content ");
-        consoleMessage.append(url.stringCenterEllipsizedToLength());
-        consoleMessage.appendLiteral(" because ");
-        consoleMessage.append("'block-all-mixed-content' appears in the Content Security Policy.");
-        reportViolation(ContentSecurityPolicyDirectiveNames::blockAllMixedContent, ContentSecurityPolicyDirectiveNames::blockAllMixedContent, *policy, url, consoleMessage.toString());
-
+        bool isReportOnly = policy->isReportOnly();
+        auto message = makeString(isReportOnly ? "[Report Only] " : "", "Blocked mixed content ",
+            url.stringCenterEllipsizedToLength(), " because 'block-all-mixed-content' appears in the Content Security Policy.");
+        reportViolation(ContentSecurityPolicyDirectiveNames::blockAllMixedContent,
+            ContentSecurityPolicyDirectiveNames::blockAllMixedContent, *policy, url, message);
         if (!isReportOnly)
             allow = false;
     }
@@ -839,30 +816,25 @@ void ContentSecurityPolicy::reportInvalidDirectiveInHTTPEquivMeta(const String& 
 
 void ContentSecurityPolicy::reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const
 {
-    String message = makeString("The value for Content Security Policy directive '", directiveName, "' contains an invalid character: '", value, "'. Non-whitespace characters outside ASCII 0x21-0x7E must be percent-encoded, as described in RFC 3986, section 2.1: http://tools.ietf.org/html/rfc3986#section-2.1.");
-    logToConsole(message);
+    logToConsole(makeString("The value for Content Security Policy directive '", directiveName, "' contains an invalid character: '", value, "'. Non-whitespace characters outside ASCII 0x21-0x7E must be percent-encoded, as described in RFC 3986, section 2.1: http://tools.ietf.org/html/rfc3986#section-2.1."));
 }
 
 void ContentSecurityPolicy::reportInvalidPathCharacter(const String& directiveName, const String& value, const char invalidChar) const
 {
     ASSERT(invalidChar == '#' || invalidChar == '?');
 
-    String ignoring;
+    const char* ignoring;
     if (invalidChar == '?')
         ignoring = "The query component, including the '?', will be ignored.";
     else
         ignoring = "The fragment identifier, including the '#', will be ignored.";
-
-    String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains a source with an invalid path: '", value, "'. ", ignoring);
-    logToConsole(message);
+    logToConsole(makeString("The source list for Content Security Policy directive '", directiveName, "' contains a source with an invalid path: '", value, "'. ", ignoring));
 }
 
 void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiveName, const String& source) const
 {
-    String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains an invalid source: '", source, "'. It will be ignored.");
-    if (equalLettersIgnoringASCIICase(source, "'none'"))
-        message = makeString(message, " Note that 'none' has no effect unless it is the only expression in the source list.");
-    logToConsole(message);
+    logToConsole(makeString("The source list for Content Security Policy directive '", directiveName, "' contains an invalid source: '", source, "'. It will be ignored.",
+        equalLettersIgnoringASCIICase(source, "'none'") ? " Note that 'none' has no effect unless it is the only expression in the source list." : ""));
 }
 
 void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
