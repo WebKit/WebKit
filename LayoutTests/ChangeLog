@@ -1,3 +1,74 @@
+2021-05-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Delete unused LayoutTests/http resources
+        https://bugs.webkit.org/show_bug.cgi?id=226065
+        <rdar://problem/78289889>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/appcache/resources/abort-cache-onprogress-4.text: Removed.
+        * http/tests/cookies/resources/post-cookies-onmessage.py: Removed.
+        * http/tests/cookies/resources/setArraycookies-expected.txt: Removed.
+        * http/tests/cookies/resources/setUtf8Cookies-expected.txt: Removed.
+        * http/tests/inspector/network/resources/stylesheet-with-sourcemap.scss: Removed.
+        * http/tests/media/media-stream/resources/getUserMedia-helper.js: Removed.
+        * http/tests/media/resources/hls/metadata/fileSequence0.ts: Removed.
+        * http/tests/media/resources/hls/metadata/fileSequence1.ts: Removed.
+        * http/tests/media/resources/media-source: Removed.
+        * http/tests/mime/resources/accept-all-text-types.cgi: Removed.
+        * http/tests/misc/resources/acid3/support-a.png.404: Removed.
+        * http/tests/misc/resources/animated-gif-with-offsets.gif: Removed.
+        * http/tests/misc/resources/chromium-selectionAsMarkup.html: Removed.
+        * http/tests/misc/resources/generatedimage.bat: Removed.
+        * http/tests/misc/resources/referrer-main-resource-expected.txt: Removed.
+        * http/tests/misc/resources/referrer-main-resource.py: Removed.
+        * http/tests/misc/resources/script-write-slow-stylesheet.js: Removed.
+        * http/tests/navigation/resources/redirect-to-cookie.py: Removed.
+        * http/tests/quicklook/resources/http-equiv-blocked.docx: Removed.
+        * http/tests/security/XFrameOptions/resources/x-frame-options-parent-same-origin-deny.cgi: Removed.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-and-without-policy.html: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-eval.js: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-function-function.js: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-make-xhr.js: Removed.
+        * http/tests/security/contentSecurityPolicy/resources/worker-set-timeout.js: Removed.
+        * http/tests/security/mixedContent/resources/frame-with-programmatically-added-insecure-image-redirects-to-basic-auth-secure-image.html: Removed.
+        * http/tests/security/postMessage/resources/middle-frame-for-lexical.html: Removed.
+        * http/tests/security/postMessage/resources/post-message-listener-with-ready.html: Removed.
+        * http/tests/security/resources/create-filesystem-file.html: Removed.
+        * http/tests/security/resources/cross-origin-iframe-for-worker-websql.html: Removed.
+        * http/tests/security/resources/document-for-cross-origin-worker-websql.html: Removed.
+        * http/tests/security/resources/drag-drop-allowed-expected.txt: Removed.
+        * http/tests/security/resources/image-wrapper.svg: Removed.
+        * http/tests/security/resources/pass-if-no-referrer.py: Removed.
+        * http/tests/security/resources/worker-for-websql.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/context: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/more/conformance: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/boolUniformShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/glsl-conformance-test.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/glsl-feature-tests.css: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/glsl-generator.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/intArrayUniformShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/intUniformShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/matUniformShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/noopUniformShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/ogles-tests.css: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/samplerUniformShader.frag: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/structUniformShader.vert: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/resources/test-eval.js: Removed.
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/resources/webgl-logo.png: Removed.
+        * http/tests/workers/resources/sync-operations.js: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-print-headers.cgi: Removed.
+        * http/tests/xmlhttprequest/resources/print-headers.py: Removed.
+        * http/tests/xmlhttprequest/resources/reply2.txt: Removed.
+        * http/tests/xmlhttprequest/resources/reply2.xml: Removed.
+        * http/tests/xmlhttprequest/resources/reply3.txt: Removed.
+        * http/tests/xmlhttprequest/resources/reply3.xml: Removed.
+        * http/tests/xmlhttprequest/resources/reply4.txt: Removed.
+        * http/tests/xmlhttprequest/resources/reply4.xml: Removed.
+        * http/tests/xmlhttprequest/resources/reply5.txt: Removed.
+        * http/tests/xmlhttprequest/resources/svgtest.svg: Removed.
+        * http/tests/xmlhttprequest/resources/utf-8-no-charset.html: Removed.
+
 2021-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
