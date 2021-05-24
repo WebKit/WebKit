@@ -74,6 +74,10 @@ typedef NS_OPTIONS(NSUInteger, NSWindowShadowOptions) {
 
 #endif
 
+@interface NSWorkspace (NSWorkspaceAccessibilityDisplayInternal_IPI)
++ (void)_invalidateAccessibilityDisplayValues;
+@end
+
 @interface NSInspectorBar (IPI)
 - (void)_update;
 @end

@@ -152,6 +152,8 @@ void _AXSetClientIdentificationOverride(AXClientType);
 extern CFStringRef kAXInterfaceReduceMotionKey;
 extern CFStringRef kAXInterfaceReduceMotionStatusDidChangeNotification;
 
+extern CFStringRef kAXInterfaceIncreaseContrastKey;
+
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

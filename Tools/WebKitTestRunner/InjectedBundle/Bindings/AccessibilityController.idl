@@ -34,6 +34,7 @@
     readonly attribute AccessibilityUIElement focusedElement;
     AccessibilityUIElement elementAtPoint(long x, long y);
     AccessibilityUIElement accessibleElementById(DOMString id);
+    undefined injectAccessibilityPreference(DOMString domain, DOMString key, DOMString value);
     
     boolean addNotificationListener(object functionCallback);
     boolean removeNotificationListener();

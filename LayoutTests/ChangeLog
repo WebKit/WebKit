@@ -1,3 +1,13 @@
+2021-05-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Settings: Increase contrast isn't detected in browser until an additional setting is applied
+        https://bugs.webkit.org/show_bug.cgi?id=225909
+
+        Reviewed by Per Arne Vollan.
+
+        * accessibility/mac/media-query-values-change-expected.txt: Added.
+        * accessibility/mac/media-query-values-change.html: Added.
+
 2021-05-24  Cameron McCormack  <heycam@apple.com>
 
         Add missing operators.woff that a few WPTs reference.

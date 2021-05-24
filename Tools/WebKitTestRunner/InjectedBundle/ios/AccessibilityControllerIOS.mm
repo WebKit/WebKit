@@ -88,6 +88,10 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     return nil;
 }
 
+void AccessibilityController::injectAccessibilityPreference(JSStringRef, JSStringRef, JSStringRef)
+{
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
 {
     auto page = InjectedBundle::singleton().page()->page();

@@ -50,6 +50,11 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
     return nullptr;
 }
 
+void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value)
+{
+    notImplemented();
+}
+
 Ref<AccessibilityUIElement> AccessibilityController::rootElement()
 {
     notImplemented();

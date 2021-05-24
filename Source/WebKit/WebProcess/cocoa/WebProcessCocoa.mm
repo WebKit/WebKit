@@ -132,6 +132,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "AppKitSPI.h"
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WebSwitchingGPUClient.h"
 #import <WebCore/GraphicsContextGLOpenGLManager.h>
@@ -1067,9 +1068,9 @@ static const WTF::String& userHighlightColorPreferenceKey()
     return userHighlightColorPreferenceKey;
 }
 
-static const WTF::String& reduceMotionPreferenceKey()
+static const WTF::String& invertColorsPreferenceKey()
 {
-    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("reduceMotion"));
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("whiteOnBlack"));
     return key;
 }
 #endif
@@ -1096,9 +1097,6 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
         auto notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
         [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
-    } else if (key == reduceMotionPreferenceKey()) {
-        auto notificationCenter = CFNotificationCenterGetDistributedCenter();
-        CFNotificationCenterPostNotification(notificationCenter, kAXInterfaceReduceMotionStatusDidChangeNotification, nullptr, nullptr, true);
     }
 #endif
     if (key == captionProfilePreferenceKey()) {
@@ -1133,6 +1131,12 @@ static void setPreferenceValue(const String& domain, const String& key, id value
         if (_AXSUpdateWebAccessibilitySettingsPtr())
             _AXSUpdateWebAccessibilitySettingsPtr()();
     }
+#endif
+    
+#if USE(APPKIT)
+    auto cfKey = key.createCFString();
+    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey())
+        [NSWorkspace _invalidateAccessibilityDisplayValues];
 #endif
 }
 
