@@ -1,3 +1,13 @@
+2021-05-24  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r256715): XSLTProcessor does not parse script when transforming to document
+        https://bugs.webkit.org/show_bug.cgi?id=226087
+
+        Reviewed by Darin Adler.
+
+        * fast/xsl/xslt-transform-script.html: Added.
+        * fast/xsl/xslt-transform-script-expected.txt: Added.
+
 2021-05-21  Jonathan Bedard  <jbedard@apple.com>
 
         [LayoutTests] Delete unused LayoutTests/http resources

@@ -1,3 +1,17 @@
+2021-05-24  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r256715): XSLTProcessor does not parse script when transforming to document
+        https://bugs.webkit.org/show_bug.cgi?id=226087
+
+        Reviewed by Darin Adler.
+
+        Allow JavaScript if context document is null to match old behavior before r256715.
+
+        Test: fast/xsl/xslt-transform-script.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::allowsContentJavaScript const):
+
 2021-05-24  Tim Nguyen  <ntim@apple.com>
 
         Clean up handling of `-webkit-inline-flex`/`-webkit-flex` CSS display values
