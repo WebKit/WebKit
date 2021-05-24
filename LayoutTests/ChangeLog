@@ -1,3 +1,39 @@
+2021-05-24  Cameron McCormack  <heycam@apple.com>
+
+        Add missing operators.woff that a few WPTs reference.
+        https://bugs.webkit.org/show_bug.cgi?id=225586
+        <rdar://77527890>
+
+        Reviewed by Frédéric Wang.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt:
+        * platform/mac-catalina-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Copied from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt:
+        * platform/mac/TestExpectations:
+
 2021-05-24  Jonathan Bedard  <jbedard@apple.com>
 
         [LayoutTests] Delete unused jquery resources
