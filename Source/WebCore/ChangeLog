@@ -1,3 +1,25 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in ShadowBlur's ScratchBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=226183
+
+        Reviewed by Simon Fraser.
+
+        Stop using UncheckedLock in ShadowBlur's ScratchBuffer to benefit from Clang
+        Thread Safety Analysis. Note that I had to factor the code a bit differently
+        because analysis doesn't support conditionally held locks. I could have also
+        used WTF_IGNORES_THREAD_SAFETY_ANALYSIS but I think it is better to factor
+        the code so that we do get the validation.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::WTF_REQUIRES_LOCK):
+        (WebCore::ScratchBuffer::WTF_RETURNS_LOCK):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTilingWithLayerImageBuffer):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTilingWithLayerImageBuffer):
+        * platform/graphics/ShadowBlur.h:
+
 2021-05-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277940.
