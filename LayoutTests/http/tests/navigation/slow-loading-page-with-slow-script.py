@@ -33,7 +33,7 @@ sys.stdout.write(
     '\n'
     '</script>\n'
     '\n'
-    '<script src=\'resources/slow-loading-script.php\'></script>\n'
+    '<script src=\'resources/slow-loading-script.py\'></script>\n'
 )
 
 while True:

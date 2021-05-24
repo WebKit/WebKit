@@ -9,5 +9,5 @@ if (window.testRunner) {
 
 const blob = new Blob(["Cross", "Origin"], {type: "text/plain;from-beacon=true"});
 // The "simple" parameter is just for differentiating the URLs.
-shouldBeTrue('navigator.sendBeacon("http://127.0.0.1:8080/navigation/resources/redirection-response.py?status=302&simple=true&target=/non-existent.php", blob);');
+shouldBeTrue('navigator.sendBeacon("http://127.0.0.1:8080/navigation/resources/redirection-response.py?status=302&simple=true&target=/non-existent.py", blob);');
 </script>

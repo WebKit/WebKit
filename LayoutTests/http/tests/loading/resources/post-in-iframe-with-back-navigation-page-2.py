@@ -12,7 +12,7 @@ sys.stdout.write(
     '<!DOCTYPE html>\n'
     '<h1>Page 2</h1>\n'
     '<span id="submissionTime">0.{}</span><br/>\n'
-    '<form action="./post-in-iframe-with-back-navigation-page-3.php" name="form" method="POST">\n'
+    '<form action="./post-in-iframe-with-back-navigation-page-3.py" name="form" method="POST">\n'
     '</form>\n'
     '<a id="link" href="javascript:document.form.submit();">to page 3</a><br/>\n'
     '<a id="backLink" href="javascript:history.back();">go back</a>\n'.format(now)

@@ -1,3 +1,28 @@
+2021-05-24  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Remove straggling PHP references
+        https://bugs.webkit.org/show_bug.cgi?id=226179
+        <rdar://problem/78407224>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob.html:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect.html:
+        * http/tests/eventsource/eventsource-events-after-close.html:
+        * http/tests/images/avif-partial-load-crash.html:
+        * http/tests/inspector/css/bad-mime-type-expected.txt:
+        * http/tests/inspector/css/bad-mime-type.html:
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-2.py:
+        * http/tests/media/resources/serve_video.py:
+        * http/tests/navigation/redirect-to-fragment2-expected.txt:
+        * http/tests/navigation/slow-loading-page-with-slow-script.py:
+        * http/tests/security/contentSecurityPolicy/resources/worker.py:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/workers/service/basic-register-exceptions-expected.txt:
+        * http/tests/workers/service/resources/basic-register-exceptions.js:
+
 2021-05-24  Kate Cheney  <katherine_cheney@apple.com>
 
         [ wk2 ] http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.py is a constant text failure

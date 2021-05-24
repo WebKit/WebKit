@@ -89,7 +89,7 @@ elif typ == 'post-message-pass':
 elif typ == 'report-referrer':
     sys.stdout.write(
         'var xhr = new XMLHttpRequest;\n'
-        'xhr.open("GET", "http://127.0.0.1:8000/security/resources/echo-referrer-header.php", true);\n'
+        'xhr.open("GET", "http://127.0.0.1:8000/security/resources/echo-referrer-header.py", true);\n'
         'xhr.onload = function () {\n'
         '    postMessage(this.responseText);\n'
         '};\n'
@@ -103,7 +103,7 @@ elif typ == 'shared-report-referrer':
         '    var xhr = new XMLHttpRequest;\n'
         '    xhr.open(\n'
         '        "GET",\n'
-        '        "http://127.0.0.1:8000/security/resources/echo-referrer-header.php",\n'
+        '        "http://127.0.0.1:8000/security/resources/echo-referrer-header.py",\n'
         '        true);\n'
         '    xhr.onload = function () {\n'
         '        port.postMessage(this.responseText);\n'
