@@ -93,61 +93,71 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         }
         cellBoxGeometry.setLogicalTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
         cellBoxGeometry.setLogicalLeft(columnList[cell->startColumn()].logicalLeft());
+
         auto availableVerticalSpace = rowList[cell->startRow()].logicalHeight();
         for (size_t rowIndex = cell->startRow() + 1; rowIndex < cell->endRow(); ++rowIndex)
             availableVerticalSpace += rowList[rowIndex].logicalHeight();
         availableVerticalSpace += (cell->rowSpan() - 1) * grid.verticalSpacing();
         layoutCell(*cell, availableHorizontalSpace, availableVerticalSpace);
-        // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to 
-        // use some kind of intrinsic padding similar to RenderTableCell.
-        auto paddingTop = cellBoxGeometry.paddingTop().valueOr(LayoutUnit { });
-        auto paddingBottom = cellBoxGeometry.paddingBottom().valueOr(LayoutUnit { });
-        auto intrinsicPaddingTop = LayoutUnit { };
-        auto intrinsicPaddingBottom = LayoutUnit { };
 
-        switch (cellBox.style().verticalAlign()) {
-        case VerticalAlign::Middle: {
-            auto intrinsicVerticalPadding = std::max(0_lu, availableVerticalSpace - cellBoxGeometry.verticalMarginBorderAndPadding() - cellBoxGeometry.contentBoxHeight());
-            intrinsicPaddingTop = intrinsicVerticalPadding / 2;
-            intrinsicPaddingBottom = intrinsicVerticalPadding / 2;
-            break;
-        }
-        case VerticalAlign::Baseline: {
-            auto rowBaseline = LayoutUnit { rowList[cell->startRow()].baseline() };
-            auto cellBaseline = LayoutUnit { cell->baseline() };
-            intrinsicPaddingTop = std::max(0_lu, rowBaseline - cellBaseline - cellBoxGeometry.borderTop());
-            intrinsicPaddingBottom = std::max(0_lu, availableVerticalSpace - cellBoxGeometry.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellBoxGeometry.contentBoxHeight());
-            break;
-        }
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
-        }
-        if (intrinsicPaddingTop && cellBox.hasInFlowOrFloatingChild()) {
-            auto adjustCellContentWithInstrinsicPaddingBefore = [&] {
-                // Child boxes (and runs) are always in the coordinate system of the containing block's border box.
-                // The content box (where the child content lives) is inside the padding box, which is inside the border box.
-                // In order to compute the child box top/left position, we need to know both the padding and the border offsets.  
-                // Normally by the time we start positioning the child content, we already have computed borders and padding for the containing block.
-                // This is different with table cells where the final padding offset depends on the content height as we use
-                // the padding box to vertically align the table cell content.
-                auto& formattingState = layoutState().establishedFormattingState(cellBox);
-                for (auto* child = cellBox.firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
-                    if (child->isInlineTextBox())
-                        continue;
-                    formattingState.boxGeometry(*child).moveVertically(intrinsicPaddingTop);
-                }
-                if (cellBox.establishesInlineFormattingContext()) {
-                    auto& inlineFormattingStatee = layoutState().establishedInlineFormattingState(cellBox);
-                    for (auto& run : inlineFormattingStatee.lineRuns())
-                        run.moveVertically(intrinsicPaddingTop);
-                    for (auto& line : inlineFormattingStatee.lines())
-                        line.moveVertically(intrinsicPaddingTop);
-                }
-            };
-            adjustCellContentWithInstrinsicPaddingBefore();
-        }
-        cellBoxGeometry.setVerticalPadding({ paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
+        auto computeIntrinsicVerticalPaddingForCell = [&] {
+            // Intrinsic padding is the extra padding for the cell box when it is shorter than the row. Cell boxes have to
+            // fill the available vertical space
+            // e.g <td height=100px></td><td height=1px></td>
+            // the second <td> ends up being 100px tall too with the extra intrinsic padding.
+
+            // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to
+            // use some kind of intrinsic padding similar to RenderTableCell.
+            auto paddingTop = cellBoxGeometry.paddingTop().valueOr(LayoutUnit { });
+            auto paddingBottom = cellBoxGeometry.paddingBottom().valueOr(LayoutUnit { });
+            auto intrinsicPaddingTop = LayoutUnit { };
+            auto intrinsicPaddingBottom = LayoutUnit { };
+
+            switch (cellBox.style().verticalAlign()) {
+            case VerticalAlign::Middle: {
+                auto intrinsicVerticalPadding = std::max(0_lu, availableVerticalSpace - cellBoxGeometry.verticalMarginBorderAndPadding() - cellBoxGeometry.contentBoxHeight());
+                intrinsicPaddingTop = intrinsicVerticalPadding / 2;
+                intrinsicPaddingBottom = intrinsicVerticalPadding / 2;
+                break;
+            }
+            case VerticalAlign::Baseline: {
+                auto rowBaseline = LayoutUnit { rowList[cell->startRow()].baseline() };
+                auto cellBaseline = LayoutUnit { cell->baseline() };
+                intrinsicPaddingTop = std::max(0_lu, rowBaseline - cellBaseline - cellBoxGeometry.borderTop());
+                intrinsicPaddingBottom = std::max(0_lu, availableVerticalSpace - cellBoxGeometry.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellBoxGeometry.contentBoxHeight());
+                break;
+            }
+            default:
+                ASSERT_NOT_IMPLEMENTED_YET();
+                break;
+            }
+            if (intrinsicPaddingTop && cellBox.hasInFlowOrFloatingChild()) {
+                auto adjustCellContentWithInstrinsicPaddingBefore = [&] {
+                    // Child boxes (and runs) are always in the coordinate system of the containing block's border box.
+                    // The content box (where the child content lives) is inside the padding box, which is inside the border box.
+                    // In order to compute the child box top/left position, we need to know both the padding and the border offsets.
+                    // Normally by the time we start positioning the child content, we already have computed borders and padding for the containing block.
+                    // This is different with table cells where the final padding offset depends on the content height as we use
+                    // the padding box to vertically align the table cell content.
+                    auto& formattingState = layoutState().establishedFormattingState(cellBox);
+                    for (auto* child = cellBox.firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
+                        if (child->isInlineTextBox())
+                            continue;
+                        formattingState.boxGeometry(*child).moveVertically(intrinsicPaddingTop);
+                    }
+                    if (cellBox.establishesInlineFormattingContext()) {
+                        auto& inlineFormattingStatee = layoutState().establishedInlineFormattingState(cellBox);
+                        for (auto& run : inlineFormattingStatee.lineRuns())
+                            run.moveVertically(intrinsicPaddingTop);
+                        for (auto& line : inlineFormattingStatee.lines())
+                            line.moveVertically(intrinsicPaddingTop);
+                    }
+                };
+                adjustCellContentWithInstrinsicPaddingBefore();
+            }
+            cellBoxGeometry.setVerticalPadding({ paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
+        };
+        computeIntrinsicVerticalPaddingForCell();
     }
 }
 
@@ -266,7 +276,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     }
 }
 
-void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> usedCellHeight)
+void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpaceForContent)
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
@@ -294,7 +304,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 
     if (cellBox.hasInFlowOrFloatingChild()) {
         auto constraintsForCellContent = geometry.constraintsForInFlowContent(cellBox);
-        constraintsForCellContent.vertical.logicalHeight = usedCellHeight;
+        constraintsForCellContent.vertical.logicalHeight = availableVerticalSpaceForContent;
         auto invalidationState = InvalidationState { };
         // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell
         // multiple times as part of the multi-pass table algorithm.

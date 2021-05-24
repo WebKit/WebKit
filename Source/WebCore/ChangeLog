@@ -1,3 +1,17 @@
+2021-05-24  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add a helper function to compute the intrinsic vertical paddings for the cell
+        https://bugs.webkit.org/show_bug.cgi?id=226130
+
+        Reviewed by Antti Koivisto.
+
+        Add a comment explaining what the intrinsic vertical padding is.
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        * layout/formattingContexts/table/TableFormattingContext.h:
+
 2021-05-24  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement OpenXR input sources
