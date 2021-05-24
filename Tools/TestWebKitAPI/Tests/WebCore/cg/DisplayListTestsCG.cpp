@@ -27,7 +27,6 @@
 
 #if USE(CG)
 
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
@@ -47,8 +46,8 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 {
     FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
 
-    auto colorSpace = DestinationColorSpace::SRGB();
-    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
     GraphicsContext context { cgContext.get() };
 
     auto imageBufferIdentifier = RenderingResourceIdentifier::generate();
@@ -70,7 +69,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     }
 
     {
-        auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, 1, colorSpace, PixelFormat::BGRA8);
+        auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
         ImageBufferHashMap imageBufferMap;
         imageBufferMap.set(imageBufferIdentifier, imageBuffer.releaseNonNull());
 

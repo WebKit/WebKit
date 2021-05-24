@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "NotImplemented.h"
 
@@ -70,11 +69,6 @@ FloatRect screenAvailableRect(Widget*)
 bool screenSupportsExtendedColor(Widget*)
 {
     return false;
-}
-
-DestinationColorSpace screenColorSpace(Widget*)
-{
-    return DestinationColorSpace::SRGB();
 }
 
 } // namespace WebCore

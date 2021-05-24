@@ -57,7 +57,12 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, Optional
     }
 
     // FIXME: Only select ExtendedColor on images known to need wide gamut.
-    auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), { screenColorSpace(renderImage.frame().mainFrame().view()) });
+    ShareableBitmap::Configuration bitmapConfiguration;
+#if USE(CG)
+    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(renderImage.frame().mainFrame().view());
+#endif
+
+    auto sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), bitmapConfiguration);
     if (!sharedBitmap)
         return nullptr;
 

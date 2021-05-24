@@ -289,7 +289,7 @@ void FilterEffectRendererCoreImage::renderToImageBuffer(FilterEffect& lastEffect
         return;
     
     auto& surface = downcast<AcceleratedImageBuffer>(*m_outputImageBuffer).surface();
-    [sharedCIContext().get() render: m_outputImage.get() toIOSurface: surface.surface() bounds:destRect(lastEffect) colorSpace:lastEffect.resultColorSpace().platformColorSpace()];
+    [sharedCIContext().get() render: m_outputImage.get() toIOSurface: surface.surface() bounds:destRect(lastEffect) colorSpace:cachedCGColorSpace(lastEffect.resultColorSpace())];
 }
     
 FloatRect FilterEffectRendererCoreImage::destRect(const FilterEffect& lastEffect) const

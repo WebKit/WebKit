@@ -37,7 +37,7 @@ namespace WebCore {
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
-RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, ShouldUseDisplayList shouldUseDisplayList, RenderingPurpose purpose, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
 {
     RefPtr<ImageBuffer> imageBuffer;
     
@@ -59,7 +59,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
 {
     RefPtr<ImageBuffer> imageBuffer;
     
@@ -95,7 +95,7 @@ RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, c
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, DestinationColorSpace colorSpace, const GraphicsContext& context)
 {
     if (size.isEmpty())
         return nullptr;
@@ -111,7 +111,7 @@ RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, c
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, DestinationColorSpace colorSpace, const GraphicsContext& context)
 {
     return ImageBuffer::create(size, context.renderingMode(), resolutionScale, colorSpace, PixelFormat::BGRA8);
 }
@@ -167,7 +167,7 @@ IntSize ImageBuffer::compatibleBufferSize(const FloatSize& size, const GraphicsC
     return expandedIntSize(size * context.scaleFactor());
 }
 
-RefPtr<ImageBuffer> ImageBuffer::copyRectToBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, const GraphicsContext& context)
+RefPtr<ImageBuffer> ImageBuffer::copyRectToBuffer(const FloatRect& rect, DestinationColorSpace colorSpace, const GraphicsContext& context)
 {
     if (rect.isEmpty())
         return nullptr;

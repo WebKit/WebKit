@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ColorSpaceData.h"
 #import "DisplayRefreshMonitorMac.h"
 #import "DrawingAreaProxyMessages.h"
 #import "LayerHostingContext.h"
@@ -44,7 +45,6 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DebugPageOverlays.h>
-#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
@@ -91,7 +91,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     });
 
     updateLayerHostingContext();
-    
     setColorSpace(parameters.colorSpace);
 
     if (auto viewExposedRect = parameters.viewExposedRect)
@@ -651,9 +650,9 @@ void TiledCoreAnimationDrawingArea::setLayerHostingMode(LayerHostingMode)
     send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
 }
 
-void TiledCoreAnimationDrawingArea::setColorSpace(Optional<WebCore::DestinationColorSpace> colorSpace)
+void TiledCoreAnimationDrawingArea::setColorSpace(const ColorSpaceData& colorSpace)
 {
-    m_layerHostingContext->setColorSpace(colorSpace ? colorSpace->platformColorSpace() : nullptr);
+    m_layerHostingContext->setColorSpace(colorSpace.cgColorSpace.get());
 }
 
 RefPtr<WebCore::DisplayRefreshMonitor> TiledCoreAnimationDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)

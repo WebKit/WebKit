@@ -53,8 +53,6 @@ ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
 {
 }
 
-ImageBufferBackend::~ImageBufferBackend() = default;
-
 RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
 {
     return copyNativeImage(DontCopyBackingStore);
@@ -116,17 +114,15 @@ Optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat
     if (destinationRect.size() != sourceRectScaled.size())
         pixelBuffer->data().zeroFill();
 
-    ConstPixelBufferConversionView source {
-        { AlphaPremultiplication::Premultiplied, pixelFormat(), colorSpace() },
-        bytesPerRow(),
-        reinterpret_cast<uint8_t*>(data) + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4
-    };
+    ConstPixelBufferConversionView source;
+    source.format = { AlphaPremultiplication::Premultiplied, pixelFormat(), colorSpace() };
+    source.bytesPerRow = bytesPerRow();
+    source.rows = reinterpret_cast<uint8_t*>(data) + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4;
     
-    PixelBufferConversionView destination {
-        destinationFormat,
-        static_cast<unsigned>(4 * sourceRectScaled.width()),
-        pixelBuffer->data().data() + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4
-    };
+    PixelBufferConversionView destination;
+    destination.format = destinationFormat;
+    destination.bytesPerRow = 4 * sourceRectScaled.width();
+    destination.rows = pixelBuffer->data().data() + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4;
 
     convertImagePixels(source, destination, destinationRect.size());
 
@@ -151,17 +147,15 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     destinationRect.intersect(backendRect());
     sourceRectClipped.setSize(destinationRect.size());
 
-    ConstPixelBufferConversionView source {
-        sourcePixelBuffer.format(),
-        static_cast<unsigned>(4 * sourcePixelBuffer.size().width()),
-        sourcePixelBuffer.data().data() + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4
-    };
+    ConstPixelBufferConversionView source;
+    source.format = sourcePixelBuffer.format();
+    source.bytesPerRow = 4 * sourcePixelBuffer.size().width();
+    source.rows = sourcePixelBuffer.data().data() + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4;
 
-    PixelBufferConversionView destination {
-        { destinationAlphaFormat, pixelFormat(), colorSpace() },
-        bytesPerRow(),
-        reinterpret_cast<uint8_t*>(data) + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4
-    };
+    PixelBufferConversionView destination;
+    destination.format = { destinationAlphaFormat, pixelFormat(), colorSpace() };
+    destination.bytesPerRow = bytesPerRow();
+    destination.rows = reinterpret_cast<uint8_t*>(data) + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4;
 
     convertImagePixels(source, destination, destinationRect.size());
 }

@@ -30,6 +30,7 @@
 
 #import "APIHitTestResult.h"
 #import "AppKitSPI.h"
+#import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
 #import "DrawingAreaProxy.h"
@@ -65,7 +66,6 @@
 #import <WebCore/BitmapImage.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Cursor.h>
-#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/FloatRect.h>
@@ -244,7 +244,7 @@ void PageClientImpl::viewWillMoveToAnotherWindow()
     clearAllEditCommands();
 }
 
-WebCore::DestinationColorSpace PageClientImpl::colorSpace()
+ColorSpaceData PageClientImpl::colorSpace()
 {
     return m_impl->colorSpace();
 }

@@ -74,7 +74,10 @@ void ShareableBitmap::Handle::clear()
 
 void ShareableBitmap::Configuration::encode(IPC::Encoder& encoder) const
 {
-    encoder << colorSpace << isOpaque;
+    encoder << isOpaque;
+#if PLATFORM(COCOA)
+    encoder << colorSpace;
+#endif
 #if USE(DIRECT2D)
     SharedMemory::Handle::encodeHandle(encoder, sharedResourceHandle);
 
@@ -85,28 +88,21 @@ void ShareableBitmap::Configuration::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool ShareableBitmap::Configuration::decode(IPC::Decoder& decoder, Configuration& result)
+bool ShareableBitmap::Configuration::decode(IPC::Decoder& decoder, Configuration& configuration)
 {
-    Optional<Optional<WebCore::DestinationColorSpace>> colorSpace;
-    decoder >> colorSpace;
-    if (!colorSpace)
+    if (!decoder.decode(configuration.isOpaque))
         return false;
-
-    Optional<bool> isOpaque;
-    decoder >> isOpaque;
-    if (!isOpaque)
+#if PLATFORM(COCOA)
+    if (!decoder.decode(configuration.colorSpace))
         return false;
-
-    result = Configuration { WTFMove(*colorSpace), *isOpaque };
-
+#endif
 #if USE(DIRECT2D)
     auto processSpecificHandle = SharedMemory::Handle::decodeHandle(decoder);
     if (!processSpecificHandle)
         return false;
 
-    result.sharedResourceHandle = processSpecificHandle.value();
+    configuration.sharedResourceHandle = processSpecificHandle.value();
 #endif
-
     return true;
 }
 

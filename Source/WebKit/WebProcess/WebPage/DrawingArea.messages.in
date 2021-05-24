@@ -31,7 +31,7 @@ messages -> DrawingArea NotRefCounted {
     // Used by TiledCoreAnimationDrawingArea.
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort)
     SetDeviceScaleFactor(float deviceScaleFactor)
-    SetColorSpace(struct Optional<WebCore::DestinationColorSpace> colorSpace)
+    SetColorSpace(struct WebKit::ColorSpaceData colorSpace)
     SetViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)

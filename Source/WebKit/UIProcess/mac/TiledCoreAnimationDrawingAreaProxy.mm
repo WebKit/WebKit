@@ -28,6 +28,7 @@
 
 #if !PLATFORM(IOS_FAMILY)
 
+#import "ColorSpaceData.h"
 #import "DrawingAreaMessages.h"
 #import "DrawingAreaProxyMessages.h"
 #import "LayerTreeContext.h"

@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIUIClient.h"
+#import "ColorSpaceData.h"
 #import "Connection.h"
 #import "DataReference.h"
 #import "EditorState.h"
@@ -51,7 +52,6 @@
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AttributedString.h>
-#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>
@@ -344,7 +344,7 @@ void WebPageProxy::assistiveTechnologyMakeFirstResponder()
     pageClient().assistiveTechnologyMakeFirstResponder();
 }
 
-WebCore::DestinationColorSpace WebPageProxy::colorSpace()
+ColorSpaceData WebPageProxy::colorSpace()
 {
     return pageClient().colorSpace();
 }

@@ -111,9 +111,9 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
         effectElement.setStandardAttributes(effect.get());
         if (effectElement.renderer()) {
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB() : DestinationColorSpace::SRGB());
+            effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB : DestinationColorSpace::SRGB);
 #else
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB);
 #endif
         }
         builder->add(effectElement.result(), effect);
@@ -296,7 +296,7 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
             // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
             // property applied here should not clip to their primitive subregions.
             effect->setClipsToBounds(consumer == FilterConsumer::FilterFunction);
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB);
             
             if (filterOperation.type() != FilterOperation::REFERENCE) {
                 effect->inputEffects() = { WTFMove(previousEffect) };
@@ -344,11 +344,11 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
     IntSize logicalSize { m_sourceDrawingRegion.size() };
     if (!sourceImage() || sourceImage()->logicalSize() != logicalSize) {
 #if USE(DIRECT2D)
-        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale(), DestinationColorSpace::SRGB, PixelFormat::BGRA8));
 #else
         UNUSED_PARAM(targetContext);
         RenderingMode mode = m_filterRenderer ? RenderingMode::Accelerated : renderingMode();
-        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale(), DestinationColorSpace::SRGB, PixelFormat::BGRA8));
 #endif
     }
     m_graphicsBufferAttached = true;
@@ -382,12 +382,12 @@ void CSSFilter::apply()
     if (m_filterRenderer) {
         m_filterRenderer->applyEffects(effect);
         if (m_filterRenderer->hasResult()) {
-            effect.transformResultColorSpace(DestinationColorSpace::SRGB());
+            effect.transformResultColorSpace(DestinationColorSpace::SRGB);
             return;
         }
     }
     effect.apply();
-    effect.transformResultColorSpace(DestinationColorSpace::SRGB());
+    effect.transformResultColorSpace(DestinationColorSpace::SRGB);
 }
 
 LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)

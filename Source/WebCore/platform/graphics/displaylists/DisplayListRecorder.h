@@ -147,7 +147,7 @@ private:
     void clipPath(const Path&, WindRule) override;
     IntRect clipBounds() override;
     void clipToImageBuffer(WebCore::ImageBuffer&, const FloatRect&) override;
-    void clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&) override;
+    void clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace, Function<void(GraphicsContext&)>&&) override;
 #if ENABLE(VIDEO)
     void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) override;
     bool canPaintFrameForMedia(const MediaPlayer&) const override;

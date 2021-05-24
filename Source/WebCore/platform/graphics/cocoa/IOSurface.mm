@@ -26,7 +26,7 @@
 #import "config.h"
 #import "IOSurface.h"
 
-#import "DestinationColorSpace.h"
+#import "CoreVideoSoftLink.h"
 #import "GraphicsContextCG.h"
 #import "GraphicsContextGL.h"
 #import "HostWindow.h"
@@ -41,11 +41,9 @@
 #import <wtf/MathExtras.h>
 #import <wtf/text/TextStream.h>
 
-#import "CoreVideoSoftLink.h"
-
 namespace WebCore {
 
-inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
+inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
     auto cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace, pixelFormat);
     if (!cachedSurface)
@@ -55,12 +53,12 @@ inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSi
     return cachedSurface;
 }
 
-std::unique_ptr<IOSurface> IOSurface::create(IntSize size, const DestinationColorSpace& colorSpace, Format pixelFormat)
+std::unique_ptr<IOSurface> IOSurface::create(IntSize size, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
     return IOSurface::create(size, size, colorSpace, pixelFormat);
 }
 
-std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
+std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format pixelFormat)
 {
     if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace, pixelFormat)) {
         LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
@@ -77,13 +75,13 @@ std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, 
     return surface;
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight&& sendRight, const DestinationColorSpace& colorSpace)
+std::unique_ptr<IOSurface> IOSurface::createFromSendRight(const MachSendRight&& sendRight, CGColorSpaceRef colorSpace)
 {
     auto surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
     return IOSurface::createFromSurface(surface.get(), colorSpace);
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpace)
+std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)
 {
     return std::unique_ptr<IOSurface>(new IOSurface(surface, colorSpace));
 }
@@ -96,7 +94,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) });
+    auto surface = IOSurface::create(IntSize(width, height), CGImageGetColorSpace(image));
     if (!surface)
         return nullptr;
     auto surfaceContext = surface->ensurePlatformContext();
@@ -118,7 +116,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromPixelBuffer(CVPixelBufferRef pix
     if (!colorSpace)
         return nullptr;
 
-    return createFromSurface(surface, DestinationColorSpace { colorSpace });
+    return createFromSurface(surface, colorSpace);
 }
 
 void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
@@ -198,7 +196,7 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
 
 }
 
-IOSurface::IOSurface(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format format, bool& success)
+IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpace, Format format, bool& success)
     : m_colorSpace(colorSpace)
     , m_size(size)
     , m_contextSize(contextSize)
@@ -234,7 +232,7 @@ IOSurface::IOSurface(IntSize size, IntSize contextSize, const DestinationColorSp
         RELEASE_LOG_ERROR(Layers, "IOSurface creation failed for size: (%d %d) and format: (%d)", size.width(), size.height(), format);
 }
 
-IOSurface::IOSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpace)
+IOSurface::IOSurface(IOSurfaceRef surface, CGColorSpaceRef colorSpace)
     : m_colorSpace(colorSpace)
     , m_surface(surface)
 {
@@ -349,7 +347,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         break;
     }
     
-    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), bitmapInfo));
+    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.get(), bitmapInfo));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
@@ -517,7 +515,7 @@ void IOSurface::setOwnershipIdentity(task_id_token_t newOwner)
 
 void IOSurface::migrateColorSpaceToProperties()
 {
-    auto colorSpaceProperties = adoptCF(CGColorSpaceCopyPropertyList(m_colorSpace.platformColorSpace()));
+    auto colorSpaceProperties = adoptCF(CGColorSpaceCopyPropertyList(m_colorSpace.get()));
     IOSurfaceSetValue(m_surface.get(), kIOSurfaceColorSpace, colorSpaceProperties.get());
 }
 

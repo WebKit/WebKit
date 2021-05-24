@@ -281,7 +281,6 @@ bool isInlineItem(ItemType type)
      * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes. */
 
     switch (type) {
-    case ItemType::BeginClipToDrawingCommands:
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
     case ItemType::DrawFocusRingPath:
@@ -295,7 +294,6 @@ bool isInlineItem(ItemType type)
     case ItemType::FillRectWithGradient:
     case ItemType::FillRectWithRoundedHole:
     case ItemType::FillRoundedRect:
-    case ItemType::GetPixelBuffer:
     case ItemType::PutPixelBuffer:
     case ItemType::SetLineDash:
     case ItemType::SetState:
@@ -312,6 +310,7 @@ bool isInlineItem(ItemType type)
     case ItemType::Clip:
     case ItemType::ClipOut:
     case ItemType::ClipToImageBuffer:
+    case ItemType::BeginClipToDrawingCommands:
     case ItemType::EndClipToDrawingCommands:
     case ItemType::ConcatenateCTM:
     case ItemType::DrawDotsForDocumentMarker:
@@ -352,6 +351,7 @@ bool isInlineItem(ItemType type)
     case ItemType::StrokeRect:
     case ItemType::StrokeLine:
     case ItemType::Translate:
+    case ItemType::GetPixelBuffer:
         return true;
     }
     ASSERT_NOT_REACHED();

@@ -27,11 +27,12 @@
 #include "PixelBufferConversion.h"
 
 #include "AlphaPremultiplication.h"
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "IntSize.h"
 #include "PixelFormat.h"
 
 #if USE(ACCELERATE) && USE(CG)
+#include "ColorSpaceCG.h"
 #include <Accelerate/Accelerate.h>
 #endif
 
@@ -70,7 +71,7 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
 
     result.bitsPerComponent = bitsPerComponent;
     result.bitsPerPixel = bitsPerPixel;
-    result.colorSpace = format.colorSpace.platformColorSpace();
+    result.colorSpace = cachedCGColorSpace(format.colorSpace);
     result.bitmapInfo = bitmapInfo;
     result.version = 0;
     result.decode = nullptr;

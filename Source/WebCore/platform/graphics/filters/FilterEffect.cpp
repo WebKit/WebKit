@@ -439,7 +439,7 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray& source, Uint8Clam
 #endif
 }
 
-Optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(const DestinationColorSpace& targetColorSpace, PixelBuffer& pixelBuffer)
+Optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(DestinationColorSpace targetColorSpace, PixelBuffer& pixelBuffer)
 {
     // FIXME: Using an ImageBuffer to perform the color space conversion is unnecessary. We can do it directly.
 
@@ -454,7 +454,7 @@ Optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(const Destina
     return convertImageBufferToColorSpace(targetColorSpace, *buffer, destinationRect, pixelBuffer.format().alphaFormat);
 }
 
-Optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(const DestinationColorSpace& targetColorSpace, ImageBuffer& inputBuffer, const IntRect& rect, AlphaPremultiplication outputAlphaFormat)
+Optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(DestinationColorSpace targetColorSpace, ImageBuffer& inputBuffer, const IntRect& rect, AlphaPremultiplication outputAlphaFormat)
 {
     // FIXME: This can be done more directly using PixelBufferConversion.
 
@@ -472,7 +472,7 @@ Optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(const Destina
     return convertedBuffer->getPixelBuffer(format, rect);
 }
 
-void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& destination, const DestinationColorSpace& colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
+void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& destination, DestinationColorSpace colorSpace, AlphaPremultiplication outputFormat, const IntRect& destRect)
 {
     // Converts the data stored in m_imageBufferResult, and save to destination
     auto convertedPixelBuffer = convertImageBufferToColorSpace(colorSpace, *m_imageBufferResult, { IntPoint(), m_absolutePaintRect.size() }, outputFormat);
@@ -481,7 +481,7 @@ void FilterEffect::copyConvertedImageBufferToDestination(Uint8ClampedArray& dest
     copyImageBytes(convertedPixelBuffer->data(), destination, destRect);
 }
 
-void FilterEffect::copyConvertedPixelBufferToDestination(Uint8ClampedArray& destination, PixelBuffer& pixelBuffer, const DestinationColorSpace& colorSpace, const IntRect& destRect)
+void FilterEffect::copyConvertedPixelBufferToDestination(Uint8ClampedArray& destination, PixelBuffer& pixelBuffer, DestinationColorSpace colorSpace, const IntRect& destRect)
 {
     // Converts the data stored in m_unmultipliedImageResult/m_premultipliedImageResult,
     // whichever isn't null, and save to destination
@@ -636,7 +636,7 @@ bool FilterEffect::requiresPixelBufferColorSpaceConversion(Optional<DestinationC
 #endif
 }
 
-void FilterEffect::transformResultColorSpace(const DestinationColorSpace& destinationColorSpace)
+void FilterEffect::transformResultColorSpace(DestinationColorSpace destinationColorSpace)
 {
 #if USE(CG)
     // CG handles color space adjustments internally.

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "PlatformScreen.h"
 #include <wtf/EnumTraits.h>
@@ -33,12 +32,14 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
+typedef struct CGColorSpace *CGColorSpaceRef;
+
 namespace WebCore {
 
 struct ScreenData {
     FloatRect screenAvailableRect;
     FloatRect screenRect;
-    DestinationColorSpace colorSpace { DestinationColorSpace::SRGB() };
+    RetainPtr<CGColorSpaceRef> colorSpace;
     int screenDepth { 0 };
     int screenDepthPerComponent { 0 };
     bool screenSupportsExtendedColor { false };
@@ -55,12 +56,13 @@ struct ScreenData {
     float scaleFactor { 1 };
 #endif
 
+    enum class ColorSpaceType : uint8_t { None, Name, Data };
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<ScreenData> decode(Decoder&);
 };
 
-using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
-
+typedef HashMap<PlatformDisplayID, ScreenData> ScreenDataMap;
+    
 struct ScreenProperties {
     PlatformDisplayID primaryDisplayID { 0 };
     ScreenDataMap screenDataMap;
@@ -72,7 +74,8 @@ struct ScreenProperties {
 template<class Encoder>
 void ScreenProperties::encode(Encoder& encoder) const
 {
-    encoder << primaryDisplayID << screenDataMap;
+    encoder << primaryDisplayID;
+    encoder << screenDataMap;
 }
 
 template<class Decoder>
@@ -94,7 +97,7 @@ Optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
 template<class Encoder>
 void ScreenData::encode(Encoder& encoder) const
 {
-    encoder << screenAvailableRect << screenRect << colorSpace << screenDepth << screenDepthPerComponent << screenSupportsExtendedColor << screenHasInvertedColors << screenSupportsHighDynamicRange;
+    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenSupportsExtendedColor << screenHasInvertedColors << screenSupportsHighDynamicRange;
 
 #if PLATFORM(MAC)
     encoder << screenIsMonochrome << displayMask << gpuID << preferredDynamicRangeMode;
@@ -103,6 +106,28 @@ void ScreenData::encode(Encoder& encoder) const
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     encoder << scaleFactor;
 #endif
+
+    if (colorSpace) {
+        // Try to encode the name.
+        if (auto name = adoptCF(CGColorSpaceCopyName(colorSpace.get()))) {
+            encoder << ColorSpaceType::Name;
+            encoder << String(name.get());
+            return;
+        }
+
+        // Failing that, just encode the ICC data.
+        if (auto profileData = adoptCF(CGColorSpaceCopyICCData(colorSpace.get()))) {
+            Vector<uint8_t> iccData;
+            iccData.append(CFDataGetBytePtr(profileData.get()), CFDataGetLength(profileData.get()));
+
+            encoder << ColorSpaceType::Data;
+            encoder << iccData;
+            return;
+        }
+    }
+
+    // The color space was null or failed to be encoded.
+    encoder << ColorSpaceType::None;
 }
 
 template<class Decoder>
@@ -116,11 +141,6 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
     Optional<FloatRect> screenRect;
     decoder >> screenRect;
     if (!screenRect)
-        return WTF::nullopt;
-
-    Optional<DestinationColorSpace> screenColorSpace;
-    decoder >> screenColorSpace;
-    if (!screenColorSpace)
         return WTF::nullopt;
 
     Optional<int> screenDepth;
@@ -177,10 +197,41 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
         return WTF::nullopt;
 #endif
 
+    ColorSpaceType dataType;
+    if (!decoder.decode(dataType))
+        return WTF::nullopt;
+
+    RetainPtr<CGColorSpaceRef> cgColorSpace;
+    switch (dataType) {
+    case ColorSpaceType::None:
+        break;
+    case ColorSpaceType::Name: {
+        Optional<String> colorSpaceName;
+        decoder >> colorSpaceName;
+        ASSERT(colorSpaceName);
+        if (!colorSpaceName)
+            return WTF::nullopt;
+
+        cgColorSpace = adoptCF(CGColorSpaceCreateWithName(colorSpaceName->createCFString().get()));
+        break;
+    }
+    case ColorSpaceType::Data: {
+        Optional<Vector<uint8_t>> iccData;
+        decoder >> iccData;
+        ASSERT(iccData);
+        if (!iccData)
+            return WTF::nullopt;
+
+        auto colorSpaceData = adoptCF(CFDataCreate(kCFAllocatorDefault, iccData->data(), iccData->size()));
+        cgColorSpace = adoptCF(CGColorSpaceCreateWithICCData(colorSpaceData.get()));
+        break;
+    }
+    }
+
     return { {
         WTFMove(*screenAvailableRect),
         WTFMove(*screenRect),
-        WTFMove(*screenColorSpace),
+        WTFMove(cgColorSpace),
         WTFMove(*screenDepth),
         WTFMove(*screenDepthPerComponent),
         WTFMove(*screenSupportsExtendedColor),
@@ -199,3 +250,16 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ScreenData::ColorSpaceType> {
+    using values = EnumValues<
+        WebCore::ScreenData::ColorSpaceType,
+        WebCore::ScreenData::ColorSpaceType::None,
+        WebCore::ScreenData::ColorSpaceType::Name,
+        WebCore::ScreenData::ColorSpaceType::Data
+    >;
+};
+
+} // namespace WTF

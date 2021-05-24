@@ -26,8 +26,8 @@
 
 #pragma once
 
+#include "ColorSpace.h"
 #include "DashArray.h"
-#include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "FontCascade.h"
 #include "GraphicsTypes.h"
@@ -410,7 +410,7 @@ public:
     void clipToImageBuffer(ImageBuffer&, const FloatRect&);
 
     enum class ClipToDrawingCommandsResult : bool { Success, FailedToCreateImageBuffer };
-    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&);
+    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace, Function<void(GraphicsContext&)>&&);
     
     IntRect clipBounds() const;
 

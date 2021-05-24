@@ -45,7 +45,11 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
 ShareableBitmap::Configuration ImageBufferShareableBitmapBackend::configuration(const Parameters& parameters)
 {
-    return { parameters.colorSpace };
+    ShareableBitmap::Configuration configuration;
+#if PLATFORM(COCOA)
+    configuration.colorSpace = { cachedCGColorSpace(parameters.colorSpace) };
+#endif
+    return configuration;
 }
 
 IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)

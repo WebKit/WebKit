@@ -18,7 +18,6 @@
  */
 #pragma once
 
-#include "DestinationColorSpace.h"
 #include "FloatPoint3D.h"
 #include "GraphicsTypesGL.h"
 #include "IntRect.h"
@@ -33,7 +32,8 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
-#include "IOSurface.h"
+#include <WebCore/ColorSpaceCG.h>
+#include <WebCore/IOSurface.h>
 #include <wtf/MachSendRight.h>
 #endif
 
@@ -446,7 +446,7 @@ Optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Deco
     WTF::MachSendRight surfaceSendRight;
     if (!decoder.decode(surfaceSendRight))
         return WTF::nullopt;
-    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());
+    layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::sRGBColorSpaceRef());
 #endif
     return layerData;
 }

@@ -28,7 +28,6 @@
 #include "ColorConversion.h"
 #include "ColorSpace.h"
 #include "ColorUtilities.h"
-#include "DestinationColorSpace.h"
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
@@ -122,7 +121,7 @@ public:
     template<typename T> SRGBA<T> toSRGBALossy() const { return toColorTypeLossy<SRGBA<T>>(); }
 
     ColorComponents<float, 4> toColorComponentsInColorSpace(ColorSpace) const;
-    ColorComponents<float, 4> toColorComponentsInColorSpace(const DestinationColorSpace&) const;
+    ColorComponents<float, 4> toColorComponentsInColorSpace(DestinationColorSpace) const;
 
     WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float, 4>> colorSpaceAndComponents() const;
 
@@ -268,7 +267,6 @@ bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
 
 #if USE(CG)
 WEBCORE_EXPORT CGColorRef cachedCGColor(const Color&);
-WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpace, ColorComponents<float, 4>, const DestinationColorSpace&);
 #endif
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);

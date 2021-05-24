@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "ColorSpaceData.h"
 
-#include <wtf/EnumTraits.h>
-#include <wtf/Forward.h>
+#import "ArgumentCodersCF.h"
+#import "Decoder.h"
+#import "Encoder.h"
+#import <wtf/EnumTraits.h>
 
-namespace WebCore {
+namespace WebKit {
 
-enum class DestinationColorSpace : uint8_t;
-
-enum class PredefinedColorSpace {
-    SRGB
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    , DisplayP3
-#endif
-};
-
-DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace);
-Optional<PredefinedColorSpace> toPredefinedColorSpace(DestinationColorSpace);
-
+void ColorSpaceData::encode(IPC::Encoder& encoder) const
+{
+    encoder << static_cast<bool>(cgColorSpace);
+    if (cgColorSpace)
+        encoder << cgColorSpace;
 }
 
-namespace WTF {
+bool ColorSpaceData::decode(IPC::Decoder& decoder, ColorSpaceData& colorSpaceData)
+{
+    bool hasCGColorSpace;
+    if (!decoder.decode(hasCGColorSpace))
+        return false;
 
-template<> struct EnumTraits<WebCore::PredefinedColorSpace> {
-    using values = EnumValues<
-        WebCore::PredefinedColorSpace,
-        WebCore::PredefinedColorSpace::SRGB
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        , WebCore::PredefinedColorSpace::DisplayP3
-#endif
-    >;
-};
+    if (!hasCGColorSpace)
+        return true;
 
-} // namespace WTF
+    RetainPtr<CGColorSpaceRef> colorSpace;
+    if (!decoder.decode(colorSpace))
+        return false;
+    
+    colorSpaceData.cgColorSpace = WTFMove(colorSpace);
+    return true;
+}
+
+} // namespace WebKit

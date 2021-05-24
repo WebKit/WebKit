@@ -198,7 +198,6 @@ namespace API {
 class Attachment;
 class ContentWorld;
 class ContextMenuClient;
-class DestinationColorSpace;
 class Error;
 class FindClient;
 class FindMatchesClient;
@@ -378,6 +377,7 @@ class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
 struct AppBoundNavigationTestingData;
+struct ColorSpaceData;
 struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
@@ -1132,7 +1132,7 @@ public:
     void makeFirstResponder();
     void assistiveTechnologyMakeFirstResponder();
 
-    WebCore::DestinationColorSpace colorSpace();
+    ColorSpaceData colorSpace();
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

@@ -177,7 +177,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, Optional<d
         return nullptr;
 
     auto imageSize = source.size();
-    auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), source.format().colorSpace.platformColorSpace(), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(source.format().colorSpace), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
     return encode(image.get(), destinationUTI.get(), quality, function);
 }

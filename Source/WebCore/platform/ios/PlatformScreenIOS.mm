@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,9 +88,9 @@ bool screenSupportsHighDynamicRange(Widget*)
     return false;
 }
 
-DestinationColorSpace screenColorSpace(Widget* widget)
+CGColorSpaceRef screenColorSpace(Widget* widget)
 {
-    return screenSupportsExtendedColor(widget) ? DestinationColorSpace { extendedSRGBColorSpaceRef() } : DestinationColorSpace::SRGB();
+    return screenSupportsExtendedColor(widget) ? extendedSRGBColorSpaceRef() : sRGBColorSpaceRef();
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
@@ -193,14 +193,16 @@ ScreenProperties collectScreenProperties()
         FloatRect screenAvailableRect = screen.bounds;
         screenAvailableRect.setY(NSMaxY(screen.bounds) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
         FloatRect screenRect = screen._referenceBounds;
-        DestinationColorSpace colorSpace { screenColorSpace(nullptr) };
+        
+        RetainPtr<CGColorSpaceRef> colorSpace = screenColorSpace(nullptr);
+        
         int screenDepth = WebCore::screenDepth(nullptr);
         int screenDepthPerComponent = WebCore::screenDepthPerComponent(nullptr);
         bool screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
         bool screenHasInvertedColors = WebCore::screenHasInvertedColors();
         float scaleFactor = WebCore::screenPPIFactor();
 
-        screenProperties.screenDataMap.set(++displayID, ScreenData { screenAvailableRect, screenRect, WTFMove(colorSpace), screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, false, scaleFactor });
+        screenProperties.screenDataMap.set(++displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, false, scaleFactor });
         
         if (screen == [PAL::getUIScreenClass() mainScreen])
             screenProperties.primaryDisplayID = displayID;

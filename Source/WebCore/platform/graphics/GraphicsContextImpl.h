@@ -104,7 +104,7 @@ public:
     virtual void clipPath(const Path&, WindRule) = 0;
     virtual IntRect clipBounds() = 0;
     virtual void clipToImageBuffer(ImageBuffer&, const FloatRect&) = 0;
-    virtual void clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace&, Function<void(GraphicsContext&)>&& drawingFunction) = 0;
+    virtual void clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace, Function<void(GraphicsContext&)>&& drawingFunction) = 0;
 #if ENABLE(VIDEO)
     virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) = 0;
     virtual bool canPaintFrameForMedia(const MediaPlayer&) const = 0;

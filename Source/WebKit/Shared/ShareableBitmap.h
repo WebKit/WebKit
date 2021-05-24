@@ -26,11 +26,14 @@
 #pragma once
 
 #include "SharedMemory.h"
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformImage.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+#if USE(CG)
+#include "ColorSpaceData.h"
+#endif
 
 #if USE(DIRECT2D)
 interface ID2D1Bitmap;
@@ -52,8 +55,10 @@ namespace WebKit {
 class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
 public:
     struct Configuration {
-        Optional<WebCore::DestinationColorSpace> colorSpace;
         bool isOpaque { false };
+#if PLATFORM(COCOA)
+        ColorSpaceData colorSpace;
+#endif
 #if USE(DIRECT2D)
         mutable HANDLE sharedResourceHandle { nullptr };
 #endif

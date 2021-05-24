@@ -571,7 +571,7 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
 bool GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
-    auto backing = IOSurface::create(getInternalFramebufferSize(), DestinationColorSpace::SRGB());
+    auto backing = WebCore::IOSurface::create(getInternalFramebufferSize(), WebCore::sRGBColorSpaceRef());
     if (!backing)
         return false;
 

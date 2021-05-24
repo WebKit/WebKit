@@ -82,8 +82,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "ArgumentCodersCF.h"
-
 namespace WTF {
 class MachSendRight;
 }

@@ -203,6 +203,7 @@ Shared/ios/WebTouchEventIOS.cpp
 
 Shared/mac/AuxiliaryProcessMac.mm
 Shared/mac/CodeSigning.mm
+Shared/mac/ColorSpaceData.mm
 Shared/mac/HangDetectionDisablerMac.mm
 Shared/mac/NativeWebGestureEventMac.mm
 Shared/mac/NativeWebKeyboardEventMac.mm

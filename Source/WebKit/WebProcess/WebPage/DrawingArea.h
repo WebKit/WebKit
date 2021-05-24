@@ -50,7 +50,6 @@ class Decoder;
 }
 
 namespace WebCore {
-class DestinationColorSpace;
 class DisplayRefreshMonitor;
 class Frame;
 class FrameView;
@@ -61,6 +60,7 @@ struct ViewportAttributes;
 
 namespace WebKit {
 
+struct ColorSpaceData;
 class LayerTreeHost;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
@@ -180,7 +180,7 @@ private:
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.
     virtual void setDeviceScaleFactor(float) { }
-    virtual void setColorSpace(Optional<WebCore::DestinationColorSpace>) { }
+    virtual void setColorSpace(const ColorSpaceData&) { }
 
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }

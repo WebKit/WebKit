@@ -37,13 +37,13 @@
 namespace WebCore {
 
 class CanvasPattern;
-class DestinationColorSpace;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
 class TypedOMCSSImageValue;
 class WebGLObject;
+enum class DestinationColorSpace : uint8_t;
 enum class PixelFormat : uint8_t;
 
 class CanvasRenderingContext : public ScriptWrappable {

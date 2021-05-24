@@ -414,7 +414,7 @@ FloatRect GraphicsContextImplCairo::roundToDevicePixels(const FloatRect& rect, G
     return Cairo::State::roundToDevicePixels(m_platformContext, rect);
 }
 
-void GraphicsContextImplCairo::clipToDrawingCommands(const FloatRect&, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&)
+void GraphicsContextImplCairo::clipToDrawingCommands(const FloatRect&, DestinationColorSpace, Function<void(GraphicsContext&)>&&)
 {
     // FIXME: Not implemented.
 }

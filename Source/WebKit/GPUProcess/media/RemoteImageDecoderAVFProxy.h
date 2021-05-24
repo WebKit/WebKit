@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
+#include "ColorSpaceData.h"
 #include "DataReference.h"
 #include "MessageReceiver.h"
 #include <WebCore/ImageDecoderAVFObjC.h>
@@ -56,7 +57,7 @@ private:
     void deleteDecoder(WebCore::ImageDecoderIdentifier);
     void setExpectedContentSize(WebCore::ImageDecoderIdentifier, long long expectedContentSize);
     void setData(WebCore::ImageDecoderIdentifier, const IPC::DataReference&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, Optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
-    void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, Optional<WebCore::DestinationColorSpace>&&)>&&);
+    void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, ColorSpaceData&&)>&&);
     void clearFrameBufferCache(WebCore::ImageDecoderIdentifier, size_t index);
 
     void encodedDataStatusChanged(WebCore::ImageDecoderIdentifier);

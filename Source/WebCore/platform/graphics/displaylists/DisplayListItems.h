@@ -880,53 +880,22 @@ Optional<ClipPath> ClipPath::decode(Decoder& decoder)
 class BeginClipToDrawingCommands {
 public:
     static constexpr ItemType itemType = ItemType::BeginClipToDrawingCommands;
-    static constexpr bool isInlineItem = false;
+    static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
     BeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace)
         : m_destination(destination)
-        , m_colorSpace(WTFMove(colorSpace))
+        , m_colorSpace(colorSpace)
     {
     }
 
-    // Explicit destructor added to force non-trivial destructor on all platforms
-    // as the encoding logic currently hardcodes which display list item types need
-    // out of line treatment rather than using the isInlineItem constant.
-    ~BeginClipToDrawingCommands() { }
-
     const FloatRect& destination() const { return m_destination; }
-    const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<BeginClipToDrawingCommands> decode(Decoder&);
+    DestinationColorSpace colorSpace() const { return m_colorSpace; }
 
 private:
     FloatRect m_destination;
     DestinationColorSpace m_colorSpace;
 };
-
-template<class Encoder>
-void BeginClipToDrawingCommands::encode(Encoder& encoder) const
-{
-    encoder << m_destination;
-    encoder << m_colorSpace;
-}
-
-template<class Decoder>
-Optional<BeginClipToDrawingCommands> BeginClipToDrawingCommands::decode(Decoder& decoder)
-{
-    Optional<FloatRect> destination;
-    decoder >> destination;
-    if (!destination)
-        return WTF::nullopt;
-
-    Optional<DestinationColorSpace> colorSpace;
-    decoder >> colorSpace;
-    if (!colorSpace)
-        return WTF::nullopt;
-
-    return {{ *destination, WTFMove(*colorSpace) }};
-}
 
 class EndClipToDrawingCommands {
 public:
@@ -1969,53 +1938,22 @@ private:
 class GetPixelBuffer {
 public:
     static constexpr ItemType itemType = ItemType::GetPixelBuffer;
-    static constexpr bool isInlineItem = false;
+    static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = false;
 
-    GetPixelBuffer(PixelBufferFormat outputFormat, const IntRect& srcRect)
+    GetPixelBuffer(WebCore::PixelBufferFormat outputFormat, const WebCore::IntRect& srcRect)
         : m_srcRect(srcRect)
-        , m_outputFormat(WTFMove(outputFormat))
+        , m_outputFormat(outputFormat)
     {
     }
 
-    // Explicit destructor added to force non-trivial destructor on all platforms
-    // as the encoding logic currently hardcodes which display list item types need
-    // out of line treatment rather than using the isInlineItem constant.
-    ~GetPixelBuffer() { }
-
-    const PixelBufferFormat& outputFormat() const { return m_outputFormat; }
+    PixelBufferFormat outputFormat() const { return m_outputFormat; }
     IntRect srcRect() const { return m_srcRect; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<GetPixelBuffer> decode(Decoder&);
 
 private:
     IntRect m_srcRect;
     PixelBufferFormat m_outputFormat;
 };
-
-template<class Encoder>
-void GetPixelBuffer::encode(Encoder& encoder) const
-{
-    encoder << m_srcRect;
-    encoder << m_outputFormat;
-}
-
-template<class Decoder>
-Optional<GetPixelBuffer> GetPixelBuffer::decode(Decoder& decoder)
-{
-    Optional<IntRect> srcRect;
-    decoder >> srcRect;
-    if (!srcRect)
-        return WTF::nullopt;
-
-    Optional<PixelBufferFormat> outputFormat;
-    decoder >> outputFormat;
-    if (!outputFormat)
-        return WTF::nullopt;
-
-    return {{ WTFMove(*outputFormat), *srcRect }};
-}
 
 class PutPixelBuffer {
 public:

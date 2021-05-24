@@ -174,7 +174,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
         // FIXME: Should this be using the same logic as ImageBufferUtilitiesCG?
 
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+        PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
         auto pixelBuffer = getPixelBuffer(format, logicalRect());
         if (!pixelBuffer)
             return nullptr;
@@ -192,7 +192,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
             return nullptr;
 
         auto imageSize = pixelBuffer->size();
-        return adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->format().colorSpace.platformColorSpace(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+        return adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), cachedCGColorSpace(pixelBuffer->format().colorSpace), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     }
 
     if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {

@@ -1197,7 +1197,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ConcreteImageBuffer.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
-    platform/graphics/DestinationColorSpace.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
     platform/graphics/DisplayRefreshMonitorFactory.h
@@ -1294,7 +1293,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PixelBuffer.h
     platform/graphics/PixelBufferFormat.h
     platform/graphics/PixelFormat.h
-    platform/graphics/PlatformColorSpace.h
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformImage.h
     platform/graphics/PlatformImageBuffer.h

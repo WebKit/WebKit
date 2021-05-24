@@ -242,7 +242,6 @@ typedef void (*CGSNotifyProcPtr)(CGSNotificationType, void* data, uint32_t data_
 
 WTF_EXTERN_C_BEGIN
 
-bool CGColorTransformConvertColorComponents(CGColorTransformRef, CGColorSpaceRef, CGColorRenderingIntent, const CGFloat srcComponents[], CGFloat dstComponents[]);
 CGColorRef CGColorTransformConvertColor(CGColorTransformRef, CGColorRef, CGColorRenderingIntent);
 CGColorTransformRef CGColorTransformCreate(CGColorSpaceRef, CFDictionaryRef attributes);
 
@@ -292,8 +291,6 @@ CGStyleRef CGGStateGetStyle(CGGStateRef);
 CGStyleType CGStyleGetType(CGStyleRef);
 const void *CGStyleGetData(CGStyleRef);
 CGColorRef CGStyleGetColor(CGStyleRef);
-bool CGColorSpaceEqualToColorSpace(CGColorSpaceRef, CGColorSpaceRef);
-CFStringRef CGColorSpaceCopyICCProfileDescription(CGColorSpaceRef);
 
 #if HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
 size_t CGPathGetNumberOfElements(CGPathRef);

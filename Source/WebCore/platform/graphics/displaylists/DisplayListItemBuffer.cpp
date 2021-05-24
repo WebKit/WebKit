@@ -281,7 +281,7 @@ void ItemHandle::destroy()
         get<FillRoundedRect>().~FillRoundedRect();
         return;
     case ItemType::GetPixelBuffer:
-        get<GetPixelBuffer>().~GetPixelBuffer();
+        static_assert(std::is_trivially_destructible<GetPixelBuffer>::value);
         return;
     case ItemType::PutPixelBuffer:
         get<PutPixelBuffer>().~PutPixelBuffer();
@@ -307,7 +307,7 @@ void ItemHandle::destroy()
         return;
 #endif
     case ItemType::BeginClipToDrawingCommands:
-        get<BeginClipToDrawingCommands>().~BeginClipToDrawingCommands();
+        static_assert(std::is_trivially_destructible<BeginClipToDrawingCommands>::value);
         return;
     case ItemType::BeginTransparencyLayer:
         static_assert(std::is_trivially_destructible<BeginTransparencyLayer>::value);
