@@ -1959,6 +1959,12 @@ void WebFrameLoaderClient::notifyPageOfAppBoundBehavior()
 }
 #endif
 
+bool WebFrameLoaderClient::isParentProcessAFullWebBrowser() const
+{
+    auto* page = m_frame->page();
+    return page && page->isParentProcessAWebBrowser();
+}
+
 } // namespace WebKit
 
 #undef PREFIX_PARAMETERS

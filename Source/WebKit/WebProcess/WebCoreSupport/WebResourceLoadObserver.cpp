@@ -443,6 +443,25 @@ void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFr
     completionHandler();
 }
 
+bool WebResourceLoadObserver::hasDeniedCrossPageStorageAccess(const SubFrameDomain& subDomain, const TopFrameDomain& topDomain) const
+{
+    auto it = m_domainsWithDeniedStorageAccess.find(topDomain);
+
+    if (it != m_domainsWithDeniedStorageAccess.end())
+        return it->value.contains(subDomain);
+
+    return false;
+}
+
+void WebResourceLoadObserver::setHasDeniedCrossPageStorageAccess(HashMap<TopFrameDomain, SubFrameDomain>&& domains, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& topDomain : domains.keys()) {
+        m_domainsWithDeniedStorageAccess.ensure(topDomain, [] { return HashSet<RegistrableDomain> { };
+            }).iterator->value.add(domains.get(topDomain));
+    }
+    completionHandler();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)

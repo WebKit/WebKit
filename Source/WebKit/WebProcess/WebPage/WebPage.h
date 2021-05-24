@@ -1382,6 +1382,8 @@ public:
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 
+    bool isParentProcessAWebBrowser() const;
+    
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
