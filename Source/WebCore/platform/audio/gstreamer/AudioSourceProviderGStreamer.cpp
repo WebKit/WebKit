@@ -23,6 +23,7 @@
 
 #include "AudioBus.h"
 #include "AudioSourceProviderClient.h"
+#include "GStreamerCommon.h"
 #include <gst/app/gstappsink.h>
 #include <gst/audio/audio-info.h>
 #include <gst/base/gstadapter.h>

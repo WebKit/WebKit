@@ -1,3 +1,13 @@
+2021-05-24  Lauro Moura  <lmoura@igalia.com>
+
+        [GStreamer] WebProcess crashes when certain elements are missing
+        https://bugs.webkit.org/show_bug.cgi?id=226081
+        <rdar://problem/78394687>
+
+        Unreviewed LTS build fix.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+
 2021-05-24  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] WebProcess crashes when certain elements are missing
