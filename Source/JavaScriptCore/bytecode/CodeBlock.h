@@ -270,8 +270,6 @@ public:
     struct JITData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        size_t size(const ConcurrentJSLocker&) const;
-
         Bag<StructureStubInfo> m_stubInfos;
         Bag<JITAddIC> m_addICs;
         Bag<JITMulIC> m_mulICs;

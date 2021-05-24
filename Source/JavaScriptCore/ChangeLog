@@ -1,3 +1,14 @@
+2021-05-24  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, revert r276610 because it causes a 1% PLT regression.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::JITData::size const): Deleted.
+        * bytecode/CodeBlock.h:
+        * jit/JITCodeMap.h:
+        (JSC::JITCodeMap::memorySize const): Deleted.
+
 2021-05-24  Chris Dumez  <cdumez@apple.com>
 
         Drop CheckedLock / CheckedCondition aliases

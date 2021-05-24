@@ -139,16 +139,6 @@ public:
         return result;
     }
 
-    // Note: if the contents of the bag have allocated bytes that won't be accounted for here.
-    size_t estimatedAllocationSizeInBytes() const
-    {
-        size_t result = 0;
-        for (auto node : *this) {
-            UNUSED_PARAM(node);
-            result += sizeof(Node) + sizeof(T);
-        }
-        return result;
-    }
 
     iterator end() const { return iterator(); }
     

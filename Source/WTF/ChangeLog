@@ -1,3 +1,9 @@
+2021-05-24  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, revert r276610 because it causes a 1% PLT regression.
+
+        * wtf/Bag.h:
+
 2021-05-24  Chris Dumez  <cdumez@apple.com>
 
         Drop CheckedLock / CheckedCondition aliases
