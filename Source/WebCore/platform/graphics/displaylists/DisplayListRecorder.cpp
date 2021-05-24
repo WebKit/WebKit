@@ -452,7 +452,7 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
     append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect);
 }
 
-void Recorder::clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
+void Recorder::clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
 {
     GraphicsContext nestedContext([&](GraphicsContext& context) {
         auto initialClip = FloatRect(FloatPoint(), destination.size());

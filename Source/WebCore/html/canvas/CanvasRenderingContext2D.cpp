@@ -37,7 +37,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
-#include "ColorSpace.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"

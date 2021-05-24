@@ -23,7 +23,7 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "IntRectExtent.h"
@@ -165,13 +165,13 @@ public:
     bool clipsToBounds() const { return m_clipsToBounds; }
     void setClipsToBounds(bool value) { m_clipsToBounds = value; }
 
-    DestinationColorSpace operatingColorSpace() const { return m_operatingColorSpace; }
-    virtual void setOperatingColorSpace(DestinationColorSpace colorSpace) { m_operatingColorSpace = colorSpace; }
-    DestinationColorSpace resultColorSpace() const { return m_resultColorSpace; }
-    virtual void setResultColorSpace(DestinationColorSpace colorSpace) { m_resultColorSpace = colorSpace; }
+    const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
+    virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
+    const DestinationColorSpace& resultColorSpace() const { return m_resultColorSpace; }
+    virtual void setResultColorSpace(const DestinationColorSpace& colorSpace) { m_resultColorSpace = colorSpace; }
 
     virtual void transformResultColorSpace(FilterEffect* in, const int) { in->transformResultColorSpace(m_operatingColorSpace); }
-    void transformResultColorSpace(DestinationColorSpace);
+    void transformResultColorSpace(const DestinationColorSpace&);
     
     static Vector<float> normalizedFloats(const Vector<float>& values)
     {
@@ -203,11 +203,11 @@ private:
     virtual void platformApplySoftware() = 0;
 
     void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
-    void copyConvertedImageBufferToDestination(Uint8ClampedArray&, DestinationColorSpace, AlphaPremultiplication, const IntRect&);
-    void copyConvertedPixelBufferToDestination(Uint8ClampedArray&, PixelBuffer&, DestinationColorSpace, const IntRect&);
+    void copyConvertedImageBufferToDestination(Uint8ClampedArray&, const DestinationColorSpace&, AlphaPremultiplication, const IntRect&);
+    void copyConvertedPixelBufferToDestination(Uint8ClampedArray&, PixelBuffer&, const DestinationColorSpace&, const IntRect&);
     bool requiresPixelBufferColorSpaceConversion(Optional<DestinationColorSpace>);
-    Optional<PixelBuffer> convertImageBufferToColorSpace(DestinationColorSpace, ImageBuffer&, const IntRect&, AlphaPremultiplication);
-    Optional<PixelBuffer> convertPixelBufferToColorSpace(DestinationColorSpace, PixelBuffer&);
+    Optional<PixelBuffer> convertImageBufferToColorSpace(const DestinationColorSpace&, ImageBuffer&, const IntRect&, AlphaPremultiplication);
+    Optional<PixelBuffer> convertPixelBufferToColorSpace(const DestinationColorSpace&, PixelBuffer&);
     
 
     Filter& m_filter;
@@ -244,13 +244,11 @@ private:
     bool m_clipsToBounds { true };
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    static constexpr auto defaultOperatingColorSpace = DestinationColorSpace::LinearSRGB;
+    DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::LinearSRGB() };
 #else
-    static constexpr auto defaultOperatingColorSpace = DestinationColorSpace::SRGB;
+    DestinationColorSpace m_operatingColorSpace { DestinationColorSpace::SRGB() };
 #endif
-
-    DestinationColorSpace m_operatingColorSpace { defaultOperatingColorSpace };
-    DestinationColorSpace m_resultColorSpace { DestinationColorSpace::SRGB };
+    DestinationColorSpace m_resultColorSpace { DestinationColorSpace::SRGB() };
     
     const Type m_filterEffectClassType;
 };

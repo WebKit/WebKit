@@ -1983,11 +1983,11 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
     IOSurfaceRef surface;
     if (useSmallBadge) {
         if (!m_smallBadgeSurface)
-            m_smallBadgeSurface = IOSurface::create({ smallBadgeDimension, smallBadgeDimension }, sRGBColorSpaceRef());
+            m_smallBadgeSurface = IOSurface::create({ smallBadgeDimension, smallBadgeDimension }, DestinationColorSpace::SRGB());
         surface = m_smallBadgeSurface->surface();
     } else {
         if (!m_largeBadgeSurface)
-            m_largeBadgeSurface = IOSurface::create({ largeBadgeDimension, largeBadgeDimension }, sRGBColorSpaceRef());
+            m_largeBadgeSurface = IOSurface::create({ largeBadgeDimension, largeBadgeDimension }, DestinationColorSpace::SRGB());
         surface = m_largeBadgeSurface->surface();
     }
     [m_ciContext.get() render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];

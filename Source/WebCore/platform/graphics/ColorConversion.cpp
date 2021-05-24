@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ColorConversion.h"
 
+#include "Color.h"
 #include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -318,18 +320,21 @@ ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, Colo
     });
 }
 
-ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, DestinationColorSpace outputColorSpace)
+ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)
 {
+#if USE(CG)
+    return platformConvertColorComponents(inputColorSpace, inputColorComponents, outputColorSpace);
+#else
     return callWithColorType(inputColorComponents, inputColorSpace, [outputColorSpace] (const auto& inputColor) {
-        switch (outputColorSpace) {
-        case DestinationColorSpace::SRGB:
+        switch (outputColorSpace.platformColorSpace()) {
+        case PlatformColorSpace::Name::SRGB:
             return asColorComponents(convertColor<SRGBA<float>>(inputColor));
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-        case DestinationColorSpace::LinearSRGB:
+        case PlatformColorSpace::Name::LinearSRGB:
             return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor));
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        case DestinationColorSpace::DisplayP3:
+        case PlatformColorSpace::Name::DisplayP3:
             return asColorComponents(convertColor<DisplayP3<float>>(inputColor));
 #endif
         }
@@ -337,6 +342,7 @@ ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, Colo
         ASSERT_NOT_REACHED();
         return asColorComponents(convertColor<SRGBA<float>>(inputColor));
     });
+#endif
 }
 
 } // namespace WebCore

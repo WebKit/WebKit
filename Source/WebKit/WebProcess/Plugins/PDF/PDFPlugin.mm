@@ -646,7 +646,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)]) {
         auto view = frame.coreFrame()->view();
-        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view)];
+        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(view).platformColorSpace()];
     }
 
 #if HAVE(INCREMENTAL_PDF_APIS)

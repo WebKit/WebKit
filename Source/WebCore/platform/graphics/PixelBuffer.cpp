@@ -42,6 +42,9 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     case PixelFormat::RGB10A8:
         return false;
     }
+    
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 Checked<unsigned, RecordOverflow> PixelBuffer::computeBufferSize(const PixelBufferFormat& format, const IntSize& size)

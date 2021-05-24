@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PredefinedColorSpace.h"
 
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -35,33 +35,26 @@ DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace colorSpace)
 {
     switch (colorSpace) {
     case PredefinedColorSpace::SRGB:
-        return DestinationColorSpace::SRGB;
+        return DestinationColorSpace::SRGB();
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
     case PredefinedColorSpace::DisplayP3:
-        return DestinationColorSpace::DisplayP3;
+        return DestinationColorSpace::DisplayP3();
 #endif
     }
 
     ASSERT_NOT_REACHED();
-    return DestinationColorSpace::SRGB;
+    return DestinationColorSpace::SRGB();
 }
 
-Optional<PredefinedColorSpace> toPredefinedColorSpace(DestinationColorSpace colorSpace)
+Optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace& colorSpace)
 {
-    switch (colorSpace) {
-    case DestinationColorSpace::SRGB:
+    if (colorSpace == DestinationColorSpace::SRGB())
         return PredefinedColorSpace::SRGB;
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    case DestinationColorSpace::LinearSRGB:
-        return WTF::nullopt;
-#endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    case DestinationColorSpace::DisplayP3:
+    if (colorSpace == DestinationColorSpace::DisplayP3())
         return PredefinedColorSpace::DisplayP3;
 #endif
-    }
 
-    ASSERT_NOT_REACHED();
     return WTF::nullopt;
 }
 

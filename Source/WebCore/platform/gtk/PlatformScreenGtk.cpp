@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2008 Collabora Ltd.
@@ -31,6 +31,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "FrameView.h"
 #include "GtkUtilities.h"
@@ -83,6 +84,11 @@ int screenDepthPerComponent(Widget*)
 bool screenIsMonochrome(Widget* widget)
 {
     return screenDepth(widget) < 2;
+}
+
+DestinationColorSpace screenColorSpace(Widget*)
+{
+    return DestinationColorSpace::SRGB();
 }
 
 bool screenHasInvertedColors()

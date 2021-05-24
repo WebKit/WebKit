@@ -104,9 +104,9 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
         effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&element, filterElement().primitiveUnits(), targetBoundingBox));
         if (element.renderer()) {
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-            effect->setOperatingColorSpace(element.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB : DestinationColorSpace::SRGB);
+            effect->setOperatingColorSpace(element.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB() : DestinationColorSpace::SRGB());
 #else
-            effect->setOperatingColorSpace(DestinationColorSpace::SRGB);
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
 #endif
         }
         builder->add(element.result(), WTFMove(effect));
@@ -198,9 +198,9 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     auto renderingMode = renderer.settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    auto colorSpace = DestinationColorSpace::LinearSRGB;
+    auto colorSpace = DestinationColorSpace::LinearSRGB();
 #else
-    auto colorSpace = DestinationColorSpace::SRGB;
+    auto colorSpace = DestinationColorSpace::SRGB();
 #endif
     auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, colorSpace, renderingMode, context);
     if (!sourceGraphic) {
@@ -281,7 +281,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
             filterData.state = FilterData::Applying;
             lastEffect->apply();
             lastEffect->correctFilterResultIfNeeded();
-            lastEffect->transformResultColorSpace(DestinationColorSpace::SRGB);
+            lastEffect->transformResultColorSpace(DestinationColorSpace::SRGB());
         }
         filterData.state = FilterData::Built;
 

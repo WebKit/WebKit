@@ -94,7 +94,7 @@ void RemoteGraphicsContextGLProxy::prepareForDisplay()
         markContextLost();
         return;
     }
-    auto displayBuffer = IOSurface::createFromSendRight(WTFMove(displayBufferSendRight), sRGBColorSpaceRef());
+    auto displayBuffer = IOSurface::createFromSendRight(WTFMove(displayBufferSendRight), WebCore::DestinationColorSpace::SRGB());
     if (displayBuffer) {
         auto& sc = platformSwapChain();
         sc.recycleBuffer();

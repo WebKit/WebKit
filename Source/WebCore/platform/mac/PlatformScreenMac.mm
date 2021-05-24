@@ -130,9 +130,7 @@ ScreenProperties collectScreenProperties()
         FloatRect screenAvailableRect = screen.visibleFrame;
         screenAvailableRect.setY(NSMaxY(screen.frame) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
         FloatRect screenRect = screen.frame;
-
-        RetainPtr<CGColorSpaceRef> colorSpace = screen.colorSpace.CGColorSpace;
-
+        DestinationColorSpace colorSpace { screen.colorSpace.CGColorSpace };
         int screenDepth = NSBitsPerPixelFromDepth(screen.depth);
         int screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
         bool screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
@@ -163,7 +161,7 @@ ScreenProperties collectScreenProperties()
         if (displayMask)
             gpuID = gpuIDForDisplayMask(displayMask);
 
-        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenSupportsHighDynamicRange, screenIsMonochrome, displayMask, gpuID, dynamicRangeMode, scaleFactor });
+        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, WTFMove(colorSpace), screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenSupportsHighDynamicRange, screenIsMonochrome, displayMask, gpuID, dynamicRangeMode, scaleFactor });
 
         if (!screenProperties.primaryDisplayID)
             screenProperties.primaryDisplayID = displayID;
@@ -340,13 +338,13 @@ NSScreen *screen(PlatformDisplayID displayID)
     return firstScreen();
 }
 
-CGColorSpaceRef screenColorSpace(Widget* widget)
+DestinationColorSpace screenColorSpace(Widget* widget)
 {
     if (auto data = screenProperties(widget))
-        return data->colorSpace.get();
+        return data->colorSpace;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return screen(widget).colorSpace.CGColorSpace;
+    return DestinationColorSpace { screen(widget).colorSpace.CGColorSpace };
 }
 
 bool screenSupportsExtendedColor(Widget* widget)

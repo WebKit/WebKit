@@ -113,28 +113,28 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
     completionHandler(frameCount, imageDecoder->size(), imageDecoder->hasTrack(), WTFMove(frameInfos));
 }
 
-void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, ColorSpaceData&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, Optional<WebCore::DestinationColorSpace>&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
     Optional<WTF::MachSendRight> sendRight;
-    ColorSpaceData colorSpaceData;
+    Optional<WebCore::DestinationColorSpace> colorSpace;
     if (!m_imageDecoders.contains(identifier)) {
-        completionHandler(WTFMove(sendRight), WTFMove(colorSpaceData));
+        completionHandler(WTFMove(sendRight), WTFMove(colorSpace));
         return;
     }
 
     auto frameImage = m_imageDecoders.get(identifier)->createFrameImageAtIndex(index);
     if (!frameImage) {
-        completionHandler(WTFMove(sendRight), WTFMove(colorSpaceData));
+        completionHandler(WTFMove(sendRight), WTFMove(colorSpace));
         return;
     }
 
     if (auto surface = IOSurface::createFromImage(frameImage.get())) {
         sendRight = surface->createSendRight();
-        colorSpaceData.cgColorSpace = surface->colorSpace();
+        colorSpace = surface->colorSpace();
     }
 
-    completionHandler(WTFMove(sendRight), WTFMove(colorSpaceData));
+    completionHandler(WTFMove(sendRight), WTFMove(colorSpace));
 }
 
 void RemoteImageDecoderAVFProxy::clearFrameBufferCache(ImageDecoderIdentifier identifier, size_t index)

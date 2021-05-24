@@ -44,14 +44,18 @@
 
 
 namespace WebCore {
+
 namespace DisplayList {
 class DisplayList;
 class Item;
 }
+
+class DestinationColorSpace;
 class FloatSize;
 class NativeImage;
-enum class DestinationColorSpace : uint8_t;
+
 enum class RenderingMode : bool;
+
 }
 
 namespace WebKit {
@@ -121,7 +125,7 @@ private:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // Messages to be received.
-    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, WebCore::DestinationColorSpace, WebCore::PixelFormat, WebCore::RenderingResourceIdentifier);
+    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingResourceIdentifier);
     void wakeUpAndApplyDisplayList(const GPUProcessWakeupMessageArguments&);
     void updateSharedMemoryForGetPixelBuffer(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&&);
     void semaphoreForGetPixelBuffer(CompletionHandler<void(const IPC::Semaphore&)>&&);

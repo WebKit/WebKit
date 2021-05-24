@@ -81,13 +81,13 @@ RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const 
     return ImageBufferCGBackend::contextColorSpace(context);
 }
 
-std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, CGColorSpaceRef cgColorSpace, const HostWindow* hostWindow)
+std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const HostWindow* hostWindow)
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(backendSize, backendSize, cgColorSpace, IOSurface::formatForPixelFormat(parameters.pixelFormat));
+    auto surface = IOSurface::create(backendSize, backendSize, parameters.colorSpace, IOSurface::formatForPixelFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
 
@@ -102,15 +102,14 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const GraphicsContext& context)
 {
-    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr)
-        return ImageBufferIOSurfaceBackend::create(parameters, cgColorSpace.get(), nullptr);
+    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr) {
+        auto overrideParameters = parameters;
+        overrideParameters.colorSpace = DestinationColorSpace { cgColorSpace };
+
+        return ImageBufferIOSurfaceBackend::create(overrideParameters, nullptr);
+    }
 
     return ImageBufferIOSurfaceBackend::create(parameters, nullptr);
-}
-
-std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const HostWindow* hostWindow)
-{
-    return ImageBufferIOSurfaceBackend::create(parameters, cachedCGColorSpace(parameters.colorSpace), hostWindow);
 }
 
 ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface)

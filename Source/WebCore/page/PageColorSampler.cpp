@@ -104,7 +104,7 @@ static Optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
     if (!snapshot)
         return WTF::nullopt;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB }, { { }, snapshot->logicalSize() });
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, snapshot->logicalSize() });
     if (!pixelBuffer)
         return WTF::nullopt;
 

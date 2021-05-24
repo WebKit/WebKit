@@ -43,6 +43,7 @@
 #import <WebCore/BitmapImage.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
+#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -213,7 +214,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
         return nil;
 
     // This is effectively a snapshot, and will be painted in an unaccelerated fashion in line with FrameSnapshotting.
-    auto buffer = ImageBuffer::create(rect.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(rect.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nil;
 

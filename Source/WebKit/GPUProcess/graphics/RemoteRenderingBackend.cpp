@@ -152,7 +152,7 @@ void RemoteRenderingBackend::didFlush(DisplayList::FlushIdentifier flushIdentifi
     send(Messages::RemoteRenderingBackendProxy::DidFlush(flushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
@@ -495,6 +495,8 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
      * See the comment at the top of DisplayListItems.h for why. */
 
     switch (type) {
+    case DisplayList::ItemType::BeginClipToDrawingCommands:
+        return decodeAndCreate<DisplayList::BeginClipToDrawingCommands>(data, length, handleLocation);
     case DisplayList::ItemType::ClipOutToPath:
         return decodeAndCreate<DisplayList::ClipOutToPath>(data, length, handleLocation);
     case DisplayList::ItemType::ClipPath:
@@ -521,6 +523,8 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
         return decodeAndCreate<DisplayList::FillRectWithRoundedHole>(data, length, handleLocation);
     case DisplayList::ItemType::FillRoundedRect:
         return decodeAndCreate<DisplayList::FillRoundedRect>(data, length, handleLocation);
+    case DisplayList::ItemType::GetPixelBuffer:
+        return decodeAndCreate<DisplayList::GetPixelBuffer>(data, length, handleLocation);
     case DisplayList::ItemType::PutPixelBuffer:
         return decodeAndCreate<DisplayList::PutPixelBuffer>(data, length, handleLocation);
     case DisplayList::ItemType::SetLineDash:
@@ -540,7 +544,6 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::Clip:
     case DisplayList::ItemType::ClipOut:
     case DisplayList::ItemType::ClipToImageBuffer:
-    case DisplayList::ItemType::BeginClipToDrawingCommands:
     case DisplayList::ItemType::EndClipToDrawingCommands:
     case DisplayList::ItemType::ConcatenateCTM:
     case DisplayList::ItemType::DrawDotsForDocumentMarker:
@@ -581,7 +584,6 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::StrokeRect:
     case DisplayList::ItemType::StrokeLine:
     case DisplayList::ItemType::Translate:
-    case DisplayList::ItemType::GetPixelBuffer:
         ASSERT_NOT_REACHED();
         return WTF::nullopt;
     }

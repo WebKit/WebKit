@@ -71,7 +71,7 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     if (!sendRight)
         return nullptr;
 
-    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), sRGBColorSpaceRef());
+    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), WebCore::DestinationColorSpace::SRGB());
     if (!surface)
         return nullptr;
 
@@ -91,7 +91,7 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateRemote::pixelBufferForCurrentTime(
     if (!sendRight)
         return nullptr;
 
-    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), nullptr);
+    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), WebCore::DestinationColorSpace::SRGB());
     if (!surface)
         return nullptr;
 

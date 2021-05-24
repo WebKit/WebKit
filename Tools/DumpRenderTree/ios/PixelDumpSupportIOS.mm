@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformScreen.h>
@@ -71,7 +72,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
 #else
     WebCore::IOSurface::Format snapshotFormat = WebCore::IOSurface::Format::BGRA;
 #endif
-    auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::sRGBColorSpaceRef(), snapshotFormat);
+    auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), snapshotFormat);
     RetainPtr<CGImageRef> cgImage = surface->createImage();
 
     void* bitmapBuffer = nullptr;

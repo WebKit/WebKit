@@ -94,6 +94,7 @@ class PageConfiguration;
 }
 
 namespace WebCore {
+class DestinationColorSpace;
 class IntPoint;
 struct ShareDataWithParsedURL;
 
@@ -168,7 +169,6 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
-struct ColorSpaceData;
 struct WebHitTestResultData;
 
 enum class ContinueUnsafeLoad : bool;
@@ -313,7 +313,7 @@ public:
 
     NSView *hitTest(CGPoint);
 
-    ColorSpaceData colorSpace();
+    WebCore::DestinationColorSpace colorSpace();
 
     void setUnderlayColor(NSColor *);
     NSColor *underlayColor() const;

@@ -1,3 +1,14 @@
+2021-05-23  Sam Weinig  <weinig@apple.com>
+
+        Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=226143
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        Upate test to use new DestinationColorSpace type.
+
 2021-05-22  Chris Dumez  <cdumez@apple.com>
 
         Replace LockHolder with Locker in local variables

@@ -119,23 +119,4 @@ static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
     return nullptr;
 }
 
-// NOTE: Since this function is for *destination* color spaces whose callers always expect a non-null color space, this function is guaranteed to return non-null, unlike cachedNullableCGColorSpace().
-static inline CGColorSpaceRef cachedCGColorSpace(DestinationColorSpace colorSpace)
-{
-    switch (colorSpace) {
-    case DestinationColorSpace::SRGB:
-        return sRGBColorSpaceRef();
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    case DestinationColorSpace::LinearSRGB:
-        return linearSRGBColorSpaceRef();
-#endif
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    case DestinationColorSpace::DisplayP3:
-        return displayP3ColorSpaceRef();
-#endif
-    }
-    ASSERT_NOT_REACHED();
-    return sRGBColorSpaceRef();
-}
-
 }

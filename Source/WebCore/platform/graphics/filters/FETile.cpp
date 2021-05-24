@@ -64,7 +64,7 @@ void FETile::platformApplySoftware()
         tileRect.scale(filter.filterResolution().width(), filter.filterResolution().height());
     }
 
-    auto tileImage = SVGRenderingContext::createImageBuffer(tileRect, tileRect, DestinationColorSpace::SRGB, filter().renderingMode());
+    auto tileImage = SVGRenderingContext::createImageBuffer(tileRect, tileRect, DestinationColorSpace::SRGB(), filter().renderingMode());
     if (!tileImage)
         return;
 

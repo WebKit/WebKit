@@ -1,3 +1,13 @@
+2021-05-23  Sam Weinig  <weinig@apple.com>
+
+        Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=226143
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        Add addional SPI for working with CGColorSpaceRefs.
+
 2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Adopt QLItem in WKImageExtractionPreviewController

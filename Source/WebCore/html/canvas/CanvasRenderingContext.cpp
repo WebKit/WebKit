@@ -28,7 +28,7 @@
 
 #include "CachedImage.h"
 #include "CanvasPattern.h"
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -90,7 +90,7 @@ PixelFormat CanvasRenderingContext::pixelFormat() const
 
 DestinationColorSpace CanvasRenderingContext::colorSpace() const
 {
-    return DestinationColorSpace::SRGB;
+    return DestinationColorSpace::SRGB();
 }
 
 bool CanvasRenderingContext::wouldTaintOrigin(const CanvasPattern* pattern)
