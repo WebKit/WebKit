@@ -1,3 +1,9 @@
+2021-05-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2021-05-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Tools][run-webkit-tests] Remove more leftover tests webserver PHP remains

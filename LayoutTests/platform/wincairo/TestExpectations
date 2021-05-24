@@ -1535,6 +1535,9 @@ webkit.org/b/159755 fast/text/emoji-gender-9.html [ Pass ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
+webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure ]
+webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1545,7 +1548,6 @@ fast/attachment [ Skip ]
 fast/backgrounds [ Skip ]
 fast/block [ Skip ]
 fast/borders [ Skip ]
-fast/canvas [ Skip ]
 fast/cookies [ Skip ]
 fast/custom-elements/defined-rule.html [ Skip ]
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2.html [ Skip ]
@@ -1734,6 +1736,45 @@ fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
+fast/canvas/canvas-blend-image.html [ Failure ]
+fast/canvas/canvas-blend-solid.html [ Failure ]
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
+fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
+fast/canvas/canvas-createPattern-video-loading.html [ Skip ] # Timeout
+fast/canvas/canvas-createPattern-video-modify.html [ Skip ] # Timeout
+fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+fast/canvas/canvas-fillPath-shadow.html [ Failure ]
+fast/canvas/canvas-imageSmoothingEnabled.html [ Failure ]
+fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
+fast/canvas/canvas-measureText-2.html [ Failure ]
+fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
+fast/canvas/canvas-toDataURL-webp.html [ Failure ]
+fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
+fast/canvas/webgl/copyBufferSubData.html [ Failure ]
+fast/canvas/webgl/css-webkit-canvas-repaint.html [ Failure ]
+fast/canvas/webgl/css-webkit-canvas.html [ Failure ]
+fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Crash
+fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ] # Timeout
+fast/canvas/webgl/match-page-color-space.html [ ImageOnlyFailure ]
+fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
+fast/canvas/webgl/oes-vertex-array-object.html [ Failure ]
+fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
+fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
+fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ] # Timeout
+fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ] # Timeout
+fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
+fast/canvas/webgl/webgl-compressed-texture-astc.html [ Failure ]
+fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
+fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
+fast/canvas/webgl/webgl-draw-buffers.html [ Failure ]
+fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
+fast/canvas/webgl/webglcontextchangedevent.html [ Skip ] # Timeout
 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 fast/css/font-face-multiple-faces.html [ Failure Pass ]
 fast/css/font-face-synthetic-bold-italic.html [ Failure ]
@@ -1790,6 +1831,7 @@ fast/events/option-tab.html [ Failure ]
 fast/events/page-visibility-iframe-move-test.html [ Skip ] # Crash by assertion failure
 fast/events/page-visibility-iframe-propagation-test.html [ Timeout Pass ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
+fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
 fast/events/selectstart-by-drag.html [ Failure Pass ]
 fast/events/shadow-event-path-2.html [ Failure ]
 fast/events/shadow-event-path.html [ Failure ]
@@ -1959,12 +2001,12 @@ http/tests/cookies/document-cookie-after-showModalDialog.html [ Timeout ]
 http/tests/cookies/document-cookie-during-iframe-parsing.html [ Timeout ]
 http/tests/cookies/document-cookie-multiple-cookies.html [ Failure ]
 http/tests/cookies/multiple-redirect-and-set-cookie.py [ Timeout ]
+http/tests/css/css-image-loading.html [ Pass Failure ]
 http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
 http/tests/misc/form-post-textplain.html [ Failure ]
 http/tests/misc/form-submit-file-cross-site-redirect.html [ Timeout ]
 http/tests/misc/gamepads-insecure.html [ Failure ]
 http/tests/misc/large-js-program.py [ Skip ] # Timeout
-http/tests/misc/last-modified-parsing.html [ Failure ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Failure ]
 http/tests/webgl/1.0.2/readPixelsBadArgs.html [ Failure ]
@@ -1992,6 +2034,7 @@ storage/indexeddb/key-type-array-private.html [ Skip ] # Crash by assertion fail
 storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Failure Pass ]
 storage/indexeddb/shared-memory-structured-clone.html [ Timeout ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/1.0.3/conformance/extensions/oes-element-index-uint.html [ Failure ]
 webgl/1.0.3/conformance/glsl/bugs/array-of-struct-with-int-first-position.html [ Skip ] # This test makes DumpRenderTree process unable to exit
