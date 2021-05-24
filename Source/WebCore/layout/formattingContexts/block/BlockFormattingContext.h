@@ -80,7 +80,7 @@ protected:
     void updateMarginAfterForPreviousSibling(const Box&);
 
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
-    BlockFormattingGeometry geometry() const;
+    BlockFormattingGeometry blockFormattingGeometry() const;
     BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED

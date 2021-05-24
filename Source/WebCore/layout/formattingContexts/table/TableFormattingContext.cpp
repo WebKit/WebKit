@@ -173,13 +173,13 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
         auto& rowBox = row.box();
         auto& rowBoxGeometry = formattingState().boxGeometry(rowBox);
 
-        rowBoxGeometry.setPadding(geometry().computedPadding(rowBox, availableHorizontalSpace));
+        rowBoxGeometry.setPadding(tableFormattingGeometry().computedPadding(rowBox, availableHorizontalSpace));
         // Internal table elements do not have margins.
         rowBoxGeometry.setHorizontalMargin({ });
         rowBoxGeometry.setVerticalMargin({ });
 
         auto computedRowBorder = [&] {
-            auto border = geometry().computedBorder(rowBox);
+            auto border = tableFormattingGeometry().computedBorder(rowBox);
             if (!grid.collapsedBorder())
                 return border;
             // Border collapsing delegates borders to table/cells.
@@ -280,13 +280,13 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
-    auto geometry = this->geometry();
+    auto formattingGeometry = tableFormattingGeometry();
     auto& grid = formattingState().tableGrid();
     auto& cellBox = cell.box();
     auto& cellBoxGeometry = formattingState().boxGeometry(cellBox);
 
-    cellBoxGeometry.setBorder(geometry.computedCellBorder(cell));
-    cellBoxGeometry.setPadding(geometry.computedPadding(cellBox, availableHorizontalSpace));
+    cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(cell));
+    cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
     // Internal table elements do not have margins.
     cellBoxGeometry.setHorizontalMargin({ });
     cellBoxGeometry.setVerticalMargin({ });
@@ -303,7 +303,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     cellBoxGeometry.setContentBoxWidth(availableSpaceForContent);
 
     if (cellBox.hasInFlowOrFloatingChild()) {
-        auto constraintsForCellContent = geometry.constraintsForInFlowContent(cellBox);
+        auto constraintsForCellContent = formattingGeometry.constraintsForInFlowContent(cellBox);
         constraintsForCellContent.vertical.logicalHeight = availableVerticalSpaceForContent;
         auto invalidationState = InvalidationState { };
         // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell
@@ -312,8 +312,8 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
         floatingStateForCellContent.clear();
         LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, constraintsForCellContent);
     }
-    auto contentBoxHeight = geometry.cellBoxContentHeight(cellBox);
-    if (auto computedHeight = geometry.computedHeight(cellBox)) {
+    auto contentBoxHeight = formattingGeometry.cellBoxContentHeight(cellBox);
+    if (auto computedHeight = formattingGeometry.computedHeight(cellBox)) {
         auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox.style().boxSizing() == BoxSizing::BorderBox;
         if (heightUsesBorderBox)
             *computedHeight -= cellBoxGeometry.verticalMarginBorderAndPadding();
@@ -407,7 +407,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
 
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
         if (!intrinsicWidth) {
-            intrinsicWidth = geometry().intrinsicWidthConstraintsForCell(*cell);
+            intrinsicWidth = tableFormattingGeometry().intrinsicWidthConstraintsForCell(*cell);
             formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
         // Spanner cells put their intrinsic widths on the initial slots.
@@ -426,7 +426,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             }
             if (auto width = columnBox->columnWidth())
                 return width;
-            return geometry().computedColumnWidth(*columnBox);
+            return tableFormattingGeometry().computedColumnWidth(*columnBox);
         };
         fixedWidthColumns.append(fixedWidth());
     }
@@ -518,7 +518,7 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
             auto& cell = slot.cell();
-            cell.setBaseline(geometry().usedBaselineForCell(cell.box()));
+            cell.setBaseline(tableFormattingGeometry().usedBaselineForCell(cell.box()));
         }
     }
 
@@ -533,7 +533,7 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
     }
 }
 
-TableFormattingGeometry TableFormattingContext::geometry() const
+TableFormattingGeometry TableFormattingContext::tableFormattingGeometry() const
 {
     return TableFormattingGeometry(*this, formattingState().tableGrid());
 }

@@ -75,18 +75,18 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        return geometry().outOfFlowHorizontalGeometry(layoutBox, constraints.horizontal, constraints.vertical, { usedWidth, { } });
+        return formattingGeometry().outOfFlowHorizontalGeometry(layoutBox, constraints.horizontal, constraints.vertical, { usedWidth, { } });
     };
 
     auto containingBlockWidth = constraints.horizontal.logicalWidth;
     auto horizontalGeometry = compute({ });
-    if (auto maxWidth = geometry().computedMaxWidth(layoutBox, containingBlockWidth)) {
+    if (auto maxWidth = formattingGeometry().computedMaxWidth(layoutBox, containingBlockWidth)) {
         auto maxHorizontalGeometry = compute(maxWidth);
         if (horizontalGeometry.contentWidthAndMargin.contentWidth > maxHorizontalGeometry.contentWidthAndMargin.contentWidth)
             horizontalGeometry = maxHorizontalGeometry;
     }
 
-    if (auto minWidth = geometry().computedMinWidth(layoutBox, containingBlockWidth)) {
+    if (auto minWidth = formattingGeometry().computedMinWidth(layoutBox, containingBlockWidth)) {
         auto minHorizontalGeometry = compute(minWidth);
         if (horizontalGeometry.contentWidthAndMargin.contentWidth < minHorizontalGeometry.contentWidthAndMargin.contentWidth)
             horizontalGeometry = minHorizontalGeometry;
@@ -103,18 +103,18 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, c
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
     auto compute = [&](Optional<LayoutUnit> usedHeight) {
-        return geometry().outOfFlowVerticalGeometry(layoutBox, constraints.horizontal, constraints.vertical, { usedHeight });
+        return formattingGeometry().outOfFlowVerticalGeometry(layoutBox, constraints.horizontal, constraints.vertical, { usedHeight });
     };
 
     auto containingBlockHeight = *constraints.vertical.logicalHeight;
     auto verticalGeometry = compute({ });
-    if (auto maxHeight = geometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
+    if (auto maxHeight = formattingGeometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
         auto maxVerticalGeometry = compute(maxHeight);
         if (verticalGeometry.contentHeightAndMargin.contentHeight > maxVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = maxVerticalGeometry;
     }
 
-    if (auto minHeight = geometry().computedMinHeight(layoutBox, containingBlockHeight)) {
+    if (auto minHeight = formattingGeometry().computedMinHeight(layoutBox, containingBlockHeight)) {
         auto minVerticalGeometry = compute(minHeight);
         if (verticalGeometry.contentHeightAndMargin.contentHeight < minVerticalGeometry.contentHeightAndMargin.contentHeight)
             verticalGeometry = minVerticalGeometry;
@@ -131,8 +131,8 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, c
 void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const HorizontalConstraints& horizontalConstraint)
 {
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    boxGeometry.setBorder(geometry().computedBorder(layoutBox));
-    boxGeometry.setPadding(geometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
+    boxGeometry.setBorder(formattingGeometry().computedBorder(layoutBox));
+    boxGeometry.setPadding(formattingGeometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
 }
 
 void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState, const ConstraintsForOutOfFlowContent& constraints)
@@ -143,7 +143,7 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
 
     auto constraintsForLayoutBox = [&] (const auto& outOfFlowBox) {
         auto& containingBlock = outOfFlowBox.containingBlock();
-        return &containingBlock == &root() ? constraints : geometry().constraintsForOutOfFlowContent(containingBlock);
+        return &containingBlock == &root() ? constraints : formattingGeometry().constraintsForOutOfFlowContent(containingBlock);
     };
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
@@ -161,9 +161,9 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
             auto& containerBox = downcast<ContainerBox>(*outOfFlowBox);
             auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
             if (containerBox.hasInFlowOrFloatingChild())
-                formattingContext->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(containerBox));
+                formattingContext->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(containerBox));
             computeOutOfFlowVerticalGeometry(containerBox, containingBlockConstraints);
-            formattingContext->layoutOutOfFlowContent(invalidationState, geometry().constraintsForOutOfFlowContent(containerBox));
+            formattingContext->layoutOutOfFlowContent(invalidationState, formattingGeometry().constraintsForOutOfFlowContent(containerBox));
         } else
             computeOutOfFlowVerticalGeometry(*outOfFlowBox, containingBlockConstraints);
     }
@@ -272,7 +272,7 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
     }
 }
 
-FormattingGeometry FormattingContext::geometry() const
+FormattingGeometry FormattingContext::formattingGeometry() const
 {
     return FormattingGeometry(*this);
 }

@@ -67,7 +67,7 @@ IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstrain
 void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    auto geometry = this->geometry();
+    auto formattingGeometry = flexFormattingGeometry();
     auto flexItemMainAxisStart = constraints.horizontal.logicalLeft;
     auto flexItemMainAxisEnd = flexItemMainAxisStart;
     auto flexItemCrosAxisStart = constraints.vertical.logicalTop;
@@ -87,16 +87,16 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
 
             flexItemGeometry.setLogicalTopLeft(LayoutPoint { flexItemMainAxisEnd, flexItemCrosAxisStart });
 
-            flexItemGeometry.setBorder(geometry.computedBorder(flexItem));
-            flexItemGeometry.setPadding(geometry.computedPadding(flexItem, constraints.horizontal.logicalWidth));
+            flexItemGeometry.setBorder(formattingGeometry.computedBorder(flexItem));
+            flexItemGeometry.setPadding(formattingGeometry.computedPadding(flexItem, constraints.horizontal.logicalWidth));
 
-            auto computedHorizontalMargin = geometry.computedHorizontalMargin(flexItem, constraints.horizontal);
+            auto computedHorizontalMargin = formattingGeometry.computedHorizontalMargin(flexItem, constraints.horizontal);
             flexItemGeometry.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) });
 
-            auto computedVerticalMargin = geometry.computedVerticalMargin(flexItem, constraints.horizontal);
+            auto computedVerticalMargin = formattingGeometry.computedVerticalMargin(flexItem, constraints.horizontal);
             flexItemGeometry.setVerticalMargin({ computedVerticalMargin.before.valueOr(0_lu), computedVerticalMargin.after.valueOr(0_lu) });
 
-            flexItemGeometry.setContentBoxHeight(geometry.contentHeightForFormattingContextRoot(flexItem));
+            flexItemGeometry.setContentBoxHeight(formattingGeometry.contentHeightForFormattingContextRoot(flexItem));
             flexItemGeometry.setContentBoxWidth(flexItemLogicalWidth);
             flexItemMainAxisEnd= BoxGeometry::borderBoxRect(flexItemGeometry).right();
             flexItemCrosAxisEnd = std::max(flexItemCrosAxisEnd, BoxGeometry::borderBoxRect(flexItemGeometry).bottom());
@@ -110,15 +110,15 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
 void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
 {
     auto& formattingState = this->formattingState();
-    auto geometry = this->geometry();
+    auto formattingGeometry = flexFormattingGeometry();
     for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
         if (formattingState.intrinsicWidthConstraintsForBox(flexItem))
             continue;
-        formattingState.setIntrinsicWidthConstraintsForBox(flexItem, geometry.intrinsicWidthConstraints(flexItem));
+        formattingState.setIntrinsicWidthConstraintsForBox(flexItem, formattingGeometry.intrinsicWidthConstraints(flexItem));
     }
 }
 
-FlexFormattingGeometry FlexFormattingContext::geometry() const
+FlexFormattingGeometry FlexFormattingContext::flexFormattingGeometry() const
 {
     return FlexFormattingGeometry(*this);
 }

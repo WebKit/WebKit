@@ -78,7 +78,7 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tabl
 
     if (tableBox.hasChild()) {
         auto invalidationState = InvalidationState { };
-        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(invalidationState, geometry().constraintsForInFlowContent(tableBox));
+        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(invalidationState, blockFormattingGeometry().constraintsForInFlowContent(tableBox));
     }
 
     computeHeightAndMarginForTableBox(tableBox, constraints);
@@ -100,13 +100,13 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
     // maximum collapsed top border. The bottom border width is computed by examining all cells whose bottom borders collapse
     // with the bottom of the table. The bottom border width is equal to half of the maximum collapsed bottom border.
     auto& grid = layoutState().establishedTableFormattingState(tableBox).tableGrid();
-    auto tableBorder = geometry().computedBorder(tableBox);
+    auto tableBorder = blockFormattingGeometry().computedBorder(tableBox);
 
     auto& firstColumnFirstRowBox = grid.slot({ 0 , 0 })->cell().box();
-    auto leftBorder = std::max(tableBorder.horizontal.left, geometry().computedBorder(firstColumnFirstRowBox).horizontal.left);
+    auto leftBorder = std::max(tableBorder.horizontal.left, blockFormattingGeometry().computedBorder(firstColumnFirstRowBox).horizontal.left);
 
     auto& lastColumnFirstRow = grid.slot({ grid.columns().size() - 1, 0 })->cell().box();
-    auto rightBorder = std::max(tableBorder.horizontal.right, geometry().computedBorder(lastColumnFirstRow).horizontal.right);
+    auto rightBorder = std::max(tableBorder.horizontal.right, blockFormattingGeometry().computedBorder(lastColumnFirstRow).horizontal.right);
 
     auto topBorder = tableBorder.vertical.top;
     auto bottomBorder = tableBorder.vertical.bottom;
@@ -115,33 +115,33 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
         auto& boxInFirstRox = grid.slot({ columnIndex, 0 })->cell().box();
         auto& boxInLastRow = grid.slot({ columnIndex, lastRowIndex })->cell().box();
 
-        topBorder = std::max(topBorder, geometry().computedBorder(boxInFirstRox).vertical.top);
-        bottomBorder = std::max(bottomBorder, geometry().computedBorder(boxInLastRow).vertical.bottom);
+        topBorder = std::max(topBorder, blockFormattingGeometry().computedBorder(boxInFirstRox).vertical.top);
+        bottomBorder = std::max(bottomBorder, blockFormattingGeometry().computedBorder(boxInLastRow).vertical.bottom);
     }
 
-    topBorder = std::max(topBorder, geometry().computedBorder(*tableBox.firstChild()).vertical.top);
+    topBorder = std::max(topBorder, blockFormattingGeometry().computedBorder(*tableBox.firstChild()).vertical.top);
     for (auto& section : childrenOfType<ContainerBox>(tableBox)) {
-        auto horiztonalBorder = geometry().computedBorder(section).horizontal;
+        auto horiztonalBorder = blockFormattingGeometry().computedBorder(section).horizontal;
         leftBorder = std::max(leftBorder, horiztonalBorder.left);
         rightBorder = std::max(rightBorder, horiztonalBorder.right);
     }
-    bottomBorder = std::max(bottomBorder, geometry().computedBorder(*tableBox.lastChild()).vertical.bottom);
+    bottomBorder = std::max(bottomBorder, blockFormattingGeometry().computedBorder(*tableBox.lastChild()).vertical.bottom);
 
     auto& rows = grid.rows().list();
-    topBorder = std::max(topBorder, geometry().computedBorder(rows.first().box()).vertical.top);
+    topBorder = std::max(topBorder, blockFormattingGeometry().computedBorder(rows.first().box()).vertical.top);
     for (auto& row : rows) {
-        auto horiztonalBorder = geometry().computedBorder(row.box()).horizontal;
+        auto horiztonalBorder = blockFormattingGeometry().computedBorder(row.box()).horizontal;
         leftBorder = std::max(leftBorder, horiztonalBorder.left);
         rightBorder = std::max(rightBorder, horiztonalBorder.right);
     }
-    bottomBorder = std::max(bottomBorder, geometry().computedBorder(rows.last().box()).vertical.bottom);
+    bottomBorder = std::max(bottomBorder, blockFormattingGeometry().computedBorder(rows.last().box()).vertical.bottom);
 
     auto collapsedBorder = Edges { { leftBorder, rightBorder }, { topBorder, bottomBorder } };
     grid.setCollapsedBorder(collapsedBorder);
 
     auto& boxGeometry = formattingState().boxGeometry(tableBox);
     boxGeometry.setBorder(collapsedBorder / 2);
-    boxGeometry.setPadding(geometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
+    boxGeometry.setPadding(blockFormattingGeometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
 }
 
 void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const ContainerBox& tableBox, const HorizontalConstraints& horizontalConstraints)
@@ -186,10 +186,10 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
     // Similar setup with non-table content would resolve the inner block level box's width to 40px;
     // This needs clarification in the spec.
     auto horizontalConstraintForResolvingWidth = m_horizontalConstraintsIgnoringFloats.logicalWidth;
-    auto geometry = this->geometry();
-    auto computedWidth = geometry.computedWidth(tableBox, horizontalConstraintForResolvingWidth);
-    auto computedMaxWidth = geometry.computedMaxWidth(tableBox, horizontalConstraintForResolvingWidth);
-    auto computedMinWidth = geometry.computedMinWidth(tableBox, horizontalConstraintForResolvingWidth);
+    auto formattingGeometry = blockFormattingGeometry();
+    auto computedWidth = formattingGeometry.computedWidth(tableBox, horizontalConstraintForResolvingWidth);
+    auto computedMaxWidth = formattingGeometry.computedMaxWidth(tableBox, horizontalConstraintForResolvingWidth);
+    auto computedMinWidth = formattingGeometry.computedMinWidth(tableBox, horizontalConstraintForResolvingWidth);
     // Use the generic shrink-to-fit-width logic as the initial width for the table.
     auto usedWidth = std::min(std::max(intrinsicWidthConstraints.minimum, availableHorizontalSpace), intrinsicWidthConstraints.maximum);
     if (computedWidth || computedMinWidth || computedMaxWidth) {
@@ -208,7 +208,7 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
             usedWidth = *computedMinWidth;
     }
 
-    auto contentWidthAndMargin = geometry.inFlowContentWidthAndMargin(tableBox, horizontalConstraints, OverriddenHorizontalValues { usedWidth, { } });
+    auto contentWidthAndMargin = formattingGeometry.inFlowContentWidthAndMargin(tableBox, horizontalConstraints, OverriddenHorizontalValues { usedWidth, { } });
 
     auto& boxGeometry = formattingState().boxGeometry(tableBox);
     boxGeometry.setContentBoxWidth(contentWidthAndMargin.contentWidth);
@@ -224,11 +224,11 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
         if (layoutState().inQuirksMode())
             return TableWrapperQuirks(*this).overriddenTableHeight(tableBox);
         if (tableBox.hasInFlowOrFloatingChild())
-            return geometry().contentHeightForFormattingContextRoot(tableBox);
+            return blockFormattingGeometry().contentHeightForFormattingContextRoot(tableBox);
         return { };
     }();
 
-    auto heightAndMargin = geometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { overriddenTableHeight });
+    auto heightAndMargin = blockFormattingGeometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { overriddenTableHeight });
     auto verticalMargin = marginCollapse().collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
     // Cache the computed positive and negative margin value pair.
     formattingState().setUsedVerticalMargin(tableBox, verticalMargin);

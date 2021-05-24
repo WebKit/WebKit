@@ -1,5 +1,68 @@
 2021-05-24  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Rename the geometry() helpers to formattingGeometry()
+        https://bugs.webkit.org/show_bug.cgi?id=226153
+
+        Reviewed by Antti Koivisto.
+
+        * layout/formattingContexts/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        (WebCore::Layout::FormattingContext::formattingGeometry const):
+        (WebCore::Layout::FormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/FormattingContext.h:
+        * layout/formattingContexts/FormattingQuirks.cpp:
+        (WebCore::Layout::FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight const):
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::BlockFormattingContext::formattingGeometry const):
+        (WebCore::Layout::BlockFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/block/BlockFormattingContext.h:
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::layoutTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        (WebCore::Layout::FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems):
+        (WebCore::Layout::FlexFormattingContext::formattingGeometry const):
+        (WebCore::Layout::FlexFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/flex/FlexFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        (WebCore::Layout::InlineFormattingContext::formattingGeometry const):
+        (WebCore::Layout::InlineFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraSpace):
+        (WebCore::Layout::TableFormattingContext::formattingGeometry const):
+        (WebCore::Layout::TableFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+
+2021-05-24  Alan Bujtas  <zalan@apple.com>
+
         [LFC] FormattingGeometry functions should all be const
         https://bugs.webkit.org/show_bug.cgi?id=226147
 

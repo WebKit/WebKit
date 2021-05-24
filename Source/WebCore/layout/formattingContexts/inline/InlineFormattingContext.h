@@ -56,7 +56,7 @@ public:
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
-    InlineFormattingGeometry geometry() const;
+    InlineFormattingGeometry inlineFormattingGeometry() const;
 
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
 

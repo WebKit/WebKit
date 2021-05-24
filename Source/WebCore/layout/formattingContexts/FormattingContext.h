@@ -91,7 +91,7 @@ protected:
 
     using LayoutQueue = Vector<const Box*>;
 private:
-    FormattingGeometry geometry() const;
+    FormattingGeometry formattingGeometry() const;
     FormattingQuirks quirks() const;
 
     void collectOutOfFlowDescendantsIfNeeded();

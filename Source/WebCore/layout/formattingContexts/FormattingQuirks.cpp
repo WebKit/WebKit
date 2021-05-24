@@ -57,9 +57,9 @@ LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(
         // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
 
-            auto geometry = FormattingGeometry { formattingContext };
-            auto horizontalConstraints = geometry.constraintsForInFlowContent(containingBlock->containingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal;
-            auto verticalMargin = geometry.computedVerticalMargin(*containingBlock, horizontalConstraints);
+            auto formattingGeometry = FormattingGeometry { formattingContext };
+            auto horizontalConstraints = formattingGeometry.constraintsForInFlowContent(containingBlock->containingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal;
+            auto verticalMargin = formattingGeometry.computedVerticalMargin(*containingBlock, horizontalConstraints);
 
             auto& boxGeometry = formattingContext.geometryForBox(*containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
             auto verticalPadding = boxGeometry.paddingTop().valueOr(0) + boxGeometry.paddingBottom().valueOr(0);

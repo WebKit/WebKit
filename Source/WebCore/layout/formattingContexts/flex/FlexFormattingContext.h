@@ -48,7 +48,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
 private:
-    FlexFormattingGeometry geometry() const;
+    FlexFormattingGeometry flexFormattingGeometry() const;
 
     void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);
     void computeIntrinsicWidthConstraintsForFlexItems();
