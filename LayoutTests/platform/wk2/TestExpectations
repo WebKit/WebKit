@@ -864,4 +864,3 @@ fast/speechrecognition/start-recognition-then-stop.html [ Pass ]
 fast/speechrecognition/start-second-recognition.html [ Pass ]
 fullscreen/full-screen-enter-while-exiting.html [ Pass ]
 
-webkit.org/b/224626 http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.py [ Failure ]
