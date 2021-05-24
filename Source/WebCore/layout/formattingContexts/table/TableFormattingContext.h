@@ -28,6 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "TableFormattingGeometry.h"
+#include "TableFormattingQuirks.h"
 #include "TableFormattingState.h"
 #include "TableGrid.h"
 #include <wtf/IsoMalloc.h>
@@ -37,7 +39,6 @@ namespace WebCore {
 namespace Layout {
 
 class InvalidationState;
-class TableFormattingGeometry;
 
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
@@ -47,6 +48,9 @@ public:
     TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState&);
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
+
+    const TableFormattingGeometry& formattingGeometry() const final { return m_tableFormattingGeometry; }
+    const TableFormattingQuirks& formattingQuirks() const final { return m_tableFormattingQuirks; }
 
     static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
 
@@ -77,9 +81,11 @@ private:
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
 
-    TableFormattingGeometry tableFormattingGeometry() const;
     const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
+
+    const TableFormattingGeometry m_tableFormattingGeometry;
+    const TableFormattingQuirks m_tableFormattingQuirks;
 };
 
 }

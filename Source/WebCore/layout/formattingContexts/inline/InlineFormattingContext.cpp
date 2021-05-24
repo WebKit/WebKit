@@ -30,8 +30,6 @@
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
-#include "InlineFormattingGeometry.h"
-#include "InlineFormattingQuirks.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
 #include "InlineLineRun.h"
@@ -58,6 +56,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
 InlineFormattingContext::InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
+    , m_inlineFormattingGeometry(*this)
+    , m_inlineFormattingQuirks(*this)
 {
 }
 
@@ -104,9 +104,9 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
                 if (formattingRoot.hasChild()) {
                     auto formattingContext = LayoutContext::createFormattingContext(formattingRoot, layoutState());
                     if (formattingRoot.hasInFlowOrFloatingChild())
-                        formattingContext->layoutInFlowContent(invalidationState, inlineFormattingGeometry().constraintsForInFlowContent(formattingRoot));
+                        formattingContext->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(formattingRoot));
                     computeHeightAndMargin(formattingRoot, constraints.horizontal);
-                    formattingContext->layoutOutOfFlowContent(invalidationState, inlineFormattingGeometry().constraintsForOutOfFlowContent(formattingRoot));
+                    formattingContext->layoutOutOfFlowContent(invalidationState, formattingGeometry().constraintsForOutOfFlowContent(formattingRoot));
                 } else
                     computeHeightAndMargin(formattingRoot, constraints.horizontal);
             } else {
@@ -198,7 +198,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         auto initialLineHeight = [&]() -> InlineLayoutUnit {
             if (layoutState().inStandardsMode())
                 return root().style().computedLineHeight();
-            return InlineFormattingQuirks(*this).initialLineHeight();
+            return formattingQuirks().initialLineHeight();
         }();
         auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal.logicalLeft, constraints.horizontal.logicalWidth, initialLineHeight };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, leadingLogicalWidth, initialLineConstraints, isFirstLine);
@@ -208,7 +208,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         if (!lineContentRange.isEmpty()) {
             ASSERT(needsLayoutRange.start < lineContentRange.end);
             isFirstLine = false;
-            lineLogicalTop = inlineFormattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
+            lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
             if (lineContent.isLastLineWithInlineContent) {
                 // The final content height of this inline formatting context should include the cleared floats as well.
                 formattingState.setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
@@ -249,7 +249,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
     ASSERT(!formattingState().intrinsicWidthConstraints());
 
     if (!root().hasInFlowOrFloatingChild()) {
-        auto constraints = inlineFormattingGeometry().constrainByMinMaxWidth(root(), { });
+        auto constraints = formattingGeometry().constrainByMinMaxWidth(root(), { });
         formattingState().setIntrinsicWidthConstraints(constraints);
         return constraints;
     }
@@ -296,7 +296,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
 
     auto minimumContentWidth = ceiledLayoutUnit(maximumLineWidth(0));
     auto maximumContentWidth = ceiledLayoutUnit(maximumLineWidth(maxInlineLayoutUnit()));
-    auto constraints = inlineFormattingGeometry().constrainByMinMaxWidth(root(), { minimumContentWidth, maximumContentWidth });
+    auto constraints = formattingGeometry().constrainByMinMaxWidth(root(), { minimumContentWidth, maximumContentWidth });
     formattingState().setIntrinsicWidthConstraints(constraints);
     return constraints;
 }
@@ -323,7 +323,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
 {
     ASSERT(formattingRoot.establishesFormattingContext());
     auto constraints = IntrinsicWidthConstraints { };
-    if (auto fixedWidth = inlineFormattingGeometry().fixedValue(formattingRoot.style().logicalWidth()))
+    if (auto fixedWidth = formattingGeometry().fixedValue(formattingRoot.style().logicalWidth()))
         constraints = { *fixedWidth, *fixedWidth };
     else {
         auto hasInflowOrFloatingContent = is<ContainerBox>(formattingRoot) && downcast<ContainerBox>(formattingRoot).hasInFlowOrFloatingChild();
@@ -332,14 +332,14 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
         if (hasInflowOrFloatingContent && !shouldIgnoreChildContent)
             constraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(formattingRoot), layoutState())->computedIntrinsicWidthConstraints();
     }
-    constraints = inlineFormattingGeometry().constrainByMinMaxWidth(formattingRoot, constraints);
+    constraints = formattingGeometry().constrainByMinMaxWidth(formattingRoot, constraints);
     constraints.expand(geometryForBox(formattingRoot).horizontalMarginBorderAndPadding());
     formattingState().setIntrinsicWidthConstraintsForBox(formattingRoot, constraints);
 }
 
 void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    auto computedHorizontalMargin = inlineFormattingGeometry().computedHorizontalMargin(layoutBox, horizontalConstraints);
+    auto computedHorizontalMargin = formattingGeometry().computedHorizontalMargin(layoutBox, horizontalConstraints);
     formattingState().boxGeometry(layoutBox).setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
 
@@ -347,11 +347,11 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
 {
     auto compute = [&](Optional<LayoutUnit> usedWidth) {
         if (layoutBox.isFloatingPositioned())
-            return inlineFormattingGeometry().floatingContentWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+            return formattingGeometry().floatingContentWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
         if (layoutBox.isInlineBlockBox())
-            return inlineFormattingGeometry().inlineBlockContentWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
+            return formattingGeometry().inlineBlockContentWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
         if (layoutBox.isReplacedBox())
-            return inlineFormattingGeometry().inlineReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedWidth, { } });
+            return formattingGeometry().inlineReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedWidth, { } });
         ASSERT_NOT_REACHED();
         return ContentWidthAndMargin { };
     };
@@ -359,13 +359,13 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
     auto contentWidthAndMargin = compute({ });
 
     auto availableWidth = horizontalConstraints.logicalWidth;
-    if (auto maxWidth = inlineFormattingGeometry().computedMaxWidth(layoutBox, availableWidth)) {
+    if (auto maxWidth = formattingGeometry().computedMaxWidth(layoutBox, availableWidth)) {
         auto maxWidthAndMargin = compute(maxWidth);
         if (contentWidthAndMargin.contentWidth > maxWidthAndMargin.contentWidth)
             contentWidthAndMargin = maxWidthAndMargin;
     }
 
-    auto minWidth = inlineFormattingGeometry().computedMinWidth(layoutBox, availableWidth).valueOr(0);
+    auto minWidth = formattingGeometry().computedMinWidth(layoutBox, availableWidth).valueOr(0);
     auto minWidthAndMargin = compute(minWidth);
     if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
         contentWidthAndMargin = minWidthAndMargin;
@@ -379,23 +379,23 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const
 {
     auto compute = [&](Optional<LayoutUnit> usedHeight) {
         if (layoutBox.isFloatingPositioned())
-            return inlineFormattingGeometry().floatingContentHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
+            return formattingGeometry().floatingContentHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
         if (layoutBox.isInlineBlockBox())
-            return inlineFormattingGeometry().inlineBlockContentHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
+            return formattingGeometry().inlineBlockContentHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
         if (layoutBox.isReplacedBox())
-            return inlineFormattingGeometry().inlineReplacedContentHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedHeight });
+            return formattingGeometry().inlineReplacedContentHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, { usedHeight });
         ASSERT_NOT_REACHED();
         return ContentHeightAndMargin { };
     };
 
     auto contentHeightAndMargin = compute({ });
-    if (auto maxHeight = inlineFormattingGeometry().computedMaxHeight(layoutBox)) {
+    if (auto maxHeight = formattingGeometry().computedMaxHeight(layoutBox)) {
         auto maxHeightAndMargin = compute(maxHeight);
         if (contentHeightAndMargin.contentHeight > maxHeightAndMargin.contentHeight)
             contentHeightAndMargin = maxHeightAndMargin;
     }
 
-    if (auto minHeight = inlineFormattingGeometry().computedMinHeight(layoutBox)) {
+    if (auto minHeight = formattingGeometry().computedMinHeight(layoutBox)) {
         auto minHeightAndMargin = compute(minHeight);
         if (contentHeightAndMargin.contentHeight < minHeightAndMargin.contentHeight)
             contentHeightAndMargin = minHeightAndMargin;
@@ -456,7 +456,7 @@ void InlineFormattingContext::collectInlineContentIfNeeded()
 InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
-    auto formattingGeometry = inlineFormattingGeometry();
+    auto& formattingGeometry = this->formattingGeometry();
 
     formattingState.addLineBox(formattingGeometry.lineBoxForLineContent(lineContent));
     const auto& lineBox = formattingState.lineBoxes().last();
@@ -610,11 +610,6 @@ void InlineFormattingContext::invalidateFormattingState(const InvalidationState&
     // For now let's just clear the runs.
     formattingState().clearLineAndRuns();
     // FIXME: This is also where we would delete inline items if their content changed.
-}
-
-InlineFormattingGeometry InlineFormattingContext::inlineFormattingGeometry() const
-{
-    return InlineFormattingGeometry(*this);
 }
 
 }

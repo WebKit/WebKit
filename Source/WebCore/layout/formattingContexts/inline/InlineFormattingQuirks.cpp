@@ -98,6 +98,7 @@ bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineL
 
 bool InlineFormattingQuirks::hasSoftWrapOpportunityAtImage() const
 {
+    ASSERT(layoutState().inQuirksMode());
     return !formattingContext().root().isTableCell();
 }
 

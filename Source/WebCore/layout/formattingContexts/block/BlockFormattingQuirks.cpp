@@ -48,7 +48,6 @@ static bool isQuirkContainer(const Box& layoutBox)
 BlockFormattingQuirks::BlockFormattingQuirks(const BlockFormattingContext& blockFormattingContext)
     : FormattingQuirks(blockFormattingContext)
 {
-    ASSERT(layoutState().inQuirksMode());
 }
 
 static bool needsStretching(const Box& layoutBox)
@@ -62,6 +61,7 @@ static bool needsStretching(const Box& layoutBox)
 
 Optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicable(const Box& layoutBox, ContentHeightAndMargin contentHeightAndMargin) const
 {
+    ASSERT(layoutState().inQuirksMode());
     if (!needsStretching(layoutBox))
         return { };
     auto& formattingContext = downcast<BlockFormattingContext>(this->formattingContext());
@@ -98,7 +98,7 @@ Optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicable(co
     bodyBoxContentHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.
     if (documentBox.isInFlow()) {
-        auto formattingGeometry = BlockFormattingGeometry { formattingContext };
+        auto& formattingGeometry = formattingContext.formattingGeometry();
         auto precomputeDocumentBoxVerticalMargin = formattingGeometry.computedVerticalMargin(documentBox, formattingGeometry.constraintsForInFlowContent(initialContainingBlock, FormattingContext::EscapeReason::BodyStretchesToViewportQuirk).horizontal);
         bodyBoxContentHeight -= precomputeDocumentBoxVerticalMargin.before.valueOr(0) + precomputeDocumentBoxVerticalMargin.after.valueOr(0);
     }

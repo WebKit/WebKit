@@ -282,7 +282,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(con
     }
 
     if (layoutState().inQuirksMode()) {
-        if (auto stretchedInFlowHeight = BlockFormattingQuirks(formattingContext()).stretchedInFlowHeightIfApplicable(layoutBox, contentHeightAndMargin))
+        if (auto stretchedInFlowHeight = formattingContext().formattingQuirks().stretchedInFlowHeightIfApplicable(layoutBox, contentHeightAndMargin))
             contentHeightAndMargin.contentHeight = *stretchedInFlowHeight;
     }
 

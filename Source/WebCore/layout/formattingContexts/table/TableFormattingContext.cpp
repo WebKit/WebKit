@@ -37,7 +37,6 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
-#include "TableFormattingGeometry.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -49,6 +48,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingContext);
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
 TableFormattingContext::TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
+    , m_tableFormattingGeometry(*this, formattingState.tableGrid())
+    , m_tableFormattingQuirks(*this)
 {
 }
 
@@ -173,13 +174,13 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
         auto& rowBox = row.box();
         auto& rowBoxGeometry = formattingState().boxGeometry(rowBox);
 
-        rowBoxGeometry.setPadding(tableFormattingGeometry().computedPadding(rowBox, availableHorizontalSpace));
+        rowBoxGeometry.setPadding(formattingGeometry().computedPadding(rowBox, availableHorizontalSpace));
         // Internal table elements do not have margins.
         rowBoxGeometry.setHorizontalMargin({ });
         rowBoxGeometry.setVerticalMargin({ });
 
         auto computedRowBorder = [&] {
-            auto border = tableFormattingGeometry().computedBorder(rowBox);
+            auto border = formattingGeometry().computedBorder(rowBox);
             if (!grid.collapsedBorder())
                 return border;
             // Border collapsing delegates borders to table/cells.
@@ -280,7 +281,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
-    auto formattingGeometry = tableFormattingGeometry();
+    auto& formattingGeometry = this->formattingGeometry();
     auto& grid = formattingState().tableGrid();
     auto& cellBox = cell.box();
     auto& cellBoxGeometry = formattingState().boxGeometry(cellBox);
@@ -407,7 +408,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
 
         auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
         if (!intrinsicWidth) {
-            intrinsicWidth = tableFormattingGeometry().intrinsicWidthConstraintsForCell(*cell);
+            intrinsicWidth = formattingGeometry().intrinsicWidthConstraintsForCell(*cell);
             formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
         }
         // Spanner cells put their intrinsic widths on the initial slots.
@@ -426,7 +427,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             }
             if (auto width = columnBox->columnWidth())
                 return width;
-            return tableFormattingGeometry().computedColumnWidth(*columnBox);
+            return formattingGeometry().computedColumnWidth(*columnBox);
         };
         fixedWidthColumns.append(fixedWidth());
     }
@@ -518,7 +519,7 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
             auto& cell = slot.cell();
-            cell.setBaseline(tableFormattingGeometry().usedBaselineForCell(cell.box()));
+            cell.setBaseline(formattingGeometry().usedBaselineForCell(cell.box()));
         }
     }
 
@@ -531,11 +532,6 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
         row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += distributedVerticalSpaces[rowIndex] + grid.verticalSpacing();
     }
-}
-
-TableFormattingGeometry TableFormattingContext::tableFormattingGeometry() const
-{
-    return TableFormattingGeometry(*this, formattingState().tableGrid());
 }
 
 }

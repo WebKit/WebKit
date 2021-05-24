@@ -272,16 +272,6 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
     }
 }
 
-FormattingGeometry FormattingContext::formattingGeometry() const
-{
-    return FormattingGeometry(*this);
-}
-
-FormattingQuirks FormattingContext::quirks() const
-{
-    return FormattingQuirks(*this);
-}
-
 #ifndef NDEBUG
 void FormattingContext::validateGeometryConstraintsAfterLayout() const
 {

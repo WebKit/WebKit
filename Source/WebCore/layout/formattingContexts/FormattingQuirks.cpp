@@ -43,6 +43,7 @@ FormattingQuirks::FormattingQuirks(const FormattingContext& formattingContext)
 
 LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox) const
 {
+    ASSERT(layoutState().inQuirksMode());
     // In quirks mode, we go and travers the containing block chain to find a block level box with fixed height value, even if it means leaving
     // the current formatting context. FIXME: surely we need to do some tricks here when block direction support is added.
     auto& formattingContext = this->formattingContext();
@@ -56,8 +57,7 @@ LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(
         // If the only fixed value box we find is the ICB, then ignore the body and the document (vertical) margin, padding and border. So much quirkiness.
         // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
         if (containingBlock->isBodyBox() || containingBlock->isDocumentBox()) {
-
-            auto formattingGeometry = FormattingGeometry { formattingContext };
+            auto& formattingGeometry = formattingContext.formattingGeometry();
             auto horizontalConstraints = formattingGeometry.constraintsForInFlowContent(containingBlock->containingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal;
             auto verticalMargin = formattingGeometry.computedVerticalMargin(*containingBlock, horizontalConstraints);
 

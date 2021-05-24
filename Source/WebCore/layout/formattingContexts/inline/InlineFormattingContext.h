@@ -28,13 +28,14 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingContext.h"
+#include "InlineFormattingGeometry.h"
+#include "InlineFormattingQuirks.h"
 #include "InlineLineBuilder.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
-class InlineFormattingGeometry;
 class InlineFormattingState;
 class InvalidationState;
 class LineBox;
@@ -53,10 +54,11 @@ public:
 
     void lineLayoutForIntergration(InvalidationState&, const ConstraintsForInFlowContent&);
 
+    const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
+    const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
+
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-
-    InlineFormattingGeometry inlineFormattingGeometry() const;
 
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
 
@@ -70,6 +72,9 @@ private:
     void collectInlineContentIfNeeded();
     InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
+
+    const InlineFormattingGeometry m_inlineFormattingGeometry;
+    const InlineFormattingQuirks m_inlineFormattingQuirks;
 };
 
 }

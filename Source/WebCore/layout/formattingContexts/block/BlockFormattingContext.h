@@ -27,6 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingGeometry.h"
+#include "BlockFormattingQuirks.h"
 #include "BlockFormattingState.h"
 #include "FormattingContext.h"
 #include <wtf/HashMap.h>
@@ -39,7 +41,6 @@ class LayoutUnit;
 namespace Layout {
 
 class Box;
-class BlockFormattingGeometry;
 class BlockMarginCollapse;
 class FloatingContext;
 
@@ -54,6 +55,8 @@ public:
     LayoutUnit usedContentHeight() const override;
 
     const BlockFormattingState& formattingState() const { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
+    const BlockFormattingGeometry& formattingGeometry() const final { return m_blockFormattingGeometry; }
+    const BlockFormattingQuirks& formattingQuirks() const override { return m_blockFormattingQuirks; }
 
 protected:
     struct ConstraintsPair {
@@ -80,7 +83,6 @@ protected:
     void updateMarginAfterForPreviousSibling(const Box&);
 
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
-    BlockFormattingGeometry blockFormattingGeometry() const;
     BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED
@@ -88,8 +90,11 @@ protected:
     PrecomputedMarginBefore precomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.get(&layoutBox); }
     bool hasPrecomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.contains(&layoutBox); }
 #endif
+
 private:
     HashMap<const Box*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
+    const BlockFormattingGeometry m_blockFormattingGeometry;
+    const BlockFormattingQuirks m_blockFormattingQuirks;
 };
 
 }

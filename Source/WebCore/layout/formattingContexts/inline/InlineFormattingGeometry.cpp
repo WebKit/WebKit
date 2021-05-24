@@ -391,7 +391,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
     // 2. Compute the baseline/logical top position of the root inline box. Aligned boxes push the root inline box around inside the line box.
     // 3. Finally align the inline level boxes using (mostly) normal inline level box geometries.
     auto& rootInlineBox = lineBox.rootInlineBox();
-    auto formattingGeometry = InlineFormattingGeometry { formattingContext() };
+    auto& formattingGeometry = formattingContext().formattingGeometry();
 
     auto computeLineBoxLogicalHeight = [&] {
         // Line box height computation is based on the layout bounds of the inline boxes and not their logical (ascent/descent) dimensions.
@@ -669,7 +669,7 @@ InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext
 {
 }
 
-LineBox InlineFormattingGeometry::lineBoxForLineContent(const LineBuilder::LineContent& lineContent)
+LineBox InlineFormattingGeometry::lineBoxForLineContent(const LineBuilder::LineContent& lineContent) const
 {
     return LineBoxBuilder(formattingContext()).build(lineContent);
 }
@@ -730,7 +730,7 @@ ContentHeightAndMargin InlineFormattingGeometry::inlineBlockContentHeightAndMarg
 bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
     if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox())
-        return layoutState().inStandardsMode() ? true : InlineFormattingQuirks(formattingContext()).inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
+        return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         if (inlineLevelBox.layoutBounds().height())
             return true;

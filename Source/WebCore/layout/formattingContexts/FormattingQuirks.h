@@ -38,6 +38,10 @@ public:
 
     LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const;
 
+    bool isBlockFormattingQuirks() const { return formattingContext().isBlockFormattingContext(); }
+    bool isInlineFormattingQuirks() const { return formattingContext().isInlineFormattingContext(); }
+    bool isTableFormattingQuirks() const { return formattingContext().isTableFormattingContext(); }
+
 protected:
     const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
@@ -47,5 +51,10 @@ protected:
 
 }
 }
+
+#define SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_QUIRKS(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
+    static bool isType(const WebCore::Layout::FormattingQuirks& formattingQuirks) { return formattingQuirks.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -89,6 +89,11 @@ public:
     Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
     Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
+    bool isBlockFormattingGeometry() const { return formattingContext().isBlockFormattingContext(); }
+    bool isInlineFormattingGeometry() const { return formattingContext().isInlineFormattingContext(); }
+    bool isFlexFormattingGeometry() const { return formattingContext().isFlexFormattingContext(); }
+    bool isTableFormattingGeometry() const { return formattingContext().isTableFormattingContext(); }
+
 protected:
     const LayoutState& layoutState() const { return m_formattingContext.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
@@ -119,5 +124,10 @@ private:
 
 }
 }
+
+#define SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
+    static bool isType(const WebCore::Layout::FormattingGeometry& formattingGeometry) { return formattingGeometry.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -47,4 +47,6 @@ public:
 }
 }
 
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_QUIRKS(BlockFormattingQuirks, isBlockFormattingQuirks())
+
 #endif

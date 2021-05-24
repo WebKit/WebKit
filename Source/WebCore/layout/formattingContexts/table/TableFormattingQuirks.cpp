@@ -39,7 +39,6 @@ namespace Layout {
 TableFormattingQuirks::TableFormattingQuirks(const TableFormattingContext& tableFormattingContext)
     : FormattingQuirks(tableFormattingContext)
 {
-    ASSERT(layoutState().inQuirksMode());
 }
 
 bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const ContainerBox& cellBox)

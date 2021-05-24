@@ -61,6 +61,8 @@ public:
     const ContainerBox& root() const { return *m_root; }
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
+    virtual const FormattingGeometry& formattingGeometry() const = 0;
+    virtual const FormattingQuirks& formattingQuirks() const = 0;
 
     enum class EscapeReason {
         TableQuirkNeedsGeometryFromEstablishedFormattingContext,
@@ -91,9 +93,6 @@ protected:
 
     using LayoutQueue = Vector<const Box*>;
 private:
-    FormattingGeometry formattingGeometry() const;
-    FormattingQuirks quirks() const;
-
     void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
     void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);

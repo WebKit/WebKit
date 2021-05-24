@@ -44,6 +44,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FlexFormattingContext);
 
 FlexFormattingContext::FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
+    , m_flexFormattingGeometry(*this)
+    , m_flexFormattingQuirks(*this)
 {
 }
 
@@ -67,7 +69,7 @@ IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstrain
 void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    auto formattingGeometry = flexFormattingGeometry();
+    auto& formattingGeometry = this->formattingGeometry();
     auto flexItemMainAxisStart = constraints.horizontal.logicalLeft;
     auto flexItemMainAxisEnd = flexItemMainAxisStart;
     auto flexItemCrosAxisStart = constraints.vertical.logicalTop;
@@ -110,17 +112,12 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
 void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
 {
     auto& formattingState = this->formattingState();
-    auto formattingGeometry = flexFormattingGeometry();
+    auto& formattingGeometry = this->formattingGeometry();
     for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
         if (formattingState.intrinsicWidthConstraintsForBox(flexItem))
             continue;
         formattingState.setIntrinsicWidthConstraintsForBox(flexItem, formattingGeometry.intrinsicWidthConstraints(flexItem));
     }
-}
-
-FlexFormattingGeometry FlexFormattingContext::flexFormattingGeometry() const
-{
-    return FlexFormattingGeometry(*this);
 }
 
 }

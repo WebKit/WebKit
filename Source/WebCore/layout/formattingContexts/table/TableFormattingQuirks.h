@@ -44,4 +44,6 @@ public:
 }
 }
 
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_QUIRKS(TableFormattingQuirks, isTableFormattingQuirks())
+
 #endif

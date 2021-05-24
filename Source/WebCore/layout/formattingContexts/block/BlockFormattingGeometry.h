@@ -34,6 +34,8 @@ namespace Layout {
 
 class BlockFormattingContext;
 
+class BlockFormattingContext;
+
 // This class implements positioning and sizing for boxes participating in a block formatting context.
 class BlockFormattingGeometry : public FormattingGeometry {
 public:
@@ -60,5 +62,7 @@ private:
 
 }
 }
+
+SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_GEOMETRY(BlockFormattingGeometry, isBlockFormattingGeometry())
 
 #endif

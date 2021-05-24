@@ -272,7 +272,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         auto maximumColumnAscent = InlineLayoutUnit { };
         auto maximumColumnDescent = InlineLayoutUnit { };
         // Initial minimum height is the computed height if available <tr style="height: 100px"><td></td></tr>
-        rowHeight[rowIndex] = formattingContext().tableFormattingGeometry().computedHeight(rows.list()[rowIndex].box(), availableVerticalSpace).valueOr(0_lu);
+        rowHeight[rowIndex] = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), availableVerticalSpace).valueOr(0_lu);
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& slot = *m_grid.slot({ columnIndex, rowIndex });
             if (slot.isRowSpanned())
@@ -302,7 +302,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         if (slot.hasRowSpan())
             return GridSpace { formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight(), formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight() };
         auto& rows = m_grid.rows();
-        auto computedRowHeight = formattingContext().tableFormattingGeometry().computedHeight(rows.list()[rowIndex].box(), { });
+        auto computedRowHeight = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), { });
         auto height = std::max<float>(rowHeight[rowIndex], computedRowHeight.valueOr(0_lu));
         return GridSpace { height, height };
     });

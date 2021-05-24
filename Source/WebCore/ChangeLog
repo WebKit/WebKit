@@ -1,3 +1,107 @@
+2021-05-24  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Add support for geometry/quirks virtual functions
+        https://bugs.webkit.org/show_bug.cgi?id=226150
+
+        Reviewed by Antti Koivisto.
+
+        This enables us to override quirks/geometry functionality at the subclasses.
+
+        * layout/formattingContexts/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        (WebCore::Layout::FormattingContext::geometry const): Deleted.
+        (WebCore::Layout::FormattingContext::quirks const): Deleted.
+        * layout/formattingContexts/FormattingContext.h:
+        * layout/formattingContexts/FormattingGeometry.cpp:
+        (WebCore::Layout::FormattingGeometry::computedHeightValue const):
+        * layout/formattingContexts/FormattingGeometry.h:
+        (WebCore::Layout::FormattingGeometry::isBlockFormattingGeometry const):
+        (WebCore::Layout::FormattingGeometry::isInlineFormattingGeometry const):
+        (WebCore::Layout::FormattingGeometry::isFlexFormattingGeometry const):
+        (WebCore::Layout::FormattingGeometry::isTableFormattingGeometry const):
+        * layout/formattingContexts/FormattingQuirks.cpp:
+        (WebCore::Layout::FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight const):
+        * layout/formattingContexts/FormattingQuirks.h:
+        (WebCore::Layout::FormattingQuirks::isBlockFormattingQuirks const):
+        (WebCore::Layout::FormattingQuirks::isInlineFormattingQuirks const):
+        (WebCore::Layout::FormattingQuirks::isTableFormattingQuirks const):
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::BlockFormattingContext):
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::computeStaticHorizontalPosition):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::BlockFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/block/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::formattingState):
+        (WebCore::Layout::BlockFormattingContext::blockFormattingGeometry const):
+        (WebCore::Layout::BlockFormattingContext::blockFormattingQuirks const):
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp:
+        (WebCore::Layout::BlockFormattingGeometry::inFlowContentHeightAndMargin const):
+        * layout/formattingContexts/block/BlockFormattingGeometry.h:
+        * layout/formattingContexts/block/BlockFormattingQuirks.cpp:
+        (WebCore::Layout::BlockFormattingQuirks::stretchedInFlowHeightIfApplicable const):
+        * layout/formattingContexts/block/BlockFormattingQuirks.h:
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::TableWrapperBlockFormattingContext):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::layoutTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.h:
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.cpp:
+        (WebCore::Layout::TableWrapperQuirks::overriddenTableHeight const):
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.h:
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::FlexFormattingContext):
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        (WebCore::Layout::FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems):
+        (WebCore::Layout::FlexFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/flex/FlexFormattingContext.h:
+        * layout/formattingContexts/flex/FlexFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        (WebCore::Layout::InlineFormattingContext::computeHorizontalMargin):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        (WebCore::Layout::InlineFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+        (WebCore::Layout::InlineFormattingGeometry::lineBoxForLineContent const):
+        (WebCore::Layout::InlineFormattingGeometry::inlineLevelBoxAffectsLineBox const):
+        (WebCore::Layout::InlineFormattingGeometry::lineBoxForLineContent): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineFormattingQuirks.h:
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::isAtSoftWrapOpportunity):
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::TableFormattingContext):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraSpace):
+        (WebCore::Layout::TableFormattingContext::geometry const): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingGeometry.h:
+        * layout/formattingContexts/table/TableFormattingQuirks.h:
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayNonRootInlineBoxes const):
+
 2021-05-24  Darin Adler  <darin@apple.com>
 
         Remove StringBuilder::appendLiteral
