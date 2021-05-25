@@ -900,7 +900,23 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
-    if (!m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick && !isProbablyMeaningfulClick(nodeRespondingToClick))
+    bool shouldDispatchDidNotHandleTapAsMeaningfulClickAtPoint = ([&] {
+        if (m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick)
+            return false;
+
+        if (oldFocusedElement != newFocusedElement)
+            return false;
+
+        if (is<HTMLTextFormControlElement>(nodeRespondingToClick) || nodeRespondingToClick.hasEditableStyle())
+            return false;
+
+        if (isProbablyMeaningfulClick(nodeRespondingToClick))
+            return false;
+
+        return true;
+    })();
+
+    if (shouldDispatchDidNotHandleTapAsMeaningfulClickAtPoint)
         send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(roundedIntPoint(location)));
 
     if (!tapWasHandled || !nodeRespondingToClick.isElementNode())
