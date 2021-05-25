@@ -1,3 +1,15 @@
+2021-05-25  Tim Nguyen  <ntim@apple.com>
+
+        Add basic <dialog> element UA styles
+        https://bugs.webkit.org/show_bug.cgi?id=226169
+
+        Reviewed by Antti Koivisto.
+
+        Basic styles from https://html.spec.whatwg.org/#flow-content-3
+
+        * css/dialog.css:
+        (dialog):
+
 2021-05-25  Frederic Wang  <fwang@igalia.com>
 
         Crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply

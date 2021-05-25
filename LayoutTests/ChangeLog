@@ -1,3 +1,16 @@
+2021-05-25  Tim Nguyen  <ntim@apple.com>
+
+        Add basic <dialog> element UA styles
+        https://bugs.webkit.org/show_bug.cgi?id=226169
+
+        Reviewed by Antti Koivisto.
+
+        Basic styles from https://html.spec.whatwg.org/#flow-content-3
+
+        * TestExpectations: marked relevant tests as failing until a proper modal dialog implementation makes them pass
+        * fast/box-shadow/box-shadow-huge-area-crash.html: changed it to use a <div> to match the behaviour before this patch
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout-expected.txt:
+
 2021-05-25  Frederic Wang  <fwang@igalia.com>
 
         Crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply

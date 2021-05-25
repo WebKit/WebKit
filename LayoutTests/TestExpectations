@@ -2098,6 +2098,11 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
 
+# Modal <dialog> support
+webkit.org/b/226175 imported/blink/dialog/modal-dialog-in-replaced-renderer.html [ ImageOnlyFailure ]
+webkit.org/b/226175 imported/blink/dialog/modal-dialog-in-table-column.html [ ImageOnlyFailure ]
+webkit.org/b/226175 imported/blink/dialog/modal-dialog-sibling.html [ ImageOnlyFailure ]
+
 # Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
 webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [ Skip ]
 
