@@ -137,10 +137,13 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     ASSERT(!!scope.exception() == !object);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto& jsProcessor = *JSC::jsCast<JSAudioWorkletProcessor*>(object);
-    jsProcessor.wrapped().setProcessCallback(makeUnique<JSCallbackDataStrong>(&jsProcessor, globalObject));
+    auto* jsProcessor = JSC::jsDynamicCast<JSAudioWorkletProcessor*>(vm, object);
+    if (!jsProcessor)
+        return nullptr;
 
-    return &jsProcessor.wrapped();
+    jsProcessor->wrapped().setProcessCallback(makeUnique<JSCallbackDataStrong>(jsProcessor, globalObject));
+
+    return &jsProcessor->wrapped();
 }
 
 void AudioWorkletGlobalScope::prepareForDestruction()
