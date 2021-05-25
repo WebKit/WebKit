@@ -2705,26 +2705,6 @@ def check_wtf_move(clean_lines, line_number, file_state, error):
     error(line_number, 'runtime/wtf_move', 4, "Use 'WTFMove()' instead of 'std::move()'.")
 
 
-def check_wtf_optional(clean_lines, line_number, file_state, error):
-    """Looks for use of 'std::optional<>' which should be replaced with 'WTF::Optional<>'.
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      file_state: A _FileState instance which maintains information about
-                  the state of things in the file.
-      error: The function to call with any errors found.
-    """
-
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-
-    using_std_optional = search(r'\boptional\s*\<', line)
-    if not using_std_optional:
-        return
-
-    error(line_number, 'runtime/wtf_optional', 4, "Use 'WTF::Optional<>' instead of 'std::optional<>'.")
-
-
 def check_callonmainthread(filename, clean_lines, line_number, file_state, error):
     """Looks for use of 'callOnMainThread()' which should be replaced with 'callOnMainRunLoop()'.
 
@@ -3426,7 +3406,6 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
-    check_wtf_optional(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
     check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
@@ -4656,7 +4635,6 @@ class CppChecker(object):
         'runtime/unsigned',
         'runtime/virtual',
         'runtime/wtf_checked_size',
-        'runtime/wtf_optional',
         'runtime/wtf_make_unique',
         'runtime/wtf_move',
         'runtime/wtf_never_destroyed',

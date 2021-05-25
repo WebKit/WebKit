@@ -29,7 +29,7 @@
 #include "GStreamerCommon.h"
 #include "MediaSourceTrackGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
-
+#include <cassert>
 #include <gst/gst.h>
 #include <wtf/Condition.h>
 #include <wtf/DataMutex.h>

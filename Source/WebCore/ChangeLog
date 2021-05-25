@@ -1,3 +1,25 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Switch from WTF::Optional to std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Reviewed by Chris Dumez.
+
+        * platform/graphics/VP9Utilities.h: Tweaked coding style a bit.
+        Added missing operator!= because std::optional's operator!= relies
+        on that, while WTF::Optional's operator!= relied on operator==.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoder.cpp:
+        (Encoders::definition): Use a pointer instead of Optional<&>.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setVP9ScreenSizeAndScaleForTesting): Use a
+        form of construction for ScreenDataOverrides that works with both
+        WTF::Optional and std::optional. Something about way the old code
+        used WTF::makeOptional was not compatible with std::make_optional,
+        but it was easy to make it more straightforward and not even have
+        to use a "make" function.
+
 2021-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Divide by zero in DisplayUpdate::relevantForUpdateFrequency()

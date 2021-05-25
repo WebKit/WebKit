@@ -1,3 +1,24 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Switch from WTF::Optional to std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/style/checker.py: Removed exceptions from the WTF::Optional
+        style rule for WebRTC.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Removed check_wtf_optional.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Removed test_wtf_optional.
+        * TestWebKitAPI/CMakeLists.txt: Removed Optional.cpp.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Ditto.
+        * TestWebKitAPI/Tests/WTF/Optional.cpp: Removed.
+
+        * TestWebKitAPI/Tests/WTF/cf/RetainPtr.cpp: Updated test to not rely on non-standard
+        aspects of moving from an optional. Instead check the retain count to make sure we
+        have moved successfully.
+        * TestWebKitAPI/Tests/WTF/ns/RetainPtr.mm: Ditto.
+
 2021-05-25  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver][WPE] Support running w3c webdriver tests with Cog

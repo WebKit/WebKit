@@ -80,11 +80,11 @@ public:
         }));
     }
 
-    static Optional<EncoderDefinition&> definition(EncoderId id)
+    static EncoderDefinition* definition(EncoderId id)
     {
         if (id == None)
-            return { };
-        return singleton()[id];
+            return nullptr;
+        return &singleton()[id];
     }
 };
 

@@ -612,7 +612,6 @@
 		7C83DEF11D0A590C00FEBCF3 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497B315857F0C00B5BC30 /* MediaTime.cpp */; };
 		7C83DEF61D0A590C00FEBCF3 /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */; };
 		7C83DEFE1D0A590C00FEBCF3 /* NakedPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */; };
-		7C83DF011D0A590C00FEBCF3 /* Optional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFDE6541953B2C000C48FFA /* Optional.cpp */; };
 		7C83DF021D0A590C00FEBCF3 /* OSObjectPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */; };
 		7C83DF051D0A590C00FEBCF3 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C9ABC71B3DB1710040A987 /* RunLoop.cpp */; };
 		7C83DF121D0A590C00FEBCF3 /* ScopedLambda.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DC69AA621CF77C6500C6272F /* ScopedLambda.cpp */; settings = {COMPILER_FLAGS = "-fno-elide-constructors"; }; };
@@ -1856,7 +1855,6 @@
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		1AEF994817A09F5300998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetPIDAfterAbortedProcessLaunch.cpp; sourceTree = "<group>"; };
 		1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumTraits.cpp; sourceTree = "<group>"; };
-		1AFDE6541953B2C000C48FFA /* Optional.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Optional.cpp; sourceTree = "<group>"; };
 		1C24DEEC263001DE00450D07 /* TextStyleFontSize.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextStyleFontSize.mm; sourceTree = "<group>"; };
 		1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresource.mm; sourceTree = "<group>"; };
 		1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresourcePlugIn.mm; sourceTree = "<group>"; };
@@ -4451,7 +4449,6 @@
 				FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */,
 				A57D54F21F338C3600A97AA7 /* NeverDestroyed.cpp */,
 				CD48A87224C8A66F00F5800C /* Observer.cpp */,
-				1AFDE6541953B2C000C48FFA /* Optional.cpp */,
 				CE50D8C81C8665CE0072EA5A /* OptionSet.cpp */,
 				E32B549122810AC0008AD702 /* Packed.cpp */,
 				E38D65C823A45FA90063D69A /* PackedRef.cpp */,
@@ -5206,7 +5203,6 @@
 				7C83DEFE1D0A590C00FEBCF3 /* NakedPtr.cpp in Sources */,
 				A57D54F31F338C3600A97AA7 /* NeverDestroyed.cpp in Sources */,
 				CD48A87324C8A66F00F5800C /* Observer.cpp in Sources */,
-				7C83DF011D0A590C00FEBCF3 /* Optional.cpp in Sources */,
 				1A77BAA31D9AFFFC005FC568 /* OptionSet.cpp in Sources */,
 				7C83DF021D0A590C00FEBCF3 /* OSObjectPtr.cpp in Sources */,
 				E32B549222810AC4008AD702 /* Packed.cpp in Sources */,

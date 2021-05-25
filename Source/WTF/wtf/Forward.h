@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <wtf/Optional.h>
 #include <wtf/Platform.h>
 
 namespace WTF {
@@ -70,7 +71,6 @@ template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
 template<typename> class OptionSet;
-template<typename> class Optional;
 template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename> struct RawPtrTraits;
@@ -136,7 +136,6 @@ using WTF::Lock;
 using WTF::Logger;
 using WTF::NeverDestroyed;
 using WTF::OptionSet;
-using WTF::Optional;
 using WTF::OrdinalNumber;
 using WTF::PrintStream;
 using WTF::RawPtrTraits;

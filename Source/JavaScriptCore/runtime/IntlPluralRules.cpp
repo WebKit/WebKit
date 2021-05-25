@@ -86,7 +86,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    JSObject* options = intlCoerceOptionsToObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, void());
 
     ResolveLocaleOptions localeOptions;

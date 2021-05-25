@@ -144,14 +144,14 @@ struct ScreenDataOverrides {
     static Optional<ScreenDataOverrides> decode(Decoder& decoder)
     {
 #define DECODE(name, type) \
-    Optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return WTF::nullopt; \
+        Optional<type> name; \
+        decoder >> name; \
+        if (!name) \
+            return WTF::nullopt; \
 
-    DECODE(width, double);
-    DECODE(height, double);
-    DECODE(scale, double);
+        DECODE(width, double);
+        DECODE(height, double);
+        DECODE(scale, double);
 #undef DECODE
 
     return {{ WTFMove(*width), WTFMove(*height), WTFMove(*scale) }};
@@ -163,5 +163,9 @@ inline bool operator==(const ScreenDataOverrides& a, const ScreenDataOverrides& 
     return a.width == b.width && a.height == b.height && a.scale == b.scale;
 }
 
+inline bool operator!=(const ScreenDataOverrides& a, const ScreenDataOverrides& b)
+{
+    return !(a == b);
+}
 
 }

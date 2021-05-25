@@ -1,3 +1,26 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Switch from WTF::Optional to std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::ArgumentCoder::decode): Add a WTFMove. Turns out this was not needed
+        to get compiling with std::optional, but it's a good idea for performance.
+        This is one of those cases where it looks like the return value optimization
+        would work, but it doesn't because the return value doesn't exactly match
+        the local variable's type.
+
+        * Shared/TouchBarMenuData.h: Remove some overzealous use of explicit that
+        was preventing some files from compiling with the stricter std::optional
+        constructor rules, while it did not prevent compiling with WTF::Optional.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::switchToBrowsingContext): Removed an unused
+        lambda capture and local variable. Not clear how this is related to
+        std::optional, but showed up as a compiler warning.
+
 2021-05-25  Matt Mokary  <mmokary@apple.com>
 
         Ensure app highlight visibility observer is initialized before adding a new highlight

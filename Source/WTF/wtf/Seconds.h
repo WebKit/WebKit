@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Optional.h>
 

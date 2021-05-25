@@ -25,10 +25,9 @@
 
 #pragma once
 
-namespace WTF {
+#include <wtf/Forward.h>
 
-template <class T>
-class Optional;
+namespace WTF {
 
 namespace Persistence {
 

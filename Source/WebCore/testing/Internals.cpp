@@ -6027,7 +6027,7 @@ void Internals::setHardwareVP9DecoderDisabledForTesting(bool disabled)
 void Internals::setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale)
 {
 #if ENABLE(VP9) && PLATFORM(COCOA)
-    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(makeOptional<ScreenDataOverrides>({ width, height, scale }));
+    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(ScreenDataOverrides { width, height, scale });
 #else
     UNUSED_PARAM(width);
     UNUSED_PARAM(height);

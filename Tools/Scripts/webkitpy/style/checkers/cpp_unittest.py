@@ -5655,29 +5655,6 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_never_destroyed] [4]",
             'foo.mm')
 
-    def test_wtf_optional(self):
-        self.assert_lint(
-             'Optional<int> a;',
-             '',
-             'foo.cpp')
-
-        self.assert_lint(
-             'WTF::Optional<int> a;',
-             '',
-             'foo.cpp')
-
-        self.assert_lint(
-            'std::optional<int> a;',
-            "Use 'WTF::Optional<>' instead of 'std::optional<>'."
-            "  [runtime/wtf_optional] [4]",
-            'foo.cpp')
-
-        self.assert_lint(
-            'optional<int> a;',
-            "Use 'WTF::Optional<>' instead of 'std::optional<>'."
-            "  [runtime/wtf_optional] [4]",
-            'foo.cpp')
-
     def test_lock_guard(self):
         self.assert_lint(
             'Locker locker(lock);',

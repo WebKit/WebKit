@@ -1,3 +1,29 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Switch from WTF::Optional to std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Forward.h: Remove Optional forward declaration.
+        Also include Optional.h, just for now. Need to remove this once
+        we do the global rename.
+
+        * wtf/Optional.h: Replaced the entire WTF::Optional implementation
+        with a WTF::Optional "using" that makes it a synonym for std::optional.
+        WTF::nullopt being a synonym for std::nullopt and WTF::nullopt_t
+        being a synonym for std::nullopt_t. Also included functions so
+        that WTF::makeOptional calls std::make_optional and kept the
+        WTF extension named valueOrCompute. Need to remove these once we
+        do the global rename, and likely just get rid of valueOrCompute, and
+        then delete this entire header.
+
+        * wtf/Seconds.h: Added an include of FastMalloc.h, since it's no
+        longer pulled in because of including Optional.h.
+
+        * wtf/persistence/PersistentCoder.h: Use Forward.h for now instead of
+        forward-declaring WTF::optional.
+
 2021-05-25  Per Arne Vollan  <pvollan@apple.com>
 
         [AppleWin] JSC fails to build

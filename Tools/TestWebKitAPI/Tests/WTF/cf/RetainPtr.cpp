@@ -161,11 +161,12 @@ TEST(RetainPtr, OptionalRetainPtrCF)
     EXPECT_EQ(optionalObject2.value(), object2);
 
     // Test move from Optional<RetainPtr<CFNumberRef>>.
+    EXPECT_EQ(2, CFGetRetainCount(object2.get()));
     optionalObject1 = WTFMove(optionalObject2);
+    EXPECT_EQ(2, CFGetRetainCount(object2.get()));
     EXPECT_TRUE(optionalObject1.value());
     EXPECT_TRUE(optionalObject1.value().get());
     EXPECT_EQ(optionalObject1.value(), object2);
-    EXPECT_FALSE(optionalObject2);
 }
 
 TEST(RetainPtr, RetainPtrCF)

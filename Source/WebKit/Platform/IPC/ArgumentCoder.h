@@ -56,7 +56,7 @@ template<typename T, typename = void> struct ArgumentCoder {
         else {
             T t;
             if (T::decode(decoder, t))
-                return t;
+                return WTFMove(t);
             return WTF::nullopt;
         }
     }

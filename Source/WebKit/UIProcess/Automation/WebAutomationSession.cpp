@@ -369,12 +369,12 @@ void WebAutomationSession::switchToBrowsingContext(const Inspector::Protocol::Au
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
     bool frameNotFound = false;
-    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    webFrameIDForHandle(frameHandle, frameNotFound);
     if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-
-    m_client->requestSwitchToPage(*this, *page, [frameID, page = makeRef(*page), callback = WTFMove(callback)]() {
+    // FIXME: Should we also switch to the frame that frameHandle points to?
+    m_client->requestSwitchToPage(*this, *page, [page = makeRef(*page), callback = WTFMove(callback)]() {
         page->setFocus(true);
 
         callback->sendSuccess();

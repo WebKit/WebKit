@@ -58,7 +58,7 @@ public:
     DECLARE_INFO;
 
     template<typename IntlType>
-    friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, Optional<JSObject&>, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
+    friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
 
     void initializePluralRules(JSGlobalObject*, JSValue locales, JSValue options);
     JSValue select(JSGlobalObject*, double value) const;

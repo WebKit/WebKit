@@ -193,7 +193,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
     return keyLocaleData;
 }
 
-static Optional<JSObject&> toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue originalOptions)
+static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue originalOptions)
 {
     // 12.1.1 ToDateTimeOptions abstract operation (ECMA-402 2.0)
     VM& vm = globalObject->vm();
@@ -307,7 +307,7 @@ static Optional<JSObject&> toDateTimeOptionsAnyDate(JSGlobalObject* globalObject
     // Defaults is always "date". Ignore this branch.
 
     // 9. Return options.
-    return *options;
+    return options;
 }
 
 void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
@@ -524,7 +524,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, locales);
     RETURN_IF_EXCEPTION(scope, void());
 
-    Optional<JSObject&> options = toDateTimeOptionsAnyDate(globalObject, originalOptions);
+    JSObject* options = toDateTimeOptionsAnyDate(globalObject, originalOptions);
     RETURN_IF_EXCEPTION(scope, void());
 
     ResolveLocaleOptions localeOptions;

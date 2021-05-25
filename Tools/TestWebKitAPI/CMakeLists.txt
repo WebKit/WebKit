@@ -66,7 +66,6 @@ set(TestWTF_SOURCES
     Tests/WTF/NakedPtr.cpp
     Tests/WTF/NeverDestroyed.cpp
     Tests/WTF/OptionSet.cpp
-    Tests/WTF/Optional.cpp
     Tests/WTF/Packed.cpp
     Tests/WTF/PackedRef.cpp
     Tests/WTF/PackedRefPtr.cpp

@@ -272,12 +272,6 @@ _PATH_RULES_SPECIFIER = [
       "-whitespace/declaration",
       "-whitespace/indent"]),
 
-    ([  # Files following using WebRTC optionnal type
-      os.path.join('Source', 'WebCore', 'platform', 'mediastream', 'libwebrtc', 'GStreamerVideoDecoderFactory.cpp'),
-     ],
-     ["-runtime/wtf_optional",
-     ]),
-
     ([
       # There is no way to avoid the symbols __jit_debug_register_code
       # and __jit_debug_descriptor when integrating with gdb.

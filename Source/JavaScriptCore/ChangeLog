@@ -1,3 +1,45 @@
+2021-05-24  Darin Adler  <darin@apple.com>
+
+        Switch from WTF::Optional to std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Reviewed by Chris Dumez.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator): Use JSObject* instead of
+        Optional<JSObject&>.
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::toDateTimeOptionsAnyDate): Ditto.
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat): Ditto.
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::initializeDisplayNames): Ditto.
+        * runtime/IntlListFormat.cpp:
+        (JSC::IntlListFormat::initializeListFormat): Ditto.
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::initializeLocale): Ditto.
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat): Ditto.
+        * runtime/IntlNumberFormat.h: Ditto.
+        * runtime/IntlNumberFormatInlines.h:
+        (JSC::setNumberFormatDigitOptions): Ditto.
+        * runtime/IntlObject.cpp:
+        (JSC::intlBooleanOption): Ditto.
+        (JSC::intlStringOption): Ditto.
+        (JSC::intlNumberOption): Ditto.
+        (JSC::supportedLocales): Ditto.
+        * runtime/IntlObject.h: Ditto.
+        * runtime/IntlObjectInlines.h:
+        (JSC::intlOption): Ditto.
+        (JSC::intlGetOptionsObject): Ditto.
+        (JSC::intlCoerceOptionsToObject): Ditto.
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules): Ditto.
+        * runtime/IntlPluralRules.h: Ditto.
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat): Ditto.
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::initializeSegmenter): Ditto.
+
 2021-05-25  Saam Barati  <sbarati@apple.com>
 
         Finalize DFG/FTL code refs on the compiler threads

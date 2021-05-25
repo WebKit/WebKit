@@ -523,7 +523,7 @@ const LocaleSet& intlSegmenterAvailableLocales()
 }
 
 // https://tc39.es/ecma402/#sec-getoption
-TriState intlBooleanOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property)
+TriState intlBooleanOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -540,7 +540,7 @@ TriState intlBooleanOption(JSGlobalObject* globalObject, Optional<JSObject&> opt
     return triState(value.toBoolean(globalObject));
 }
 
-String intlStringOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)
+String intlStringOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, std::initializer_list<const char*> values, const char* notFound, const char* fallback)
 {
     // GetOption (options, property, type="string", values, fallback)
     // https://tc39.github.io/ecma402/#sec-getoption
@@ -568,7 +568,7 @@ String intlStringOption(JSGlobalObject* globalObject, Optional<JSObject&> option
     return fallback;
 }
 
-unsigned intlNumberOption(JSGlobalObject* globalObject, Optional<JSObject&> options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
+unsigned intlNumberOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, unsigned minimum, unsigned maximum, unsigned fallback)
 {
     // GetNumberOption (options, property, minimum, maximum, fallback)
     // https://tc39.github.io/ecma402/#sec-getnumberoption
@@ -962,7 +962,7 @@ JSValue supportedLocales(JSGlobalObject* globalObject, const LocaleSet& availabl
     auto scope = DECLARE_THROW_SCOPE(vm);
     String matcher;
 
-    Optional<JSObject&> options = intlCoerceOptionsToObject(globalObject, optionsValue);
+    JSObject* options = intlCoerceOptionsToObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);

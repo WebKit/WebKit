@@ -33,7 +33,7 @@
 namespace JSC  {
 
 template<typename IntlType>
-void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlInstance, Optional<JSObject&> options, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation notation)
+void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlInstance, JSObject* options, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation notation)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
