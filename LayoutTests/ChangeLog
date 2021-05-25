@@ -1,3 +1,45 @@
+2021-05-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTess] Delete unused LayoutTests/fast resources
+        https://bugs.webkit.org/show_bug.cgi?id=226064
+        <rdar://problem/78289833>
+
+        Reviewed by Dewei Zhu.
+
+        * fast/box-shadow/resources/box-shadow-overflow-scroll.js: Removed.
+        * fast/canvas/resources/empty.svg: Removed.
+        * fast/canvas/resources/orientation-rotate-0.jpg: Removed.
+        * fast/canvas/resources/orientation-rotate-180.jpg: Removed.
+        * fast/canvas/resources/orientation-rotate-90-ccw.jpg: Removed.
+        * fast/canvas/resources/orientation-rotate-90-cw.jpg: Removed.
+        * fast/canvas/webgl/resources/out-of-bounds-test.js: Removed.
+        * fast/css-grid-layout/resources/blue-100x50.png: Removed.
+        * fast/css/resources/alignment-parsing-utils.js: Removed.
+        * fast/css/resources/purple-noprofile.png: Removed.
+        * fast/custom-elements/resources/document-types.js: Removed.
+        * fast/dom/HTMLScriptElement/resources/script-set-src-p4pass.js: Removed.
+        * fast/dom/resources/event-sender-util.js: Removed.
+        * fast/forms/resources/common-clearbutton-change-and-input-events.js: Removed.
+        * fast/forms/resources/multiple-fields-ax-aria-attributes.js: Removed.
+        * fast/forms/resources/multiple-fields-blur-and-focus-events.js: Removed.
+        * fast/forms/resources/multiple-fields-validity-badinput.js: Removed.
+        * fast/forms/resources/multiple-fields-value-set-empty.js: Removed.
+        * fast/history/resources/clicked-link-is-visited-2.html: Removed.
+        * fast/history/resources/page-cache-helper-10000ms.html: Removed.
+        * fast/history/resources/page-cache-helper-100ms.html: Removed.
+        * fast/images/resources/animated-red-green-blue-repeat-infinite.webp: Removed.
+        * fast/images/resources/large.webp: Removed.
+        * fast/images/resources/lenna.jpg: Removed.
+        * fast/images/resources/lenna.png: Removed.
+        * fast/reflections/resources/reflection-overflow-scroll.js: Removed.
+        * fast/shadow-dom/resources/red-div.css: Removed.
+        * fast/text/resources/gw432047-license.txt: Removed.
+        * fast/text/resources/unicode-range-download-Ahem.otf: Removed.
+        * fast/text/resources/unicode-range-download-Ahem.ttf: Removed.
+        * fast/text/resources/unicode-range-download-Ahem.woff: Removed.
+        * fast/workers/resources/messageevent-source.js: Removed.
+        * fast/xmlhttprequest/resources/1251.html: Removed.
+
 2021-05-25  Alan Bujtas  <zalan@apple.com>
 
         CrashOnOverflow in WebCore::RenderTable::cellBefore(WebCore::RenderTableCell const*)
