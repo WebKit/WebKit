@@ -77,7 +77,7 @@ private:
     Ref<RealtimeMediaSource> m_source;
 
 #if PLATFORM(COCOA)
-    RefPtr<AudioSampleDataSource> m_dataSource WTF_GUARDED_BY_LOCK(m_dataSourceLock); // Only modified on the audio thread but may get used on the main thread.
+    RefPtr<AudioSampleDataSource> m_dataSource WTF_GUARDED_BY_LOCK(m_dataSourceLock);
     Lock m_dataSourceLock;
 #endif
 };

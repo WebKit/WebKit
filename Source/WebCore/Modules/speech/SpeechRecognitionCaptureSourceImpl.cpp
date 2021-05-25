@@ -83,8 +83,6 @@ SpeechRecognitionCaptureSourceImpl::~SpeechRecognitionCaptureSourceImpl()
 #if PLATFORM(COCOA)
 bool SpeechRecognitionCaptureSourceImpl::updateDataSource(const CAAudioStreamDescription& audioDescription)
 {
-    ASSERT(!isMainThread());
-
     if (!m_dataSourceLock.tryLock())
         return false;
 
@@ -128,7 +126,6 @@ void SpeechRecognitionCaptureSourceImpl::pullSamplesAndCallDataCallback(const Me
 // FIXME: It is unclear why it is safe to use m_dataSource without locking in this function.
 void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    ASSERT(!isMainThread());
 #if PLATFORM(COCOA)
     DisableMallocRestrictionsForCurrentThreadScope scope;
 

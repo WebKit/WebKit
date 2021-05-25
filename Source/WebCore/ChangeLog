@@ -1,3 +1,16 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] ASSERTION FAILED: !isMainThread() in WebCore::SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable
+        https://bugs.webkit.org/show_bug.cgi?id=226247
+        <rdar://problem/78481513>
+
+        Unreviewed, drop threading assertions I added in r277921 as my understanding was wrong
+        about which thread the functions run on and they are hitting on the bots.
+
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp:
+        (WebCore::SpeechRecognitionCaptureSourceImpl::updateDataSource):
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.h:
+
 2021-05-25  Sihui Liu  <sihui_liu@apple.com>
 
         Make error returned by SQLiteIDBBackingStore::getOrEstablishDatabaseInfo more detailed
