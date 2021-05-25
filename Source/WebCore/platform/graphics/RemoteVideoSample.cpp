@@ -56,7 +56,7 @@ static inline std::unique_ptr<IOSurface> transferBGRAPixelBufferToIOSurface(CVPi
     }
 
     IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer)) };
-    auto ioSurface =  IOSurface::create(size, sRGBColorSpaceRef(), IOSurface::Format::BGRA);
+    auto ioSurface = IOSurface::create(size, DestinationColorSpace::SRGB(), IOSurface::Format::BGRA);
 
     IOSurface::Locker lock(*ioSurface);
     vImage_Buffer src;
@@ -113,7 +113,7 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample& sample
         surface = ioSurface->surface();
     }
 
-    return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, sRGBColorSpaceRef(), sample.presentationTime(), sample.videoRotation(), sample.videoMirrored()));
+    return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, DestinationColorSpace::SRGB(), sample.presentationTime(), sample.videoRotation(), sample.videoMirrored()));
 }
 
 std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(CVPixelBufferRef imageBuffer, MediaTime&& presentationTime, MediaSample::VideoRotation rotation)
@@ -124,10 +124,10 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(CVPixelBufferRef im
         return nullptr;
     }
 
-    return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, sRGBColorSpaceRef(), WTFMove(presentationTime), rotation, false));
+    return std::unique_ptr<RemoteVideoSample>(new RemoteVideoSample(surface, DestinationColorSpace::SRGB(), WTFMove(presentationTime), rotation, false));
 }
 
-RemoteVideoSample::RemoteVideoSample(IOSurfaceRef surface, CGColorSpaceRef colorSpace, MediaTime&& time, MediaSample::VideoRotation rotation, bool mirrored)
+RemoteVideoSample::RemoteVideoSample(IOSurfaceRef surface, const DestinationColorSpace& colorSpace, MediaTime&& time, MediaSample::VideoRotation rotation, bool mirrored)
     : m_ioSurface(WebCore::IOSurface::createFromSurface(surface, colorSpace))
     , m_rotation(rotation)
     , m_time(WTFMove(time))
@@ -140,7 +140,7 @@ RemoteVideoSample::RemoteVideoSample(IOSurfaceRef surface, CGColorSpaceRef color
 IOSurfaceRef RemoteVideoSample::surface() const
 {
     if (!m_ioSurface && m_sendRight)
-        const_cast<RemoteVideoSample*>(this)->m_ioSurface = WebCore::IOSurface::createFromSendRight(WTFMove(const_cast<RemoteVideoSample*>(this)->m_sendRight), sRGBColorSpaceRef());
+        const_cast<RemoteVideoSample*>(this)->m_ioSurface = WebCore::IOSurface::createFromSendRight(WTFMove(const_cast<RemoteVideoSample*>(this)->m_sendRight), DestinationColorSpace::SRGB());
 
     return m_ioSurface ? m_ioSurface->surface() : nullptr;
 }

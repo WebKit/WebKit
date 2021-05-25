@@ -29,15 +29,16 @@
 
 namespace WebCore {
 
+class DestinationColorSpace;
+
 enum class ColorSpace : uint8_t;
-enum class DestinationColorSpace : uint8_t;
 
 // Conversion function for typed colors.
 template<typename Output, typename Input> Output convertColor(const Input& color);
 
 // Conversion functions for raw color components with associated color spaces.
 ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
-ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, DestinationColorSpace outputColorSpace);
+ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
 
 
 // All color types, other than XYZA or those inheriting from RGBType, must implement

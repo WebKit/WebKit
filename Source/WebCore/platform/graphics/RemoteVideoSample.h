@@ -103,7 +103,7 @@ public:
     }
 
 private:
-    RemoteVideoSample(IOSurfaceRef, CGColorSpaceRef, MediaTime&&, MediaSample::VideoRotation, bool);
+    RemoteVideoSample(IOSurfaceRef, const DestinationColorSpace&, MediaTime&&, MediaSample::VideoRotation, bool);
 
     std::unique_ptr<WebCore::IOSurface> m_ioSurface;
     WTF::MachSendRight m_sendRight;

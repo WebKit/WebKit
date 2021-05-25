@@ -36,6 +36,7 @@
 #include "WebPreferencesStore.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/Color.h>
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/LayoutMilestone.h>
@@ -48,10 +49,6 @@
 #include <WebCore/ViewportArguments.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
-
-#if PLATFORM(MAC)
-#include "ColorSpaceData.h"
-#endif
 
 #if ENABLE(APPLICATION_MANIFEST)
 #include <WebCore/ApplicationManifest.h>
@@ -146,7 +143,7 @@ struct WebPageCreationParameters {
     bool useElevatedUserInterfaceLevel { false };
 
 #if PLATFORM(MAC)
-    ColorSpaceData colorSpace;
+    Optional<WebCore::DestinationColorSpace> colorSpace;
     bool useSystemAppearance;
 #endif
 #if ENABLE(META_VIEWPORT)

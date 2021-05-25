@@ -93,6 +93,7 @@ class SecurityOrigin;
 namespace WebCore {
 class Color;
 class Cursor;
+class DestinationColorSpace;
 class FloatQuad;
 class FloatRect;
 class Region;
@@ -186,10 +187,6 @@ class WebFullScreenManagerProxyClient;
 
 #if USE(GSTREAMER)
 class InstallMissingMediaPluginsPermissionRequest;
-#endif
-
-#if PLATFORM(COCOA)
-struct ColorSpaceData;
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -426,7 +423,7 @@ public:
 
     virtual CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const = 0;
 
-    virtual ColorSpaceData colorSpace() = 0;
+    virtual WebCore::DestinationColorSpace colorSpace() = 0;
 
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) = 0;
 

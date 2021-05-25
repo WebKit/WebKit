@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,14 @@
 #if USE(CG)
 
 #include "ColorSpaceCG.h"
+#include "DestinationColorSpace.h"
 #include <mutex>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/TinyLRUCache.h>
-#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TinyLRUCache.h>
 
 namespace WebCore {
 static RetainPtr<CGColorRef> createCGColor(const Color&);
@@ -91,34 +92,38 @@ Color::Color(CGColorRef color, OptionSet<Flags> flags)
 {
 }
 
-static RetainPtr<CGColorRef> createCGColor(const Color& color)
+static std::pair<CGColorSpaceRef, ColorComponents<float, 4>> convertToCGCompatibleComponents(ColorSpace colorSpace, ColorComponents<float, 4> components)
 {
-    auto [colorSpace, components] = color.colorSpaceAndComponents();
-
-    auto cgColorSpace = cachedNullableCGColorSpace(colorSpace);
-
     // Some CG ports don't support all the color spaces required and return
     // nullptr for unsupported color spaces. In those cases, we eagerly convert
     // the color into either extended sRGB or normal sRGB, if extended sRGB is
-    // not supported, before creating the CGColorRef.
+    // not supported.
+
+    auto cgColorSpace = cachedNullableCGColorSpace(colorSpace);
     if (!cgColorSpace) {
 #if HAVE(CORE_GRAPHICS_EXTENDED_SRGB_COLOR_SPACE)
-        auto colorConvertedToExtendedSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
-            return convertColor<ExtendedSRGBA<float>>(color);
+        auto componentsConvertedToExtendedSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
+            return asColorComponents(convertColor<ExtendedSRGBA<float>>(color));
         });
-        components = asColorComponents(colorConvertedToExtendedSRGBA);
-        cgColorSpace = extendedSRGBColorSpaceRef();
+        return { extendedSRGBColorSpaceRef(), componentsConvertedToExtendedSRGBA };
 #else
-        auto colorConvertedToSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
-            return convertColor<SRGBA<float>>(color);
+        auto componentsConvertedToSRGBA = callWithColorType(components, colorSpace, [] (const auto& color) {
+            return asColorComponents(convertColor<SRGBA<float>>(color));
         });
-        components = asColorComponents(colorConvertedToSRGBA);
-        cgColorSpace = sRGBColorSpaceRef();
+        return { sRGBColorSpaceRef(), componentsConvertedToSRGBA };
 #endif
     }
 
-    auto [r, g, b, a] = components;
-    CGFloat cgFloatComponents[4] { r, g, b, a };
+    return { cgColorSpace, components };
+}
+
+static RetainPtr<CGColorRef> createCGColor(const Color& color)
+{
+    auto [colorSpace, components] = color.colorSpaceAndComponents();
+    auto [cgColorSpace, cgCompatibleComponents] = convertToCGCompatibleComponents(colorSpace, components);
+    
+    auto [c1, c2, c3, c4] = cgCompatibleComponents;
+    CGFloat cgFloatComponents[4] { c1, c2, c3, c4 };
 
     return adoptCF(CGColorCreate(cgColorSpace, cgFloatComponents));
 }
@@ -159,6 +164,24 @@ CGColorRef cachedCGColor(const Color& color)
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
     return cache.get().get(color).get();
+}
+
+ColorComponents<float, 4> platformConvertColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)
+{
+    // FIXME: Investigate optimizing this to use the builtin color conversion code for supported color spaces.
+
+    auto [cgInputColorSpace, cgCompatibleComponents] = convertToCGCompatibleComponents(inputColorSpace, inputColorComponents);
+    if (cgInputColorSpace == outputColorSpace.platformColorSpace())
+        return cgCompatibleComponents;
+
+    auto [c1, c2, c3, c4] = cgCompatibleComponents;
+    CGFloat sourceComponents[4] { c1, c2, c3, c4 };
+    CGFloat destinationComponents[4] { };
+
+    auto transform = adoptCF(CGColorTransformCreate(outputColorSpace.platformColorSpace(), nullptr));
+    auto result = CGColorTransformConvertColorComponents(transform.get(), cgInputColorSpace, kCGRenderingIntentDefault, sourceComponents, destinationComponents);
+    ASSERT_UNUSED(result, result);
+    return { static_cast<float>(destinationComponents[0]), static_cast<float>(destinationComponents[1]), static_cast<float>(destinationComponents[2]), static_cast<float>(destinationComponents[3]) };
 }
 
 }

@@ -1149,7 +1149,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             if (CachedImage* cachedImage = imageElement->cachedImage()) {
                 Image* image = cachedImage->image();
                 if (image && image != &Image::nullImage()) {
-                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
                     imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
                     dataURL = imageBuffer->toDataURL("image/png");
                 }
@@ -1163,7 +1163,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             unsigned videoWidth = videoElement->videoWidth();
             unsigned videoHeight = videoElement->videoHeight();
-            auto imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+            auto imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
             if (imageBuffer) {
                 videoElement->paintCurrentFrameInContext(imageBuffer->context(), FloatRect(0, 0, videoWidth, videoHeight));
                 dataURL = imageBuffer->toDataURL("image/png");
@@ -1200,7 +1200,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             if (auto* cachedImage = cssImageValue->image()) {
                 auto* image = cachedImage->image();
                 if (image && image != &Image::nullImage()) {
-                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
                     imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
                     dataURL = imageBuffer->toDataURL("image/png");
                 }
@@ -1441,7 +1441,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasPattern(cons
 {
     auto& tileImage = canvasPattern.pattern().tileImage();
     FloatRect rect = { { }, tileImage.size() };
-    auto imageBuffer = ImageBuffer::create(tileImage.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(tileImage.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     imageBuffer->context().drawNativeImage(tileImage, tileImage.size(), rect, rect);
 
     String repeat;

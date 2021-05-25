@@ -43,15 +43,19 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
 namespace DisplayList {
 class DisplayList;
 class Item;
 }
+
+class DestinationColorSpace;
 class FloatSize;
 class PixelBuffer;
+
 enum class AlphaPremultiplication : uint8_t;
-enum class DestinationColorSpace : uint8_t;
 enum class RenderingMode : bool;
+
 }
 
 namespace WebKit {
@@ -92,7 +96,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Messages to be sent.
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::DestinationColorSpace, WebCore::PixelFormat);
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat);
     String getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution, WebCore::RenderingResourceIdentifier);
     Vector<uint8_t> getDataForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier);
     WebCore::DisplayList::FlushIdentifier flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);

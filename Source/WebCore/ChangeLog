@@ -1,3 +1,295 @@
+2021-05-24  Sam Weinig  <weinig@apple.com>
+
+        Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=226143
+
+        Reviewed by Darin Adler.
+
+        Replace enumeration based DestinationColorSpace with a struct wrapping
+        a platform color space (CGColorSpaceRef for CG ports, etc.). For ports
+        that don't have a platform level color space type, a builtin PlatformColorSpace
+        type is provided that is just the old enum renamed to PlatformColorSpace::Name.
+
+        The goal of this change is to unify the currently bifurcated concept of an
+        ImageBuffer's color space, which previosly could either be based on the 
+        DestinationColorSpace (and reflected in the colorSpace() member function),
+        or (for CG ports) based on a CGColorSpaceRef, with the colorSpace() function
+        returning sRGB even if the ImageBuffer was not. 
+
+        * Headers.cmake:
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNeeded):
+        * Modules/mediasession/MediaMetadata.cpp:
+        (WebCore::ArtworkImageLoader::notifyFinished):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpImageBitmap):
+        (WebCore::CloneDeserializer::readImageBitmap):
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * html/CustomPaintCanvas.cpp:
+        (WebCore::CustomPaintCanvas::copiedImage const):
+        * html/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::drawPattern):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toMediaSample):
+        (WebCore::HTMLCanvasElement::createImageBuffer const):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::createBufferForPainting const):
+        * html/HTMLVideoElement.h:
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createImageBuffer):
+        (WebCore::ImageBitmap::createPromise):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::commitToPlaceholderCanvas):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::colorSpace const):
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/ImageBitmapRenderingContext.cpp:
+        (WebCore::ImageBitmapRenderingContext::setOutputBitmap):
+        * html/canvas/PredefinedColorSpace.cpp:
+        (WebCore::toDestinationColorSpace):
+        (WebCore::toPredefinedColorSpace):
+        * html/canvas/PredefinedColorSpace.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer):
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::indexForData):
+        (WebCore::InspectorCanvas::buildArrayForCanvasPattern):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createImageBuffer const):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::createImageBuffer const):
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRectWithClip):
+        * page/PageColorSampler.cpp:
+        (WebCore::sampleColor):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::screenshot):
+        * platform/HostWindow.h:
+        * platform/PlatformColorSpace.h: Added.
+        (WebCore::PlatformColorSpace::get const):
+        * platform/PlatformScreen.h:
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenProperties::encode const):
+        (WebCore::ScreenData::encode const):
+        (WebCore::ScreenData::decode):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::preTransformedNativeImageForCurrentFrame):
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::toColorComponentsInColorSpace const):
+        * platform/graphics/Color.h:
+        * platform/graphics/ColorConversion.cpp:
+        (WebCore::converColorComponents):
+        * platform/graphics/ColorConversion.h:
+        * platform/graphics/ColorSpace.cpp:
+        * platform/graphics/ColorSpace.h:
+        * platform/graphics/ConcreteImageBuffer.h:
+        (WebCore::ConcreteImageBuffer::create):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/DestinationColorSpace.cpp: Added.
+        (WebCore::DestinationColorSpace::SRGB):
+        (WebCore::DestinationColorSpace::LinearSRGB):
+        (WebCore::DestinationColorSpace::DisplayP3):
+        (WebCore::DestinationColorSpace::DestinationColorSpace):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::operator<<):
+        * platform/graphics/DestinationColorSpace.h: Added.
+        (WebCore::DestinationColorSpace::platformColorSpace const):
+        (WebCore::DestinationColorSpace::encode const):
+        (WebCore::DestinationColorSpace::decode):
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::clipToDrawingCommands):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::create):
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        (WebCore::ImageBuffer::copyRectToBuffer):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::getPixelBuffer const):
+        (WebCore::ImageBufferBackend::putPixelBuffer):
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::transformColorSpace):
+        (WebCore::ImageBufferBackend::colorSpace const):
+        * platform/graphics/PixelBuffer.h:
+        (WebCore::PixelBuffer::decode):
+        * platform/graphics/PixelBufferConversion.cpp:
+        (WebCore::makeVImageCGImageFormat):
+        * platform/graphics/PixelBufferFormat.h:
+        (WebCore::PixelBufferFormat::decode):
+        * platform/graphics/RemoteVideoSample.cpp:
+        (WebCore::transferBGRAPixelBufferToIOSurface):
+        (WebCore::RemoteVideoSample::create):
+        (WebCore::RemoteVideoSample::RemoteVideoSample):
+        (WebCore::RemoteVideoSample::surface const):
+        * platform/graphics/RemoteVideoSample.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::getScratchBuffer):
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::blurShadowBuffer):
+        (WebCore::ShadowBlur::drawShadowLayer):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::readPixelsForPaintResults):
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        (WebCore::ImageBufferCairoBackend::transformColorSpace):
+        * platform/graphics/cairo/ImageBufferCairoBackend.h:
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::convertToCGCompatibleComponents):
+        (WebCore::createCGColor):
+        (WebCore::platformConvertColorComponents):
+        * platform/graphics/cg/ColorSpaceCG.h:
+        (WebCore::cachedCGColorSpace): Deleted.
+        * platform/graphics/cg/GraphicsContextGLCG.cpp:
+        (WebCore::GraphicsContextGLOpenGL::paintToCanvas):
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::surfaceMatchesParameters):
+        (WebCore::IOSurfacePool::takeSurface):
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::createBitmapImageAfterScalingIfNeeded):
+        (WebCore::ImageBufferCGBackend::copyCGImageForEncoding const):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::create):
+        (WebCore::ImageBufferCGBitmapBackend::copyNativeImage const):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::create):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/cg/ImageBufferUtilitiesCG.cpp:
+        (WebCore::encode):
+        * platform/graphics/cg/NativeImageCG.cpp:
+        (WebCore::NativeImage::singlePixelSolidColor const):
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::allocateAndBindDisplayBufferBacking):
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::surfaceFromPool):
+        (WebCore::IOSurface::create):
+        (WebCore::IOSurface::createFromSendRight):
+        (WebCore::IOSurface::createFromSurface):
+        (WebCore::IOSurface::createFromImage):
+        (WebCore::IOSurface::createFromPixelBuffer):
+        (WebCore::IOSurface::IOSurface):
+        (WebCore::IOSurface::ensurePlatformContext):
+        (WebCore::IOSurface::migrateColorSpaceToProperties):
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.mm:
+        (WebCore::FilterEffectRendererCoreImage::renderToImageBuffer):
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        (WebCore::ImageTransferSessionVT::createPixelBuffer):
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        (WebCore::PixelBufferConformerCV::createImageFromPixelBuffer):
+        * platform/graphics/displaylists/DisplayListImageBuffer.h:
+        (WebCore::DisplayList::ImageBuffer::create):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemHandle::destroy):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::BeginClipToDrawingCommands::BeginClipToDrawingCommands):
+        (WebCore::DisplayList::BeginClipToDrawingCommands::colorSpace const):
+        (WebCore::DisplayList::BeginClipToDrawingCommands::encode const):
+        (WebCore::DisplayList::BeginClipToDrawingCommands::decode):
+        (WebCore::DisplayList::GetPixelBuffer::GetPixelBuffer):
+        (WebCore::DisplayList::GetPixelBuffer::outputFormat const):
+        (WebCore::DisplayList::GetPixelBuffer::encode const):
+        (WebCore::DisplayList::GetPixelBuffer::decode):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::clipToDrawingCommands):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::setResultColorSpace):
+        * platform/graphics/filters/FEDisplacementMap.h:
+        * platform/graphics/filters/FEFlood.h:
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::convertPixelBufferToColorSpace):
+        (WebCore::FilterEffect::convertImageBufferToColorSpace):
+        (WebCore::FilterEffect::copyConvertedImageBufferToDestination):
+        (WebCore::FilterEffect::copyConvertedPixelBufferToDestination):
+        (WebCore::FilterEffect::requiresPixelBufferColorSpaceConversion):
+        (WebCore::FilterEffect::transformResultColorSpace):
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::operatingColorSpace const):
+        (WebCore::FilterEffect::setOperatingColorSpace):
+        (WebCore::FilterEffect::resultColorSpace const):
+        (WebCore::FilterEffect::setResultColorSpace):
+        * platform/graphics/filters/SourceGraphic.h:
+        (WebCore::SourceGraphic::SourceGraphic):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenColorSpace):
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenColorSpace):
+        (WebCore::collectScreenProperties):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::collectScreenProperties):
+        (WebCore::screenColorSpace):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::drawCellOrFocusRingWithViewIntoContext):
+        * platform/mediastream/mac/ScreenDisplayCapturerMac.mm:
+        (WebCore::ScreenDisplayCapturerMac::createDisplayStream):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::imageBuffer const):
+        * platform/playstation/PlatformScreenPlayStation.cpp:
+        (WebCore::screenColorSpace):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenColorSpace):
+        * platform/wpe/PlatformScreenWPE.cpp:
+        (WebCore::screenColorSpace):
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::FrameData::LayerData::decode):
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::buildReferenceFilter):
+        (WebCore::CSSFilter::build):
+        (WebCore::CSSFilter::allocateBackingStoreIfNeeded):
+        (WebCore::CSSFilter::apply):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::patternForDescription):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives const):
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::createTileImage const):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::createImageBuffer):
+        (WebCore::SVGRenderingContext::bufferForeground):
+        * rendering/svg/SVGRenderingContext.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImage):
+        (WebCore::SVGImage::drawPatternForContainer):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+
 2021-05-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Add support for geometry/quirks virtual functions

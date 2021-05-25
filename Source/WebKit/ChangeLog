@@ -1,3 +1,97 @@
+2021-05-24  Sam Weinig  <weinig@apple.com>
+
+        Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
+        https://bugs.webkit.org/show_bug.cgi?id=226143
+
+        Reviewed by Darin Adler.
+
+        - Update ImageBuffer subclass signatures to use "const DestinationColorSpace&" to
+          conform to the base class.
+        - Replace ColorSpaceData with Optional<DestinationColorSpace>. No reason to have two
+          types that are the same.
+        - Give all ports a color space configuration for ShareableBitmap now that there is
+          a common class for representing color space.
+        - Update DisplayList decoding to account for BeginClipToDrawingCommands and GetPixelBuffer
+          no longer being inlineable due to now having non-trivial destructors due to 
+          DestinationColorSpace member.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::create):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::createFrameImageAtIndex):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.messages.in:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Configuration::encode const):
+        (WebKit::ShareableBitmap::Configuration::decode):
+        * Shared/ShareableBitmap.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::colorSpace):
+        * Shared/mac/ColorSpaceData.h: Removed.
+        * Shared/mac/ColorSpaceData.mm: Removed.
+        * SourcesCocoa.txt:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::colorSpace):
+        * UIProcess/PageClient.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::recursivelyMapIOSurfaceBackingStore):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::colorSpace):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::colorSpace):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::configuration):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::prepareForDisplay):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::createFrameImageAtIndex):
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime):
+        (WebKit::MediaPlayerPrivateRemote::pixelBufferForCurrentTime):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        * WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp:
+        (WebKit::createShareableBitmap):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertDragImageToBitmap):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setColorSpace):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::snapshotOptionsToBitmapConfiguration):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setColorSpace):
+
 2021-05-24  Dana Estra  <destra@apple.com>
 
         Remove deprecated API usage in PageClientImplMac

@@ -40,7 +40,7 @@ using namespace WebCore;
     
 static CGColorSpaceRef colorSpace(const ShareableBitmap::Configuration& configuration)
 {
-    return configuration.colorSpace.cgColorSpace.get() ?: sRGBColorSpaceRef();
+    return configuration.colorSpace ? configuration.colorSpace->platformColorSpace() : WebCore::sRGBColorSpaceRef();
 }
 
 static bool wantsExtendedRange(const ShareableBitmap::Configuration& configuration)

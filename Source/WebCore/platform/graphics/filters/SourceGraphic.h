@@ -36,7 +36,7 @@ private:
     SourceGraphic(Filter& filter)
         : FilterEffect(filter, Type::SourceGraphic)
     {
-        setOperatingColorSpace(DestinationColorSpace::SRGB);
+        setOperatingColorSpace(DestinationColorSpace::SRGB());
     }
 
     const char* filterName() const final { return "SourceGraphic"; }

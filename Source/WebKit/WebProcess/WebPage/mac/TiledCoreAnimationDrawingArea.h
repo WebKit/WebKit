@@ -98,7 +98,7 @@ private:
     void suspendPainting();
     void resumePainting();
     void setLayerHostingMode(LayerHostingMode) override;
-    void setColorSpace(const ColorSpaceData&) override;
+    void setColorSpace(Optional<WebCore::DestinationColorSpace>) override;
     void addFence(const WTF::MachSendRight&) override;
 
     void addTransactionCallbackID(CallbackID) override;

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include "IntSize.h"
 #include "PixelBufferFormat.h"
 #include "PixelFormat.h"
@@ -87,19 +87,21 @@ template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
 
 template<class Decoder> Optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
 {
-    PixelBufferFormat format;
-    if (!decoder.decode(format))
+    Optional<PixelBufferFormat> format;
+    decoder >> format;
+    if (!format)
         return WTF::nullopt;
 
     // FIXME: Support non-8 bit formats.
-    if (!(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8))
+    if (!(format->pixelFormat == PixelFormat::RGBA8 || format->pixelFormat == PixelFormat::BGRA8))
         return WTF::nullopt;
 
-    IntSize size;
-    if (!decoder.decode(size))
+    Optional<IntSize> size;
+    decoder >> size;
+    if (!size)
         return WTF::nullopt;
 
-    auto computedBufferSize = PixelBuffer::computeBufferSize(format, size);
+    auto computedBufferSize = PixelBuffer::computeBufferSize(*format, *size);
     if (computedBufferSize.hasOverflowed())
         return WTF::nullopt;
 
@@ -107,7 +109,7 @@ template<class Decoder> Optional<PixelBuffer> PixelBuffer::decode(Decoder& decod
     if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
         return WTF::nullopt;
 
-    auto result = PixelBuffer::tryCreateForDecoding(format, size, bufferSize);
+    auto result = PixelBuffer::tryCreateForDecoding(WTFMove(*format), *size, bufferSize);
     if (!result)
         return WTF::nullopt;
 

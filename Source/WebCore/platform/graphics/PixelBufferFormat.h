@@ -26,7 +26,7 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include "PixelFormat.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
@@ -51,19 +51,22 @@ template<class Encoder> void PixelBufferFormat::encode(Encoder& encoder) const
 
 template<class Decoder> Optional<PixelBufferFormat> PixelBufferFormat::decode(Decoder& decoder)
 {
-    AlphaPremultiplication alphaFormat;
-    if (!decoder.decode(alphaFormat))
+    Optional<AlphaPremultiplication> alphaFormat;
+    decoder >> alphaFormat;
+    if (!alphaFormat)
         return WTF::nullopt;
 
-    PixelFormat pixelFormat;
-    if (!decoder.decode(pixelFormat))
+    Optional<PixelFormat> pixelFormat;
+    decoder >> pixelFormat;
+    if (!pixelFormat)
         return WTF::nullopt;
 
-    DestinationColorSpace colorSpace;
-    if (!decoder.decode(colorSpace))
+    Optional<DestinationColorSpace> colorSpace;
+    decoder >> colorSpace;
+    if (!colorSpace)
         return WTF::nullopt;
 
-    return { { alphaFormat, pixelFormat, colorSpace } };
+    return { { WTFMove(*alphaFormat), WTFMove(*pixelFormat), WTFMove(*colorSpace) } };
 }
 
 }

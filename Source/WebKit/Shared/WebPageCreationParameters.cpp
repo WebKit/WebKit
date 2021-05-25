@@ -325,8 +325,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     parameters.hasResourceLoadClient = WTFMove(*hasResourceLoadClient);
 
 #if PLATFORM(MAC)
-    if (!decoder.decode(parameters.colorSpace))
+    Optional<Optional<DestinationColorSpace>> colorSpace;
+    decoder >> colorSpace;
+    if (!colorSpace)
         return WTF::nullopt;
+    parameters.colorSpace = WTFMove(*colorSpace);
     if (!decoder.decode(parameters.useSystemAppearance))
         return WTF::nullopt;
 #endif

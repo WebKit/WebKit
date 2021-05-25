@@ -1950,6 +1950,7 @@ platform/graphics/ColorSpace.cpp
 platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp
+platform/graphics/DestinationColorSpace.cpp
 platform/graphics/DisplayRefreshMonitor.cpp
 platform/graphics/DisplayRefreshMonitorClient.cpp
 platform/graphics/DisplayRefreshMonitorManager.cpp

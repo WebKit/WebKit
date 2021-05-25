@@ -2594,7 +2594,7 @@ static ShareableBitmap::Configuration snapshotOptionsToBitmapConfiguration(Snaps
     ShareableBitmap::Configuration configuration;
 #if USE(CG)
     if (options & SnapshotOptionsUseScreenColorSpace)
-        configuration.colorSpace.cgColorSpace = screenColorSpace(page.corePage()->mainFrame().view());
+        configuration.colorSpace = screenColorSpace(page.corePage()->mainFrame().view());
 #endif
     return configuration;
 }

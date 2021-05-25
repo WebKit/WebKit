@@ -32,7 +32,6 @@
 #import "APILegacyContextHistoryClient.h"
 #import "APINavigation.h"
 #import "AppKitSPI.h"
-#import "ColorSpaceData.h"
 #import "CoreTextHelpers.h"
 #import "FontInfo.h"
 #import "FullscreenClient.h"
@@ -90,6 +89,7 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/CompositionHighlight.h>
+#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragData.h>
 #import <WebCore/DragItem.h>
@@ -2500,21 +2500,28 @@ void WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *flagsChan
     m_page->handleMouseEvent(webEvent);
 }
 
-ColorSpaceData WebViewImpl::colorSpace()
+WebCore::DestinationColorSpace WebViewImpl::colorSpace()
 {
     if (!m_colorSpace) {
-        if (m_targetWindowForMovePreparation)
-            m_colorSpace = [m_targetWindowForMovePreparation colorSpace];
-        else if (NSWindow *window = [m_view window])
-            m_colorSpace = window.colorSpace;
-        else
+        m_colorSpace = [&] () -> NSColorSpace * {
+            if (m_targetWindowForMovePreparation)
+                return [m_targetWindowForMovePreparation colorSpace];
+            
+            if (NSWindow *window = [m_view window])
+                return [window colorSpace];
+
+            return nil;
+        }();
+
+        if (!m_colorSpace)
             m_colorSpace = [NSScreen mainScreen].colorSpace;
+    
+        if (!m_colorSpace)
+            m_colorSpace = [NSColorSpace sRGBColorSpace];
     }
 
-    ColorSpaceData colorSpaceData;
-    colorSpaceData.cgColorSpace = [m_colorSpace CGColorSpace];
-
-    return colorSpaceData;
+    ASSERT(m_colorSpace);
+    return WebCore::DestinationColorSpace { [m_colorSpace CGColorSpace] };
 }
 
 void WebViewImpl::setUnderlayColor(NSColor *underlayColor)

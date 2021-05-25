@@ -92,7 +92,7 @@ Image* CustomPaintCanvas::copiedImage() const
     if (!width() || !height())
         return nullptr;
 
-    m_copiedBuffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8, nullptr);
+    m_copiedBuffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, nullptr);
     if (!m_copiedBuffer)
         return nullptr;
 

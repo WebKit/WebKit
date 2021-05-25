@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ColorSpace.h"
+#include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "GraphicsTypesGL.h"
 #include "ImagePaintingOptions.h"
@@ -78,7 +78,7 @@ public:
         PixelFormat pixelFormat;
     };
 
-    WEBCORE_EXPORT virtual ~ImageBufferBackend() = default;
+    WEBCORE_EXPORT virtual ~ImageBufferBackend();
 
     WEBCORE_EXPORT static IntSize calculateBackendSize(const Parameters&);
     WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
@@ -102,7 +102,7 @@ public:
     virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
 
     WEBCORE_EXPORT void convertToLuminanceMask();
-    virtual void transformColorSpace(DestinationColorSpace, DestinationColorSpace) { }
+    virtual void transformColorSpace(const DestinationColorSpace&, const DestinationColorSpace&) { }
 
     virtual String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const = 0;
@@ -140,7 +140,7 @@ protected:
 
     IntSize logicalSize() const { return IntSize(m_parameters.logicalSize); }
     float resolutionScale() const { return m_parameters.resolutionScale; }
-    DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
+    const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
 
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };

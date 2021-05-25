@@ -28,13 +28,12 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
-#include "ColorSpaceData.h"
 #include "GPUProcessConnection.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
 #include "SharedBufferDataReference.h"
 #include "WebProcess.h"
 #include <WebCore/AVAssetMIMETypeCache.h>
-#include <WebCore/ColorSpaceCG.h>
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -168,14 +167,14 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
             return;
 
         Optional<MachSendRight> sendRight;
-        ColorSpaceData colorSpace;
+        Optional<DestinationColorSpace> colorSpace;
         if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(sendRight, colorSpace), 0))
             return;
 
-        if (!sendRight)
+        if (!sendRight || !colorSpace)
             return;
 
-        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), colorSpace.cgColorSpace.get());
+        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), WTFMove(*colorSpace));
         if (!surface)
             return;
 
