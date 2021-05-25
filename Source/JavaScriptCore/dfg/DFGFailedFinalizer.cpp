@@ -49,11 +49,6 @@ bool FailedFinalizer::finalize()
     return false;
 }
 
-bool FailedFinalizer::finalizeFunction()
-{
-    return false;
-}
-
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

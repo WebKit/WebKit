@@ -216,6 +216,23 @@ void link(State& state)
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+
+    {
+        bool dumpDisassembly = shouldDumpDisassembly() || Options::asyncDisassembly();
+
+        MacroAssemblerCodeRef<JSEntryPtrTag> b3CodeRef =
+            FINALIZE_CODE_IF(dumpDisassembly, *state.finalizer->b3CodeLinkBuffer, JSEntryPtrTag,
+                "FTL B3 code for %s", toCString(CodeBlockWithJITType(codeBlock, JITType::FTLJIT)).data());
+
+        MacroAssemblerCodeRef<JSEntryPtrTag> arityCheckCodeRef = linkBuffer
+            ? FINALIZE_CODE_IF(dumpDisassembly, *linkBuffer, JSEntryPtrTag,
+                "FTL entrypoint thunk for %s with B3 generated code at %p", toCString(CodeBlockWithJITType(codeBlock, JITType::FTLJIT)).data(), state.generatedFunction)
+            : MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(b3CodeRef.code());
+
+        state.jitCode->initializeB3Code(b3CodeRef);
+        state.jitCode->initializeArityCheckEntrypoint(arityCheckCodeRef);
+    }
+
     
     state.finalizer->entrypointLinkBuffer = WTFMove(linkBuffer);
     state.finalizer->function = state.generatedFunction;

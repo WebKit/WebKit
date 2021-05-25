@@ -258,7 +258,7 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     emitLoad(callee, regT1, regT0);
-    m_virtualCalls.append(std::pair<Call, CallLinkInfo&> { emitUnlinkedVirtualCall(m_codeBlock->globalObject(), info), *info });
+    emitVirtualCall(*m_vm, m_codeBlock->globalObject(), info);
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 

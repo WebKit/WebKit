@@ -993,14 +993,7 @@ CompilationResult JIT::finalizeOnMainThread()
     if (!m_jitCode)
         return CompilationFailed;
 
-    for (auto pair : m_virtualCalls) {
-        auto callLocation = m_linkBuffer->locationOfNearCall<JITThunkPtrTag>(pair.first);
-
-        CallLinkInfo& info = pair.second;
-        MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(*m_vm, info);
-        info.setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, *m_vm));
-        MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
-    }
+    m_linkBuffer->runMainThreadFinalizationTasks();
 
     {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);

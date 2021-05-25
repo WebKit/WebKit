@@ -1,3 +1,70 @@
+2021-05-25  Saam Barati  <sbarati@apple.com>
+
+        Finalize DFG/FTL code refs on the compiler threads
+        https://bugs.webkit.org/show_bug.cgi?id=226096
+
+        Reviewed by Mark Lam.
+
+        Previously, link tasks that ran via the addLinkTask API were guaranteed to be
+        called on the main thread. This is no longer the case. Most link tasks are
+        happy running on a background thread, since all they're really doing is
+        linking branches/calls or grabbing labels. However, a few users of addLinkTask were
+        relying on it running on the main thread. For those users, there is a new
+        addMainThreadFinalizationTask API, which is now used instead.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::~LinkBuffer):
+        (JSC::LinkBuffer::runMainThreadFinalizationTasks):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::cancel):
+        (JSC::LinkBuffer::addMainThreadFinalizationTask):
+        (JSC::LinkBuffer::~LinkBuffer): Deleted.
+        * dfg/DFGFailedFinalizer.cpp:
+        (JSC::DFG::FailedFinalizer::finalizeFunction): Deleted.
+        * dfg/DFGFailedFinalizer.h:
+        * dfg/DFGFinalizer.h:
+        (JSC::DFG::Finalizer::cancel):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::cancel):
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction): Deleted.
+        (JSC::DFG::JITFinalizer::finalizeCommon): Deleted.
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::emit const):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::cancel):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalize):
+        (JSC::FTL::JITFinalizer::cancel):
+        (JSC::FTL::JITFinalizer::finalizeFunction): Deleted.
+        (JSC::FTL::JITFinalizer::finalizeCommon): Deleted.
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLPatchpointExceptionHandle.cpp:
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreationForUnwind):
+        * ftl/FTLThunks.h:
+        (JSC::FTL::Thunks::getSlowPathCallThunk):
+        Add a lock to FTLThunks since we now may be calling into it from more than
+        one thread at a time.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitVirtualCall):
+        (JSC::AssemblyHelpers::emitUnlinkedVirtualCall): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::finalizeOnMainThread):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+
 2021-05-25  Mark Lam  <mark.lam@apple.com>
 
         Reduce Baseline JIT emitted code size for op_jfalse, op_jtrue, op_get_from_scope, op_resolve_scope.

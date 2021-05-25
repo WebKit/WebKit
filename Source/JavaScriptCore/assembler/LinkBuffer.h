@@ -153,6 +153,8 @@ public:
     ~LinkBuffer()
     {
     }
+
+    void runMainThreadFinalizationTasks();
     
     bool didFailToAllocate() const
     {
@@ -340,6 +342,12 @@ public:
     JS_EXPORT_PRIVATE static void clearProfileStatistics();
     JS_EXPORT_PRIVATE static void dumpProfileStatistics(Optional<PrintStream*> = WTF::nullopt);
 
+    template<typename Functor>
+    void addMainThreadFinalizationTask(const Functor& functor)
+    {
+        m_mainThreadFinalizationTasks.append(createSharedTask<void()>(functor));
+    }
+
 private:
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithoutDisassemblyImpl();
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...) WTF_ATTRIBUTE_PRINTF(3, 4);
@@ -419,6 +427,7 @@ private:
     MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
+    Vector<RefPtr<SharedTask<void()>>> m_mainThreadFinalizationTasks;
 
     static size_t s_profileCummulativeLinkedSizes[numberOfProfiles];
     static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];

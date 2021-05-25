@@ -643,22 +643,19 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 #endif
 }
 
-AssemblyHelpers::Call AssemblyHelpers::emitUnlinkedVirtualCall(JSGlobalObject* globalObject, CallLinkInfo* info)
+void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
 {
     move(TrustedImmPtr(info), GPRInfo::regT2);
     move(TrustedImmPtr(globalObject), GPRInfo::regT3);
-    return nearCall();
-}
-
-void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
-{
-    Call call = emitUnlinkedVirtualCall(globalObject, info);
-    addLinkTask(
-        [=, &vm] (LinkBuffer& linkBuffer) {
+    Call call = nearCall();
+    addLinkTask([=, &vm] (LinkBuffer& linkBuffer) {
+        auto callLocation = linkBuffer.locationOfNearCall<JITCompilationPtrTag>(call);
+        linkBuffer.addMainThreadFinalizationTask([=, &vm] () {
             MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, *info);
             info->setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, vm));
-            linkBuffer.link(call, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
+            MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
         });
+    });
 }
 
 #if USE(JSVALUE64)

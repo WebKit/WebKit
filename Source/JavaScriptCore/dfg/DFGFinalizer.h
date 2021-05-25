@@ -42,7 +42,6 @@ public:
     
     virtual size_t codeSize() = 0;
     virtual bool finalize() = 0;
-    virtual bool finalizeFunction() = 0;
 
 protected:
     Plan& m_plan;

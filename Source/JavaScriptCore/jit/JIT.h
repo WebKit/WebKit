@@ -1088,8 +1088,6 @@ namespace JSC {
         BytecodeIndex m_loopOSREntryBytecodeIndex;
 
         RefPtr<DirectJITCode> m_jitCode;
-
-        Vector<std::pair<Call, CallLinkInfo&>> m_virtualCalls;
     };
 
 } // namespace JSC

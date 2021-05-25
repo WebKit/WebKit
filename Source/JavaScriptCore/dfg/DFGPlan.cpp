@@ -609,12 +609,7 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
             return CompilationInvalidated;
         }
 
-        bool result;
-        if (m_codeBlock->codeType() == FunctionCode)
-            result = m_finalizer->finalizeFunction();
-        else
-            result = m_finalizer->finalize();
-
+        bool result = m_finalizer->finalize();
         if (!result) {
             CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgFinalize", ("failed"));
             return CompilationFailed;
