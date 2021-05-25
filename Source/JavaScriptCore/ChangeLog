@@ -1,3 +1,14 @@
+2021-05-24  Robin Morisset  <rmorisset@apple.com>
+
+        When running with --reportTotalPhaseTimes=1, we should also log the max time in a phase
+        https://bugs.webkit.org/show_bug.cgi?id=226196
+
+        Reviewed by Saam Barati.
+
+        It is especially useful when looking at DFG phases, since the GC may have to wait for them to finish.
+
+        * tools/CompilerTimingScope.cpp:
+
 2021-05-24  Saam Barati  <sbarati@apple.com>
 
         Allow CTI stubs to be generated off the main thread
