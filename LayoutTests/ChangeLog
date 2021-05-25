@@ -1,3 +1,15 @@
+2021-05-25  Frederic Wang  <fwang@igalia.com>
+
+        Crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=225267
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * fast/editing/paste-and-match-style-with-table-2-crash-expected.txt: Added.
+        * fast/editing/paste-and-match-style-with-table-2-crash.html: Added.
+
 2021-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

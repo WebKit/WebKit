@@ -1203,7 +1203,7 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
         // Avoid using table as paragraphs due to its special treatment in Position::upstream/downstream.
-        && !block->hasTagName(tableTag)
+        && !isRenderedTable(block)
         && block != editableRootForPosition(start);
     bool useLineBreak = enclosingTextFormControl(start);
 

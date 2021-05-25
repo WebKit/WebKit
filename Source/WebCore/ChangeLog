@@ -1,3 +1,22 @@
+2021-05-25  Frederic Wang  <fwang@igalia.com>
+
+        Crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=225267
+
+        Reviewed by Ryosuke Niwa.
+
+        WebCore::Position::upstream behaves specially for table renderer, which may confuse the
+        execution of WebCore::InsertParagraphSeparatorCommand::doApply() when the visible position
+        is within a table, leading to a debug assertion failure and a nullptr dereference in release
+        build. In r273375, this was fixed for DOM elements with the table tag, but this does not work
+        for display: table. This patch instead directly calls isRenderedTable, for consistency with
+        WebCore::Position::upstream.
+
+        Test: fast/editing/paste-and-match-style-with-table-2-crash.html
+
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): Use isRenderedTable instead of checking the tag name.
+
 2021-05-25  Ian Gilbert  <iang@apple.com>
 
         Only create MediaElementSession when necessary
