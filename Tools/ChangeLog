@@ -1,3 +1,14 @@
+2021-05-25  Keith Miller  <keith_miller@apple.com>
+
+        Wasm low memory tests should have a larger executable pool
+        https://bugs.webkit.org/show_bug.cgi?id=226233
+
+        Reviewed by Saam Barati.
+
+        With some other recent JSC changes we can sometimes go over the allocation pool we set aside. Let's bump the number.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-05-25  Sam Sneddon  <gsnedders@apple.com>
 
         Run webkitpy integration tests under pytest by default
