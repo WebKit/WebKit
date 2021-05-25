@@ -1,3 +1,15 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in Condition API tests
+        https://bugs.webkit.org/show_bug.cgi?id=226198
+
+        Reviewed by Sam Weinig.
+
+        Stop using UncheckedLock in Condition API tests. This is a step towards phasing out UncheckedLock
+        in favor the Lock so that we can benefit from Clang Thread Safety Analysis.
+
+        * TestWebKitAPI/Tests/WTF/Condition.cpp:
+
 2021-05-24  Mark Lam  <mark.lam@apple.com>
 
         Raise jitMemoryReservationSize for ftl-no-cjit-small-pool* tests.
