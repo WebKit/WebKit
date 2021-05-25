@@ -1275,3 +1275,5 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
 
 webkit.org/b/224144 storage/websql/alter-to-info-table.html [ Skip ]
+
+webkit.org/b/226229 [ Catalina ] imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html [ Pass ImageOnlyFailure ]

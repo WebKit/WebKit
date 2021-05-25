@@ -1,3 +1,12 @@
+2021-05-25  Amir Mark Jr  <amir_mark@apple.com>
+
+        [ Catalina E Wk1 ] imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html is flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=226229
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
         SecurityPolicyViolationEvent.constructor do not throw any exception as expected when eventInitDict param do not include all the members required
