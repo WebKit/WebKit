@@ -1,3 +1,60 @@
+2021-05-25  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r277881. rdar://problem/78467211
+
+    [Cocoa] Unable to upload files that are stored in the cloud (without a local copy)
+    https://bugs.webkit.org/show_bug.cgi?id=226090
+    <rdar://77775887>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    Allow the network process to load / read dataless files stored in the cloud by allowing
+    the process to materialize such files. I initially only allowed the AsyncFileStream
+    thread to materialize the dataless files and this was enough to make the file upload
+    use cases work. However, I noticed that drag and dropping such file in the Safari URL
+    bar would fail loading, which I think is bad user experience. As a result, I have
+    decided to allow the materializing at network process level.
+    
+    I have verified manually that I can now upload such dataless files via either file
+    picker or drag and drop (used https://blueimp.github.io/jQuery-File-Upload/). I have
+    also verified that drag and dropping such a file in the Safari URL bar successfuly
+    loads that file.
+    
+    * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+    (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+    
+    Source/WTF:
+    
+    Add FileSystem API to allow/disallow the materializing of dataless files stored
+    in the cloud, at process or thread level.
+    
+    * wtf/FileSystem.h:
+    * wtf/cocoa/FileSystemCocoa.mm:
+    (WTF::FileSystemImpl::toIOPolicyScope):
+    (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+    (WTF::FileSystemImpl::allowsMaterializingDatalessFiles):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277881 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+            [Cocoa] Unable to upload files that are stored in the cloud (without a local copy)
+            https://bugs.webkit.org/show_bug.cgi?id=226090
+            <rdar://77775887>
+
+            Reviewed by Darin Adler.
+
+            Add FileSystem API to allow/disallow the materializing of dataless files stored
+            in the cloud, at process or thread level.
+
+            * wtf/FileSystem.h:
+            * wtf/cocoa/FileSystemCocoa.mm:
+            (WTF::FileSystemImpl::toIOPolicyScope):
+            (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+            (WTF::FileSystemImpl::allowsMaterializingDatalessFiles):
+
 2021-05-20  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r276788. rdar://problem/78264378
