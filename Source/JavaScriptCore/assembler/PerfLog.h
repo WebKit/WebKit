@@ -43,14 +43,14 @@ private:
     PerfLog();
     static PerfLog& singleton();
 
-    void write(const AbstractLocker&, const void*, size_t);
-    void flush(const AbstractLocker&);
+    void write(const void*, size_t) WTF_REQUIRES_LOCK(m_lock);
+    void flush() WTF_REQUIRES_LOCK(m_lock);
 
     FILE* m_file { nullptr };
     void* m_marker { nullptr };
     uint64_t m_codeIndex { 0 };
     int m_fd { -1 };
-    UncheckedLock m_lock;
+    Lock m_lock;
 };
 
 } // namespace JSC

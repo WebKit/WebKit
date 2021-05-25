@@ -165,17 +165,17 @@ PerfLog::PerfLog()
     header.pid = getCurrentProcessID();
 
     Locker locker { m_lock };
-    write(locker, &header, sizeof(JITDump::FileHeader));
-    flush(locker);
+    write(&header, sizeof(JITDump::FileHeader));
+    flush();
 }
 
-void PerfLog::write(const AbstractLocker&, const void* data, size_t size)
+void PerfLog::write(const void* data, size_t size)
 {
     size_t result = fwrite(data, 1, size, m_file);
     RELEASE_ASSERT(result == size);
 }
 
-void PerfLog::flush(const AbstractLocker&)
+void PerfLog::flush()
 {
     fflush(m_file);
 }
@@ -200,10 +200,10 @@ void PerfLog::log(CString&& name, const uint8_t* executableAddress, size_t size)
     record.codeSize = size;
     record.codeIndex = logger.m_codeIndex++;
 
-    logger.write(locker, &record, sizeof(JITDump::CodeLoadRecord));
-    logger.write(locker, name.data(), name.length() + 1);
-    logger.write(locker, executableAddress, size);
-    logger.flush(locker);
+    logger.write(&record, sizeof(JITDump::CodeLoadRecord));
+    logger.write(name.data(), name.length() + 1);
+    logger.write(executableAddress, size);
+    logger.flush();
 
     dataLogLnIf(PerfLogInternal::verbose, name, " [", record.codeIndex, "] ", RawPointer(executableAddress), "-", RawPointer(executableAddress + size), " ", size);
 }
