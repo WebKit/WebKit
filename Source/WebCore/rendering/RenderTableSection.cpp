@@ -123,8 +123,7 @@ void RenderTableSection::willBeRemovedFromTree(IsInternalMove isInternalMove)
 
 void RenderTableSection::willInsertTableRow(RenderTableRow& child, RenderObject* beforeChild)
 {
-    if (beforeChild)
-        setNeedsCellRecalc();
+    setNeedsCellRecalc();
 
     unsigned insertionRow = m_cRow;
     ++m_cRow;
