@@ -1,3 +1,28 @@
+2021-05-25  Sihui Liu  <sihui_liu@apple.com>
+
+        Make error returned by SQLiteIDBBackingStore::getOrEstablishDatabaseInfo more detailed
+        https://bugs.webkit.org/show_bug.cgi?id=226124
+
+        Reviewed by Chris Dumez.
+
+        Convert some error loggings to error info to help debug rdar://77532291.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidBlobTables):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * platform/sql/SQLiteDatabase.cpp: add two helper funtions that are used in many places.
+        (WebCore::SQLiteDatabase::tableExists):
+        (WebCore::SQLiteDatabase::tableSQL):
+        (WebCore::SQLiteDatabase::indexSQL):
+        * platform/sql/SQLiteDatabase.h:
+
 2021-05-25  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Build failure in UserAgentPlayStation

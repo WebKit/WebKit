@@ -252,340 +252,165 @@ SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
         closeSQLiteDB();
 }
 
-static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
+static IDBError createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
 {
-    String currentSchema;
-    {
-        // Fetch the schema for an existing records table.
-        auto statement = database.prepareStatement("SELECT type, sql FROM sqlite_master WHERE tbl_name='Records'"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare statement to fetch schema for the Records table.");
-            return false;
-        }
+    String tableStatement = database.tableSQL("Records"_s);
+    if (tableStatement.isEmpty()) {
+        if (!database.executeCommand(v3RecordsTableSchema()))
+            return IDBError { UnknownError, makeString("Error creating new Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
 
-        int sqliteResult = statement->step();
-
-        // If there is no Records table at all, create it and then bail.
-        if (sqliteResult == SQLITE_DONE) {
-            if (!database.executeCommand(v3RecordsTableSchema())) {
-                LOG_ERROR("Could not create Records table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
-                return false;
-            }
-
-            return true;
-        }
-
-        if (sqliteResult != SQLITE_ROW) {
-            LOG_ERROR("Error executing statement to fetch schema for the Records table.");
-            return false;
-        }
-
-        currentSchema = statement->columnText(1);
+        return IDBError { };
     }
 
-    ASSERT(!currentSchema.isEmpty());
-
     // If the schema in the backing store is the current schema, we're done.
-    if (currentSchema == v3RecordsTableSchema() || currentSchema == v3RecordsTableSchemaAlternate())
-        return true;
+    if (tableStatement == v3RecordsTableSchema() || tableStatement == v3RecordsTableSchemaAlternate())
+        return IDBError { };
 
     // If the record table is not the current schema then it must be one of the previous schemas.
     // If it is not then the database is in an unrecoverable state and this should be considered a fatal error.
-    if (currentSchema != v1RecordsTableSchema() && currentSchema != v1RecordsTableSchemaAlternate()
-        && currentSchema != v2RecordsTableSchema() && currentSchema != v2RecordsTableSchemaAlternate())
+    if (tableStatement != v1RecordsTableSchema() && tableStatement != v1RecordsTableSchemaAlternate()
+        && tableStatement != v2RecordsTableSchema() && tableStatement != v2RecordsTableSchemaAlternate())
         RELEASE_ASSERT_NOT_REACHED();
 
     SQLiteTransaction transaction(database);
     transaction.begin();
 
     // Create a temporary table with the correct schema and migrate all existing content over.
-    if (!database.executeCommand(v3RecordsTableSchemaTemp())) {
-        LOG_ERROR("Could not create temporary records table in database (%i) - %s", database.lastError(), database.lastErrorMsg());
-        return false;
-    }
+    if (!database.executeCommand(v3RecordsTableSchemaTemp()))
+        return IDBError { UnknownError, makeString("Error creating temporary Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
 
-    if (!database.executeCommand("INSERT INTO _Temp_Records (objectStoreID, key, value) SELECT objectStoreID, CAST(key AS TEXT), value FROM Records"_s)) {
-        LOG_ERROR("Could not migrate existing Records content (%i) - %s", database.lastError(), database.lastErrorMsg());
-        return false;
-    }
+    if (!database.executeCommand("INSERT INTO _Temp_Records (objectStoreID, key, value) SELECT objectStoreID, CAST(key AS TEXT), value FROM Records"_s))
+        return IDBError { UnknownError, makeString("Error migrating Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
 
-    if (!database.executeCommand("DROP TABLE Records"_s)) {
-        LOG_ERROR("Could not drop existing Records table (%i) - %s", database.lastError(), database.lastErrorMsg());
-        return false;
-    }
+    if (!database.executeCommand("DROP TABLE Records"_s))
+        return IDBError { UnknownError, makeString("Error dropping Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
 
-    if (!database.executeCommand("ALTER TABLE _Temp_Records RENAME TO Records"_s)) {
-        LOG_ERROR("Could not rename temporary Records table (%i) - %s", database.lastError(), database.lastErrorMsg());
-        return false;
-    }
+    if (!database.executeCommand("ALTER TABLE _Temp_Records RENAME TO Records"_s))
+        return IDBError { UnknownError, makeString("Error renaming temporary Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
 
     transaction.commit();
 
-    return true;
+    return IDBError { };
 }
 
-bool SQLiteIDBBackingStore::ensureValidBlobTables()
+IDBError SQLiteIDBBackingStore::ensureValidBlobTables()
 {
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    String currentSchema;
-    {
-        // Fetch the schema for an existing blob record table.
-        auto statement = m_sqliteDB->prepareStatement("SELECT type, sql FROM sqlite_master WHERE tbl_name='BlobRecords'"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare statement to fetch schema for the BlobRecords table.");
-            return false;
-        }
+    String recordsTableStatement = m_sqliteDB->tableSQL("BlobRecords"_s);
+    if (recordsTableStatement.isEmpty()) {
+        if (!m_sqliteDB->executeCommand(blobRecordsTableSchema()))
+            return IDBError { UnknownError, makeString("Error creating BlobRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-        int sqliteResult = statement->step();
-
-        // If there is no BlobRecords table at all, create it..
-        if (sqliteResult == SQLITE_DONE) {
-            if (!m_sqliteDB->executeCommand(blobRecordsTableSchema())) {
-                LOG_ERROR("Could not create BlobRecords table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-                return false;
-            }
-
-            currentSchema = blobRecordsTableSchema();
-        } else if (sqliteResult != SQLITE_ROW) {
-            LOG_ERROR("Error executing statement to fetch schema for the BlobRecords table.");
-            return false;
-        } else
-            currentSchema = statement->columnText(1);
+        recordsTableStatement = blobRecordsTableSchema();
     }
 
-    if (currentSchema != blobRecordsTableSchema() && currentSchema != blobRecordsTableSchemaAlternate()) {
-        LOG_ERROR("Invalid BlobRecords table schema found");
-        return false;
+    RELEASE_ASSERT(recordsTableStatement == blobRecordsTableSchema() || recordsTableStatement == blobRecordsTableSchemaAlternate());
+
+    String filesTableStatement = m_sqliteDB->tableSQL("BlobFiles"_s);
+    if (filesTableStatement.isEmpty()) {
+        if (!m_sqliteDB->executeCommand(blobFilesTableSchema()))
+            return IDBError { UnknownError, makeString("Error creating BlobFiles table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+
+        filesTableStatement = blobFilesTableSchema();
     }
 
-    {
-        // Fetch the schema for an existing blob file table.
-        auto statement = m_sqliteDB->prepareStatement("SELECT type, sql FROM sqlite_master WHERE tbl_name='BlobFiles'"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare statement to fetch schema for the BlobFiles table.");
-            return false;
-        }
-
-        int sqliteResult = statement->step();
-
-        // If there is no BlobFiles table at all, create it and then bail.
-        if (sqliteResult == SQLITE_DONE) {
-            if (!m_sqliteDB->executeCommand(blobFilesTableSchema())) {
-                LOG_ERROR("Could not create BlobFiles table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-                return false;
-            }
-
-            return true;
-        }
-
-        if (sqliteResult != SQLITE_ROW) {
-            LOG_ERROR("Error executing statement to fetch schema for the BlobFiles table.");
-            return false;
-        }
-
-        currentSchema = statement->columnText(1);
-    }
-
-    if (currentSchema != blobFilesTableSchema() && currentSchema != blobFilesTableSchemaAlternate()) {
-        LOG_ERROR("Invalid BlobFiles table schema found");
-        return false;
-    }
-
-    return true;
+    RELEASE_ASSERT(filesTableStatement == blobFilesTableSchema() || filesTableStatement == blobFilesTableSchemaAlternate());
+    return IDBError { };
 }
 
-bool SQLiteIDBBackingStore::ensureValidRecordsTable()
+IDBError SQLiteIDBBackingStore::ensureValidRecordsTable()
 {
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    if (!createOrMigrateRecordsTableIfNecessary(*m_sqliteDB))
-        return false;
+    IDBError error = createOrMigrateRecordsTableIfNecessary(*m_sqliteDB);
+    if (!error.isNull())
+        return error;
 
     // Whether the updated records table already existed or if it was just created and the data migrated over,
     // make sure the uniqueness index exists.
-    if (!m_sqliteDB->executeCommand("CREATE UNIQUE INDEX IF NOT EXISTS RecordsIndex ON Records (objectStoreID, key);"_s)) {
-        LOG_ERROR("Could not create RecordsIndex on Records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
-    }
+    if (!m_sqliteDB->executeCommand("CREATE UNIQUE INDEX IF NOT EXISTS RecordsIndex ON Records (objectStoreID, key);"_s))
+        error = IDBError { UnknownError, makeString("Error creating RecordsIndex on Records table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-    return true;
+    return error;
 }
 
-bool SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
+IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
 {
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    String currentSchema;
-    {
-        // Fetch the schema for an existing index record table.
-        auto statement = m_sqliteDB->prepareStatement("SELECT type, sql FROM sqlite_master WHERE tbl_name='IndexRecords'"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare statement to fetch schema for the IndexRecords table.");
-            return false;
-        }
+    String tableStatement = m_sqliteDB->tableSQL("IndexRecords"_s);
+    if (tableStatement.isEmpty()) {
+        if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchema()))
+            return IDBError { UnknownError, makeString("Error creating IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-        int sqliteResult = statement->step();
-
-        // If there is no IndexRecords table at all, create it and then bail.
-        if (sqliteResult == SQLITE_DONE) {
-            if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchema())) {
-                LOG_ERROR("Could not create IndexRecords table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-                return false;
-            }
-
-            return true;
-        }
-
-        if (sqliteResult != SQLITE_ROW) {
-            LOG_ERROR("Error executing statement to fetch schema for the IndexRecords table.");
-            return false;
-        }
-
-        currentSchema = statement->columnText(1);
+        return IDBError { };
     }
 
-    ASSERT(!currentSchema.isEmpty());
-
     // If the schema in the backing store is the current schema, we're done.
-    if (currentSchema == v3IndexRecordsTableSchema() || currentSchema == v3IndexRecordsTableSchemaAlternate())
-        return true;
+    if (tableStatement == v3IndexRecordsTableSchema() || tableStatement == v3IndexRecordsTableSchemaAlternate())
+        return IDBError { };
 
-    // If the record table is not the current schema then it must be one of the previous schemas.
-    // If it is not then the database is in an unrecoverable state and this should be considered a fatal error.
-    if (currentSchema != v1IndexRecordsTableSchema() && currentSchema != v1IndexRecordsTableSchemaAlternate()
-        && currentSchema != v2IndexRecordsTableSchema() && currentSchema != v2IndexRecordsTableSchemaAlternate())
-        RELEASE_ASSERT_NOT_REACHED();
+    RELEASE_ASSERT(tableStatement == v1IndexRecordsTableSchema() || tableStatement == v1IndexRecordsTableSchemaAlternate() || tableStatement == v2IndexRecordsTableSchema() || tableStatement == v2IndexRecordsTableSchemaAlternate());
 
     SQLiteTransaction transaction(*m_sqliteDB);
     transaction.begin();
 
     // Create a temporary table with the correct schema and migrate all existing content over.
-    if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchemaTemp())) {
-        LOG_ERROR("Could not create temporary index records table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
-    }
+    if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchemaTemp()))
+        return IDBError { UnknownError, makeString("Error creating temporary IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-    if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_IndexRecords SELECT IndexRecords.indexID, IndexRecords.objectStoreID, IndexRecords.key, IndexRecords.value, Records.rowid FROM IndexRecords INNER JOIN Records ON Records.key = IndexRecords.value AND Records.objectStoreID = IndexRecords.objectStoreID"_s)) {
-        LOG_ERROR("Could not migrate existing IndexRecords content (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
-    }
+    if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_IndexRecords SELECT IndexRecords.indexID, IndexRecords.objectStoreID, IndexRecords.key, IndexRecords.value, Records.rowid FROM IndexRecords INNER JOIN Records ON Records.key = IndexRecords.value AND Records.objectStoreID = IndexRecords.objectStoreID"_s))
+        return IDBError { UnknownError, makeString("Error migrating IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-    if (!m_sqliteDB->executeCommand("DROP TABLE IndexRecords"_s)) {
-        LOG_ERROR("Could not drop existing IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
-    }
+    if (!m_sqliteDB->executeCommand("DROP TABLE IndexRecords"_s))
+        return IDBError { UnknownError, makeString("Error dropping IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-    if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords"_s)) {
-        LOG_ERROR("Could not rename temporary IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
-    }
+    if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords"_s))
+        return IDBError { UnknownError, makeString("Error renaming temporary IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
     transaction.commit();
 
-    return true;
+    return IDBError { };
 }
 
-bool SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
+IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
 {
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    String currentSchema;
-    {
-        // Fetch the schema for an existing index record index.
-        auto statement = m_sqliteDB->prepareStatement("SELECT sql FROM sqlite_master WHERE name='IndexRecordsIndex'"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare statement to fetch schema for the IndexRecordsIndex index.");
-            return false;
-        }
+    String indexStatement = m_sqliteDB->indexSQL("IndexRecordsIndex"_s);
+    if (indexStatement == IndexRecordsIndexSchema)
+        return IDBError { };
+    
+    if (!m_sqliteDB->executeCommand("DROP INDEX IF EXISTS IndexRecordsIndex"_s))
+        return IDBError { UnknownError, makeString("Error dropping IndexRecordsIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-        int sqliteResult = statement->step();
+    if (!m_sqliteDB->executeCommand(IndexRecordsIndexSchema))
+        return IDBError { UnknownError, makeString("Error creating IndexRecordsIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-        // If there is no IndexRecordsIndex index at all, create it and then bail.
-        if (sqliteResult == SQLITE_DONE) {
-            if (!m_sqliteDB->executeCommand(IndexRecordsIndexSchema)) {
-                LOG_ERROR("Could not create IndexRecordsIndex index in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-                return false;
-            }
-
-            return true;
-        }
-
-        if (sqliteResult != SQLITE_ROW) {
-            LOG_ERROR("Error executing statement to fetch schema for the IndexRecordsIndex index.");
-            return false;
-        }
-
-        currentSchema = statement->columnText(0);
-    }
-
-    ASSERT(!currentSchema.isEmpty());
-
-    // If the schema in the backing store is the current schema, we're done.
-    if (currentSchema == IndexRecordsIndexSchema)
-        return true;
-
-    // Otherwise, update the schema.
-    SQLiteTransaction transaction(*m_sqliteDB);
-    transaction.begin();
-
-    if (!m_sqliteDB->executeCommand("DROP INDEX IndexRecordsIndex"_s)) {
-        LOG_ERROR("Could not drop index IndexRecordsIndex in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
-    }
-
-    if (!m_sqliteDB->executeCommand(IndexRecordsIndexSchema)) {
-        LOG_ERROR("Could not create IndexRecordsIndex index in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return false;
-    }
-
-    transaction.commit();
-
-    return true;
+    return IDBError { };
 }
 
-bool SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex()
+IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex()
 {
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    String currentSchema;
-    {
-        auto statement = m_sqliteDB->prepareStatement("SELECT sql FROM sqlite_master WHERE name='IndexRecordsRecordIndex'"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare statement to fetch schema for the IndexRecordsRecordIndex index.");
-            return false;
-        }
+    String indexStatement = m_sqliteDB->indexSQL("IndexRecordsRecordIndex"_s);
+    if (indexStatement == v1IndexRecordsRecordIndexSchema)
+        return IDBError { };
+    
+    if (!m_sqliteDB->executeCommand("DROP INDEX IF EXISTS IndexRecordsRecordIndex"_s))
+        return IDBError { UnknownError, makeString("Error dropping IndexRecordsRecordIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-        int sqliteResult = statement->step();
+    if (!m_sqliteDB->executeCommand(v1IndexRecordsRecordIndexSchema))
+        return IDBError { UnknownError, makeString("Error creating IndexRecordsRecordIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
 
-        if (sqliteResult == SQLITE_DONE) {
-            if (!m_sqliteDB->executeCommand(v1IndexRecordsRecordIndexSchema)) {
-                LOG_ERROR("Could not create IndexRecordsRecordIndex index in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-                return false;
-            }
-
-            return true;
-        }
-
-        if (sqliteResult != SQLITE_ROW) {
-            LOG_ERROR("Error executing statement to fetch schema for the IndexRecordsRecordIndex index.");
-            return false;
-        }
-
-        currentSchema = statement->columnText(0);
-    }
-
-    ASSERT(!currentSchema.isEmpty());
-
-    if (currentSchema == v1IndexRecordsRecordIndexSchema)
-        return true;
-
-    return false;
+    return IDBError { };
 }
 
 std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitialDatabaseInfo()
@@ -665,32 +490,14 @@ Optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTabl
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
 
-    String currentSchema;
-    {
-        // Fetch the schema for ObjectStoreInfo table.
-        auto statement = m_sqliteDB->prepareStatement("SELECT sql FROM sqlite_master WHERE tbl_name='ObjectStoreInfo'"_s);
-        if (!statement) {
-            LOG_ERROR("Unable to prepare statement to fetch schema for the ObjectStoreInfo table.");
-            return WTF::nullopt;
-        }
-
-        int sqliteResult = statement->step();
-        if (sqliteResult != SQLITE_ROW) {
-            LOG_ERROR("Error executing statement to fetch schema for the ObjectStoreInfo table.");
-            return WTF::nullopt;
-        }
-
-        currentSchema = statement->columnText(0);
-    }
-
-    ASSERT(!currentSchema.isEmpty());
-    if (currentSchema == v2ObjectStoreInfoSchema || currentSchema == createV2ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate))
-        return { IsSchemaUpgraded::No };
-
-    if (currentSchema != createV1ObjectStoreInfoSchema(objectStoreInfoTableName) && currentSchema != createV1ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate)) {
-        RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable: schema is invalid - %s", this, currentSchema.utf8().data());
+    String tableStatement = m_sqliteDB->tableSQL("ObjectStoreInfo"_s);
+    if (tableStatement.isEmpty())
         return WTF::nullopt;
-    }
+    
+    if (tableStatement == v2ObjectStoreInfoSchema || tableStatement == createV2ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate))
+        return { IsSchemaUpgraded::No };
+    
+    RELEASE_ASSERT(tableStatement == createV1ObjectStoreInfoSchema(objectStoreInfoTableName) || tableStatement == createV1ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate));
 
     // Drop column maxIndexID from table.
     SQLiteTransaction transaction(*m_sqliteDB);
@@ -1203,34 +1010,34 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         return idbKeyCollate(aLength, a, bLength, b);
     });
 
-    if (!ensureValidRecordsTable()) {
-        LOG_ERROR("Error creating or migrating Records table in database");
+    IDBError error = ensureValidRecordsTable();
+    if (!error.isNull()) {
         closeSQLiteDB();
-        return IDBError { UnknownError, "Error creating or migrating Records table in database"_s };
+        return error;
     }
 
-    if (!ensureValidIndexRecordsTable()) {
-        LOG_ERROR("Error creating or migrating Index Records table in database");
+    error = ensureValidIndexRecordsTable();
+    if (!error.isNull()) {
         closeSQLiteDB();
-        return IDBError { UnknownError, "Error creating or migrating Index Records table in database"_s };
+        return error;
     }
 
-    if (!ensureValidIndexRecordsIndex()) {
-        LOG_ERROR("Error creating or migrating Index Records index in database");
+    error = ensureValidIndexRecordsIndex();
+    if (!error.isNull()) {
         closeSQLiteDB();
-        return IDBError { UnknownError, "Error creating or migrating Index Records index in database"_s };
+        return error;
     }
-
-    if (!ensureValidIndexRecordsRecordIndex()) {
-        LOG_ERROR("Error creating or migrating Index Records second index for in database");
+    
+    error = ensureValidIndexRecordsRecordIndex();
+    if (!error.isNull()) {
         closeSQLiteDB();
-        return IDBError { UnknownError, "Error creating or migrating Index Records second index in database"_s };
+        return error;
     }
-
-    if (!ensureValidBlobTables()) {
-        LOG_ERROR("Error creating or confirming Blob Records tables in database");
+    
+    error = ensureValidBlobTables();
+    if (!error.isNull()) {
         closeSQLiteDB();
-        return IDBError { UnknownError, "Error creating or confirming Blob Records tables in database"_s };
+        return error;
     }
 
     auto databaseInfo = extractExistingDatabaseInfo();

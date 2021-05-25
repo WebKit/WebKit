@@ -65,6 +65,8 @@ public:
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     
     WEBCORE_EXPORT bool tableExists(const String&);
+    WEBCORE_EXPORT String tableSQL(const String&);
+    WEBCORE_EXPORT String indexSQL(const String&);
     WEBCORE_EXPORT void clearAllTables();
     WEBCORE_EXPORT int runVacuumCommand();
     WEBCORE_EXPORT int runIncrementalVacuumCommand();

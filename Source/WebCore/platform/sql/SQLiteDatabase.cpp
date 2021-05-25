@@ -387,15 +387,31 @@ bool SQLiteDatabase::executeCommand(ASCIILiteral query)
 
 bool SQLiteDatabase::tableExists(const String& tableName)
 {
-    if (!isOpen())
-        return false;
+    return !tableSQL(tableName).isEmpty();
+}
 
-    auto statement = prepareStatement("SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?;"_s);
-    if (!statement)
-        return false;
-    if (statement->bindText(1, tableName) != SQLITE_OK)
-        return false;
-    return statement->step() == SQLITE_ROW;
+String SQLiteDatabase::tableSQL(const String& tableName)
+{
+    if (!isOpen())
+        return { };
+
+    auto statement = prepareStatement("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?;"_s);
+    if (!statement || statement->bindText(1, tableName) != SQLITE_OK || statement->step() != SQLITE_ROW)
+        return { };
+
+    return statement->columnText(0);
+}
+
+String SQLiteDatabase::indexSQL(const String& indexName)
+{
+    if (!isOpen())
+        return { };
+
+    auto statement = prepareStatement("SELECT sql FROM sqlite_master WHERE type = 'index' AND name = ?;"_s);
+    if (!statement || statement->bindText(1, indexName) != SQLITE_OK || statement->step() != SQLITE_ROW)
+        return { };
+
+    return statement->columnText(0);
 }
 
 void SQLiteDatabase::clearAllTables()
