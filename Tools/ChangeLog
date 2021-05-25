@@ -1,3 +1,14 @@
+2021-05-25  Mark Lam  <mark.lam@apple.com>
+
+        Raise jitMemoryReservationSize for ftl-no-cjit-small-pool* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=226205
+
+        Rubber-stamped by Saam Barati.
+
+        The bump to 75K didn't relieve the jsc EWS bot.  Trying a bump to 100K this time.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-05-25  Keith Miller  <keith_miller@apple.com>
 
         Wasm low memory tests should have a larger executable pool
