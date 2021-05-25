@@ -1,3 +1,16 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        SecurityPolicyViolationEvent.constructor do not throw any exception as expected when eventInitDict param do not include all the members required
+        https://bugs.webkit.org/show_bug.cgi?id=226215
+
+        Reviewed by Darin Adler.
+
+        Update existing test so that it keeps passing with the new SecurityPolicyViolationEvent constructor
+        changes.
+
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-basics.html:
+
 2021-05-21  Jonathan Bedard  <jbedard@apple.com>
 
         [LayoutTess] Delete unused LayoutTests/fast resources

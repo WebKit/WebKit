@@ -712,6 +712,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.effectiveDirective = effectiveViolatedDirective;
     violationEventInit.originalPolicy = violatedDirectiveList.header();
     violationEventInit.sourceFile = info.sourceFile;
+    violationEventInit.disposition = violatedDirectiveList.isReportOnly() ? SecurityPolicyViolationEvent::Disposition::Report : SecurityPolicyViolationEvent::Disposition::Enforce;
     violationEventInit.statusCode = httpStatusCode;
     violationEventInit.lineNumber =  info.lineNumber;
     violationEventInit.columnNumber = info.columnNumber;

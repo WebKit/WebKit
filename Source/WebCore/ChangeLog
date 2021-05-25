@@ -1,3 +1,34 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        SecurityPolicyViolationEvent.constructor do not throw any exception as expected when eventInitDict param do not include all the members required
+        https://bugs.webkit.org/show_bug.cgi?id=226215
+
+        Reviewed by Darin Adler.
+
+        Update our SecurityPolicyViolationEvent & SecurityPolicyViolationEventInit IDL to match
+        Blink more closely, which gets us much closer to the specification:
+        - https://w3c.github.io/webappsec-csp/#securitypolicyviolationevent
+
+        I added comments in the IDL for cases where we intentionally don't match the specification
+        because it would not be compatible with Blink.
+
+        The following changes were made:
+        - Mark documentURI, violatedDirective, effectiveDirective, originalPolicy, disposition and
+          statusCode dictionary members as required.
+        - Use 'unsigned long' type for lineNumber & columNumber dictionary members instead of 'long'.
+        - Add disposition and sample dictionary members.
+        - Use USVString type for referrer dictionary member instead of DOMString
+        - Allow workers to construct a SecurityPolicyViolationEvent.
+        - Add documentURL, blockedURL, sample, disposition, lineno, colno attributes to
+          SecurityPolicyViolationEvent.
+
+        * dom/SecurityPolicyViolationEvent.h:
+        (WebCore::SecurityPolicyViolationEvent::Init::encode const):
+        (WebCore::SecurityPolicyViolationEvent::Init::decode):
+        * dom/SecurityPolicyViolationEvent.idl:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+
 2021-05-24  Darin Adler  <darin@apple.com>
 
         Switch from WTF::Optional to std::optional
