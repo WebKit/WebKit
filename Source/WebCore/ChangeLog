@@ -1,3 +1,19 @@
+2021-05-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        GLContextEGL::swapBuffers() shouldn't do anything for Surfaceless contexts
+        https://bugs.webkit.org/show_bug.cgi?id=226164
+
+        Reviewed by Philippe Normand.
+
+        In case of a surfaceless GLContextEGL, the swapBuffers() method should
+        return early, avoiding an assert expecting a non-null EGLSurface (not
+        viable for surfaceless context) and a call to eglSwapBuffers(), which
+        on some drivers could still fail even when the surfaceless context
+        support is present and active.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::swapBuffers):
+
 2021-05-24  Cathie Chen  <cathiechen@igalia.com>
 
         Use the parsed width and height attributes as a presentational hint for aspect-ratio CSS property
