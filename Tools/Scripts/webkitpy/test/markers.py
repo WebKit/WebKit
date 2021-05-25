@@ -64,3 +64,6 @@ def slow(func):
         return pytest.mark.slow(func)
     except NameError:
         return func
+
+
+skip = unittest.skip

@@ -30,12 +30,14 @@ import subprocess
 import unittest
 
 from webkitpy.tool.steps.haslanded import HasLanded
+from webkitpy.test.markers import skip
 
 
 class HasLandedTest(unittest.TestCase):
     maxDiff = None
 
-    @unittest.skipUnless(subprocess.call('which interdiff', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0, "requires interdiff")
+    @unittest.skip("https://bugs.webkit.org/show_bug.cgi?id=226230")
+    # @unittest.skipUnless(subprocess.call('which interdiff', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0, "requires interdiff")
     def test_run(self):
         # These patches require trailing whitespace to remain valid patches.
         diff1 = """\

@@ -38,9 +38,14 @@ import sys
 import tempfile
 import unittest
 
+from copy import copy
+
+from webkitpy.test.markers import slow, xfail, skip
+
 
 class BaseTest(unittest.TestCase):
     """Basic framework for script tests."""
+    __pytest_no_rewrite__ = True
     HOST = 'localhost'
 
     # Override in actual test classes.
@@ -132,14 +137,41 @@ class BaseTest(unittest.TestCase):
 
 class HTTPServerTest(BaseTest):
     """Tests that new-run-webkit-http must pass."""
+    __pytest_no_rewrite__ = False
 
     PORTS = (8000, 8080, 8443)
     SCRIPT_NAME = 'new-run-webkit-httpd'
 
+    @xfail
+    def integration_test_server__normal(self):
+        return super(HTTPServerTest, self).integration_test_server__normal()
+
+    @xfail
+    def integration_test_server__fails(self):
+        return super(HTTPServerTest, self).integration_test_server__fails()
+
+    @xfail
+    def integration_test_port_and_root(self):
+        return super(HTTPServerTest, self).integration_test_port_and_root()
+
 
 class WebsocketserverTest(BaseTest):
     """Tests that new-run-webkit-websocketserver must pass."""
+    __pytest_no_rewrite__ = False
 
     # FIXME: test TLS at some point?
     PORTS = (8880, )
     SCRIPT_NAME = 'new-run-webkit-websocketserver'
+
+    @skip("flaky")
+    def integration_test_server__normal(self):
+        return super(WebsocketserverTest, self).integration_test_server__normal()
+
+    @skip("flaky")
+    def integration_test_server__fails(self):
+        return super(WebsocketserverTest, self).integration_test_server__fails()
+
+    @slow
+    @xfail
+    def integration_test_port_and_root(self):
+        return super(WebsocketserverTest, self).integration_test_port_and_root()

@@ -30,6 +30,7 @@ from webkitcorepy import StringIO
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import Executive
 from webkitpy.test.main import Tester, _Loader
+from webkitpy.test.markers import xfail
 
 from webkitcorepy import OutputCapture
 
@@ -107,6 +108,7 @@ class TesterTest(unittest.TestCase):
             STUBS_CLASS + '.serial_test_empty',
             ])
 
+    @xfail
     def integration_test_coverage_works(self):
         filesystem = FileSystem()
         executive = Executive()

@@ -176,7 +176,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # FIXME: Multiprocessing doesn't do well when nested in Python 3 (https://bugs.webkit.org/show_bug.cgi?id=205280)
         self.should_test_processes = not self._platform.is_win() and sys.version_info < (3, 0)
 
-    def test_basic(self):
+    def serial_test_basic(self):
         options, args = parse_args(tests_included=True)
         logging_stream = StringIO()
         host = MockHost()
@@ -208,7 +208,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         self.assertEqual(host.user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
 
-    def test_batch_size(self):
+    def serial_test_batch_size(self):
         batch_tests_run = get_test_batches(['--batch-size', '2'])
         for batch in batch_tests_run:
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
@@ -226,7 +226,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
                 tests_included=True, shared_port=False)
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.getvalue().splitlines()]))
 
-    def test_dryrun(self):
+    def serial_test_dryrun(self):
         tests_run = get_tests_run(['--dry-run'])
         self.assertEqual(tests_run, [])
 
@@ -250,7 +250,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             self.assertRaises(BaseException, logging_run,
                 ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True, shared_port=False)
 
-    def test_full_results_html(self):
+    def serial_test_full_results_html(self):
         # FIXME: verify html?
         details, _, _ = logging_run(['--full-results-html'])
         self.assertEqual(details.exit_code, 0)
@@ -308,21 +308,21 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--order=none'] + tests_to_run)
         self.assertEqual(tests_to_run, tests_run)
 
-    def test_no_order_with_directory_entries_in_natural_order(self):
+    def serial_test_no_order_with_directory_entries_in_natural_order(self):
         tests_to_run = ['http/tests/ssl', 'http/tests/passes']
         tests_run = get_tests_run(['--order=none'] + tests_to_run)
         self.assertEqual(tests_run, ['http/tests/ssl/text.html', 'http/tests/passes/image.html', 'http/tests/passes/text.html'])
 
-    def test_gc_between_tests(self):
+    def serial_test_gc_between_tests(self):
         self.assertTrue(passing_run(['--gc-between-tests']))
 
-    def test_check_for_world_leaks(self):
+    def serial_test_check_for_world_leaks(self):
         self.assertTrue(passing_run(['--world-leaks']))
 
-    def test_complex_text(self):
+    def serial_test_complex_text(self):
         self.assertTrue(passing_run(['--complex-text']))
 
-    def test_threaded(self):
+    def serial_test_threaded(self):
         self.assertTrue(passing_run(['--threaded']))
 
     def test_repeat_each(self):
@@ -381,7 +381,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         chunk_tests_run = get_tests_run(['--run-chunk', '1:3', '--skipped', 'always'] + tests_to_run)
         self.assertEqual(['passes/text.html', 'passes/error.html', 'passes/image.html'], chunk_tests_run)
 
-    def test_run_force(self):
+    def serial_test_run_force(self):
         # This raises an exception because we run
         # failures/expected/exception.html, which is normally SKIPped.
 
@@ -399,12 +399,12 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         chunk_tests_run = get_tests_run(['--run-part', '3:3', '--skipped', 'always'] + tests_to_run)
         self.assertEqual(['passes/error.html', 'passes/image.html'], chunk_tests_run)
 
-    def test_run_singly(self):
+    def serial_test_run_singly(self):
         batch_tests_run = get_test_batches(['--run-singly'])
         for batch in batch_tests_run:
             self.assertEqual(len(batch), 1, '%s had too many tests' % ', '.join(batch))
 
-    def test_skip_failing_tests(self):
+    def serial_test_skip_failing_tests(self):
         # This tests that we skip both known failing and known flaky tests. Because there are
         # no known flaky tests in the default test_expectations, we add additional expectations.
         host = MockHost()
@@ -418,7 +418,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             has_passes_text = has_passes_text or ('passes/text.html' in batch)
         self.assertTrue(has_passes_text)
 
-    def test_run_singly_actually_runs_tests(self):
+    def serial_test_run_singly_actually_runs_tests(self):
         details, _, _ = logging_run(['--run-singly'], tests_included=True)
         self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES - 1)  # failures/expected/hang.html actually passes w/ --run-singly.
 
@@ -434,7 +434,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['failures/expected/keybaord.html'])
         self.assertEqual([], tests_run)
 
-    def test_stderr_is_saved(self):
+    def serial_test_stderr_is_saved(self):
         host = MockHost()
         self.assertTrue(passing_run(host=host))
         self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/passes/error-stderr.txt'),
@@ -661,7 +661,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['failures/expected/crash.html', 'passes/text.html', '--exit-after-n-crashes-or-timeouts', '1'])
         self.assertEqual(['failures/expected/crash.html', 'passes/text.html'], tests_run)
 
-    def test_results_directory_absolute(self):
+    def serial_test_results_directory_absolute(self):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
 
@@ -670,7 +670,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             _, _, user = logging_run(['--results-directory=' + str(tmpdir)], tests_included=True, host=host)
             self.assertEqual(user.opened_urls, [path.abspath_to_uri(host.platform, host.filesystem.join(tmpdir, 'results.html'))])
 
-    def test_results_directory_default(self):
+    def serial_test_results_directory_default(self):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
 
@@ -678,7 +678,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         _, _, user = logging_run(tests_included=True)
         self.assertEqual(user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
 
-    def test_results_directory_relative(self):
+    def serial_test_results_directory_relative(self):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
         host = MockHost()
@@ -744,7 +744,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/unexpected/text-image-checksum-actual.txt'))
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/failures/unexpected/text-image-checksum-actual.txt'))
 
-    def test_run_order__inline(self):
+    def serial_test_run_order__inline(self):
         # These next tests test that we run the tests in ascending alphabetical
         # order per directory. HTTP tests are sharded separately from other tests,
         # so we have to test both.
@@ -807,7 +807,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_test_results(['passes/mismatch.html'])
         self.assertEqual(tests_run[0].references, ['passes/mismatch-expected-mismatch.html'])
 
-    def test_additional_platform_directory(self):
+    def serial_test_additional_platform_directory(self):
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo']))
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/../foo']))
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo', '--additional-platform-directory', '/tmp/bar']))
@@ -834,7 +834,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEquals(details.retry_results.slow_tests,
                           {'failures/unexpected/timeout.html'})
 
-    def test_no_http_and_force(self):
+    def serial_test_no_http_and_force(self):
         # See test_run_force, using --force raises an exception.
         # FIXME: We would like to check the warnings generated.
         self.assertRaises(ValueError, logging_run, ['--force', '--no-http'])
@@ -843,7 +843,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def has_test_of_type(tests, type):
         return [test for test in tests if type in test]
 
-    def test_no_http_tests(self):
+    def serial_test_no_http_tests(self):
         batch_tests_dryrun = get_tests_run(['LayoutTests/http', 'websocket/'])
         self.assertTrue(RunTest.has_test_of_type(batch_tests_dryrun, 'http'))
         self.assertTrue(RunTest.has_test_of_type(batch_tests_dryrun, 'websocket'))
@@ -856,7 +856,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(RunTest.has_test_of_type(batch_tests_run_http, 'http'))
         self.assertTrue(RunTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
-    def test_platform_tests_are_found(self):
+    def serial_test_platform_tests_are_found(self):
         tests_run = get_tests_run(['--platform', 'test-mac-leopard', 'http'])
         self.assertTrue('platform/test-mac-leopard/http/test.html' in tests_run)
         self.assertFalse('platform/test-win-win7/http/test.html' in tests_run)

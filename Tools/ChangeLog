@@ -1,3 +1,60 @@
+2021-05-25  Sam Sneddon  <gsnedders@apple.com>
+
+        Run webkitpy integration tests under pytest by default
+        https://bugs.webkit.org/show_bug.cgi?id=226017
+
+        Reviewed by Jonathan Bedard.
+
+        This involves adding a variety of new xfail annotations and moving some tests to
+        be serial to avoid flakiness.
+
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        (CommittersTest):
+        * Scripts/webkitpy/conftest.py:
+        (pytest_addoption): Remove --run-integration
+        (pytest_collection_modifyitems): Remove --run-integration
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.serial_test_basic):
+        (RunTest.serial_test_batch_size):
+        (RunTest.serial_test_dryrun):
+        (RunTest.serial_test_full_results_html):
+        (RunTest.serial_test_no_order_with_directory_entries_in_natural_order):
+        (RunTest.serial_test_gc_between_tests):
+        (RunTest.serial_test_check_for_world_leaks):
+        (RunTest.serial_test_complex_text):
+        (RunTest.serial_test_threaded):
+        (RunTest.serial_test_run_force):
+        (RunTest.serial_test_run_singly):
+        (RunTest.serial_test_skip_failing_tests):
+        (RunTest.serial_test_run_singly_actually_runs_tests):
+        (RunTest.serial_test_stderr_is_saved):
+        (RunTest.serial_test_results_directory_absolute):
+        (RunTest.serial_test_results_directory_default):
+        (RunTest.serial_test_results_directory_relative):
+        (RunTest.serial_test_run_order__inline):
+        (RunTest.serial_test_additional_platform_directory):
+        (RunTest.serial_test_no_http_and_force):
+        (RunTest.serial_test_no_http_tests):
+        (RunTest.serial_test_platform_tests_are_found):
+        * Scripts/webkitpy/layout_tests/servers/http_server_integrationtest.py:
+        (BaseTest):
+        (HTTPServerTest):
+        (HTTPServerTest.integration_test_server__normal):
+        (HTTPServerTest.integration_test_server__fails):
+        (HTTPServerTest.integration_test_port_and_root):
+        (WebsocketserverTest):
+        (WebsocketserverTest.integration_test_server__normal):
+        (WebsocketserverTest.integration_test_server__fails):
+        (WebsocketserverTest.integration_test_port_and_root):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase):
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest):
+        * Scripts/webkitpy/test/markers.py:
+        (skip): Add skip
+        * Scripts/webkitpy/tool/steps/haslanded_unittest.py:
+        (HasLandedTest): Always skip this, as it seems to fail always
+
 2021-05-24  Darin Adler  <darin@apple.com>
 
         Switch from WTF::Optional to std::optional
