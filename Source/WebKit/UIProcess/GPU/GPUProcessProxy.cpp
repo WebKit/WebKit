@@ -45,6 +45,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/LogInitialization.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
@@ -167,6 +168,11 @@ GPUProcessProxy::GPUProcessProxy()
 
     if (!WebCore::IOSApplication::isMobileSafari())
         parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
+#endif
+
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    parameters.webCoreLoggingChannels = WebCore::logLevelString();
+    parameters.webKitLoggingChannels = WebKit::logLevelString();
 #endif
 
     // Initialize the GPU process.

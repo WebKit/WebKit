@@ -1,3 +1,18 @@
+2021-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Initialize WebCore and WebKit logging channels in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=226210
+
+        Reviewed by Andy Estes.
+
+        Send the strings representing the enabled WebCore and WebKit logging channels to the
+        GPU Process, and use them to initialize log channels there, as we do for the WebContent
+        process.
+
+        * platform/LogInitialization.h: Export logLevelString().
+        * platform/Logging.h: Remove functions that are declared in LogInitialization.h.
+        * platform/mac/LoggingMac.mm:
+
 2021-05-25  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Layout test media/track/track-cue-missing.html is failing

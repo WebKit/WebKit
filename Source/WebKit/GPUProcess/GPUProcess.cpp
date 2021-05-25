@@ -228,6 +228,11 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     CGImageSourceSetAllowableTypes(emptyArray.get());
 #endif
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    WebCore::initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
+    WebKit::initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
+#endif
+
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
 

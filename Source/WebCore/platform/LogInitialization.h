@@ -34,7 +34,7 @@ namespace WebCore {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-String logLevelString();
+WEBCORE_EXPORT String logLevelString();
 bool isLogChannelEnabled(const String& name);
 WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
 WEBCORE_EXPORT void clearAllLogChannelsToAccumulate();
