@@ -1,3 +1,19 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        [GStreamer] Stop using UncheckedLock in VideoRenderRequestScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=226192
+
+        Reviewed by Sam Weinig.
+
+        Stop using UncheckedLock in VideoRenderRequestScheduler to benefit from Clang thread safety
+        analysis.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::start):
+        (VideoRenderRequestScheduler::stop):
+        (VideoRenderRequestScheduler::drain):
+        (VideoRenderRequestScheduler::requestRender):
+
 2021-05-24  Sam Weinig  <weinig@apple.com>
 
         Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
