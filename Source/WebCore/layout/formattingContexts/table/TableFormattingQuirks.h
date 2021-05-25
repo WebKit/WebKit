@@ -39,6 +39,7 @@ public:
     TableFormattingQuirks(const TableFormattingContext&);
 
     static bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&);
+    LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const final;
 };
 
 }

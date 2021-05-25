@@ -55,6 +55,25 @@ bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const Contain
     return cellBox.firstInFlowChild()->style().hasMarginBeforeQuirk() || cellBox.lastInFlowChild()->style().hasMarginAfterQuirk();
 }
 
+LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox) const
+{
+    // The "let's find the nearest ancestor with fixed height to resolve percent height" quirk is limited to the table formatting
+    // context. If we can't resolve it within the table subtree, we default it to 0.
+    // e.g <div style="height: 100px"><table><tr><td style="height: 100%"></td></tr></table></div> is resolved to 0px.
+    auto fixedLogicalHeight = [&](const auto& ancestorBox) {
+        auto height = ancestorBox.style().logicalHeight();
+        return height.isFixed() ? makeOptional(LayoutUnit { height.value() }) : WTF::nullopt;
+    };
+
+    auto& formattingContext = this->formattingContext();
+    auto& tableBox = formattingContext.root();
+    for (auto* ancestor = &layoutBox.containingBlock(); ancestor && ancestor != &tableBox; ancestor = &ancestor->containingBlock()) {
+        if (auto fixedHeight = fixedLogicalHeight(*ancestor))
+            return *fixedHeight;
+    }
+    return fixedLogicalHeight(tableBox).valueOr(LayoutUnit { });
+}
+
 }
 }
 

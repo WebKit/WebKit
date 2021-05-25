@@ -35,8 +35,9 @@ namespace Layout {
 class FormattingQuirks {
 public:
     FormattingQuirks(const FormattingContext&);
+    virtual ~FormattingQuirks() = default;
 
-    LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const;
+    virtual LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const;
 
     bool isBlockFormattingQuirks() const { return formattingContext().isBlockFormattingContext(); }
     bool isInlineFormattingQuirks() const { return formattingContext().isInlineFormattingContext(); }

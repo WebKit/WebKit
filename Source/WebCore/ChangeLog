@@ -1,3 +1,17 @@
+2021-05-25  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Percent height resolving quirk should stop at the table formatting context root
+        https://bugs.webkit.org/show_bug.cgi?id=226156
+
+        Reviewed by Darin Adler.
+
+        Test: fast/layoutformattingcontext/table-with-percent-height-descendant.html
+
+        * layout/formattingContexts/FormattingQuirks.h:
+        * layout/formattingContexts/table/TableFormattingQuirks.cpp:
+        (WebCore::Layout::TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight const):
+        * layout/formattingContexts/table/TableFormattingQuirks.h:
+
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in DatabaseTracker
