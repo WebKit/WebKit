@@ -1,3 +1,18 @@
+2021-05-25  Matt Mokary  <mmokary@apple.com>
+
+        Ensure app highlight visibility observer is initialized before adding a new highlight
+        https://bugs.webkit.org/show_bug.cgi?id=226214
+        rdar://78173370
+
+        Reviewed by Wenson Hsieh.
+
+        The app highlight visibility observer is initialized before restoring highlights, but was not initialized
+        before adding a new one. It must be initialized before adding a highlight so a change in visibility resulting
+        from a new highlight is handled correct.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createAppHighlightInSelectedRange):
+
 2021-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Initialize WebCore and WebKit logging channels in the GPU Process
