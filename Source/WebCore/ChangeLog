@@ -1,3 +1,17 @@
+2021-05-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277867.
+        https://bugs.webkit.org/show_bug.cgi?id=226211
+
+        Causes problems playing YouTube videos
+
+        Reverted changeset:
+
+        "[Cocoa] Last few seconds of 'audio/webm; codecs=vorbis'
+        appended to a SampleBuffer are not played"
+        https://bugs.webkit.org/show_bug.cgi?id=226069
+        https://trac.webkit.org/changeset/277867
+
 2021-05-24  Sam Weinig  <weinig@apple.com>
 
         DestinationColorSpace's well known color space accessors cause unnecessary retain count churn
