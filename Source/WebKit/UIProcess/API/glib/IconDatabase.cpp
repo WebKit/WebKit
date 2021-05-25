@@ -566,37 +566,33 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 return;
             }
 
-            Locker locker { m_loadedIconsLock };
-            auto it = m_loadedIcons.find(iconURL);
-            if (it != m_loadedIcons.end() && it->value.first) {
-                auto icon = it->value.first;
-                it->value.second = MonotonicTime::now();
+            auto icon = [&]() -> WebCore::PlatformImagePtr {
+                Locker locker { m_loadedIconsLock };
+                auto it = m_loadedIcons.find(iconURL);
+                if (it != m_loadedIcons.end() && it->value.first) {
+                    auto icon = it->value.first;
+                    it->value.second = MonotonicTime::now();
+                    startClearLoadedIconsTimer();
+                    return icon;
+                }
+
+                auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, MonotonicTime::now()));
+                if (!iconData.isEmpty()) {
+                    auto image = BitmapImage::create();
+                    if (image->setData(SharedBuffer::create(WTFMove(iconData)), true) < EncodedDataStatus::SizeAvailable)
+                        return nullptr;
+
+                    auto nativeImage = image->nativeImageForCurrentFrame();
+                    if (!nativeImage)
+                        return nullptr;
+
+                    addResult.iterator->value.first = nativeImage->platformImage();
+                }
+
+                auto icon = addResult.iterator->value.first;
                 startClearLoadedIconsTimer();
-                locker.unlockEarly();
-                completionHandler(WTFMove(icon));
-                return;
-            }
-
-            auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, MonotonicTime::now()));
-            if (!iconData.isEmpty()) {
-                auto image = BitmapImage::create();
-                if (image->setData(SharedBuffer::create(WTFMove(iconData)), true) < EncodedDataStatus::SizeAvailable) {
-                    completionHandler(nullptr);
-                    return;
-                }
-
-                auto nativeImage = image->nativeImageForCurrentFrame();
-                if (!nativeImage) {
-                    completionHandler(nullptr);
-                    return;
-                }
-
-                addResult.iterator->value.first = nativeImage->platformImage();
-            }
-
-            auto icon = addResult.iterator->value.first;
-            startClearLoadedIconsTimer();
-            locker.unlockEarly();
+                return icon;
+            }();
             completionHandler(WTFMove(icon));
         });
     });

@@ -1,3 +1,14 @@
+2021-05-24  Chris Dumez  <cdumez@apple.com>
+
+        [GLIB] Stop using UncheckedLock in IconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=226190
+
+        Reviewed by Sam Weinig.
+
+        Stop using UncheckedLock in IconDatabase to benefit from Clang thread-safety analysis.
+
+        * UIProcess/API/glib/IconDatabase.h:
+
 2021-05-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Adjust meaningful click heuristic to detect focus changes and editable content

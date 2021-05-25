@@ -71,8 +71,8 @@ private:
     WebCore::SQLiteDatabase m_db;
     HashMap<String, String> m_pageURLToIconURLMap;
     Lock m_pageURLToIconURLMapLock;
-    HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons;
-    UncheckedLock m_loadedIconsLock;
+    HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);
+    Lock m_loadedIconsLock;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_iconIDForIconURLStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_setIconIDForPageURLStatement;
