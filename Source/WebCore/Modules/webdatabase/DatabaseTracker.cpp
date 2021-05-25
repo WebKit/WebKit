@@ -1285,20 +1285,22 @@ bool DatabaseTracker::deleteDatabaseFileIfEmpty(const String& path)
     return SQLiteFileSystem::deleteDatabaseFile(path);
 }
 
-static UncheckedLock openDatabaseLock;
-UncheckedLock& DatabaseTracker::openDatabaseMutex()
+static Lock openDatabaseLock;
+Lock& DatabaseTracker::openDatabaseMutex()
 {
     return openDatabaseLock;
 }
 
-void DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled()
+// We are not using WTF_ACQUIRES_LOCK(openDatabaseLock) because the call sites are ObjC functions and cannot be annotated.
+void DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     // Lock the database from opening any database until we are done with scanning the file system for
     // zero byte database files to remove.
     openDatabaseLock.lock();
 }
 
-void DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish()
+// We are not using WTF_RELEASES_LOCK(openDatabaseLock) because the call sites are ObjC functions and cannot be annotated.
+void DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     openDatabaseLock.unlock();
 }

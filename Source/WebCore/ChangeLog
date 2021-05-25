@@ -1,3 +1,22 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in DatabaseTracker
+        https://bugs.webkit.org/show_bug.cgi?id=226208
+
+        Reviewed by Sam Weinig.
+
+        Stop using UncheckedLock in DatabaseTracker. This is a step towards phasing out the
+        UncheckedLock in favor of the regular Lock which support Clang thread safety analysis.
+
+        In this particular instance, I have opted to annotate the functions that gave out
+        warning with WTF_IGNORES_THREAD_SAFETY_ANALYSIS. I initially tried to use proper
+        annotations (WTF_ACQUIRES_LOCK() / WTF_RELEASES_LOCK()). However, the call sites are
+        Objective C functions and I am unable to annotate those.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::openDatabaseMutex):
+        * Modules/webdatabase/DatabaseTracker.h:
+
 2021-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Initialize WebCore and WebKit logging channels in the GPU Process
