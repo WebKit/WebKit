@@ -1,3 +1,22 @@
+2021-05-25  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver][WPE] Support running w3c webdriver tests with Cog
+        https://bugs.webkit.org/show_bug.cgi?id=226203
+
+        Reviewed by Adrian Perez de Castro.
+
+        Using the same infrastructure as the MiniBrowser, through ENABLE_COG.
+
+        Selenium not yet supported, as the browserName capability is hardcoded
+        as MiniBrowser in selenium's test codebase.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.browser_env): Factored out of run_minibrowser to be used in the WebDriver driver module.
+        (WPEPort.run_minibrowser):
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_wpe.py:
+        (WebDriverWPE.browser_args):
+        (WebDriverWPE.browser_env):
+
 2021-05-24  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in Condition API tests

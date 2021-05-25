@@ -41,9 +41,17 @@ class WebDriverWPE(WebDriver):
 
     def browser_args(self):
         args = ['--automation']
-        if self._port._display_server == 'headless':
+        if self.browser_name() == "cog":
+            if self._port._display_server == 'headless':
+                args.append('--platform=headless')
+            else:
+                args.append("--platform=gtk4")
+        elif self._port._display_server == 'headless':
             args.append('--headless')
         return args
+
+    def browser_env(self):
+        return self._port.browser_env()
 
     def capabilities(self):
         return {'wpe:browserOptions': {

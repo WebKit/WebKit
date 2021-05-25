@@ -168,21 +168,27 @@ class WPEPort(Port):
             return "cog"
         return "minibrowser"
 
+    def browser_env(self):
+        env = os.environ.copy()
+
+        if self.browser_name() == "cog":
+            env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
+                        'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
+
+        return env
+
     def run_minibrowser(self, args):
         env = None
-        browser_name = self.browser_name()
         miniBrowser = None
 
-        if browser_name == "cog":
+        if self.browser_name() == "cog":
             miniBrowser = self.cog_path()
             if not self._filesystem.isfile(miniBrowser):
                 print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
                 miniBrowser = None
             else:
                 print("Using Cog as MiniBrowser")
-                env = os.environ.copy()
-                env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
-                            'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
+                env = self.browser_env()
                 has_platform_arg = any((a == "-P" or a.startswith("--platform=") for a in args))
                 if not has_platform_arg:
                     args.insert(0, "--platform=gtk4")
