@@ -181,6 +181,7 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
 bool deleteNonEmptyDirectory(const String& path)
 {
     return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+}
 
 static int toIOPolicyScope(PolicyScope scope)
 {
