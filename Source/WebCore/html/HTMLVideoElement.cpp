@@ -113,11 +113,13 @@ void HTMLVideoElement::didAttachRenderers()
 
 void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == widthAttr)
+    if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
-    else if (name == heightAttr)
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+    } else if (name == heightAttr) {
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-    else
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+    } else
         HTMLMediaElement::collectStyleForPresentationAttribute(name, value, style);
 }
 

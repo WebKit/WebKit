@@ -478,23 +478,6 @@ RoundedRect RenderReplaced::roundedContentBoxRect() const
         borderLeft() + paddingLeft(), borderRight() + paddingRight());
 }
 
-Optional<double> RenderReplaced::intrinsicAspectRatioFromWidthHeight() const
-{
-    if (!settings().aspectRatioOfImgFromWidthAndHeightEnabled())
-        return Optional<double>();
-
-    if (!canMapWidthHeightToAspectRatio())
-        return Optional<double>();
-
-    ASSERT(element());
-    double attributeWidth = parseValidHTMLFloatingPointNumber(element()->getAttribute(HTMLNames::widthAttr)).valueOr(0);
-    double attributeHeight = parseValidHTMLFloatingPointNumber(element()->getAttribute(HTMLNames::heightAttr)).valueOr(0);
-    if (attributeWidth > 0 && attributeHeight > 0)
-        return attributeWidth / attributeHeight;
-
-    return Optional<double>();
-}
-
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     // If there's an embeddedContentBox() of a remote, referenced document available, this code-path should never be used.
@@ -510,10 +493,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     if (!hasIntrinsicAspectRatio())
         return;
 
-    if (intrinsicSize.isEmpty()) {
-        intrinsicRatio = intrinsicAspectRatioFromWidthHeight().valueOr(0);
+    if (intrinsicSize.isEmpty())
         return;
-    }
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
 }

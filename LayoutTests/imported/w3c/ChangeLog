@@ -1,3 +1,15 @@
+2021-05-24  Cathie Chen  <cathiechen@igalia.com>
+
+        Use the parsed width and height attributes as a presentational hint for aspect-ratio CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=217529
+
+        Reviewed by Antti Koivisto.
+
+        Update the expected results of test_computed_style which are passed now.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+
 2021-05-24  Cameron McCormack  <heycam@apple.com>
 
         Add missing operators.woff that a few WPTs reference.

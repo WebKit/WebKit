@@ -103,8 +103,6 @@ protected:
         imageChanged(imageResource().imagePtr());
     }
 
-    bool canMapWidthHeightToAspectRatio() const override;
-
 private:
     const char* renderName() const override { return "RenderImage"; }
 

@@ -154,6 +154,7 @@ protected:
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
     void addHTMLColorToStyle(MutableStyleProperties&, CSSPropertyID, const String& color);
 
+    void applyAspectRatioFromWidthAndHeightAttributesToStyle(MutableStyleProperties&);
     void applyAlignmentAttributeToStyle(const AtomString&, MutableStyleProperties&);
     void applyBorderAttributeToStyle(const AtomString&, MutableStyleProperties&);
 

@@ -707,9 +707,13 @@ void HTMLInputElement::collectStyleForPresentationAttribute(const QualifiedName&
     } else if (name == widthAttr) {
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+        if (isImageButton())
+            applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
     } else if (name == heightAttr) {
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+        if (isImageButton())
+            applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
     } else if (name == borderAttr && isImageButton())
         applyBorderAttributeToStyle(value, style);
     else

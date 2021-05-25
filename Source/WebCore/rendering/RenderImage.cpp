@@ -842,12 +842,6 @@ void RenderImage::layoutShadowContent(const LayoutSize& oldSize)
     clearChildNeedsLayout();
 }
 
-bool RenderImage::canMapWidthHeightToAspectRatio() const
-{
-    // The aspectRatioOfImgFromWidthAndHeight only applies to <img>.
-    return is<HTMLImageElement>(element()) && !isShowingAltText();
-}
-
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     ASSERT(!shouldApplySizeContainment(*this));
@@ -865,11 +859,11 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, dou
 
     // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
     if (shouldDisplayBrokenImageIcon()) {
-        if (!style().hasAspectRatio()) {
-            intrinsicRatio = intrinsicAspectRatioFromWidthHeight().valueOr(1);
-            return;
-        }
-        intrinsicRatio = 1;
+        if (settings().aspectRatioOfImgFromWidthAndHeightEnabled()
+            && style().aspectRatioType() == AspectRatioType::AutoAndRatio && !isShowingAltText())
+            intrinsicRatio = style().logicalAspectRatio();
+        else
+            intrinsicRatio = 1;
         return;
     }
 }

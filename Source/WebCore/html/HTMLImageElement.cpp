@@ -115,11 +115,13 @@ bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const
 
 void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == widthAttr)
+    if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
-    else if (name == heightAttr)
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+    } else if (name == heightAttr) {
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-    else if (name == borderAttr)
+        applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
+    } else if (name == borderAttr)
         applyBorderAttributeToStyle(value, style);
     else if (name == vspaceAttr) {
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);

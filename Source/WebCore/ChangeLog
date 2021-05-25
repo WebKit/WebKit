@@ -1,3 +1,37 @@
+2021-05-24  Cathie Chen  <cathiechen@igalia.com>
+
+        Use the parsed width and height attributes as a presentational hint for aspect-ratio CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=217529
+
+        Reviewed by Antti Koivisto.
+
+        The feature "mapping attributes width and height to aspect ratio" currently is handled by RenderReplaced::computeIntrinsicRatioInformation.
+        However, per [1], the non-negative width and height attributes are expected to be used as a presentational hint for the aspect-ratio property.
+        This patch addes HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle to apply the attributes to m_presentationAttributeStyle.
+        Also this patch supports the feature for <video> and <input> with type="image".
+
+        [1] https://html.spec.whatwg.org/#map-to-the-aspect-ratio-property-(using-dimension-rules)
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle): Apply attributes width / height to aspectRatio of style if they aren't negative.
+        * html/HTMLElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::collectStyleForPresentationAttribute): Use attributes width and height as a presentational hint for aspect-ratio.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::collectStyleForPresentationAttribute): If isImageButton(), collect attributes width and height as aspect-ratio of m_presentationAttributeStyle.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::collectStyleForPresentationAttribute): Ditto.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeIntrinsicRatioInformation const): The intrinsicRatio is logicalAspectRatio()
+        if error image is not showing alt text.
+        (WebCore::RenderImage::canMapWidthHeightToAspectRatio const): Deleted. Remove the legacy code.
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformation const): Ditto.
+        (WebCore::RenderReplaced::intrinsicAspectRatioFromWidthHeight const): Deleted. Ditto.
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::canMapWidthHeightToAspectRatio const): Deleted. Ditto.
+
 2021-05-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277867.

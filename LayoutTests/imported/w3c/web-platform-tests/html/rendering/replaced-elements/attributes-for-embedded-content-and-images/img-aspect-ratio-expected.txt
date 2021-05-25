@@ -4,20 +4,20 @@ PASS Image width and height attributes are used to infer aspect-ratio
 PASS Create, append and test immediately: <img> with attributes width=250, height=100
 PASS Create, append and test immediately: <img> with attributes width=0.8, height=0.2
 PASS Create, append and test immediately: <img> with attributes width=50% height=25%
-FAIL Computed style test: img with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
-FAIL Computed style test: input with {"type":"image","width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+PASS Computed style test: img with {"width":"10","height":"20"}
+PASS Computed style test: input with {"type":"image","width":"10","height":"20"}
 PASS Computed style test: input with {"type":"submit","width":"10","height":"20"}
-FAIL Computed style test: img with {"width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
-FAIL Computed style test: input with {"type":"image","width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
+PASS Computed style test: img with {"width":"0","height":"1"}
+PASS Computed style test: input with {"type":"image","width":"0","height":"1"}
 PASS Computed style test: input with {"type":"submit","width":"0","height":"1"}
-FAIL Computed style test: img with {"width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
-FAIL Computed style test: input with {"type":"image","width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
+PASS Computed style test: img with {"width":"1","height":"0"}
+PASS Computed style test: input with {"type":"image","width":"1","height":"0"}
 PASS Computed style test: input with {"type":"submit","width":"1","height":"0"}
-FAIL Computed style test: img with {"width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
-FAIL Computed style test: input with {"type":"image","width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
+PASS Computed style test: img with {"width":"0","height":"0"}
+PASS Computed style test: input with {"type":"image","width":"0","height":"0"}
 PASS Computed style test: input with {"type":"submit","width":"0","height":"0"}
-FAIL Computed style test: img with {"width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
-FAIL Computed style test: input with {"type":"image","width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
+PASS Computed style test: img with {"width":"0.5","height":"1.5"}
+PASS Computed style test: input with {"type":"image","width":"0.5","height":"1.5"}
 PASS Computed style test: input with {"type":"submit","width":"0.5","height":"1.5"}
 PASS Computed style test: img with {"width":null,"height":null}
 PASS Computed style test: input with {"type":"image","width":null,"height":null}

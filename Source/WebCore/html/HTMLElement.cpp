@@ -28,6 +28,7 @@
 #include "CSSMarkup.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -618,6 +619,28 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
             return result.releaseException();
     }
     return { };
+}
+
+void HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle(MutableStyleProperties& style)
+{
+    if (!document().settings().aspectRatioOfImgFromWidthAndHeightEnabled())
+        return;
+
+    double width = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(widthAttr)).valueOr(-1);
+    if (width < 0)
+        return;
+    double height = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(heightAttr)).valueOr(-1);
+    if (height < 0)
+        return;
+
+    auto ratioList = CSSValueList::createSlashSeparated();
+    ratioList->append(CSSValuePool::singleton().createValue(width, CSSUnitType::CSS_NUMBER));
+    ratioList->append(CSSValuePool::singleton().createValue(height, CSSUnitType::CSS_NUMBER));
+    auto list = CSSValueList::createSpaceSeparated();
+    list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAuto));
+    list->append(ratioList);
+
+    style.setProperty(CSSPropertyAspectRatio, RefPtr<CSSValue>(WTFMove(list)));
 }
 
 void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, MutableStyleProperties& style)
