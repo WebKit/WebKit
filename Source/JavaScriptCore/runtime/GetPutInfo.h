@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,21 @@ enum ResolveMode {
     ThrowIfNotFound,
     DoNotThrowIfNotFound
 };
+
+#define FOR_EACH_RESOLVE_TYPE(v) \
+    v(GlobalProperty) \
+    v(GlobalVar) \
+    v(GlobalLexicalVar) \
+    v(ClosureVar) \
+    v(LocalClosureVar) \
+    v(ModuleVar) \
+    v(GlobalPropertyWithVarInjectionChecks) \
+    v(GlobalVarWithVarInjectionChecks) \
+    v(GlobalLexicalVarWithVarInjectionChecks) \
+    v(ClosureVarWithVarInjectionChecks) \
+    v(UnresolvedProperty) \
+    v(UnresolvedPropertyWithVarInjectionChecks) \
+    v(Dynamic)
 
 enum ResolveType : unsigned {
     // Lexical scope guaranteed a certain type of variable access.

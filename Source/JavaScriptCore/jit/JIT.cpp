@@ -589,7 +589,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_del_by_id)
         DEFINE_SLOWCASE_OP(op_sub)
         DEFINE_SLOWCASE_OP(op_has_enumerable_indexed_property)
+#if !ENABLE(EXTRA_CTI_THUNKS)
         DEFINE_SLOWCASE_OP(op_get_from_scope)
+#endif
         DEFINE_SLOWCASE_OP(op_put_to_scope)
 
         DEFINE_SLOWCASE_OP(op_iterator_open)
@@ -624,7 +626,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_SLOW_OP(has_enumerable_structure_property)
         DEFINE_SLOWCASE_SLOW_OP(has_own_structure_property)
         DEFINE_SLOWCASE_SLOW_OP(in_structure_property)
+#if !ENABLE(EXTRA_CTI_THUNKS)
         DEFINE_SLOWCASE_SLOW_OP(resolve_scope)
+#endif
         DEFINE_SLOWCASE_SLOW_OP(check_tdz)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key)
         default:

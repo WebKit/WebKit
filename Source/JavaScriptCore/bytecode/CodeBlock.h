@@ -890,6 +890,12 @@ public:
         return bitwise_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
     }
 
+    template<typename Metadata>
+    ptrdiff_t offsetInMetadataTable(Metadata* metadata)
+    {
+        return bitwise_cast<uint8_t*>(metadata) - bitwise_cast<uint8_t*>(metadataTable());
+    }
+
     size_t metadataSizeInBytes()
     {
         return m_unlinkedCode->metadataSizeInBytes();
@@ -898,6 +904,7 @@ public:
     MetadataTable* metadataTable() { return m_metadata.get(); }
     const void* instructionsRawPointer() { return m_instructionsRawPointer; }
 
+    static ptrdiff_t offsetOfMetadataTable() { return OBJECT_OFFSETOF(CodeBlock, m_metadata); }
     static ptrdiff_t offsetOfInstructionsRawPointer() { return OBJECT_OFFSETOF(CodeBlock, m_instructionsRawPointer); }
 
     bool loopHintsAreEligibleForFuzzingEarlyReturn()

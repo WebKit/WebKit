@@ -2898,6 +2898,60 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     return reinterpret_cast<char*>(result);
 }
 
+#if ENABLE(EXTRA_CTI_THUNKS)
+JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject* globalObject, const Instruction* pc))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+
+    auto bytecode = pc->as<OpResolveScope>();
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
+    JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
+    JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
+    // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    auto& metadata = bytecode.metadata(codeBlock);
+    ResolveType resolveType = metadata.m_resolveType;
+
+    // ModuleVar does not keep the scope register value alive in DFG.
+    ASSERT(resolveType != ModuleVar);
+
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks:
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks: {
+        if (resolvedScope->isGlobalObject()) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
+            bool hasProperty = globalObject->hasProperty(globalObject, ident);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            if (hasProperty) {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
+                metadata.m_globalObject.set(vm, codeBlock, globalObject);
+                metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
+            }
+        } else if (resolvedScope->isGlobalLexicalEnvironment()) {
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+
+    return JSValue::encode(resolvedScope);
+}
+#endif
+
 JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const Instruction* pc))
 {
     VM& vm = globalObject->vm();

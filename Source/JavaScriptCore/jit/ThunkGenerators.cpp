@@ -91,7 +91,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     auto handler = vm.getCTIStub(handleExceptionGenerator);
-    RELEASE_ASSERT(handler);
     patchBuffer.link(continuation, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
 }

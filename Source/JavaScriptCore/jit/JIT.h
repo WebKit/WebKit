@@ -730,7 +730,9 @@ namespace JSC {
         void emit_op_put_to_scope(const Instruction*);
         void emit_op_get_from_arguments(const Instruction*);
         void emit_op_put_to_arguments(const Instruction*);
+#if !ENABLE(EXTRA_CTI_THUNKS)
         void emitSlow_op_get_from_scope(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+#endif
         void emitSlow_op_put_to_scope(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitSlowCaseCall(const Instruction*, Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
@@ -796,12 +798,45 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_val_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_private_name_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_to_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
 
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_ret_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
-#endif
+
+        static constexpr bool thunkIsUsedForOpGetFromScope(ResolveType resolveType)
+        {
+            // GlobalVar because it is more efficient to emit inline than use a thunk.
+            // LocalClosureVar and ModuleVar because we don't use these types with op_get_from_scope.
+            return !(resolveType == GlobalVar || resolveType == LocalClosureVar || resolveType == ModuleVar);
+        }
+
+#define DECLARE_GET_FROM_SCOPE_GENERATOR(resolveType) \
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_get_from_scope_##resolveType##Generator(VM&);
+        FOR_EACH_RESOLVE_TYPE(DECLARE_GET_FROM_SCOPE_GENERATOR)
+#undef DECLARE_GET_FROM_SCOPE_GENERATOR
+
+        MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(ResolveType, const char* thunkName);
+
+        static constexpr bool thunkIsUsedForOpResolveScope(ResolveType resolveType)
+        {
+            // ModuleVar because it is more efficient to emit inline than use a thunk.
+            // LocalClosureVar because we don't use these types with op_resolve_scope.
+            return !(resolveType == LocalClosureVar || resolveType == ModuleVar);
+        }
+
+#define DECLARE_RESOLVE_SCOPE_GENERATOR(resolveType) \
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_resolve_scope_##resolveType##Generator(VM&);
+        FOR_EACH_RESOLVE_TYPE(DECLARE_RESOLVE_SCOPE_GENERATOR)
+#undef DECLARE_RESOLVE_SCOPE_GENERATOR
+
+        MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(ResolveType, const char* thunkName);
+
+        static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsFalseyGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsTruthyGenerator(VM&);
+
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {

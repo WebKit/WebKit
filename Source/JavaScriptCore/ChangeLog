@@ -1,3 +1,75 @@
+2021-05-25  Mark Lam  <mark.lam@apple.com>
+
+        Reduce Baseline JIT emitted code size for op_jfalse, op_jtrue, op_get_from_scope, op_resolve_scope.
+        https://bugs.webkit.org/show_bug.cgi?id=226107
+
+        Reviewed by Saam Barati.
+
+        Benchmarking with JetStream2 and Speedometer2 on M1 Mac shows that performance is
+        neutral.
+
+        This patch reduces Baseline JIT emitted code side on a run of JetStream2 CLI by
+        another ~6.6M:
+                        Base                     New                      Diff
+
+           BaselineJIT: 64955116 (61.946026 MB)  57991704 (55.305199 MB)  0.89x (reduction)
+                   DFG: 36382012 (34.696590 MB)  36540652 (34.847881 MB)  1.00x
+                 Thunk: 23217692 (22.142117 MB)  23115852 (22.044994 MB)  1.00x
+           InlineCache: 22228140 (21.198406 MB)  22262572 (21.231243 MB)  1.00x
+                   FTL: 6025320 (5.746193 MB)    6164332 (5.878765 MB)    1.02x
+                  Wasm: 2327604 (2.219776 MB)    2297036 (2.190624 MB)    0.99x
+               YarrJIT: 1547172 (1.475498 MB)    1522584 (1.452049 MB)    0.98x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        Cumulative diff since the start of this effort to reduce Baseline JIT code size:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  57991704 (55.305199 MB)  0.65x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36540652 (34.847881 MB)  0.93x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  23115852 (22.044994 MB)  1.00x
+           InlineCache: 22027416 (21.006981 MB)  22262572 (21.231243 MB)  1.01x
+                   FTL: 6575772 (6.271145 MB)    6164332 (5.878765 MB)    0.94x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2297036 (2.190624 MB)    1.00x
+               YarrJIT: 1538956 (1.467663 MB)    1522584 (1.452049 MB)    0.99x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetInMetadataTable):
+        (JSC::CodeBlock::offsetOfMetadataTable):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfTruthy):
+        (JSC::AssemblyHelpers::branchIfFalsey):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::valueIsFalseyGenerator):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::valueIsTruthyGenerator):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::generateOpResolveScopeThunk):
+        (JSC::JIT::slow_op_resolve_scopeGenerator):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::generateOpGetFromScopeThunk):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        * jit/ThunkGenerators.cpp:
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+        * runtime/GetPutInfo.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::offsetOfGlobalLexicalEnvironment):
+        (JSC::JSGlobalObject::offsetOfGlobalLexicalBindingEpoch):
+
 2021-05-24  Robin Morisset  <rmorisset@apple.com>
 
         When running with --reportTotalPhaseTimes=1, we should also log the max time in a phase
