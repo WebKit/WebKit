@@ -8686,8 +8686,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
 {
-    [self _cancelLongPressGestureRecognizer];
-
     RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
     if (self.currentDragOrDropSession) {
         // FIXME: Support multiple simultaneous drag sessions in the future.
@@ -8735,6 +8733,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationLists:registrationLists stagedDragSource:stagedDragSource];
     if (![dragItems count])
         _page->dragCancelled();
+    else
+        [self _cancelLongPressGestureRecognizer];
 
     RELEASE_LOG(DragAndDrop, "Drag session: %p starting with %tu items", session, [dragItems count]);
     _dragDropInteractionState.clearStagedDragSource([dragItems count] ? WebKit::DragDropInteractionState::DidBecomeActive::Yes : WebKit::DragDropInteractionState::DidBecomeActive::No);

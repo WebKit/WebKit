@@ -1,3 +1,20 @@
+2021-05-24  Devin Rousso  <drousso@apple.com>
+
+        [iOS DnD] [WK2] don't cancel the long-press gesture until we know we have `UIDragItem`
+        https://bugs.webkit.org/show_bug.cgi?id=226188
+        <rdar://problem/77448503>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        Instead of `_cancelLongPressGestureRecognizer` when first asked to get `UIDragItem`, only
+        call it once we actually have `UIDragItem`. This shouldn't change the behavior of r218812
+        as we're still `_cancelLongPressGestureRecognizer` before generating `UITargetedDragPreview`
+        or animating them (i.e. before the drag starts). This allows a synthetic click from a
+        long-press gesture to be dispatched in the case that drag gesture has no items.
+
 2021-05-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Fix build failure for WK API WTF::String usage
