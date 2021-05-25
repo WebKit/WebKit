@@ -97,10 +97,12 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
 
 void AccessibilityController::injectAccessibilityPreference(JSStringRef domain, JSStringRef key, JSStringRef value)
 {
+    auto page = InjectedBundle::singleton().page()->page();
+    auto context = WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(page));
     NSNumber *numberValue = @([[NSString stringWithJSStringRef:value] integerValue]);
     NSData *encodedData = [NSKeyedArchiver archivedDataWithRootObject:numberValue requiringSecureCoding:YES error:nil];
     NSString *encodedString = [encodedData base64EncodedStringWithOptions:0];
-    WKAccessibilityTestingInjectPreference(InjectedBundle::singleton().page()->page(), toWTFString(domain), toWTFString(key), (String)encodedString);
+    WKAccessibilityTestingInjectPreference(page, toWKString(context, JSValueMakeString(context, domain)).get(), toWKString(context, JSValueMakeString(context, key)).get(), toWK((String)encodedString).get());
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)

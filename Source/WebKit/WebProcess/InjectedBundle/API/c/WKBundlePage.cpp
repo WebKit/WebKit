@@ -231,13 +231,13 @@ void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef pageRef)
     WebKit::toImpl(pageRef)->insertNewlineInQuotedContent();
 }
 
-void WKAccessibilityTestingInjectPreference(WKBundlePageRef pageRef, const String& domain, const String& key, const Optional<String>& encodedValue)
+void WKAccessibilityTestingInjectPreference(WKBundlePageRef pageRef, WKStringRef domain, WKStringRef key, WKStringRef encodedValue)
 {
     if (!pageRef)
         return;
     
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    WebKit::WebProcess::singleton().notifyPreferencesChanged(domain, key, encodedValue);
+    WebKit::WebProcess::singleton().notifyPreferencesChanged(WebKit::toWTFString(domain), WebKit::toWTFString(key), WebKit::toWTFString(encodedValue));
 #endif
 }
 

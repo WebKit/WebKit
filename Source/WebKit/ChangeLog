@@ -1,3 +1,16 @@
+2021-05-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Fix build failure for WK API WTF::String usage
+        https://bugs.webkit.org/show_bug.cgi?id=226204
+
+        Reviewed by Tim Horton.
+
+        Build fix for WTF string usage.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityTestingInjectPreference):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2021-05-24  Sam Weinig  <weinig@apple.com>
 
         Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
