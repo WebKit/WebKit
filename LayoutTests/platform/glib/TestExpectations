@@ -2287,8 +2287,6 @@ webkit.org/b/186638 media/video-remote-control-playpause.html [ Failure Timeout 
 webkit.org/b/186664 media/video-playsinline.html [ Failure ]
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
-webkit.org/b/191004 media/track/track-cue-missing.html [ Failure ]
-
 webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout Pass Crash ]
 webkit.org/b/198827 media/video-ended-event-slow-motion-playback.html [ Timeout Pass ]
 

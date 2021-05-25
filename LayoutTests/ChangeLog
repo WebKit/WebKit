@@ -1,3 +1,12 @@
+2021-05-25  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Layout test media/track/track-cue-missing.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191004
+
+        Reviewed by Alicia Boya Garcia.
+
+        * platform/glib/TestExpectations: Unskipped test.
+
 2021-05-25  Tim Nguyen  <ntim@apple.com>
 
         Add basic <dialog> element UA styles

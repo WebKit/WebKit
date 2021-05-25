@@ -39,6 +39,7 @@
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Atomics.h>
 #include <wtf/Condition.h>
+#include <wtf/DataMutex.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
@@ -185,6 +186,7 @@ public:
 
     Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void acceleratedRenderingStateChanged() final;
+    bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) override;
 
 #if USE(TEXTURE_MAPPER_GL)
     PlatformLayer* platformLayer() const override;
@@ -304,7 +306,7 @@ protected:
     void setAudioStreamProperties(GObject*);
 
     virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags);
-    void invalidateCachedPosition() { m_lastQueryTime.reset(); }
+    void invalidateCachedPosition() const;
 
     static void setAudioStreamPropertiesCallback(MediaPlayerPrivateGStreamer*, GObject*);
 
@@ -324,7 +326,7 @@ protected:
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     MediaPlayer* m_player;
     String m_referrer;
-    mutable MediaTime m_cachedPosition;
+    mutable Optional<MediaTime> m_cachedPosition;
     mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition { false };
     bool m_isChangingRate { false };
@@ -389,6 +391,33 @@ protected:
     Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
 private:
+    class TaskAtMediaTimeScheduler {
+    public:
+        enum PlaybackDirection {
+            Forward, // Schedule when targetTime <= currentTime. Used on forward playback, when playbackRate >= 0.
+            Backward // Schedule when targetTime >= currentTime. Used on backward playback, when playbackRate < 0.
+        };
+        void setTask(Function<void()>&& task, const MediaTime& targetTime, PlaybackDirection playbackDirection)
+        {
+            m_targetTime = targetTime;
+            m_task = WTFMove(task);
+            m_playbackDirection = playbackDirection;
+        }
+        Optional<Function<void()>> checkTaskForScheduling(const MediaTime& currentTime)
+        {
+            if (!m_targetTime.isValid() || !currentTime.isFinite()
+                || (m_playbackDirection == Forward && currentTime < m_targetTime)
+                || (m_playbackDirection == Backward && currentTime > m_targetTime))
+                return Optional<Function<void()>>();
+            m_targetTime = MediaTime::invalidTime();
+            return WTFMove(m_task);
+        }
+    private:
+        MediaTime m_targetTime = MediaTime::invalidTime();
+        PlaybackDirection m_playbackDirection = Forward;
+        Function<void()> m_task = Function<void()>();
+    };
+
     bool isPlayerShuttingDown() const { return m_isPlayerShuttingDown.load(); }
     MediaTime maxTimeLoaded() const;
     void setVideoSourceOrientation(ImageOrientation);
@@ -458,6 +487,7 @@ private:
 #endif
 
     void configureMediaStreamAudioTracks();
+    void invalidateCachedPositionOnNextIteration() const;
 
     Atomic<bool> m_isPlayerShuttingDown;
     GRefPtr<GstElement> m_textSink;
@@ -491,7 +521,6 @@ private:
     mutable unsigned long long m_totalBytes { 0 };
     URL m_url;
     bool m_shouldPreservePitch { false };
-    mutable Optional<Seconds> m_lastQueryTime;
     bool m_isLegacyPlaybin;
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStreamPrivate> m_streamPrivate;
@@ -535,6 +564,8 @@ private:
 
     // This is set to true if no videoflip element has been added to the pipeline.
     bool m_shouldHandleOrientationTags { false };
+
+    WTF::DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
 private:
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)

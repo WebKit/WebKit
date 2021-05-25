@@ -146,7 +146,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_player(player)
     , m_referrer(player->referrer())
-    , m_cachedPosition(MediaTime::invalidTime())
     , m_cachedDuration(MediaTime::invalidTime())
     , m_seekTime(MediaTime::invalidTime())
     , m_timeOfOverlappingSeek(MediaTime::invalidTime())
@@ -1344,22 +1343,31 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
     if (m_isEndReached)
         return m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
 
-    // This constant should remain lower than HTMLMediaElement's maxTimeupdateEventFrequency.
-    static const Seconds positionCacheThreshold = 200_ms;
-    Seconds now = WTF::WallTime::now().secondsSinceEpoch();
-    if (m_lastQueryTime && (now - m_lastQueryTime.value()) < positionCacheThreshold && m_cachedPosition.isValid()) {
-        GST_TRACE_OBJECT(pipeline(), "Returning cached position: %s", m_cachedPosition.toString().utf8().data());
-        return m_cachedPosition;
+    if (m_cachedPosition.hasValue()) {
+        GST_TRACE_OBJECT(pipeline(), "Returning cached position: %s", m_cachedPosition.value().toString().utf8().data());
+        return m_cachedPosition.value();
     }
-
-    m_lastQueryTime = now;
 
     // Position is only available if no async state change is going on and the state is either paused or playing.
     gint64 position = GST_CLOCK_TIME_NONE;
-    GstQuery* query = gst_query_new_position(GST_FORMAT_TIME);
-    if (gst_element_query(m_pipeline.get(), query))
-        gst_query_parse_position(query, 0, &position);
-    gst_query_unref(query);
+
+    // Asking directly to the sinks and choosing the highest value is faster than asking to the pipeline.
+    GRefPtr<GstQuery> query = adoptGRef(gst_query_new_position(GST_FORMAT_TIME));
+    if (m_audioSink && gst_element_query(m_audioSink.get(), query.get())) {
+        gint64 audioPosition = GST_CLOCK_TIME_NONE;
+        gst_query_parse_position(query.get(), 0, &audioPosition);
+        if (GST_CLOCK_TIME_IS_VALID(audioPosition))
+            position = audioPosition;
+        query = adoptGRef(gst_query_new_position(GST_FORMAT_TIME));
+    }
+    if (m_videoSink && gst_element_query(m_videoSink.get(), query.get())) {
+        gint64 videoPosition = GST_CLOCK_TIME_NONE;
+        gst_query_parse_position(query.get(), 0, &videoPosition);
+        if (GST_CLOCK_TIME_IS_VALID(videoPosition) && (!GST_CLOCK_TIME_IS_VALID(position)
+            || (m_playbackRate >= 0 && videoPosition > position)
+            || (m_playbackRate < 0 && videoPosition < position)))
+            position = videoPosition;
+    }
 
     GstClockTime gstreamerPosition = static_cast<GstClockTime>(position);
     GST_TRACE_OBJECT(pipeline(), "Position %" GST_TIME_FORMAT ", canFallBackToLastFinishedSeekPosition: %s", GST_TIME_ARGS(gstreamerPosition), boolForPrinting(m_canFallBackToLastFinishedSeekPosition));
@@ -1372,6 +1380,7 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
         playbackPosition = m_seekTime;
 
     m_cachedPosition = playbackPosition;
+    invalidateCachedPositionOnNextIteration();
     return playbackPosition;
 }
 
@@ -2235,7 +2244,7 @@ void MediaPlayerPrivateGStreamer::asyncStateChangeDone()
         else {
             GST_DEBUG_OBJECT(pipeline(), "[Seek] seeked to %s", toString(m_seekTime).utf8().data());
             m_isSeeking = false;
-            m_cachedPosition = MediaTime::invalidTime();
+            invalidateCachedPosition();
             if (m_timeOfOverlappingSeek != m_seekTime && m_timeOfOverlappingSeek.isValid()) {
                 seek(m_timeOfOverlappingSeek);
                 m_timeOfOverlappingSeek = MediaTime::invalidTime();
@@ -2421,7 +2430,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             m_isSeekPending = false;
             m_isSeeking = doSeek(m_seekTime, m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE));
             if (!m_isSeeking) {
-                m_cachedPosition = MediaTime::invalidTime();
+                invalidateCachedPosition();
                 GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(m_seekTime).utf8().data());
             }
         }
@@ -2533,7 +2542,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
 
 void MediaPlayerPrivateGStreamer::didEnd()
 {
-    m_cachedPosition = MediaTime::invalidTime();
+    invalidateCachedPosition();
     MediaTime now = currentMediaTime();
     GST_INFO_OBJECT(pipeline(), "Playback ended, currentMediaTime = %s, duration = %s", now.toString().utf8().data(), durationMediaTime().toString().utf8().data());
     m_isEndReached = true;
@@ -2843,6 +2852,31 @@ void MediaPlayerPrivateGStreamer::acceleratedRenderingStateChanged()
     m_canRenderingBeAccelerated = m_player && m_player->acceleratedCompositingEnabled();
 }
 
+bool MediaPlayerPrivateGStreamer::performTaskAtMediaTime(Function<void()>&& task, const MediaTime& time)
+{
+    ASSERT(isMainThread());
+
+    // Ignore the cases when the time isn't marching on or the position is unknown.
+    MediaTime currentTime = playbackPosition();
+    if (!m_pipeline || m_didErrorOccur || m_isSeeking || m_isPaused || !m_playbackRate || !currentTime.isValid())
+        return false;
+
+    Optional<Function<void()>> taskToSchedule;
+    {
+        auto taskAtMediaTimeScheduler = holdLock(m_TaskAtMediaTimeSchedulerDataMutex);
+        taskAtMediaTimeScheduler->setTask(WTFMove(task), time,
+            m_playbackRate >= 0 ? TaskAtMediaTimeScheduler::Forward : TaskAtMediaTimeScheduler::Backward);
+        taskToSchedule = taskAtMediaTimeScheduler->checkTaskForScheduling(currentTime);
+    }
+
+    // Dispatch the task if the time is already reached. Dispatching instead of directly running the
+    // task prevents infinite recursion in case the task calls performTaskAtMediaTime() internally.
+    if (taskToSchedule.hasValue())
+        RunLoop::main().dispatch(WTFMove(taskToSchedule.value()));
+
+    return true;
+}
+
 #if USE(TEXTURE_MAPPER_GL)
 PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
 {
@@ -3068,9 +3102,32 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
     m_player->sizeChanged();
 }
 
+void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
+{
+    m_cachedPosition.reset();
+}
+
+void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() const
+{
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), this] {
+        if (!weakThis)
+            return;
+        invalidateCachedPosition();
+    });
+}
+
 void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
 {
     ASSERT(!isMainThread());
+
+    GstBuffer* buffer = gst_sample_get_buffer(sample);
+    if (buffer && GST_BUFFER_PTS_IS_VALID(buffer)) {
+        // Heuristic to avoid asking for playbackPosition() from a non-main thread.
+        MediaTime currentTime = MediaTime(gst_segment_to_stream_time(gst_sample_get_segment(sample), GST_FORMAT_TIME, GST_BUFFER_PTS(buffer)), GST_SECOND);
+        auto task = holdLock(m_TaskAtMediaTimeSchedulerDataMutex)->checkTaskForScheduling(currentTime);
+        if (task.hasValue())
+            RunLoop::main().dispatch(WTFMove(task.value()));
+    }
 
     bool shouldTriggerResize;
     {

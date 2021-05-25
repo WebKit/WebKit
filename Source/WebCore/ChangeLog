@@ -1,3 +1,54 @@
+2021-05-25  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK] Layout test media/track/track-cue-missing.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=191004
+
+        Reviewed by Alicia Boya Garcia.
+
+        Implemented the missing performTaskAtMediaTime() method, needed by HTMLMediaElement::updateActiveTextTrackCues()
+        to trigger custom updates at times that don't fit in the regular updates statically scheduled every 250 ms.
+        The implementation uses triggerRepaint() for synchronization instead of timers, computing the current stream time
+        of the last video frame to be painted as an heuristic, instead of asking the position to the pipeline (more
+        expensive and risky from a non-main thread). If the stream time is beyond the task target time, the task is run
+        on the main thread.
+
+        Still, that is not enough. The task scheduled by HTMLMediaElement requires currentTime() to return an accurate
+        value, not one cached every 200ms. m_cachedTime needs to be updated more frequently (at least once every main
+        loop iteration), but still remain consistent along the whole iteration. This is achieved by enqueing an
+        invalidation task (to be run at the end of the current iteration) each time the cached value is set with a value
+        coming from a position query.
+
+        The changes in the m_cachedTime management add an overhead between 173% (track-cue-missing test) and 426%
+        (regular video playback without subtitles) in the run time spent querying the position to the pipeline. As an
+        optimization, the position is now directly queried to the audio and video sink and the highest value (according
+        to the current playback direction) is returned. This reduces the overhead to just 63% in the regular playback
+        without subtitles case.
+
+        The inner TaskAtMediaTimeScheduler class is used for task target time evaluation. As it can be used from the
+        main thread and from a secondary one in triggerRepaint(), it's wrapped in a DataMutex to manage concurrent
+        access. The original task is returned to the caller of checkTaskForScheduling() when the currentTime is beyond
+        the target time. The caller is then responsible of running the task externally in the main thread, out of the
+        influence of the DataMutex lock (the task can be expensive and the lock is only needed to evaluate the triggering
+        conditions).
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::TaskAtMediaTimeScheduler::setTask): Configure the object with the right task, targetTime, and current playback direction.
+        (WebCore::MediaPlayerPrivateGStreamer::TaskAtMediaTimeScheduler::checkTaskForScheduling): Check if the task must run. In that case, return the task as result so the caller can run it externally on the main thread after the DataMutex lock has been released.
+        (WebCore::MediaPlayerPrivateGStreamer::invalidateCachedPosition): Implementation moved to the cpp file.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer): Don't initialize m_cachedPosition, as it's now an Optional that will be initialized as no-value.
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const): Change the time based caching mechanism to a mainloop iteration based one. Directly query the sinks instead of the pipeline for position.
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone): Invalidate the Optional, instead of setting an invalid MediaTime.
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::performTaskAtMediaTime): Set the task on the TaskAtMediaTimeScheduler when the media is currently playing. That task will run at the target time. The HTMLMediaElement periodic update will already take care if the media isn't currently playing.
+        (WebCore::MediaPlayerPrivateGStreamer::invalidateCachedPosition const): Reset Optional<MediaTime> m_cachedTime.
+        (WebCore::MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration const): Enqueue an invalidation on the next mainloop iteration.
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint): Check if the PendingTask needs to be run, using the streaming time of the last rendered sample as an approximate way to get the position, and run it if that's the case.
+
 2021-05-25  Tim Nguyen  <ntim@apple.com>
 
         Add basic <dialog> element UA styles
