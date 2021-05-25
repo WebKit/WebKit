@@ -1,3 +1,17 @@
+2021-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Divide by zero in DisplayUpdate::relevantForUpdateFrequency()
+        https://bugs.webkit.org/show_bug.cgi?id=226224
+        <rdar://76894675>
+
+        Reviewed by Wenson Hsieh.
+
+        Check for non-zero preferredFramesPerSecond before using it as a denominator
+        to avoid divide by zero.
+
+        * platform/graphics/DisplayUpdate.cpp:
+        (WebCore::DisplayUpdate::relevantForUpdateFrequency const):
+
 2021-05-25  Alan Bujtas  <zalan@apple.com>
 
         CrashOnOverflow in WebCore::RenderTable::cellBefore(WebCore::RenderTableCell const*)

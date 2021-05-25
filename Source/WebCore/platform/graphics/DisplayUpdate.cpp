@@ -35,7 +35,7 @@ namespace WebCore {
 bool DisplayUpdate::relevantForUpdateFrequency(FramesPerSecond preferredFramesPerSecond) const
 {
     // FIXME: Ideally this would be an assertion, but that may fire when windows move between screens with different refresh rates, because of webkit.org/b/212120.
-    if (!WTF::isIntegral(static_cast<float>(updatesPerSecond) / preferredFramesPerSecond || !preferredFramesPerSecond))
+    if (!preferredFramesPerSecond || !WTF::isIntegral(static_cast<float>(updatesPerSecond) / preferredFramesPerSecond))
         return true;
 
     unsigned rateFactor = updatesPerSecond / preferredFramesPerSecond;
