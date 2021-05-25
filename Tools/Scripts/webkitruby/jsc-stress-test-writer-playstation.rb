@@ -311,7 +311,7 @@ class Plan
         # something that's clearly invalid.
         <<-END_STATUS_COMMAND
           File.open("#{statusFile}", "w") { |f|
-              f.puts("#{$runUniqueId} \#{status.nil? ? 999999999 : status.exitstatus} #{status_code}")
+              f.puts("#{$runUniqueId} \#{status.nil? ? 999999999 : status} #{status_code}")
           }
         END_STATUS_COMMAND
     end
@@ -358,6 +358,7 @@ class Plan
                 outputName: @name.gsub(/(\\|\/)/, '_'),
                 checkScript: filename,
                 args: @arguments,
+                statusFile: "#{statusFile}",
             })
         }
 
@@ -412,7 +413,7 @@ def testRunnerCommand
     options = ENV["JSCTEST_options"]
 
     fsRoot = $jscPath.dirname
-    command = "PlayStationTestRunner #{options} -numProcesses=#{$numChildProcesses.to_s} -exe=#{$jscPath} -fsroot=#{fsRoot} @#{$runnerDir}/runscript"
+    command = "PlayStationTestRunner #{options} -numProcesses=#{$numChildProcesses.to_s} -exe=#{$jscPath} -fsroot=#{fsRoot} --runUniqueId=#{$runUniqueId} @#{$runnerDir}/runscript"
 
     print command
 
