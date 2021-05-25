@@ -1,3 +1,17 @@
+2021-05-25  Ian Gilbert  <iang@apple.com>
+
+        Only create MediaElementSession when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=226132
+
+        Reviewed by Eric Carlson.
+
+        Some methods had an unexpected side effect of creating a MediaElementSession.
+        Modified these to not create one if one does not already exist.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::mediaState const):
+
 2021-05-24  Zan Dobersek  <zdobersek@igalia.com>
 
         GLContextEGL::swapBuffers() shouldn't do anything for Surfaceless contexts
