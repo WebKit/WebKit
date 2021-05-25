@@ -29,9 +29,9 @@
 #include "AudioStreamDescription.h"
 
 #include "SharedBuffer.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
-#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -118,8 +118,8 @@ private:
 
     RetainPtr<AVAssetWriter> m_writer;
 
-    Lock m_dataLock;
-    RefPtr<SharedBuffer> m_data;
+    CheckedLock m_dataLock;
+    RefPtr<SharedBuffer> m_data WTF_GUARDED_BY_LOCK(m_dataLock);
     CompletionHandler<void(RefPtr<SharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;

@@ -28,6 +28,7 @@
 #include "DOMFormData.h"
 #include "File.h"
 #include "FormDataBuilder.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
@@ -123,6 +124,21 @@ Ref<FormData> FormData::isolatedCopy() const
     return formData;
 }
 
+unsigned FormData::imageOrMediaFilesCount() const
+{
+    unsigned imageOrMediaFilesCount = 0;
+    for (auto& element : m_elements) {
+        auto* encodedFileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data);
+        if (!encodedFileData)
+            continue;
+
+        auto mimeType = MIMETypeRegistry::mimeTypeForPath(encodedFileData->filename);
+        if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
+            ++imageOrMediaFilesCount;
+    }
+    return imageOrMediaFilesCount;
+}
+
 uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const
 {
     return switchOn(data,
@@ -131,10 +147,7 @@ uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& bl
         }, [] (const FormDataElement::EncodedFileData& fileData) {
             if (fileData.fileLength != BlobDataItem::toEndOfFile)
                 return static_cast<uint64_t>(fileData.fileLength);
-            long long fileSize;
-            if (FileSystem::getFileSize(fileData.filename, fileSize))
-                return static_cast<uint64_t>(fileSize);
-            return static_cast<uint64_t>(0);
+            return FileSystem::fileSize(fileData.filename).valueOr(0);
         }, [&blobSize] (const FormDataElement::EncodedBlobData& blobData) {
             return blobSize(blobData.url);
         }
@@ -357,7 +370,7 @@ FormDataForUpload FormData::prepareForUpload()
         auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data);
         if (!fileData)
             continue;
-        if (!FileSystem::fileIsDirectory(fileData->filename, FileSystem::ShouldFollowSymbolicLinks::Yes))
+        if (FileSystem::fileTypeFollowingSymlinks(fileData->filename) != FileSystem::FileType::Directory)
             continue;
         if (fileData->fileStart || fileData->fileLength != BlobDataItem::toEndOfFile)
             continue;
@@ -422,7 +435,7 @@ bool FormDataElement::EncodedFileData::fileModificationTimeMatchesExpectation() 
     if (!expectedFileModificationTime)
         return true;
 
-    auto fileModificationTime = FileSystem::getFileModificationTime(filename);
+    auto fileModificationTime = FileSystem::fileModificationTime(filename);
     if (!fileModificationTime)
         return false;
 

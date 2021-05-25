@@ -98,8 +98,8 @@ TEST_F(SSLKeyGeneratorTest, DefaultTest)
     char challenge[] = "0123456789";
     auto rawResult = WebCore::signedPublicKeyAndChallengeString(0, challenge, url);
     ASSERT_FALSE(rawResult.isEmpty());
-    Vector<uint8_t> derResult;
-    ASSERT_TRUE(base64Decode(rawResult, derResult));
+    auto derResult = base64Decode(rawResult);
+    ASSERT_TRUE(derResult);
 
     SecAsn1CoderRef coder = nullptr;
     ASSERT_EQ(errSecSuccess, SecAsn1CoderCreate(&coder));
@@ -108,7 +108,7 @@ TEST_F(SSLKeyGeneratorTest, DefaultTest)
     });
 
     SignedPublicKeyAndChallenge decodedResult { };
-    SecAsn1Item derResultItem { derResult.size(), derResult.data() };
+    SecAsn1Item derResultItem { derResult->size(), derResult->data() };
     ASSERT_EQ(errSecSuccess, SecAsn1DecodeData(coder, &derResultItem, signedPublicKeyAndChallengeTemplate, &decodedResult));
 
     // Check challenge

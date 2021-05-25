@@ -36,13 +36,14 @@
 namespace WebCore {
 
 enum class AlphaPremultiplication : uint8_t;
+
+class FloatPoint;
 class FloatPoint;
 class FloatRect;
-class GlyphBuffer;
-class FloatPoint;
 class Font;
+class GlyphBuffer;
 class Image;
-class ImageData;
+class PixelBuffer;
 
 struct GraphicsContextState;
 struct ImagePaintingOptions;
@@ -57,8 +58,8 @@ public:
     WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Delegate* = nullptr, DrawGlyphsRecorder::DrawGlyphsDeconstruction = DrawGlyphsRecorder::DrawGlyphsDeconstruction::Deconstruct);
     WEBCORE_EXPORT virtual ~Recorder();
 
-    WEBCORE_EXPORT void getImageData(AlphaPremultiplication outputFormat, const IntRect& sourceRect);
-    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT void getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect);
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
 
@@ -76,6 +77,8 @@ public:
 
 private:
     friend class DrawGlyphsRecorder;
+    Recorder(Recorder& parent, GraphicsContext&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
+
     bool hasPlatformContext() const override { return false; }
     bool canDrawImageBuffer(const ImageBuffer&) const override;
     PlatformGraphicsContext* platformContext() const override { return nullptr; }
@@ -233,6 +236,7 @@ private:
 
     DisplayList& m_displayList;
     Delegate* m_delegate;
+    bool m_isNested;
 
     Vector<ContextState, 4> m_stateStack;
 

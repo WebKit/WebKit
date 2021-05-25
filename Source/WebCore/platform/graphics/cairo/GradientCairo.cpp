@@ -60,6 +60,20 @@ static void setCornerColorRGBA(cairo_pattern_t* gradient, int id, Gradient::Colo
     cairo_mesh_pattern_set_corner_color_rgba(gradient, id, r, g, b, a * globalAlpha);
 }
 
+static constexpr double deg0 = 0;
+static constexpr double deg90 = piDouble / 2;
+static constexpr double deg180 = piDouble;
+static constexpr double deg270 = 3 * piDouble / 2;
+static constexpr double deg360 = 2 * piDouble;
+
+static double normalizeAngle(double angle)
+{
+    double tmp = std::fmod(angle, deg360);
+    if (tmp < 0)
+        tmp += deg360;
+    return tmp;
+}
+
 static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float r, float angleRadians,
     Gradient::ColorStop from, Gradient::ColorStop to, float globalAlpha)
 {
@@ -77,21 +91,22 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
     // center. If all sections had the same center, the center will get overridden as
     // the sections get painted.
     double cxOffset, cyOffset;
-    if (from.offset >= 0 && from.offset < 0.25) {
+    auto actualAngleStart = normalizeAngle(angleStart);
+    if (actualAngleStart >= deg0 && actualAngleStart < deg90) {
         cxOffset = 0;
+        cyOffset = 0;
+    } else if (actualAngleStart >= deg90 && actualAngleStart < deg180) {
+        cxOffset = -1;
+        cyOffset = 0;
+    } else if (actualAngleStart >= deg180 && actualAngleStart < deg270) {
+        cxOffset = -1;
         cyOffset = -1;
-    } else if (from.offset >= 0.25 && from.offset < 0.50) {
+    } else if (actualAngleStart >= deg270 && actualAngleStart < deg360) {
         cxOffset = 0;
-        cyOffset = 0;
-    } else if (from.offset >= 0.50 && from.offset < 0.75) {
-        cxOffset = -1;
-        cyOffset = 0;
-    } else if (from.offset >= 0.75 && from.offset < 1) {
-        cxOffset = -1;
         cyOffset = -1;
     } else {
         cxOffset = 0;
-        cyOffset = -1;
+        cyOffset = 0;
     }
     // The center offset for each of the sections is 1 pixel, since in theory nothing
     // can be smaller than 1 pixel. However, in high-resolution displays 1 pixel is

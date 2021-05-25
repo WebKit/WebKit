@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "WheelEventTestMonitor.h"
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
 #include "ScrollSnapAnimatorState.h"
@@ -43,6 +44,48 @@ namespace WebCore {
 ScrollController::ScrollController(ScrollControllerClient& client)
     : m_client(client)
 {
+}
+
+void ScrollController::animationCallback(MonotonicTime currentTime)
+{
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollController " << this << " animationCallback: isAnimatingRubberBand " << m_isAnimatingRubberBand << " isAnimatingScrollSnap " << m_isAnimatingScrollSnap);
+
+    updateScrollSnapAnimatingState(currentTime);
+    updateRubberBandAnimatingState(currentTime);
+}
+
+void ScrollController::startOrStopAnimationCallbacks()
+{
+    bool needsCallbacks = m_isAnimatingRubberBand || m_isAnimatingScrollSnap;
+    if (needsCallbacks == m_isRunningAnimatingCallback)
+        return;
+
+    if (needsCallbacks) {
+        m_client.startAnimationCallback(*this);
+        m_isRunningAnimatingCallback = true;
+        return;
+    }
+
+    m_client.stopAnimationCallback(*this);
+    m_isRunningAnimatingCallback = false;
+}
+
+void ScrollController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)
+{
+    if (isAnimatingRubberBand == m_isAnimatingRubberBand)
+        return;
+        
+    m_isAnimatingRubberBand = isAnimatingRubberBand;
+    startOrStopAnimationCallbacks();
+}
+
+void ScrollController::setIsAnimatingScrollSnap(bool isAnimatingScrollSnap)
+{
+    if (isAnimatingScrollSnap == m_isAnimatingScrollSnap)
+        return;
+        
+    m_isAnimatingScrollSnap = isAnimatingScrollSnap;
+    startOrStopAnimationCallbacks();
 }
 
 bool ScrollController::usesScrollSnap() const
@@ -167,6 +210,16 @@ void ScrollController::stopAllTimers()
 
 void ScrollController::scrollPositionChanged()
 {
+}
+
+void ScrollController::updateScrollSnapAnimatingState(MonotonicTime)
+{
+
+}
+
+void ScrollController::updateRubberBandAnimatingState(MonotonicTime)
+{
+
 }
 
 #endif // PLATFORM(MAC)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,7 +124,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
 #endif
     jit.ret();
     
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::FTLThunk);
     patchBuffer.link(functionCall, generationFunction.retagged<OperationPtrTag>());
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "%s", name);
 }
@@ -231,7 +231,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     
     jit.ret();
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::FTLThunk);
     patchBuffer.link(call, key.callTarget());
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "FTL slow path call thunk for %s", toCString(key).data());
 }

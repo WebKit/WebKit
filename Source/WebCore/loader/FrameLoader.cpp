@@ -1340,7 +1340,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    addExtraFieldsToRequest(request, IsMainResource::Yes, newLoadType);
+    updateRequestAndAddExtraFields(request, IsMainResource::Yes, newLoadType);
 
     ASSERT(newLoadType != FrameLoadType::Same);
 
@@ -1492,7 +1492,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader)
     ResourceRequest& r = newDocumentLoader.request();
     // FIXME: Using m_loadType seems wrong here.
     // If we are only preparing to load the main resource, that is previous load's load type!
-    addExtraFieldsToRequest(r, IsMainResource::Yes, m_loadType);
+    updateRequestAndAddExtraFields(r, IsMainResource::Yes, m_loadType, ShouldUpdateAppBoundValue::No);
     FrameLoadType type;
 
     if (shouldTreatURLAsSameAsCurrent(newDocumentLoader.originalRequest().url())) {
@@ -2877,7 +2877,7 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
     return ResourceRequestCachePolicy::UseProtocolCachePolicy;
 }
 
-void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType)
+void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppBoundValue shouldUpdate)
 {
     // If the request came from a previous process due to process-swap-on-navigation then we should not modify the request.
     if (m_currentLoadContinuingState == LoadContinuingState::ContinuingWithRequest)
@@ -2946,6 +2946,9 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, IsMainResour
         // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
         request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_frame.document()->encoding(), m_frame.settings().defaultTextEncodingName());
     }
+
+    if (shouldUpdate == ShouldUpdateAppBoundValue::Yes && m_frame.mainFrame().loader().documentLoader())
+        request.setIsAppBound(m_frame.mainFrame().loader().documentLoader()->lastNavigationWasAppBound());
 }
 
 void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content)
@@ -3033,7 +3036,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     workingResourceRequest.setHTTPMethod("POST");
     workingResourceRequest.setHTTPBody(inRequest.httpBody());
     workingResourceRequest.setHTTPContentType(contentType);
-    addExtraFieldsToRequest(workingResourceRequest, IsMainResource::Yes, loadType);
+    updateRequestAndAddExtraFields(workingResourceRequest, IsMainResource::Yes, loadType);
 
     if (Document* document = m_frame.document())
         document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(workingResourceRequest, ContentSecurityPolicy::InsecureRequestType::Load);
@@ -3083,7 +3086,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 
     initialRequest.setFirstPartyForCookies(m_frame.mainFrame().loader().documentLoader()->request().url());
     
-    addExtraFieldsToRequest(initialRequest, IsMainResource::No);
+    updateRequestAndAddExtraFields(initialRequest, IsMainResource::No);
 
     applyUserAgentIfNeeded(initialRequest);
 
@@ -3110,12 +3113,12 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 #endif
 
     m_frame.document()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newRequest, ContentSecurityPolicy::InsecureRequestType::Load);
-    
+
     if (error.isNull()) {
         ASSERT(!newRequest.isNull());
 
         if (!documentLoader()->applicationCacheHost().maybeLoadSynchronously(newRequest, error, response, data)) {
-            Vector<char> buffer;
+            Vector<uint8_t> buffer;
             platformStrategies()->loaderStrategy()->loadResourceSynchronously(*this, identifier, newRequest, clientCredentialPolicy, options, originalRequestHeaders, error, response, buffer);
             data = SharedBuffer::create(WTFMove(buffer));
             documentLoader()->applicationCacheHost().maybeLoadFallbackSynchronously(newRequest, error, response, data);
@@ -3780,7 +3783,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
         auto securityOrigin = SecurityOrigin::createFromString(item.referrer());
         addHTTPOriginIfNeeded(request, securityOrigin->toString());
 
-        addExtraFieldsToRequest(request, IsMainResource::Yes, loadType);
+        updateRequestAndAddExtraFields(request, IsMainResource::Yes, loadType);
         
         // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
         // We want to know this before talking to the policy delegate, since it affects whether 
@@ -3825,7 +3828,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
             ASSERT_NOT_REACHED();
         }
 
-        addExtraFieldsToRequest(request, IsMainResource::Yes, loadType);
+        updateRequestAndAddExtraFields(request, IsMainResource::Yes, loadType);
 
         ResourceRequest requestForOriginalURL(request);
         requestForOriginalURL.setURL(itemOriginalURL);

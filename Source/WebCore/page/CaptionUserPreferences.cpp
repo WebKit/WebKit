@@ -45,6 +45,7 @@
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <wtf/Language.h>
+#include <wtf/unicode/Collator.h>
 
 namespace WebCore {
 
@@ -237,8 +238,10 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
             tracksForMenu.append(track);
     }
 
-    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [](auto& a, auto& b) {
-        return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
+    Collator collator;
+
+    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [&] (auto& a, auto& b) {
+        return collator.collate(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
     });
 
     if (kinds.contains(TextTrack::Kind::Subtitles) || kinds.contains(TextTrack::Kind::Captions) || kinds.contains(TextTrack::Kind::Descriptions)) {
@@ -279,8 +282,10 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
         tracksForMenu.append(track);
     }
 
-    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [](auto& a, auto& b) {
-        return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
+    Collator collator;
+
+    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [&] (auto& a, auto& b) {
+        return collator.collate(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
     });
 
     return tracksForMenu;

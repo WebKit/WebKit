@@ -29,6 +29,7 @@
 #pragma once
 
 #include <memory>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/RefPtr.h>
@@ -75,8 +76,8 @@ private:
 
     // This set keeps track of the open databases that have been used on this thread.
     using DatabaseSet = HashSet<RefPtr<Database>>;
-    mutable Lock m_openDatabaseSetMutex;
-    DatabaseSet m_openDatabaseSet;
+    mutable CheckedLock m_openDatabaseSetLock;
+    DatabaseSet m_openDatabaseSet WTF_GUARDED_BY_LOCK(m_openDatabaseSetLock);
 
     std::unique_ptr<SQLTransactionCoordinator> m_transactionCoordinator;
     DatabaseTaskSynchronizer* m_cleanupSync { nullptr };

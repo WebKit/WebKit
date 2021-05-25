@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010 Google Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,6 +32,7 @@
 #include "config.h"
 #include "HTMLOutputElement.h"
 
+#include "DOMTokenList.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -40,19 +42,19 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLOutputElement);
 
-using namespace HTMLNames;
-
 inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
-    , m_isDefaultValueMode(true)
-    , m_isSetTextContentInProgress(false)
-    , m_defaultValue(emptyString())
 {
 }
 
 Ref<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(*new HTMLOutputElement(tagName, document, form));
+}
+
+Ref<HTMLOutputElement> HTMLOutputElement::create(Document& document)
+{
+    return create(HTMLNames::outputTag, document, nullptr);
 }
 
 const AtomString& HTMLOutputElement::formControlType() const
@@ -68,35 +70,15 @@ bool HTMLOutputElement::supportsFocus() const
 
 void HTMLOutputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == forAttr) {
-        if (m_tokens)
-            m_tokens->associatedAttributeValueChanged(value);
-    } else
-        HTMLFormControlElement::parseAttribute(name, value);
-}
-
-void HTMLOutputElement::childrenChanged(const ChildChange& change)
-{
-    HTMLFormControlElement::childrenChanged(change);
-
-    if (change.source == ChildChange::Source::Parser || m_isSetTextContentInProgress) {
-        m_isSetTextContentInProgress = false;
-        return;
-    }
-
-    if (m_isDefaultValueMode)
-        m_defaultValue = textContent();
+    if (name == HTMLNames::forAttr && m_forTokens)
+        m_forTokens->associatedAttributeValueChanged(value);
+    HTMLFormControlElement::parseAttribute(name, value);
 }
 
 void HTMLOutputElement::reset()
 {
-    // The reset algorithm for output elements is to set the element's
-    // value mode flag to "default" and then to set the element's textContent
-    // attribute to the default value.
-    m_isDefaultValueMode = true;
-    if (m_defaultValue == value())
-        return;
-    setTextContentInternal(m_defaultValue);
+    stringReplaceAll(defaultValue());
+    m_defaultValueOverride = { };
 }
 
 String HTMLOutputElement::value() const
@@ -106,41 +88,28 @@ String HTMLOutputElement::value() const
 
 void HTMLOutputElement::setValue(const String& value)
 {
-    // The value mode flag set to "value" when the value attribute is set.
-    m_isDefaultValueMode = false;
-    if (value == this->value())
-        return;
-    setTextContentInternal(value);
+    m_defaultValueOverride = defaultValue();
+    stringReplaceAll(value);
 }
 
 String HTMLOutputElement::defaultValue() const
 {
-    return m_defaultValue;
+    return m_defaultValueOverride.isNull() ? textContent() : m_defaultValueOverride;
 }
 
 void HTMLOutputElement::setDefaultValue(const String& value)
 {
-    if (m_defaultValue == value)
-        return;
-    m_defaultValue = value;
-    // The spec requires the value attribute set to the default value
-    // when the element's value mode flag to "default".
-    if (m_isDefaultValueMode)
-        setTextContentInternal(value);
+    if (m_defaultValueOverride.isNull())
+        stringReplaceAll(value);
+    else
+        m_defaultValueOverride = value;
 }
 
 DOMTokenList& HTMLOutputElement::htmlFor()
 {
-    if (!m_tokens)
-        m_tokens = makeUnique<DOMTokenList>(*this, forAttr);
-    return *m_tokens;
-}
-
-void HTMLOutputElement::setTextContentInternal(const String& value)
-{
-    ASSERT(!m_isSetTextContentInProgress);
-    m_isSetTextContentInProgress = true;
-    setTextContent(value);
+    if (!m_forTokens)
+        m_forTokens = makeUnique<DOMTokenList>(*this, HTMLNames::forAttr);
+    return *m_forTokens;
 }
 
 } // namespace

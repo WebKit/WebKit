@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKStylusDeviceObserver.h"
 
-#if HAVE(PENCILKIT_TEXT_INPUT)
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
 
 #import "WebProcessProxy.h"
 #import <UIKit/UIScribbleInteraction.h>
@@ -124,4 +124,4 @@ static Seconds changeTimeInterval { 10_min };
 
 @end
 
-#endif // HAVE(PENCILKIT_TEXT_INPUT)
+#endif // HAVE(STYLUS_DEVICE_OBSERVATION)

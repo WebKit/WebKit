@@ -38,6 +38,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
+#include "StyleScope.h"
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "InvalidationContext.h"
 #include "InvalidationState.h"

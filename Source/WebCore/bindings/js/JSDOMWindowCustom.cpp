@@ -84,7 +84,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDOMWindow);
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_webkit, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = lexicalGlobalObject->vm();
-    JSDOMWindow* castedThis = toJSDOMWindow(vm, JSValue::decode(thisValue));
+    auto* castedThis = toJSDOMGlobalObject<JSDOMWindow>(vm, JSValue::decode(thisValue));
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(toJS(lexicalGlobalObject, castedThis->globalObject(), castedThis->wrapped().webkitNamespace()));
@@ -140,7 +140,7 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     auto* frame = window.frame();
     if (frame && is<Frame>(*frame)) {
         if (auto* scopedChild = downcast<Frame>(*frame).tree().scopedChild(propertyNameToAtomString(propertyName))) {
-            slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(&lexicalGlobalObject, scopedChild->document()->domWindow()));
+            slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(&lexicalGlobalObject, scopedChild->document()->domWindow()));
             return true;
         }
     }
@@ -248,6 +248,23 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* le
     return Base::getOwnPropertySlotByIndex(thisObject, lexicalGlobalObject, index, slot);
 }
 
+void JSDOMWindow::doPutPropertySecurityCheck(JSObject* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PutPropertySlot&)
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* thisObject = jsCast<JSDOMWindow*>(cell);
+
+    String errorMessage;
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
+        // We only allow setting "location" attribute cross-origin.
+        if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName())
+            return;
+        throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
+        return;
+    }
+}
+
 bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = lexicalGlobalObject->vm();
@@ -255,10 +272,17 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
 
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
 
-    if (propertyName != static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName()) {
+    String errorMessage;
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
         // We only allow setting "location" attribute cross-origin.
-        if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), ThrowSecurityError))
+        if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName()) {
+            bool putResult = false;
+            if (lookupPut(lexicalGlobalObject, propertyName, thisObject, value, *s_info.staticPropHashTable, slot, putResult))
+                return putResult;
             return false;
+        }
+        throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
+        return false;
     }
 
     RELEASE_AND_RETURN(scope, Base::put(thisObject, lexicalGlobalObject, propertyName, value, slot));
@@ -576,11 +600,6 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunction_openDatabaseBody(J
     });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(toJS<IDLNullable<IDLInterface<Database>>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, WebCore::DOMWindowWebDatabase::openDatabase(impl, WTFMove(name), WTFMove(version), WTFMove(displayName), WTFMove(estimatedSize), WTFMove(creationCallback))));
-}
-
-template<> inline JSDOMWindow* IDLOperation<JSDOMWindow>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return toJSDOMWindow(lexicalGlobalObject.vm(), callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::sloppy()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsDOMWindowInstanceFunction_openDatabase, (JSGlobalObject* globalObject, CallFrame* callFrame))

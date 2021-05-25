@@ -1,3 +1,113 @@
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Adopt QLItem in WKImageExtractionPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=226114
+        rdar://76657718
+
+        Reviewed by Tim Horton.
+
+        Add a PAL softlinking header for QuickLookUI on macOS.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/mac/QuickLookUISoftLink.h: Added.
+        * pal/mac/QuickLookUISoftLink.mm: Added.
+        * pal/spi/mac/QuickLookMacSPI.h:
+
+        Add staging declarations for some new QuickLook SPI; these method declarations should be moved into the non-
+        internal-SDK section in the (near) future, once it is safe to do so.
+
+2021-05-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Plumb data detector results through some platform objects
+        https://bugs.webkit.org/show_bug.cgi?id=225775
+        Work towards rdar://75504956
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Move `DataDetectorsCoreSoftLink.{h|mm}` into PAL, so that it can be used in WebKit as well.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+
+        Add the header and source file to the CMake build.
+
+        * pal/cocoa/DataDetectorsCoreSoftLink.h: Added.
+        * pal/cocoa/DataDetectorsCoreSoftLink.mm: Added.
+        * pal/spi/cocoa/DataDetectorsCoreSPI.h:
+
+        Explicitly import Foundation headers here, so that the forward declarations don't cause compilation failures in
+        non-internal SDKs.
+
+2021-05-13  Tim Horton  <timothy_horton@apple.com>
+
+        Work around WebCore failing to build due to NDEBUG getting undefined in release
+        https://bugs.webkit.org/show_bug.cgi?id=225782
+        <rdar://problem/77982432>
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        * pal/spi/ios/GraphicsServicesSPI.h:
+        Apply a temporary workaround to preserve NDEBUG through these includes.
+        There are a few ways to get to CoreGraphicsPrivate.h, so we fix all of them.
+
+2021-05-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r276945): [iOS] Focus rings are too large
+        https://bugs.webkit.org/show_bug.cgi?id=225778
+        <rdar://problem/77858341>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/ios/UIKitSPI.h:
+
+2021-05-12  Jean-Yves Avenard  <jya@apple.com>
+
+        Adopt CoreMedia SPI to identify audio-only playback for MSE clients
+        https://bugs.webkit.org/show_bug.cgi?id=225647
+        rdar://76138365
+
+        Reviewed by Youenn Fablet.
+
+        * pal/spi/cocoa/AVFoundationSPI.h: Add forward declaration for new methods
+          while this isn't in SDK yet.
+
+2021-05-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277322.
+        https://bugs.webkit.org/show_bug.cgi?id=225657
+
+        Causing build failure
+
+        Reverted changeset:
+
+        "Adopt CoreMedia SPI to identify audio-only playback for MSE
+        clients"
+        https://bugs.webkit.org/show_bug.cgi?id=225647
+        https://trac.webkit.org/changeset/277322
+
+2021-05-11  Jean-Yves Avenard  <jya@apple.com>
+
+        Adopt CoreMedia SPI to identify audio-only playback for MSE clients
+        https://bugs.webkit.org/show_bug.cgi?id=225647
+        rdar://76138365
+
+        Reviewed by Youenn Fablet.
+
+        * pal/spi/cocoa/AVFoundationSPI.h: Add forward declaration for new methods
+          while this isn't in SDK yet.
+
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Allow immediate action gestures to begin when force clicking text inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=225600
+        <rdar://problem/77792365>
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h:
+
 2021-04-29  Jean-Yves Avenard  <jya@apple.com>
 
         Adopt AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification

@@ -34,6 +34,8 @@ messages -> RemoteMediaSessionCoordinator NotRefCounted {
     PauseSession() -> (bool result) Async
 
     SetSessionTrack(String trackIdentifier) -> (bool result) Async
+
+    CoordinatorStateChanged(enum:uint8_t WebCore::MediaSessionCoordinatorState state);
 }
 
 #endif

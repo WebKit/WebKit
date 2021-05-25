@@ -92,7 +92,7 @@ void WeakMapImpl<WeakMapBucket>::rehash(RehashMode mode)
 
     // This rehash modifies m_buffer which is not GC-managed buffer. But m_buffer can be touched in
     // visitOutputConstraints. Thus, we should guard it with cellLock.
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
 
     uint32_t oldCapacity = m_capacity;
     MallocPtr<WeakMapBufferType, JSValueMalloc> oldBuffer = WTFMove(m_buffer);

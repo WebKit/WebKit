@@ -80,15 +80,14 @@ static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffe
         if (!keyID)
             continue;
 
-        Vector<char> keyIDData;
-        if (!WTF::base64URLDecode(keyID, { keyIDData }))
+        auto keyIDData = base64URLDecode(keyID);
+        if (!keyIDData)
             continue;
 
-        if (keyIDData.size() < kKeyIdsMinKeyIdSizeInBytes || keyIDData.size() > kKeyIdsMaxKeyIdSizeInBytes)
+        if (keyIDData->size() < kKeyIdsMinKeyIdSizeInBytes || keyIDData->size() > kKeyIdsMaxKeyIdSizeInBytes)
             return WTF::nullopt;
 
-        Ref<SharedBuffer> keyIDBuffer = SharedBuffer::create(WTFMove(keyIDData));
-        keyIDs.append(WTFMove(keyIDBuffer));
+        keyIDs.append(SharedBuffer::create(WTFMove(*keyIDData)));
     }
 
     return keyIDs;
@@ -105,7 +104,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     auto object = JSON::Object::create();
     auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer.value())
-        kidsArray->pushString(WTF::base64URLEncode(buffer->data(), buffer->size()));
+        kidsArray->pushString(base64URLEncodeToString(buffer->data(), buffer->size()));
     object->setArray("kids", WTFMove(kidsArray));
 
     CString jsonData = object->toJSONString().utf8();

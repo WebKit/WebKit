@@ -27,15 +27,25 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
 #include "Connection.h"
 #include "MediaOverridesForTesting.h"
 #include "MessageReceiverMap.h"
 #include "SampleBufferDisplayLayerManager.h"
+#include "SharedMemory.h"
 #include <WebCore/PlatformMediaSession.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class CAAudioStreamDescription;
+}
+
+namespace IPC {
+class Semaphore;
+}
 
 namespace WebKit {
 
@@ -84,6 +94,8 @@ public:
     void createVisibilityPropagationContextForPage(WebPage&);
     void destroyVisibilityPropagationContextForPage(WebPage&);
 #endif
+
+    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
     class Client : public CanMakeWeakPtr<Client> {
     public:

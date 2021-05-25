@@ -66,7 +66,7 @@ messages -> WebPageProxy {
 #endif
 
     RunBeforeUnloadConfirmPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> (bool shouldClose) Synchronous
-    PageDidScroll()
+    PageDidScroll(WebCore::IntPoint scrollPosition)
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
     ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted) Async
     ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (Optional<Vector<WebCore::ContactInfo>> info) Async
@@ -281,7 +281,7 @@ messages -> WebPageProxy {
 #endif
 
     # Notification messages
-    RequestNotificationPermission(uint64_t requestID, String originIdentifier)
+    RequestNotificationPermission(String originIdentifier) -> (bool allowed) Async
     ShowNotification(String title, String body, String iconURL, String tag, String lang, enum:uint8_t WebCore::NotificationDirection dir, String originIdentifier, uint64_t notificationID)
     CancelNotification(uint64_t notificationID)
     ClearNotifications(Vector<uint64_t> notificationIDs)
@@ -520,7 +520,7 @@ messages -> WebPageProxy {
 
     StartURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters)
     StopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
-    LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, Vector<char> data) Synchronous
+    LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, Vector<uint8_t> data) Synchronous
 
 #if ENABLE(DEVICE_ORIENTATION)
     ShouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, bool mayPrompt) -> (enum:uint8_t WebCore::DeviceOrientationOrMotionPermissionState permissionState) Async

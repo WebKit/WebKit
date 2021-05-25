@@ -465,6 +465,15 @@ void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+void PageClientImpl::requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion)
+{
+    [m_contentView requestImageExtraction:imageURL imageData:imageData completionHandler:WTFMove(completion)];
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
+
 #if HAVE(PASTEBOARD_DATA_OWNER)
 
 WebCore::DataOwnerType PageClientImpl::dataOwnerForPasteboard(PasteboardAccessIntent intent) const
@@ -479,16 +488,19 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&)
     return nullptr;
 }
 
-void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, TextIndicatorWindowLifetime)
+void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorLifetime)
 {
+    [m_contentView setUpTextIndicator:textIndicator];
 }
 
-void PageClientImpl::clearTextIndicator(TextIndicatorWindowDismissalAnimation)
+void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation dismissalAnimation)
 {
+    [m_contentView clearTextIndicator:dismissalAnimation];
 }
 
-void PageClientImpl::setTextIndicatorAnimationProgress(float)
+void PageClientImpl::setTextIndicatorAnimationProgress(float animationProgress)
 {
+    [m_contentView setTextIndicatorAnimationProgress:animationProgress];
 }
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -1003,6 +1015,11 @@ void PageClientImpl::handleAsynchronousCancelableScrollEvent(UIScrollView *scrol
 void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callback)
 {
     [m_contentView runModalJavaScriptDialog:WTFMove(callback)];
+}
+
+WebCore::Color PageClientImpl::contentViewBackgroundColor()
+{
+    return [m_contentView backgroundColor].CGColor;
 }
 
 } // namespace WebKit

@@ -45,13 +45,13 @@ public:
 
     void registerCallee(Callee* callee)
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         m_calleeSet.add(callee);
     }
 
     void unregisterCallee(Callee* callee)
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         m_calleeSet.remove(callee);
     }
 

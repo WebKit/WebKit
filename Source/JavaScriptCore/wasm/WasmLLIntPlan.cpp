@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,7 +87,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
     Expected<std::unique_ptr<FunctionCodeBlock>, String> parseAndCompileResult = parseAndCompileBytecode(function.data.data(), function.data.size(), signature, m_moduleInformation.get(), functionIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
             fail(locker, makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
@@ -127,7 +127,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
             jumps[i] = jit.jump();
         }
 
-        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
         if (UNLIKELY(linkBuffer.didFailToAllocate())) {
             Base::fail(locker, "Out of executable memory in Wasm LLInt entry thunks");
             return;
@@ -154,7 +154,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
             MemoryMode mode = MemoryMode::BoundsChecking;
             std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
-            LinkBuffer linkBuffer(jit, nullptr, JITCompilationCanFail);
+            LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
                 Base::fail(locker, makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
                 return;
@@ -191,18 +191,18 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
 
 void LLIntPlan::completeInStreaming()
 {
-    complete(holdLock(m_lock));
+    complete(Locker { m_lock });
 }
 
 void LLIntPlan::didCompileFunctionInStreaming()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     moveToState(EntryPlan::State::Compiled);
 }
 
 void LLIntPlan::didFailInStreaming(String&& message)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     if (!m_errorMessage)
         fail(locker, WTFMove(message));
 }

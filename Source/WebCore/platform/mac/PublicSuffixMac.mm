@@ -51,7 +51,7 @@ String topPrivatelyControlledDomain(const String& domain)
         return domain;
 
     static Lock cacheLock;
-    auto locker = holdLock(cacheLock);
+    Locker locker { cacheLock };
 
     static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> cache;
 

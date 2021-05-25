@@ -567,8 +567,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 #endif // ENABLE(FTL_JIT)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
+
+        jitStubs->preinitializeCTIThunks(*this);
     }
-#endif
+#endif // ENABLE(JIT)
 
     if (Options::forceDebuggerBytecodeGeneration() || Options::alwaysUseShadowChicken())
         ensureShadowChicken();
@@ -583,12 +585,12 @@ static ReadWriteLock s_destructionLock;
 
 void waitForVMDestruction()
 {
-    auto locker = holdLock(s_destructionLock.write());
+    Locker locker { s_destructionLock.write() };
 }
 
 VM::~VM()
 {
-    auto destructionLocker = holdLock(s_destructionLock.read());
+    Locker destructionLocker { s_destructionLock.read() };
     
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
@@ -886,13 +888,14 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
     return getOrCreate(m_fastBoundExecutable);
 }
 
-MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
+MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind, Optional<NoLockingNecessaryTag> noLockingNecessary)
 {
+    UNUSED_PARAM(noLockingNecessary);
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         if (kind == CodeForCall)
-            return jitStubs->ctiInternalFunctionCall(*this).retagged<JSEntryPtrTag>();
-        return jitStubs->ctiInternalFunctionConstruct(*this).retagged<JSEntryPtrTag>();
+            return jitStubs->ctiInternalFunctionCall(*this, noLockingNecessary).retagged<JSEntryPtrTag>();
+        return jitStubs->ctiInternalFunctionConstruct(*this, noLockingNecessary).retagged<JSEntryPtrTag>();
     }
 #endif
     if (kind == CodeForCall)
@@ -1127,7 +1130,7 @@ void VM::updateStackLimits()
 #if ENABLE(DFG_JIT)
 void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
 {
-    auto lock = holdLock(m_scratchBufferLock);
+    Locker locker { m_scratchBufferLock };
     for (auto* scratchBuffer : m_scratchBuffers) {
         if (scratchBuffer->activeLength()) {
             void* bufferStart = scratchBuffer->dataBuffer();
@@ -1491,7 +1494,7 @@ ScratchBuffer* VM::scratchBufferForSize(size_t size)
     if (!size)
         return nullptr;
 
-    auto locker = holdLock(m_scratchBufferLock);
+    Locker locker { m_scratchBufferLock };
 
     if (size > m_sizeOfLastScratchBuffer) {
         // Protect against a N^2 memory usage pathology by ensuring
@@ -1511,7 +1514,7 @@ ScratchBuffer* VM::scratchBufferForSize(size_t size)
 
 void VM::clearScratchBuffers()
 {
-    auto lock = holdLock(m_scratchBufferLock);
+    Locker locker { m_scratchBufferLock };
     for (auto* scratchBuffer : m_scratchBuffers)
         scratchBuffer->setActiveLength(0);
 }
@@ -1685,7 +1688,7 @@ void VM::setCrashOnVMCreation(bool shouldCrash)
 
 void VM::addLoopHintExecutionCounter(const Instruction* instruction)
 {
-    auto locker = holdLock(m_loopHintExecutionCountLock);
+    Locker locker { m_loopHintExecutionCountLock };
     auto addResult = m_loopHintExecutionCounts.add(instruction, std::pair<unsigned, std::unique_ptr<uint64_t>>(0, nullptr));
     if (addResult.isNewEntry) {
         auto ptr = WTF::makeUniqueWithoutFastMallocCheck<uint64_t>();
@@ -1697,14 +1700,14 @@ void VM::addLoopHintExecutionCounter(const Instruction* instruction)
 
 uint64_t* VM::getLoopHintExecutionCounter(const Instruction* instruction)
 {
-    auto locker = holdLock(m_loopHintExecutionCountLock);
+    Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);
     return iter->value.second.get();
 }
 
 void VM::removeLoopHintExecutionCounter(const Instruction* instruction)
 {
-    auto locker = holdLock(m_loopHintExecutionCountLock);
+    Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);
     RELEASE_ASSERT(!!iter->value.first);
     --iter->value.first;

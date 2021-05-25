@@ -32,7 +32,6 @@ test infrastructure (the Port and Driver classes)."""
 
 import argparse
 import difflib
-import json
 import logging
 import os
 import optparse
@@ -40,13 +39,10 @@ import re
 import sys
 
 from collections import OrderedDict
-from functools import partial
 from webkitcorepy import string_utils, decorators
 from webkitscmpy import local
 
-from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
-from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.memoized import memoized
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path, pemfile
@@ -554,7 +550,7 @@ class Port(object):
             except ValueError:
                 return val
 
-        return [tryint(chunk) for chunk in re.split('(\d+)', string_to_split)]
+        return [tryint(chunk) for chunk in re.split(r'(\d+)', string_to_split)]
 
     def test_dirs(self):
         """Returns the list of top-level test directories."""
@@ -1135,11 +1131,6 @@ class Port(object):
         _log.error("Could not find apache. Not installed or unknown path.")
         return None
 
-    def _is_fedora_php_version_7(self):
-        if self._filesystem.exists("/etc/httpd/modules/libphp7.so"):
-            return True
-        return False
-
     def _is_darwin_php_version_7(self):
         if self._filesystem.exists("/usr/libexec/apache2/libphp7.so"):
             return True
@@ -1162,14 +1153,6 @@ class Port(object):
         config = self._executive.run_command([self._path_to_apache(), '-v'])
         return re.sub(r'(?:.|\n)*Server version: Apache/(\d+\.\d+)(?:.|\n)*', r'\1', config)
 
-    def _debian_php_version(self):
-        prefix = "/usr/lib/apache2/modules/"
-        for version in ("7.0", "7.1", "7.2", "7.3", "7.4"):
-            if self._filesystem.exists("%s/libphp%s.so" % (prefix, version)):
-                return "-php%s" % version
-        _log.error("No libphp7.x.so found in %s" % prefix)
-        return ""
-
     def _darwin_php_version(self):
         if self._is_darwin_php_version_7():
             return '-php7'
@@ -1179,11 +1162,6 @@ class Port(object):
                     return ''
             return '-x'
         return ''
-
-    def _fedora_php_version(self):
-        if self._is_fedora_php_version_7():
-            return "-php7"
-        return ""
 
     def _win_php_version(self):
         root = os.environ.get('XAMPP_ROOT', 'C:\\xampp')
@@ -1203,9 +1181,9 @@ class Port(object):
             return 'apache' + self._apache_version() + self._darwin_php_version() + '-httpd.conf'
         if sys_platform.startswith('linux'):
             if self._is_redhat_based():
-                return 'fedora-httpd-' + self._apache_version() + self._fedora_php_version() + '.conf'
+                return 'fedora-httpd-' + self._apache_version() + '.conf'
             if self._is_debian_based():
-                return 'debian-httpd-' + self._apache_version() + self._debian_php_version() + '.conf'
+                return 'debian-httpd-' + self._apache_version() + '.conf'
             if self._is_arch_based():
                 return 'archlinux-httpd.conf'
             if self._is_flatpak():

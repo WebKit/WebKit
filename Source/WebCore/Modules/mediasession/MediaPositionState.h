@@ -38,6 +38,8 @@ struct MediaPositionState {
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<MediaPositionState> decode(Decoder&);
+
+    bool operator==(const MediaPositionState& other) const { return duration == other.duration && playbackRate == other.playbackRate && position == other.position; }
 };
 
 template<class Encoder> inline void MediaPositionState::encode(Encoder& encoder) const

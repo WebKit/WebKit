@@ -38,7 +38,7 @@ static String getExecutablePath()
 {
     CString executablePath = getCurrentExecutablePath();
     if (!executablePath.isNull())
-        return FileSystem::directoryName(FileSystem::stringFromFileSystemRepresentation(executablePath.data()));
+        return FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath.data()));
     return { };
 }
 #endif

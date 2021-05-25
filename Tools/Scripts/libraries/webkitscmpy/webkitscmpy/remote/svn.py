@@ -39,7 +39,7 @@ from webkitscmpy import Commit, Version
 
 class Svn(Scm):
     URL_RE = re.compile(r'\Ahttps?://svn.(?P<host>\S+)/repository/\S+\Z')
-    DATA_RE = re.compile(b'<[SD]:(?P<tag>\S+)>(?P<content>.*)</[SD]:.+>')
+    DATA_RE = re.compile(br'<[SD]:(?P<tag>\S+)>(?P<content>.*)</[SD]:.+>')
     CACHE_VERSION = Version(1)
 
     @classmethod

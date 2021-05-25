@@ -161,11 +161,6 @@ void JSTestDelegateToSharedSyntheticAttribute::destroy(JSC::JSCell* cell)
     thisObject->JSTestDelegateToSharedSyntheticAttribute::~JSTestDelegateToSharedSyntheticAttribute();
 }
 
-template<> inline JSTestDelegateToSharedSyntheticAttribute* IDLAttribute<JSTestDelegateToSharedSyntheticAttribute>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestDelegateToSharedSyntheticAttribute*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestDelegateToSharedSyntheticAttributeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

@@ -217,7 +217,7 @@ static void HandleDelegateSource(void*)
     _WebThreadAutoLock();
 
     {
-        auto locker = holdLock(delegateLock);
+        Locker locker { delegateLock };
 
 #if LOG_MESSAGES
         if ([[delegateInvocation() target] isKindOfClass:[NSNotificationCenter class]]) {
@@ -322,7 +322,7 @@ void WebThreadAdoptAndRelease(id obj)
     NSLog(@"Release send [main thread]: %@", obj);
 #endif        
 
-    auto locker = holdLock(webThreadReleaseLock);
+    Locker locker { webThreadReleaseLock };
 
     if (webThreadReleaseObjArray() == nil)
         webThreadReleaseObjArray() = adoptCF(CFArrayCreateMutable(kCFAllocatorSystemDefault, 0, nullptr));
@@ -391,7 +391,7 @@ void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL)
     }
 
     {
-        auto locker = holdLock(webCoreReleaseLock);
+        Locker locker { webCoreReleaseLock };
         if ([self retainCount] != 1) {
             // This is not the only reference retaining the object, so another
             // thread could also call release - hold the lock whilst calling
@@ -410,7 +410,7 @@ void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL)
 
 void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL)
 {
-    auto locker = holdLock(webCoreReleaseLock);
+    Locker locker { webCoreReleaseLock };
     if (WebThreadIsLockedOrDisabled() || 1 != [self retainCount])
         [self _webcore_releaseWithWebThreadLock];
     else
@@ -423,7 +423,7 @@ static void HandleWebThreadReleaseSource(void*)
 
     RetainPtr<CFMutableArrayRef> objects;
     {
-        auto locker = holdLock(webThreadReleaseLock);
+        Locker locker { webThreadReleaseLock };
         if (CFArrayGetCount(webThreadReleaseObjArray().get())) {
             objects = adoptCF(CFArrayCreateMutableCopy(nullptr, 0, webThreadReleaseObjArray().get()));
             CFArrayRemoveAllValues(webThreadReleaseObjArray().get());
@@ -668,7 +668,7 @@ static void* RunWebThread(void*)
     perCalloutAutoreleasepoolEnabled = _CFRunLoopSetPerCalloutAutoreleasepoolEnabled(YES);
 
     {
-        LockHolder locker(startupLock);
+        Locker locker { startupLock };
         startupCondition.notifyOne();
     }
 
@@ -722,7 +722,7 @@ static void StartWebThread()
 
     // Wait for the web thread to startup completely before we continue.
     {
-        LockHolder locker(startupLock);
+        Locker locker { startupLock };
 
         // Propagate the mainThread's fenv to workers & the web thread.
         FloatingPointEnvironment::singleton().saveMainThreadEnvironment();

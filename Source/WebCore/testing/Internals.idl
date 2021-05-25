@@ -688,6 +688,7 @@ enum TreeType {
     [Conditional=VIDEO] DOMString elementBufferingPolicy(HTMLMediaElement media);
     [Conditional=VIDEO] double privatePlayerVolume(HTMLMediaElement media);
     [Conditional=VIDEO] boolean privatePlayerMuted(HTMLMediaElement media);
+    [Conditional=VIDEO] boolean isMediaElementHidden(HTMLMediaElement media);
     [Conditional=VIDEO] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
 
     undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
@@ -737,7 +738,7 @@ enum TreeType {
     [Conditional=VIDEO] undefined setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
     [Conditional=VIDEO] DOMString mediaSessionRestrictions(DOMString mediaType);
     [Conditional=VIDEO] undefined setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
-    [Conditional=WEB_AUDIO] undefined setAudioContextRestrictions((AudioContext or WebKitAudioContext) context, DOMString restrictions);
+    [Conditional=WEB_AUDIO] undefined setAudioContextRestrictions(AudioContext context, DOMString restrictions);
     [Conditional=VIDEO] undefined postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
     [Conditional=VIDEO] undefined activeAudioRouteDidChange(boolean shouldPause);
 
@@ -893,6 +894,7 @@ enum TreeType {
     readonly attribute boolean supportsAudioSession;
     DOMString audioSessionCategory();
     double preferredAudioBufferSize();
+    double currentAudioBufferSize();
     boolean audioSessionActive();
 
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);

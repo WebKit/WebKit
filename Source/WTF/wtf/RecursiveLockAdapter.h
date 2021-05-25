@@ -80,6 +80,8 @@ public:
     {
         return m_lock.isLocked();
     }
+
+    bool isOwner() const { return m_owner == &Thread::current(); }
     
 private:
     Thread* m_owner { nullptr }; // Use Thread* instead of RefPtr<Thread> since m_owner thread is always alive while m_onwer is set.

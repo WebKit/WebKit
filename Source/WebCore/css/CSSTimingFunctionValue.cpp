@@ -43,8 +43,7 @@ bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctio
 String CSSStepsTimingFunctionValue::customCSSText() const
 {
     StringBuilder builder;
-    builder.appendLiteral("steps(");
-    builder.appendNumber(m_steps);
+    builder.append("steps(", m_steps);
     if (m_stepPosition) {
         switch (m_stepPosition.value()) {
         case StepsTimingFunction::StepPosition::JumpStart:
@@ -68,7 +67,7 @@ String CSSStepsTimingFunctionValue::customCSSText() const
             break;
         }
     }
-    builder.appendLiteral(")");
+    builder.append(')');
     return builder.toString();
 }
 

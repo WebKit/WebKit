@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,7 +154,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
 {
     if (jit.m_assembler.buffer().codeSize() <= stubInfo.inlineSize()) {
         bool needsBranchCompaction = true;
-        LinkBuffer linkBuffer(jit, stubInfo.start, stubInfo.inlineSize(), JITCompilationMustSucceed, needsBranchCompaction);
+        LinkBuffer linkBuffer(jit, stubInfo.start, stubInfo.inlineSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
         ASSERT(linkBuffer.isValid());
         function(linkBuffer);
         FINALIZE_CODE(linkBuffer, NoPtrTag, "InlineAccessType: '%s'", name);
@@ -387,7 +387,7 @@ void InlineAccess::rewireStubAsJump(StructureStubInfo& stubInfo, CodeLocationLab
 
     // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
     bool needsBranchCompaction = false;
-    LinkBuffer linkBuffer(jit, stubInfo.start, jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
+    LinkBuffer linkBuffer(jit, stubInfo.start, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
     RELEASE_ASSERT(linkBuffer.isValid());
     linkBuffer.link(jump, target);
 

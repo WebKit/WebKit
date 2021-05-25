@@ -419,7 +419,7 @@ String StructureShape::stringRepresentation()
     }
 
     if (representation.length() >= 3)
-        representation.resize(representation.length() - 2);
+        representation.shrink(representation.length() - 2);
 
     representation.append('}');
 

@@ -36,7 +36,7 @@ async function checkResult()
     await shouldHaveCookieWithValue("lax", "19");
 
     debug("<br>Cookies visible in DOM:");
-    shouldNotHaveDOMCookie("strict");
+    shouldHaveDOMCookieWithValue("strict", "19");
     shouldHaveDOMCookieWithValue("implicit-strict", "19");
     shouldHaveDOMCookieWithValue("strict-because-invalid-SameSite-value", "19");
     shouldHaveDOMCookieWithValue("lax", "19");

@@ -70,7 +70,11 @@ protected:
     virtual ~ScrollControllerClient() = default;
 
 public:
+    // Only used for non-animation timers.
     virtual std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) = 0;
+
+    virtual void startAnimationCallback(ScrollController&) = 0;
+    virtual void stopAnimationCallback(ScrollController&) = 0;
 
 #if ENABLE(RUBBER_BANDING)
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
@@ -130,6 +134,9 @@ public:
     bool usesScrollSnap() const;
     void stopAllTimers();
     void scrollPositionChanged();
+    
+    // Should be called periodically by the client. Started by startAnimationCallback(), stopped by stopAnimationCallback().
+    void animationCallback(MonotonicTime);
 
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo&);
@@ -171,11 +178,17 @@ private:
     void setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis, int);
 #endif
 
+    void updateScrollSnapAnimatingState(MonotonicTime);
+    void updateRubberBandAnimatingState(MonotonicTime);
+    
+    void setIsAnimatingRubberBand(bool);
+    void setIsAnimatingScrollSnap(bool);
+
 #if PLATFORM(MAC)
 #if ENABLE(CSS_SCROLL_SNAP)
-    void scrollSnapTimerFired();
-    void startScrollSnapTimer();
-    void stopScrollSnapTimer();
+    void startScrollSnapAnimation();
+    void stopScrollSnapAnimation();
+
     bool shouldOverrideMomentumScrolling() const;
     void statelessSnapTransitionTimerFired();
     void scheduleStatelessScrollSnap();
@@ -184,10 +197,10 @@ private:
 #endif
 
 #if ENABLE(RUBBER_BANDING)
-    void startSnapRubberbandTimer();
-    void stopSnapRubberbandTimer();
+    void startRubberbandAnimation();
+    void stopSnapRubberbandAnimation();
+
     void snapRubberBand();
-    void snapRubberBandTimerFired();
     bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent&) const;
     bool shouldRubberBandInDirection(ScrollDirection) const;
     bool isRubberBandInProgressInternal() const;
@@ -196,11 +209,17 @@ private:
 #endif
 #endif
 
+    void startOrStopAnimationCallbacks();
+
     ScrollControllerClient& m_client;
 #if ENABLE(CSS_SCROLL_SNAP)
     std::unique_ptr<ScrollSnapAnimatorState> m_scrollSnapState;
     bool m_activeScrollSnapIndexDidChange { false };
 #endif
+
+    bool m_isRunningAnimatingCallback { false };
+    bool m_isAnimatingRubberBand { false };
+    bool m_isAnimatingScrollSnap { false };
 
 #if PLATFORM(MAC)
     WallTime m_lastMomentumScrollTimestamp;
@@ -216,7 +235,6 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
     FloatSize m_dragEndedScrollingVelocity;
     std::unique_ptr<ScrollControllerTimer> m_statelessSnapTransitionTimer;
-    std::unique_ptr<ScrollControllerTimer> m_scrollSnapTimer;
 #endif
 
 #if ENABLE(RUBBER_BANDING)
@@ -225,7 +243,6 @@ private:
     FloatSize m_startStretch;
     FloatSize m_origVelocity;
     RectEdges<bool> m_rubberBandingEdges;
-    std::unique_ptr<ScrollControllerTimer> m_snapRubberbandTimer;
 #endif
 
 #if ASSERT_ENABLED

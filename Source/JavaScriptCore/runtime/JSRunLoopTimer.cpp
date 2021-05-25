@@ -72,7 +72,7 @@ void JSRunLoopTimer::Manager::timerDidFire()
     Vector<Ref<JSRunLoopTimer>> timersToFire;
 
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         RunLoop* currentRunLoop = &RunLoop::current();
         EpochTime nowEpochTime = epochTime(0_s);
         for (auto& entry : m_mapping) {
@@ -120,14 +120,14 @@ void JSRunLoopTimer::Manager::registerVM(VM& vm)
 {
     auto data = makeUnique<PerVMData>(*this, vm.runLoop());
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     auto addResult = m_mapping.add({ vm.apiLock() }, WTFMove(data));
     RELEASE_ASSERT(addResult.isNewEntry);
 }
 
 void JSRunLoopTimer::Manager::unregisterVM(VM& vm)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     auto iter = m_mapping.find({ vm.apiLock() });
     RELEASE_ASSERT(iter != m_mapping.end());
@@ -138,7 +138,7 @@ void JSRunLoopTimer::Manager::scheduleTimer(JSRunLoopTimer& timer, Seconds delay
 {
     EpochTime fireEpochTime = epochTime(delay);
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     auto iter = m_mapping.find(timer.m_apiLock);
     RELEASE_ASSERT(iter != m_mapping.end()); // We don't allow calling this after the VM dies.
 
@@ -161,7 +161,7 @@ void JSRunLoopTimer::Manager::scheduleTimer(JSRunLoopTimer& timer, Seconds delay
 
 void JSRunLoopTimer::Manager::cancelTimer(JSRunLoopTimer& timer)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     auto iter = m_mapping.find(timer.m_apiLock);
     if (iter == m_mapping.end()) {
         // It's trivial to allow this to be called after the VM dies, so we allow for it.
@@ -192,7 +192,7 @@ void JSRunLoopTimer::Manager::cancelTimer(JSRunLoopTimer& timer)
 
 Optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     auto iter = m_mapping.find(timer.m_apiLock);
     RELEASE_ASSERT(iter != m_mapping.end()); // We only allow this to be called with a live VM.
 
@@ -212,7 +212,7 @@ void JSRunLoopTimer::timerDidFire()
     NO_TAIL_CALLS();
 
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         if (!m_isScheduled) {
             // We raced between this callback being called and cancel() being called.
             // That's fine, we just don't do anything here.
@@ -220,7 +220,7 @@ void JSRunLoopTimer::timerDidFire()
         }
     }
 
-    auto locker = holdLock(m_apiLock.get());
+    Locker locker { m_apiLock.get() };
     RefPtr<VM> vm = m_apiLock->vm();
     if (!vm) {
         // The VM has been destroyed, so we should just give up.
@@ -247,32 +247,32 @@ Optional<Seconds> JSRunLoopTimer::timeUntilFire()
 void JSRunLoopTimer::setTimeUntilFire(Seconds intervalInSeconds)
 {
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         m_isScheduled = true;
         Manager::shared().scheduleTimer(*this, intervalInSeconds);
     }
 
-    auto locker = holdLock(m_timerCallbacksLock);
+    Locker locker { m_timerCallbacksLock };
     for (auto& task : m_timerSetCallbacks)
         task->run();
 }
 
 void JSRunLoopTimer::cancelTimer()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_isScheduled = false;
     Manager::shared().cancelTimer(*this);
 }
 
 void JSRunLoopTimer::addTimerSetNotification(TimerNotificationCallback callback)
 {
-    auto locker = holdLock(m_timerCallbacksLock);
+    Locker locker { m_timerCallbacksLock };
     m_timerSetCallbacks.add(callback);
 }
 
 void JSRunLoopTimer::removeTimerSetNotification(TimerNotificationCallback callback)
 {
-    auto locker = holdLock(m_timerCallbacksLock);
+    Locker locker { m_timerCallbacksLock };
     m_timerSetCallbacks.remove(callback);
 }
 

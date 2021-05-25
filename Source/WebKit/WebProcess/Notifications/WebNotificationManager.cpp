@@ -101,23 +101,17 @@ void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>
 #endif
 }
 
-NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::SecurityOrigin* origin) const
+NotificationClient::Permission WebNotificationManager::policyForOrigin(const String& originString) const
 {
 #if ENABLE(NOTIFICATIONS)
-    if (!origin)
-        return NotificationClient::Permission::Default;
-
-    ASSERT(!origin->isUnique());
-
-    auto originString = origin->toRawString();
-    if (!decltype(m_permissionsMap)::isValidKey(originString))
+    if (!originString)
         return NotificationClient::Permission::Default;
 
     auto it = m_permissionsMap.find(originString);
     if (it != m_permissionsMap.end())
         return it->value ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied;
 #else
-    UNUSED_PARAM(origin);
+    UNUSED_PARAM(originString);
 #endif
     
     return NotificationClient::Permission::Default;

@@ -27,7 +27,8 @@
 #include "ImageBufferBackend.h"
 
 #include "Image.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
+#include "PixelBufferConversion.h"
 
 namespace WebCore {
 
@@ -62,227 +63,101 @@ RefPtr<Image> ImageBufferBackend::sinkIntoImage(PreserveResolution preserveResol
     return copyImage(DontCopyBackingStore, preserveResolution);
 }
 
-void ImageBufferBackend::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void ImageBufferBackend::drawConsuming(GraphicsContext& destinationContext, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
 {
-    draw(destContext, destRect, srcRect, options);
+    draw(destinationContext, destinationRect, sourceRect, options);
 }
 
 void ImageBufferBackend::convertToLuminanceMask()
 {
-    auto imageData = getImageData(AlphaPremultiplication::Unpremultiplied, logicalRect());
-    if (!imageData)
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace() };
+    auto pixelBuffer = getPixelBuffer(format, logicalRect());
+    if (!pixelBuffer)
         return;
 
-    auto& srcPixelArray = imageData->data();
-    unsigned pixelArrayLength = srcPixelArray.length();
+    auto& pixelArray = pixelBuffer->data();
+    unsigned pixelArrayLength = pixelArray.length();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
-        uint8_t a = srcPixelArray.item(pixelOffset + 3);
+        uint8_t a = pixelArray.item(pixelOffset + 3);
         if (!a)
             continue;
-        uint8_t r = srcPixelArray.item(pixelOffset);
-        uint8_t g = srcPixelArray.item(pixelOffset + 1);
-        uint8_t b = srcPixelArray.item(pixelOffset + 2);
+        uint8_t r = pixelArray.item(pixelOffset);
+        uint8_t g = pixelArray.item(pixelOffset + 1);
+        uint8_t b = pixelArray.item(pixelOffset + 2);
 
         double luma = (r * 0.2125 + g * 0.7154 + b * 0.0721) * ((double)a / 255.0);
-        srcPixelArray.set(pixelOffset + 3, luma);
+        pixelArray.set(pixelOffset + 3, luma);
     }
 
-    putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, logicalRect(), IntPoint::zero(), AlphaPremultiplication::Premultiplied);
+    putPixelBuffer(*pixelBuffer, logicalRect(), IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-Vector<uint8_t> ImageBufferBackend::toBGRAData(void* data) const
+Optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data) const
 {
-    Vector<uint8_t> result(4 * logicalSize().area().unsafeGet());
-    size_t destBytesPerRow = logicalSize().width() * 4;
-    size_t srcBytesPerRow = bytesPerRow();
+    ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
 
-    uint8_t* srcRows = reinterpret_cast<uint8_t*>(data);
+    auto sourceRectScaled = toBackendCoordinates(sourceRect);
 
-    copyImagePixels(
-        AlphaPremultiplication::Premultiplied, pixelFormat(), srcBytesPerRow, srcRows,
-        AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, destBytesPerRow, result.data(), logicalSize());
+    auto pixelBuffer = PixelBuffer::tryCreate(destinationFormat, sourceRectScaled.size());
+    if (!pixelBuffer)
+        return WTF::nullopt;
 
-    return result;
+    auto sourceRectClipped = intersection(backendRect(), sourceRectScaled);
+    IntRect destinationRect { IntPoint::zero(), sourceRectClipped.size() };
+
+    if (sourceRectScaled.x() < 0)
+        destinationRect.setX(-sourceRectScaled.x());
+
+    if (sourceRectScaled.y() < 0)
+        destinationRect.setY(-sourceRectScaled.y());
+
+    if (destinationRect.size() != sourceRectScaled.size())
+        pixelBuffer->data().zeroFill();
+
+    ConstPixelBufferConversionView source;
+    source.format = { AlphaPremultiplication::Premultiplied, pixelFormat(), colorSpace() };
+    source.bytesPerRow = bytesPerRow();
+    source.rows = reinterpret_cast<uint8_t*>(data) + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4;
+    
+    PixelBufferConversionView destination;
+    destination.format = destinationFormat;
+    destination.bytesPerRow = 4 * sourceRectScaled.width();
+    destination.rows = pixelBuffer->data().data() + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4;
+
+    convertImagePixels(source, destination, destinationRect.size());
+
+    return pixelBuffer;
 }
 
-static inline void copyPremultipliedToPremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
+void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, void* data)
 {
-    uint8_t alpha = srcPixel[3];
-    if (!alpha) {
-        reinterpret_cast<uint32_t*>(destPixel)[0] = 0;
-        return;
-    }
+    auto sourceRectScaled = toBackendCoordinates(sourceRect);
+    auto destinationPointScaled = toBackendCoordinates(destinationPoint);
 
-    if (srcPixelFormat == destPixelFormat) {
-        reinterpret_cast<uint32_t*>(destPixel)[0] = reinterpret_cast<const uint32_t*>(srcPixel)[0];
-        return;
-    }
+    auto sourceRectClipped = intersection({ IntPoint::zero(), sourcePixelBuffer.size() }, sourceRectScaled);
+    auto destinationRect = sourceRectClipped;
+    destinationRect.moveBy(destinationPointScaled);
 
-    // Swap pixel channels BGRA <-> RGBA.
-    destPixel[0] = srcPixel[2];
-    destPixel[1] = srcPixel[1];
-    destPixel[2] = srcPixel[0];
-    destPixel[3] = srcPixel[3];
-}
+    if (sourceRectScaled.x() < 0)
+        destinationRect.setX(destinationRect.x() - sourceRectScaled.x());
 
-static inline void copyPremultipliedToUnpremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
-{
-    uint8_t alpha = srcPixel[3];
-    if (!alpha || alpha == 255) {
-        copyPremultipliedToPremultiplied(srcPixelFormat, srcPixel, destPixelFormat, destPixel);
-        return;
-    }
+    if (sourceRectScaled.y() < 0)
+        destinationRect.setY(destinationRect.y() - sourceRectScaled.y());
 
-    if (srcPixelFormat == destPixelFormat) {
-        destPixel[0] = (srcPixel[0] * 255) / alpha;
-        destPixel[1] = (srcPixel[1] * 255) / alpha;
-        destPixel[2] = (srcPixel[2] * 255) / alpha;
-        destPixel[3] = alpha;
-        return;
-    }
+    destinationRect.intersect(backendRect());
+    sourceRectClipped.setSize(destinationRect.size());
 
-    // Swap pixel channels BGRA <-> RGBA.
-    destPixel[0] = (srcPixel[2] * 255) / alpha;
-    destPixel[1] = (srcPixel[1] * 255) / alpha;
-    destPixel[2] = (srcPixel[0] * 255) / alpha;
-    destPixel[3] = alpha;
-}
+    ConstPixelBufferConversionView source;
+    source.format = sourcePixelBuffer.format();
+    source.bytesPerRow = 4 * sourcePixelBuffer.size().width();
+    source.rows = sourcePixelBuffer.data().data() + sourceRectClipped.y() * source.bytesPerRow + sourceRectClipped.x() * 4;
 
-static inline void copyUnpremultipliedToPremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
-{
-    uint8_t alpha = srcPixel[3];
-    if (!alpha || alpha == 255) {
-        copyPremultipliedToPremultiplied(srcPixelFormat, srcPixel, destPixelFormat, destPixel);
-        return;
-    }
+    PixelBufferConversionView destination;
+    destination.format = { destinationAlphaFormat, pixelFormat(), colorSpace() };
+    destination.bytesPerRow = bytesPerRow();
+    destination.rows = reinterpret_cast<uint8_t*>(data) + destinationRect.y() * destination.bytesPerRow + destinationRect.x() * 4;
 
-    if (srcPixelFormat == destPixelFormat) {
-        destPixel[0] = (srcPixel[0] * alpha + 254) / 255;
-        destPixel[1] = (srcPixel[1] * alpha + 254) / 255;
-        destPixel[2] = (srcPixel[2] * alpha + 254) / 255;
-        destPixel[3] = alpha;
-        return;
-    }
-
-    // Swap pixel channels BGRA <-> RGBA.
-    destPixel[0] = (srcPixel[2] * alpha + 254) / 255;
-    destPixel[1] = (srcPixel[1] * alpha + 254) / 255;
-    destPixel[2] = (srcPixel[0] * alpha + 254) / 255;
-    destPixel[3] = alpha;
-}
-
-static inline void copyUnpremultipliedToUnpremultiplied(PixelFormat srcPixelFormat, const uint8_t* srcPixel, PixelFormat destPixelFormat, uint8_t* destPixel)
-{
-    if (srcPixelFormat == destPixelFormat) {
-        reinterpret_cast<uint32_t*>(destPixel)[0] = reinterpret_cast<const uint32_t*>(srcPixel)[0];
-        return;
-    }
-
-    // Swap pixel channels BGRA <-> RGBA.
-    destPixel[0] = srcPixel[2];
-    destPixel[1] = srcPixel[1];
-    destPixel[2] = srcPixel[0];
-    destPixel[3] = srcPixel[3];
-}
-
-template<void (*copyFunctor)(PixelFormat, const uint8_t*, PixelFormat, uint8_t*)>
-static inline void copyImagePixelsUnaccelerated(
-    PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-    PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size)
-{
-    size_t bytesPerRow = size.width() * 4;
-    for (int y = 0; y < size.height(); ++y) {
-        for (size_t x = 0; x < bytesPerRow; x += 4)
-            copyFunctor(srcPixelFormat, &srcRows[x], destPixelFormat, &destRows[x]);
-        srcRows += srcBytesPerRow;
-        destRows += destBytesPerRow;
-    }
-}
-
-void ImageBufferBackend::copyImagePixels(
-    AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-    AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize& size) const
-{
-    // We don't currently support getting or putting pixel data with deep color buffers.
-    ASSERT(srcPixelFormat == PixelFormat::RGBA8 || srcPixelFormat == PixelFormat::BGRA8);
-    ASSERT(destPixelFormat == PixelFormat::RGBA8 || destPixelFormat == PixelFormat::BGRA8);
-
-    if (srcAlphaFormat == destAlphaFormat) {
-        if (srcAlphaFormat == AlphaPremultiplication::Premultiplied)
-            copyImagePixelsUnaccelerated<copyPremultipliedToPremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
-        else
-            copyImagePixelsUnaccelerated<copyUnpremultipliedToUnpremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
-        return;
-    }
-
-    if (destAlphaFormat == AlphaPremultiplication::Unpremultiplied) {
-        copyImagePixelsUnaccelerated<copyPremultipliedToUnpremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
-        return;
-    }
-
-    copyImagePixelsUnaccelerated<copyUnpremultipliedToPremultiplied>(srcPixelFormat, srcBytesPerRow, srcRows, destPixelFormat, destBytesPerRow, destRows, size);
-}
-
-RefPtr<ImageData> ImageBufferBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect, void* data) const
-{
-    IntRect srcRectScaled = toBackendCoordinates(srcRect);
-
-    auto imageData = ImageData::create(srcRectScaled.size());
-    if (!imageData)
-        return nullptr;
-
-    IntRect srcRectClipped = intersection(backendRect(), srcRectScaled);
-    IntRect destRect = { IntPoint::zero(), srcRectClipped.size() };
-
-    if (srcRectScaled.x() < 0)
-        destRect.setX(-srcRectScaled.x());
-
-    if (srcRectScaled.y() < 0)
-        destRect.setY(-srcRectScaled.y());
-
-    if (destRect.size() != srcRectScaled.size())
-        imageData->data().zeroFill();
-
-    unsigned destBytesPerRow = 4 * srcRectScaled.width();
-    uint8_t* destRows = imageData->data().data() + destRect.y() * destBytesPerRow + destRect.x() * 4;
-
-    unsigned srcBytesPerRow = bytesPerRow();
-    uint8_t* srcRows = reinterpret_cast<uint8_t*>(data) + srcRectClipped.y() * srcBytesPerRow + srcRectClipped.x() * 4;
-
-    copyImagePixels(
-        AlphaPremultiplication::Premultiplied, pixelFormat(), srcBytesPerRow, srcRows,
-        outputFormat, PixelFormat::RGBA8, destBytesPerRow, destRows, destRect.size());
-
-    return imageData;
-}
-
-void ImageBufferBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data)
-{
-    IntRect srcRectScaled = toBackendCoordinates(srcRect);
-    IntPoint destPointScaled = toBackendCoordinates(destPoint);
-
-    IntRect srcRectClipped = intersection({ IntPoint::zero(), imageData.size() }, srcRectScaled);
-    IntRect destRect = srcRectClipped;
-    destRect.moveBy(destPointScaled);
-
-    if (srcRectScaled.x() < 0)
-        destRect.setX(destRect.x() - srcRectScaled.x());
-
-    if (srcRectScaled.y() < 0)
-        destRect.setY(destRect.y() - srcRectScaled.y());
-
-    destRect.intersect(backendRect());
-    srcRectClipped.setSize(destRect.size());
-
-    unsigned destBytesPerRow = bytesPerRow();
-    uint8_t* destRows = reinterpret_cast<uint8_t*>(data) + destRect.y() * destBytesPerRow + destRect.x() * 4;
-
-    unsigned srcBytesPerRow = 4 * imageData.size().width();
-    uint8_t* srcRows = imageData.data().data() + srcRectClipped.y() * srcBytesPerRow + srcRectClipped.x() * 4;
-
-    copyImagePixels(
-        inputFormat, PixelFormat::RGBA8, srcBytesPerRow, srcRows,
-        destFormat, pixelFormat(), destBytesPerRow, destRows, destRect.size());
+    convertImagePixels(source, destination, destinationRect.size());
 }
 
 } // namespace WebCore

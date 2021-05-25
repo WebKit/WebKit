@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -408,6 +408,10 @@
 #define ENABLE_OFFSCREEN_CANVAS 0
 #endif
 
+#if !defined(ENABLE_OFFSCREEN_CANVAS_IN_WORKERS)
+#define ENABLE_OFFSCREEN_CANVAS_IN_WORKERS 0
+#endif
+
 #if !defined(ENABLE_THUNDER)
 #define ENABLE_THUNDER 0
 #endif
@@ -661,14 +665,9 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-#if ENABLE(JIT) && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS))
-#define ENABLE_MASM_PROBE 1
-#endif
-
 /* FIXME: This should be turned into an #error invariant */
-/* If the baseline jit is not available, then disable upper tiers as well.
-   The MacroAssembler::probe() is also required for supporting the upper tiers. */
-#if !ENABLE(JIT) || !ENABLE(MASM_PROBE)
+/* If the baseline jit is not available, then disable upper tiers as well. */
+#if !ENABLE(JIT)
 #undef ENABLE_DFG_JIT
 #undef ENABLE_FTL_JIT
 #define ENABLE_DFG_JIT 0
@@ -832,6 +831,14 @@
 #define ENABLE_JIT_OPERATION_VALIDATION 1
 #endif
 
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+/* The implementation of these thunks can use up to 6 argument registers, and
+   make use of ARM64 like features. For now, we'll only support them on platforms
+   that have 6 or more argument registers to use.
+*/
+#define ENABLE_EXTRA_CTI_THUNKS 1
+#endif
+
 #if !defined(ENABLE_BINDING_INTEGRITY) && !OS(WINDOWS)
 #define ENABLE_BINDING_INTEGRITY 1
 #endif
@@ -901,6 +908,10 @@
 
 #if ENABLE(WHLSL_COMPILER) && !ENABLE(WEBGPU)
 #error "ENABLE(WHLSL_COMPILER) requires ENABLE(WEBGPU)"
+#endif
+
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) && !ENABLE(OFFSCREEN_CANVAS)
+#error "ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) requires ENABLE(OFFSCREEN_CANVAS)"
 #endif
 
 #if USE(CG)

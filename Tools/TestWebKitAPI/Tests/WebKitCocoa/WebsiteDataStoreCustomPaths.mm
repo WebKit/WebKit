@@ -47,6 +47,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
 
 static bool receivedScriptMessage;
@@ -147,7 +148,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     // We expect 4 messages, 1 each for WebSQL, IndexedDB, cookies, and localStorage.
     EXPECT_STREQ([getNextMessage().body UTF8String], "localstorage written");
     EXPECT_STREQ([getNextMessage().body UTF8String], "cookie written");
-    EXPECT_STREQ([getNextMessage().body UTF8String], "Exception: QuotaExceededError: The quota has been exceeded.");
+    EXPECT_STREQ([getNextMessage().body UTF8String], "Exception: UnknownError: Web SQL is deprecated");
     EXPECT_STREQ([getNextMessage().body UTF8String], "Success opening indexed database");
 
     __block bool flushed = false;
@@ -770,8 +771,8 @@ TEST(WebKit, MediaCache)
             auto end = request.find('\r', dash);
             ASSERT(end != notFound);
 
-            auto rangeBegin = *request.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length()).toUInt64Strict();
-            auto rangeEnd = *request.substring(dash + 1, end - dash - 1).toUInt64Strict();
+            auto rangeBegin = parseInteger<uint64_t>(request.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length())).value();
+            auto rangeEnd = parseInteger<uint64_t>(request.substring(dash + 1, end - dash - 1)).value();
 
             NSString *responseHeaderString = [NSString stringWithFormat:
                 @"HTTP/1.1 206 Partial Content\r\n"

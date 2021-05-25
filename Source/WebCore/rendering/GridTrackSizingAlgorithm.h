@@ -224,6 +224,7 @@ private:
     enum SizingState {
         ColumnSizingFirstIteration,
         RowSizingFirstIteration,
+        RowSizingExtraIterationForSizeContainment,
         ColumnSizingSecondIteration,
         RowSizingSecondIteration
     };
@@ -261,6 +262,7 @@ public:
     virtual double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, Optional<LayoutUnit> initialFreeSpace) const = 0;
     virtual bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const = 0;
     virtual LayoutUnit freeSpaceForStretchAutoTracksStep() const = 0;
+    virtual bool isComputingSizeContainment() const = 0;
 
 protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)

@@ -1302,7 +1302,7 @@ struct ANGLE_castVector {};
 template <typename T, int N>
 struct ANGLE_castVector<T, N, N>
 {
-    static ANGLE_ALWAYS_INLINE metal::vec<T, N> exec(thread metal::vec<T, N> const &v)
+    static ANGLE_ALWAYS_INLINE metal::vec<T, N> exec(metal::vec<T, N> const v)
     {
         return v;
     }
@@ -1310,7 +1310,7 @@ struct ANGLE_castVector<T, N, N>
 template <typename T>
 struct ANGLE_castVector<T, 2, 3>
 {
-    static ANGLE_ALWAYS_INLINE metal::vec<T, 2> exec(thread metal::vec<T, 3> const &v)
+    static ANGLE_ALWAYS_INLINE metal::vec<T, 2> exec(metal::vec<T, 3> const v)
     {
         return v.xy;
     }
@@ -1318,7 +1318,7 @@ struct ANGLE_castVector<T, 2, 3>
 template <typename T>
 struct ANGLE_castVector<T, 2, 4>
 {
-    static ANGLE_ALWAYS_INLINE metal::vec<T, 2> exec(thread metal::vec<T, 4> const &v)
+    static ANGLE_ALWAYS_INLINE metal::vec<T, 2> exec(metal::vec<T, 4> const v)
     {
         return v.xy;
     }
@@ -1326,13 +1326,13 @@ struct ANGLE_castVector<T, 2, 4>
 template <typename T>
 struct ANGLE_castVector<T, 3, 4>
 {
-    static ANGLE_ALWAYS_INLINE metal::vec<T, 3> exec(thread metal::vec<T, 4> const &v)
+    static ANGLE_ALWAYS_INLINE metal::vec<T, 3> exec(metal::vec<T, 4> const v)
     {
         return as_type<metal::vec<T, 3>>(v);
     }
 };
 template <int N1, int N2, typename T>
-ANGLE_ALWAYS_INLINE metal::vec<T, N1> ANGLE_cast(thread metal::vec<T, N2> const &v)
+ANGLE_ALWAYS_INLINE metal::vec<T, N1> ANGLE_cast(metal::vec<T, N2> const v)
 {
     return ANGLE_castVector<T, N1, N2>::exec(v);
 }
@@ -1343,7 +1343,7 @@ PROGRAM_PRELUDE_DECLARE(castMatrix,
 template <typename T, int C1, int R1, int C2, int R2, typename Enable = void>
 struct ANGLE_castMatrix
 {
-    static ANGLE_ALWAYS_INLINE metal::matrix<T, C1, R1> exec(thread metal::matrix<T, C2, R2> const &m2)
+    static ANGLE_ALWAYS_INLINE metal::matrix<T, C1, R1> exec(metal::matrix<T, C2, R2> const m2)
     {
         metal::matrix<T, C1, R1> m1;
         const int MinC = C1 <= C2 ? C1 : C2;
@@ -1372,7 +1372,7 @@ struct ANGLE_castMatrix
 template <typename T, int C1, int R1, int C2, int R2>
 struct ANGLE_castMatrix<T, C1, R1, C2, R2, ANGLE_enable_if_t<(C1 <= C2 && R1 <= R2)>>
 {
-    static ANGLE_ALWAYS_INLINE metal::matrix<T, C1, R1> exec(thread metal::matrix<T, C2, R2> const &m2)
+    static ANGLE_ALWAYS_INLINE metal::matrix<T, C1, R1> exec(metal::matrix<T, C2, R2> const m2)
     {
         metal::matrix<T, C1, R1> m1;
         for (size_t c = 0; c < C1; ++c)
@@ -1383,7 +1383,7 @@ struct ANGLE_castMatrix<T, C1, R1, C2, R2, ANGLE_enable_if_t<(C1 <= C2 && R1 <= 
     }
 };
 template <int C1, int R1, int C2, int R2, typename T>
-ANGLE_ALWAYS_INLINE metal::matrix<T, C1, R1> ANGLE_cast(thread metal::matrix<T, C2, R2> const &m)
+ANGLE_ALWAYS_INLINE metal::matrix<T, C1, R1> ANGLE_cast(metal::matrix<T, C2, R2> const m)
 {
     return ANGLE_castMatrix<T, C1, R1, C2, R2>::exec(m);
 };

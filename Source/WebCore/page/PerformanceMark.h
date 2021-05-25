@@ -48,14 +48,10 @@ private:
     PerformanceMark(const String& name, double startTime, Ref<SerializedScriptValue>&&);
     ~PerformanceMark();
 
-    Type type() const final { return Type::Mark; }
+    Type performanceEntryType() const final { return Type::Mark; }
     ASCIILiteral entryType() const final { return "mark"_s; }
 
     Ref<SerializedScriptValue> m_serializedDetail;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceMark)
-    static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isMark(); }
-SPECIALIZE_TYPE_TRAITS_END()

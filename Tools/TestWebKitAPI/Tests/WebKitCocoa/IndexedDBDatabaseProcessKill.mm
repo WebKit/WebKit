@@ -27,10 +27,11 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -41,6 +42,7 @@ static bool receivedAtLeastOneOpenError;
 static bool receivedAtLeastOneDeleteError;
 static bool openRequestUpgradeNeeded;
 static bool databaseErrorReceived;
+static RetainPtr<NSString> lastScriptMessage;
 
 @interface DatabaseProcessKillMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -66,16 +68,20 @@ static bool databaseErrorReceived;
         return;
     }
 
-    if ([[message body] isEqualToString:@"OpenRequestError"])
+    if ([[message body] isEqualToString:@"OpenRequestError"]) {
         receivedAtLeastOneOpenError = true;
+        return;
+    }
+
+    lastScriptMessage = [message body];
 }
 
 @end
 
 TEST(IndexedDB, DatabaseProcessKill)
 {
-    RetainPtr<DatabaseProcessKillMessageHandler> handler = adoptNS([[DatabaseProcessKillMessageHandler alloc] init]);
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[DatabaseProcessKillMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -99,4 +105,45 @@ TEST(IndexedDB, DatabaseProcessKill)
     EXPECT_EQ(receivedAtLeastOneOpenError, true);
     EXPECT_EQ(receivedAtLeastOneDeleteError, true);
     EXPECT_EQ(databaseErrorReceived, true);
+}
+
+TEST(IndexedDB, OneVMPerThread)
+{
+    RetainPtr<DatabaseProcessKillMessageHandler> handler = adoptNS([[DatabaseProcessKillMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    auto secondWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    
+    NSString *htmlString = @"<script> \
+        function openDatabase() { \
+            var request = indexedDB.open('testDB'); \
+            request.onupgradeneeded = function(event) { \
+                let db = event.target.result; \
+                let os = db.createObjectStore('testOS');\
+                for (let i = 0; i < 10000; i++) \
+                    os.put(i, i); \
+                webkit.messageHandlers.testHandler.postMessage('Opened');\
+            }; \
+        }\
+        </script>";
+
+    [webView synchronouslyLoadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    [secondWebView synchronouslyLoadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://apple.com"]];
+
+    receivedScriptMessage = false;
+    [webView evaluateJavaScript:@"openDatabase()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"Opened", lastScriptMessage.get());
+
+    kill([webView _webProcessIdentifier], SIGKILL);
+
+    receivedScriptMessage = false;
+    [secondWebView evaluateJavaScript:@"openDatabase()" completionHandler:nil];
+    lastScriptMessage = nil;
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"Opened", lastScriptMessage.get());
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,24 +157,6 @@ struct ValueProfileWithLogNumberOfBuckets : public ValueProfileBase<1 << logNumb
 struct ValueProfile : public ValueProfileWithLogNumberOfBuckets<0> {
     ValueProfile() : ValueProfileWithLogNumberOfBuckets<0>() { }
 };
-
-// This is a mini value profile to catch pathologies. It is a counter that gets
-// incremented when we take the slow path on any instruction.
-struct RareCaseProfile {
-    RareCaseProfile(BytecodeIndex bytecodeIndex)
-        : m_bytecodeIndex(bytecodeIndex)
-    {
-    }
-    RareCaseProfile() = default;
-    
-    BytecodeIndex m_bytecodeIndex { };
-    uint32_t m_counter { 0 };
-};
-
-inline BytecodeIndex getRareCaseProfileBytecodeIndex(RareCaseProfile* rareCaseProfile)
-{
-    return rareCaseProfile->m_bytecodeIndex;
-}
 
 struct ValueProfileAndVirtualRegister : public ValueProfile {
     VirtualRegister m_operand;

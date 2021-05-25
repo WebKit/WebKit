@@ -61,7 +61,7 @@ private:
     void startClearLoadedIconsTimer();
     Optional<int64_t> iconIDForIconURL(const String&, bool& expired);
     bool setIconIDForPageURL(int64_t, const String&);
-    Vector<char> iconData(int64_t);
+    Vector<uint8_t> iconData(int64_t);
     Optional<int64_t> addIcon(const String&, const Vector<char>&);
     void updateIconTimestamp(int64_t iconID, int64_t timestamp);
     void deleteIcon(int64_t);

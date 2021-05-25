@@ -38,16 +38,12 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/TextIndicatorWindow.h>
+#import <pal/mac/QuickLookUISoftLink.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSPopoverSPI.h>
-#import <pal/spi/mac/QuickLookMacSPI.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/URL.h>
-
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
-SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
 @interface WKImmediateActionController () <QLPreviewMenuItemDelegate>
 @end
@@ -86,7 +82,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     _contentPreventsDefault = NO;
     
     id animationController = [_immediateActionRecognizer animationController];
-    if ([animationController isKindOfClass:NSClassFromString(@"QLPreviewMenuItem")]) {
+    if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClass()]) {
         QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
         menuItem.delegate = nil;
     }
@@ -490,9 +486,9 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     _viewImpl->prepareForDictionaryLookup();
 
     return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](WebCore::TextIndicator& textIndicator) {
-        _viewImpl->setTextIndicator(textIndicator, WebCore::TextIndicatorWindowLifetime::Permanent);
+        _viewImpl->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
     }, nullptr, [self]() {
-        _viewImpl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation::None);
+        _viewImpl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
     });
 }
 

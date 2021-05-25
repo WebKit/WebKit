@@ -32,8 +32,8 @@
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <memory>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -118,13 +118,13 @@ private:
     Ref<WorkQueue> m_queue;
 
 #if ENABLE(SCROLLING_THREAD)
-    Lock m_scrollingTreesMutex;
-    HashMap<WebCore::PageIdentifier, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees;
+    CheckedLock m_scrollingTreesLock;
+    HashMap<WebCore::PageIdentifier, RefPtr<WebCore::ThreadedScrollingTree>> m_scrollingTrees WTF_GUARDED_BY_LOCK(m_scrollingTreesLock);
 #endif
     std::unique_ptr<WebCore::WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
 #if ENABLE(IOS_TOUCH_EVENTS)
-    Lock m_touchEventsLock;
-    HashMap<WebCore::PageIdentifier, TouchEventQueue> m_touchEvents;
+    CheckedLock m_touchEventsLock;
+    HashMap<WebCore::PageIdentifier, TouchEventQueue> m_touchEvents WTF_GUARDED_BY_LOCK(m_touchEventsLock);
 #endif
 };
 

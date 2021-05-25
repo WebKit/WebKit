@@ -53,5 +53,6 @@ int main(int argc, char** argv)
         passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
     }
 
-    return passed ? EXIT_SUCCESS : EXIT_FAILURE;
+    // FIXME: Work-around for <rdar://problem/77922262>
+    exit(passed ? EXIT_SUCCESS : EXIT_FAILURE);
 }

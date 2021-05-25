@@ -68,6 +68,7 @@ GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
 GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm
 GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @no-unify
+GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 
 Platform/cf/ModuleCF.cpp
 
@@ -303,7 +304,6 @@ UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
 UIProcess/API/Cocoa/_WKWebsiteDataSize.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStore.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
-UIProcess/API/Cocoa/_WKWebsitePolicies.mm
 UIProcess/API/Cocoa/APIAttachmentCocoa.mm
 UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm
 UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm
@@ -613,6 +613,7 @@ WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp
 WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm
 WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm
 WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp
+WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.mm
 WebProcess/GPU/webrtc/MediaRecorderPrivate.mm
 

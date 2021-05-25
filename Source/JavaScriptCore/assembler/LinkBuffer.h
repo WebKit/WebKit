@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -83,24 +84,62 @@ class LinkBuffer {
 #endif
 
 public:
-    LinkBuffer(MacroAssembler& macroAssembler, void* ownerUID, JITCompilationEffort effort = JITCompilationMustSucceed)
+
+#define FOR_EACH_LINKBUFFER_PROFILE(v) \
+    v(BaselineJIT) \
+    v(DFG) \
+    v(FTL) \
+    v(DFGOSREntry) \
+    v(DFGOSRExit) \
+    v(FTLOSRExit) \
+    v(InlineCache) \
+    v(JumpIsland) \
+    v(Thunk) \
+    v(LLIntThunk) \
+    v(DFGThunk) \
+    v(FTLThunk) \
+    v(BoundFunctionThunk) \
+    v(SpecializedThunk) \
+    v(VirtualThunk) \
+    v(WasmThunk) \
+    v(ExtraCTIThunk) \
+    v(Wasm) \
+    v(YarrJIT) \
+    v(CSSJIT) \
+    v(Uncategorized) \
+    v(Total) \
+
+#define DECLARE_LINKBUFFER_PROFILE(name) name,
+    enum class Profile {
+        FOR_EACH_LINKBUFFER_PROFILE(DECLARE_LINKBUFFER_PROFILE)
+    };
+#undef DECLARE_LINKBUFFER_PROFILE
+
+#define COUNT_LINKBUFFER_PROFILE(name) + 1
+    static constexpr unsigned numberOfProfiles = FOR_EACH_LINKBUFFER_PROFILE(COUNT_LINKBUFFER_PROFILE);
+#undef COUNT_LINKBUFFER_PROFILE
+    static constexpr unsigned numberOfProfilesExcludingTotal = numberOfProfiles - 1;
+
+    LinkBuffer(MacroAssembler& macroAssembler, void* ownerUID, Profile profile = Profile::Uncategorized, JITCompilationEffort effort = JITCompilationMustSucceed)
         : m_size(0)
         , m_didAllocate(false)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
+        , m_profile(profile)
     {
         UNUSED_PARAM(ownerUID);
         linkCode(macroAssembler, effort);
     }
 
     template<PtrTag tag>
-    LinkBuffer(MacroAssembler& macroAssembler, MacroAssemblerCodePtr<tag> code, size_t size, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
+    LinkBuffer(MacroAssembler& macroAssembler, MacroAssemblerCodePtr<tag> code, size_t size, Profile profile = Profile::Uncategorized, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
         : m_size(size)
         , m_didAllocate(false)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
+        , m_profile(profile)
         , m_code(code.template retagged<LinkBufferPtrTag>())
     {
 #if ENABLE(BRANCH_COMPACTION)
@@ -298,6 +337,9 @@ public:
     bool wasAlreadyDisassembled() const { return m_alreadyDisassembled; }
     void didAlreadyDisassemble() { m_alreadyDisassembled = true; }
 
+    JS_EXPORT_PRIVATE static void clearProfileStatistics();
+    JS_EXPORT_PRIVATE static void dumpProfileStatistics(Optional<PrintStream*> = WTF::nullopt);
+
 private:
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithoutDisassemblyImpl();
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...) WTF_ATTRIBUTE_PRINTF(3, 4);
@@ -355,7 +397,7 @@ private:
 #if DUMP_CODE
     static void dumpCode(void* code, size_t);
 #endif
-    
+
     RefPtr<ExecutableMemoryHandle> m_executableMemory;
     size_t m_size;
 #if ENABLE(BRANCH_COMPACTION)
@@ -373,8 +415,13 @@ private:
     bool m_isJumpIsland { false };
 #endif
     bool m_alreadyDisassembled { false };
+    Profile m_profile { Profile::Uncategorized };
     MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
+    Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_lateLinkTasks;
+
+    static size_t s_profileCummulativeLinkedSizes[numberOfProfiles];
+    static size_t s_profileCummulativeLinkedCounts[numberOfProfiles];
 };
 
 #if OS(LINUX)

@@ -41,7 +41,7 @@ void ConcurrentPtrHashSet::deleteOldTables()
 {
     // This is just in case. It does not make it OK for other threads to call add(). But it might prevent
     // some bad crashes if we did make that mistake.
-    auto locker = holdLock(m_lock); 
+    Locker locker { m_lock };
 
     ASSERT(m_table.loadRelaxed() != &m_stubTable);
     m_allTables.removeAllMatching(
@@ -54,7 +54,7 @@ void ConcurrentPtrHashSet::clear()
 {
     // This is just in case. It does not make it OK for other threads to call add(). But it might prevent
     // some bad crashes if we did make that mistake.
-    auto locker = holdLock(m_lock); 
+    Locker locker { m_lock };
     
     m_allTables.clear();
     initialize();
@@ -92,21 +92,21 @@ bool ConcurrentPtrHashSet::addSlow(Table* table, unsigned mask, unsigned startIn
 
 bool ConcurrentPtrHashSet::containsImplSlow(void* ptr) const
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     ASSERT(m_table.loadRelaxed() != &m_stubTable);
     return containsImpl(ptr);
 }
 
 size_t ConcurrentPtrHashSet::sizeSlow() const
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     ASSERT(m_table.loadRelaxed() != &m_stubTable);
     return size();
 }
 
 void ConcurrentPtrHashSet::resizeIfNecessary()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     Table* table = m_table.loadRelaxed();
     ASSERT(table != &m_stubTable);
     if (table->load.loadRelaxed() < table->maxLoad())

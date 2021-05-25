@@ -57,6 +57,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyMemory.h"
 #include "LLIntThunks.h"
+#include "LinkBuffer.h"
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
@@ -431,6 +432,7 @@ public:
     bool m_treatWatchdogExceptionAsSuccess { false };
     bool m_alwaysDumpUncaughtException { false };
     bool m_dumpMemoryFootprint { false };
+    bool m_dumpLinkBufferStats { false };
     bool m_dumpSamplingProfilerData { false };
     bool m_enableRemoteDebugging { false };
     bool m_canBlockIsFalse { false };
@@ -1048,12 +1050,12 @@ public:
             FileSystem::unlockAndCloseFile(fd);
         });
 
-        long long fileSize;
-        if (!FileSystem::getFileSize(fd, fileSize))
+        auto fileSize = FileSystem::fileSize(fd);
+        if (!fileSize)
             return;
 
         size_t cacheFileSize;
-        if (!WTF::convertSafely(fileSize, cacheFileSize) || cacheFileSize != m_cachedBytecode->size()) {
+        if (!WTF::convertSafely(*fileSize, cacheFileSize) || cacheFileSize != m_cachedBytecode->size()) {
             // The bytecode cache has already been updated
             return;
         }
@@ -1799,7 +1801,7 @@ Message::~Message()
 Worker::Worker(Workers& workers)
     : m_workers(workers)
 {
-    auto locker = holdLock(m_workers.m_lock);
+    Locker locker { m_workers.m_lock };
     m_workers.m_workers.append(this);
     
     *currentWorker() = this;
@@ -1807,7 +1809,7 @@ Worker::Worker(Workers& workers)
 
 Worker::~Worker()
 {
-    auto locker = holdLock(m_workers.m_lock);
+    Locker locker { m_workers.m_lock };
     RELEASE_ASSERT(isOnList());
     remove();
 }
@@ -1819,7 +1821,7 @@ void Worker::enqueue(const AbstractLocker&, RefPtr<Message> message)
 
 RefPtr<Message> Worker::dequeue()
 {
-    auto locker = holdLock(m_workers.m_lock);
+    Locker locker { m_workers.m_lock };
     while (m_messages.isEmpty())
         m_workers.m_condition.wait(m_workers.m_lock);
     return m_messages.takeFirst();
@@ -1854,7 +1856,7 @@ Workers::~Workers()
 template<typename Func>
 void Workers::broadcast(const Func& func)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     for (Worker* worker = m_workers.begin(); worker != m_workers.end(); worker = worker->next()) {
         if (worker != &Worker::current())
             func(locker, *worker);
@@ -1864,14 +1866,14 @@ void Workers::broadcast(const Func& func)
 
 void Workers::report(const String& string)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_reports.append(string.isolatedCopy());
     m_condition.notifyAll();
 }
 
 String Workers::tryGetReport()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     if (m_reports.isEmpty())
         return String();
     return m_reports.takeFirst();
@@ -1879,7 +1881,7 @@ String Workers::tryGetReport()
 
 String Workers::getReport()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     while (m_reports.isEmpty())
         m_condition.wait(m_lock);
     return m_reports.takeFirst();
@@ -1980,7 +1982,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
                 [&] (VM&, GlobalObject* globalObject, bool& success) {
                     // Notify the thread that started us that we have registered a worker.
                     {
-                        auto locker = holdLock(didStartLock);
+                        Locker locker { didStartLock };
                         didStart = true;
                         didStartCondition.notifyOne();
                     }
@@ -1997,7 +1999,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
         })->detach();
     
     {
-        auto locker = holdLock(didStartLock);
+        Locker locker { didStartLock };
         while (!didStart)
             didStartCondition.wait(didStartLock);
     }
@@ -2387,7 +2389,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryLiveCount, (JSGlobalObject*
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
-    auto locker = holdLock(finalizationRegistry->cellLock());
+    Locker locker { finalizationRegistry->cellLock() };
     return JSValue::encode(jsNumber(finalizationRegistry->liveCount(locker)));
 }
 
@@ -2400,7 +2402,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryDeadCount, (JSGlobalObject*
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
-    auto locker = holdLock(finalizationRegistry->cellLock());
+    Locker locker { finalizationRegistry->cellLock() };
     return JSValue::encode(jsNumber(finalizationRegistry->deadCount(locker)));
 }
 
@@ -3360,6 +3362,11 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
 
+        if (!strcmp(arg, "--dumpLinkBufferStats")) {
+            m_dumpLinkBufferStats = true;
+            continue;
+        }
+
         static const unsigned exceptionStrLength = strlen("--exception=");
         if (!strncmp(arg, "--exception=", exceptionStrLength)) {
             m_uncaughtExceptionName = String(arg + exceptionStrLength);
@@ -3619,6 +3626,11 @@ int jscmain(int argc, char** argv)
 
         printf("Memory Footprint:\n    Current Footprint: %" PRIu64 "\n    Peak Footprint: %" PRIu64 "\n", footprint.current, footprint.peak);
     }
+
+#if ENABLE(ASSEMBLER)
+    if (mainCommandLine->m_dumpLinkBufferStats)
+        LinkBuffer::dumpProfileStatistics();
+#endif
 
     return result;
 }

@@ -340,7 +340,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (is<CSSPaintImageValue>(valueToApply)) {
         auto& name = downcast<CSSPaintImageValue>(valueToApply.get()).name();
         if (auto* paintWorklet = const_cast<Document&>(m_state.document()).paintWorkletGlobalScopeForName(name)) {
-            auto locker = holdLock(paintWorklet->paintDefinitionLock());
+            Locker locker { paintWorklet->paintDefinitionLock() };
             if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
                 for (auto& property : registration->inputProperties)
                     m_state.style().addCustomPaintWatchProperty(property);

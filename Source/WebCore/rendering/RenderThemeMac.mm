@@ -2041,6 +2041,8 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
         return adjustedLocalBounds;
     };
 
+    if (!box.element())
+        return false;
     Element* input = box.element()->shadowHost();
     if (!input)
         input = box.element();

@@ -22,7 +22,6 @@
 
 from webkitcorepy import BytesIO
 
-import collections
 import json
 import requests
 import sys

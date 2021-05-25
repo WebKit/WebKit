@@ -819,6 +819,21 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(passing_run(['--additional-expectations', '/tmp/overrides.txt', 'failures/unexpected/mismatch.html'],
                                     tests_included=True, host=host))
 
+    def test_tests_options(self):
+        host = MockHost()
+        host.filesystem.write_text_file(
+            '/test.checkout/LayoutTests/tests-options.json',
+            '{"failures/unexpected/timeout.html":["slow"]}'
+        )
+
+        details, _, _ = logging_run(['failures/expected/timeout.html',
+                                     'failures/unexpected/timeout.html'],
+                                    host=host)
+        self.assertEquals(details.initial_results.slow_tests,
+                          {'failures/unexpected/timeout.html'})
+        self.assertEquals(details.retry_results.slow_tests,
+                          {'failures/unexpected/timeout.html'})
+
     def test_no_http_and_force(self):
         # See test_run_force, using --force raises an exception.
         # FIXME: We would like to check the warnings generated.

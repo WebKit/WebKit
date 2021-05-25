@@ -28,7 +28,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BlockFormattingGeometry.h"
 #include "BlockFormattingState.h"
+#include "BlockMarginCollapse.h"
 #include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
@@ -36,6 +38,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"
+#include "TableWrapperBlockFormattingQuirks.h"
 
 namespace WebCore {
 namespace Layout {
@@ -217,10 +220,16 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     ASSERT(tableBox.isTableBox());
     // Table is a special BFC content. Its height is mainly driven by the content. Computed height, min-height and max-height are all
     // already been taken into account during the TFC layout.
-    auto heightAndMargin = geometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { quirks().overriddenTableHeight(tableBox) });
+    auto overriddenTableHeight = [&]() -> Optional<LayoutUnit> {
+        if (layoutState().inQuirksMode())
+            return TableWrapperQuirks(*this).overriddenTableHeight(tableBox);
+        if (tableBox.hasInFlowOrFloatingChild())
+            return geometry().contentHeightForFormattingContextRoot(tableBox);
+        return { };
+    }();
 
-    auto marginCollapse = this->marginCollapse();
-    auto verticalMargin = marginCollapse.collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
+    auto heightAndMargin = geometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { overriddenTableHeight });
+    auto verticalMargin = marginCollapse().collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
     // Cache the computed positive and negative margin value pair.
     formattingState().setUsedVerticalMargin(tableBox, verticalMargin);
 
@@ -229,7 +238,7 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     boxGeometry.setContentBoxHeight(heightAndMargin.contentHeight);
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.
-    MarginCollapse::updateMarginAfterForPreviousSibling(*this, marginCollapse, tableBox);
+    updateMarginAfterForPreviousSibling(tableBox);
 }
 
 }

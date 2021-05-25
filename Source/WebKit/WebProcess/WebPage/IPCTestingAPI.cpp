@@ -814,7 +814,7 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
     auto protection = SharedMemory::Protection::ReadWrite;
     if (equalLettersIgnoringASCIICase(protectionValue, "readonly"))
         protection = SharedMemory::Protection::ReadOnly;
-    else if (equalLettersIgnoringASCIICase(protectionValue, "readwrite"))
+    else if (!equalLettersIgnoringASCIICase(protectionValue, "readwrite"))
         return false;
 
     encoder << SharedMemory::IPCHandle { jsSharedMemory->createHandle(protection), dataSize };

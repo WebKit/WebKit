@@ -602,7 +602,7 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContextGL* g3d, const char*
         // Context has been deleted - should not be calling this.
         return false;
     }
-    auto locker = holdLock(objectGraphLockForContext());
+    Locker locker { objectGraphLockForContext() };
 
     ASSERT(object());
     GCGLbitfield mask = 0;
@@ -754,7 +754,7 @@ void WebGLFramebuffer::setAttachmentInternal(GCGLenum attachment, GCGLenum texTa
         // Context has been deleted - should not be calling this.
         return;
     }
-    auto locker = holdLock(objectGraphLockForContext());
+    Locker locker { objectGraphLockForContext() };
 
     removeAttachmentInternal(locker, attachment);
     if (texture && texture->object()) {
@@ -770,7 +770,7 @@ void WebGLFramebuffer::setAttachmentInternal(GCGLenum attachment, WebGLRenderbuf
         // Context has been deleted - should not be calling this.
         return;
     }
-    auto locker = holdLock(objectGraphLockForContext());
+    Locker locker { objectGraphLockForContext() };
 
     removeAttachmentInternal(locker, attachment);
     if (renderbuffer && renderbuffer->object()) {

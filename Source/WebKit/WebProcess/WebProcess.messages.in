@@ -50,11 +50,13 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     SetHasMouseDevice(bool hasMouseDevice)
 #endif
 
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     SetHasStylusDevice(bool hasStylusDevice)
+#endif
 
     RefreshPlugins()
 

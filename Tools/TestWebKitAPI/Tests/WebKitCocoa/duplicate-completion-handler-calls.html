@@ -4,6 +4,6 @@
     alert("alert");
     confirm("confirm");
     prompt("prompt");
-    openDatabase("testDatabase", "1", "test database", 1024);
+    window.indexedDB.open("DuplicateCompletionHandlerCallsDatabase");
     document.forms[0].submit();
 </script>

@@ -983,7 +983,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
     if (!intersectionRect.isEmpty() && !areElementsOnSameLine(closest, candidate)) {
         // If 2 nodes are intersecting, do hit test to find which node in on top.
         auto center = flooredIntPoint(intersectionRect.center()); // FIXME: Would roundedIntPoint be better?
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::IgnoreClipping, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         HitTestResult result = candidate.visibleNode->document().page()->mainFrame().eventHandler().hitTestResultAtPoint(center, hitType);
         if (candidate.visibleNode->contains(result.innerNode())) {
             closest = candidate;

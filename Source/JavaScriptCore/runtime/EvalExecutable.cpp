@@ -59,7 +59,7 @@ void EvalExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_unlinkedEvalCodeBlock);
     visitor.append(thisObject->m_evalCodeBlock);
     if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
-        auto locker = holdLock(thisObject->cellLock());
+        Locker locker { thisObject->cellLock() };
         for (auto& entry : *map)
             visitor.append(entry.value);
     }

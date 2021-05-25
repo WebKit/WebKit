@@ -25,7 +25,7 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -285,13 +285,14 @@ void FEColorMatrix::platformApplySoftware()
     if (inBuffer)
         resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
 
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, resultColorSpace() };
     IntRect imageRect(IntPoint(), resultImage->logicalSize());
-    auto imageData = resultImage->getImageData(AlphaPremultiplication::Unpremultiplied, imageRect);
-    if (!imageData)
+    auto pixelBuffer = resultImage->getPixelBuffer(format, imageRect);
+    if (!pixelBuffer)
         return;
 
-    auto& pixelArray = imageData->data();
-    IntSize pixelArrayDimensions = imageData->size();
+    auto& pixelArray = pixelBuffer->data();
+    auto pixelArrayDimensions = pixelBuffer->size();
 
     Vector<float> values = normalizedFloats(m_values);
     
@@ -313,7 +314,7 @@ void FEColorMatrix::platformApplySoftware()
         break;
     }
 
-    resultImage->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, imageRect);
+    resultImage->putPixelBuffer(*pixelBuffer, imageRect);
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

@@ -131,7 +131,7 @@ private:
     void openDatabase(bool createIfDoesNotExist);
     
     bool executeStatement(SQLiteStatement&);
-    bool executeSQLCommand(const String&);
+    bool executeSQLCommand(ASCIILiteral);
 
     void checkForMaxSizeReached();
     void checkForDeletedResources();

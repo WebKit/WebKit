@@ -192,6 +192,7 @@ namespace WebCore {
     macro(PaymentRequest) \
     macro(PaymentRequestUpdateEvent) \
     macro(PaymentResponse) \
+    macro(PerformanceNavigationTiming) \
     macro(PictureInPictureWindow) \
     macro(SQLError) \
     macro(SQLResultSet) \

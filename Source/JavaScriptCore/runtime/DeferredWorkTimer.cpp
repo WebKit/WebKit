@@ -45,7 +45,7 @@ DeferredWorkTimer::DeferredWorkTimer(VM& vm)
 void DeferredWorkTimer::doWork(VM& vm)
 {
     ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto locker = holdLock(m_taskLock);
+    Locker locker { m_taskLock };
     cancelTimer();
     if (!m_runTasks)
         return;
@@ -154,7 +154,7 @@ bool DeferredWorkTimer::hasDependancyInPendingWork(Ticket ticket, JSCell* depend
 
 void DeferredWorkTimer::scheduleWorkSoon(Ticket ticket, Task&& task)
 {
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     m_tasks.append(std::make_tuple(ticket, WTFMove(task)));
     if (!isScheduled() && !m_currentlyRunningTask)
         setTimeUntilFire(0_s);
@@ -174,7 +174,7 @@ bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 void DeferredWorkTimer::didResumeScriptExecutionOwner()
 {
     ASSERT(!m_currentlyRunningTask);
-    LockHolder locker(m_taskLock);
+    Locker locker { m_taskLock };
     if (!isScheduled() && m_tasks.size())
         setTimeUntilFire(0_s);
 }

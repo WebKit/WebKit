@@ -343,17 +343,27 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureState) {
  @discussion Includes picture-in-picture and fullscreen.
  */
 - (void)closeAllMediaPresentationsWithCompletionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+#ifndef __swift__
+- (void)closeAllMediaPresentations:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("closeAllMediaPresentationsWithCompletionHandler:", macos(11.3, WK_MAC_TBA), ios(14.5, WK_IOS_TBA));
+#endif
 
 /*! @abstract Pauses media playback in WKWebView.
  @discussion Pauses media playback. Media in the page can be restarted by calling play() on a media element or resume() on an AudioContext in JavaScript. A user can also use media controls to play media content after it has been paused.
  */
 - (void)pauseAllMediaPlaybackWithCompletionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+#ifndef __swift__
+- (void)pauseAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("pauseAllMediaPlaybackWithCompletionHandler:", macos(11.3, WK_MAC_TBA), ios(14.5, WK_IOS_TBA));
+#endif
 
 /*! @abstract Suspends or resumes all media playback in WKWebView.
   @param suspended Whether media playback should be suspended or resumed.
   @discussion If suspended is true, this pauses media playback and blocks all attempts by the page or the user to resume until setAllMediaPlaybackSuspended is called again with suspended set to false. Media playback should always be suspended and resumed in pairs.
 */
 - (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(void (^_Nullable)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+#ifndef __swift__
+- (void)resumeAllMediaPlayback:(void (^ _Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:completionHandler:", macos(11.3, WK_MAC_TBA), ios(14.5, WK_IOS_TBA));
+- (void)suspendAllMediaPlayback:(void (^_Nullable)(void))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("setAllMediaPlaybackSuspended:completionHandler:", macos(11.3, WK_MAC_TBA), ios(14.5, WK_IOS_TBA));
+#endif
 
 /*! @abstract Get the current media playback state of a WKWebView.
  @param completionHandler A block to invoke with the return value of the function call.
@@ -363,7 +373,9 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureState) {
  WKMediaPlaybackStateNone.
  */
 - (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
+#ifndef __swift__
+- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("requestMediaPlaybackStateWithCompletionHandler:", macos(11.3, WK_MAC_TBA), ios(14.5, WK_IOS_TBA));
+#endif
 
 /*! @abstract The state of camera capture on a web page.
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant
@@ -578,6 +590,20 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 @property (nonatomic, readonly, nullable) UIColor *themeColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 @property (nonatomic, readonly, nullable) NSColor *themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
+
+/*! @abstract The color drawn behind the active page.
+ @discussion A color derived from the content of the active page, such as by blending the background color of
+ the <html> and <body> elements with the @link backgroundColor @/link of this @link WKWebView @/link. Used as
+ the background color under the page's content, such as for scroll bouncing areas. Can be overridden by the
+ owner application for custom styling without having to modify the page's style.
+ the background of scroll bouncing areas.
+ @link WKWebView @/link is key-value observing (KVO) compliant for this property.
+ */
+#if TARGET_OS_IPHONE
+@property (nonatomic, null_resettable, copy) UIColor *underPageBackgroundColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#else
+@property (nonatomic, null_resettable, copy) NSColor *underPageBackgroundColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
 #endif
 
 @end

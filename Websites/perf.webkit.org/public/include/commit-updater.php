@@ -81,7 +81,7 @@ class CommitUpdater {
             $has_update = count($commit_data) > 1;
 
             $update = array('commit' => &$commit_data, 'repository' => &$commit_info['repository']);
-            if (array_key_exists('revisionIdentifier', $commit_info)) {
+            if (array_key_exists('revisionIdentifier', $commit_info) && isset($commit_info['revisionIdentifier'])) {
                 if (array_key_exists($commit_info['revisionIdentifier'], $commit_revision_identifiers))
                     $this->exit_with_error('DuplicatedRevisionIdentifier', array('commit' => $commit_info));
                 $commit_revision_identifiers[$commit_info['revisionIdentifier']] = true;
@@ -169,7 +169,7 @@ class CommitUpdater {
             exit_with_error('InvalidAuthorFormat', array('commit' => $commit_info));
         if (array_key_exists('previousCommit', $commit_info))
             require_format('Revision', $commit_info['previousCommit'], '/^[A-Za-z0-9 \.]+$/');
-        if (array_key_exists('revisionIdentifier', $commit_info))
+        if (array_key_exists('revisionIdentifier', $commit_info) && isset($commit_info['revisionIdentifier']))
             require_format('RevisionIdentifier', $commit_info['revisionIdentifier'], '/^\d+@[\w\.\-]+$/');
     }
 

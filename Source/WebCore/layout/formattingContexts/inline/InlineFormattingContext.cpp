@@ -30,6 +30,8 @@
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
+#include "InlineFormattingGeometry.h"
+#include "InlineFormattingQuirks.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
 #include "InlineLineRun.h"
@@ -193,7 +195,12 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : 0;
         auto leadingLogicalWidth = previousLine ? previousLine->overflowLogicalWidth : WTF::nullopt;
-        auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal.logicalLeft, constraints.horizontal.logicalWidth, quirks().initialLineHeight() };
+        auto initialLineHeight = [&]() -> InlineLayoutUnit {
+            if (layoutState().inStandardsMode())
+                return root().style().computedLineHeight();
+            return InlineFormattingQuirks(*this).initialLineHeight();
+        }();
+        auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal.logicalLeft, constraints.horizontal.logicalWidth, initialLineHeight };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, leadingLogicalWidth, initialLineConstraints, isFirstLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal);
 
@@ -236,7 +243,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     }
 }
 
-FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraints()
+IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraints()
 {
     auto& layoutState = this->layoutState();
     ASSERT(!formattingState().intrinsicWidthConstraints());
@@ -603,6 +610,11 @@ void InlineFormattingContext::invalidateFormattingState(const InvalidationState&
     // For now let's just clear the runs.
     formattingState().clearLineAndRuns();
     // FIXME: This is also where we would delete inline items if their content changed.
+}
+
+InlineFormattingGeometry InlineFormattingContext::geometry() const
+{
+    return InlineFormattingGeometry(*this);
 }
 
 }

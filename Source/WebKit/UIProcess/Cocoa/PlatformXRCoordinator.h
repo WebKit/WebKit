@@ -41,6 +41,9 @@ class PlatformXRCoordinator {
 public:
     virtual ~PlatformXRCoordinator() = default;
 
+    // FIXME: Temporary and will be fixed later.
+    static PlatformXR::LayerHandle defaultLayerHandle() { return 1; }
+
     using DeviceInfoCallback = Function<void(Optional<XRDeviceInfo>)>;
     virtual void getPrimaryDeviceInfo(DeviceInfoCallback&&) = 0;
 
@@ -51,6 +54,7 @@ public:
 
     // Session display loop.
     virtual void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) = 0;
+    virtual void submitFrame(WebPageProxy&) { }
 };
 
 } // namespace WebKit

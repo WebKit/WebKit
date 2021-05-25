@@ -1,10 +1,9 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'navigation_entry.type')
+CONSOLE MESSAGE: Error: assert_true: Expected startTime to be no greater than redirectStart. expected true got false
 Description
 
 This test validates the values of the window.performance.redirectCount and the window.performance.timing.redirectStart/End times for a same-origin server side redirect navigation.
 
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'navigation_entry.type')
-
+FAIL Navigation Timing 2 WPT Error: assert_true: Expected startTime to be no greater than redirectStart. expected true got false
 

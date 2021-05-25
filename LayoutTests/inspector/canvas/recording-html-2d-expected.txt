@@ -128,6 +128,7 @@ let frames = [
         context.fillStyle = objects[4];
         context.fillStyle = objects[5];
         context.fillStyle = objects[6];
+        context.fillStyle = objects[7];
     },
     function frame2() {
         context.beginPath();
@@ -136,19 +137,19 @@ let frames = [
         context.moveTo(1, 2);
     },
     function frame4() {
-        context.drawImage(objects[7], 11, 12);
+        context.drawImage(objects[8], 11, 12);
     },
     function frame5() {
-        context.createImageData(objects[8]);
+        context.createImageData(objects[9]);
     },
     function frame6() {
-        context.drawImage(objects[9], 11, 12);
+        context.drawImage(objects[10], 11, 12);
     },
     function frame7() {
-        context.setTransform(objects[10]);
+        context.setTransform(objects[11]);
     },
     function frame8() {
-        // context.drawFocusIfNeeded(objects[11], "Element");
+        // context.drawFocusIfNeeded(objects[12], "Element");
     },
     function stopRecording() {
         if (typeof console.recordEnd === "function")
@@ -160,8 +161,10 @@ function rebuildCanvasGradient(key, data) {
     let gradient = null;
     if (data.type === "radial-gradient")
         gradient = context.createRadialGradient(data.points[0], data.points[1], data.points[2], data.points[3], data.points[4], data.points[5]);
-    else
+    else if (data.type === "linear-gradient")
         gradient = context.createLinearGradient(data.points[0], data.points[1], data.points[2], data.points[3]);
+    else
+        gradient = context.createConicGradient(data.points[0], data.points[1], data.points[2]);
     for (let stop of data.stops)
         gradient.addColorStop(stop.offset, stop.color);
     objects[key] = gradient;
@@ -220,12 +223,13 @@ rebuildPath2D(2, "");
 rebuildPath2D(3, "");
 rebuildCanvasGradient(4, {"type":"linear-gradient","points":[1,2,3,4],"stops":[{"offset":1,"color":"rgb(255, 0, 0)"},{"offset":1,"color":"rgb(0, 0, 255)"}]});
 rebuildCanvasGradient(5, {"type":"radial-gradient","points":[1,2,3,4,5,6],"stops":[]});
-rebuildCanvasPattern(6, {"image":<filtered>,"repeat":"no-repeat"});
-rebuildImage(7, <filtered>);
-rebuildImageData(8, {"data":[0,0,0,0,0,0,0,0],"width":1,"height":2});
-rebuildImageBitmap(9, <filtered>);
-rebuildDOMMatrix(10, "matrix(1, 2, 3, 4, 5, 6)");
-rebuildPath2D(11, "M1 2");
+rebuildCanvasGradient(6, {"type":"conic-gradient","points":[2,3,1],"stops":[{"offset":1,"color":"rgb(0, 128, 0)"}]});
+rebuildCanvasPattern(7, {"image":<filtered>,"repeat":"no-repeat"});
+rebuildImage(8, <filtered>);
+rebuildImageData(9, {"data":[0,0,0,0,0,0,0,0],"width":1,"height":2});
+rebuildImageBitmap(10, <filtered>);
+rebuildDOMMatrix(11, "matrix(1, 2, 3, 4, 5, 6)");
+rebuildPath2D(12, "M1 2");
 
 Promise.all(promises).then(function() {
     window.requestAnimationFrame(function executeFrame() {

@@ -1,3 +1,100 @@
+2021-05-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Support Ergonomic Brand Checks proposal (`#x in obj`)
+        https://bugs.webkit.org/show_bug.cgi?id=221093
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        * stress/private-in.js: Added.
+        * test262/config.yaml: Add feature flag.
+
+2021-05-21  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Unskip type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=226011
+
+        Unreviewed gardening.
+
+        Appears to no longer be flaky.
+
+        * stress/type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value.js:
+
+2021-05-20  Saam Barati  <sbarati@apple.com>
+
+        [ Catalina Release JSC] A large number of JSC test appear to be flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=225998
+        <rdar://problem/78235001>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dont-link-virtual-calls-on-compiler-thread.js: Added.
+
+2021-05-19  Robin Morisset  <rmorisset@apple.com>
+
+        Fix typo in AirUseCounts
+        https://bugs.webkit.org/show_bug.cgi?id=225977
+        rdar://78210501
+
+        Reviewed by Mark Lam.
+
+        Add the testcase found by Tuomas.
+
+        * stress/register-allocator-stress.js: Added.
+        (foo):
+
+2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Temporarily revert r276592 as it breaks some native apps
+        https://bugs.webkit.org/show_bug.cgi?id=225917
+
+        Unreviewed, revert.
+
+        * microbenchmarks/put-slow-no-cache-array.js: Removed.
+        * microbenchmarks/put-slow-no-cache-function.js: Removed.
+        * microbenchmarks/put-slow-no-cache-js-proxy.js: Removed.
+        * microbenchmarks/put-slow-no-cache-long-prototype-chain.js: Removed.
+        * microbenchmarks/put-slow-no-cache.js: Removed.
+        * microbenchmarks/reflect-set-with-receiver.js: Removed.
+        * stress/custom-get-set-proto-chain-put.js:
+        (getObjects):
+        (let.base.of.getBases):
+        * stress/module-namespace-access-set-fails.js: Removed.
+        * stress/put-non-reified-static-accessor-or-custom.js: Removed.
+        * stress/put-non-reified-static-function-or-custom.js: Removed.
+        * stress/put-to-primitive-non-reified-static-custom.js: Removed.
+        * stress/put-to-primitive.js: Removed.
+        * stress/put-to-proto-chain-overrides-put.js: Removed.
+        * stress/typed-array-canonical-numeric-index-string-set.js: Removed.
+
+2021-05-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r271119): Object methods defined with shorthand notation cannot access "caller" in non-strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=225277
+
+        Reviewed by Darin Adler.
+
+        * stress/caller-and-arguments-properties-for-functions-that-dont-have-them.js: Now covers #157461 and #157863. 
+        * stress/function-caller-cross-realm-via-call-apply.js: Added, coverage for #34553.
+        * stress/function-hidden-as-caller.js: Also adds test case for #102276.
+
+2021-05-16  Saam Barati  <sbarati@apple.com>
+
+        DFGVarargsForwardingPhase shouldn't consult Flush
+        https://bugs.webkit.org/show_bug.cgi?id=225824
+
+        Reviewed by Filip Pizlo and Yusuke Suzuki.
+
+        * microbenchmarks/tail-call-forward-arguments-arguments-elimination.js: Added.
+
+2021-05-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Turn callGetter() / callSetter() into instance methods
+        https://bugs.webkit.org/show_bug.cgi?id=225831
+
+        Reviewed by Ross Kirsling.
+
+        * microbenchmarks/put-slow-no-cache-setter.js: Added.
+
 2021-05-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Error#cause must recognize explicit undefined

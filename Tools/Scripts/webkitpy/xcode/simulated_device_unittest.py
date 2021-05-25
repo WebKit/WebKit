@@ -678,3 +678,12 @@ class SimulatedDeviceTest(unittest.TestCase):
         SimulatedDeviceTest.change_state_to(SimulatedDeviceManager.INITIALIZED_DEVICES[0], SimulatedDevice.DeviceState.SHUT_DOWN)
         SimulatedDeviceManager.tear_down(host)
         self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
+
+    def test_no_state_files(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        host.filesystem = MockFileSystem()
+        devices = SimulatedDeviceManager.available_devices(host)
+
+        for device in devices:
+            self.assertEquals(SimulatedDevice.DeviceState.SHUT_DOWN, device.state(force_update=True))

@@ -102,7 +102,7 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
 
     CallFrame* callFrame = reinterpret_cast<CallFrame*>(context.framePointer);
 
-    auto codeBlockSetLocker = holdLock(vm.heap.codeBlockSet().getLock());
+    Locker codeBlockSetLocker { vm.heap.codeBlockSet().getLock() };
 
     CodeBlock* foundCodeBlock = nullptr;
     EntryFrame* entryFrame = vm.topEntryFrame;
@@ -137,10 +137,10 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
     }
 
     if (JITCode::isOptimizingJIT(foundCodeBlock->jitType())) {
-        auto locker = tryHoldLock(*m_lock);
-        if (!locker)
+        if (!m_lock->tryLock())
             return; // Let the SignalSender try again later.
 
+        Locker locker { AdoptLock, *m_lock };
         if (!needHandling(VMTraps::AsyncEvents)) {
             // Too late. Someone else already handled the trap.
             return;
@@ -159,7 +159,7 @@ void VMTraps::invalidateCodeBlocksOnStack()
 
 void VMTraps::invalidateCodeBlocksOnStack(CallFrame* topCallFrame)
 {
-    auto codeBlockSetLocker = holdLock(vm().heap.codeBlockSet().getLock());
+    Locker codeBlockSetLocker { vm().heap.codeBlockSet().getLock() };
     invalidateCodeBlocksOnStack(codeBlockSetLocker, topCallFrame);
 }
     
@@ -217,7 +217,7 @@ public:
                 VM& vm = currentCodeBlock->vm();
 
                 // We are in JIT code so it's safe to acquire this lock.
-                auto codeBlockSetLocker = holdLock(vm.heap.codeBlockSet().getLock());
+                Locker codeBlockSetLocker { vm.heap.codeBlockSet().getLock() };
                 bool sawCurrentCodeBlock = false;
                 vm.heap.forEachCodeBlockIgnoringJITPlans(codeBlockSetLocker, [&] (CodeBlock* codeBlock) {
                     // We want to jettison all code blocks that have vm traps breakpoints, otherwise we could hit them later.
@@ -279,7 +279,7 @@ private:
         }
 
         {
-            auto locker = holdLock(*traps().m_lock);
+            Locker locker { *traps().m_lock };
             if (traps().m_isShuttingDown)
                 return WorkResult::Stop;
             traps().m_condition->waitFor(*traps().m_lock, 1_ms);
@@ -308,7 +308,7 @@ void VMTraps::willDestroyVM()
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     if (m_signalSender) {
         {
-            auto locker = holdLock(*m_lock);
+            Locker locker { *m_lock };
             if (!m_signalSender->tryStop(locker))
                 m_condition->notifyAll(locker);
         }
@@ -323,7 +323,7 @@ void VMTraps::fireTrap(VMTraps::Event event)
     ASSERT(!vm().currentThreadIsHoldingAPILock());
     ASSERT(onlyContainsAsyncEvents(event));
     {
-        auto locker = holdLock(*m_lock);
+        Locker locker { *m_lock };
         ASSERT(!m_isShuttingDown);
         setTrapBit(event);
         m_needToInvalidatedCodeBlocks = true;
@@ -334,7 +334,7 @@ void VMTraps::fireTrap(VMTraps::Event event)
         // sendSignal() can loop until it has confirmation that the mutator thread
         // has received the trap request. We'll call it from another thread so that
         // fireTrap() does not block.
-        auto locker = holdLock(*m_lock);
+        Locker locker { *m_lock };
         if (!m_signalSender)
             m_signalSender = adoptRef(new SignalSender(locker, vm()));
         m_condition->notifyAll(locker);
@@ -353,7 +353,7 @@ void VMTraps::handleTraps(VMTraps::BitField mask)
         mask &= ~NeedTermination;
 
     {
-        auto codeBlockSetLocker = holdLock(vm.heap.codeBlockSet().getLock());
+        Locker codeBlockSetLocker { vm.heap.codeBlockSet().getLock() };
         vm.heap.forEachCodeBlockIgnoringJITPlans(codeBlockSetLocker, [&] (CodeBlock* codeBlock) {
             // We want to jettison all code blocks that have vm traps breakpoints, otherwise we could hit them later.
             if (codeBlock->hasInstalledVMTrapBreakpoints())
@@ -397,7 +397,7 @@ void VMTraps::handleTraps(VMTraps::BitField mask)
 
 auto VMTraps::takeTopPriorityTrap(VMTraps::BitField mask) -> Event
 {
-    auto locker = holdLock(*m_lock);
+    Locker locker { *m_lock };
 
     // Note: the EventBitShift is already sorted in highest to lowest priority
     // i.e. a bit shift of 0 is highest priority, etc.

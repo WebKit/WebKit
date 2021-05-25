@@ -624,6 +624,7 @@ public:
 
     ElementIdentifier createElementIdentifier();
 
+    String description() const override;
     String debugDescription() const override;
 
 protected:

@@ -268,6 +268,10 @@ imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-rep
 # CSS color. Passing after WPT re-import in r277077.
 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ Pass ]
 
+# Conic gradient. Marked as failure in root expectations
+webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ Pass ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -771,6 +775,12 @@ webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w.html [ Slow ]
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
 
+# Failing since r277543.
+webkit.org/b/225870 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.html [ Failure ]
+webkit.org/b/225870 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker.html [ Failure ]
+webkit.org/b/225870 imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.html [ Failure ]
+webkit.org/b/225870 imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.worker.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -849,6 +859,11 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-b
 
 webkit.org/b/224626 http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.py [ Failure Pass ]
 
+# Sometimes there's an extra error message:
+# - [Report Only] Refused to connect to http://localhost:8000/security/contentSecurityPolicy/resources/echo-report.py
+# because it does not appear in the connect-src directive of the Content Security Policy.
+http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSConsoleLogInStdErr ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Security-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -895,6 +910,10 @@ webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ DumpJ
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ DumpJSConsoleLogInStdErr ]
+
+# Soup upstream issue #111
+webkit.org/b/179475 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
+webkit.org/b/179475 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
@@ -1095,6 +1114,8 @@ webkit.org/b/223624 webgl/conformance/extensions/khr-parallel-shader-compile.htm
 
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Slow ]
 
+webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1206,6 +1227,10 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
+
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001.html [ Failure Pass ]
+webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002.html [ Failure Pass ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Pass Timeout ]
@@ -1410,6 +1435,10 @@ webkit.org/b/206503 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharnes
 webkit.org/b/224668 imported/w3c/web-platform-tests/html/infrastructure/common-dom-interfaces/collections/htmlformcontrolscollection.html [ Failure Pass ]
 webkit.org/b/224668 imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements.html [ Failure Pass ]
 webkit.org/b/224668 imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Failure Pass ]
+
+webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
+
+webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
@@ -2352,8 +2381,18 @@ fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ ImageOnlyFailur
 # It was a flaky crash until r275516, but it's still a timeout flaky.
 webkit.org/b/224112 media/video-as-img-output-pts.html [ Timeout Pass ]
 
-webkit.org/b/225423 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
+
+# Non-sRGB color spaces are not currently supported by the glib ports.
+fast/canvas/canvas-color-space-display-p3.html [ Skip ]
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Skip ]
+
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
 # Failing after r277073.
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-10.html [ ImageOnlyFailure ]
@@ -2375,6 +2414,9 @@ webkit.org/b/225466 imported/w3c/web-platform-tests/css/css-color-adjust/renderi
 
 # Failing since r277091.
 webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
+
+# Failing since r277493.
+webkit.org/b/225904 imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

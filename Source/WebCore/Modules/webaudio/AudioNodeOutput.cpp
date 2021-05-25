@@ -42,14 +42,14 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     , m_numberOfChannels(numberOfChannels)
     , m_desiredNumberOfChannels(numberOfChannels)
 {
-    ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
+    ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels);
 
     m_internalBus = AudioBus::create(numberOfChannels, AudioUtilities::renderQuantumSize);
 }
 
 void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
 {
-    ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
+    ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels);
     ASSERT(context().isGraphOwner());
 
     m_desiredNumberOfChannels = numberOfChannels;

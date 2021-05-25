@@ -36,14 +36,14 @@ from optparse import make_option
 
 from webkitpy.tool import steps
 
+from webkitcorepy import string_utils
+
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.system.user import User
-from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.comments import bug_comment_from_svn_revision
-from webkitpy.tool.grammar import pluralize, join_with_separators
 from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ class CleanPendingCommit(Command):
                 what_was_cleared.append(u"%s's review+" % patch.reviewer().full_name)
             else:
                 what_was_cleared.append("review+")
-        return join_with_separators(what_was_cleared)
+        return string_utils.join(what_was_cleared)
 
     def execute(self, options, args, tool):
         for bug_id in tool.bugs.queries.fetch_bug_ids_from_pending_commit_list():
@@ -348,7 +348,7 @@ class PostCommits(Command):
     def execute(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
         if len(commit_ids) > 10:  # We could lower this limit, 10 is too many for one bug as-is.
-            _log.error("webkit-patch does not support attaching %s at once.  Are you sure you passed the right commit range?" % (pluralize(len(commit_ids), "patch")))
+            _log.error("webkit-patch does not support attaching %s at once.  Are you sure you passed the right commit range?" % (string_utils.pluralize(len(commit_ids), 'patch', plural='patches')))
             sys.exit(1)
 
         have_obsoleted_patches = set()
@@ -406,7 +406,7 @@ class MarkBugFixed(Command):
             bug_id = parse_bug_id_from_changelog(commit_log)
 
         if not svn_revision:
-            match = re.search("^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)
+            match = re.search(r"^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)
             if match:
                 svn_revision = match.group('svn_revision')
 

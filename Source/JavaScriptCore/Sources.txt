@@ -676,6 +676,7 @@ jit/RegisterSet.cpp
 jit/Repatch.cpp
 jit/ScratchRegisterAllocator.cpp
 jit/SetupVarargsFrame.cpp
+jit/SlowPathCall.cpp
 jit/TagRegistersMode.cpp
 jit/TempRegisterSet.cpp
 jit/ThunkGenerators.cpp

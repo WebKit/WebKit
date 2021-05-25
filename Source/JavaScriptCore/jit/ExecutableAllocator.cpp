@@ -233,7 +233,7 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
     jit.ret();
 
     auto stubBaseCodePtr = MacroAssemblerCodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(stubBase));
-    LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize);
+    LinkBuffer linkBuffer(jit, stubBaseCodePtr, stubSize, LinkBuffer::Profile::Thunk);
     // We don't use FINALIZE_CODE() for two reasons.
     // The first is that we don't want the writeable address, as disassembled instructions,
     // to appear in the console or anywhere in memory, via the PrintStream buffer.
@@ -464,7 +464,7 @@ public:
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
     {
 #if ENABLE(JUMP_ISLANDS)
-        auto locker = holdLock(getLock());
+        Locker locker { getLock() };
 
         unsigned start = 0;
         if (Options::useRandomizingExecutableIslandAllocation())
@@ -535,7 +535,7 @@ public:
 
     MetaAllocator::Statistics currentStatistics()
     {
-        auto locker = holdLock(getLock());
+        Locker locker { getLock() };
         MetaAllocator::Statistics result { 0, 0, 0 };
         forEachAllocator([&] (Allocator& allocator) {
             auto allocatorStats = allocator.currentStatistics(locker);
@@ -581,7 +581,7 @@ public:
 
     void* makeIsland(uintptr_t jumpLocation, uintptr_t newTarget, bool concurrently)
     {
-        auto locker = holdLock(getLock());
+        Locker locker { getLock() };
         return islandForJumpLocation(locker, jumpLocation, newTarget, concurrently);
     }
 
@@ -644,7 +644,7 @@ private:
 
                 MacroAssembler jit;
                 auto jump = jit.jump();
-                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, JITCompilationMustSucceed, false);
+                LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::JumpIsland, JITCompilationMustSucceed, false);
                 RELEASE_ASSERT(linkBuffer.isValid());
 
                 // We use this to appease the assertion that we're not finalizing on a compiler thread. In this situation, it's
@@ -1058,7 +1058,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
         buffer = bitwise_cast<uint8_t*>(malloc(bufferSize));
         flushQueue.construct(WorkQueue::create("jsc.dumpJITMemory.queue", WorkQueue::Type::Serial, WorkQueue::QOS::Background));
         std::atexit([] {
-            LockHolder locker(dumpJITMemoryLock);
+            Locker locker { dumpJITMemoryLock };
             flush(locker);
             close(fd);
             fd = -1;
@@ -1071,7 +1071,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
 
         needsToFlush = true;
         flushQueue.get()->dispatchAfter(Seconds(Options::dumpJITMemoryFlushInterval()), [] {
-            LockHolder locker(dumpJITMemoryLock);
+            Locker locker { dumpJITMemoryLock };
             if (!needsToFlush)
                 return;
             flush(locker);
@@ -1086,7 +1086,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
         enqueueFlush(locker);
     };
 
-    LockHolder locker(dumpJITMemoryLock);
+    Locker locker { dumpJITMemoryLock };
     uint64_t time = mach_absolute_time();
     uint64_t dst64 = bitwise_cast<uintptr_t>(dst);
     uint64_t size64 = size;

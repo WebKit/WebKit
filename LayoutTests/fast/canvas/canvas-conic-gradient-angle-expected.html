@@ -1,0 +1,28 @@
+<style>
+    canvas {
+        border: 1px solid;
+    }
+</style>
+<body>
+    <canvas id="c1" width="100" height="100"></canvas>
+    <canvas id="c2" width="100" height="100"></canvas>
+    <canvas id="c3" width="100" height="100"></canvas>
+    <canvas id="c4" width="100" height="100"></canvas>
+    <script>
+        function fillCanvasWithSolidColor(canvasId, x, y, width, height) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = "black";
+            ctx.fillRect(x, y, width, height);
+        }
+
+        fillCanvasWithSolidColor("c1", 50,  0, 50, 50);
+        fillCanvasWithSolidColor("c1",  0, 50, 50, 50);
+        fillCanvasWithSolidColor("c2",  0,  0, 50, 50);
+        fillCanvasWithSolidColor("c2", 50, 50, 50, 50);
+        fillCanvasWithSolidColor("c3",  0, 50, 50, 50);
+        fillCanvasWithSolidColor("c3", 50,  0, 50, 50);
+        fillCanvasWithSolidColor("c4",  0,  0, 50, 50);
+        fillCanvasWithSolidColor("c4", 50, 50, 50, 50);
+    </script>
+</body>

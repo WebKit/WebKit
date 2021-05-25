@@ -51,7 +51,7 @@ TEST(WTF_WorkQueue, AsyncIO)
     GUniquePtr<char> currentDirectory(g_get_current_dir());
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(currentDirectory.get()));
 
-    LockHolder locker(context.m_lock);
+    Locker locker { context.m_lock };
     queue->dispatch([&](void) {
         EXPECT_TRUE(g_main_context_get_thread_default());
         EXPECT_TRUE(g_main_context_get_thread_default() != context.m_mainContext);
@@ -59,7 +59,7 @@ TEST(WTF_WorkQueue, AsyncIO)
         g_file_query_info_async(file.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, G_FILE_QUERY_INFO_NONE, G_PRIORITY_DEFAULT, nullptr,
             [](GObject*, GAsyncResult*, gpointer userData) {
                 TestingContext* context = static_cast<TestingContext*>(userData);
-                LockHolder locker(context->m_lock);
+                Locker locker { context->m_lock };
                 EXPECT_EQ(g_main_context_get_thread_default(), context->m_mainContext);
                 context->m_testCompleted.notifyOne();
             }, &context);

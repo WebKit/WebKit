@@ -56,8 +56,9 @@ private:
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
     Vector<PlatformXR::Device::ViewData> views(PlatformXR::SessionMode) const final;
     void requestFrame(PlatformXR::Device::RequestFrameCallback&&) final;
-    Optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) override { return WTF::nullopt; };
+    Optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) final;
     void deleteLayer(PlatformXR::LayerHandle) override { };
+    void submitFrame(Vector<PlatformXR::Device::Layer>&&) final;
 
     XRDeviceIdentifier m_identifier;
     WeakPtr<PlatformXRSystemProxy> m_xrSystem;

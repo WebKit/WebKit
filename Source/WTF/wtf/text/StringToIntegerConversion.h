@@ -110,35 +110,7 @@ template<typename IntegralType> Optional<IntegralType> parseIntegerAllowingTrail
     return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Allow);
 }
 
-// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
-template<typename IntegralType, typename StringOrStringView> IntegralType toIntegralType(const StringOrStringView& stringView, bool* ok, int base = 10)
-{
-    auto result = parseInteger<IntegralType>(stringView, base);
-    if (ok)
-        *ok = result.hasValue();
-    return result.valueOr(0);
-}
-
-// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
-template<typename IntegralType, typename CharacterType> IntegralType toIntegralType(const CharacterType* data, unsigned length, bool* ok, int base = 10)
-{
-    return toIntegralType<IntegralType>(StringView { data, length }, ok, base);
-}
-
-// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
-template<typename IntegralType, typename StringOrStringView> Optional<IntegralType> toIntegralType(const StringOrStringView& stringView, int base = 10)
-{
-    return parseInteger<IntegralType>(stringView, base);
-}
-
-// FIXME: Deprecated. Remove toIntegralType entirely once we get move all callers to parseInteger.
-template<typename IntegralType, typename CharacterType> Optional<IntegralType> toIntegralType(const CharacterType* data, unsigned length, int base = 10)
-{
-    return parseInteger<IntegralType>(StringView { data, length }, base);
-}
-
 }
 
 using WTF::parseInteger;
 using WTF::parseIntegerAllowingTrailingJunk;
-using WTF::toIntegralType;

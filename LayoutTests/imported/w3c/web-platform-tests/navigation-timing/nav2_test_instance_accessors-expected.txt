@@ -1,0 +1,7 @@
+Description
+
+This test validates that nav timing 2 instance can be accessed by three different accessors once available: window.performance.getEntries()/getEntriesByType("navigation")/getEntriesByName("document")
+
+
+PASS Performance navigation timing entries are accessible through three different accessors.
+

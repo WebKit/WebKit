@@ -32,8 +32,8 @@
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 
 namespace IPC {
 class Connection;
@@ -68,7 +68,7 @@ private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     void notifyObserversDisplayWasRefreshed();
 
-    void removeInfoForConnectionIfPossible(IPC::Connection&);
+    void removeInfoForConnectionIfPossible(IPC::Connection&) WTF_REQUIRES_LOCK(m_observersLock);
 
     static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 
@@ -83,8 +83,8 @@ private:
     };
 
     CVDisplayLinkRef m_displayLink { nullptr };
-    Lock m_observersLock;
-    HashMap<RefPtr<IPC::Connection>, ConnectionClientInfo> m_observers;
+    CheckedLock m_observersLock;
+    HashMap<RefPtr<IPC::Connection>, ConnectionClientInfo> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
     WebCore::PlatformDisplayID m_displayID;
     WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
     WebCore::DisplayUpdate m_currentUpdate;

@@ -575,13 +575,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/WaveShaperNode.idl
     Modules/webaudio/WaveShaperOptions.idl
-    Modules/webaudio/WebKitAudioBufferSourceNode.idl
-    Modules/webaudio/WebKitAudioContext.idl
-    Modules/webaudio/WebKitAudioListener.idl
-    Modules/webaudio/WebKitAudioPannerNode.idl
-    Modules/webaudio/WebKitDynamicsCompressorNode.idl
-    Modules/webaudio/WebKitOfflineAudioContext.idl
-    Modules/webaudio/WebKitOscillatorNode.idl
 
     Modules/webauthn/AttestationConveyancePreference.idl
     Modules/webauthn/AuthenticationExtensionsClientInputs.idl
@@ -1028,6 +1021,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ImageBitmap.idl
     html/ImageBitmapOptions.idl
     html/ImageData.idl
+    html/ImageDataSettings.idl
     html/MediaController.idl
     html/MediaEncryptedEvent.idl
     html/MediaError.idl
@@ -1139,6 +1133,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceObserverCallback.idl
     page/PerformanceObserverEntryList.idl
     page/PerformanceNavigation.idl
+    page/PerformanceNavigationTiming.idl
     page/PerformancePaintTiming.idl
     page/PerformanceResourceTiming.idl
     page/PerformanceServerTiming.idl

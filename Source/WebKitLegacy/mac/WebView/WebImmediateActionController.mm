@@ -56,14 +56,10 @@
 #import <WebCore/TextIterator.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
+#import <pal/mac/QuickLookUISoftLink.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
-#import <pal/spi/mac/QuickLookMacSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
-SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
 @interface WebImmediateActionController () <QLPreviewMenuItemDelegate>
 @end
@@ -93,7 +89,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     _webView = nil;
 
     id animationController = [_immediateActionRecognizer animationController];
-    if ([animationController isKindOfClass:NSClassFromString(@"QLPreviewMenuItem")]) {
+    if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClass()]) {
         QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
         menuItem.delegate = nil;
     }
@@ -122,7 +118,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 {
     [_currentQLPreviewMenuItem close];
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::None];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::None];
 }
 
 - (NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -139,7 +135,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     }
 
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
 }
 
 - (void)_clearImmediateActionState
@@ -169,7 +165,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
     if (!coreFrame)
         return;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(WebCore::IntPoint(viewPoint), hitType);
     coreFrame->mainFrame().eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::PerformedHitTest);
 
@@ -251,7 +247,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 
     [_webView _setTextIndicatorAnimationProgress:0];
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::None];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::None];
     [_webView _setMaintainsInactiveSelection:NO];
 }
 
@@ -293,7 +289,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
             auto linkRange = makeRangeSelectingNodeContents(*_hitTestResult.URLElement());
             auto indicator = WebCore::TextIndicator::createWithRange(linkRange, { WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, WebCore::TextIndicatorPresentationTransition::FadeIn);
             if (indicator)
-                [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
+                [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorLifetime::Permanent];
 
             QLPreviewMenuItem *item = [NSMenuItem standardQuickLookMenuItem];
             item.previewStyle = QLPreviewStylePopover;
@@ -379,7 +375,7 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 - (void)menuItemDidClose:(NSMenuItem *)menuItem
 {
     [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
+    [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
 }
 
 static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::Node* node)
@@ -464,9 +460,9 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     _currentActionContext = [detectedItem->actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (indicator)
-            [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
+            [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorLifetime::Permanent];
     } interactionStoppedHandler:^() {
-        [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
+        [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
     }];
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedItem->boundingBox]];
@@ -497,9 +493,9 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (indicator)
-            [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
+            [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorLifetime::Permanent];
     } interactionStoppedHandler:^() {
-        [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
+        [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
     }];
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(_hitTestResult.URLElement())]];

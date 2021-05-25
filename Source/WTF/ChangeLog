@@ -1,3 +1,1308 @@
+2021-05-23  Mark Lam  <mark.lam@apple.com>
+
+        Remove ENABLE(MASM_PROBE) flag.
+        https://bugs.webkit.org/show_bug.cgi?id=226154
+
+        Reviewed by Yusuke Suzuki.
+
+        The MacroAssembler::probe() mechanism is now available on all supported platforms.
+        There's no longer a need for the ENABLE(MASM_PROBE) flag.
+
+        * wtf/PlatformEnable.h:
+
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226145
+
+        Reviewed by Darin Adler.
+
+        Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis.
+        Instead, use the following pattern which is supported:
+        ```
+        if (lock.tryLock()) {
+            Locker locker { AdoptLock, lock };
+            // ...
+        }
+        ```
+
+        * wtf/CheckedLock.h:
+        * wtf/Lock.h:
+        * wtf/Locker.h:
+        (WTF::Locker::Locker):
+
+2021-05-23  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for JSCOnly-Linux-AArch64 bot.
+
+        Not reviewed.
+
+        * wtf/Vector.h:
+        (WTF::Malloc>::expandCapacity):
+        (WTF::Malloc>::reserveCapacity):
+        (WTF::Malloc>::constructAndAppendSlowCase):
+
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Adopt CheckedLock in more places
+        https://bugs.webkit.org/show_bug.cgi?id=226138
+
+        Reviewed by Darin Adler.
+
+        Adopt CheckedLock in more places to benefit from Clang Thread Safety Analysis.
+
+        * wtf/Assertions.cpp:
+        * wtf/TimingScope.cpp:
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::waitUntil):
+        * wtf/threads/BinarySemaphore.h:
+
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::~AutomaticThread):
+        (WTF::AutomaticThread::join):
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::ParallelHelperClient):
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::setTask):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::doSomeHelping):
+        (WTF::ParallelHelperClient::runTask):
+        (WTF::ParallelHelperPool::~ParallelHelperPool):
+        (WTF::ParallelHelperPool::ensureThreads):
+        (WTF::ParallelHelperPool::doSomeHelping):
+        * wtf/Seconds.cpp:
+        (WTF::sleep):
+        * wtf/TimeWithDynamicClockType.cpp:
+        (WTF::sleep):
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        (WTF::WorkerPool::~WorkerPool):
+        (WTF::WorkerPool::postTask):
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        * wtf/win/DbgHelperWin.cpp:
+        (WTF::DbgHelper::SymFromAddress):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+
+2021-05-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277913.
+        https://bugs.webkit.org/show_bug.cgi?id=226140
+
+        Caused multiple layout-test crash on mac debug queues
+
+        Reverted changeset:
+
+        "Replace LockHolder with Locker in local variables"
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+        https://trac.webkit.org/changeset/277913
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Remove WTF::holdLock() / WTF::holdLockIf()
+        https://bugs.webkit.org/show_bug.cgi?id=226135
+
+        Reviewed by Darin Adler.
+
+        Remove WTF::holdLock() / WTF::holdLockIf() because they are not compatible with
+        Clang Thread Safety Analysis. All call sites have been converted to use the Locker
+        constructor directly.
+
+        * wtf/Locker.h:
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * benchmarks/LockSpeedTest.cpp:
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThread::~AutomaticThread):
+        (WTF::AutomaticThread::join):
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::shrink):
+        (WTF::MetaAllocator::addFreshFreeSpace):
+        (WTF::MetaAllocator::debugFreeSpaceSize):
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::ParallelHelperClient):
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::setTask):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::doSomeHelping):
+        (WTF::ParallelHelperClient::runTask):
+        (WTF::ParallelHelperPool::~ParallelHelperPool):
+        (WTF::ParallelHelperPool::ensureThreads):
+        (WTF::ParallelHelperPool::doSomeHelping):
+        * wtf/Seconds.cpp:
+        (WTF::sleep):
+        * wtf/TimeWithDynamicClockType.cpp:
+        (WTF::sleep):
+        * wtf/WorkerPool.cpp:
+        (WTF::WorkerPool::WorkerPool):
+        (WTF::WorkerPool::~WorkerPool):
+        (WTF::WorkerPool::postTask):
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        * wtf/win/DbgHelperWin.cpp:
+        (WTF::DbgHelper::SymFromAddress):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedCondition in more places
+        https://bugs.webkit.org/show_bug.cgi?id=226113
+
+        Reviewed by Darin Adler.
+
+        Use CheckedCondition in more places to benefit from Clang Thread Safety
+        Analysis.
+
+        * wtf/RunLoop.h:
+        * wtf/SynchronizedFixedQueue.h:
+        * wtf/WTFSemaphore.h:
+        * wtf/WorkQueue.cpp:
+        (WTF::WorkQueue::concurrentApply):
+        * wtf/generic/RunLoopGeneric.cpp:
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::populateTasks):
+        (WTF::RunLoop::runImpl):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::wakeUpWithLock):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::schedule):
+        (WTF::RunLoop::scheduleAndWakeUpWithLock):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive const):
+        (WTF::RunLoop::TimerBase::secondsUntilFire const):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive const):
+        (WTF::RunLoop::TimerBase::secondsUntilFire const):
+
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Adopt QLItem in WKImageExtractionPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=226114
+        rdar://76657718
+
+        Reviewed by Tim Horton.
+
+        Introduce `SOFT_LINK_FRAMEWORK_IN_UMBRELLA_FOR_SOURCE_WITH_EXPORT`, so that we can soft link frameworks that are
+        embedded inside other umbrella frameworks in PAL.
+
+        * wtf/cocoa/SoftLinking.h:
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in WTF as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226117
+
+        Reviewed by Darin Adler.
+
+        Stop using holdLock() in WTF as it is not compatible with Clang thread safety analysis
+        (WTF::CheckedLock) and use the Locker constructor instead.
+
+        This is a step towards getting rid of holdLock() completely.
+
+        * benchmarks/ConditionSpeedTest.cpp:
+        * wtf/ConcurrentPtrHashSet.cpp:
+        (WTF::ConcurrentPtrHashSet::deleteOldTables):
+        (WTF::ConcurrentPtrHashSet::clear):
+        (WTF::ConcurrentPtrHashSet::containsImplSlow const):
+        (WTF::ConcurrentPtrHashSet::sizeSlow const):
+        (WTF::ConcurrentPtrHashSet::resizeIfNecessary):
+        * wtf/CountingLock.h:
+        * wtf/HashTable.cpp:
+        (WTF::HashTableStats::recordCollisionAtCount):
+        (WTF::HashTableStats::dumpStats):
+        * wtf/HashTable.h:
+        (WTF::invalidateIterators):
+        (WTF::addIterator):
+        (WTF::removeIterator):
+        * wtf/LockedPrintStream.cpp:
+        (WTF::LockedPrintStream::vprintf):
+        (WTF::LockedPrintStream::flush):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::~MetaAllocatorHandle):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/ReadWriteLock.h:
+        * wtf/StackShotProfiler.h:
+        (WTF::StackShotProfiler::profile):
+        (WTF::StackShotProfiler::run):
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::LayoutCheckPoint::~LayoutCheckPoint):
+        * wtf/ThreadGroup.cpp:
+        (WTF::ThreadGroup::~ThreadGroup):
+        (WTF::ThreadGroup::add):
+        * wtf/ThreadMessage.cpp:
+        (WTF::sendMessageScoped):
+        * wtf/Threading.cpp:
+        (WTF::Thread::didExit):
+        (WTF::Thread::addToThreadGroup):
+        (WTF::Thread::removeFromThreadGroup):
+        (WTF::Thread::numberOfThreadGroups):
+        * wtf/TimingScope.cpp:
+        * wtf/WTFConfig.cpp:
+        (WTF::Config::permanentlyFreeze):
+        * wtf/WTFSemaphore.h:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::signal):
+        (WTF::Thread::establishPlatformSpecificHandle):
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::signal):
+        (WTF::BinarySemaphore::waitUntil):
+        * wtf/threads/Signals.cpp:
+        (WTF::SignalHandlers::add):
+        (WTF::registerThreadForMachExceptionHandling):
+        (WTF::activateSignalHandlersFor):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::platformLanguage):
+        * wtf/win/ThreadingWin.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::establishPlatformSpecificHandle):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Unable to upload files that are stored in the cloud (without a local copy)
+        https://bugs.webkit.org/show_bug.cgi?id=226090
+        <rdar://77775887>
+
+        Reviewed by Darin Adler.
+
+        Add FileSystem API to allow/disallow the materializing of dataless files stored
+        in the cloud, at process or thread level.
+
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::toIOPolicyScope):
+        (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+        (WTF::FileSystemImpl::allowsMaterializingDatalessFiles):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace more static Locks with CheckedLocks in WTF / WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=226040
+
+        Reviewed by Darin Adler.
+
+        Replace more static Locks with CheckedLocks so that we can benefit from Clang Thread Safety Analysis.
+
+        * wtf/Threading.cpp:
+        (WTF::Thread::allThreadsLock):
+        (WTF::Thread::create):
+        (WTF::Thread::didExit):
+        * wtf/Threading.h:
+        * wtf/URL.cpp:
+        (WTF::WTF_REQUIRES_LOCK):
+        (WTF::registerDefaultPortForProtocolForTesting):
+        (WTF::clearDefaultPortForProtocolMapForTesting):
+        (WTF::defaultPortForProtocol):
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::WTF_REQUIRES_LOCK):
+        (WTF::platformLanguageDidChange):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::invalidate):
+        (WTF::StringView::adoptUnderlyingString):
+        (WTF::StringView::setUnderlyingString):
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in cases where we try-lock
+        https://bugs.webkit.org/show_bug.cgi?id=226056
+
+        Reviewed by Alex Christensen.
+
+        Use CheckedLock more in cases where we try-lock to benefit from Clang
+        Thread Safety Analysis.
+
+        * wtf/Logger.cpp:
+        * wtf/Logger.h:
+        (WTF::Logger::addObserver):
+        (WTF::Logger::removeObserver):
+        (WTF::Logger::log):
+        (WTF::Logger::logVerbose):
+        (WTF::Logger::WTF_RETURNS_LOCK):
+
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock more in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=226045
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock more in WTF to benefit from Clang Thread Safety Analysis.
+
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::append):
+        (WTF::CrossThreadQueue<DataType>::waitForMessage):
+        (WTF::CrossThreadQueue<DataType>::tryGetMessage):
+        (WTF::CrossThreadQueue<DataType>::kill):
+        (WTF::CrossThreadQueue<DataType>::isKilled const):
+        (WTF::CrossThreadQueue<DataType>::isEmpty const):
+        * wtf/CrossThreadTaskHandler.cpp:
+        (WTF::CrossThreadTaskHandler::postTaskReply):
+        (WTF::CrossThreadTaskHandler::handleTaskRepliesOnMainThread):
+        * wtf/CrossThreadTaskHandler.h:
+        (WTF::CrossThreadTaskHandler::WTF_GUARDED_BY_LOCK):
+        * wtf/CryptographicallyRandomNumber.cpp:
+        * wtf/FastMalloc.cpp:
+        (WTF::MallocCallTracker::recordMalloc):
+        (WTF::MallocCallTracker::recordRealloc):
+        (WTF::MallocCallTracker::recordFree):
+        (WTF::MallocCallTracker::dumpStats):
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue<DataType>::append):
+        (WTF::MessageQueue<DataType>::appendAndKill):
+        (WTF::MessageQueue<DataType>::appendAndCheckEmpty):
+        (WTF::MessageQueue<DataType>::prepend):
+        (WTF::MessageQueue<DataType>::waitForMessageFilteredWithTimeout):
+        (WTF::MessageQueue<DataType>::tryGetMessage):
+        (WTF::MessageQueue<DataType>::takeAllMessages):
+        (WTF::MessageQueue<DataType>::tryGetMessageIgnoringKilled):
+        (WTF::MessageQueue<DataType>::removeIf):
+        (WTF::MessageQueue<DataType>::isEmpty):
+        (WTF::MessageQueue<DataType>::kill):
+        (WTF::MessageQueue<DataType>::killed const):
+        * wtf/OSLogPrintStream.cpp:
+        (WTF::OSLogPrintStream::vprintf):
+        * wtf/OSLogPrintStream.h:
+        * wtf/ParallelJobsGeneric.h:
+        (WTF::ParallelEnvironment::ThreadPrivate::WTF_GUARDED_BY_LOCK):
+        * wtf/ParallelVectorIterator.h:
+        (WTF::ParallelVectorIterator::iterate):
+        (WTF::ParallelVectorIterator::WTF_GUARDED_BY_LOCK):
+        * wtf/ReadWriteLock.cpp:
+        (WTF::ReadWriteLock::readLock):
+        (WTF::ReadWriteLock::readUnlock):
+        (WTF::ReadWriteLock::writeLock):
+        (WTF::ReadWriteLock::writeUnlock):
+        * wtf/ReadWriteLock.h:
+        (WTF::ReadWriteLock::WTF_GUARDED_BY_LOCK):
+
+2021-05-20  Chris Dumez  <cdumez@apple.com>
+
+        Add missing locks in Language.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=226059
+
+        Reviewed by Alex Christensen.
+
+        Add missing locks in Language.cpp. This was found via Clang Thread Safety Analysis.
+        Some of the overrideUserPreferredLanguages() call sites were failing to grab the
+        lock first.
+
+        Also use NeverDestroyed in preferredLanguagesOverride() instead of LazyNeverDestroyed
+        with std::call_once. All call sites are already grabbing a lock so there is no need
+        for extra synchronization.
+
+        * wtf/Language.cpp:
+        (WTF::WTF_REQUIRES_LOCK):
+        (WTF::userPreferredLanguagesOverride):
+        (WTF::overrideUserPreferredLanguages):
+        (WTF::userPreferredLanguages):
+        (WTF::preferredLanguagesOverride): Deleted.
+
+2021-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add support for Navigation Timing Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=184363
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Drop "get" prefix from SQLiteStatement member functions as well as out-parameters
+        https://bugs.webkit.org/show_bug.cgi?id=225971
+
+        Reviewed by Darin Adler.
+
+        Add Vector constructor that takes in an array and a size.
+
+        * wtf/Vector.h:
+        (WTF::Vector::Vector):
+
+2021-05-18  Darin Adler  <darin@apple.com>
+
+        Move CFStringRef and NSString support from StringBuilder into StringConcatenateCF
+        https://bugs.webkit.org/show_bug.cgi?id=225839
+
+        Reviewed by Sam Weinig.
+
+        The new header makes CFStringRef and NSString work with string concatenation,
+        which means it now works with the variadic StringBuilder::append and makeString,
+        and still works with the single-argument StringBuilder::append. More efficient
+        that the old version because it does not allocate a temporary WTF::String for
+        the 16-bit character path.
+
+        Also made many other small improvements to the StringBuilder implementation.
+
+        * WTF.xcodeproj/project.pbxproj: Added StringConcatenateCF.h.
+
+        * wtf/CheckedArithmetic.h: Removed ConditionalCrashOnOverflow, which was only
+        here for use by StringBuilder, which does not use CheckedArithmetic any more.
+
+        * wtf/PlatformFTW.cmake: Added StringConcatenateCF.h..
+        * wtf/PlatformMac.cmake: Ditto.
+        * wtf/PlatformWin.cmake: Ditto.
+
+        * wtf/SaturatedArithmetic.h: Moved the contents of this file inside the
+        WTF namespace.
+        (WTF::signedAddInt32Overflows): Renamed this function. The type here is
+        important, and we are not doing anything to prevent type conversion or
+        create ambiguity, so it's good to be explicit in the function name.
+        (WTF::saturatedSum<int32_t>): Renamed this from saturatedAddition for
+        clarity. The function returns a sum, so that's a better name than calling
+        it "addition". Also, it's clearer to be explicit about the return type.
+        (WTF::signedSubtractInt32Overflows): Renamed. Same reason as above.
+        (WTF::saturatedDifference<int32_t>): Ditto.
+        (WTF::saturatedSum): Added. Does unsigned integer saturated addition.
+        This one can be written in a portable manner and still get really
+        efficient code on at least Intel and ARM64.
+        (WTF::saturatedSum): Added a function template that lets callers pass
+        larger number of arguments to saturatedSum, rather than exactly two.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::expandedCapacity): Renamed to use the term capacity rather than
+        length for the new required capacity.
+        (WTF::StringBuilder::didOverflow): Implement the new approach to
+        overflow, meaning we need to write the CRASH() here explicitly and
+        in the non-crashing mode, set m_length.
+        (WTF::StringBuilder::reifyString const): Changed the overflow check
+        into a RELEASE_ASSERT. This is now responsible for doing the check that
+        callers were doing earlier, so we want it in production builds. Also
+        simplified this since our m_length member is a simple integer now,
+        and removed the unused m_isReified.
+        (WTF::StringBuilder::shrink): Renamed this to shrink to match the
+        Vector::shrink function, since this has never supported making the
+        builder larger. Removed unnecessary overflow checks, since shrinking
+        cannot cause overflow.
+        (WTF::StringBuilder::allocateBuffer): Replaced two separate functions
+        with a single simpler function template. Removed extra overflow checks
+        because the StringImpl::tryCreateUninitialized function already does
+        the only overflow check we need. Also move to StringImpl::copyCharacters
+        for copying characters rather than using std::memcpy directly.
+        Removed code to set m_is8Bit and m_bufferCharacters.
+        (WTF::StringBuilder::reallocateBuffer): Replaced two separate
+        functions with a function template and a cover that calls the
+        appropriate instance of the template for places where we aren't
+        already in character-type-specific code paths. This version now
+        supports allocating a buffer for the first time in cases where
+        we have m_string and not m_buffer, which used to be handled at
+        the higher level. Removed code to set m_bufferCharacters.
+        (WTF::StringBuilder::reserveCapacity): Rewrote for simplicity.
+        By relying on the overflow checking inside reallocateBuffer and
+        allocateBuffer we no longer need checking of the passed-in value
+        at this level.
+        (WTF::StringBuilder::extendBufferForAppending): Removed the
+        version of this that takes additionalLength since it's
+        potentially confusing to have a family of functions that have the
+        same name and take the same type of argument, but interpret it
+        subtly differently. Streamlined the code using std::exchange.
+        This function now also includes the logic from the function named
+        extendBufferForAppendingWithoutOverflowCheck, which was subtly
+        misnamed since that was not the only semantic difference. Also
+        removed the ALWAYS_INLINE because the compiler will do the right
+        thing without such heavy handed advice.
+        (WTF::StringBuilder::extendBufferForAppendingSlowCase): Streamlined
+        this by using std::exchange and removed additional overflow checks
+        at this level since reallocateBuffer already does them. Also added
+        a check for the case where the new total length is 0, which would
+        not be handled correctly and efficiently by reallocateBuffer.
+        (WTF::StringBuilder::extendBufferForAppendingLChar): Renamed this
+        from extendBufferForAppending8, since it's now identical to calling
+        extendBufferForAppending<LChar>, except for inlining and linkage.
+        (WTF::StringBuilder::extendBufferForAppendingWithUpconvert):
+        Renamed this from extendBufferForAppending16. It is different from
+        the other extendBuffer functions because is supports upconverting
+        from LChar to UChar. Like the others it relies on allocateBuffer
+        for the overflow checking.
+        (WTF::StringBuilder::appendCharacters): Removed an unnecessary
+        assertion that the characters pointer is non-null; that will fail
+        in an obvious way without an assertion. Simplified the logic and
+        removed some invariant assertions that don't help us much. Changed
+        overflow checking by using saturatedSum to compute the new length.
+        In overflow cases, the new sum will be larger than the maximum
+        string length, but will fit in an unsigned, so we can pass it
+        down to lower levels and let functions like reallocateBuffer do
+        the actual overflow checking. Also use StringImpl::copyCharacters.
+        (WTF::StringBuilder::append): Removed the CFStringRef overload.
+        (WTF::StringBuilder::shouldShrinkToFit const): Rename this from
+        canShrink. Simplify the function a bit and remove the vague FIXME
+        that says "this should be tuned". That may be so, but the FIXME
+        is not really driving us to action.
+        (WTF::StringBuilder::shrinkToFit): Simplify by using the new
+        reallocateBuffer and std::exchange. Removed unneeded assertion
+        about overflow that doesn't help us maintain the invariant.
+        (WTF::StringBuilder::isAllASCII const): Was tempted to remove
+        this function, but for now just made it use the StringView
+        version for brevity.
+
+        * wtf/text/StringBuilder.h: Removed many unneeded includes, and
+        notably included SaturatedArithmetic.h instead of
+        CheckedArithmetic.h because we now use the former instead of the
+        latter. Changed the overflow checking implementation to work
+        more simply based on saturated addition rather than Checked.
+        This allowed us to get rid of dependency on our own unique mode
+        for Checked, called ConditionalCrashOnOverflow. Removed a
+        comment about making a templatized version of StringBuilder.
+        We can do it if we like, but does not seem urgent. Moved
+        fucntion bodies out of the class definition so it's easier to
+        see what's going on in the class. Since m_length is now an
+        ordinary integer, the check for overflowed simply checks to see
+        if the length is larger than the maximum string length. When we
+        encounter overflow that is not about length computation, we set
+        the length to the maximum integer to indicate the failure.
+        Deleted the append overloads for CFStringRef and NSString.
+        Removed m_bufferCharacters, m_is8Bit, and m_isReified.
+        (WTF::StringBuilder::StringBuilder): Simplified the constructor
+        since we only have to initialize the m_shouldCrashOnOverflow member.
+        (WTF::StringBuilder::clear): Fixed a mistake where this was not
+        resetting the m_isReified flag.
+        (WTF::StringBuilder::swap): Updated for changes in the data members.
+        (WTF::StringBuilder::operator StringView const): Moved out of line.
+        Made sure to call the length() function so we crash if this is
+        called after overflow.
+        (WTF::StringBuilder::append): Remove some of the unnecessary checks
+        and special cases in the various versions of append. Most of the
+        checking is done inside appendCharacters, with only a few exceptions.
+        (WTF::StringBuilder::appendSubstring): Moved out of the class
+        definition without making significant changes.
+        (WTF::StringBuilder::appendCharacter): Ditto.
+        (WTF::StringBuilder::toString): Greatly simplified this function
+        by relying on overflow checking in the reifyString function instead
+        of doing it here and removing unneeded invariant assertions.
+        (WTF::StringBuilder::toStringPreserveCapacity const): Ditto.
+        (WTF::StringBuilder::toAtomString const): Rewrote this to streamline,
+        removing explicit overflow checks.
+        (WTF::StringBuilder::length const): Moved out of the class
+        definition without making significant changes.
+        (WTF::StringBuilder::capacity const): Ditto.
+        (WTF::StringBuilder::operator[] const): Ditto.
+        (WTF::StringBuilder::characters const): Implemented this operation
+        in the function template. Now rather than having this call the
+        characters8 and characters16 functions, they can call it.
+        (WTF::StringBuilder::getBufferCharacters<LChar>): Deleted.
+        (WTF::StringBuilder::getBufferCharacters<UChar>): Deleted.
+        (WTF::StringBuilder::appendFromAdapters): Use saturatedSum to
+        compute the required length, which allows the extendBuffer
+        functions to do overflow checking without having to take special
+        checked integer types for arguments.
+        (WTF::StringBuilder::equal): Implement using StringView.
+
+        * wtf/text/StringBuilderJSON.cpp:
+        (WTF::StringBuilder::appendQuotedJSONString): Simplified the checked
+        arithmetic for computing the required capacity. Updated since we
+        removed m_bufferCharacters and changed the type of m_length.
+
+        * wtf/text/cf/StringConcatenateCF.h: Added. Specializes StringTypeAdapter for
+        both CFStringRef and NSString *. If CFStringGetCStringPtr works for Latin-1, then
+        does the 8-bit code path, otherwise the 16-bit.
+
+        * wtf/text/cocoa/TextStreamCocoa.mm: Include StringConcatenateCF.h, since it's
+        now needed to use CFStringRef with StringBuilder.
+
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        Bring base64 encoding/decoding up to more modern WebKit conventions by:
+        - Replace use of "out parameter + bool" with Optional return values.
+        - Using enum class for enumerations.
+        - Replacing SignedOrUnsignedCharVectorAdapter/ConstSignedOrUnsignedCharVectorAdapter
+          with appropriate function overloads.
+
+        Also adds a new StringTypeAdapter for inline base64 encoding data in either makeString()
+        or StringBuilder. To make this work, a few modifications were need to the base64Encode()
+        functions to support the fixed size writeTo() function.
+
+        First, the length of the encoded data is now computed up front depending on the policy.
+        This has been extracted into a new calculateBase64EncodedSize() function used by both
+        the adaptor and by base64Encode when passed a Vector. Previously, when encoding using
+        some policies, the size was an overestimate and the resulting Vector would be resized
+        down after encoding.
+
+        Second, base64EncodeInternal was made into a template function to allow for two new 
+        base64Encode functions, one of which has a UChar* destination. These are used by the
+        adaptor to write the encoded data.
+
+        One additional small change is that now a optional map type parameter has been added
+        to all the encoders to allow using either the default map or the URL one as defined 
+        in RFC 4648. This simplifies the implementation of the StringTypeAdapter and makes the
+        base64URLEncode/base64URLDecode functions into simple convenience functions that use
+        the right defaults for the generic encode/decode functions. 
+
+        * wtf/text/Base64.cpp:
+        (WTF::base64EncodeInternal):
+        (WTF::base64Encode):
+        (WTF::base64DecodeInternal):
+        (WTF::base64Decode):
+        (WTF::base64URLDecode):
+        (WTF::base64URLEncode): Deleted.
+        * wtf/text/Base64.h:
+        (WTF::base64Decode):
+        (WTF::base64Encode):
+        (WTF::base64URLEncode):
+        (WTF::isBase64OrBase64URLCharacter):
+        (WTF::calculateBase64EncodedSize):
+        (WTF::base64Encoded):
+        (WTF::base64URLEncoded):
+        (WTF::StringTypeAdapter<Base64Specification>::StringTypeAdapter):
+        (WTF::StringTypeAdapter<Base64Specification>::length const):
+        (WTF::StringTypeAdapter<Base64Specification>::is8Bit const):
+        (WTF::StringTypeAdapter<Base64Specification>::writeTo const):
+
+2021-05-18  Robin Morisset  <rmorisset@apple.com>
+
+        Make AirAllocateRegistersByGraphColoring use less memory
+        https://bugs.webkit.org/show_bug.cgi?id=225848
+
+        Reviewed by Filip Pizlo.
+
+        Two changes: the addition of LikelyDenseUnsignedIntegerSet, and various improvements to Small(Ptr)Set.
+
+        The latter include:
+        - Renaming SmallPtrSet into SmallSet, as it now supports integers as well as pointers.
+        - Reducing its size by sharing the same storage for m_buffer and for m_smallStorage.
+        This is safe to do, because all operations branch on isSmall() which depends purely on m_capacity.
+        - Adding trivial size(), isEmpty() and memoryUse() methods
+        - Adding a comment at the top of the file explaining when to use, and (more importantly) not to use SmallSet.
+
+        LikelyDenseUnsignedIntegerSet is an even more specialized data structure, that can represent sets of unsigned integers very compactly if they are clustered.
+
+        Finally I added an outOfLineMemoryUse() method to BitVector, making it more convenient to compare the memory consumption of different data structures in the register allocator.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BitVector.h:
+        * wtf/CMakeLists.txt:
+        * wtf/LikelyDenseUnsignedIntegerSet.cpp: Copied from Source/WTF/wtf/SmallPtrSet.cpp.
+        * wtf/LikelyDenseUnsignedIntegerSet.h: Added.
+        (WTF::LikelyDenseUnsignedIntegerSet::LikelyDenseUnsignedIntegerSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::~LikelyDenseUnsignedIntegerSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::contains const):
+        (WTF::LikelyDenseUnsignedIntegerSet::add):
+        (WTF::LikelyDenseUnsignedIntegerSet::size const):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::iterator):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::m_shift):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator++):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator* const):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator== const):
+        (WTF::LikelyDenseUnsignedIntegerSet::iterator::operator!= const):
+        (WTF::LikelyDenseUnsignedIntegerSet::begin const):
+        (WTF::LikelyDenseUnsignedIntegerSet::end const):
+        (WTF::LikelyDenseUnsignedIntegerSet::memoryUse const):
+        (WTF::LikelyDenseUnsignedIntegerSet::validate const):
+        (WTF::LikelyDenseUnsignedIntegerSet::isBitVector const):
+        (WTF::LikelyDenseUnsignedIntegerSet::isValidValue const):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToHashSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToBitVector):
+        * wtf/SmallPtrSet.h: Removed.
+        * wtf/SmallSet.cpp: Renamed from Source/WTF/wtf/SmallPtrSet.cpp.
+        * wtf/SmallSet.h: Added.
+
+2021-05-18  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Locker for locking BaseAudioContext's graph lock
+        https://bugs.webkit.org/show_bug.cgi?id=225935
+
+        Reviewed by Sam Weinig.
+
+        * wtf/RecursiveLockAdapter.h:
+        (WTF::RecursiveLockAdapter::isOwner const):
+        Add isOwner() function that returns true if the current thread is holding the lock.
+        This is needed for WebAudio purposes.
+
+2021-05-18  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Titlebar separator doesn't show when WKWebView is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=220633
+        <rdar://problem/71094055>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h: Defined HAVE_NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER.
+
+2021-05-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Fix PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=225913
+
+        Reviewed by Don Olmstead.
+
+        Fix PlayStation port
+
+        * wtf/PlatformPlayStation.cmake: Rename
+        PLAYSTATION_COPY_SHARED_LIBRARIES to PLAYSTATION_COPY_REQUIREMENTS.
+
+2021-05-17  Saam Barati  <sbarati@apple.com>
+
+        Enable JS to emit sign posts and trace points under Options::exposeProfilersOnGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=225895
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/SystemTracing.h:
+
+2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs
+        https://bugs.webkit.org/show_bug.cgi?id=225886
+        rdar://78114708
+
+        Reviewed by Chris Dumez.
+
+        See WebCore/ChangeLog for more details. Add a helper method on `ObjectIdentifier` that returns true only if it
+        is the empty value or deleted value.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::ObjectIdentifier::isValid const):
+
+2021-05-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use kAudioObjectPropertyElementMain where available
+        https://bugs.webkit.org/show_bug.cgi?id=224635
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+
+2021-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Optimize SQLiteStatement creation and preparation
+        https://bugs.webkit.org/show_bug.cgi?id=225791
+
+        Reviewed by Sam Weinig.
+
+        Allow constructing a UniqueRef<> from a C++ reference. std::unique_ptr<>() can be constructed
+        using a raw pointer and we can construct a UniqueRef<> from a std::unique_ptr<>() so I see
+        no reason not to allow that.
+
+        The reason I needed this is that I want to prevent call sites from allocating SQLiteStatement
+        without going through the SQLiteDatabase. As a result, I made the SQLiteStatement constructor
+        private and marked SQLiteDatabase as a friend class. SQLiteDatabase has to heap-allocate
+        a SQLiteStatement via new and then construct a UniqueRef<> for it. SQLiteDatabase cannot use
+        makeUniqueRef() because the SQLiteStatement constructor is private. I also cannot mark
+        makeUniqueRef() as a friend function of SQLiteStatement or anybody could heap allocate a
+        SQLiteStatement via makeUniqueRef (not just the SQLiteDatabase).
+
+        * wtf/UniqueRef.h:
+        (WTF::UniqueRef::UniqueRef):
+
+2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete WebSQL code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=225739
+
+        Reviewed by Sihui Liu.
+
+        Deleted the experimental feature to disable WebSQL since we've been shipping this,
+        and made the flag to selectively enable WebSQL in WebKit1 an internal debug setting
+        since nobody should be enabling this now.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-05-15  Sam Weinig  <weinig@apple.com>
+
+        Allow conditionally enabling OffscreenCanvas only for non-worker contexts
+        https://bugs.webkit.org/show_bug.cgi?id=225845
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Add new OffscreenCanvasInWorkersEnabled preference.
+
+        * wtf/PlatformEnable.h:
+        Add new ENABLE_OFFSCREEN_CANVAS_IN_WORKERS macro.
+
+2021-05-15  Alberto Garcia  <berto@igalia.com>
+
+        CeilingOnPageSize too low for Loongson CPUs
+        https://bugs.webkit.org/show_bug.cgi?id=221198
+        <rdar://problem/74089683>
+
+        Reviewed by Michael Catanzaro.
+
+        Increase the page size to 16KB in MIPS64.
+
+        * wtf/PageBlock.h:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks()
+        https://bugs.webkit.org/show_bug.cgi?id=225820
+
+        Reviewed by Darin Adler.
+
+        Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks(). Those don't match very closely the
+        std::filesystem API we use internally and they are not very efficient because we gather several attributes
+        of a file but the callers are usually only interested in one thing (e.g. file type or file size).
+
+        Callers interested in the file size, can call the pre-existing FileSystem::fileSize(). For call sites
+        wanting to check if it is a hidden file, I introduced a new FileSystem::isHiddenFile() API. For call sites
+        interested in the file type, I replaced FileSystem::isDirectory() / FileSystem::isDirectoryFollowingSymlinks()
+        with more generic FileSystem::fileType() / FileSystem::fileTypeFollowingSymlinks().
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FileMetadata.h: Removed.
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::isHiddenFile):
+        (WTF::FileSystemImpl::fileTypePotentiallyFollowingSymLinks):
+        (WTF::FileSystemImpl::fileType):
+        (WTF::FileSystemImpl::fileTypeFollowingSymlinks):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy / prefixed WebAudio implementation
+        https://bugs.webkit.org/show_bug.cgi?id=225832
+
+        Reviewed by Darin Adler.
+
+        Drop preference for prefixed WebAudio, which was disabled everywhere.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Port WTF::FileSystem::realPath() to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225828
+
+        Reviewed by Darin Adler.
+
+        Port WTF::FileSystem::realPath() to std::filesystem (in particular std::filesystem::canonical())
+        so that we no longer need platform-specific code.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::realPath):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop "get" prefix from WTF::FileSystem's getFileModificationTime() / getFileCreationTime()
+        https://bugs.webkit.org/show_bug.cgi?id=225812
+
+        Reviewed by Darin Adler.
+
+        We avoid the "get" prefix in WebKit.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::fileModificationTime):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::fileCreationTime):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::fileCreationTime):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::fileCreationTimeFromFindData):
+        (WTF::FileSystemImpl::fileModificationTimeFromFindData):
+        (WTF::FileSystemImpl::fileCreationTime):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::getVolumeFreeSpace() to FileSystem::volumeFreeSpace()
+        https://bugs.webkit.org/show_bug.cgi?id=225811
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::getVolumeFreeSpace() to FileSystem::volumeFreeSpace() given that we
+        avoid the "get" prefix in WebKit. Also modernize the function by returning an
+        Optional<uint64_t> instead of using an out-parameter.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::volumeFreeSpace):
+        * wtf/FileSystem.h:
+
+2021-05-14  Devin Rousso  <drousso@apple.com>
+
+        Promote `-[WKWebView _pageExtendedBackgroundColor]` SPI to `-[WKWebView underPageBackgroundColor]` API
+        https://bugs.webkit.org/show_bug.cgi?id=225615
+        <rdar://problem/76568094>
+
+        Reviewed by Wenson Hsieh.
+
+        `underPageBackgroundColor` is a `null_resettable` property that will return (in order of validity)
+         - the most recent non-null value provided
+         - the CSS `background-color` of the `<body>` and/or `<html>` (this is the current value of `_pageExtendedBackgroundColor`)
+         - the underlying platform view's background color
+        Modifications to this property will not have any effect until control is returned to the runloop.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Remove the experimental settings `UseSampledPageTopColorForScrollAreaBackgroundColor`and
+        `UseThemeColorForScrollAreaBackgroundColor` now that clients can override the default
+        overscroll area background color using `-[WKWebView setUnderPageBackgroundColor:]`.
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Introduce FileSystem::updateFileModificationTime()
+        https://bugs.webkit.org/show_bug.cgi?id=225810
+
+        Reviewed by Darin Adler.
+
+        Introduce FileSystem::updateFileModificationTime() to update the modification time of a
+        file. The implementation is cross-platform and relies on std::filesystem. It allows us
+        to replace platform-specific code that we had at the WebKit2 layer.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::updateFileModificationTime):
+        * wtf/FileSystem.h:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused FileSystem::homeDirectoryPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225808
+
+        Reviewed by Anders Carlsson.
+
+        Only Windows-specific code was calling FileSystem::homeDirectoryPath() but the Windows implementation
+        for this was always returning the empty string.
+
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::homeDirectoryPath): Deleted.
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::homeDirectoryPath): Deleted.
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::homeDirectoryPath): Deleted.
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::getFileSize() to FileSystem::fileSize()
+        https://bugs.webkit.org/show_bug.cgi?id=225798
+
+        Reviewed by Alex Christensen.
+
+        Rename FileSystem::getFileSize() to FileSystem::fileSize() as we usually avoid the "get"
+        prefix in WebKit. It is also more consistent with the std::filesystem::file_size() the
+        implementation relies on.
+
+        Also have it return an Optional<uint64_t> instead of taking a long long out-parameter, as
+        this is more modern.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::fileSize):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::fileSize):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::fileSize):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::getFileSizeFromByHandleFileInformationStructure):
+        (WTF::FileSystemImpl::fileSize):
+        (WTF::FileSystemImpl::MappedFileData::mapFileHandle):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
+        https://bugs.webkit.org/show_bug.cgi?id=225806
+
+        Reviewed by Alex Christensen.
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName(), as we avoid "get" prefixes in WebKit.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::pathFileName):
+        (WTF::FileSystemImpl::pathGetFileName): Deleted.
+        * wtf/FileSystem.h:
+
+2021-05-13  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)
+        https://bugs.webkit.org/show_bug.cgi?id=225578
+
+        Reviewed by Sam Weinig.
+
+        Compile-time enabled on all Cocoa platforms.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::readOrMakeSalt):
+        (WTF::FileSystemImpl::parentPath):
+        (WTF::FileSystemImpl::directoryName): Deleted.
+        * wtf/FileSystem.h:
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
+        https://bugs.webkit.org/show_bug.cgi?id=225772
+
+        Reviewed by Darin Adler.
+
+        I don't think the "file" prefix is useful here so I am renaming the function to
+        isDirectory(). Also, instead of using an enum parameter to decide whether or
+        not to follow symlink, I am adding a separate function called
+        isDirectoryFollowingSymlinks(). This is consistent with the
+        fileMetadata() / fileMetadataFollowingSymlinks() pattern, which Darin said he
+        preferred.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::isDirectory):
+        (WTF::FileSystemImpl::isDirectoryFollowingSymlinks):
+        (WTF::FileSystemImpl::fileIsDirectory): Deleted.
+        * wtf/FileSystem.h:
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Introduce FileSystem::hardLinkCount()
+        https://bugs.webkit.org/show_bug.cgi?id=225767
+
+        Reviewed by Darin Adler.
+
+        Introduce FileSystem::hardLinkCount() to replace our platform-specific implementation
+        in NetworkCacheBlobStorage.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::hardLinkCount):
+        * wtf/FileSystem.h:
+
+2021-05-13  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF] Add holdLock() overload for WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=225652
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch adds a holdLock() overload for WTF::DataMutex as syntactic
+        sugar to simplify usage in a similar way to what holdLock() already
+        does for WTF::Locker.
+
+        * wtf/DataMutex.h:
+        (WTF::holdLock):
+
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        We originally added StringBuilder::appendNumber to resolve the ambiguity
+        between UChar and uint16_t, but that problem was solved long ago and it
+        is safe to use StringBuilder::append, including the variadic form, on all
+        types of numbers and we'll get the same results we did with appendNumber.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::writeJSON const): Use append instead of appendNumber.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendNumber): Deleted.
+        * wtf/text/StringBuilder.h: Removed appendNumber.
+
+        * wtf/text/TextStream.cpp:
+        (WTF::TextStream::operator<<): Use append instead of appendNumber.
+
+2021-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Implement some common Baseline JIT slow paths using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225682
+
+        Reviewed by Filip Pizlo.
+
+        Introduce ENABLE(EXTRA_CTI_THUNKS) flag to guard the use of these new thunks.
+        Currently, the thunks are 64-bit only, and only supported for ARM64 and non-Windows
+        X86_64.  The reason it is not supported for Windows as well is because Windows
+        only has 4 argument registers.  In this patch, the thunks do not use that many
+        registers yet, but there will be more thunks coming that will require the use
+        of up to 6 argument registers.
+
+        * wtf/PlatformEnable.h:
+
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Port WTF::FileSystem::listDirectory to std::filesystem with the following 2 changes:
+        - The function no longer takes a (blob-style) filter parameter
+        - The function now returns file names instead of file paths, allowing the call sites
+          to more easily filter based on prefixes.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::listDirectory):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
+2021-05-11  Darin Adler  <darin@apple.com>
+
+        Remove the String::toInt family of functions
+        https://bugs.webkit.org/show_bug.cgi?id=225599
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/text/AtomString.h: Deleted AtomString::toInt.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::toIntStrict): Deleted.
+        (WTF::StringImpl::toUIntStrict): Deleted.
+        (WTF::StringImpl::toInt64Strict): Deleted.
+        (WTF::StringImpl::toUInt64Strict): Deleted.
+        (WTF::StringImpl::toIntPtrStrict): Deleted.
+        (WTF::StringImpl::toInt): Deleted.
+        (WTF::StringImpl::toUInt): Deleted.
+        (WTF::StringImpl::toInt64): Deleted.
+        (WTF::StringImpl::toUInt64): Deleted.
+        (WTF::StringImpl::toIntPtr): Deleted.
+        * wtf/text/StringImpl.h: Deleted the above functions.
+
+        * wtf/text/StringToIntegerConversion.h: Removed toIntegralType.
+
+        * wtf/text/StringView.cpp:
+        (WTF::parseUInt16): Deleted.
+
+        * wtf/text/StringView.h: Deleted StringView::toInt,
+        StringView::toIntStrict, StringView::toUInt64Strict,
+        StringView::toInt64Strict, and parseUInt16. Changed the constructor
+        that takes a const char* to work when passed nullptr. StringView has
+        a null value, and converting a null const char* should produce that.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::toIntStrict const): Deleted.
+        (WTF::String::toUIntStrict const): Deleted.
+        (WTF::String::toInt64Strict const): Deleted.
+        (WTF::String::toUInt64Strict const): Deleted.
+        (WTF::String::toIntPtrStrict const): Deleted.
+        (WTF::String::toInt const): Deleted.
+        (WTF::String::toUInt const): Deleted.
+        (WTF::String::toInt64 const): Deleted.
+        (WTF::String::toUInt64 const): Deleted.
+        (WTF::String::toIntPtr const): Deleted.
+        (WTF::lengthOfCharactersAsInteger): Deleted.
+        (WTF::charactersToIntStrict): Deleted.
+        (WTF::charactersToUIntStrict): Deleted.
+        (WTF::charactersToInt64Strict): Deleted.
+        (WTF::charactersToUInt64Strict): Deleted.
+        (WTF::charactersToIntPtrStrict): Deleted.
+        (WTF::charactersToInt): Deleted.
+        (WTF::charactersToUInt): Deleted.
+        (WTF::charactersToInt64): Deleted.
+        (WTF::charactersToUInt64): Deleted.
+        (WTF::charactersToIntPtr): Deleted.
+        * wtf/text/WTFString.h: Deleted the above functions.
+
+2021-05-11  Devin Rousso  <drousso@apple.com>
+
+        [macCatalyst] should have CSS `hover: hover` and `pointer: fine`
+        https://bugs.webkit.org/show_bug.cgi?id=225672
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+        Add `HAVE_MOUSE_DEVICE_OBSERVATION` and `HAVE_STYLUS_DEVICE_OBSERVATION` to make callsites
+        clearer instead of having a somewhat unrelated connection to `HAVE_UIKIT_WITH_MOUSE_SUPPORT`
+        and `HAVE_PENCILKIT_TEXT_INPUT` (not to mention both of them are `PLATFORM(MACCATALYST)`
+        which isn't desirable since macCatalyst should consider the mouse as the primary pointing
+        device, just like macOS).
+
+2021-05-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove xpc_connection_kill
+        https://bugs.webkit.org/show_bug.cgi?id=225602
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/PlatformHave.h:
+
+2021-05-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS Release wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225522
+        <rdar://problem/77680019>
+
+        Reviewed by Darin Adler.
+
+        Pass ec parameter to std::filesystem::directory_iterator() so that it doesn't throw in case of the
+        path does not exist. Normally, the function would return early earlier if the path does not exist
+        or isn't a directory. However, in the context of the test, this function is getting called on a
+        background thread and another thread is deleting the directory in parallel.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+
+2021-05-10  Devin Rousso  <drousso@apple.com>
+
+        `SLEEP_THREAD_FOR_DEBUGGER` should print the PID before sleeping
+        https://bugs.webkit.org/show_bug.cgi?id=225619
+
+        Reviewed by Tim Horton.
+
+        * wtf/DebugUtilities.h:
+
 2021-05-10  Rob Buis  <rbuis@igalia.com>
 
         Implement <form>.requestSubmit()

@@ -51,9 +51,10 @@ void TextTrackPrivateRemote::setMode(TextTrackMode mode)
     if (!m_gpuProcessConnection)
         return;
 
-    if (mode != m_mode)
-        m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_identifier, mode), m_playerIdentifier);
+    if (mode == InbandTextTrackPrivate::mode())
+        return;
 
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_identifier, mode), m_playerIdentifier);
     InbandTextTrackPrivate::setMode(mode);
 }
 
@@ -81,11 +82,10 @@ void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfigura
     }
 
     m_trackIndex = configuration.trackIndex;
+    m_inBandMetadataTrackDispatchType = configuration.inBandMetadataTrackDispatchType;
     m_startTimeVariance = configuration.startTimeVariance;
 
-    m_format = configuration.cueFormat;
     m_kind = configuration.kind;
-    m_mode = configuration.mode;
     m_isClosedCaptions = configuration.isClosedCaptions;
     m_isSDH = configuration.isSDH;
     m_containsOnlyForcedSubtitles = configuration.containsOnlyForcedSubtitles;

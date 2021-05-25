@@ -349,6 +349,13 @@ public:
     // Use this to iterate over set bits.
     iterator begin() const { return iterator(*this, findBit(0, true)); }
     iterator end() const { return iterator(*this, size()); }
+
+    unsigned outOfLineMemoryUse() const
+    {
+        if (isInline())
+            return 0;
+        return byteCount(size());
+    }
         
 private:
     friend class JSC::CachedBitVector;

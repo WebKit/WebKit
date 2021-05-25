@@ -312,29 +312,38 @@ function testRegExpObject(callback)
 function testImageData(callback)
 {
     debug("Testing ImageData");
-    evalAndLog("canvas = document.createElement('canvas')");
-    evalAndLog("canvas.width = 8");
-    evalAndLog("canvas.height = 8");
-    evalAndLog("test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8)");
+    function testImageData(colorSpace, callback) {
+        debug(`Testing ImageData: { colorSpace: ${colorSpace} }`);
+        evalAndLog("canvas = document.createElement('canvas')");
+        evalAndLog("canvas.width = 8");
+        evalAndLog("canvas.height = 8");
+        evalAndLog(`test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8, { colorSpace: ${colorSpace} })`);
 
-    for (var i = 0; i < 256; ++i) {
-        test_data.data[i] = i;
+        for (var i = 0; i < 256; ++i) {
+            test_data.data[i] = i;
+        }
+
+        testValue(test_data, function(result) {
+            self.result = result;
+            shouldBeTrue("test_data !== result");
+            shouldBeEqualToString("Object.prototype.toString.call(result)", "[object ImageData]");
+            shouldBe("result.width", "test_data.width");
+            shouldBe("result.height", "test_data.height");
+            shouldBe("result.data.length", "test_data.data.length");
+            shouldBe("result.colorSpace", "test_data.colorSpace");
+            if (arrayCompare(test_data.data, result.data)) {
+                testPassed("result data matches");
+            } else {
+                testFailed("result data doesn't match");
+            }
+            callback();
+        });
     }
 
-    testValue(test_data, function(result) {
-        self.result = result;
-        shouldBeTrue("test_data !== result");
-        shouldBeEqualToString("Object.prototype.toString.call(result)", "[object ImageData]");
-        shouldBe("result.width", "test_data.width");
-        shouldBe("result.height", "test_data.height");
-        shouldBe("result.data.length", "test_data.data.length");
-        if (arrayCompare(test_data.data, result.data)) {
-            testPassed("result data matches");
-        } else {
-            testFailed("result data doesn't match");
-        }
-        callback();
-    });
+    forEachWithCallback(testImageData, [
+        `"srgb"`,
+        `undefined`
+    ], callback);
 }
 
 function readBlobAsText(blob, callback)

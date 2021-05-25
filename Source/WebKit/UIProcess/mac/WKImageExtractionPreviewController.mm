@@ -29,61 +29,39 @@
 #if ENABLE(IMAGE_EXTRACTION) && PLATFORM(MAC)
 
 #import "WebPageProxy.h"
-#import <wtf/FileSystem.h>
+#import <pal/mac/QuickLookUISoftLink.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/WeakPtr.h>
-
-@implementation WKImageExtractionPreviewItem {
-    RetainPtr<NSURL> _url;
-    RetainPtr<NSString> _title;
-}
-
-- (instancetype)initWithURL:(NSURL *)url title:(NSString *)title
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _url = url;
-    _title = adoptNS([title copy]);
-
-    return self;
-}
-
-- (void)dealloc
-{
-    FileSystem::deleteFile([_url path]);
-
-    [super dealloc];
-}
-
-#pragma mark - QLPreviewItem
-
-- (NSURL *)previewItemURL
-{
-    return _url.get();
-}
-
-- (NSString *)previewItemTitle
-{
-    return _title.get();
-}
-
-@end
 
 @implementation WKImageExtractionPreviewController {
-    WeakPtr<WebKit::WebPageProxy> _page;
-    RetainPtr<WKImageExtractionPreviewItem> _previewItem;
+    RetainPtr<QLItem> _item;
+    RetainPtr<NSData> _imageData;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page url:(NSURL *)url title:(NSString *)title
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)imageData title:(NSString *)title imageURL:(NSURL *)imageURL
 {
     if (!(self = [super init]))
         return nil;
 
-    _page = makeWeakPtr(page);
-    _previewItem = adoptNS([[WKImageExtractionPreviewItem alloc] initWithURL:url title:title]);
+    _imageData = imageData;
+    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:(id)self contentType:UTTypePNG previewTitle:title]);
+    if ([_item respondsToSelector:@selector(setPreviewOptions:)]) {
+        auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
+        if (imageURL)
+            [previewOptions setObject:imageURL forKey:@"imageURL"];
+        if (NSURL *pageURL = URL { URL { }, page.currentURL() })
+            [previewOptions setObject:pageURL forKey:@"pageURL"];
+        [_item setPreviewOptions:previewOptions.get()];
+    }
 
     return self;
+}
+
+#pragma mark - QLPreviewItemDataProvider
+
+- (NSData *)provideDataForItem:(QLItem *)item
+{
+    ASSERT(item == _item);
+    return _imageData.get();
 }
 
 #pragma mark - QLPreviewPanelDataSource
@@ -96,7 +74,7 @@
 - (id <QLPreviewItem>)previewPanel:(QLPreviewPanel *)panel previewItemAtIndex:(NSInteger)index
 {
     ASSERT(!index);
-    return _previewItem.get();
+    return _item.get();
 }
 
 #if USE(APPLE_INTERNAL_SDK)

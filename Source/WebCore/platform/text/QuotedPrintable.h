@@ -28,19 +28,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QuotedPrintable_h
-#define QuotedPrintable_h
+#pragma once
 
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-void quotedPrintableEncode(const Vector<char>&, Vector<char>&);
-void quotedPrintableEncode(const char*, size_t, Vector<char>&);
+Vector<uint8_t> quotedPrintableEncode(const Vector<uint8_t>&);
+Vector<uint8_t> quotedPrintableEncode(const uint8_t*, size_t);
 
-void quotedPrintableDecode(const Vector<char>&, Vector<char>&);
-void quotedPrintableDecode(const char*, size_t, Vector<char>&);
+Vector<uint8_t> quotedPrintableDecode(const Vector<uint8_t>&);
+Vector<uint8_t> quotedPrintableDecode(const uint8_t*, size_t);
 
 } // namespace WebCore
-
-#endif // QuotedPrintable_h

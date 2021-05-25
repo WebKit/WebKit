@@ -1,3 +1,2021 @@
+2021-05-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Tools][run-webkit-tests] Remove more leftover tests webserver PHP remains
+        https://bugs.webkit.org/show_bug.cgi?id=226089
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove leftover PHP module configurations used on Linux now that PHP is not used anymore.
+
+        * http/conf/archlinux-httpd.conf: Removed PHP module configuration.
+        * http/conf/debian-httpd-2.4-php7.0.conf: Removed.
+        * http/conf/debian-httpd-2.4-php7.1.conf: Removed.
+        * http/conf/debian-httpd-2.4-php7.2.conf: Removed.
+        * http/conf/debian-httpd-2.4-php7.4.conf: Removed.
+        * http/conf/debian-httpd-2.4.conf: Renamed from LayoutTests/http/conf/debian-httpd-2.4-php7.3.conf
+        and removed PHP module configuration.
+        * http/conf/fedora-httpd-2.2.conf: Removed PHP module configuration.
+        * http/conf/fedora-httpd-2.4-php7.conf: Removed.
+        * http/conf/fedora-httpd-2.4.conf: Removed PHP module configuration.
+
+2021-05-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        Set CanvasImageSmoothing.imageSmoothingQuality value to 'low' as default
+        https://bugs.webkit.org/show_bug.cgi?id=225952
+
+        Reviewed by Sam Weinig.
+
+        Defined by spec:
+        https://html.spec.whatwg.org/multipage/canvas.html#canvasimagesmoothing
+
+        * platform/gtk/TestExpectations:
+
+2021-05-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Delete unused LayoutTests/svg resources
+        https://bugs.webkit.org/show_bug.cgi?id=226057
+        <rdar://problem/78284735>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * svg/W3C-SVG-1.1/resources/SVG-1.1-monolithic-fixed.dtd: Removed.
+        * svg/W3C-SVG-1.1/resources/SVGImageTest.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/animation-extRef-image1.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/animation-extRef-image2.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/animation-extRef-image3.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/bullet-small.png: Removed.
+        * svg/W3C-SVG-1.1/resources/bullet-white.png: Removed.
+        * svg/W3C-SVG-1.1/resources/bullet.png: Removed.
+        * svg/W3C-SVG-1.1/resources/bumpMap.png: Removed.
+        * svg/W3C-SVG-1.1/resources/coords-units-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/coords-units-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/diagarrow.png: Removed.
+        * svg/W3C-SVG-1.1/resources/fillChangeColor.ICM: Removed.
+        * svg/W3C-SVG-1.1/resources/filters-composite-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/gam030b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam045b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam056b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam100b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/gam200b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/greentopbutton.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/image1.png: Removed.
+        * svg/W3C-SVG-1.1/resources/image1_b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/image2_b.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/image2_b.png: Removed.
+        * svg/W3C-SVG-1.1/resources/leftarrow.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-1st.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-2nd.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-3rd.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-4th.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-01-f-start.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-03-f-1st.png: Removed.
+        * svg/W3C-SVG-1.1/resources/linking-uri-03-f-start.png: Removed.
+        * svg/W3C-SVG-1.1/resources/makealpha.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/myimage.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_bullet.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_down.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_downleft.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_downright.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_frame.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_left.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_noframe.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_right.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_svg.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_up.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_upleft.png: Removed.
+        * svg/W3C-SVG-1.1/resources/nav_upright.png: Removed.
+        * svg/W3C-SVG-1.1/resources/old-name-2-new-name1.html: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-02-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-02-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-03-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-04-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/paths-data-04-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/plant.jpg: Removed.
+        * svg/W3C-SVG-1.1/resources/rects_b.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/rightarrow.png: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-b.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-ellipse-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-b.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-f.png: Removed.
+        * svg/W3C-SVG-1.1/resources/shapes-rect-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/struct-frag-01-B.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/struct-image-02.png: Removed.
+        * svg/W3C-SVG-1.1/resources/svgRef4.css: Removed.
+        * svg/W3C-SVG-1.1/resources/svgRef4.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-align-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-align-03-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-tref-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/text-ws-01-f.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/toc-sv.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/toc-svcmp.svg: Removed.
+        * svg/W3C-SVG-1.1/resources/uparrow.png: Removed.
+        * svg/as-image/resources/circle-nosize.svg: Removed.
+        * svg/custom/resources/object-sizing-height-50p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-50p-height-50p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-50p-height-75p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-50p.svg: Removed.
+        * svg/custom/resources/object-sizing-width-75p-height-50p.svg: Removed.
+        * svg/dom/SVGScriptElement/resources/script-load2.js: Removed.
+        * svg/dom/SVGScriptElement/resources/script-load3.js: Removed.
+        * svg/dom/SVGScriptElement/resources/script-load4.js: Removed.
+
+2021-05-21  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Last few seconds of 'audio/webm; codecs=vorbis' appended to a SampleBuffer are not played
+        https://bugs.webkit.org/show_bug.cgi?id=226069
+        <rdar://78004793>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-bigsur/media/media-source/content/test-vorbis-manifest.json: Added.
+        * platform/mac-bigsur/media/media-source/content/test-vorbis.webm: Added.
+        * platform/mac-bigsur/media/media-source/media-vorbis-partial-expected.txt: Added.
+        * platform/mac-bigsur/media/media-source/media-vorbis-partial.html: Added.
+
+2021-05-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        FrameLoader::loadURL, FrameLoader::loadPostRequest not attributing requests as app bound
+        https://bugs.webkit.org/show_bug.cgi?id=225923
+        <rdar://problem/78160933>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/in-app-browser-privacy/app-bound-attribution-load-url-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-load-url.html: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-ping-load-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-ping-load.html: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-post-request-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-post-request.html: Added.
+        * http/tests/in-app-browser-privacy/resources/post.py: Added.
+        * http/tests/navigation/resources/check-ping-app-bound-data.py: Added.
+        * platform/ios-wk2/TestExpectations:
+        These tests rely on internal additions, so I will skip it here and
+        unskip in the future.
+
+2021-05-21  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Fix use after move bug in WebXRSession
+        https://bugs.webkit.org/show_bug.cgi?id=226074
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXR test expectations.
+
+        * platform/wpe/TestExpectations:
+
+2021-05-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [LayoutTests] Delete unused imported/blink resources
+        https://bugs.webkit.org/show_bug.cgi?id=226047
+        <rdar://problem/78280660>
+
+        Reviewed by Dewei Zhu.
+
+        * imported/blink/compositing/iframes/resources/subframe-with-fixed-position-element.html: Removed.
+        * imported/blink/compositing/layer-creation/resources: Removed.
+        * imported/blink/compositing/overflow/resources: Removed.
+        * imported/blink/css3/blending/resources: Removed.
+        * imported/blink/editing/execCommand/resources: Removed.
+        * imported/blink/editing/selection/resources: Removed.
+        * imported/blink/fast/canvas/resources: Removed.
+        * imported/blink/fast/css/resources/ahem.html: Removed.
+        * imported/blink/fast/css/resources/circle-small.svg: Removed.
+        * imported/blink/fast/css/resources/font-face-local-file-frame.html: Removed.
+        * imported/blink/fast/css/resources/media-query-with-cached-sheet-next.html: Removed.
+        * imported/blink/fast/css/resources/resize-corner-tracking-touch-iframe.html: Removed.
+        * imported/blink/fast/dom/HTMLDialogElement/resources: Removed.
+        * imported/blink/fast/dom/HTMLImageElement/resources: Removed.
+        * imported/blink/fast/dom/Range/resources: Removed.
+        * imported/blink/fast/dom/Window/resources: Removed.
+        * imported/blink/fast/dom/custom/resources: Removed.
+        * imported/blink/fast/dom/shadow/resources: Removed.
+        * imported/blink/fast/events/resources: Removed.
+        * imported/blink/fast/events/touch/gesture/resources: Removed.
+        * imported/blink/fast/events/touch/resources: Removed.
+        * imported/blink/fast/forms/date-multiple-fields/resources: Removed.
+        * imported/blink/fast/forms/datetimelocal-multiple-fields/resources: Removed.
+        * imported/blink/fast/forms/month-multiple-fields/resources: Removed.
+        * imported/blink/fast/forms/resources/popup-no-crash.html: Removed.
+        * imported/blink/fast/forms/time-multiple-fields/resources: Removed.
+        * imported/blink/fast/forms/week-multiple-fields/resources: Removed.
+        * imported/blink/fast/frames/resources/detach-frame-nested-subframe.html: Removed.
+        * imported/blink/fast/frames/resources/frame-set-location-badstring.html: Removed.
+        * imported/blink/fast/html/imports/resources/async-child.html: Removed.
+        * imported/blink/fast/html/imports/resources/async-root-child-1.html: Removed.
+        * imported/blink/fast/html/imports/resources/async-root-child-2.html: Removed.
+        * imported/blink/fast/html/imports/resources/async-root.html: Removed.
+        * imported/blink/fast/html/imports/resources/child-frame-with-import.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-1.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-2.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-3.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-4.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-5.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-6.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-7.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-8.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-parent-12.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-parent-34.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello-parent-56.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-hello.html: Removed.
+        * imported/blink/fast/html/imports/resources/custom-element-style.html: Removed.
+        * imported/blink/fast/html/imports/resources/cycle-two-parents-2-b.html: Removed.
+        * imported/blink/fast/html/imports/resources/cycle-two-parents-3-a.html: Removed.
+        * imported/blink/fast/html/imports/resources/do-document-write.html: Removed.
+        * imported/blink/fast/html/imports/resources/events-inline.html: Removed.
+        * imported/blink/fast/html/imports/resources/hello-css.html: Removed.
+        * imported/blink/fast/html/imports/resources/hello-legacy.html: Removed.
+        * imported/blink/fast/html/imports/resources/hello-nodtd.html: Removed.
+        * imported/blink/fast/html/imports/resources/import-custom-element-onload-child.html: Removed.
+        * imported/blink/fast/html/imports/resources/import-custom-element-onload-grandchild.html: Removed.
+        * imported/blink/fast/html/imports/resources/import-events-target.html: Removed.
+        * imported/blink/fast/html/imports/resources/import-link-with-media-query.html: Removed.
+        * imported/blink/fast/html/imports/resources/meta-encoding.html: Removed.
+        * imported/blink/fast/html/imports/resources/nest-dup-2-parent.html: Removed.
+        * imported/blink/fast/html/imports/resources/nest-dup-2.html: Removed.
+        * imported/blink/fast/html/imports/resources/nest-dup-child.html: Removed.
+        * imported/blink/fast/html/imports/resources/nest-dup-grand-parent.html: Removed.
+        * imported/blink/fast/html/imports/resources/nest-dup-parent.html: Removed.
+        * imported/blink/fast/html/imports/resources/nest-dup.html: Removed.
+        * imported/blink/fast/html/imports/resources/no-encoding.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr1-i0.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr1-i1.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr1-i2.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr1-i3.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr1-i4.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr1-i5.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i0.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i1.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i2.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i3.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i4.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i5.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i6.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr2-i7.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr3-i6.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr3-i7.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i0.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i1.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i2.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i3.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i4.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i5.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i6.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i7.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i8.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-i9.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr4-ia.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr5-i9.html: Removed.
+        * imported/blink/fast/html/imports/resources/nr5-ia.html: Removed.
+        * imported/blink/fast/html/imports/resources/onload-root.html: Removed.
+        * imported/blink/fast/html/imports/resources/script-document-write.html: Removed.
+        * imported/blink/fast/html/imports/resources/script-leaf.html: Removed.
+        * imported/blink/fast/html/imports/resources/script-prototype-test.html: Removed.
+        * imported/blink/fast/html/imports/resources/setting-greet-var.html: Removed.
+        * imported/blink/fast/html/imports/resources/shared-crash-child.html: Removed.
+        * imported/blink/fast/html/imports/resources/shared-crash-dup.html: Removed.
+        * imported/blink/fast/html/imports/resources/shared-crash-grandchild.html: Removed.
+        * imported/blink/fast/html/imports/resources/shared-crash-root.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-basic-child-dynamic.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-basic-child.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-basic-grandchild.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-blue.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-link-block-child.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-link-child.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-link-grandchild.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-red-parent.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-red.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-target-blue.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-dynamic-following.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-dynamic-leading.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-import-green.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-import-red.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-link.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-shared.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-style.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-subimport-green.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-subimport-red.html: Removed.
+        * imported/blink/fast/html/imports/resources/style-tree-order-hide-subimport.html: Removed.
+        * imported/blink/fast/html/resources: Removed.
+        * imported/blink/fast/images/resources: Removed.
+        * imported/blink/fast/loader/resources/javascript-detached-frame-iframe.html: Removed.
+        * imported/blink/fast/multicol/resources: Removed.
+        * imported/blink/fast/parser/resources: Removed.
+        * imported/blink/fast/repaint/resources: Removed.
+        * imported/blink/fast/workers/resources: Removed.
+        * imported/blink/fast/xsl/resources: Removed.
+        * imported/blink/fullscreen/resources: Removed.
+        * imported/blink/http/tests/css/resources/cors-ahem.php: Removed.
+        * imported/blink/http/tests/css/resources/delayedCircle.php: Removed.
+        * imported/blink/http/tests/css/resources/performance-info-with-cached-sheet-next.html: Removed.
+        * imported/blink/http/tests/css/resources/referrer-check.php: Removed.
+        * imported/blink/http/tests/history/resources/frameset-dest.html: Removed.
+        * imported/blink/http/tests/history/resources/push-state-in-grandchild-child.html: Removed.
+        * imported/blink/http/tests/history/resources/push-state-in-grandchild-grandchild.html: Removed.
+        * imported/blink/http/tests/misc/resources/form-post-success.html: Removed.
+        * imported/blink/http/tests/misc/resources/frame-with-form-action-using-replace-child.html: Removed.
+        * imported/blink/http/tests/misc/resources/generatedimage.php: Removed.
+        * imported/blink/http/tests/misc/resources/iframe-accept-ch.php: Removed.
+        * imported/blink/http/tests/misc/resources/image-checks-for-dpr.php: Removed.
+        * imported/blink/http/tests/misc/resources/image-checks-for-viewport-width.php: Removed.
+        * imported/blink/http/tests/misc/resources/image-checks-for-width.php: Removed.
+        * imported/blink/http/tests/misc/resources/image-slow-out-of-viewport.pl: Removed.
+        * imported/blink/http/tests/misc/resources/nearly-empty-content-disposition.php: Removed.
+        * imported/blink/http/tests/misc/resources/reentrant-beforeunload-helper.html: Removed.
+        * imported/blink/http/tests/misc/resources/slow-frame-with-image.php: Removed.
+        * imported/blink/http/tests/misc/resources/webtiming-cross-origin-and-back-redirect3.php: Removed.
+        * imported/blink/http/tests/plugins/resources: Removed.
+        * imported/blink/http/tests/resources/accept-ch.php: Removed.
+        * imported/blink/http/tests/resources/dpr.php: Removed.
+        * imported/blink/http/tests/resources/iframe-no-accept-ch.php: Removed.
+        * imported/blink/http/tests/resources/no-last-modified.php: Removed.
+        * imported/blink/http/tests/resources/slow-image-dimensions.php: Removed.
+        * imported/blink/http/tests/resources/testharness-helpers.js: Removed.
+        * imported/blink/http/tests/resources/testharness.css: Removed.
+        * imported/blink/http/tests/resources/tripmine.php: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/resources: Removed.
+        * imported/blink/http/tests/security/mixedContent/resources: Removed.
+        * imported/blink/http/tests/security/mixedContent/websocket/resources: Removed.
+        * imported/blink/http/tests/security/resources/conditional-cors.php: Removed.
+        * imported/blink/http/tests/security/resources/cors-font.php: Removed.
+        * imported/blink/http/tests/security/resources/cors-hello.php: Removed.
+        * imported/blink/http/tests/security/resources/cors-redir.php: Removed.
+        * imported/blink/http/tests/security/resources/cors-redirect.php: Removed.
+        * imported/blink/http/tests/security/resources/cors-style.php: Removed.
+        * imported/blink/http/tests/security/resources/cross-origin-iframe-for-shared-worker.html: Removed.
+        * imported/blink/http/tests/security/resources/doc-with-iframe.html: Removed.
+        * imported/blink/http/tests/security/resources/echo-referrer-header.php: Removed.
+        * imported/blink/http/tests/security/resources/green-background-allow-credentials-import.php: Removed.
+        * imported/blink/http/tests/security/resources/green-background-allow-credentials.php: Removed.
+        * imported/blink/http/tests/security/resources/green-background-allow-star-import.php: Removed.
+        * imported/blink/http/tests/security/resources/green-background-allow-star.php: Removed.
+        * imported/blink/http/tests/security/resources/green-if-cors-anonymous.php: Removed.
+        * imported/blink/http/tests/security/resources/green-if-cors-credentialed.php: Removed.
+        * imported/blink/http/tests/security/resources/iframe-crossorigin-script.html: Removed.
+        * imported/blink/http/tests/security/resources/iframe-for-naked-global-object.html: Removed.
+        * imported/blink/http/tests/security/resources/iframe-for-storage-blocking-changed-shared-worker.html: Removed.
+        * imported/blink/http/tests/security/resources/image-wrapper-with-no-image.svg: Removed.
+        * imported/blink/http/tests/security/resources/img-basic-auth.php: Removed.
+        * imported/blink/http/tests/security/resources/post-origin-to-opener.html: Removed.
+        * imported/blink/http/tests/security/resources/postmessage-document-origin.html: Removed.
+        * imported/blink/http/tests/security/resources/redir.php: Removed.
+        * imported/blink/http/tests/security/resources/referrer-attr-anchor-noreferrer-target.html: Removed.
+        * imported/blink/http/tests/security/resources/referrer-attr-anchor-target.html: Removed.
+        * imported/blink/http/tests/security/resources/referrer-on-client-redirect.html: Removed.
+        * imported/blink/http/tests/security/resources/referrer-policy-conflicting-policies.html: Removed.
+        * imported/blink/http/tests/security/resources/referrer-policy-script.php: Removed.
+        * imported/blink/http/tests/security/resources/referrer-policy-start-crossorigin.html: Removed.
+        * imported/blink/http/tests/security/resources/script-allow-credentials.php: Removed.
+        * imported/blink/http/tests/security/resources/script-allow-star.php: Removed.
+        * imported/blink/http/tests/security/resources/webaudio: Removed.
+        * imported/blink/http/tests/security/resources/xorigincss7.html: Removed.
+        * imported/blink/http/tests/svg/resources/delayCachedLoadScript.php: Removed.
+        * imported/blink/http/tests/webfont/resources: Removed.
+        * imported/blink/http/tests/websocket/resources: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/access-control-basic-post-success-no-content-type.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/access-control-preflight-request-header-sorted.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/access-control-preflight-request-headers-origin.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/access-control-preflight-request-invalid-status.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/access-control-preflight-request-must-not-contain-cookie.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/access-control-sandboxed-iframe-allow-origin-null-iframe.html: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/echo-random.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/echo-request-origin.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/frame-with-insecure-xhr.html: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/invalid-utf8-json.pl: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/json-response-overflow.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/multiple-send.html: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/navigation-abort-detaches-frame-subframe.html: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/noscript-check.html: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/post-echo.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/redirect-cors-origin-null-pass.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/redirect-cors-origin-null.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/redirect-loop.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/request-encoding4-doc.html: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/xmlhttprequest-in-unload-sync.html: Removed.
+        * imported/blink/http/tests/xmlhttprequest/resources/xmlhttprequest-no-content-type-with-text.php: Removed.
+        * imported/blink/http/tests/xmlhttprequest/workers/resources: Removed.
+        * imported/blink/imported/web-platform-tests/screen-orientation/resources: Removed.
+        * imported/blink/imported/web-platform-tests/shadow-dom/resources: Removed.
+        * imported/blink/imported/web-platform-tests/webstorage/resources: Removed.
+        * imported/blink/plugins/resources/empty2.html: Removed.
+        * imported/blink/resources: Removed.
+        * imported/blink/scrollbars/resources: Removed.
+        * imported/blink/svg/animations/resources/animate-fill-freeze-with-repeatDur.svg: Removed.
+        * imported/blink/svg/animations/resources/animate-no-matching-end-value.svg: Removed.
+        * imported/blink/svg/animations/resources/animateMotion-fill-freeze.svg: Removed.
+        * imported/blink/svg/animations/resources/animateMotion-fill-remove.svg: Removed.
+        * imported/blink/svg/animations/resources/animateMotion-multiple.svg: Removed.
+        * imported/blink/svg/animations/resources/animation-policy.svg: Removed.
+        * imported/blink/svg/animations/resources/cyclic-syncbase.svg: Removed.
+        * imported/blink/svg/animations/resources/discard-on-discard.svg: Removed.
+        * imported/blink/svg/animations/resources/repeatn-remove-add-animation.svg: Removed.
+        * imported/blink/svg/animations/resources/viewspec-checkaspectparams.svg: Removed.
+        * imported/blink/svg/as-background-image/resources: Removed.
+        * imported/blink/svg/as-image/resources/actually-xhtml-with-media.svg: Removed.
+        * imported/blink/svg/as-image/resources/animated-rect-color.svg: Removed.
+        * imported/blink/svg/as-image/resources/animated-visited-link.svg: Removed.
+        * imported/blink/svg/as-image/resources/circle-200px-none.svg: Removed.
+        * imported/blink/svg/as-image/resources/css-animation.svg: Removed.
+        * imported/blink/svg/as-image/resources/default-font-settings.svg: Removed.
+        * imported/blink/svg/as-image/resources/image-with-data-uri.svg: Removed.
+        * imported/blink/svg/as-image/resources/image-with-svg-data-uri.svg: Removed.
+        * imported/blink/svg/as-image/resources/svg-with-image-with-link.svg: Removed.
+        * imported/blink/svg/custom/resources/draw-image-crash.svg: Removed.
+        * imported/blink/svg/dom/resources/import-other-svg.svg: Removed.
+        * imported/blink/svg/dom/resources/svg-with-animate-use.svg: Removed.
+        * imported/blink/svg/dom/resources/svg-with-animate.svg: Removed.
+
+2021-05-21  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] fast/canvas/canvas-conic-gradient-angle.html is failing since added in r277547
+        https://bugs.webkit.org/show_bug.cgi?id=225916
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/glib/TestExpectations: Unskip and mark as passing to override root dir.
+
+2021-05-21  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC][Quirks] Use box-sizing: border-box when computing cell height
+        https://bugs.webkit.org/show_bug.cgi?id=226063
+
+        Reviewed by Simon Fraser.
+
+        * fast/layoutformattingcontext/table-simple-quirk-td-height-with-padding-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-quirk-td-height-with-padding.html: Added.
+
+2021-05-20  Chris Lord  <clord@igalia.com>
+
+        [WPE] Spatial navigation tests fail with async overflow scrolling enabled
+        https://bugs.webkit.org/show_bug.cgi?id=225922
+
+        Reviewed by Simon Fraser.
+
+        Some spatial navigation tests now pass on WPE.
+
+        * platform/wpe/TestExpectations:
+
+2021-05-20  Amir Mark Jr  <amir_mark@apple.com>
+
+        [macOS] imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=226050
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        * fast/css-custom-paint/registerPaintBindings.html:
+        * http/tests/security/listener/*:
+        This is a progression: Blink and Gecko don't call event listeners belonging to destroyed frames.
+
+        * js/property-of-window-as-prototype-expected.txt: Removed.
+        * js/property-of-window-as-prototype.html: Removed.
+
+2021-05-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Remove PHP packages
+        https://bugs.webkit.org/show_bug.cgi?id=226037
+
+        Reviewed by Philippe Normand.
+
+        Remove the PHP package from the SDK now that the layout tests do not use PHP.
+
+        * http/conf/flatpak-httpd.conf: Remove usage of mod_php7.
+
+2021-05-20  Youenn Fablet  <youenn@apple.com>
+
+        <video> rendered inside <template> shows black for webcam stream (Safari 14.0.3 only)
+        https://bugs.webkit.org/show_bug.cgi?id=222115
+        <rdar://problem/74546659>
+
+        Reviewed by Eric Carlson.
+
+        * fast/media/template-hidden-expected.txt: Added.
+        * fast/media/template-hidden.html: Added.
+
+2021-05-20  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Available space distribution should account for the top and bottom table spacing
+        https://bugs.webkit.org/show_bug.cgi?id=226003
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: rendering code disagrees here.
+        * fast/layoutformattingcontext/table-simple-row-height-expected.html: Added.
+        * fast/layoutformattingcontext/table-simple-row-height.html: Added.
+
+2021-05-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        Value of a color input does not update visually when using setAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=166930
+        <rdar://problem/29983218>
+
+        Reviewed by Simon Fraser.
+
+        * fast/forms/color/color-input-set-attribute-value-expected.html: Added.
+        * fast/forms/color/color-input-set-attribute-value.html: Added.
+
+2021-05-20  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Wrong height of an empty table inside an orthogonal flex parent
+        https://bugs.webkit.org/show_bug.cgi?id=225339
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations: Remove one WPT test that now passes.
+
+2021-05-19  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Scrolling must be done after the layout when doing full page zoom
+        https://bugs.webkit.org/show_bug.cgi?id=225730
+
+        Reviewed by Simon Fraser.
+
+        Added a testcase to ensure that scroll position is not changed after zoom.
+
+        * fast/scrolling/page-y-offset-should-not-be-changed-after-zoom-expected.txt: Added.
+        * fast/scrolling/page-y-offset-should-not-be-changed-after-zoom.html: Added.
+
+2021-05-19  Devin Rousso  <drousso@apple.com>
+
+        Add a way to create `"wheel"` events from gesture/touch events
+        https://bugs.webkit.org/show_bug.cgi?id=225788
+        <rdar://problem/76714308>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/gesture/wheel-from-gesture.html: Added.
+        * fast/events/gesture/wheel-from-gesture-expected.txt: Added.
+
+        * TestExpectations:
+
+2021-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add support for Navigation Timing Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=184363
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        Annoyingly secure_connection_start_non_zero.https.html becomes flaky with a correct implementation because it assumes
+        that no connection is reused.  However, when running this test after other tests, another connection is often reused.
+        * performance-api/paint-timing/performance-observer-first-contentful-paint-expected.txt:
+        * performance-api/paint-timing/performance-observer-first-contentful-paint.html:
+        * performance-api/performance-observer-api-expected.txt:
+        * performance-api/performance-timeline-api-expected.txt:
+        * performance-api/resources/timeline-api.js:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values-expected.txt:
+        Next hop protocol isn't implemented in ResourceHandle.  That's probably no big deal because WebKitLegacy is deprecated and not used by Safari.
+
+2021-05-19  Robert Jenner  <jenner@apple.com>
+
+        ASSERTION FAILED: unwrapParamsOrException.exception().code() != ExistingExceptionError on http/wpt/preload/change-link-rel-attribute.html
+        https://bugs.webkit.org/show_bug.cgi?id=224845
+
+        Unreviewed test garedning.
+
+        Removing un-needed test expectation.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-19  Kyle Piddington <kpiddington@apple.com> 
+
+        ASSERT(!toType.isArray()) failure in sh::CoerceSimple due to vector array dereference
+        https://bugs.webkit.org/show_bug.cgi?id=225864
+        <rdar://77968214>
+
+        Reviewed by Dean Jackson.
+
+        Fixed program translation error, additional issues with preloaded transform feedback shaders
+
+        * fast/canvas/webgl/shader-vec-array-deref-no-crash-expected.txt: Added.
+        * fast/canvas/webgl/shader-vec-array-deref-no-crash.html: Added.
+
+2021-05-19  Kyle Piddington  <kpiddington@apple.com>
+
+        [ANGLE Metal] Support provoking vertex emulation, pass fragmentOutput tests
+        https://bugs.webkit.org/show_bug.cgi?id=225842
+
+        Reviewed by Dean Jackson.
+
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/array.int-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/array.uint-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/basic.int-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/basic.uint-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_02-expected.txt:
+
+2021-05-19  Alan Bujtas  <zalan@apple.com>
+
+        Calculated width percent loses the floating point and cause line wrap
+        https://bugs.webkit.org/show_bug.cgi?id=225962
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/unexpected-line-wrap-with-calc-expected.html: Added.
+        * fast/inline/unexpected-line-wrap-with-calc.html: Added.
+
+2021-05-19  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] MSE-based video pauses when put in background; PiP context menu disabled
+        https://bugs.webkit.org/show_bug.cgi?id=225958
+        <rdar://78130303>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-has-audio-video-expected.txt: Added.
+        * media/media-source/media-source-has-audio-video.html: Added.
+
+2021-05-18  Cameron McCormack  <heycam@apple.com>
+
+        Record gradient and pattern filled canvas text in the correct coordinate system.
+        https://bugs.webkit.org/show_bug.cgi?id=222881
+        <rdar://75155310>
+
+        Reviewed by Myles C. Maxfield.
+
+        Re-enable GPUP canvas rendering in the affected tests.
+
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-2.html:
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-3.html:
+        * http/tests/canvas/color-fonts/fill-gradient-sbix-4.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-2.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-3.html:
+        * http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html:
+
+2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update two baselines of inspector test that were failing.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/inspector/network/resource-sizes-network-expected.txt:
+        * platform/gtk/inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
+2021-05-18  Robert Jenner  <jenner@apple.com>
+
+        Disable WebSQL in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=224144
+
+        Unreviewed test gardening.
+
+        Disabling consant failing test for wk1. Test has already been disabled for wk2.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-05-18  Robert Jenner  <jenner@apple.com>
+
+        [BigSur] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=222118
+
+        Unreviewed test gardening.
+
+        Removing test expectation no longer needed.
+
+        * platform/mac/TestExpectations:
+
+2021-05-18  Robert Jenner  <jenner@apple.com>
+
+        Disable WebSQL in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=224144
+
+        Unreviewed test gardening.
+
+        Remvoing test expectation that is causing this skipped test to run.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Temporarily revert r276592 as it breaks some native apps
+        https://bugs.webkit.org/show_bug.cgi?id=225917
+
+        Unreviewed, revert
+
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put-expected.txt:
+        * http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html:
+        * js/dom/reflect-set-onto-dom-expected.txt:
+        * js/dom/script-tests/reflect-set-onto-dom.js:
+
+2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. File several printing tests that were crashing under own bug.
+
+        Also updated baseline of tests that was failing.
+
+        * platform/glib/fast/selectors/unqualified-hover-strict-expected.txt: Updated.
+        * platform/gtk/TestExpectations:
+
+2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Some mathml tests are failing in EWS GTK-WK2 but passing in post-commit bot.
+
+        * platform/glib/TestExpectations:
+
+2021-05-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. fast/canvas/canvas-conic-gradient-angle.html is an image failure.
+
+        * platform/glib/TestExpectations:
+
+2021-05-18  Philippe Normand  <pnormand@igalia.com>
+
+        [MediaStream][GStreamer] Flaky fast/mediastream/MediaStream-video-element-video-tracks-disabled.html
+        https://bugs.webkit.org/show_bug.cgi?id=225651
+
+        Reviewed by Alicia Boya Garcia.
+
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled.html: Delay the
+        notifyDone call to give the video element some time to render the black frame corresponding
+        to the disabled track. This might still flake on the bots, if that is the case we might need
+        to reassess how the test behaves or decide to mark it as expected flaky on glib ports.
+
+2021-05-18  Alan Bujtas  <zalan@apple.com>
+
+        Difficult to scroll calcalist.co.il webpage, scrolling gets 'stuck'
+        https://bugs.webkit.org/show_bug.cgi?id=225905
+        <rdar://77692680>
+
+        Reviewed by Simon Fraser.
+
+        * fast/inline/vertical-top-on-subpixel-makes-inline-box-overflow-expected.txt: Added.
+        * fast/inline/vertical-top-on-subpixel-makes-inline-box-overflow.html: Added.
+
+2021-05-18  Cameron McCormack  <heycam@apple.com>
+
+        Test expectation updates from bug 225728
+        https://bugs.webkit.org/show_bug.cgi?id=225902
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ASSERTION FAILED: isReactionAllowed() in enqueueDisconnectedCallbackIfNeeded during document teardown
+        https://bugs.webkit.org/show_bug.cgi?id=224033
+
+        Reviewed by Maciej Stachowiak.
+
+        Removed flaky test expectation.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2021-05-18  Frederic Wang  <fwang@igalia.com>
+
+        SHOULD NEVER BE REACHED in FrameSelection::setSelectionWithoutUpdatingAppearance
+        https://bugs.webkit.org/show_bug.cgi?id=225219
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a regression test.
+
+        * editing/selection/selection-in-iframe-removed-assert.html: Copied from
+        editing/selection/selection-in-iframe-removed-crash.html, with an additional
+        requestAnimationFrame.
+        * editing/selection/selection-in-iframe-removed-assert-expected.txt: Added.
+
+2021-05-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden a few tests and unify some expectations
+
+        Unreviewed test gardening.
+
+        Removed some deprecated WPE baselines, moving expectations from GTK to
+        Glib.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/security/block-test-expected.txt: Renamed from LayoutTests/platform/gtk/security/block-test-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/content-type/script.window-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window-expected.txt: Removed.
+        * platform/wpe/security/block-test-expected.txt: Removed.
+
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. imported/w3c/web-platform-tests/eventsource/eventsource-close.htm is crashing since r277601.
+
+        * platform/gtk/TestExpectations:
+
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html is failing.
+
+        * platform/glib/TestExpectations:
+
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Reintroduce platform specific baselines removed in r277577 that are still needed.
+
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Added.
+
+2021-05-17  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION(r277116): [ macOS Release wk2 ] media/modern-media-controls/pip-support/pip-support-enabled.html (layout-test) is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=225521
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass Failure while test is reviewed.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-17  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] promote submenus items if there is only one
+        https://bugs.webkit.org/show_bug.cgi?id=225883
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/tracks-support/auto-text-track.html:
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu.html:
+        * media/modern-media-controls/tracks-support/hidden-tracks.html:
+        * media/modern-media-controls/tracks-support/off-text-track.html:
+        * media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html:
+
+2021-05-17  Truitt Savell  <tsavell@apple.com>
+
+        [ Mac ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=225882
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-05-17  Dean Jackson  <dino@apple.com>
+
+        Skip WebXR tests again. They are flakey.
+
+        * TestExpectations:
+
+2021-05-17  Youenn Fablet  <youenn@apple.com>
+
+        [ BigSur Debug wk2 ARM64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225534
+        <rdar://problem/77679466>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/video-script-transform-keyframe-only-expected.txt: Added.
+        * http/wpt/webrtc/video-script-transform-keyframe-only-worker.js: Added.
+        * http/wpt/webrtc/video-script-transform-keyframe-only.html: Added.
+
+2021-05-17  Jer Noble  <jer.noble@apple.com>
+
+        MediaSession action handlers aren't treated as having a user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=225875
+
+        Reviewed by Eric Carlson.
+
+        * media/media-session/user-gesture-action-handlers-expected.txt: Added.
+        * media/media-session/user-gesture-action-handlers.html: Added.
+
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Several OffscreenCanvas tests are failing since r277543.
+
+        * platform/glib/TestExpectations:
+
+2021-05-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Skip tests requiring support for 'display-p3'.
+
+        * platform/glib/TestExpectations:
+
+2021-05-17  Rob Buis  <rbuis@igalia.com>
+
+        will-change: contain should create a containing block
+        https://bugs.webkit.org/show_bug.cgi?id=225442
+
+        Reviewed by Antti Koivisto.
+
+        Tests contain-paint-stacking-context-001b.html (testing
+        that will-change: contain creates a containing block) and
+        contain-paint-stacking-context-001b.html (which tests that
+        will-change: contain creates a CSS stacking context) now
+        pass, so no longer mark them as image failures.
+
+        * TestExpectations:
+
+2021-05-17  Tim Nguyen  <ntim@apple.com>
+
+        will-change: position should not create a containing block for position: fixed elements
+        https://bugs.webkit.org/show_bug.cgi?id=225443
+
+        Reviewed by Antti Koivisto.
+
+        This partially undoes r276627 which made will-change: position create a CB for all out-of-flow elements:
+
+        - Removed CSSPropertyPosition from createsContainingBlockForOutOfFlowPositioned() to not create a containing block
+        for position: fixed; children.
+        - Added createsContainingBlockForAbsolutelyPositioned() with CSSPropertyPosition to still create a containing block
+        for position: absolute; children.
+
+        Enabled WPT (which covers both cases): css/css-will-change/will-change-fixpos-cb-position-1.html
+
+        * TestExpectations:
+
+2021-05-16  Cameron McCormack  <heycam@apple.com>
+
+        Make MathML WPTs wait for all font loads
+        https://bugs.webkit.org/show_bug.cgi?id=225728
+
+        Reviewed by Darin Adler.
+
+        With current interop issues around font loading, there's no guarantee
+        that waiting on the document.fonts.ready promise in the load event will
+        catch font loads initiated by content. Since these tests are not
+        explicitly testing font loading behavior, change to wait explicitly for
+        all fonts to load.
+
+        Many of these tests were flaky due to this, and so we now no longer
+        need platform specific expectations.
+
+        * TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt: Removed.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Removed.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt: Removed.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt: Removed.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Removed.
+
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Support serializing ImageData object colorSpace property in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=225854
+
+        Reviewed by Chris Dumez.
+
+        Updates existing tests for new serialization version (version 8) and support
+        for serializing color space in ImageData.
+
+        To avoid multiple result files due to lack of support for display-p3, testing
+        that the display-p3 color space is serialized correctly was put into its own
+        test that is skipped on non-supporting platforms.
+
+        * platform/glib/TestExpectations:
+        * platform/win/TestExpectations:
+        Skip structured-clone-image-data-display-p3.html on platforms that don't support
+        display-p3 color spaces.
+
+        * fast/storage/serialized-script-value.html:
+        Bump version to version 8.
+
+        * storage/indexeddb/resources/structured-clone.js:
+        * storage/indexeddb/structured-clone-expected.txt:
+        Add tests for ImageData colorSpace round tripping.
+
+        * storage/indexeddb/structured-clone-image-data-display-p3-expected.txt: Added.
+        * storage/indexeddb/structured-clone-image-data-display-p3.html: Added.
+        Add test for ImageData display-p3 colorSpace round tripping as its own test
+        to allow targetted skipping by non-supporting platforms.
+
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Add support for creating/accessing/setting non-sRGB ImageData via canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225841
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations:
+        Remove wide-gamut-canvas now that they should pass.
+
+        * fast/canvas/canvas-color-space-display-p3-ImageData-expected.txt: Added.
+        * fast/canvas/canvas-color-space-display-p3-ImageData.html: Added.
+        Add new test exercising getImageData and putImageData with non-sRGB canvases
+        and non-sRGB ImageData.
+ 
+        * fast/canvas/canvas-imageData-expected.txt:
+        Update results for updated error messages, which are a bit worse due additional
+        ambiguity in signatures.
+
+        * platform/glib/TestExpectations:
+        Mark new test as failing on glib due to lack of display-p3 support.
+
+        * platform/win/TestExpectations:
+        Mark new test as failing on Windows due to lack of display-p3 support.
+        Unskip CanvasRenderingContext2DSettings-colorSpace-enabled.html which
+        should now pass due to adding manual preferences support in WebKitLegacy/win. 
+
+        * storage/indexeddb/modern/objectstore-autoincrement-types-expected.txt:
+        Update results due to new attribute in ImageData that is auto printed.
+
+2021-05-16  Tim Nguyen  <ntim@apple.com>
+
+        Make will-change: transform-style create a containing block
+        https://bugs.webkit.org/show_bug.cgi?id=225441
+
+        Reviewed by Simon Fraser.
+
+        Marked relevant WPT as pass.
+
+        * TestExpectations:
+
+2021-05-15  Said Abou-Hallawa  <said@apple.com>
+
+        Implement CanvasRenderingContext2D.createConicGradient
+        https://bugs.webkit.org/show_bug.cgi?id=225539
+
+        Reviewed by Sam Weinig.
+
+        * fast/canvas/canvas-conic-gradient-angle-expected.html: Added.
+        * fast/canvas/canvas-conic-gradient-angle.html: Added.
+        * fast/canvas/canvas-conic-gradient-center-expected.html: Added.
+        * fast/canvas/canvas-conic-gradient-center.html: Added.
+        * fast/canvas/conicGradient-infinite-values-expected.txt: Added.
+        * fast/canvas/conicGradient-infinite-values.html: Added.
+        * inspector/canvas/recording-html-2d-expected.txt:
+        * inspector/canvas/recording-html-2d.html:
+        * platform/win/TestExpectations:
+
+2021-05-15  Antti Koivisto  <antti@apple.com>
+
+        Don't allow :visited link style in subtrees that use mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=225446
+        rdar://65686091
+
+        Reviewed by Darin Adler.
+
+        * fast/css/visited-link-mix-blend-mode-expected.html: Added.
+        * fast/css/visited-link-mix-blend-mode.html: Added.
+
+2021-05-14  John Wilander  <wilander@apple.com>
+
+        Javascript can't access a SameSite=Strict cookie after page is loaded after a redirect from a third party site
+        https://bugs.webkit.org/show_bug.cgi?id=208049
+        <rdar://problem/59701889>
+
+        Reviewed by Chris Dumez.
+
+        The HTTP WG has decided that SameSite=strict cookies should be returned in document.cookie
+        even in cases where they are not sent in the HTTP request for the page. Chromium and Gecko
+        now work according to those rules and the spec is being updated.
+
+        See:
+        - https://github.com/httpwg/http-extensions/issues/769
+        - https://github.com/httpwg/http-extensions/pull/1428/files.
+
+        Tests changed and rebased accordingly.
+
+        * http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect-expected.txt:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt:
+        * http/tests/cookies/same-site/popup-cross-site-post.html:
+        * http/tests/cookies/same-site/popup-cross-site.html:
+        * http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.py:
+        * http/tests/cookies/same-site/user-load-cross-site-redirect-expected.txt:
+        * http/tests/cookies/same-site/user-load-cross-site-redirect.py:
+
+2021-05-14  Darin Adler  <darin@apple.com>
+
+        output element doesn't react properly to node tree mutations
+        https://bugs.webkit.org/show_bug.cgi?id=196532
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations: Removed an expectation for a directory that no longer exists.
+        * platform/mac-wk2/TestExpectations: Removed an expectation for a test that no longer exists.
+        * platform/mac/TestExpectations: Removed an expectation for a directory that no longer exists.
+
+        * platform/gtk/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        Updated since HTMLOptionElement now has a constructor. Still not passing, but closer to correct.
+
+2021-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] a media element with a data url and "crossorigin='anonymous'" doesn't load
+        https://bugs.webkit.org/show_bug.cgi?id=225786
+        <rdar://77625185>
+
+        Reviewed by Jer Noble.
+
+        * media/data-url-cross-origin-expected.txt: Added.
+        * media/data-url-cross-origin.html: Added.
+        * media/media-file.js:
+        (findDataURL):
+        * media/sources-fallback-codecs.html:
+
+2021-05-14  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION: [ Mac WK2 ] fast/mediastream/audio-track-enabled.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=221985
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-14  Robert Jenner  <jenner@apple.com>
+
+        [ iOS14-Simulator ] wk2imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html is a flaky ImageOnlyFailure
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=225830
+
+        Unreviewed test gardening.
+
+        Setting expectation to Pass ImageOnlyFailure due to causing an EWS slowdown.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2021-05-14  Jean-Yves Avenard  <jya@apple.com>
+
+        Bad media session artwork URL results in blue "broken image" icon being shown in Now Playing
+        https://bugs.webkit.org/show_bug.cgi?id=225799
+        rdar://77990886
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediasession/metadata/artworkdownload-expected.txt:
+        * fast/mediasession/metadata/artworkdownload.html: Add test case.
+
+2021-05-14  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Bot exiting early with crashes in new window layout tests inside wl_proxy_marshal_constructor
+        https://bugs.webkit.org/show_bug.cgi?id=225555
+
+        Unreviewed test gardening.
+
+        Basically revert the changes from r277223 as the SDK was updated with
+        a new wpebackend-fdo in r277436.
+
+        * platform/wpe/TestExpectations:
+
+2021-05-14  Ziran Sun  <zsun@igalia.com>
+
+        Wrong static position for out-of-flow positioned element with different writing-mode than its containing block
+        https://bugs.webkit.org/show_bug.cgi?id=189513
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations: updating 22 css-writing-modes tests that are passing.
+
+2021-05-14  Alex Christensen  <achristensen@webkit.org>
+
+        Resource Timing: secureConnectionStart == 0 when a connection is re-used
+        https://bugs.webkit.org/show_bug.cgi?id=225733
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
+2021-05-14  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS] imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=225804
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-05-13  Rob Buis  <rbuis@igalia.com>
+
+        Check for null element in paintSearchFieldResultsButton
+        https://bugs.webkit.org/show_bug.cgi?id=225232
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for this.
+
+        * fast/css/searchfield-results-button-crash-expected.txt: Added.
+        * fast/css/searchfield-results-button-crash.html: Added.
+
+2021-05-13  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Skip WebXR tests after r277468
+
+        Unreviewed test gardening.
+
+        WebXR is not yet enabled in GTK.
+
+        * platform/gtk/TestExpectations:
+
+2021-05-13  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)
+        https://bugs.webkit.org/show_bug.cgi?id=225578
+
+        Reviewed by Sam Weinig.
+
+        Remove the skip rule for the WebXR directory, and add more
+        specific expected results.
+
+        * TestExpectations:
+
+2021-05-13  Cameron McCormack  <heycam@apple.com>
+
+        Ensure scrollable transformed elements that are themselves within scrollable elements don't ignore border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=216978
+        <rdar://69660229>
+
+        Reviewed by Darin Adler.
+
+        * fast/layers/overflow-scroll-transform-border-radius-expected.html: Added.
+        * fast/layers/overflow-scroll-transform-border-radius.html: Added.
+
+2021-05-13  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur] media/video-played-ranges-1.html is flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=223645
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-05-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r276945): [iOS] Focus rings are too large
+        https://bugs.webkit.org/show_bug.cgi?id=225778
+        <rdar://problem/77858341>
+
+        Reviewed by Tim Horton.
+
+        Added a regression test to verify the size of the focus ring on iOS.
+        The test works by drawing an overlay on top of an input element, that
+        is just large enough to obscure the focus ring. If the focus ring is
+        too large, the ring will not obscured, leading to a mismatch failure.
+
+        * fast/forms/ios/focus-ring-size-expected.html: Added.
+        * fast/forms/ios/focus-ring-size.html: Added.
+
+2021-05-13  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS Wk1] media/video-playback-quality.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=223770
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-05-13  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur iOS14 ] http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225668
+
+        Unreviewed test gardening.
+
+        Marking as slow to see if timeouts stop occurring.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-13  Jer Noble  <jer.noble@apple.com>
+
+        [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=222277
+        <rdar://problem/74600790>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-13  Robert Jenner  <jenner@apple.com>
+
+        [ Catalina+ wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225667
+
+        Unreviewed test gardening.
+
+        Accidentally broke a test when I applied it for all of mac instead of just for mac wk2. I have updated the slow expectation for just mac wk2.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2021-05-13  Zalan Bujtas  <zalan@apple.com>
+
+        [css-flexbox] Flex item construction may affect sibling flex item height computation
+        https://bugs.webkit.org/show_bug.cgi?id=225489
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/flexbox/flex-column-with-percent-height-descendants-expected.html: Added.
+        * fast/flexbox/flex-column-with-percent-height-descendants.html: Added.
+
+2021-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::Document::updateLayout
+        https://bugs.webkit.org/show_bug.cgi?id=225677
+
+        Reviewed by Alan Bujtas.
+
+        * accessibility/mac/menu-selection-notification-crash-expected.txt: Added.
+        * accessibility/mac/menu-selection-notification-crash.html: Added.
+
+2021-05-13  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] media/track/in-band/track-in-band-srt-mkv-kind.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=225697
+
+        Reviewed by Alicia Boya Garcia.
+
+        * platform/glib/TestExpectations: Unskipped test.
+
+2021-05-13  Martin Robinson  <mrobinson@webkit.org>
+
+        Import new and updated css-scroll-snap WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=225653
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        * http/tests/notifications/notification-in-non-secure-context-expected.txt:
+        Rebaseline test now that we log an error message in the JS console when trying to call
+        Notification.requestPermission() in a non-secure context.
+
+        * http/tests/notifications/request-with-promise-expected.txt: Added.
+        * http/tests/notifications/request-with-promise.html: Added.
+        Add layout test coverage.
+
+2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] http/tests/security/contentSecurityPolicy/report-only-from-header.py is a flaky text failure
+
+        Unreviewed test gardening.
+
+        Sometimes there's an extra console log error message. Dump all JS console output and emit new baseline.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt: Added.
+
+2021-05-12  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur Wk1 Release] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=225704
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: actualVTablePointer == expectedVTablePointer in toJSNewlyCreated(JSC::JSGlobalObject *, WebCore::JSDOMGlobalObject *, Ref<WebCore::AudioNode> &&)
+        https://bugs.webkit.org/show_bug.cgi?id=225719
+        <rdar://77828031>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage. This test was reliably crashing before the fix.
+
+        * webaudio/event-relatedTarget-audionode-expected.txt: Added.
+        * webaudio/event-relatedTarget-audionode.html: Added.
+
+2021-05-12  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Release wk2 arm64 ] http/tests/appcache/fail-on-update-2.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225665
+
+        Unreviewed test gardening.
+
+        Updating expectations to (DumpJSConsoleLogInStdErr Slow ) to stop the constant text failures, and improve the flaky timeouts.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-12  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] http/tests/misc/last-modified-parsing.html handles non-standard dates differently in PHP than Python
+        https://bugs.webkit.org/show_bug.cgi?id=224933
+        <rdar://problem/77020039>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/misc/last-modified-parsing-expected.txt: Removed.
+        * http/tests/misc/last-modified-parsing.html: Removed.
+        * http/tests/misc/no-last-modified-expected.txt: Removed.
+        * http/tests/misc/no-last-modified.html: Removed.
+        * http/tests/resources/last-modified.php: Removed.
+        * http/wpt/misc: Added.
+        * http/wpt/misc/last-modified-parsing-expected.txt: Added.
+        * http/wpt/misc/last-modified-parsing.html: Added.
+        * http/wpt/misc/no-last-modified-expected.txt: Added.
+        * http/wpt/misc/no-last-modified.html: Added.
+        * http/wpt/misc/resources: Added.
+        * http/wpt/misc/resources/last-modified-utilities.js: Added.
+        (async getLastModified):
+        * platform/win/TestExpectations:
+
+2021-05-12  Robert Jenner  <jenner@apple.com>
+
+        [ Catalina+ wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225667
+
+        Unreviewed test gardening.
+
+        Updating expectation to Slow to see if test conditions improve.
+
+        * platform/mac/TestExpectations:
+
+2021-05-12  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur ] webaudio/AudioContext/audiocontext-close-basic.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225670
+
+        Unreviewed test gardening.
+
+        Updating expectations to slow to see if test will pass. 
+
+        * platform/mac/TestExpectations:
+
+2021-05-12  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 arm64 ] editing/selection/move-by-character-brute-force.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225664
+
+        Unreviewed test gardening.
+
+        Updating test expectations to slow.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-12  Robert Jenner  <jenner@apple.com>
+
+        [ Catalina+ wk2 ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html (layout-test) is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=225669
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass Failure for macOS Release and Debug.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-12  Said Abou-Hallawa  <said@apple.com>
+
+        Removing the transform CSS property from the SVG element does not cause invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=225366
+
+        Reviewed by Simon Fraser.
+
+        * svg/css/svg-css-transform-dynamic-remove-expected.html: Added.
+        * svg/css/svg-css-transform-dynamic-remove.html: Added.
+
+2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: m_clients.contains(&client) in CSSFontFace::removeClient via CSSSegmentedFontFace::~CSSSegmentedFontFace()
+        https://bugs.webkit.org/show_bug.cgi?id=223790
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/svg-font-face-duplicate-crash-expected.txt: Added.
+        * fast/css/svg-font-face-duplicate-crash.html: Added.
+
+2021-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Release assert in SlotAssignment::assignedNodesForSlot via ComposedTreeIterator::traverseNextInShadowTree in Element::insertedIntoAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=225684
+
+        Reviewed by Darin Adler.
+
+        Added a regression test.
+
+        * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash-expected.txt: Added.
+        * fast/shadow-dom/insert-host-child-with-slot-renderer-teardown-crash.html: Added.
+
+2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Do not use margins when computing aspect ratio cross sizes
+        https://bugs.webkit.org/show_bug.cgi?id=221210
+
+        Reviewed by Javier Fernandez.
+
+        * TestExpectations: Unskipped flex-aspect-ratio-img-row-013.html which is now passing.
+
+2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. media/track/in-band/track-in-band-srt-mkv-kind.html is a flaky crash.
+
+        * platform/glib/TestExpectations:
+
+2021-05-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277320 and r277329.
+        https://bugs.webkit.org/show_bug.cgi?id=225698
+
+        Added broken test fast/css/visited-link-mix-blend-mode.html
+
+        Reverted changesets:
+
+        "Don't allow :visited link style in subtrees that use mix-
+        blend-mode"
+        https://bugs.webkit.org/show_bug.cgi?id=225446
+        https://trac.webkit.org/changeset/277320
+
+        "Don't allow :visited link style in subtrees that use mix-
+        blend-mode"
+        https://bugs.webkit.org/show_bug.cgi?id=225446
+        https://trac.webkit.org/changeset/277329
+
+2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines for GTK.
+
+        Remove stale GTK baseline after r277321.
+        Emit new GTK baseline after WPT update in r277160.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries-expected.txt: Added.
+
+2021-05-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Gardened several test failures from GTK post-commit bot.
+
+        * platform/gtk/TestExpectations:
+
+2021-05-12  Youenn Fablet  <youenn@apple.com>
+
+        [ macOS wk2 ] http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html (layout-test) is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=225500
+        <rdar://problem/77636573>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html:
+        Make sure video1 is playing to get its duration.
+
+2021-05-12  Youenn Fablet  <youenn@apple.com>
+
+        fast/mediastream/getUserMedia-webaudio.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=225655
+        <rdar://74158395>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getUserMedia-webaudio.html:
+        Retry several time instead of just once when detecting no noise to improve robustness.
+
+2021-05-11  Cameron McCormack  <heycam@apple.com>
+
+        Include reasons for compositing in showLayerTree output
+        https://bugs.webkit.org/show_bug.cgi?id=225640
+
+        Reviewed by Simon Fraser.
+
+        * fast/harness/render-tree-as-text-options-expected.txt:
+
+2021-05-11  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize.
+        https://bugs.webkit.org/show_bug.cgi?id=225630
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error-expected.txt: Added.
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error.html: Added.
+
+2021-05-11  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 arm64 ] editing/selection/move-by-character-brute-force.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225664
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass Timeout for BigSur wk2 arm64.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-11  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Release wk2 arm64 ] http/tests/appcache/fail-on-update-2.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225665
+
+        Unreviewed test gardening.
+
+        Updating test expectations to Pass Timeout for BigSur Release wk2 arm64.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-11  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 arm64 ] http/tests/cache/disk-cache/redirect-chain-limits.html (layout-test) is a flaky timeout
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=225666
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass timeout.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r277071): imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=225469
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Mark the test as failing for iOS, too.
+
+2021-05-11  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur Wk2 Arm64] http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=224783
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-11  Robert Jenner  <jenner@apple.com>
+
+        js/dom/Promise-reject-large-string.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=225258
+
+        Unreviewed test gardening.
+
+        Updating expectation to Pass Failure for arm64 only.
+
+        * platform/mac/TestExpectations:
+
+2021-05-11  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r275515): wpt/quirks/blocks-ignore-line-height.html
+        https://bugs.webkit.org/show_bug.cgi?id=225591
+        <rdar://problem/77766308>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/incorrect-middle-baseline-alignment-with-line-height-expected.html: progression.
+        * fast/inline/line-height-in-non-standards-mode-expected.html: Added.
+        * fast/inline/line-height-in-non-standards-mode.html: Added.
+
+2021-05-11  Cathie Chen  <cathiechen@igalia.com>
+
+        [CSS contain] Support contain:size
+        https://bugs.webkit.org/show_bug.cgi?id=223570
+
+        Reviewed by Alan Bujtas.
+
+        Update the test result for size containment. Added explanations for size containment tests
+        that depended on other features.
+
+        * TestExpectations:
+
+2021-05-11  Antti Koivisto  <antti@apple.com>
+
+        Don't allow :visited link style in subtrees that use mix-blend-mode
+        https://bugs.webkit.org/show_bug.cgi?id=225446
+        rdar://65686091
+
+        Reviewed by Darin Adler.
+
+        * fast/css/visited-link-mix-blend-mode-expected.html: Added.
+        * fast/css/visited-link-mix-blend-mode.html: Added.
+
+2021-05-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS Release wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225522
+        <rdar://problem/77680019>
+
+        Reviewed by Darin Adler.
+
+        Restore previous expectation for the test, now that it is no longer flaky crashing.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-10  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Decouple http/tests/media/resources/create-id3-db.php from webserver
+        https://bugs.webkit.org/show_bug.cgi?id=224561
+        <rdar://problem/76653054>
+
+        Reviewed by Jonathan Bedard.
+
+        Replacing the creation of metadata.db with JSON into a new file named metadata.json. This standalone script remains in PHP to be able to still use getid3.
+
+        * http/tests/media/resources/create-id3-db.php: Removed.
+        * http/tests/resources/dir-helpers.php: Removed.
+        * http/tests/resources/portabilityLayer.php: Removed.
+        * media/content/create-id3-db: Copied from LayoutTests/http/tests/media/resources/create-id3-db.php.
+
+2021-05-10  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur Wk1 Release] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=225625
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Speculative revalidation requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225613
+        <rdar://problem/77664358>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test coverage.
+
+        * http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation.html: Added.
+        * http/tests/in-app-browser-privacy/resources/frame-with-authenticated-resource.py: Added.
+        * http/tests/in-app-browser-privacy/resources/resource-with-auth.py: Added.
+        * platform/ios-wk2/TestExpectations:
+        Essentially copied http/tests/cache/disk-cache/speculative-validation/http-auth.html
+        to hit the speculative revalidation code path, and added in a check
+        for app-bound load data at the end to confirm all requests are marked
+        correctly.
+
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Release wk2 ARM64 ] mathml/scripts-removeChild.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=225533
+
+        Unreviewed test gardening.
+
+        Updating test expectations to Pass ImageOnlyFailure for BigSur Release wk2 arm64 only.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Debug wk2 ARM64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225534
+
+        Unrviewed test gardening.
+
+        Updating test expectation to Pass Crash for BigSur Debug wk2 arm64 only.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preflight requests not properly attributed as app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=225596
+        <rdar://problem/77664272>
+
+        Reviewed by Brent Fulgham.
+
+        Add two tests for sync and async preflight requests.
+
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async.html: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        These tests rely on internal additions, we should skip them in open
+        source expectations.
+
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur ARM64] http/wpt/fetch/fetch-response-body-stop-in-worker.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=225528
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass Crash for arm64 only. 
+
+        * platform/mac/TestExpectations:
+
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Release wk2 arm64 ] scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=225529
+
+        Uneviewed test gardening.
+
+        Updating expectations to Pass Failure for BigSur Release wk2 arm64 only. 
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-10  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Release wk2 ] http/tests/cache-storage/cache-records-persistency.https.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225522
+
+        Unreviewed test gardening.
+
+        Updating expectations to Pass Crash while test is reviewed.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277222.
+        https://bugs.webkit.org/show_bug.cgi?id=225618
+
+        WebContent process crashes while visiting
+        <http://ign.com|ign.com> (RenderFlexibleBox::layoutFlexItems)
+
+        Reverted changeset:
+
+        "[css-flexbox] Flex item construction may affect sibling flex
+        item height computation"
+        https://bugs.webkit.org/show_bug.cgi?id=225489
+        https://trac.webkit.org/changeset/277222
+
+2021-05-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        [ Mac ] accessibility/mac/expanded-notification.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205410
+        rdar://58056289
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/expanded-notification.html:
+        Replaced the setTimeout(..., 10) with the use of Promises to make it
+        time deterministic.
+
+2021-05-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for assert crash in AXObjectCache::visiblePositionForTextMarkerData.
+        https://bugs.webkit.org/show_bug.cgi?id=225303
+        <rdar://problem/77453921>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/pseudo-element-text-markers-expected.txt: Added.
+        * accessibility/mac/pseudo-element-text-markers.html: Added.
+
+2021-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] WPT css/css-color-adjust/rendering/dark-color-scheme/color-scheme-system-colors.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=225607
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2021-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] imported/w3c/web-platform-tests/css/css-flexbox/flex-item-compressible-001.html is failing after WPT re-sync
+        https://bugs.webkit.org/show_bug.cgi?id=225604
+
+        Unreviewed test gardening.
+
+        Rebaseline test for iOS.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-compressible-001-expected.txt:
+
+2021-05-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] WPT css-fonts/font-feature-resolution-001.html and css-fonts/font-feature-resolution-002.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=225606
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] ImageOverlayController should paint selection quads instead of bounding rects

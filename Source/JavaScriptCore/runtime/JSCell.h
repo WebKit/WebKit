@@ -114,6 +114,7 @@ public:
     template<Concurrency> TriState isConstructorWithConcurrency(VM&);
     bool inherits(VM&, const ClassInfo*) const;
     template<typename Target> bool inherits(VM&) const;
+    JS_EXPORT_PRIVATE bool isValidCallee() const;
     bool isAPIValueWrapper() const;
     
     // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's
@@ -122,7 +123,7 @@ public:
 
     // We use this abstraction to make it easier to grep for places where we lock cells.
     // to lock a cell you can just do:
-    // auto locker = holdLock(cell->cellLocker());
+    // Locker locker { cell->cellLocker() };
     JSCellLock& cellLock() { return *reinterpret_cast<JSCellLock*>(this); }
     
     JSType type() const;
@@ -256,6 +257,7 @@ protected:
     static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
+    static NO_RETURN_DUE_TO_CRASH void doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&);
 
 private:
     friend class LLIntOffsetsExtractor;

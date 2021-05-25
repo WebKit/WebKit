@@ -32,7 +32,6 @@
 import logging
 import os
 import sys
-import time
 
 from webkitpy.layout_tests.servers import http_server, http_server_base
 

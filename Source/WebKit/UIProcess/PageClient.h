@@ -106,8 +106,8 @@ class SelectionData;
 enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ScrollbarStyle : uint8_t;
-enum class TextIndicatorWindowLifetime : uint8_t;
-enum class TextIndicatorWindowDismissalAnimation : uint8_t;
+enum class TextIndicatorLifetime : uint8_t;
+enum class TextIndicatorDismissalAnimation : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 
 struct AppHighlight;
@@ -385,8 +385,8 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorWindowLifetime) = 0;
-    virtual void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) = 0;
+    virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime) = 0;
+    virtual void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation) = 0;
     virtual void setTextIndicatorAnimationProgress(float) = 0;
     
     virtual void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) = 0;
@@ -490,6 +490,8 @@ public:
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
     virtual void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) = 0;
 #endif
+
+    virtual WebCore::Color contentViewBackgroundColor() = 0;
 #endif
 
     // Auxiliary Client Creation
@@ -514,6 +516,8 @@ public:
 
     virtual void themeColorWillChange() { }
     virtual void themeColorDidChange() { }
+    virtual void underPageBackgroundColorWillChange() { }
+    virtual void underPageBackgroundColorDidChange() { }
     virtual void pageExtendedBackgroundColorWillChange() { }
     virtual void pageExtendedBackgroundColorDidChange() { }
     virtual void sampledPageTopColorWillChange() { }
@@ -568,6 +572,8 @@ public:
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     virtual bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) = 0;
 #endif
+
+    virtual void pageDidScroll(const WebCore::IntPoint&) { }
 
     virtual void didRestoreScrollPosition() = 0;
 

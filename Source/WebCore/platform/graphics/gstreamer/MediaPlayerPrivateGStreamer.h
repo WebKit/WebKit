@@ -38,7 +38,8 @@
 #include <gst/gst.h>
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Atomics.h>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RunLoop.h>
@@ -363,7 +364,7 @@ protected:
     bool m_isUsingFallbackVideoSink { false };
     bool m_canRenderingBeAccelerated { false };
 
-    bool m_isBeingDestroyed { false };
+    bool m_isBeingDestroyed WTF_GUARDED_BY_LOCK(m_drawLock) { false };
 
 #if USE(GSTREAMER_GL)
     std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
@@ -375,8 +376,8 @@ protected:
     ImageOrientation m_videoSourceOrientation;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    Lock m_cdmAttachmentMutex;
-    Condition m_cdmAttachmentCondition;
+    CheckedLock m_cdmAttachmentLock;
+    CheckedCondition m_cdmAttachmentCondition;
     RefPtr<CDMInstanceProxy> m_cdmInstance;
 
     Lock m_protectionMutex; // Guards access to m_handledProtectionEvents.
@@ -437,7 +438,7 @@ private:
     bool didPassCORSAccessCheck() const override;
     bool canSaveMediaData() const override;
 
-    void purgeOldDownloadFiles(const char*);
+    void purgeOldDownloadFiles(const String& downloadFilePrefixPath);
     static void uriDecodeBinElementAddedCallback(GstBin*, GstElement*, MediaPlayerPrivateGStreamer*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
@@ -474,9 +475,9 @@ private:
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     bool m_hasVideo { false };
     bool m_hasAudio { false };
-    Condition m_drawCondition;
-    Lock m_drawMutex;
-    RunLoop::Timer<MediaPlayerPrivateGStreamer> m_drawTimer;
+    CheckedCondition m_drawCondition;
+    CheckedLock m_drawLock;
+    RunLoop::Timer<MediaPlayerPrivateGStreamer> m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
     RunLoop::Timer<MediaPlayerPrivateGStreamer> m_readyTimerHandler;
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)

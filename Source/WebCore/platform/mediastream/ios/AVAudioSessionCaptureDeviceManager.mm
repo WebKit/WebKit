@@ -146,7 +146,7 @@ Optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioS
 
 void AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices()
 {
-    getCaptureDevices([] (auto) { });
+    computeCaptureDevices([] { });
 }
 
 void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
@@ -166,7 +166,7 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
     setAudioCaptureDevices(WTFMove(newAudioDevices).isolatedCopy());
 }
 
-void AVAudioSessionCaptureDeviceManager::getCaptureDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
+void AVAudioSessionCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& completion)
 {
     if (m_audioSessionState == AudioSessionState::Inactive) {
         m_audioSessionState = AudioSessionState::Active;
@@ -180,7 +180,7 @@ void AVAudioSessionCaptureDeviceManager::getCaptureDevices(CompletionHandler<voi
         auto newAudioDevices = retrieveAudioSessionCaptureDevices();
         callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTFMove(completion), newAudioDevices = WTFMove(newAudioDevices).isolatedCopy()] () mutable {
             setAudioCaptureDevices(WTFMove(newAudioDevices));
-            completion(copyToVector(*m_devices));
+            completion();
         }).get());
     });
 }

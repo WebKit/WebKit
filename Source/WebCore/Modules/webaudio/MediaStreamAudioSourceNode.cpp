@@ -94,7 +94,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         return;
 
     // The sample-rate must be equal to the context's sample-rate.
-    if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels()) {
+    if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels) {
         // process() will generate silence for these uninitialized values.
         LOG(Media, "MediaStreamAudioSourceNode::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
         m_sourceNumberOfChannels = 0;
@@ -102,7 +102,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
     }
 
     // Synchronize with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     m_sourceNumberOfChannels = numberOfChannels;
     m_sourceSampleRate = sourceSampleRate;
@@ -118,7 +118,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
 
     {
         // The context must be locked when changing the number of output channels.
-        AudioContext::AutoLocker contextLocker(context());
+        Locker contextLocker { context().graphLock() };
 
         // Do any necesssary re-configuration to the output's number of channels.
         output(0)->setNumberOfChannels(numberOfChannels);
@@ -139,15 +139,15 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
         return;
     }
 
-    // Use tryHoldLock() to avoid contention in the real-time audio thread.
+    // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the MediaStream must be in the middle of
     // a format change, so we output silence in this case.
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker) {
+    if (!m_processLock.tryLock()) {
         // We failed to acquire the lock.
         outputBus->zero();
         return;
     }
+    Locker locker { AdoptLock, m_processLock };
     if (m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
         outputBus->zero();
         return;

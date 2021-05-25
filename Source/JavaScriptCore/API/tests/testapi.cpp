@@ -765,7 +765,7 @@ int testCAPIViaCpp(const char* filter)
                 for (;;) {
                     RefPtr<SharedTask<void(TestAPI&)>> task;
                     {
-                        LockHolder locker(lock);
+                        Locker locker { lock };
                         if (tasks.isEmpty())
                             break;
                         task = tasks.takeFirst();

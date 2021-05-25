@@ -115,7 +115,7 @@ PASS vertical-lr ltr inside horizontal-tb ltr - Pixels resolve as-is when overco
 PASS vertical-lr ltr inside horizontal-tb ltr - Percentages absolutize the computed value when overconstrained
 FAIL vertical-lr ltr inside horizontal-tb ltr - If start side is 'auto' and end side is not, 'auto' resolves to used value assert_equals: 'top' expected "297px" but got "425px"
 FAIL vertical-lr ltr inside horizontal-tb ltr - If end side is 'auto' and start side is not, 'auto' resolves to used value assert_equals: 'bottom' expected "299px" but got "171px"
-FAIL vertical-lr ltr inside horizontal-tb ltr - If opposite sides are 'auto', they resolve to used value assert_equals: 'top' expected "127px" but got "382px"
+FAIL vertical-lr ltr inside horizontal-tb ltr - If opposite sides are 'auto', they resolve to used value assert_equals: 'top' expected "127px" but got "255px"
 PASS vertical-lr ltr inside horizontal-tb rtl - Pixels resolve as-is
 PASS vertical-lr ltr inside horizontal-tb rtl - Relative lengths are absolutized into pixels
 PASS vertical-lr ltr inside horizontal-tb rtl - Percentages are absolutized into pixels
@@ -169,7 +169,7 @@ PASS vertical-lr rtl inside horizontal-tb ltr - Pixels resolve as-is when overco
 PASS vertical-lr rtl inside horizontal-tb ltr - Percentages absolutize the computed value when overconstrained
 FAIL vertical-lr rtl inside horizontal-tb ltr - If start side is 'auto' and end side is not, 'auto' resolves to used value assert_equals: 'top' expected "297px" but got "425px"
 FAIL vertical-lr rtl inside horizontal-tb ltr - If end side is 'auto' and start side is not, 'auto' resolves to used value assert_equals: 'bottom' expected "299px" but got "171px"
-FAIL vertical-lr rtl inside horizontal-tb ltr - If opposite sides are 'auto', they resolve to used value assert_equals: 'top' expected "127px" but got "382px"
+FAIL vertical-lr rtl inside horizontal-tb ltr - If opposite sides are 'auto', they resolve to used value assert_equals: 'top' expected "127px" but got "255px"
 PASS vertical-lr rtl inside horizontal-tb rtl - Pixels resolve as-is
 PASS vertical-lr rtl inside horizontal-tb rtl - Relative lengths are absolutized into pixels
 PASS vertical-lr rtl inside horizontal-tb rtl - Percentages are absolutized into pixels

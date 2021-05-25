@@ -30,7 +30,6 @@
 
 import unittest
 
-from webkitpy.style.checkers import text as text_style
 from webkitpy.style.checkers.text import TextChecker
 
 

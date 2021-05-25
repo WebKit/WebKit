@@ -158,11 +158,6 @@ void JSTestStringifierOperationImplementedAs::destroy(JSC::JSCell* cell)
     thisObject->JSTestStringifierOperationImplementedAs::~JSTestStringifierOperationImplementedAs();
 }
 
-template<> inline JSTestStringifierOperationImplementedAs* IDLOperation<JSTestStringifierOperationImplementedAs>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestStringifierOperationImplementedAs*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierOperationImplementedAsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

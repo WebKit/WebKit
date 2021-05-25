@@ -22,6 +22,7 @@
 
 #include "ActivityState.h"
 #include "AnimationFrameRate.h"
+#include "Color.h"
 #include "DisabledAdaptations.h"
 #include "Document.h"
 #include "FindOptions.h"
@@ -94,7 +95,6 @@ class AuthenticatorCoordinator;
 class BackForwardController;
 class CacheStorageProvider;
 class Chrome;
-class Color;
 class ContextMenuController;
 class CookieJar;
 class DOMRectList;
@@ -105,6 +105,7 @@ class DragController;
 class EditorClient;
 class Element;
 class FocusController;
+class FormData;
 class Frame;
 class HTMLMediaElement;
 class HistoryItem;
@@ -116,6 +117,7 @@ class LowPowerModeNotifier;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
 class MediaRecorderProvider;
+class MediaSessionCoordinatorPrivate;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
@@ -495,6 +497,8 @@ public:
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
+    WEBCORE_EXPORT void logMediaDiagnosticMessage(const FormData*) const;
+
     PerformanceLoggingClient* performanceLoggingClient() const { return m_performanceLoggingClient.get(); }
 
     WheelEventDeltaFilter* wheelEventDeltaFilter() { return m_recentWheelEventDeltaFilter.get(); }
@@ -521,6 +525,12 @@ public:
 
 #if ENABLE(APPLICATION_MANIFEST)
     const Optional<ApplicationManifest>& applicationManifest() const { return m_applicationManifest; }
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    MediaSessionCoordinatorPrivate* mediaSessionCoordinator() { return m_mediaSessionCoordinator.get(); }
+    WEBCORE_EXPORT void setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
+    WEBCORE_EXPORT void invalidateMediaSessionCoordinator();
 #endif
 
     // Notifications when the Page starts and stops being presented via a native window.
@@ -622,6 +632,9 @@ public:
     WEBCORE_EXPORT Color themeColor() const;
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
     WEBCORE_EXPORT Color sampledPageTopColor() const;
+
+    Color underPageBackgroundColorOverride() const { return m_underPageBackgroundColorOverride; }
+    WEBCORE_EXPORT void setUnderPageBackgroundColorOverride(Color&&);
 
     bool isCountingRelevantRepaintedObjects() const;
     void setIsCountingRelevantRepaintedObjects(bool isCounting) { m_isCountingRelevantRepaintedObjects = isCounting; }
@@ -794,7 +807,7 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
     bool loadsSubresources() const { return m_loadsSubresources; }
-    bool loadsFromNetwork() const { return m_loadsFromNetwork; }
+    bool allowsLoadFromURL(const URL&) const;
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }
@@ -1140,17 +1153,24 @@ private:
     RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<MediaSessionCoordinatorPrivate> m_mediaSessionCoordinator;
+#endif
+
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
     Vector<UserStyleSheet> m_userStyleSheetsPendingInjection;
+    Optional<HashSet<String>> m_allowedNetworkHosts;
     bool m_isTakingSnapshotsForApplicationSuspension { false };
     bool m_loadsSubresources { true };
-    bool m_loadsFromNetwork { true };
     bool m_canUseCredentialStorage { true };
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     LoadSchedulingMode m_loadSchedulingMode { LoadSchedulingMode::Direct };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
+
+    Color m_underPageBackgroundColorOverride;
+    Optional<Color> m_sampledPageTopColor;
 
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;

@@ -222,7 +222,7 @@ struct WebPageCreationParameters {
     Vector<String> corsDisablingPatterns;
     bool userScriptsShouldWaitUntilNotification { true };
     bool loadsSubresources { true };
-    bool loadsFromNetwork { true };
+    Optional<HashSet<String>> allowedNetworkHosts;
 
     bool crossOriginAccessControlCheckEnabled { true };
     String processDisplayName;

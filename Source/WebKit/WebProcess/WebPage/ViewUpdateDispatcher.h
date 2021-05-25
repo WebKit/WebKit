@@ -31,8 +31,8 @@
 
 #include "VisibleContentRectUpdateInfo.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/Ref.h>
 
 namespace WebKit {
@@ -64,8 +64,8 @@ private:
     };
 
     Ref<WorkQueue> m_queue;
-    Lock m_dataMutex;
-    HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> m_latestUpdate;
+    CheckedLock m_latestUpdateLock;
+    HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> m_latestUpdate WTF_GUARDED_BY_LOCK(m_latestUpdateLock);
 };
 
 } // namespace WebKit

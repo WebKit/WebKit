@@ -28,20 +28,18 @@
 
 #include <JavaScriptCore/ExecutableAllocator.h>
 #include <cstring>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 
 bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {
     for (int i = 0; i < argc; i++) {
-        if (!strcmp(argv[i], "-clientIdentifier") && i + 1 < argc) {
-            String str(argv[++i]);
-            m_parameters.connectionIdentifier = reinterpret_cast<HANDLE>(str.toUInt64());
-        } else if (!strcmp(argv[i], "-processIdentifier") && i + 1 < argc) {
-            String str(argv[++i]);
-            m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(str.toUInt64());
-        } else if (!strcmp(argv[i], "-configure-jsc-for-testing"))
+        if (!strcmp(argv[i], "-clientIdentifier") && i + 1 < argc)
+            m_parameters.connectionIdentifier = reinterpret_cast<HANDLE>(parseIntegerAllowingTrailingJunk<uint64_t>(argv[++i]).valueOr(0));
+        else if (!strcmp(argv[i], "-processIdentifier") && i + 1 < argc)
+            m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(parseIntegerAllowingTrailingJunk<uint64_t>(argv[++i]).valueOr(0));
+        else if (!strcmp(argv[i], "-configure-jsc-for-testing"))
             JSC::Config::configureForTesting();
         else if (!strcmp(argv[i], "-disable-jit"))
             JSC::ExecutableAllocator::setJITEnabled(false);

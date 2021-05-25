@@ -168,7 +168,7 @@ bool Thread::establishHandle(NewThreadContext* data, Optional<size_t> stackSize,
 
 void Thread::changePriority(int delta)
 {
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     SetThreadPriority(m_handle, THREAD_PRIORITY_NORMAL + delta);
 }
 
@@ -176,7 +176,7 @@ int Thread::waitForCompletion()
 {
     HANDLE handle;
     {
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
         handle = m_handle;
     }
 
@@ -184,7 +184,7 @@ int Thread::waitForCompletion()
     if (joinResult == WAIT_FAILED)
         LOG_ERROR("Thread %p was found to be deadlocked trying to quit", this);
 
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     ASSERT(joinableState() == Joinable);
 
     // The thread has already exited, do nothing.
@@ -206,7 +206,7 @@ void Thread::detach()
     // FlsCallback automatically. FlsCallback will call CloseHandle to clean up
     // resource. So in this function, we just mark the thread as detached to
     // avoid calling waitForCompletion for this thread.
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     if (!hasExited())
         didBecomeDetached();
 }
@@ -214,7 +214,7 @@ void Thread::detach()
 auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 {
     RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::current(), "We do not support suspending the current thread itself.");
-    LockHolder locker(globalSuspendLock);
+    Locker locker { globalSuspendLock };
     DWORD result = SuspendThread(m_handle);
     if (result != (DWORD)-1)
         return { };
@@ -224,13 +224,13 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 // During resume, suspend or resume should not be executed from the other threads.
 void Thread::resume()
 {
-    LockHolder locker(globalSuspendLock);
+    Locker locker { globalSuspendLock };
     ResumeThread(m_handle);
 }
 
 size_t Thread::getRegisters(PlatformRegisters& registers)
 {
-    LockHolder locker(globalSuspendLock);
+    Locker locker { globalSuspendLock };
     registers.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(m_handle, &registers);
     return sizeof(CONTEXT);
@@ -260,7 +260,7 @@ ThreadIdentifier Thread::currentID()
 
 void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier threadID)
 {
-    auto locker = holdLock(m_mutex);
+    Locker locker { m_mutex };
     m_handle = handle;
     m_id = threadID;
 }

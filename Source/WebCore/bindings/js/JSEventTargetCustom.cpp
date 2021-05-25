@@ -65,9 +65,9 @@ std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(VM& vm, JSValue thisValu
 {
     if (auto* target = jsDynamicCast<JSEventTarget*>(vm, thisValue))
         return makeUnique<JSEventTargetWrapper>(target->wrapped(), *target);
-    if (auto* window = toJSDOMWindow(vm, thisValue))
+    if (auto* window = toJSDOMGlobalObject<JSDOMWindow>(vm, thisValue))
         return makeUnique<JSEventTargetWrapper>(window->wrapped(), *window);
-    if (auto* scope = toJSWorkerGlobalScope(vm, thisValue))
+    if (auto* scope = toJSDOMGlobalObject<JSWorkerGlobalScope>(vm, thisValue))
         return makeUnique<JSEventTargetWrapper>(scope->wrapped(), *scope);
     return nullptr;
 }

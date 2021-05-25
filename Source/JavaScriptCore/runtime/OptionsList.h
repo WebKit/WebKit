@@ -521,6 +521,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, usePrivateStaticClassFields, true, Normal, "If true, the parser will understand private static data fields inside classes.") \
     v(Bool, usePrivateClassFields, true, Normal, "If true, the parser will understand private data fields inside classes.") \
     v(Bool, usePrivateMethods, true, Normal, "If true, the parser will understand private methods inside classes.") \
+    v(Bool, usePrivateIn, false, Normal, "If true, the parser will understand private member existence checks with the `in` operator.") \
     v(Bool, useWebAssemblyStreaming, true, Normal, "Allow to run WebAssembly's Streaming API") \
     v(Bool, useWebAssemblyReferences, true, Normal, "Allow types from the wasm references spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \

@@ -258,11 +258,6 @@ JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* glo
     return getDOMConstructor<JSTestEventConstructorDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-template<> inline JSTestEventConstructor* IDLAttribute<JSTestEventConstructor>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestEventConstructor*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

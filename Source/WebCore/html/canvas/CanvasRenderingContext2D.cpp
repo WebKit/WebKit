@@ -79,8 +79,7 @@ std::unique_ptr<CanvasRenderingContext2D> CanvasRenderingContext2D::create(Canva
 }
 
 CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
-    : CanvasRenderingContext2DBase(canvas, usesCSSCompatibilityParseMode)
-    , m_settings { WTFMove(settings) }
+    : CanvasRenderingContext2DBase(canvas, WTFMove(settings), usesCSSCompatibilityParseMode)
 {
 }
 
@@ -244,17 +243,6 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     bool override = computedStyle && isOverride(computedStyle->unicodeBidi());
     TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
-}
-
-PixelFormat CanvasRenderingContext2D::pixelFormat() const
-{
-    // FIXME: Take m_settings.alpha into account here and add PixelFormat::BGRX8.
-    return PixelFormat::BGRA8;
-}
-
-DestinationColorSpace CanvasRenderingContext2D::colorSpace() const
-{
-    return toDestinationColorSpace(m_settings.colorSpace);
 }
 
 } // namespace WebCore

@@ -150,12 +150,8 @@ HRESULT WebKitStatistics::comClassNameCounts(__deref_out_opt BSTR* output)
         return E_POINTER;
 
     StringBuilder builder;
-    for (auto& slot : gClassNameCount()) {
-        builder.appendNumber(slot.value);
-        builder.append('\t');
-        builder.append(slot.key);
-        builder.append('\n');
-    }
+    for (auto& slot : gClassNameCount())
+        builder.append(slot.value, '\t', slot.key, '\n');
     *output = BString(builder.toString()).release();
     return S_OK;
 }

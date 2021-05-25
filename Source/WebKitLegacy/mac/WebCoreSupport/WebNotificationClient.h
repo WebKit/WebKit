@@ -50,12 +50,10 @@ private:
     void clearNotifications(WebCore::ScriptExecutionContext*) override;
     void notificationObjectDestroyed(WebCore::Notification*) override;
     void notificationControllerDestroyed() override;
-    void requestPermission(WebCore::ScriptExecutionContext*, RefPtr<WebCore::NotificationPermissionCallback>&&) override;
-    void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) override { }
-    bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
+    void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) override;
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
 
-    void requestPermission(WebCore::ScriptExecutionContext*, WebNotificationPolicyListener *);
+    void requestPermission(WebCore::ScriptExecutionContext&, WebNotificationPolicyListener *);
 
     WebView *m_webView;
     HashMap<RefPtr<WebCore::Notification>, RetainPtr<WebNotification>> m_notificationMap;

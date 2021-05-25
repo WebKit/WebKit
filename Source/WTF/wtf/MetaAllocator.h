@@ -71,7 +71,7 @@ public:
     
     ALWAYS_INLINE RefPtr<MetaAllocatorHandle> allocate(size_t sizeInBytes)
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         return allocate(locker, sizeInBytes);
     }
     WTF_EXPORT_PRIVATE RefPtr<MetaAllocatorHandle> allocate(const LockHolder&, size_t sizeInBytes);
@@ -95,7 +95,7 @@ public:
     };
     Statistics currentStatistics()
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         return currentStatistics(locker);
     }
     WTF_EXPORT_PRIVATE Statistics currentStatistics(const LockHolder&);

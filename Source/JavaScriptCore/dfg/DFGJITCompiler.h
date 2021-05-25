@@ -219,19 +219,14 @@ public:
         m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
     }
 
-    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo* info)
+    void addJSCall(Label slowPathStart, Label doneLocation, CallLinkInfo* info)
     {
-        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, info));
+        m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
     }
     
-    void addJSDirectCall(Call call, Label slowPath, CallLinkInfo* info)
+    void addJSDirectCall(Label slowPath, CallLinkInfo* info)
     {
-        m_jsDirectCalls.append(JSDirectCallRecord(call, slowPath, info));
-    }
-    
-    void addJSDirectTailCall(PatchableJump patchableJump, Call call, Label slowPath, CallLinkInfo* info)
-    {
-        m_jsDirectTailCalls.append(JSDirectTailCallRecord(patchableJump, call, slowPath, info));
+        m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
     }
     
     void addWeakReference(JSCell* target)
@@ -323,57 +318,33 @@ private:
     Vector<CallLinkRecord> m_calls;
     JumpList m_exceptionChecks;
     JumpList m_exceptionChecksWithCallFrameRollback;
-    
+
     Vector<Label> m_blockHeads;
 
 
     struct JSCallRecord {
-        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo* info)
-            : fastCall(fastCall)
-            , slowCall(slowCall)
-            , targetToCheck(targetToCheck)
+        JSCallRecord(Label slowPathStart, Label doneLocation, CallLinkInfo* info)
+            : slowPathStart(slowPathStart)
+            , doneLocation(doneLocation)
             , info(info)
         {
-            ASSERT(fastCall.isFlagSet(Call::Near));
-            ASSERT(slowCall.isFlagSet(Call::Near));
         }
         
-        Call fastCall;
-        Call slowCall;
-        DataLabelPtr targetToCheck;
+        Label slowPathStart;
+        Label doneLocation;
         CallLinkInfo* info;
     };
     
     struct JSDirectCallRecord {
-        JSDirectCallRecord(Call call, Label slowPath, CallLinkInfo* info)
-            : call(call)
-            , slowPath(slowPath)
+        JSDirectCallRecord(Label slowPath, CallLinkInfo* info)
+            : slowPath(slowPath)
             , info(info)
         {
-            ASSERT(call.isFlagSet(Call::Near));
         }
         
-        Call call;
         Label slowPath;
         CallLinkInfo* info;
     };
-    
-    struct JSDirectTailCallRecord {
-        JSDirectTailCallRecord(PatchableJump patchableJump, Call call, Label slowPath, CallLinkInfo* info)
-            : patchableJump(patchableJump)
-            , call(call)
-            , slowPath(slowPath)
-            , info(info)
-        {
-            ASSERT(call.isFlagSet(Call::Near) && call.isFlagSet(Call::Tail));
-        }
-        
-        PatchableJump patchableJump;
-        Call call;
-        Label slowPath;
-        CallLinkInfo* info;
-    };
-
     
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;
     Vector<InlineCacheWrapper<JITGetByIdWithThisGenerator>, 4> m_getByIdsWithThis;
@@ -386,7 +357,6 @@ private:
     Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
     Vector<JSCallRecord, 4> m_jsCalls;
     Vector<JSDirectCallRecord, 4> m_jsDirectCalls;
-    Vector<JSDirectTailCallRecord, 4> m_jsDirectTailCalls;
     SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
     Vector<Vector<Label>> m_exitSiteLabels;
     Vector<DFG::OSREntryData> m_osrEntry;

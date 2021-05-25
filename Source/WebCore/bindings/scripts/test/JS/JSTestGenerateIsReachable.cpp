@@ -163,11 +163,6 @@ void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)
     thisObject->JSTestGenerateIsReachable::~JSTestGenerateIsReachable();
 }
 
-template<> inline JSTestGenerateIsReachable* IDLAttribute<JSTestGenerateIsReachable>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestGenerateIsReachable*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

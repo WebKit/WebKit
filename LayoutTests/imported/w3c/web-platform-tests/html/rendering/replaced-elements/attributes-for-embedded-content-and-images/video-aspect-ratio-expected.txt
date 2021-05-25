@@ -1,6 +1,6 @@
 
 
-FAIL Video width and height attributes are not used to infer aspect-ratio assert_approx_equals: expected 2.5 +/- 0.001 but got 2
+FAIL Video width and height attributes are not used to infer aspect-ratio assert_approx_equals: expected 2.5 +/- 0.001 but got Infinity
 FAIL Computed style test: video with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
 FAIL Computed style test: video with {"width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
 PASS Computed style test: video with {"width":"0","height":"1"}

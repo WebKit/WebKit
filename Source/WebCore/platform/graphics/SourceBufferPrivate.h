@@ -108,6 +108,7 @@ public:
     bool hasVideo() const { return m_hasVideo; }
 
     MediaTime timestampOffset() const { return m_timestampOffset; }
+    uint64_t totalTrackBufferSizeInBytes() const;
 
     struct TrackBuffer {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -168,7 +169,6 @@ protected:
     WEBCORE_EXPORT void setBufferedRanges(const PlatformTimeRanges&);
     void setBufferFull(bool bufferFull) { m_bufferFull = bufferFull; }
     void provideMediaData(const AtomString& trackID);
-    uint64_t totalTrackBufferSizeInBytes() const;
 
     SourceBufferPrivateClient* m_client { nullptr };
 

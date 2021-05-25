@@ -87,6 +87,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaRecorderProvider.h"
 #include "Navigator.h"
+#include "PageColorSampler.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"
 #include "PageDebuggable.h"
@@ -171,6 +172,11 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "DisplayView.h"
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include "MediaSessionCoordinator.h"
+#include "NavigatorMediaSession.h"
 #endif
 
 namespace WebCore {
@@ -305,8 +311,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_deviceOrientationUpdateProvider(WTFMove(pageConfiguration.deviceOrientationUpdateProvider))
 #endif
     , m_corsDisablingPatterns(WTFMove(pageConfiguration.corsDisablingPatterns))
+    , m_allowedNetworkHosts(WTFMove(pageConfiguration.allowedNetworkHosts))
     , m_loadsSubresources(pageConfiguration.loadsSubresources)
-    , m_loadsFromNetwork(pageConfiguration.loadsFromNetwork)
     , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
     , m_httpsUpgradeEnabled(pageConfiguration.httpsUpgradeEnabled)
 {
@@ -966,7 +972,7 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     if (!document)
         return { };
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::CollectMultipleElements, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::CollectMultipleElements, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     LayoutRect searchRectInMainFrameCoordinates = frameView->rootViewToContents(roundedIntRect(searchRectInRootViewCoordinates));
     HitTestResult hitTestResult { searchRectInMainFrameCoordinates };
     if (!document->hitTest(hitType, hitTestResult))
@@ -1051,6 +1057,15 @@ DiagnosticLoggingClient& Page::diagnosticLoggingClient() const
     if (!settings().diagnosticLoggingEnabled() || !m_diagnosticLoggingClient)
         return emptyDiagnosticLoggingClient();
     return *m_diagnosticLoggingClient;
+}
+
+void Page::logMediaDiagnosticMessage(const FormData* formData) const
+{
+    unsigned imageOrMediaFilesCount = formData ? formData->imageOrMediaFilesCount() : 0;
+    if (!imageOrMediaFilesCount)
+        return;
+    auto message = makeString(imageOrMediaFilesCount, imageOrMediaFilesCount == 1 ? " media file has been submitted" : " media files have been submitted");
+    diagnosticLoggingClient().logDiagnosticMessageWithDomain(message, DiagnosticLoggingDomain::Media);
 }
 
 void Page::setMediaVolume(float volume)
@@ -1672,6 +1687,12 @@ void Page::doAfterUpdateRendering()
         ASSERT(!frameView || !frameView->needsLayout());
     }
 #endif
+
+    if (!m_sampledPageTopColor) {
+        m_sampledPageTopColor = PageColorSampler::sampleTop(*this);
+        if (m_sampledPageTopColor)
+            chrome().client().sampledPageTopColorChanged();
+    }
 }
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
@@ -1841,9 +1862,8 @@ void Page::userStyleSheetLocationChanged()
     if (url.protocolIsData() && url.string().startsWith("data:text/css;charset=utf-8;base64,")) {
         m_didLoadUserStyleSheet = true;
 
-        Vector<char> styleSheetAsUTF8;
-        if (base64Decode(decodeURLEscapeSequences(url.string().substring(35)), styleSheetAsUTF8, Base64IgnoreSpacesAndNewLines))
-            m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data(), styleSheetAsUTF8.size());
+        if (auto styleSheetAsUTF8 = base64Decode(decodeURLEscapeSequences(url.string().substring(35)), Base64DecodeOptions::IgnoreSpacesAndNewLines))
+            m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8->data(), styleSheetAsUTF8->size());
     }
 
     forEachDocument([] (Document& document) {
@@ -1856,7 +1876,7 @@ const String& Page::userStyleSheet() const
     if (m_userStyleSheetPath.isEmpty())
         return m_userStyleSheet;
 
-    auto modificationTime = FileSystem::getFileModificationTime(m_userStyleSheetPath);
+    auto modificationTime = FileSystem::fileModificationTime(m_userStyleSheetPath);
     if (!modificationTime) {
         // The stylesheet either doesn't exist, was just deleted, or is
         // otherwise unreadable. If we've read the stylesheet before, we should
@@ -2556,11 +2576,26 @@ Color Page::pageExtendedBackgroundColor() const
 
 Color Page::sampledPageTopColor() const
 {
-    auto* document = mainFrame().document();
-    if (!document)
-        return { };
+    return m_sampledPageTopColor.valueOr(Color());
+}
 
-    return document->sampledPageTopColor();
+void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorOverride)
+{
+    if (underPageBackgroundColorOverride == m_underPageBackgroundColorOverride)
+        return;
+
+    m_underPageBackgroundColorOverride = WTFMove(underPageBackgroundColorOverride);
+
+    scheduleRenderingUpdate({ });
+
+#if ENABLE(RUBBER_BANDING)
+    if (auto frameView = makeRefPtr(mainFrame().view())) {
+        if (auto* renderView = frameView->renderView()) {
+            if (renderView->usesCompositing())
+                renderView->compositor().updateLayerForOverhangAreasBackgroundColor();
+        }
+    }
+#endif // ENABLE(RUBBER_BANDING)
 }
 
 // These are magical constants that might be tweaked over time.
@@ -3266,6 +3301,11 @@ void Page::didChangeMainDocument()
     m_rtcController.reset(m_shouldEnableICECandidateFilteringByDefault);
 #endif
     m_pointerCaptureController->reset();
+
+    if (m_sampledPageTopColor) {
+        m_sampledPageTopColor = WTF::nullopt;
+        chrome().client().sampledPageTopColorChanged();
+    }
 }
 
 RenderingUpdateScheduler& Page::renderingUpdateScheduler()
@@ -3297,6 +3337,15 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 #else
     UNUSED_PARAM(functor);
 #endif
+}
+
+bool Page::allowsLoadFromURL(const URL& url) const
+{
+    if (!m_allowedNetworkHosts)
+        return true;
+    if (!url.protocolIsInHTTPFamily() && !url.protocolIs("ws") && !url.protocolIs("wss"))
+        return true;
+    return m_allowedNetworkHosts->contains(url.host().toStringWithoutCopying());
 }
 
 void Page::applicationWillResignActive()
@@ -3368,6 +3417,35 @@ void Page::dispatchAfterPrintEvent()
 void Page::setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&& paymentCoordinator)
 {
     m_paymentCoordinator = WTFMove(paymentCoordinator);
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void Page::setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& mediaSessionCoordinator)
+{
+    m_mediaSessionCoordinator = WTFMove(mediaSessionCoordinator);
+
+    auto* window = mainFrame().window();
+    if (auto* navigator = window ? window->optionalNavigator() : nullptr)
+        NavigatorMediaSession::mediaSession(*navigator).createCoordinator(*m_mediaSessionCoordinator);
+}
+
+void Page::invalidateMediaSessionCoordinator()
+{
+    m_mediaSessionCoordinator = nullptr;
+    auto* window = mainFrame().window();
+    if (!window)
+        return;
+
+    auto* navigator = window->optionalNavigator();
+    if (!navigator)
+        return;
+
+    auto* coordinator = NavigatorMediaSession::mediaSession(*navigator).coordinator();
+    if (!coordinator)
+        return;
+
+    coordinator->close();
 }
 #endif
 

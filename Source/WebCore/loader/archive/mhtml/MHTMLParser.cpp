@@ -192,16 +192,19 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
         return nullptr;
     }
 
-    Vector<char> data;
+    Vector<uint8_t> data;
     switch (mimeHeader.contentTransferEncoding()) {
-    case MIMEHeader::Base64:
-        if (!base64Decode(content->data(), content->size(), data)) {
+    case MIMEHeader::Base64: {
+        auto decodedData = base64Decode(content->dataAsUInt8Ptr()   , content->size());
+        if (!decodedData) {
             LOG_ERROR("Invalid base64 content for MHTML part.");
             return nullptr;
         }
+        data = WTFMove(*decodedData);
         break;
+    }
     case MIMEHeader::QuotedPrintable:
-        quotedPrintableDecode(content->data(), content->size(), data);
+        data = quotedPrintableDecode(content->dataAsUInt8Ptr(), content->size());
         break;
     case MIMEHeader::SevenBit:
     case MIMEHeader::Binary:

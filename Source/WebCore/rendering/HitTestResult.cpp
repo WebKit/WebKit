@@ -656,7 +656,8 @@ inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* n
     if (!node)
         return HitTestProgress::Continue;
 
-    if (request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
+    if ((request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
+        || (request.disallowsUserAgentShadowContentExceptForImageOverlays() && !HTMLElement::isInsideImageOverlay(*node) && node->isInUserAgentShadowTree()))
         node = node->document().ancestorNodeInThisScope(node);
 
     mutableListBasedTestResult().add(*node);

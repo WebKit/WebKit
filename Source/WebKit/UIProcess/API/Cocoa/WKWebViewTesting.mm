@@ -557,13 +557,9 @@
             [m_clientCoordinator playbackStateChanged:static_cast<_WKMediaSessionPlaybackState>(state)];
         }
 
-        void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state) final
+        void trackIdentifierChanged(const String& identifier) final
         {
-            static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Waiting) == static_cast<size_t>(WKMediaSessionCoordinatorStateWaiting), "WKMediaSessionCoordinatorStateWaiting does not match WebKit value");
-            static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Joined) == static_cast<size_t>(WKMediaSessionCoordinatorStateJoined), "WKMediaSessionCoordinatorStateJoined does not match WebKit value");
-            static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Closed) == static_cast<size_t>(WKMediaSessionCoordinatorStateClosed), "WKMediaSessionCoordinatorStateClosed does not match WebKit value");
-
-            [m_clientCoordinator coordinatorStateChanged:static_cast<_WKMediaSessionCoordinatorState>(state)];
+            [m_clientCoordinator trackIdentifierChanged:identifier];
         }
 
     private:

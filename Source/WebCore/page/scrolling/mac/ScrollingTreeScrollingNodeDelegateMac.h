@@ -30,6 +30,7 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include "ScrollController.h"
+#include <wtf/RunLoop.h>
 
 OBJC_CLASS NSScrollerImp;
 
@@ -73,6 +74,9 @@ private:
 
     // ScrollControllerClient.
     std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
+    void startAnimationCallback(ScrollController&) final;
+    void stopAnimationCallback(ScrollController&) final;
+
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
     IntSize stretchAmount() const final;
@@ -88,6 +92,7 @@ private:
     void adjustScrollPositionToBoundsIfNecessary() final;
 
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
+    void scrollControllerAnimationTimerFired();
 
 #if ENABLE(CSS_SCROLL_SNAP)
     FloatPoint scrollOffset() const override;
@@ -102,11 +107,13 @@ private:
     void releaseReferencesToScrollerImpsOnTheMainThread();
 
     ScrollController m_scrollController;
-    
-    bool m_inMomentumPhase { false };
 
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
+
+    std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>> m_scrollControllerAnimationTimer;
+
+    bool m_inMomentumPhase { false };
 };
 
 } // namespace WebCore

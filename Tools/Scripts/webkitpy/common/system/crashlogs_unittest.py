@@ -115,9 +115,9 @@ Binary Images:
 
 
 def make_mock_crash_report_win(process_name, pid):
-    return """Opened log file 'C:\Projects\WebKit\OpenSource\WebKitBuild\Release\bin32\layout-test-results\CrashLog_1d58_2013-06-03_12-21-20-110.txt'
-0:000> .srcpath "C:\Projects\WebKit\OpenSource"
-Source search path is: C:\Projects\WebKit\OpenSource
+    return """Opened log file 'C:\\Projects\\WebKit\\OpenSource\\WebKitBuild\\Release\bin32\\layout-test-results\\CrashLog_1d58_2013-06-03_12-21-20-110.txt'
+0:000> .srcpath "C:\\Projects\\WebKit\\OpenSource"
+Source search path is: C:\\Projects\\WebKit\\OpenSource
 0:000> !analyze -vv
 *******************************************************************************
 *                                                                             *
@@ -125,11 +125,11 @@ Source search path is: C:\Projects\WebKit\OpenSource
 *                                                                             *
 *******************************************************************************
 
-*** ERROR: Symbol file could not be found.  Defaulted to export symbols for C:\Projects\WebKit\OpenSource\WebKitBuild\Release\bin32\libdispatch.dll -
-*** ERROR: Symbol file could not be found.  Defaulted to export symbols for C:\Windows\SYSTEM32\atiumdag.dll -
+*** ERROR: Symbol file could not be found.  Defaulted to export symbols for C:\\Projects\\WebKit\\OpenSource\\WebKitBuild\\Release\bin32\\libdispatch.dll -
+*** ERROR: Symbol file could not be found.  Defaulted to export symbols for C:\\Windows\\SYSTEM32\atiumdag.dll -
 
 FAULTING_IP:
-JavaScriptCore!JSC::JSActivation::getOwnPropertySlot+0 [c:\projects\webkit\opensource\source\javascriptcore\runtime\jsactivation.cpp @ 146]
+JavaScriptCore!JSC::JSActivation::getOwnPropertySlot+0 [c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsactivation.cpp @ 146]
 01e3d070 55              push    ebp
 
 EXCEPTION_RECORD:  00092cc8 -- (.exr 0x92cc8)
@@ -151,7 +151,7 @@ EXCEPTION_PARAMETER2:  00090000
 READ_ADDRESS:  00090000
 
 FOLLOWUP_IP:
-JavaScriptCore!JSC::JSActivation::getOwnPropertySlot+0 [c:\projects\webkit\opensource\source\javascriptcore\runtime\jsactivation.cpp @ 146]
+JavaScriptCore!JSC::JSActivation::getOwnPropertySlot+0 [c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsactivation.cpp @ 146]
 01e3d070 55              push    ebp
 
 WATSON_BKT_PROCSTAMP:  51a8f979
@@ -189,8 +189,8 @@ THREAD_ATTRIBUTES:
     Global     Thread_Count: [19]
     Global     PageSize: [4096]
     Global     ModList_SHA1_Hash: [aacef4e7e83b9bddc9cd0cc094dac88d531ea4a3]
-    Global     CommandLine: [C:\Projects\WebKit\OpenSource\WebKitBuild\Release\bin32\{process_name} -]
-    Global     Desktop_Name: [Winsta0\Default]
+    Global     CommandLine: [C:\\Projects\\WebKit\\OpenSource\\WebKitBuild\\Release\bin32\\{process_name} -]
+    Global     Desktop_Name: [Winsta0\\Default]
     Global     ProcessName: [{process_name}]
     Global     Debugger_CPU_Architecture: [X86]
     Global     CPU_ProcessorCount: [24]
@@ -219,9 +219,9 @@ THREAD_ATTRIBUTES:
 
 FAULT_INSTR_CODE:  83ec8b55
 
-FAULTING_SOURCE_LINE:  c:\projects\webkit\opensource\source\javascriptcore\runtime\jsactivation.cpp
+FAULTING_SOURCE_LINE:  c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsactivation.cpp
 
-FAULTING_SOURCE_FILE:  c:\projects\webkit\opensource\source\javascriptcore\runtime\jsactivation.cpp
+FAULTING_SOURCE_FILE:  c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsactivation.cpp
 
 FAULTING_SOURCE_LINE_NUMBER:  146
 
@@ -257,7 +257,7 @@ Followup: MachineOwner
 02 00092a6c 7261ef6b MSVCR100!_flush+0x3b
 03 00092a7c 7261ef1c MSVCR100!_fflush_nolock+0x1c
 04 00092ab4 1000f814 MSVCR100!fflush+0x30
-05 00092ac8 77c0084e DumpRenderTree_10000000!exceptionFilter(struct _EXCEPTION_POINTERS * __formal = 0x852ac807)+0x24 [c:\projects\webkit\opensource\tools\dumprendertree\win\dumprendertree.cpp @ 1281]
+05 00092ac8 77c0084e DumpRenderTree_10000000!exceptionFilter(struct _EXCEPTION_POINTERS * __formal = 0x852ac807)+0x24 [c:\\projects\\webkit\\opensource\tools\\dumprendertree\\win\\dumprendertree.cpp @ 1281]
 06 00092b60 77e8bf2c KERNELBASE!UnhandledExceptionFilter+0x164
 07 00092b68 77e530b4 ntdll!__RtlUserThreadStart+0x57
 08 00092b7c 77e15246 ntdll!_EH4_CallFilterFunc+0x12
@@ -266,10 +266,10 @@ Followup: MachineOwner
 0b 00092be8 77e52e43 ntdll!ExecuteHandler2+0x26
 0c 00092cb0 77e52cbb ntdll!ExecuteHandler+0x24
 0d 00092cb0 01e3d070 ntdll!KiUserExceptionDispatcher+0xf
-0e 00092ffc 01e67d25 JavaScriptCore!JSC::JSActivation::getOwnPropertySlot(class JSC::JSCell * cell = 0x07a7ff98, class JSC::ExecState * exec = 0x0751e168, class JSC::PropertyName propertyName = class JSC::PropertyName, class JSC::PropertySlot * slot = 0x000930bc) [c:\projects\webkit\opensource\source\javascriptcore\runtime\jsactivation.cpp @ 146]
-0f 0009306c 01e68837 JavaScriptCore!JSC::JSScope::resolveContainingScopeInternal<1,2>(class JSC::ExecState * callFrame = 0x0751e168, class JSC::Identifier * identifier = 0x7fe0ebc0, class JSC::PropertySlot * slot = 0x7fe03ed0, class WTF::Vector<JSC::ResolveOperation,0,WTF::CrashOnOverflow> * operations = 0x7fda16c0, struct JSC::PutToBaseOperation * putToBaseOperation = 0x00000000, bool __formal = false)+0x205 [c:\projects\webkit\opensource\source\javascriptcore\runtime\jsscope.cpp @ 247]
-10 00093090 01e65860 JavaScriptCore!JSC::JSScope::resolveContainingScope<1>(class JSC::ExecState * callFrame = 0x0751e168, class JSC::Identifier * identifier = 0x7fe0ebc0, class JSC::PropertySlot * slot = 0x000930bc, class WTF::Vector<JSC::ResolveOperation,0,WTF::CrashOnOverflow> * operations = 0x7fda16c0, struct JSC::PutToBaseOperation * putToBaseOperation = 0x00000000, bool isStrict = false)+0x27 [c:\projects\webkit\opensource\source\javascriptcore\runtime\jsscope.cpp @ 427]
-11 00093104 01dceeff JavaScriptCore!JSC::JSScope::resolve(class JSC::ExecState * callFrame = 0x0751e168, class JSC::Identifier * identifier = 0x7fe0ebc0, class WTF::Vector<JSC::ResolveOperation,0,WTF::CrashOnOverflow> * operations = 0x7fda16c0)+0xc0 [c:\projects\webkit\opensource\source\javascriptcore\runtime\jsscope.cpp @ 447]
+0e 00092ffc 01e67d25 JavaScriptCore!JSC::JSActivation::getOwnPropertySlot(class JSC::JSCell * cell = 0x07a7ff98, class JSC::ExecState * exec = 0x0751e168, class JSC::PropertyName propertyName = class JSC::PropertyName, class JSC::PropertySlot * slot = 0x000930bc) [c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsactivation.cpp @ 146]
+0f 0009306c 01e68837 JavaScriptCore!JSC::JSScope::resolveContainingScopeInternal<1,2>(class JSC::ExecState * callFrame = 0x0751e168, class JSC::Identifier * identifier = 0x7fe0ebc0, class JSC::PropertySlot * slot = 0x7fe03ed0, class WTF::Vector<JSC::ResolveOperation,0,WTF::CrashOnOverflow> * operations = 0x7fda16c0, struct JSC::PutToBaseOperation * putToBaseOperation = 0x00000000, bool __formal = false)+0x205 [c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsscope.cpp @ 247]
+10 00093090 01e65860 JavaScriptCore!JSC::JSScope::resolveContainingScope<1>(class JSC::ExecState * callFrame = 0x0751e168, class JSC::Identifier * identifier = 0x7fe0ebc0, class JSC::PropertySlot * slot = 0x000930bc, class WTF::Vector<JSC::ResolveOperation,0,WTF::CrashOnOverflow> * operations = 0x7fda16c0, struct JSC::PutToBaseOperation * putToBaseOperation = 0x00000000, bool isStrict = false)+0x27 [c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsscope.cpp @ 427]
+11 00093104 01dceeff JavaScriptCore!JSC::JSScope::resolve(class JSC::ExecState * callFrame = 0x0751e168, class JSC::Identifier * identifier = 0x7fe0ebc0, class WTF::Vector<JSC::ResolveOperation,0,WTF::CrashOnOverflow> * operations = 0x7fda16c0)+0xc0 [c:\\projects\\webkit\\opensource\\source\\javascriptcore\runtime\\jsscope.cpp @ 447]
 
 0:000> q
 quit:

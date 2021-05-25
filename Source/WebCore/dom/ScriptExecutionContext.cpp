@@ -72,6 +72,7 @@
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
@@ -79,8 +80,8 @@
 namespace WebCore {
 using namespace Inspector;
 
-static Lock allScriptExecutionContextsMapLock;
-static HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>& allScriptExecutionContextsMap()
+static CheckedLock allScriptExecutionContextsMapLock;
+static HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>& allScriptExecutionContextsMap() WTF_REQUIRES_LOCK(allScriptExecutionContextsMapLock)
 {
     static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, ScriptExecutionContext*>> contexts;
     ASSERT(allScriptExecutionContextsMapLock.isLocked());
@@ -113,7 +114,7 @@ ScriptExecutionContextIdentifier ScriptExecutionContext::contextIdentifier() con
 {
     ASSERT(isContextThread());
     if (!m_contextIdentifier) {
-        Locker<Lock> locker(allScriptExecutionContextsMapLock);
+        Locker locker { allScriptExecutionContextsMapLock };
 
         m_contextIdentifier = ScriptExecutionContextIdentifier::generate();
 
@@ -126,7 +127,7 @@ ScriptExecutionContextIdentifier ScriptExecutionContext::contextIdentifier() con
 void ScriptExecutionContext::removeFromContextsMap()
 {
     if (m_contextIdentifier) {
-        Locker<Lock> locker(allScriptExecutionContextsMapLock);
+        Locker locker { allScriptExecutionContextsMapLock };
         ASSERT(allScriptExecutionContextsMap().contains(m_contextIdentifier));
         allScriptExecutionContextsMap().remove(m_contextIdentifier);
     }
@@ -162,7 +163,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 #if ASSERT_ENABLED
     if (m_contextIdentifier) {
-        Locker<Lock> locker(allScriptExecutionContextsMapLock);
+        Locker locker { allScriptExecutionContextsMapLock };
         ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_contextIdentifier),
             "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
     }
@@ -623,7 +624,7 @@ ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
 
 bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identifier, Task&& task)
 {
-    Locker<Lock> locker(allScriptExecutionContextsMapLock);
+    Locker locker { allScriptExecutionContextsMapLock };
     auto* context = allScriptExecutionContextsMap().get(identifier);
 
     if (!context)

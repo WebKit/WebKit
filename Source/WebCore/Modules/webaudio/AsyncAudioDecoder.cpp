@@ -38,7 +38,7 @@ namespace WebCore {
 AsyncAudioDecoder::AsyncAudioDecoder()
 {
     // Start worker thread.
-    LockHolder lock(m_threadCreationMutex);
+    Locker locker { m_threadCreationMutex };
     m_thread = Thread::create("Audio Decoder", [this] {
         runLoop();
     }, ThreadType::Audio);
@@ -66,7 +66,7 @@ void AsyncAudioDecoder::runLoop()
 
     {
         // Wait for until we have m_thread established before starting the run loop.
-        LockHolder lock(m_threadCreationMutex);
+        Locker locker { m_threadCreationMutex };
     }
 
     // Keep running decoding tasks until we're killed.

@@ -1,0 +1,16 @@
+<body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+let c = document.createElement("canvas");
+let gl = c.getContext("webgl2");
+let vs = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vs, "#version 300 es\nvoid main(){vec2 S[1];S;}");
+gl.compileShader(vs);
+if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS) ) {
+    let info = gl.getShaderInfoLog(vs);
+    throw 'Could not compile WebGL program. Info:' + info;
+}
+document.body.innerHTML += "PASS, no crash."
+</script>
+</body>

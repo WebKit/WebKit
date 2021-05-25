@@ -43,9 +43,17 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
+#if ENABLE(IPC_TESTING_API)
+#define WEB_PROCESS_TERMINATE_CONDITION !m_gpuConnectionToWebProcess->connection().ignoreInvalidMessageForTesting()
+#else
+#define WEB_PROCESS_TERMINATE_CONDITION true
+#endif
+
 #define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
-    RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), #message); \
-    m_gpuConnectionToWebProcess->terminateWebProcess();
+    if (WEB_PROCESS_TERMINATE_CONDITION) { \
+        RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), #message); \
+        m_gpuConnectionToWebProcess->terminateWebProcess(); \
+    }
 
 #define MESSAGE_CHECK(assertion, message) do { \
     if (UNLIKELY(!(assertion))) { \
@@ -124,11 +132,13 @@ bool RemoteRenderingBackend::applyMediaItem(DisplayList::ItemHandle item, Graphi
         return false;
 
     auto& mediaItem = item.get<DisplayList::PaintFrameForMedia>();
-    auto player = m_gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaItem.identifier());
-    if (!player)
-        return true;
-
-    context.paintFrameForMedia(*player, mediaItem.destination());
+    callOnMainRunLoopAndWait([&, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, mediaPlayerIdentifier = mediaItem.identifier()] {
+        auto player = gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(mediaPlayerIdentifier);
+        if (!player)
+            return;
+        // It is currently not safe to call paintFrameForMedia() off the main thread.
+        context.paintFrameForMedia(*player, mediaItem.destination());
+    });
     return true;
 }
 
@@ -258,7 +268,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             MESSAGE_CHECK_WITH_RETURN_VALUE(sizeToRead, nullptr, "No unread bytes when resuming display list processing");
 
             auto newDestinationIdentifier = makeObjectIdentifier<RenderingResourceIdentifierType>(resumeReadingInfo->destination);
-            MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier, nullptr, "Invalid image buffer destination when resuming display list processing");
+            MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier.isValid(), nullptr, "Invalid image buffer destination when resuming display list processing");
 
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(newDestinationIdentifier));
             MESSAGE_CHECK_WITH_RETURN_VALUE(destination, nullptr, "Missing image buffer destination when resuming display list processing");
@@ -315,65 +325,65 @@ void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIden
     m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, WTF::nullopt }};
 }
 
-Optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemoryForGetImageDataHelper(size_t byteCount)
+Optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemoryForGetPixelBufferHelper(size_t byteCount)
 {
-    MESSAGE_CHECK_WITH_RETURN_VALUE(!m_getImageDataSharedMemory || byteCount > m_getImageDataSharedMemory->size(), WTF::nullopt, "The existing Shmem for getImageData() is already big enough to handle the request");
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!m_getPixelBufferSharedMemory || byteCount > m_getPixelBufferSharedMemory->size(), WTF::nullopt, "The existing Shmem for getPixelBuffer() is already big enough to handle the request");
 
     if (byteCount > 64 * MB) {
         // Just a sanity check. A 4K image is 36MB.
         return WTF::nullopt;
     }
 
-    destroyGetImageDataSharedMemory();
-    m_getImageDataSharedMemory = SharedMemory::allocate(byteCount);
+    destroyGetPixelBufferSharedMemory();
+    m_getPixelBufferSharedMemory = SharedMemory::allocate(byteCount);
     SharedMemory::Handle handle;
-    if (m_getImageDataSharedMemory)
-        m_getImageDataSharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    return SharedMemory::IPCHandle { WTFMove(handle), m_getImageDataSharedMemory ? m_getImageDataSharedMemory->size() : 0 };
+    if (m_getPixelBufferSharedMemory)
+        m_getPixelBufferSharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    return SharedMemory::IPCHandle { WTFMove(handle), m_getPixelBufferSharedMemory ? m_getPixelBufferSharedMemory->size() : 0 };
 }
 
-void RemoteRenderingBackend::updateSharedMemoryForGetImageData(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&& completionHandler)
+void RemoteRenderingBackend::updateSharedMemoryForGetPixelBuffer(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (auto handle = updateSharedMemoryForGetImageDataHelper(byteCount))
+    if (auto handle = updateSharedMemoryForGetPixelBufferHelper(byteCount))
         completionHandler(WTFMove(handle.value()));
     else
         completionHandler({ });
 }
 
-void RemoteRenderingBackend::semaphoreForGetImageData(CompletionHandler<void(const IPC::Semaphore&)>&& completionHandler)
+void RemoteRenderingBackend::semaphoreForGetPixelBuffer(CompletionHandler<void(const IPC::Semaphore&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    completionHandler(m_getImageDataSemaphore);
+    completionHandler(m_getPixelBufferSemaphore);
 }
 
-void RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetImageData(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&, const IPC::Semaphore&)>&& completionHandler)
+void RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetPixelBuffer(uint32_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&, const IPC::Semaphore&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (auto handle = updateSharedMemoryForGetImageDataHelper(byteCount))
-        completionHandler(WTFMove(handle.value()), m_getImageDataSemaphore);
+    if (auto handle = updateSharedMemoryForGetPixelBufferHelper(byteCount))
+        completionHandler(WTFMove(handle.value()), m_getPixelBufferSemaphore);
     else
-        completionHandler({ }, m_getImageDataSemaphore);
+        completionHandler({ }, m_getPixelBufferSemaphore);
 }
 
-void RemoteRenderingBackend::destroyGetImageDataSharedMemory()
+void RemoteRenderingBackend::destroyGetPixelBufferSharedMemory()
 {
-    m_getImageDataSharedMemory = nullptr;
+    m_getPixelBufferSharedMemory = nullptr;
 }
 
-void RemoteRenderingBackend::populateGetImageDataSharedMemory(WebCore::ImageData* imageData)
+void RemoteRenderingBackend::populateGetPixelBufferSharedMemory(Optional<WebCore::PixelBuffer>&& pixelBuffer)
 {
-    MESSAGE_CHECK(m_getImageDataSharedMemory, "We can't run getImageData without a buffer to write into");
+    MESSAGE_CHECK(m_getPixelBufferSharedMemory, "We can't run getPixelBuffer without a buffer to write into");
 
-    if (imageData) {
-        MESSAGE_CHECK(imageData->data().byteLength() <= m_getImageDataSharedMemory->size(), "Shmem for return of getImageData is too small");
-        memcpy(m_getImageDataSharedMemory->data(), imageData->data().data(), imageData->data().byteLength());
+    if (pixelBuffer) {
+        MESSAGE_CHECK(pixelBuffer->data().byteLength() <= m_getPixelBufferSharedMemory->size(), "Shmem for return of getPixelBuffer is too small");
+        memcpy(m_getPixelBufferSharedMemory->data(), pixelBuffer->data().data(), pixelBuffer->data().byteLength());
     } else
-        memset(m_getImageDataSharedMemory->data(), 0, m_getImageDataSharedMemory->size());
+        memset(m_getPixelBufferSharedMemory->data(), 0, m_getPixelBufferSharedMemory->size());
 
-    m_getImageDataSemaphore.signal();
+    m_getPixelBufferSemaphore.signal();
 }
 
 void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
@@ -393,16 +403,6 @@ void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, Optio
     Vector<uint8_t> data;
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
         data = imageBuffer->toData(mimeType, quality);
-    completionHandler(WTFMove(data));
-}
-
-void RemoteRenderingBackend::getBGRADataForImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-
-    Vector<uint8_t> data;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
-        data = imageBuffer->toBGRAData();
     completionHandler(WTFMove(data));
 }
 
@@ -521,8 +521,8 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
         return decodeAndCreate<DisplayList::FillRectWithRoundedHole>(data, length, handleLocation);
     case DisplayList::ItemType::FillRoundedRect:
         return decodeAndCreate<DisplayList::FillRoundedRect>(data, length, handleLocation);
-    case DisplayList::ItemType::PutImageData:
-        return decodeAndCreate<DisplayList::PutImageData>(data, length, handleLocation);
+    case DisplayList::ItemType::PutPixelBuffer:
+        return decodeAndCreate<DisplayList::PutPixelBuffer>(data, length, handleLocation);
     case DisplayList::ItemType::SetLineDash:
         return decodeAndCreate<DisplayList::SetLineDash>(data, length, handleLocation);
     case DisplayList::ItemType::SetState:
@@ -581,10 +581,9 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::StrokeRect:
     case DisplayList::ItemType::StrokeLine:
     case DisplayList::ItemType::Translate:
-    case DisplayList::ItemType::GetImageData: {
+    case DisplayList::ItemType::GetPixelBuffer:
         ASSERT_NOT_REACHED();
-        break;
-    }
+        return WTF::nullopt;
     }
     ASSERT_NOT_REACHED();
     return WTF::nullopt;

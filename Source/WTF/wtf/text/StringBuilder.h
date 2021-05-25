@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,423 +26,315 @@
 
 #pragma once
 
-#include <wtf/CheckedArithmetic.h>
-#include <wtf/text/AtomString.h>
-#include <wtf/text/IntegerToStringConversion.h>
+#include <wtf/SaturatedArithmetic.h>
 #include <wtf/text/StringConcatenateNumbers.h>
-#include <wtf/text/StringView.h>
-#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
-// StringBuilder currently uses a Checked<int32_t, ConditionalCrashOnOverflow> for m_length.
-// Ideally, we would want to make StringBuilder a template with an OverflowHandler parameter, and
-// m_length can be instantiated based on that OverflowHandler instead. However, currently, we're
-// not able to get clang to export explicitly instantiated template methods (which would be needed
-// if we templatize StringBuilder). As a workaround, we use the ConditionalCrashOnOverflow handler
-// instead to do a runtime check on whether it should crash on overflows or not.
-//
-// When clang is able to export explicitly instantiated template methods, we can templatize
-// StringBuilder and do away with ConditionalCrashOnOverflow.
-// See https://bugs.webkit.org/show_bug.cgi?id=191050.
-
 class StringBuilder {
-    // Disallow copying since it's expensive and we don't want code to do it by accident.
+    // Disallow copying since we don't want to share m_buffer between two builders.
     WTF_MAKE_NONCOPYABLE(StringBuilder);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    enum class OverflowHandler {
-        CrashOnOverflow,
-        RecordOverflow
-    };
-
-    StringBuilder(OverflowHandler handler = OverflowHandler::CrashOnOverflow)
-        : m_bufferCharacters8(nullptr)
-    {
-        m_length.setShouldCrashOnOverflow(handler == OverflowHandler::CrashOnOverflow);
-    }
+    StringBuilder() = default;
     StringBuilder(StringBuilder&&) = default;
     StringBuilder& operator=(StringBuilder&&) = default;
 
-    ALWAYS_INLINE void didOverflow() { m_length.overflowed(); }
-    ALWAYS_INLINE bool hasOverflowed() const { return m_length.hasOverflowed(); }
-    ALWAYS_INLINE bool crashesOnOverflow() const { return m_length.shouldCrashOnOverflow(); }
+    enum class OverflowHandler { CrashOnOverflow, RecordOverflow }; // FIXME: Despite its use in Checked<>, "handler" does not seem the correct name for this.
+    explicit StringBuilder(OverflowHandler);
+
+    void clear();
+    void swap(StringBuilder&);
+
+    void didOverflow();
+    bool hasOverflowed() const { return m_length > String::MaxLength; }
+    bool crashesOnOverflow() const { return m_shouldCrashOnOverflow; }
 
     WTF_EXPORT_PRIVATE void appendCharacters(const UChar*, unsigned);
     WTF_EXPORT_PRIVATE void appendCharacters(const LChar*, unsigned);
-
-    ALWAYS_INLINE void appendCharacters(const char* characters, unsigned length) { appendCharacters(reinterpret_cast<const LChar*>(characters), length); }
-
-    void append(const AtomString& atomString)
-    {
-        append(atomString.string());
-    }
-
-    void append(const String& string)
-    {
-        if (hasOverflowed())
-            return;
-
-        if (!string.length())
-            return;
-
-        // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
-        // then just retain the string.
-        if (!m_length && !m_buffer) {
-            m_string = string;
-            m_length = string.length();
-            m_is8Bit = m_string.is8Bit();
-            return;
-        }
-
-        if (string.is8Bit())
-            appendCharacters(string.characters8(), string.length());
-        else
-            appendCharacters(string.characters16(), string.length());
-    }
-
-    void append(const StringBuilder& other)
-    {
-        if (hasOverflowed())
-            return;
-        if (other.hasOverflowed())
-            return didOverflow();
-
-        if (!other.m_length)
-            return;
-
-        // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
-        // then just retain the string.
-        if (!m_length && !m_buffer && !other.m_string.isNull()) {
-            m_string = other.m_string;
-            m_length = other.m_length;
-            m_is8Bit = other.m_is8Bit;
-            return;
-        }
-
-        if (other.is8Bit())
-            appendCharacters(other.characters8(), other.m_length.unsafeGet());
-        else
-            appendCharacters(other.characters16(), other.m_length.unsafeGet());
-    }
-
-    void append(StringView stringView)
-    {
-        if (stringView.is8Bit())
-            appendCharacters(stringView.characters8(), stringView.length());
-        else
-            appendCharacters(stringView.characters16(), stringView.length());
-    }
-
-#if USE(CF)
-    WTF_EXPORT_PRIVATE void append(CFStringRef);
-#endif
-#if USE(CF) && defined(__OBJC__)
-    void append(NSString *string) { append((__bridge CFStringRef)string); }
-#endif
-    
-    void appendSubstring(const String& string, unsigned offset, unsigned length = String::MaxLength)
-    {
-        if (offset >= string.length())
-            return;
-
-        unsigned clampedLength = std::min(length, string.length() - offset);
-        if (string.is8Bit())
-            appendCharacters(string.characters8() + offset, clampedLength);
-        else
-            appendCharacters(string.characters16() + offset, clampedLength);
-    }
-
-    void append(const char* characters)
-    {
-        if (characters)
-            appendCharacters(characters, strlen(characters));
-    }
-
-    void appendCharacter(UChar) = delete;
-    void append(UChar c)
-    {
-        if (hasOverflowed())
-            return;
-        unsigned length = m_length.unsafeGet<unsigned>();
-        if (m_buffer && length < m_buffer->length() && m_string.isNull()) {
-            if (!m_is8Bit) {
-                m_bufferCharacters16[length] = c;
-                m_length++;
-                return;
-            }
-
-            if (isLatin1(c)) {
-                m_bufferCharacters8[length] = static_cast<LChar>(c);
-                m_length++;
-                return;
-            }
-        }
-        appendCharacters(&c, 1);
-    }
-
-    void appendCharacter(LChar) = delete;
-    void append(LChar c)
-    {
-        if (hasOverflowed())
-            return;
-        unsigned length = m_length.unsafeGet<unsigned>();
-        if (m_buffer && length < m_buffer->length() && m_string.isNull()) {
-            if (m_is8Bit)
-                m_bufferCharacters8[length] = c;
-            else
-                m_bufferCharacters16[length] = c;
-            m_length++;
-        } else
-            appendCharacters(&c, 1);
-    }
-
-    void appendCharacter(char) = delete;
-    void append(char c)
-    {
-        append(static_cast<LChar>(c));
-    }
-
-    void appendCharacter(UChar32 c)
-    {
-        if (U_IS_BMP(c)) {
-            append(static_cast<UChar>(c));
-            return;
-        }
-        append(U16_LEAD(c));
-        append(U16_TRAIL(c));
-    }
-
-    WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
-
-    template<unsigned characterCount>
-    ALWAYS_INLINE void appendLiteral(const char (&characters)[characterCount]) { appendCharacters(characters, characterCount - 1); }
-
-    WTF_EXPORT_PRIVATE void appendNumber(int);
-    WTF_EXPORT_PRIVATE void appendNumber(unsigned);
-    WTF_EXPORT_PRIVATE void appendNumber(long);
-    WTF_EXPORT_PRIVATE void appendNumber(unsigned long);
-    WTF_EXPORT_PRIVATE void appendNumber(long long);
-    WTF_EXPORT_PRIVATE void appendNumber(unsigned long long);
-    WTF_EXPORT_PRIVATE void appendNumber(float);
-    WTF_EXPORT_PRIVATE void appendNumber(double);
+    void appendCharacters(const char* characters, unsigned length) { appendCharacters(reinterpret_cast<const LChar*>(characters), length); }
 
     template<typename... StringTypes> void append(StringTypes...);
 
-    String toString()
-    {
-        if (!m_string.isNull()) {
-            ASSERT(!m_buffer || m_isReified);
-            ASSERT(!hasOverflowed());
-            return m_string;
-        }
+    // FIXME: We should keep these overloads only if optimizations make them more efficient than the single-argument form of the variadic append above.
+    void append(const AtomString& string) { append(string.string()); }
+    void append(const String&);
+    void append(StringView);
+    void append(UChar);
+    void append(LChar);
+    void append(char character) { append(static_cast<LChar>(character)); }
+    void append(const char*);
 
-        RELEASE_ASSERT(!hasOverflowed());
-        shrinkToFit();
-        reifyString();
-        return m_string;
-    }
+    // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
+    void append(const StringBuilder&);
 
-    const String& toStringPreserveCapacity() const
-    {
-        RELEASE_ASSERT(!hasOverflowed());
-        if (m_string.isNull())
-            reifyString();
-        return m_string;
-    }
+    template<unsigned characterCount> void appendLiteral(const char (&characters)[characterCount]) { appendCharacters(characters, characterCount - 1); }
 
-    AtomString toAtomString() const
-    {
-        RELEASE_ASSERT(!hasOverflowed());
-        if (!m_length)
-            return emptyAtom();
+    void appendCharacter(UChar) = delete;
+    void appendCharacter(LChar) = delete;
+    void appendCharacter(char) = delete;
+    void appendCharacter(UChar32);
 
-        // If the buffer is sufficiently over-allocated, make a new AtomString from a copy so its buffer is not so large.
-        if (canShrink()) {
-            if (is8Bit())
-                return AtomString(characters8(), length());
-            return AtomString(characters16(), length());            
-        }
+    void appendSubstring(const String&, unsigned offset, unsigned length = String::MaxLength);
+    WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
 
-        if (!m_string.isNull())
-            return AtomString(m_string);
-
-        ASSERT(m_buffer);
-        return AtomString(m_buffer.get(), 0, m_length.unsafeGet());
-    }
-
-    unsigned length() const
-    {
-        RELEASE_ASSERT(!hasOverflowed());
-        return m_length.unsafeGet();
-    }
+    // FIXME: Unclear why toString returns String and toStringPreserveCapacity returns const String&. Make them consistent.
+    String toString();
+    const String& toStringPreserveCapacity() const;
+    AtomString toAtomString() const;
 
     bool isEmpty() const { return !m_length; }
-
-    WTF_EXPORT_PRIVATE void reserveCapacity(unsigned newCapacity);
-
-    unsigned capacity() const
-    {
-        RELEASE_ASSERT(!hasOverflowed());
-        return m_buffer ? m_buffer->length() : m_length.unsafeGet();
-    }
-
-    WTF_EXPORT_PRIVATE void resize(unsigned newSize);
-
-    WTF_EXPORT_PRIVATE bool canShrink() const;
-
-    WTF_EXPORT_PRIVATE void shrinkToFit();
-
-    UChar operator[](unsigned i) const
-    {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!hasOverflowed() && i < m_length.unsafeGet<unsigned>());
-        if (m_is8Bit)
-            return characters8()[i];
-        return characters16()[i];
-    }
-
-    const LChar* characters8() const
-    {
-        ASSERT(m_is8Bit);
-        if (!m_length)
-            return nullptr;
-        if (!m_string.isNull())
-            return m_string.characters8();
-        ASSERT(m_buffer);
-        return m_buffer->characters8();
-    }
-
-    const UChar* characters16() const
-    {
-        ASSERT(!m_is8Bit);
-        if (!m_length)
-            return nullptr;
-        if (!m_string.isNull())
-            return m_string.characters16();
-        ASSERT(m_buffer);
-        return m_buffer->characters16();
-    }
-    
-    bool is8Bit() const { return m_is8Bit; }
-    WTF_EXPORT_PRIVATE bool isAllASCII() const;
+    unsigned length() const;
 
     operator StringView() const;
+    UChar operator[](unsigned i) const;
 
-    void clear()
-    {
-        m_length = 0;
-        m_string = String();
-        m_buffer = nullptr;
-        m_bufferCharacters8 = nullptr;
-        m_is8Bit = true;
-    }
+    bool is8Bit() const;
+    template<typename CharacterType> const CharacterType* characters() const;
+    const LChar* characters8() const { return characters<LChar>(); }
+    const UChar* characters16() const { return characters<UChar>(); }
+    
+    unsigned capacity() const;
+    WTF_EXPORT_PRIVATE void reserveCapacity(unsigned newCapacity);
 
-    void swap(StringBuilder& stringBuilder)
-    {
-        std::swap(m_length, stringBuilder.m_length);
-        m_string.swap(stringBuilder.m_string);
-        m_buffer.swap(stringBuilder.m_buffer);
-        std::swap(m_is8Bit, stringBuilder.m_is8Bit);
-        std::swap(m_bufferCharacters8, stringBuilder.m_bufferCharacters8);
-        ASSERT(!m_buffer || hasOverflowed() || m_buffer->length() >= m_length.unsafeGet<unsigned>());
-    }
+    WTF_EXPORT_PRIVATE void shrink(unsigned newLength);
+    WTF_EXPORT_PRIVATE bool shouldShrinkToFit() const;
+    WTF_EXPORT_PRIVATE void shrinkToFit();
+
+    WTF_EXPORT_PRIVATE bool isAllASCII() const;
 
 private:
-    void allocateBuffer(const LChar* currentCharacters, unsigned requiredLength);
-    void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
-    void allocateBufferUpConvert(const LChar* currentCharacters, unsigned requiredLength);
-    template<typename CharacterType> void reallocateBuffer(unsigned requiredLength);
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* extendBufferForAppending(unsigned additionalLength);
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* extendBufferForAppendingWithoutOverflowCheck(CheckedInt32 requiredLength);
-    template<typename CharacterType> CharacterType* extendBufferForAppendingSlowCase(unsigned requiredLength);
-    WTF_EXPORT_PRIVATE LChar* extendBufferForAppending8(CheckedInt32 requiredLength);
-    WTF_EXPORT_PRIVATE UChar* extendBufferForAppending16(CheckedInt32 requiredLength);
+    template<typename AllocationCharacterType, typename CurrentCharacterType> void allocateBuffer(const CurrentCharacterType* currentCharacters, unsigned requiredCapacity);
+    template<typename CharacterType> void reallocateBuffer(unsigned requiredCapacity);
+    void reallocateBuffer(unsigned requiredCapacity);
 
-    template<typename CharacterType> ALWAYS_INLINE CharacterType* getBufferCharacters();
+    template<typename CharacterType> CharacterType* extendBufferForAppending(unsigned requiredLength);
+    template<typename CharacterType> CharacterType* extendBufferForAppendingSlowCase(unsigned requiredLength);
+    WTF_EXPORT_PRIVATE LChar* extendBufferForAppendingLChar(unsigned requiredLength);
+    WTF_EXPORT_PRIVATE UChar* extendBufferForAppendingWithUpconvert(unsigned requiredLength);
+
     WTF_EXPORT_PRIVATE void reifyString() const;
 
     template<typename... StringTypeAdapters> void appendFromAdapters(StringTypeAdapters...);
 
     mutable String m_string;
     RefPtr<StringImpl> m_buffer;
-    union {
-        LChar* m_bufferCharacters8;
-        UChar* m_bufferCharacters16;
-    };
-    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max(), "");
-    Checked<int32_t, ConditionalCrashOnOverflow> m_length;
-    bool m_is8Bit { true };
-#if ASSERT_ENABLED
-    mutable bool m_isReified { false };
-#endif
+    unsigned m_length { 0 };
+    bool m_shouldCrashOnOverflow { true };
 };
+
+template<> struct IntegerToStringConversionTrait<StringBuilder>;
+
+// FIXME: Move this to StringView and make it take a StringView instead of a StringBuilder?
+template<typename CharacterType> bool equal(const StringBuilder&, const CharacterType*, unsigned length);
+
+// Inline function implementations.
+
+inline StringBuilder::StringBuilder(OverflowHandler policy)
+    : m_shouldCrashOnOverflow { policy == OverflowHandler::CrashOnOverflow }
+{
+}
+
+inline void StringBuilder::clear()
+{
+    m_string = { };
+    m_buffer = nullptr;
+    m_length = 0;
+    // We intentionally do not change m_shouldCrashOnOverflow.
+}
+
+inline void StringBuilder::swap(StringBuilder& other)
+{
+    m_string.swap(other.m_string);
+    m_buffer.swap(other.m_buffer);
+    std::swap(m_length, other.m_length);
+    std::swap(m_shouldCrashOnOverflow, other.m_shouldCrashOnOverflow);
+}
 
 inline StringBuilder::operator StringView() const
 {
-    if (m_is8Bit)
-        return { characters8(), length() };
-    return { characters16(), length() };
+    if (is8Bit())
+        return { characters<LChar>(), length() };
+    return { characters<UChar>(), length() };
 }
 
-template<>
-ALWAYS_INLINE LChar* StringBuilder::getBufferCharacters<LChar>()
+inline void StringBuilder::append(UChar character)
 {
-    ASSERT(m_is8Bit);
-    return m_bufferCharacters8;
-}
-
-template<>
-ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
-{
-    ASSERT(!m_is8Bit);
-    return m_bufferCharacters16;
-}
-
-template<typename... StringTypeAdapters>
-void StringBuilder::appendFromAdapters(StringTypeAdapters... adapters)
-{
-    auto requiredLength = checkedSum<int32_t>(m_length, adapters.length()...);
-    if (m_is8Bit && are8Bit(adapters...)) {
-        LChar* destination = extendBufferForAppending8(requiredLength);
-        if (!destination) {
-            ASSERT(hasOverflowed());
+    if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
+        if (!m_buffer->is8Bit()) {
+            const_cast<UChar*>(m_buffer->characters<UChar>())[m_length++] = character;
             return;
         }
+        if (isLatin1(character)) {
+            const_cast<LChar*>(m_buffer->characters<LChar>())[m_length++] = static_cast<LChar>(character);
+            return;
+        }
+    }
+    appendCharacters(&character, 1);
+}
+
+inline void StringBuilder::append(LChar character)
+{
+    if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
+        if (m_buffer->is8Bit())
+            const_cast<LChar*>(m_buffer->characters<LChar>())[m_length++] = character;
+        else
+            const_cast<UChar*>(m_buffer->characters<UChar>())[m_length++] = character;
+        return;
+    }
+    appendCharacters(&character, 1);
+}
+
+inline void StringBuilder::append(const String& string)
+{
+    // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
+    // then just retain the string.
+    if (!m_length && !m_buffer) {
+        m_string = string;
+        m_length = string.length();
+        return;
+    }
+
+    append(StringView { string });
+}
+
+inline void StringBuilder::append(const StringBuilder& other)
+{
+    // If we're appending to an empty string, and there is not a buffer (reserveCapacity has not been called)
+    // then just retain the string.
+    if (!m_length && !m_buffer && !other.m_string.isNull()) {
+        // Use the length function here so we crash on overflow without explicit overflow checks.
+        m_string = other.m_string;
+        m_length = other.length();
+        return;
+    }
+
+    append(StringView { other });
+}
+
+inline void StringBuilder::append(StringView string)
+{
+    if (string.is8Bit())
+        appendCharacters(string.characters8(), string.length());
+    else
+        appendCharacters(string.characters16(), string.length());
+}
+
+inline void StringBuilder::appendSubstring(const String& string, unsigned offset, unsigned length)
+{
+    append(StringView { string }.substring(offset, length));
+}
+
+inline void StringBuilder::append(const char* characters)
+{
+    append(StringView { characters });
+}
+
+inline void StringBuilder::appendCharacter(UChar32 c)
+{
+    if (U_IS_BMP(c)) {
+        append(static_cast<UChar>(c));
+        return;
+    }
+    append(U16_LEAD(c));
+    append(U16_TRAIL(c));
+}
+
+inline String StringBuilder::toString()
+{
+    if (m_string.isNull()) {
+        shrinkToFit();
+        reifyString();
+    }
+    return m_string;
+}
+
+inline const String& StringBuilder::toStringPreserveCapacity() const
+{
+    if (m_string.isNull())
+        reifyString();
+    return m_string;
+}
+
+inline AtomString StringBuilder::toAtomString() const
+{
+    if (isEmpty())
+        return emptyAtom();
+
+    // If the buffer is sufficiently over-allocated, make a new AtomString from a copy so its buffer is not so large.
+    if (shouldShrinkToFit())
+        return StringView { *this }.toAtomString();
+
+    if (!m_string.isNull())
+        return m_string;
+
+    // Use the length function here so we crash on overflow without explicit overflow checks.
+    ASSERT(m_buffer);
+    return { m_buffer.get(), 0, length() };
+}
+
+inline unsigned StringBuilder::length() const
+{
+    RELEASE_ASSERT(!hasOverflowed());
+    return m_length;
+}
+
+inline unsigned StringBuilder::capacity() const
+{
+    return m_buffer ? m_buffer->length() : length();
+}
+
+inline UChar StringBuilder::operator[](unsigned i) const
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(i < length());
+    return is8Bit() ? characters<LChar>()[i] : characters<UChar>()[i];
+}
+
+inline bool StringBuilder::is8Bit() const
+{
+    return m_buffer ? m_buffer->is8Bit() : m_string.is8Bit();
+}
+
+template<typename CharacterType> inline const CharacterType* StringBuilder::characters() const
+{
+    if (!m_length)
+        return nullptr;
+    if (!m_string.isNull())
+        return m_string.characters<CharacterType>();
+    return m_buffer->characters<CharacterType>();
+}
+
+template<typename... StringTypeAdapters> void StringBuilder::appendFromAdapters(StringTypeAdapters... adapters)
+{
+    auto requiredLength = saturatedSum<uint32_t>(m_length, adapters.length()...);
+    if (is8Bit() && are8Bit(adapters...)) {
+        auto destination = extendBufferForAppendingLChar(requiredLength);
+        if (!destination)
+            return;
         stringTypeAdapterAccumulator(destination, adapters...);
     } else {
-        UChar* destination = extendBufferForAppending16(requiredLength);
-        if (!destination) {
-            ASSERT(hasOverflowed());
+        auto destination = extendBufferForAppendingWithUpconvert(requiredLength);
+        if (!destination)
             return;
-        }
         stringTypeAdapterAccumulator(destination, adapters...);
     }
 }
 
-template<typename... StringTypes>
-void StringBuilder::append(StringTypes... strings)
+template<typename... StringTypes> void StringBuilder::append(StringTypes... strings)
 {
     appendFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
 
-// FIXME: Move this to StringView and make it take a StringView instead of a StringBuilder?
-template<typename CharacterType>
-bool equal(const StringBuilder& s, const CharacterType* buffer, unsigned length)
+template<typename CharacterType> bool equal(const StringBuilder& builder, const CharacterType* buffer, unsigned length)
 {
-    if (s.length() != length)
-        return false;
-
-    if (s.is8Bit())
-        return equal(s.characters8(), buffer, length);
-
-    return equal(s.characters16(), buffer, length);
+    return builder == StringView { buffer, length };
 }
 
 template<> struct IntegerToStringConversionTrait<StringBuilder> {
     using ReturnType = void;
     using AdditionalArgumentType = StringBuilder;
-    static void flush(LChar* characters, unsigned length, StringBuilder* stringBuilder) { stringBuilder->appendCharacters(characters, length); }
+    static void flush(const LChar* characters, unsigned length, StringBuilder* builder) { builder->appendCharacters(characters, length); }
 };
 
 } // namespace WTF

@@ -113,7 +113,7 @@ void JIT::emitSlow_op_new_object(const Instruction* currentInstruction, Vector<S
     auto& metadata = bytecode.metadata(m_codeBlock);
     VirtualRegister dst = bytecode.m_dst;
     Structure* structure = metadata.m_objectAllocationProfile.structure();
-    callOperation(operationNewObject, TrustedImmPtr(&vm()), structure);
+    callOperationNoExceptionCheck(operationNewObject, &vm(), structure);
     emitStoreCell(dst, returnValueGPR);
 }
 
@@ -677,7 +677,7 @@ void JIT::emitSlow_op_jneq(const Instruction* currentInstruction, Vector<SlowCas
 }
 
 template <typename Op>
-void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStrictEqType type)
+void JIT::compileOpStrictEq(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
@@ -698,7 +698,7 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStri
     firstIsObject.link(this);
 
     // Simply compare the payloads.
-    if (type == CompileOpStrictEqType::StrictEq)
+    if constexpr (std::is_same<Op, OpStricteq>::value)
         compare32(Equal, regT0, regT2, regT0);
     else
         compare32(NotEqual, regT0, regT2, regT0);
@@ -708,16 +708,16 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction, CompileOpStri
 
 void JIT::emit_op_stricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEq<OpStricteq>(currentInstruction, CompileOpStrictEqType::StrictEq);
+    compileOpStrictEq<OpStricteq>(currentInstruction);
 }
 
 void JIT::emit_op_nstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEq<OpNstricteq>(currentInstruction, CompileOpStrictEqType::NStrictEq);
+    compileOpStrictEq<OpNstricteq>(currentInstruction);
 }
 
 template<typename Op>
-void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOpStrictEqType type)
+void JIT::compileOpStrictEqJump(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -738,7 +738,7 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
     firstIsObject.link(this);
 
     // Simply compare the payloads.
-    if (type == CompileOpStrictEqType::StrictEq)
+    if constexpr (std::is_same<Op, OpJstricteq>::value)
         addJump(branch32(Equal, regT0, regT2), target);
     else
         addJump(branch32(NotEqual, regT0, regT2), target);
@@ -746,12 +746,12 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction, CompileOp
 
 void JIT::emit_op_jstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEqJump<OpJstricteq>(currentInstruction, CompileOpStrictEqType::StrictEq);
+    compileOpStrictEqJump<OpJstricteq>(currentInstruction);
 }
 
 void JIT::emit_op_jnstricteq(const Instruction* currentInstruction)
 {
-    compileOpStrictEqJump<OpJnstricteq>(currentInstruction, CompileOpStrictEqType::NStrictEq);
+    compileOpStrictEqJump<OpJnstricteq>(currentInstruction);
 }
 
 void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -931,7 +931,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
-    callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, TrustedImmPtr(&vm()));
+    callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, &vm());
     Jump isCatchableException = branchTest32(NonZero, returnValueGPR);
     jumpToExceptionHandler(vm());
     isCatchableException.link(this);
@@ -955,9 +955,9 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     ValueProfileAndVirtualRegisterBuffer* buffer = metadata.m_buffer;
     if (buffer || !shouldEmitProfiling())
-        callOperation(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
+        callOperationNoExceptionCheck(operationTryOSREnterAtCatch, &vm(), m_bytecodeIndex.asBits());
     else
-        callOperation(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
+        callOperationNoExceptionCheck(operationTryOSREnterAtCatchAndValueProfile, &vm(), m_bytecodeIndex.asBits());
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
     farJump(returnValueGPR, NoPtrTag);
@@ -1009,7 +1009,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     farJump(regT1, NoPtrTag);
 
     notInt32.link(this);
-    callOperationNoExceptionCheck(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
+    callOperationNoExceptionCheck(operationSwitchImmWithUnknownKeyType, &vm(), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, NoPtrTag);
 }
 
@@ -1187,7 +1187,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     move(TrustedImm32(1), regT0);
     Jump done = jump();
 
-    LinkBuffer patchBuffer(*this, m_codeBlock);
+    LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
     
     patchBuffer.link(badType, byValInfo->slowPathTarget);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
@@ -1423,7 +1423,7 @@ void JIT::emit_op_profile_type(const Instruction* currentInstruction)
     store32(regT1, Address(regT2, TypeProfilerLog::currentLogEntryOffset()));
     jumpToEnd.append(branchPtr(NotEqual, regT1, TrustedImmPtr(cachedTypeProfilerLog->logEndPtr())));
     // Clear the log if we're at the end of the log.
-    callOperation(operationProcessTypeProfilerLog, &vm());
+    callOperationNoExceptionCheck(operationProcessTypeProfilerLog, &vm());
 
     jumpToEnd.link(this);
 }

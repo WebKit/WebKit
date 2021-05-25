@@ -79,8 +79,8 @@ enum class ItemType : uint8_t {
     FlushContext,
     MetaCommandChangeDestinationImageBuffer,
     MetaCommandChangeItemBuffer,
-    GetImageData,
-    PutImageData,
+    GetPixelBuffer,
+    PutPixelBuffer,
 #if ENABLE(VIDEO)
     PaintFrameForMedia,
 #endif

@@ -1,3 +1,47 @@
+2021-05-19  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug that incorrect timestamp is reported for Git repositories.
+        https://bugs.webkit.org/show_bug.cgi?id=225987
+
+        Reviewed by Ryosuke Niwa.
+
+        'datetime.fromtimestamp' will use the current timezone.
+        However, '/api/report-commits' will interprete it as a timestamp string from UTC.
+        In order to keep the consistency, we should always use 'datetime.utcfromtimestamp'.
+
+        * tools/sync-commits.py: Use 'datetime.utcfromtimestamp' instead of 'datetime.fromtimestamp'.
+        (GitRepository._revision_from_tokens):
+
+2021-05-20  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Need to use default git pull to remove the fake svn commit when syncing with SVN
+        https://bugs.webkit.org/show_bug.cgi?id=226039
+
+        Reviewed by Jonathan Bedard.
+
+        * tools/sync-commits.py:
+        (GitRepository._fetch_remote):
+
+2021-05-18  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Clean up git svn mapping when git pull
+        https://bugs.webkit.org/show_bug.cgi?id=225934
+
+        Reviewed by Ryosuke Niwa.
+
+        * tools/sync-commits.py:
+        (GitRepository._fetch_remote):
+
+2021-05-18  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Commits updater should ignore null revision identifier
+        https://bugs.webkit.org/show_bug.cgi?id=225911
+
+        Reviewed by Ryosuke Niwa.
+
+        * public/include/commit-updater.php:
+        * server-tests/api-report-commits-tests.js:
+
 2021-05-07  Zhifei Fang  <zhifei_fang@apple.com>
         
         Add support for syncing repo with commit revision label.

@@ -66,7 +66,7 @@ ICStats::ICStats()
     m_thread = Thread::create(
         "JSC ICStats",
         [this] () {
-            LockHolder locker(m_lock);
+            Locker locker { m_lock };
             for (;;) {
                 m_condition.waitFor(
                     m_lock, Seconds(1), [this] () -> bool { return m_shouldStop; });
@@ -84,7 +84,7 @@ ICStats::ICStats()
 ICStats::~ICStats()
 {
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         m_shouldStop = true;
         m_condition.notifyAll();
     }

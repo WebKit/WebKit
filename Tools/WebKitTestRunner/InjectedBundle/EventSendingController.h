@@ -89,6 +89,12 @@ public:
     void cancelTouchPoint(int index);
 #endif
 
+#if ENABLE(MAC_GESTURE_EVENTS)
+    void scaleGestureStart(double scale);
+    void scaleGestureChange(double scale);
+    void scaleGestureEnd(double scale);
+#endif
+
 private:
     EventSendingController() = default;
 

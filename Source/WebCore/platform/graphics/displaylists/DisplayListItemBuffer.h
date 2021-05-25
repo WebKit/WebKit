@@ -79,7 +79,7 @@ struct ItemHandle {
         return *reinterpret_cast<T*>(data + sizeof(uint64_t));
     }
 
-    bool safeCopy(ItemHandle destination) const;
+    bool safeCopy(ItemType, ItemHandle destination) const;
 };
 
 bool safeCopy(ItemHandle destination, const DisplayListItem& source);

@@ -744,8 +744,6 @@ public:
 
     const Color& themeColor();
 
-    const Color& sampledPageTopColor() const { return m_sampledPageTopColor; }
-
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
 
@@ -1677,8 +1675,6 @@ private:
     WeakPtr<HTMLMetaElement> determineActiveThemeColorMetaElement();
     void themeColorChanged();
 
-    void determineSampledPageTopColor();
-
     void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
 
@@ -1801,8 +1797,6 @@ private:
     Optional<Vector<WeakPtr<HTMLMetaElement>>> m_metaThemeColorElements;
     WeakPtr<HTMLMetaElement> m_activeThemeColorMetaElement;
     Color m_applicationManifestThemeColor;
-
-    Color m_sampledPageTopColor;
 
     Color m_textColor { Color::black };
     Color m_linkColor;

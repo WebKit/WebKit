@@ -52,21 +52,26 @@ static const char* const gDictionaryDirectories[] = {
     "/usr/local/share/hyphen",
 };
 
-static String extractLocaleFromDictionaryFilePath(const String& filePath)
+static String extractLocaleFromDictionaryFileName(const String& fileName)
 {
+    if (!fileName.startsWith("hyph_") || !fileName.endsWith(".dic"))
+        return { };
+
     // Dictionary files always have the form "hyph_<locale name>.dic"
     // so we strip everything except the locale.
-    String fileName = FileSystem::pathGetFileName(filePath);
-    static const int prefixLength = 5;
-    static const int suffixLength = 4;
-    return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength);
+    constexpr int prefixLength = 5;
+    constexpr int suffixLength = 4;
+    return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercase();
 }
 
 static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomString, Vector<String>>& availableLocales)
 {
-    for (auto& filePath : FileSystem::listDirectory(directoryPath, "hyph_*.dic")) {
-        String locale = extractLocaleFromDictionaryFilePath(filePath).convertToASCIILowercase();
+    for (auto& fileName : FileSystem::listDirectory(directoryPath)) {
+        String locale = extractLocaleFromDictionaryFileName(fileName);
+        if (locale.isEmpty())
+            continue;
 
+        auto filePath = FileSystem::pathByAppendingComponent(directoryPath, fileName);
         char normalizedPath[PATH_MAX];
         if (!realpath(FileSystem::fileSystemRepresentation(filePath).data(), normalizedPath))
             continue;

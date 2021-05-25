@@ -206,6 +206,8 @@ add_custom_target(playstation_tools_copy
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${WEBKIT_LIBRARIES_DIR}/tools/sce_sys/
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/sce_sys/
+    COMMAND ${CMAKE_COMMAND} -E touch
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ebootparam.ini
 )
 
 macro(WEBKIT_EXECUTABLE _target)
@@ -223,7 +225,9 @@ macro(WEBKIT_EXECUTABLE _target)
     add_dependencies(${_target} playstation_tools_copy)
 endmacro()
 
-function(PLAYSTATION_COPY_SHARED_LIBRARIES target_name)
+set_property(GLOBAL PROPERTY playstation_copied_requirements)
+
+function(PLAYSTATION_COPY_REQUIREMENTS target_name)
     set(oneValueArgs PREFIX DESTINATION)
     set(multiValueArgs FILES)
     cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -238,35 +242,45 @@ function(PLAYSTATION_COPY_SHARED_LIBRARIES target_name)
         set(destination ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endif ()
 
-    set(stub_libs)
+    set(files_to_copy)
     list(REMOVE_DUPLICATES opt_FILES)
     foreach (file IN LISTS opt_FILES)
-        if (NOT ${file} MATCHES ".*_stub_weak.a")
+        if (NOT (${file} MATCHES ".*_stub_weak\.a" OR
+                 ${file} MATCHES ".*\.sprx" OR
+                 ${file} MATCHES ".*\.elf" OR
+                 ${file} MATCHES ".*\.self"))
             continue()
         endif ()
         file(RELATIVE_PATH _relative ${prefix} ${file})
         if (NOT ${_relative} MATCHES "^\.\./.*")
             get_filename_component(lib ${file} NAME)
-            list(APPEND stub_libs ${lib})
+            list(APPEND files_to_copy ${lib})
         endif ()
     endforeach ()
 
-    set(dst_shared_libs)
-    foreach (lib IN LISTS stub_libs)
-        string(REPLACE "_stub_weak.a" ".sprx" shared_lib ${lib})
-        set(src_file "${prefix}/bin/${shared_lib}")
+    set(dst_requirements)
+    get_property(copied_requirements GLOBAL PROPERTY playstation_copied_requirements)
+    foreach (basefilename IN LISTS files_to_copy)
+        string(REPLACE "_stub_weak.a" ".sprx" filename ${basefilename})
+        set(src_file "${prefix}/bin/${filename}")
+        list(FIND copied_requirements ${src_file} found)
+        if (${found} GREATER_EQUAL 0)
+            continue()
+        endif ()
         if (NOT EXISTS ${src_file})
             continue()
         endif ()
-        set(dst_file "${destination}/${shared_lib}")
+        list(APPEND copied_requirements ${src_file})
+        set(dst_file "${destination}/${filename}")
         add_custom_command(OUTPUT ${dst_file}
             COMMAND ${CMAKE_COMMAND} -E copy ${src_file} ${dst_file}
             MAIN_DEPENDENCY ${file}
             VERBATIM
         )
-        list(APPEND dst_shared_libs ${dst_file})
+        list(APPEND dst_requirements ${dst_file})
     endforeach ()
-    add_custom_target(${target_name} ALL DEPENDS ${dst_shared_libs})
+    add_custom_target(${target_name} ALL DEPENDS ${dst_requirements})
+    set_property(GLOBAL PROPERTY playstation_copied_requirements ${copied_requirements} ${dst_requirements})
 endfunction()
 
 check_symbol_exists(memmem string.h HAVE_MEMMEM)

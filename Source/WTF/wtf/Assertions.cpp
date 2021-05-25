@@ -31,8 +31,8 @@
 #include <mutex>
 #include <stdio.h>
 #include <string.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Compiler.h>
-#include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/PrintStream.h>
@@ -368,25 +368,25 @@ public:
     String getAndResetAccumulatedLogs();
 
 private:
-    Lock accumulatorLock;
-    StringBuilder loggingAccumulator;
+    CheckedLock accumulatorLock;
+    StringBuilder loggingAccumulator WTF_GUARDED_BY_LOCK(accumulatorLock);
 };
 
 void WTFLoggingAccumulator::accumulate(const String& log)
 {
-    Locker<Lock> locker(accumulatorLock);
+    Locker locker { accumulatorLock };
     loggingAccumulator.append(log);
 }
 
 void WTFLoggingAccumulator::resetAccumulatedLogs()
 {
-    Locker<Lock> locker(accumulatorLock);
+    Locker locker { accumulatorLock };
     loggingAccumulator.clear();
 }
 
 String WTFLoggingAccumulator::getAndResetAccumulatedLogs()
 {
-    Locker<Lock> locker(accumulatorLock);
+    Locker locker { accumulatorLock };
     String result = loggingAccumulator.toString();
     loggingAccumulator.clear();
     return result;

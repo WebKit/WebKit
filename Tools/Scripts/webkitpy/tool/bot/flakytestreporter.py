@@ -26,14 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
 import logging
 import os.path
 
-from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
+from webkitcorepy import string_utils
+
+from webkitpy.common.net.layouttestresults import path_for_layout_test
 from webkitpy.common.config import urls
 from webkitpy.tool.bot.botinfo import BotInfo
-from webkitpy.tool.grammar import plural, pluralize, join_with_separators
+
 
 _log = logging.getLogger(__name__)
 
@@ -79,7 +80,7 @@ class FlakyTestReporter(object):
         if len(bugs) > 1:
             # FIXME: There are probably heuristics we could use for finding
             # the right bug instead of the first, like open vs. closed.
-            _log.warn("Found %s %s matching '%s' filed by a bot, using the first." % (pluralize(len(bugs), "bug"), [bug.id() for bug in bugs], flaky_test))
+            _log.warn("Found %s %s matching '%s' filed by a bot, using the first." % (string_utils.pluralize(len(bugs), "bug"), [bug.id() for bug in bugs], flaky_test))
         return bugs[0]
 
     def _view_source_url_for_test(self, test_path):
@@ -88,7 +89,7 @@ class FlakyTestReporter(object):
     def _create_bug_for_flaky_test(self, flaky_test, author_emails, latest_flake_message):
         format_values = {
             'test': flaky_test,
-            'authors': join_with_separators(sorted(author_emails)),
+            'authors': string_utils.join(sorted(author_emails)),
             'flake_message': latest_flake_message,
             'test_url': self._view_source_url_for_test(flaky_test),
             'bot_name': self._bot_name,
@@ -119,8 +120,8 @@ If you would like to track this test fix with another bug, please close this bug
     def _optional_author_string(self, author_emails):
         if not author_emails:
             return ""
-        heading_string = plural('author') if len(author_emails) > 1 else 'author'
-        authors_string = join_with_separators(sorted(author_emails))
+        heading_string = 'authors' if len(author_emails) > 1 else 'author'
+        authors_string = string_utils.join(sorted(author_emails))
         return " (%s: %s)" % (heading_string, authors_string)
 
     def _latest_flake_message(self, flaky_result, patch):

@@ -45,14 +45,14 @@ BaseAudioSharedUnit::BaseAudioSharedUnit()
 void BaseAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
 {
     ASSERT(isMainThread());
-    auto locker = holdLock(m_clientsLock);
+    Locker locker { m_clientsLock };
     m_clients.add(&client);
 }
 
 void BaseAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
 {
     ASSERT(isMainThread());
-    auto locker = holdLock(m_clientsLock);
+    Locker locker { m_clientsLock };
     m_clients.remove(&client);
 }
 
@@ -60,11 +60,11 @@ void BaseAudioSharedUnit::forEachClient(const Function<void(CoreAudioCaptureSour
 {
     Vector<CoreAudioCaptureSource*> clientsCopy;
     {
-        auto locker = holdLock(m_clientsLock);
+        Locker locker { m_clientsLock };
         clientsCopy = copyToVector(m_clients);
     }
     for (auto* client : clientsCopy) {
-        auto locker = holdLock(m_clientsLock);
+        Locker locker { m_clientsLock };
         // Make sure the client has not been destroyed.
         if (!m_clients.contains(client))
             continue;
@@ -74,7 +74,7 @@ void BaseAudioSharedUnit::forEachClient(const Function<void(CoreAudioCaptureSour
 
 void BaseAudioSharedUnit::clearClients()
 {
-    auto locker = holdLock(m_clientsLock);
+    Locker locker { m_clientsLock };
     m_clients.clear();
 }
 
@@ -103,7 +103,7 @@ OSStatus BaseAudioSharedUnit::startUnit()
     forEachClient([](auto& client) {
         client.audioUnitWillStart();
     });
-    ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::PlayAndRecord);
+    ASSERT(!DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
 
     if (auto error = startInternal()) {
         captureFailed();
@@ -217,7 +217,7 @@ OSStatus BaseAudioSharedUnit::suspend()
 void BaseAudioSharedUnit::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t numberOfFrames)
 {
     // We hold the lock here since adding/removing clients can only happen in main thread.
-    auto locker = holdLock(m_clientsLock);
+    Locker locker { m_clientsLock };
 
     // For performance reasons, we forbid heap allocations while doing rendering on the capture audio thread.
     ForbidMallocUseForCurrentThreadScope forbidMallocUse;

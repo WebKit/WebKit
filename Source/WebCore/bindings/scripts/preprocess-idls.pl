@@ -228,10 +228,11 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
         }
         $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
         my @globalContexts = split(",", $exposedAttribute);
-        my ($attributeCode, $windowAliases) = GenerateConstructorAttributes($interfaceName, $extendedAttributes);
         foreach my $globalContext (@globalContexts) {
+            my ($attributeCode, $windowAliases) = GenerateConstructorAttributes($interfaceName, $extendedAttributes, $globalContext);
             if ($globalContext eq "Window") {
                 $windowConstructorsCode .= $attributeCode;
+                $windowConstructorsCode .= $windowAliases if $windowAliases;
             } elsif ($globalContext eq "Worker") {
                 $workerGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq "DedicatedWorker") {
@@ -250,7 +251,6 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
                 die "Unsupported global context '$globalContext' used in [Exposed] at $idlFileName";
             }
         }
-        $windowConstructorsCode .= $windowAliases if $windowAliases;
     }
 }
 
@@ -381,6 +381,19 @@ sub GenerateConstructorAttributes
 {
     my $interfaceName = shift;
     my $extendedAttributes = shift;
+    my $globalContext = shift;
+
+    # FIXME: Rather than being ConditionalForWorker=FOO, we need a syntax like ConditionalForContext=(Worker:FOO).
+    if ($extendedAttributes->{"ConditionalForWorker"} && $globalContext eq "Worker") {
+      my $conditionalForWorker = $extendedAttributes->{"ConditionalForWorker"};
+      my $existingConditional = $extendedAttributes->{"Conditional"};
+      if ($existingConditional) {
+        $existingConditional .= "&" . $conditionalForWorker;
+      } else {
+        $existingConditional = $conditionalForWorker;
+      }
+      $extendedAttributes->{"Conditional"} = $existingConditional;
+    }
 
     my $code = "    ";
     my @extendedAttributesList;
@@ -390,6 +403,7 @@ sub GenerateConstructorAttributes
         || $attributeName eq "PublicIdentifier" || $attributeName eq "DisabledByQuirk" || $attributeName eq "EnabledByQuirk"
         || $attributeName eq "EnabledForContext" || $attributeName eq "CustomEnabled") || $attributeName eq "LegacyFactoryFunctionEnabledBySetting";
       my $extendedAttribute = $attributeName;
+      
       $extendedAttribute .= "=" . $extendedAttributes->{$attributeName} unless $extendedAttributes->{$attributeName} eq "VALUE_IS_MISSING";
       push(@extendedAttributesList, $extendedAttribute);
     }

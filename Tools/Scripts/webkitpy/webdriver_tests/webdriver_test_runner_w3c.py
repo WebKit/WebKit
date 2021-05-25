@@ -22,9 +22,7 @@
 
 import logging
 import os
-import sys
 
-from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.webdriver_tests.webdriver_w3c_executor import WebDriverW3CExecutor
 from webkitpy.webdriver_tests.webdriver_test_result import WebDriverTestResult

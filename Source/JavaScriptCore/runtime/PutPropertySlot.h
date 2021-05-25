@@ -37,7 +37,7 @@ class JSFunction;
 class PutPropertySlot {
 public:
     enum Type : uint8_t { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
-    enum Context : uint8_t { UnknownContext, PutById, PutByIdEval, ReflectSet };
+    enum Context { UnknownContext, PutById, PutByIdEval };
     using PutValueFunc = JSC::PutValueFunc;
     using PutValueFuncWithPtr = JSC::PutValueFuncWithPtr;
 
@@ -47,7 +47,6 @@ public:
         , m_offset(invalidOffset)
         , m_isStrictMode(isStrictMode)
         , m_isInitialization(isInitialization)
-        , m_isTaintedByOpaqueObject(false)
         , m_type(Uncachable)
         , m_context(context)
         , m_cacheability(CachingAllowed)
@@ -105,8 +104,9 @@ public:
         return m_putFunction;
     }
 
+    Context context() const { return static_cast<Context>(m_context); }
+
     Type type() const { return m_type; }
-    Context context() const { return m_context; }
     JSObject* base() const { return m_base; }
     JSValue thisValue() const { return m_thisValue; }
 
@@ -116,8 +116,6 @@ public:
     bool isCacheableCustom() const { return isCacheable() && (m_type == CustomValue || m_type == CustomAccessor) && !!m_putFunction; }
     bool isCustomAccessor() const { return isCacheable() && m_type == CustomAccessor; }
     bool isInitialization() const { return m_isInitialization; }
-    bool isTaintedByOpaqueObject() const { return m_isTaintedByOpaqueObject; }
-    void setIsTaintedByOpaqueObject() { m_isTaintedByOpaqueObject = true; }
 
     PropertyOffset cachedOffset() const
     {
@@ -137,9 +135,8 @@ private:
     PropertyOffset m_offset;
     bool m_isStrictMode : 1;
     bool m_isInitialization : 1;
-    bool m_isTaintedByOpaqueObject : 1;
     Type m_type;
-    Context m_context;
+    uint8_t m_context;
     CacheabilityType m_cacheability;
     FunctionPtr<CustomAccessorPtrTag> m_putFunction;
 };

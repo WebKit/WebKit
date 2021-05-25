@@ -188,8 +188,8 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::MetaCommandChangeDestinationImageBuffer:
     case ItemType::MetaCommandChangeItemBuffer:
         return;
-    case ItemType::GetImageData:
-    case ItemType::PutImageData:
+    case ItemType::GetPixelBuffer:
+    case ItemType::PutPixelBuffer:
         // Should already be handled by the delegate.
         ASSERT_NOT_REACHED();
         return;
@@ -280,11 +280,11 @@ void ItemHandle::destroy()
     case ItemType::FillRoundedRect:
         get<FillRoundedRect>().~FillRoundedRect();
         return;
-    case ItemType::GetImageData:
-        static_assert(std::is_trivially_destructible<GetImageData>::value);
+    case ItemType::GetPixelBuffer:
+        static_assert(std::is_trivially_destructible<GetPixelBuffer>::value);
         return;
-    case ItemType::PutImageData:
-        get<PutImageData>().~PutImageData();
+    case ItemType::PutPixelBuffer:
+        get<PutPixelBuffer>().~PutPixelBuffer();
         return;
     case ItemType::SetLineDash:
         get<SetLineDash>().~SetLineDash();
@@ -466,9 +466,9 @@ static inline bool copyInto(uint8_t* destinationWithOffset, const ItemHandle& it
     return copyInto(destinationWithOffset, itemHandle.get<Item>());
 }
 
-bool ItemHandle::safeCopy(ItemHandle destination) const
+bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
 {
-    auto itemType = type();
+    ASSERT(itemType == type());
     destination.data[0] = static_cast<uint8_t>(itemType);
     auto itemOffset = destination.data + sizeof(uint64_t);
     switch (itemType) {
@@ -504,10 +504,10 @@ bool ItemHandle::safeCopy(ItemHandle destination) const
         return copyInto<FillRectWithRoundedHole>(itemOffset, *this);
     case ItemType::FillRoundedRect:
         return copyInto<FillRoundedRect>(itemOffset, *this);
-    case ItemType::GetImageData:
-        return copyInto<GetImageData>(itemOffset, *this);
-    case ItemType::PutImageData:
-        return copyInto<PutImageData>(itemOffset, *this);
+    case ItemType::GetPixelBuffer:
+        return copyInto<GetPixelBuffer>(itemOffset, *this);
+    case ItemType::PutPixelBuffer:
+        return copyInto<PutPixelBuffer>(itemOffset, *this);
     case ItemType::SetLineDash:
         return copyInto<SetLineDash>(itemOffset, *this);
     case ItemType::SetState:

@@ -119,7 +119,6 @@
 #import "_WKTextManipulationItem.h"
 #import "_WKTextManipulationToken.h"
 #import "_WKVisitedLinkStoreInternal.h"
-#import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/AppHighlight.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
@@ -198,6 +197,9 @@ static const BOOL defaultFastClickingEnabled = NO;
 
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif // PLATFORM(IOS_FAMILY)
+
+#define THROW_IF_SUSPENDED if (UNLIKELY(_page && _page->isSuspended())) \
+    [NSException raise:NSInternalInconsistencyException format:@"The WKWebView is suspended"]
 
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
 {
@@ -718,11 +720,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->loadRequest(request));
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
 {
+    THROW_IF_SUSPENDED;
     if (![URL isFileURL])
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", URL];
 
@@ -734,6 +738,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
 {
+    THROW_IF_SUSPENDED;
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
 
     return [self loadData:data MIMEType:@"text/html" characterEncodingName:@"UTF-8" baseURL:baseURL];
@@ -741,11 +746,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString));
 }
 
 - (void)startDownloadUsingRequest:(NSURLRequest *)request completionHandler:(void(^)(WKDownload *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->downloadRequest(request, [completionHandler = makeBlockPtr(completionHandler)] (auto* download) {
         if (download)
             completionHandler(wrapper(download));
@@ -756,6 +763,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (void)resumeDownloadFromResumeData:(NSData *)resumeData completionHandler:(void(^)(WKDownload *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:resumeData error:nil]);
     [unarchiver setDecodingFailurePolicy:NSDecodingFailurePolicyRaiseException];
     NSDictionary *dictionary = [unarchiver decodeObjectOfClasses:[NSSet setWithObjects:[NSDictionary class], [NSArray class], [NSString class], [NSNumber class], [NSData class], [NSURL class], [NSURLRequest class], nil] forKey:@"NSKeyedArchiveRootObjectKey"];
@@ -782,6 +790,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->goToBackForwardItem(item._item));
 }
 
@@ -840,6 +849,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKNavigation *)goBack
 {
+    THROW_IF_SUSPENDED;
     if (self._safeBrowsingWarning)
         return [self reload];
     return wrapper(_page->goBack());
@@ -847,11 +857,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKNavigation *)goForward
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->goForward());
 }
 
 - (WKNavigation *)reload
 {
+    THROW_IF_SUSPENDED;
     OptionSet<WebCore::ReloadOption> reloadOptions;
     if (linkedOnOrAfter(WebCore::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
@@ -861,26 +873,31 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKNavigation *)reloadFromOrigin
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->reload(WebCore::ReloadOption::FromOrigin));
 }
 
 - (void)stopLoading
 {
+    THROW_IF_SUSPENDED;
     _page->stopLoading();
 }
 
 - (void)evaluateJavaScript:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
 }
 
 - (void)evaluateJavaScript:(NSString *)javaScriptString inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
 - (void)callAsyncJavaScript:(NSString *)javaScriptString arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
@@ -918,8 +935,14 @@ static bool validateArgument(id argument)
     return false;
 }
 
+- (void)closeAllMediaPresentations:(void (^)(void))completionHandler
+{
+    [self closeAllMediaPresentationsWithCompletionHandler:completionHandler];
+}
+
 - (void)closeAllMediaPresentationsWithCompletionHandler:(void (^)(void))completionHandler
 {
+    THROW_IF_SUSPENDED;
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
 #if ENABLE(FULLSCREEN_API)
@@ -934,8 +957,14 @@ static bool validateArgument(id argument)
 #endif
 }
 
+- (void)pauseAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self pauseAllMediaPlaybackWithCompletionHandler:completionHandler];
+}
+
 - (void)pauseAllMediaPlaybackWithCompletionHandler:(void (^)(void))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!completionHandler) {
         _page->pauseAllMediaPlayback([] { });
         return;
@@ -944,8 +973,19 @@ static bool validateArgument(id argument)
     _page->pauseAllMediaPlayback(makeBlockPtr(completionHandler));
 }
 
+- (void)resumeAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self setAllMediaPlaybackSuspended:NO completionHandler:completionHandler];
+}
+
+- (void)suspendAllMediaPlayback:(void (^)(void))completionHandler
+{
+    [self setAllMediaPlaybackSuspended:YES completionHandler:completionHandler];
+}
+
 - (void)setAllMediaPlaybackSuspended:(BOOL)suspended completionHandler:(void (^)(void))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!completionHandler)
         completionHandler = [] { };
 
@@ -974,8 +1014,14 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     return WKMediaPlaybackStateNone;
 }
 
+- (void)requestMediaPlaybackState:(void (^)(WKMediaPlaybackState))completionHandler
+{
+    [self requestMediaPlaybackStateWithCompletionHandler:completionHandler];
+}
+
 - (void)requestMediaPlaybackStateWithCompletionHandler:(void (^)(WKMediaPlaybackState))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!completionHandler)
         return;
 
@@ -1006,6 +1052,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)setMicrophoneCaptureState:(WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!completionHandler)
         completionHandler = [] { };
 
@@ -1027,6 +1074,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)setCameraCaptureState:(WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!completionHandler)
         completionHandler = [] { };
 
@@ -1048,6 +1096,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withSourceURL:(NSURL *)sourceURL withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture inFrame:(WKFrameInfo *)frame inWorld:(WKContentWorld *)world completionHandler:(void (^)(id, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     auto handler = adoptNS([completionHandler copy]);
 
     Optional<WebCore::ArgumentWireBytesMap> argumentsMap;
@@ -1109,6 +1158,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(CocoaImage *, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     constexpr bool snapshotFailedTraceValue = false;
     tracePoint(TakeSnapshotStart);
 
@@ -1182,6 +1232,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(MAC)
     _impl->setAllowsBackForwardNavigationGestures(allowsBackForwardNavigationGestures);
 #elif PLATFORM(IOS_FAMILY)
@@ -1220,6 +1271,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)setCustomUserAgent:(NSString *)customUserAgent
 {
+    THROW_IF_SUSPENDED;
     _page->setCustomUserAgent(customUserAgent);
 }
 
@@ -1234,6 +1286,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)setAllowsLinkPreview:(BOOL)allowsLinkPreview
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(MAC)
     _impl->setAllowsLinkPreview(allowsLinkPreview);
     return;
@@ -1255,6 +1308,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)setPageZoom:(CGFloat)pageZoom
 {
+    THROW_IF_SUSPENDED;
     _page->setPageZoomFactor(pageZoom);
 }
 
@@ -1279,6 +1333,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!string.length) {
         completionHandler(adoptNS([[WKFindResult alloc] _initWithMatchFound:NO]).get());
         return;
@@ -1296,6 +1351,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)setMediaType:(NSString *)mediaStyle
 {
+    THROW_IF_SUSPENDED;
     _page->setOverriddenMediaType(mediaStyle);
 }
 
@@ -1311,6 +1367,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)setInteractionState:(id)interactionState
 {
+    THROW_IF_SUSPENDED;
     if (![(id)interactionState isKindOfClass:[NSData class]])
         return;
 
@@ -1335,6 +1392,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)setAllowsMagnification:(BOOL)allowsMagnification
 {
+    THROW_IF_SUSPENDED;
     _impl->setAllowsMagnification(allowsMagnification);
 }
 
@@ -1345,11 +1403,13 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point
 {
+    THROW_IF_SUSPENDED;
     _impl->setMagnification(magnification, NSPointToCGPoint(point));
 }
 
 - (void)setMagnification:(double)magnification
 {
+    THROW_IF_SUSPENDED;
     _impl->setMagnification(magnification);
 }
 
@@ -1360,6 +1420,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo
 {
+    THROW_IF_SUSPENDED;
     if (auto webFrameProxy = _page->mainFrame())
         return _impl->printOperationWithPrintInfo(printInfo, *webFrameProxy);
     return nil;
@@ -1527,6 +1588,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)createPDFWithConfiguration:(WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData *pdfDocumentData, NSError *error))completionHandler
 {
+    THROW_IF_SUSPENDED;
     WebCore::FrameIdentifier frameID;
     if (auto mainFrame = _page->mainFrame())
         frameID = mainFrame->frameID();
@@ -1552,6 +1614,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->getWebArchiveOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
         completionHandler(wrapper(data), nil);
     });
@@ -1633,17 +1696,20 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
 }
 
 // FIXME(223658): Remove this once adopters have moved to the final API.
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponse:(NSURLResponse *)response responseData:(NSData *)data
 {
+    THROW_IF_SUSPENDED;
     return [self loadSimulatedRequest:request response:response responseData:data];
 }
 
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)string
 {
+    THROW_IF_SUSPENDED;
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html" expectedContentLength:string.length textEncodingName:@"UTF-8"]);
 
@@ -1653,11 +1719,13 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 // FIXME(223658): Remove this once adopters have moved to the final API.
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request withResponseHTMLString:(NSString *)string
 {
+    THROW_IF_SUSPENDED;
     return [self loadSimulatedRequest:request responseHTMLString:string];
 }
 
 - (WKNavigation *)loadFileRequest:(NSURLRequest *)request allowingReadAccessToURL:(NSURL *)readAccessURL
 {
+    THROW_IF_SUSPENDED;
     auto URL = request.URL;
 
     if (![URL isFileURL])
@@ -1677,6 +1745,21 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return WebCore::platformColor(themeColor);
 }
 
+- (CocoaColor *)underPageBackgroundColor
+{
+    return WebCore::platformColor(_page->underPageBackgroundColor());
+}
+
+- (void)setUnderPageBackgroundColor:(CocoaColor *)underPageBackgroundColorOverride
+{
+    _page->setUnderPageBackgroundColorOverride(underPageBackgroundColorOverride.CGColor);
+}
+
++ (BOOL)automaticallyNotifiesObserversOfUnderPageBackgroundColor
+{
+    return NO;
+}
+
 @end
 
 #pragma mark -
@@ -1687,7 +1770,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #if PLATFORM(MAC)
 
-#define WEBCORE_PRIVATE_COMMAND(command) - (void)_##command:(id)sender { _page->executeEditCommand(#command ## _s); }
+#define WEBCORE_PRIVATE_COMMAND(command) - (void)_##command:(id)sender { THROW_IF_SUSPENDED; _page->executeEditCommand(#command ## _s); }
 
 WEBCORE_PRIVATE_COMMAND(alignCenter)
 WEBCORE_PRIVATE_COMMAND(alignJustified)
@@ -1706,21 +1789,25 @@ WEBCORE_PRIVATE_COMMAND(pasteAndMatchStyle)
 
 - (void)_toggleStrikeThrough:(id)sender
 {
+    THROW_IF_SUSPENDED;
     _page->executeEditCommand("strikethrough"_s);
 }
 
 - (void)_increaseListLevel:(id)sender
 {
+    THROW_IF_SUSPENDED;
     _page->increaseListLevel();
 }
 
 - (void)_decreaseListLevel:(id)sender
 {
+    THROW_IF_SUSPENDED;
     _page->decreaseListLevel();
 }
 
 - (void)_changeListType:(id)sender
 {
+    THROW_IF_SUSPENDED;
     _page->changeListType();
 }
 
@@ -1772,6 +1859,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_setViewportSizeForCSSViewportUnits:(CGSize)viewportSize
 {
+    THROW_IF_SUSPENDED;
     auto viewportSizeForViewportUnits = WebCore::IntSize(viewportSize);
     if (viewportSizeForViewportUnits.isEmpty())
         [NSException raise:NSInvalidArgumentException format:@"Viewport size should not be empty"];
@@ -1793,6 +1881,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_didEnableBrowserExtensions:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap
 {
+    THROW_IF_SUSPENDED;
     HashMap<String, String> transformed;
     transformed.reserveInitialCapacity(extensionIDToNameMap.count);
     [extensionIDToNameMap enumerateKeysAndObjectsUsingBlock:[&](NSString *extensionID, NSString *extensionName, BOOL *) {
@@ -1803,6 +1892,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_didDisableBrowserExtensions:(NSSet<NSString *> *)extensionIDs
 {
+    THROW_IF_SUSPENDED;
     HashSet<String> transformed;
     transformed.reserveInitialCapacity(extensionIDs.count);
     for (NSString *extensionID in extensionIDs)
@@ -1851,6 +1941,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_setEditable:(BOOL)editable
 {
+    THROW_IF_SUSPENDED;
     bool wasEditable = _page->isEditable();
     _page->setEditable(editable);
 #if PLATFORM(MAC)
@@ -1868,6 +1959,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion
 {
+    THROW_IF_SUSPENDED;
     _page->executeEditCommand(command, argument, [capturedCompletionBlock = makeBlockPtr(completion)] {
         if (capturedCompletionBlock)
             capturedCompletionBlock(YES);
@@ -1903,6 +1995,7 @@ static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const Optional<Web
 
 - (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)())completionHandler
 {
+    THROW_IF_SUSPENDED;
     using ExclusionRule = WebCore::TextManipulationController::ExclusionRule;
 
     if (!_textManipulationDelegate || !_page) {
@@ -1967,6 +2060,7 @@ static WebCore::TextManipulationController::TokenIdentifier coreTextManipulation
 
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!_page) {
         completionHandler(false);
         return;
@@ -2024,6 +2118,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_completeTextManipulationForItems:(NSArray<_WKTextManipulationItem *> *)items completion:(void(^)(NSArray<NSError *> *errors))completionHandler
 {
+    THROW_IF_SUSPENDED;
     if (!_page) {
         completionHandler(makeFailureSetForAllTextManipulationItems(items).get());
         return;
@@ -2051,6 +2146,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_takeFindStringFromSelection:(id)sender
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(MAC)
     [self _takeFindStringFromSelectionInternal:sender];
 #else
@@ -2105,6 +2201,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_updateMediaPlaybackControlsManager
 {
+    THROW_IF_SUSPENDED;
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     _impl->updateMediaPlaybackControlsManager();
 #endif
@@ -2130,6 +2227,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_togglePictureInPicture
 {
+    THROW_IF_SUSPENDED;
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     _impl->togglePictureInPicture();
 #endif
@@ -2142,26 +2240,31 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_closeAllMediaPresentations
 {
+    THROW_IF_SUSPENDED;
     [self closeAllMediaPresentationsWithCompletionHandler:nil];
 }
 
 - (void)_stopMediaCapture
 {
+    THROW_IF_SUSPENDED;
     _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::AudioVideo);
 }
 
 - (void)_stopAllMediaPlayback
 {
+    THROW_IF_SUSPENDED;
     [self pauseAllMediaPlaybackWithCompletionHandler:nil];
 }
 
 - (void)_suspendAllMediaPlayback
 {
+    THROW_IF_SUSPENDED;
     [self setAllMediaPlaybackSuspended:YES completionHandler:nil];
 }
 
 - (void)_resumeAllMediaPlayback
 {
+    THROW_IF_SUSPENDED;
     [self setAllMediaPlaybackSuspended:NO completionHandler:nil];
 }
 
@@ -2178,6 +2281,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_restoreAppHighlights:(NSArray<NSData *> *)highlights
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<Ref<WebKit::SharedMemory>> buffers;
 
@@ -2192,6 +2296,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_restoreAndScrollToAppHighlight:(NSData *)highlight
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<Ref<WebKit::SharedMemory>> buffers;
     
@@ -2204,6 +2309,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_addAppHighlight
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(APP_HIGHLIGHTS)
     _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::Yes);
 #endif
@@ -2223,23 +2329,27 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
+    THROW_IF_SUSPENDED;
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     _page->loadAlternateHTML({ static_cast<const uint8_t*>(data.bytes), data.length }, "UTF-8"_s, baseURL, unreachableURL);
 }
 
 - (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr()));
 }
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
 {
+    THROW_IF_SUSPENDED;
     _WKShouldOpenExternalURLsPolicy policy = shouldOpenExternalURLs ? _WKShouldOpenExternalURLsPolicyAllow : _WKShouldOpenExternalURLsPolicyNotAllow;
     return [self _loadRequest:request shouldOpenExternalURLsPolicy:policy];
 }
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLsPolicy:(_WKShouldOpenExternalURLsPolicy)shouldOpenExternalURLsPolicy
 {
+    THROW_IF_SUSPENDED;
     WebCore::ShouldOpenExternalURLsPolicy policy;
     switch (shouldOpenExternalURLsPolicy) {
     case _WKShouldOpenExternalURLsPolicyNotAllow:
@@ -2257,24 +2367,28 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_grantAccessToAssetServices
 {
+    THROW_IF_SUSPENDED;
     if (_page)
         _page->grantAccessToAssetServices();
 }
 
 - (void)_revokeAccessToAssetServices
 {
+    THROW_IF_SUSPENDED;
     if (_page)
         _page->revokeAccessToAssetServices();
 }
 
 - (void)_switchFromStaticFontRegistryToUserFontRegistry
 {
+    THROW_IF_SUSPENDED;
     if (_page)
         _page->switchFromStaticFontRegistryToUserFontRegistry();
 }
 
 - (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->appBoundNavigationData([registrableDomain = WebCore::RegistrableDomain::uncheckedCreateFromHost(domain), completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
         if (!appBoundData.contextData.contains(registrableDomain)) {
             completionHandler(nil);
@@ -2282,6 +2396,44 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         }
 
         completionHandler(appBoundData.contextData.get(registrableDomain).string());
+    });
+}
+
+- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
+        completionHandler(appBoundData.hasLoadedAppBoundRequestTesting);
+    });
+}
+
+- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
+        completionHandler(appBoundData.hasLoadedNonAppBoundRequestTesting);
+    });
+}
+
+- (void)_suspendPage:(void (^)(BOOL))completionHandler
+{
+    if (!_page) {
+        completionHandler(NO);
+        return;
+    }
+    _page->suspend([completionHandler = makeBlockPtr(completionHandler)](bool success) {
+        completionHandler(success);
+    });
+}
+
+- (void)_resumePage:(void (^)(BOOL))completionHandler
+{
+    if (!_page) {
+        completionHandler(NO);
+        return;
+    }
+    _page->resume([completionHandler = makeBlockPtr(completionHandler)](bool success) {
+        completionHandler(success);
     });
 }
 
@@ -2318,6 +2470,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
 {
+    THROW_IF_SUSPENDED;
     _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
     _page->setApplicationNameForDesktopUserAgent(applicationNameForUserAgent);
 }
@@ -2370,6 +2523,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_killWebContentProcess
 {
+    THROW_IF_SUSPENDED;
     if (![self _isValid])
         return;
 
@@ -2378,16 +2532,19 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (WKNavigation *)_reloadWithoutContentBlockers
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->reload(WebCore::ReloadOption::DisableContentBlockers));
 }
 
 - (WKNavigation *)_reloadExpiredOnly
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->reload(WebCore::ReloadOption::ExpiredOnly));
 }
 
 - (void)_killWebContentProcessAndResetState
 {
+    THROW_IF_SUSPENDED;
     Ref<WebKit::WebProcessProxy> protectedProcessProxy(_page->process());
     protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
 
@@ -2399,6 +2556,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     RetainPtr<WKPDFConfiguration> pdfConfiguration;
     if (snapshotConfiguration) {
         pdfConfiguration = adoptNS([[WKPDFConfiguration alloc] init]);
@@ -2410,6 +2568,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_getPDFFirstPageSizeInFrame:(_WKFrameHandle *)frame completionHandler:(void(^)(CGSize))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->getPDFFirstPageSize(frame->_frameHandle->frameID(), [completionHandler = makeBlockPtr(completionHandler)](WebCore::FloatSize size) {
         completionHandler(static_cast<CGSize>(size));
     });
@@ -2440,6 +2599,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData
 {
+    THROW_IF_SUSPENDED;
     // FIXME: This should not use the legacy session state decoder.
     WebKit::SessionState sessionState;
     if (!WebKit::decodeLegacySessionState(static_cast<const uint8_t*>(sessionStateData.bytes), sessionStateData.length, sessionState))
@@ -2450,6 +2610,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate
 {
+    THROW_IF_SUSPENDED;
     return wrapper(_page->restoreFromSessionState(sessionState ? sessionState->_sessionState : WebKit::SessionState { }, navigate));
 }
 
@@ -2460,6 +2621,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (BOOL)_tryClose
 {
+    THROW_IF_SUSPENDED;
     return _page->tryClose();
 }
 
@@ -2470,6 +2632,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (_WKAttachment *)_insertAttachmentWithFilename:(NSString *)filename contentType:(NSString *)contentType data:(NSData *)data options:(_WKAttachmentDisplayOptions *)options completion:(void(^)(BOOL success))completionHandler
 {
+    THROW_IF_SUSPENDED;
     UNUSED_PARAM(options);
     auto fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data]);
     if (filename)
@@ -2479,12 +2642,14 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (_WKAttachment *)_insertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType options:(_WKAttachmentDisplayOptions *)options completion:(void(^)(BOOL success))completionHandler
 {
+    THROW_IF_SUSPENDED;
     UNUSED_PARAM(options);
     return [self _insertAttachmentWithFileWrapper:fileWrapper contentType:contentType completion:completionHandler];
 }
 
 - (_WKAttachment *)_insertAttachmentWithFileWrapper:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType completion:(void(^)(BOOL success))completionHandler
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto identifier = createCanonicalUUIDString();
     auto attachment = API::Attachment::create(identifier, *_page);
@@ -2504,6 +2669,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (_WKAttachment *)_attachmentForIdentifier:(NSString *)identifier
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (auto attachment = _page->attachmentForIdentifier(identifier))
         return wrapper(attachment);
@@ -2513,6 +2679,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_simulateDeviceOrientationChangeWithAlpha:(double)alpha beta:(double)beta gamma:(double)gamma
 {
+    THROW_IF_SUSPENDED;
     _page->simulateDeviceOrientationChange(alpha, beta, gamma);
 }
 
@@ -2528,6 +2695,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _showSafeBrowsingWarningWithURL:nil title:title warning:warning detailsWithLinks:details completionHandler:^(BOOL continueUnsafeLoad, NSURL *url) {
         ASSERT(!url);
         completionHandler(continueUnsafeLoad);
@@ -2536,6 +2704,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_showSafeBrowsingWarningWithURL:(NSURL *)url title:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _showSafeBrowsingWarningWithURL:nil title:title warning:warning detailsWithLinks:details completionHandler:^(BOOL continueUnsafeLoad, NSURL *url) {
         ASSERT(!url);
         completionHandler(continueUnsafeLoad);
@@ -2544,6 +2713,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_showSafeBrowsingWarningWithURL:(NSURL *)url title:(NSString *)title warning:(NSString *)warning detailsWithLinks:(NSAttributedString *)details completionHandler:(void(^)(BOOL, NSURL *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     auto safeBrowsingWarning = WebKit::SafeBrowsingWarning::create(url, title, warning, details);
     auto wrapper = [completionHandler = makeBlockPtr(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, URL>&& variant) {
         switchOn(variant, [&] (WebKit::ContinueUnsafeLoad continueUnsafeLoad) {
@@ -2576,6 +2746,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_isJITEnabled:(void(^)(BOOL))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->isJITEnabled([completionHandler = makeBlockPtr(completionHandler)] (bool enabled) {
         completionHandler(enabled);
     });
@@ -2583,11 +2754,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:NO inFrame:nil inWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
 }
 
 - (void)_callAsyncJavaScript:(NSString *)functionBody arguments:(NSDictionary<NSString *, id> *)arguments inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:functionBody asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
@@ -2612,20 +2785,19 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:nil withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
 }
 
 - (void)_evaluateJavaScript:(NSString *)javaScriptString withSourceURL:(NSURL *)url inFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(id, NSError *error))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:NO withSourceURL:url withArguments:nil forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
-}
-
-- (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
-{
 }
 
 - (void)_updateWebpagePreferences:(WKWebpagePreferences *)webpagePreferences
 {
+    THROW_IF_SUSPENDED;
     if (webpagePreferences._websiteDataStore)
         [NSException raise:NSInvalidArgumentException format:@"Updating WKWebsiteDataStore is only supported during decidePolicyForNavigationAction."];
     if (webpagePreferences._userContentController)
@@ -2636,11 +2808,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_notifyUserScripts
 {
+    THROW_IF_SUSPENDED;
     _page->notifyUserScripts();
 }
 
 - (BOOL)_deferrableUserScriptsNeedNotification
 {
+    THROW_IF_SUSPENDED;
     return _page->userScriptsNeedNotification();
 }
 
@@ -2655,6 +2829,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_setAllowsRemoteInspection:(BOOL)allow
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(REMOTE_INSPECTOR)
     _page->setAllowsRemoteInspection(allow);
 #endif
@@ -2671,6 +2846,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_setRemoteInspectionNameOverride:(NSString *)name
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(REMOTE_INSPECTOR)
     _page->setRemoteInspectionNameOverride(name);
 #endif
@@ -2683,6 +2859,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 
 - (void)_setAddsVisitedLinks:(BOOL)addsVisitedLinks
 {
+    THROW_IF_SUSPENDED;
     _page->setAddsVisitedLinks(addsVisitedLinks);
 }
 
@@ -2730,6 +2907,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->getMainResourceDataOfFrame(_page->mainFrame(), [completionHandler = makeBlockPtr(completionHandler)](API::Data* data) {
         completionHandler(wrapper(data), nil);
     });
@@ -2737,11 +2915,13 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     [self createWebArchiveDataWithCompletionHandler:completionHandler];
 }
 
 - (void)_getContentsAsStringWithCompletionHandler:(void (^)(NSString *, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::No, [handler = makeBlockPtr(completionHandler)](String string) {
         handler(string, nil);
     });
@@ -2749,6 +2929,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getContentsOfAllFramesAsStringWithCompletionHandler:(void (^)(NSString *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->getContentsAsString(WebKit::ContentAsStringIncludesChildFrames::Yes, [handler = makeBlockPtr(completionHandler)](String string) {
         handler(string);
     });
@@ -2756,6 +2937,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getContentsAsAttributedStringWithCompletionHandler:(void (^)(NSAttributedString *, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *, NSError *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->getContentsAsAttributedString([handler = makeBlockPtr(completionHandler)](auto& attributedString) {
         if (attributedString.string)
             handler(attributedString.string.get(), attributedString.documentAttributes.get(), nil);
@@ -2766,6 +2948,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_getApplicationManifestWithCompletionHandler:(void (^)(_WKApplicationManifest *))completionHandler
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(APPLICATION_MANIFEST)
     _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ApplicationManifest>& manifest) {
         if (completionHandler) {
@@ -2803,6 +2986,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_setPaginationMode:(_WKPaginationMode)paginationMode
 {
+    THROW_IF_SUSPENDED;
     WebCore::Pagination::Mode mode;
     switch (paginationMode) {
     case _WKPaginationModeUnpaginated:
@@ -2834,6 +3018,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
 {
+    THROW_IF_SUSPENDED;
     _page->setPaginationBehavesLikeColumns(behavesLikeColumns);
 }
 
@@ -2844,6 +3029,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_setPageLength:(CGFloat)pageLength
 {
+    THROW_IF_SUSPENDED;
     _page->setPageLength(pageLength);
 }
 
@@ -2854,6 +3040,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_setGapBetweenPages:(CGFloat)gapBetweenPages
 {
+    THROW_IF_SUSPENDED;
     _page->setGapBetweenPages(gapBetweenPages);
 }
 
@@ -2864,6 +3051,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_setPaginationLineGridEnabled:(BOOL)lineGridEnabled
 {
+    THROW_IF_SUSPENDED;
     _page->setPaginationLineGridEnabled(lineGridEnabled);
 }
 
@@ -2884,6 +3072,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_setTextZoomFactor:(double)zoomFactor
 {
+    THROW_IF_SUSPENDED;
     _page->setTextZoomFactor(zoomFactor);
 }
 
@@ -2894,6 +3083,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 
 - (void)_setPageZoomFactor:(double)zoomFactor
 {
+    THROW_IF_SUSPENDED;
     [self setPageZoom:zoomFactor];
 }
 
@@ -2955,6 +3145,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(IOS_FAMILY)
     if (_customContentView) {
         [_customContentView web_countStringMatches:string options:options maxCount:maxCount];
@@ -2966,6 +3157,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(IOS_FAMILY)
     // While AppKit contains logic in NSBarTextFinder to automatically update the find pasteboard
     // when the find string changes, this (along with the find pasteboard itself) are both missing
@@ -2982,6 +3174,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_hideFindUI
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(IOS_FAMILY)
     if (_customContentView) {
         [_customContentView web_hideFindUI];
@@ -2993,6 +3186,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item
 {
+    THROW_IF_SUSPENDED;
     if (!item)
         return;
     _page->recordNavigationSnapshot(item._item);
@@ -3006,6 +3200,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_clearServiceWorkerEntitlementOverride:(void (^)(void))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->clearServiceWorkerEntitlementOverride([completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
@@ -3013,6 +3208,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_preconnectToServer:(NSURL *)url
 {
+    THROW_IF_SUSPENDED;
     _page->preconnectTo(url);
 }
 
@@ -3023,14 +3219,17 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setCanUseCredentialStorage:(BOOL)canUseCredentialStorage
 {
+    THROW_IF_SUSPENDED;
     _page->setCanUseCredentialStorage(canUseCredentialStorage);
 }
 
+// FIXME: Remove old `-[WKWebView _themeColor]` SPI <rdar://76662644>
 - (CocoaColor *)_themeColor
 {
     return [self themeColor];
 }
 
+// FIXME: Remove old `-[WKWebView _pageExtendedBackgroundColor]` SPI <rdar://77789732>
 - (CocoaColor *)_pageExtendedBackgroundColor
 {
     auto pageExtendedBackgroundColor = _page->pageExtendedBackgroundColor();
@@ -3163,6 +3362,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setLayoutMode:(_WKLayoutMode)layoutMode
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(MAC)
     WKLayoutMode wkViewLayoutMode;
     switch (layoutMode) {
@@ -3193,11 +3393,13 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setFixedLayoutSize:(CGSize)fixedLayoutSize
 {
+    THROW_IF_SUSPENDED;
     _page->setFixedLayoutSize(WebCore::expandedIntSize(WebCore::FloatSize(fixedLayoutSize)));
 }
 
 - (void)_setBackgroundExtendsBeyondPage:(BOOL)backgroundExtends
 {
+    THROW_IF_SUSPENDED;
     _page->setBackgroundExtendsBeyondPage(backgroundExtends);
 }
 
@@ -3217,6 +3419,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setViewScale:(CGFloat)viewScale
 {
+    THROW_IF_SUSPENDED;
     if (viewScale <= 0 || isnan(viewScale) || isinf(viewScale))
         [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
 
@@ -3237,11 +3440,13 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setCORSDisablingPatterns:(NSArray<NSString *> *)patterns
 {
+    THROW_IF_SUSPENDED;
     _page->setCORSDisablingPatterns(makeVector<String>(patterns));
 }
 
 - (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler
 {
+    THROW_IF_SUSPENDED;
     _page->getProcessDisplayName([handler = makeBlockPtr(completionHandler)](auto&& name) {
         handler(name);
     });
@@ -3249,6 +3454,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setMinimumEffectiveDeviceWidth:(CGFloat)minimumEffectiveDeviceWidth
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(IOS_FAMILY)
     if (_page->minimumEffectiveDeviceWidth() == minimumEffectiveDeviceWidth)
         return;
@@ -3271,6 +3477,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_grantAccessToPreferenceService
 {
+    THROW_IF_SUSPENDED;
     if (_page)
         _page->grantAccessToPreferenceService();
 }
@@ -3279,6 +3486,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setScrollPerformanceDataCollectionEnabled:(BOOL)enabled
 {
+    THROW_IF_SUSPENDED;
     _page->setScrollPerformanceDataCollectionEnabled(enabled);
 }
 
@@ -3309,6 +3517,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setAllowsMediaDocumentInlinePlayback:(BOOL)flag
 {
+    THROW_IF_SUSPENDED;
 #if PLATFORM(IOS_FAMILY)
     _page->setAllowsMediaDocumentInlinePlayback(flag);
 #endif
@@ -3347,6 +3556,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setMediaCaptureEnabled:(BOOL)enabled
 {
+    THROW_IF_SUSPENDED;
     _page->setMediaCaptureEnabled(enabled);
 }
 
@@ -3357,6 +3567,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState
 {
+    THROW_IF_SUSPENDED;
     WebCore::MediaProducer::MutedStateFlags coreState;
 
     if (mutedState & _WKMediaAudioMuted)
@@ -3371,6 +3582,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_removeDataDetectedLinks:(dispatch_block_t)completion
 {
+    THROW_IF_SUSPENDED;
 #if ENABLE(DATA_DETECTION)
     _page->removeDataDetectedLinks([completion = makeBlockPtr(completion), page = makeWeakPtr(_page.get())] (auto& result) {
         if (page)
@@ -3386,11 +3598,13 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 // Execute the supplied block after the next transaction from the WebProcess.
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
 {
+    THROW_IF_SUSPENDED;
     [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:NO withoutWaitingForAnimatedResize:NO];
 }
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForPainting:(void (^)(void))updateBlock
 {
+    THROW_IF_SUSPENDED;
     [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:YES withoutWaitingForAnimatedResize:NO];
 }
 

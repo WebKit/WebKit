@@ -69,7 +69,7 @@ private:
     void preconnectForSubresource(const SubresourceInfo&, Entry*, const GlobalFrameID&, Optional<NavigatingToAppBoundDomain>);
     bool satisfyPendingRequests(const Key&, Entry*);
     void retrieveSubresourcesEntry(const Key& storageKey, WTF::Function<void (std::unique_ptr<SubresourcesEntry>)>&&);
-    void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&, Optional<NavigatingToAppBoundDomain>);
+    void startSpeculativeRevalidation(const GlobalFrameID&, SubresourcesEntry&, bool, Optional<NavigatingToAppBoundDomain>);
 
     static bool canUsePreloadedEntry(const PreloadedEntry&, const WebCore::ResourceRequest& actualRequest);
     static bool canUsePendingPreload(const SpeculativeLoad&, const WebCore::ResourceRequest& actualRequest);

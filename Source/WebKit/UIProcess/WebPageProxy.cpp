@@ -218,7 +218,6 @@
 #include <WebCore/AttributedString.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/SystemBattery.h>
-#include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/VersionChecks.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/cocoa/Entitlements.h>
@@ -482,7 +481,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_fullscreenClient(makeUnique<API::FullscreenClient>())
 #endif
     , m_geolocationPermissionRequestManager(*this)
-    , m_notificationPermissionRequestManager(*this)
 #if PLATFORM(IOS_FAMILY)
     , m_audibleActivityTimer(RunLoop::main(), this, &WebPageProxy::clearAudibleActivity)
 #endif
@@ -1913,15 +1911,55 @@ void WebPageProxy::setUnderlayColor(const Color& color)
         send(Messages::WebPage::SetUnderlayColor(color));
 }
 
-Color WebPageProxy::scrollAreaBackgroundColor() const
+Color WebPageProxy::underPageBackgroundColor() const
 {
-    if (m_preferences->useThemeColorForScrollAreaBackgroundColor() && m_themeColor.isValid())
-        return m_themeColor;
+    if (m_underPageBackgroundColorOverride.isValid())
+        return m_underPageBackgroundColorOverride;
 
-    if (m_preferences->useSampledPageTopColorForScrollAreaBackgroundColor() && m_sampledPageTopColor.isValid())
-        return m_sampledPageTopColor;
+    if (m_pageExtendedBackgroundColor.isValid())
+        return m_pageExtendedBackgroundColor;
 
-    return m_pageExtendedBackgroundColor;
+    return platformUnderPageBackgroundColor();
+}
+
+void WebPageProxy::setUnderPageBackgroundColorOverride(Color&& newUnderPageBackgroundColorOverride)
+{
+    if (newUnderPageBackgroundColorOverride == m_underPageBackgroundColorOverride)
+        return;
+
+    auto oldUnderPageBackgroundColor = underPageBackgroundColor();
+    auto oldUnderPageBackgroundColorOverride = std::exchange(m_underPageBackgroundColorOverride, newUnderPageBackgroundColorOverride);
+    bool changesUnderPageBackgroundColor = !equalIgnoringSemanticColor(oldUnderPageBackgroundColor, underPageBackgroundColor());
+    m_underPageBackgroundColorOverride = WTFMove(oldUnderPageBackgroundColorOverride);
+
+    if (changesUnderPageBackgroundColor)
+        pageClient().underPageBackgroundColorWillChange();
+
+    m_underPageBackgroundColorOverride = WTFMove(newUnderPageBackgroundColorOverride);
+
+    if (changesUnderPageBackgroundColor)
+        pageClient().underPageBackgroundColorDidChange();
+
+    if (m_hasPendingUnderPageBackgroundColorOverrideToDispatch)
+        return;
+
+    m_hasPendingUnderPageBackgroundColorOverrideToDispatch = true;
+
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+
+        if (!m_hasPendingUnderPageBackgroundColorOverrideToDispatch)
+            return;
+
+        m_hasPendingUnderPageBackgroundColorOverrideToDispatch = false;
+
+        if (m_pageClient)
+            m_pageClient->didChangeBackgroundColor();
+
+        if (hasRunningProcess())
+            send(Messages::WebPage::SetUnderPageBackgroundColorOverride(m_underPageBackgroundColorOverride));
+    });
 }
 
 void WebPageProxy::viewWillStartLiveResize()
@@ -2782,6 +2820,9 @@ void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 {
 #if HAVE(CVDISPLAYLINK)
     if (m_wheelEventActivityHysteresis.state() == PAL::HysteresisState::Started) {
+        if (!m_process->hasConnection() || !m_displayID)
+            return;
+
         bool wantsFullSpeedUpdates = true;
         process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
     }
@@ -2811,10 +2852,25 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 
 WebWheelEventCoalescer& WebPageProxy::wheelEventCoalescer()
 {
-    if (!m_wheelEventCoalescer)
+    if (!m_wheelEventCoalescer) {
         m_wheelEventCoalescer = makeUnique<WebWheelEventCoalescer>();
+        m_wheelEventCoalescer->setShouldCoalesceEventsDuringDeceleration(shouldCoalesceWheelEventsDuringDeceleration());
+    }
 
     return *m_wheelEventCoalescer;
+}
+
+bool WebPageProxy::shouldCoalesceWheelEventsDuringDeceleration() const
+{
+#if HAVE(CVDISPLAYLINK)
+    if (!m_displayID)
+        return false;
+
+    auto framesPerSecond = m_process->processPool().nominalFramesPerSecondForDisplay(*m_displayID);
+    return framesPerSecond > WebCore::FullSpeedFramesPerSecond;
+#else
+    return false;
+#endif
 }
 
 bool WebPageProxy::hasQueuedKeyEvent() const
@@ -3143,7 +3199,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     // If the page is suspended, which should be the case during panning, pinching
     // and animation on the page itself (kinetic scrolling, tap to zoom) etc, then
     // we do not send any of the events to the page even if is has listeners.
-    if (!m_isPageSuspended) {
+    if (!m_areActiveDOMObjectsAndAnimationsSuspended) {
         m_touchEventQueue.append(event);
         m_process->startResponsivenessTimer();
         send(Messages::WebPage::TouchEvent(event));
@@ -3591,22 +3647,43 @@ void WebPageProxy::setCustomUserAgent(const String& customUserAgent)
 
 void WebPageProxy::resumeActiveDOMObjectsAndAnimations()
 {
-    if (!hasRunningProcess() || !m_isPageSuspended)
+    if (!hasRunningProcess() || !m_areActiveDOMObjectsAndAnimationsSuspended)
         return;
 
-    m_isPageSuspended = false;
+    m_areActiveDOMObjectsAndAnimationsSuspended = false;
 
     send(Messages::WebPage::ResumeActiveDOMObjectsAndAnimations());
 }
 
 void WebPageProxy::suspendActiveDOMObjectsAndAnimations()
 {
-    if (!hasRunningProcess() || m_isPageSuspended)
+    if (!hasRunningProcess() || m_areActiveDOMObjectsAndAnimationsSuspended)
         return;
 
-    m_isPageSuspended = true;
+    m_areActiveDOMObjectsAndAnimationsSuspended = true;
 
     send(Messages::WebPage::SuspendActiveDOMObjectsAndAnimations());
+}
+
+void WebPageProxy::suspend(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "suspend:");
+    if (!hasRunningProcess() || m_isSuspended)
+        return completionHandler(false);
+
+    m_isSuspended = true;
+    sendWithAsyncReply(Messages::WebPage::Suspend(), WTFMove(completionHandler));
+}
+
+void WebPageProxy::resume(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "resume:");
+
+    if (!hasRunningProcess() || !m_isSuspended)
+        return completionHandler(false);
+
+    m_isSuspended = false;
+    sendWithAsyncReply(Messages::WebPage::Resume(), WTFMove(completionHandler));
 }
 
 bool WebPageProxy::supportsTextEncoding() const
@@ -3809,6 +3886,9 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
 {
     m_displayID = displayID;
+
+    if (m_wheelEventCoalescer)
+        m_wheelEventCoalescer->setShouldCoalesceEventsDuringDeceleration(shouldCoalesceWheelEventsDuringDeceleration());
 
     if (!hasRunningProcess())
         return;
@@ -5945,9 +6025,11 @@ void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
     pageClient().didChangeViewportProperties(attr);
 }
 
-void WebPageProxy::pageDidScroll()
+void WebPageProxy::pageDidScroll(const WebCore::IntPoint& scrollPosition)
 {
     m_uiClient->pageDidScroll(this);
+
+    pageClient().pageDidScroll(scrollPosition);
 
 #if PLATFORM(IOS_FAMILY)
     // Do not hide the validation message if the scrolling was caused by the keyboard showing up.
@@ -6078,7 +6160,7 @@ void WebPageProxy::stopMediaCapture(MediaProducer::MediaCaptureKind kind, Comple
 #endif
 }
 
-void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
+void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(MediaPlaybackState)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
@@ -6193,10 +6275,8 @@ void WebPageProxy::setColorPickerColor(const WebCore::Color& color)
 
 void WebPageProxy::endColorPicker()
 {
-    if (!m_colorPicker)
-        return;
-
-    m_colorPicker->endPicker();
+    if (auto colorPicker = std::exchange(m_colorPicker, nullptr))
+        colorPicker->endPicker();
 }
 
 void WebPageProxy::didChooseColor(const WebCore::Color& color)
@@ -6209,11 +6289,13 @@ void WebPageProxy::didChooseColor(const WebCore::Color& color)
 
 void WebPageProxy::didEndColorPicker()
 {
-    m_colorPicker = nullptr;
-    if (!hasRunningProcess())
-        return;
+    if (std::exchange(m_colorPicker, nullptr)) {
+        if (!hasRunningProcess())
+            return;
 
-    send(Messages::WebPage::DidEndColorPicker());
+        send(Messages::WebPage::DidEndColorPicker());
+    }
+
 }
 #endif
 
@@ -6511,7 +6593,7 @@ void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint
 {
     // FIXME: Make TextIndicatorWindow a platform-independent presentational thing ("TextIndicatorPresentation"?).
 #if PLATFORM(COCOA)
-    pageClient().setTextIndicator(TextIndicator::create(indicatorData), static_cast<TextIndicatorWindowLifetime>(lifetime));
+    pageClient().setTextIndicator(TextIndicator::create(indicatorData), static_cast<WebCore::TextIndicatorLifetime>(lifetime));
 #else
     ASSERT_NOT_REACHED();
 #endif
@@ -6520,7 +6602,7 @@ void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint
 void WebPageProxy::clearTextIndicator()
 {
 #if PLATFORM(COCOA)
-    pageClient().clearTextIndicator(TextIndicatorWindowDismissalAnimation::FadeOut);
+    pageClient().clearTextIndicator(WebCore::TextIndicatorDismissalAnimation::FadeOut);
 #else
     ASSERT_NOT_REACHED();
 #endif
@@ -7608,8 +7690,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_geolocationPermissionRequestManager.invalidateRequests();
 #endif
 
-    m_notificationPermissionRequestManager.invalidateRequests();
-
     setToolTip({ });
 
     m_mainFrameHasHorizontalScrollbar = false;
@@ -7719,7 +7799,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_visiblePageToken = nullptr;
 
     m_hasRunningProcess = false;
-    m_isPageSuspended = false;
+    m_areActiveDOMObjectsAndAnimationsSuspended = false;
 
     m_userScriptsNotified = false;
 
@@ -7828,6 +7908,7 @@ static const Vector<ASCIILiteral>& gpuMachServices()
         "com.apple.MTLCompilerService"_s,
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         "com.apple.cvmsServ"_s,
+        "com.apple.print.normalizerd"_s,
 #endif
     });
     return services;
@@ -8032,7 +8113,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.overriddenMediaType = m_overriddenMediaType;
     parameters.corsDisablingPatterns = corsDisablingPatterns();
     parameters.userScriptsShouldWaitUntilNotification = m_configuration->userScriptsShouldWaitUntilNotification();
-    parameters.loadsFromNetwork = m_configuration->loadsFromNetwork();
+    parameters.allowedNetworkHosts = m_configuration->allowedNetworkHosts();
     parameters.loadsSubresources = m_configuration->loadsSubresources();
     parameters.crossOriginAccessControlCheckEnabled = m_configuration->crossOriginAccessControlCheckEnabled();
     parameters.hasResourceLoadClient = !!m_resourceLoadClient;
@@ -8422,20 +8503,10 @@ void WebPageProxy::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 
-void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
+void WebPageProxy::requestNotificationPermission(const String& originString, CompletionHandler<void(bool allowed)>&& completionHandler)
 {
-    if (!isRequestIDValid(requestID))
-        return;
-
     auto origin = API::SecurityOrigin::createFromString(originString);
-    auto request = m_notificationPermissionRequestManager.createRequest(requestID);
-    
-    m_uiClient->decidePolicyForNotificationPermissionRequest(*this, origin.get(), [request = WTFMove(request)](bool allowed) {
-        if (allowed)
-            request->allow();
-        else
-            request->deny();
-    });
+    m_uiClient->decidePolicyForNotificationPermissionRequest(*this, origin.get(), WTFMove(completionHandler));
 }
 
 void WebPageProxy::showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection dir, const String& originString, uint64_t notificationID)
@@ -8547,13 +8618,24 @@ void WebPageProxy::themeColorChanged(const Color& themeColor)
     pageClient().themeColorDidChange();
 }
 
-void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& pageExtendedBackgroundColor)
+void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& newPageExtendedBackgroundColor)
 {
-    if (m_pageExtendedBackgroundColor == pageExtendedBackgroundColor)
+    if (m_pageExtendedBackgroundColor == newPageExtendedBackgroundColor)
         return;
 
+    auto oldUnderPageBackgroundColor = underPageBackgroundColor();
+    auto oldPageExtendedBackgroundColor = std::exchange(m_pageExtendedBackgroundColor, newPageExtendedBackgroundColor);
+    bool changesUnderPageBackgroundColor = !equalIgnoringSemanticColor(oldUnderPageBackgroundColor, underPageBackgroundColor());
+    m_pageExtendedBackgroundColor = WTFMove(oldPageExtendedBackgroundColor);
+
+    if (changesUnderPageBackgroundColor)
+        pageClient().underPageBackgroundColorWillChange();
     pageClient().pageExtendedBackgroundColorWillChange();
-    m_pageExtendedBackgroundColor = pageExtendedBackgroundColor;
+
+    m_pageExtendedBackgroundColor = newPageExtendedBackgroundColor;
+
+    if (changesUnderPageBackgroundColor)
+        pageClient().underPageBackgroundColorDidChange();
     pageClient().pageExtendedBackgroundColorDidChange();
 }
 
@@ -8566,6 +8648,15 @@ void WebPageProxy::sampledPageTopColorChanged(const Color& sampledPageTopColor)
     m_sampledPageTopColor = sampledPageTopColor;
     pageClient().sampledPageTopColorDidChange();
 }
+
+#if !PLATFORM(COCOA)
+
+Color WebPageProxy::platformUnderPageBackgroundColor() const
+{
+    return Color::transparentBlack;
+}
+
+#endif // !PLATFORM(COCOA)
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
@@ -10555,8 +10646,6 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ASSERT(!m_mediaSessionCoordinatorProxy);
-
     sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
 
         if (!weakThis || !success) {

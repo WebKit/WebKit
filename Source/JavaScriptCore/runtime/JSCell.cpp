@@ -98,6 +98,11 @@ CallData JSCell::getConstructData(JSCell*)
     return { };
 }
 
+bool JSCell::isValidCallee() const
+{
+    return isObject() && asObject(this)->globalObject();
+}
+
 bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, JSValue value, PutPropertySlot& slot)
 {
     if (cell->isString() || cell->isSymbol() || cell->isHeapBigInt())
@@ -193,6 +198,11 @@ bool JSCell::getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned, Pro
 {
     RELEASE_ASSERT_NOT_REACHED();
     return false;
+}
+
+void JSCell::doPutPropertySecurityCheck(JSObject*, JSGlobalObject*, PropertyName, PutPropertySlot&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void JSCell::getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode)

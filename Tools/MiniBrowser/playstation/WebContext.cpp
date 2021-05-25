@@ -57,7 +57,6 @@ WebContext::WebContext()
     WKRetainPtr<WKStringRef> networkCacheDirectory = adoptWK(WKStringCreateWithUTF8CString("/data/minibrowser/NetworkCache"));
     WKRetainPtr<WKStringRef> indexedDBDirectory = adoptWK(WKStringCreateWithUTF8CString("/data/minibrowser/IndexedDB"));
     WKRetainPtr<WKStringRef> localStorageDirectory = adoptWK(WKStringCreateWithUTF8CString("/data/minibrowser/LocalStorage"));
-    WKRetainPtr<WKStringRef> webSQLDirectory = adoptWK(WKStringCreateWithUTF8CString("/data/minibrowser/WebSQL"));
     WKRetainPtr<WKStringRef> cacheStorageDirectory = adoptWK(WKStringCreateWithUTF8CString("/data/minibrowser/CacheStroage"));
     WKRetainPtr<WKStringRef> mediaKeyStorageDirectory = adoptWK(WKStringCreateWithUTF8CString("/data/minibrowser/MediaKey"));
     WKRetainPtr<WKStringRef> resourceLoadStatisticsDirectory = adoptWK(WKStringCreateWithUTF8CString("/data/minibrowser/ResourceLoadStatistics"));
@@ -72,7 +71,6 @@ WebContext::WebContext()
     WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(dataStoreConfiguration.get(), networkCacheDirectory.get());
     WKWebsiteDataStoreConfigurationSetIndexedDBDatabaseDirectory(dataStoreConfiguration.get(), indexedDBDirectory.get());
     WKWebsiteDataStoreConfigurationSetLocalStorageDirectory(dataStoreConfiguration.get(), localStorageDirectory.get());
-    WKWebsiteDataStoreConfigurationSetWebSQLDatabaseDirectory(dataStoreConfiguration.get(), webSQLDirectory.get());
     WKWebsiteDataStoreConfigurationSetCacheStorageDirectory(dataStoreConfiguration.get(), cacheStorageDirectory.get());
     WKWebsiteDataStoreConfigurationSetMediaKeysStorageDirectory(dataStoreConfiguration.get(), mediaKeyStorageDirectory.get());
     WKWebsiteDataStoreConfigurationSetResourceLoadStatisticsDirectory(dataStoreConfiguration.get(), resourceLoadStatisticsDirectory.get());

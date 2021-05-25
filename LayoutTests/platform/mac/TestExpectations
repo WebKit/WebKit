@@ -14,7 +14,6 @@ editing/mac [ Pass ]
 editing/pasteboard/mac [ Pass ]
 fast/dom/Range/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
-media/mac [ Pass ]
 model-element [ Pass ]
 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
@@ -1445,9 +1444,6 @@ webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html [ Pass ImageOnlyFailure ]
 
-# Flaky for non MathML core.
-imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html [ Pass Failure ]
-
 webkit.org/b/19650 accessibility/mac/press-not-work-for-disabled-menu-list.html [ Pass Failure ]
 
 # Skip iOS-specific Pointer Events WPT tests.
@@ -2135,8 +2131,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-sty
 imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-132.html [ ImageOnlyFailure ]
 
-webkit.org/b/222118 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-counter-styles/tibetan/css3-counter-styles-156.html [ ImageOnlyFailure ]
-
 webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
@@ -2192,7 +2186,6 @@ webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/
 
 webkit.org/b/223759 [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Pass Timeout ]
 
-webkit.org/b/222239 fast/canvas/webgl/context-creation-attributes.html [ Pass Failure ]
 webkit.org/b/222239 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Pass Failure ]
 webkit.org/b/222239 webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass Failure ]
 webkit.org/b/222239 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Pass Failure ]
@@ -2240,8 +2233,6 @@ webkit.org/b/220754 http/wpt/service-workers/service-worker-spinning-activate.ht
 
 webkit.org/b/223976 [ Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Pass Failure ]
 
-webkit.org/b/224033 imported/w3c/web-platform-tests/custom-elements/reactions/HTMLMediaElement.html [ Pass Crash ]
-
 webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html [ Pass Failure ]
 
 webkit.org/b/224212 [ arm64 ] compositing/background-color/no-composited-background-color-when-perspective.html [ Pass ImageOnlyFailure ]
@@ -2265,8 +2256,20 @@ webkit.org/b/225484 imported/w3c/web-platform-tests/css/css-animations/translati
 
 webkit.org/b/225425 [ Debug ] webgl/1.0.3/conformance/glsl/misc/expression-list-in-declarator-initializer.html [ Pass Timeout ]
 
-webkit.org/b/205410 accessibility/mac/expanded-notification.html [ Pass Failure ]
-
 webkit.org/b/225523 webrtc/direction-change.html [ Pass Failure ]
 
 webkit.org/b/22525 webrtc/video-replace-muted-track.html [ Pass Failure ]
+
+webkit.org/b/225528 [ arm64 ] http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
+
+webkit.org/b/225258 [ arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
+
+webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
+
+webkit.org/b/223645 [ BigSur ] media/video-played-ranges-1.html [ Pass Failure ]
+
+webkit.org/b/225804 imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html [ Pass Failure ]
+
+webkit.org/b/225882 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-process-frozen-array.https.html [ Pass Failure ]
+
+webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]

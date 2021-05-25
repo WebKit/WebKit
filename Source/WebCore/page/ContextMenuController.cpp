@@ -103,7 +103,7 @@ void ContextMenuController::handleContextMenuEvent(Event& event)
 
     SetForScope<bool> isHandlingContextMenuEventForScope(m_isHandlingContextMenuEvent, true);
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     m_contextMenu = maybeCreateContextMenu(event, hitType, ContextMenuContext::Type::ContextMenu);
     if (!m_contextMenu)
         return;
@@ -124,9 +124,9 @@ void ContextMenuController::showContextMenu(Event& event, ContextMenuProvider& p
 
     auto contextType = provider.contextMenuContextType();
 
-    OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     if (contextType == ContextMenuContext::Type::ContextMenu)
-        hitType.add(HitTestRequest::DisallowUserAgentShadowContent);
+        hitType.add(HitTestRequest::Type::DisallowUserAgentShadowContent);
 
     m_contextMenu = maybeCreateContextMenu(event, WTFMove(hitType), contextType);
     if (!m_contextMenu) {
@@ -142,7 +142,7 @@ void ContextMenuController::showContextMenu(Event& event, ContextMenuProvider& p
     showContextMenu(event);
 }
 
-std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event& event, OptionSet<HitTestRequest::RequestType> hitType, ContextMenuContext::Type contextType)
+std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event& event, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type contextType)
 {
     if (!is<MouseEvent>(event))
         return nullptr;

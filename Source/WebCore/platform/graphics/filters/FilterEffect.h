@@ -2,6 +2,7 @@
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,8 +27,10 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "IntRectExtent.h"
+#include "PixelBuffer.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -41,7 +44,6 @@ namespace WebCore {
 class Filter;
 class FilterEffect;
 class ImageBuffer;
-class ImageData;
 
 typedef Vector<RefPtr<FilterEffect>> FilterEffectVector;
 
@@ -100,7 +102,7 @@ public:
     }
 
     FloatRect drawingRegionOfInputImage(const IntRect&) const;
-    IntRect requestedRegionOfInputImageData(const IntRect&) const;
+    IntRect requestedRegionOfInputPixelBuffer(const IntRect&) const;
     
     // Recurses on inputs.
     FloatRect determineFilterPrimitiveSubregion();
@@ -185,8 +187,8 @@ protected:
     virtual const char* filterName() const = 0;
 
     ImageBuffer* createImageBufferResult();
-    ImageData* createUnmultipliedImageResult();
-    ImageData* createPremultipliedImageResult();
+    Optional<PixelBuffer>& createUnmultipliedImageResult();
+    Optional<PixelBuffer>& createPremultipliedImageResult();
 
     // Return true if the filter will only operate correctly on valid RGBA values, with
     // alpha in [0,255] and each color component in [0, alpha].
@@ -202,18 +204,18 @@ private:
 
     void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
     void copyConvertedImageBufferToDestination(Uint8ClampedArray&, DestinationColorSpace, AlphaPremultiplication, const IntRect&);
-    void copyConvertedImageDataToDestination(Uint8ClampedArray&, ImageData&, DestinationColorSpace, AlphaPremultiplication, const IntRect&);
-    bool requiresImageDataColorSpaceConversion(Optional<DestinationColorSpace>);
-    RefPtr<ImageData> convertImageDataToColorSpace(DestinationColorSpace, ImageData&, AlphaPremultiplication);
-    RefPtr<ImageData> convertImageBufferToColorSpace(DestinationColorSpace, ImageBuffer&, const IntRect&, AlphaPremultiplication);
+    void copyConvertedPixelBufferToDestination(Uint8ClampedArray&, PixelBuffer&, DestinationColorSpace, const IntRect&);
+    bool requiresPixelBufferColorSpaceConversion(Optional<DestinationColorSpace>);
+    Optional<PixelBuffer> convertImageBufferToColorSpace(DestinationColorSpace, ImageBuffer&, const IntRect&, AlphaPremultiplication);
+    Optional<PixelBuffer> convertPixelBufferToColorSpace(DestinationColorSpace, PixelBuffer&);
     
 
     Filter& m_filter;
     FilterEffectVector m_inputEffects;
 
     RefPtr<ImageBuffer> m_imageBufferResult;
-    RefPtr<ImageData> m_unmultipliedImageResult;
-    RefPtr<ImageData> m_premultipliedImageResult;
+    Optional<PixelBuffer> m_unmultipliedImageResult;
+    Optional<PixelBuffer> m_premultipliedImageResult;
 
     IntRect m_absolutePaintRect;
     

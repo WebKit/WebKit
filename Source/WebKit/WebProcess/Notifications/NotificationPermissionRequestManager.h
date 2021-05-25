@@ -28,15 +28,14 @@
 
 #include <WebCore/NotificationClient.h>
 #include <WebCore/NotificationPermissionCallback.h>
-#include <WebCore/SecurityOriginHash.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class Notification;    
-class SecurityOrigin;
+class Notification;
 }
 
 namespace WebKit {
@@ -47,31 +46,29 @@ class WebPage;
 class NotificationPermissionRequestManager : public RefCounted<NotificationPermissionRequestManager> {
 public:
     static Ref<NotificationPermissionRequestManager> create(WebPage*);
+    ~NotificationPermissionRequestManager();
+
+    using Permission = WebCore::NotificationClient::Permission;
+    using PermissionHandler = WebCore::NotificationClient::PermissionHandler;
 
 #if ENABLE(NOTIFICATIONS)
-    void startRequest(WebCore::SecurityOrigin*, RefPtr<WebCore::NotificationPermissionCallback>&&);
+    void startRequest(const WebCore::SecurityOriginData&, PermissionHandler&&);
 #endif
-    void cancelRequest(WebCore::SecurityOrigin*);
-    bool hasPendingPermissionRequests(WebCore::SecurityOrigin*) const;
     
-    WebCore::NotificationClient::Permission permissionLevel(WebCore::SecurityOrigin*);
+    Permission permissionLevel(const WebCore::SecurityOriginData&);
 
     // For testing purposes only.
     void setPermissionLevelForTesting(const String& originString, bool allowed);
     void removeAllPermissionsForTesting();
     
-    void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
-    
 private:
     NotificationPermissionRequestManager(WebPage*);
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<uint64_t, RefPtr<WebCore::NotificationPermissionCallback>> m_idToCallbackMap;
-#endif
-    HashMap<RefPtr<WebCore::SecurityOrigin>, uint64_t> m_originToIDMap;
-    HashMap<uint64_t, RefPtr<WebCore::SecurityOrigin>> m_idToOriginMap;
+    using PermissionHandlers = Vector<PermissionHandler>;
+    static void callPermissionHandlersWith(PermissionHandlers&, Permission);
 
-#if ENABLE(NOTIFICATIONS)
+    HashMap<WebCore::SecurityOriginData, PermissionHandlers> m_requestsPerOrigin;
     WebPage* m_page;
 #endif
 };

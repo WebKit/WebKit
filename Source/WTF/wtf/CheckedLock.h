@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <mutex>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/ThreadSafetyAnalysis.h>
@@ -40,12 +39,12 @@ namespace WTF {
 //   class MyValue : public ThreadSafeRefCounted<MyValue>
 //   {
 //   public:
-//       void setValue(int value) { Lochker holdLock { m_lock }; m_value = value;  }
+//       void setValue(int value) { Locker holdLock { m_lock }; m_value = value;  }
 //       void maybeSetOtherValue(int value)
 //       {
 //           if (!m_lock.tryLock())
 //              return;
-//           Locker locker { AdoptLockTag { }, m_otherLock };
+//           Locker locker { AdoptLock, m_otherLock };
 //           m_otherValue = value;
 //       }
 //   private:
@@ -74,8 +73,6 @@ public:
 // This can be used in cases where the annotations cannot be added to the function
 // declaration.
 inline void assertIsHeld(const CheckedLock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { ASSERT_UNUSED(lock, lock.isHeld()); }
-
-using AdoptLockTag = std::adopt_lock_t;
 
 // Locker specialization to use with CheckedLock.
 // Non-movable simple scoped lock holder.
@@ -109,4 +106,3 @@ Locker(AdoptLockTag, CheckedLock&) -> Locker<CheckedLock>;
 
 using WTF::assertIsHeld;
 using WTF::CheckedLock;
-using WTF::AdoptLockTag;

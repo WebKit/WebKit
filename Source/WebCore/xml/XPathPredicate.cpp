@@ -241,7 +241,7 @@ Value Union::evaluate() const
     NodeSet& resultSet = lhsResult.modifiableNodeSet();
     const NodeSet& rhsNodes = rhs.toNodeSet();
 
-    HashSet<Node*> nodes;
+    HashSet<RefPtr<Node>> nodes;
     for (auto& result : resultSet)
         nodes.add(result.get());
 

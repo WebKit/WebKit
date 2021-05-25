@@ -73,6 +73,7 @@ public:
     RenderObject* firstInFlowChild() const;
     RenderObject* lastInFlowChild() const;
 
+    // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     bool canContainFixedPositionObjects() const;
     bool canContainAbsolutelyPositionedObjects() const;
 
@@ -449,7 +450,7 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
     return style().position() != PositionType::Static
         || (isRenderBlock() && hasTransformRelatedProperty())
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
-        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
+        || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned())
         || isSVGForeignObject()
         || shouldApplyLayoutContainment(*this)
         || isRenderView();

@@ -782,6 +782,18 @@ PerElementSpeakerSelectionEnabled:
     WebCore:
       default: false
 
+PerformanceNavigationTimingAPIEnabled:
+  type: bool
+  humanReadableName: "PerformanceNavigationTiming"
+  humanReadableDescription: "Enable PerformanceNavigationTiming API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
   humanReadableName: "Private Click Measurement Debug Mode"
@@ -1304,28 +1316,6 @@ WebRTCVP9Profile2CodecEnabled:
       default: false
     WebKit:
       default: false
-
-WebSQLDisabled:
-  type: bool
-  humanReadableName: "Disable WebSQL"
-  humanReadableDescription: "Disable WebSQL"
-  webcoreBinding: RuntimeEnabledFeatures
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: true
-
-# FIXME: WebKitLegacy has an existing preference called 'WebSQLEnabled'. We should reconcile it with WebSQLDisabled.
-WebSQLEnabled:
-  type: bool
-  humanReadableName: "Enable WebSQL"
-  humanReadableDescription: "Enable WebSQL"
-  webcoreBinding: custom
-  exposed: [ WebKitLegacy ]
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": WebKit::defaultWebSQLEnabled()
-      default: true
 
 WebShareFileAPIEnabled:
   type: bool

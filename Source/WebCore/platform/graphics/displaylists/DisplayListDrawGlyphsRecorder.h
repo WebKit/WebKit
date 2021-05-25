@@ -65,6 +65,8 @@ public:
     void recordDrawImage(CGRenderingStateRef, CGGStateRef, CGRect, CGImageRef);
 #endif
 
+    DrawGlyphsDeconstruction drawGlyphsDeconstruction() const { return m_drawGlyphsDeconstruction; }
+
 private:
     GraphicsContext createInternalContext();
 

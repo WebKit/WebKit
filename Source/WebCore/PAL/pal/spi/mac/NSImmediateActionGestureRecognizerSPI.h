@@ -56,6 +56,7 @@
 
 @interface NSImmediateActionGestureRecognizer : NSGestureRecognizer
 
+@property (weak) id <NSImmediateActionGestureRecognizerDelegate> delegate;
 @property (strong) id<NSImmediateActionAnimationController> animationController;
 @property (readonly) CGFloat animationProgress;
 

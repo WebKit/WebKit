@@ -63,6 +63,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/Function.h>
+#import <wtf/ObjectIdentifier.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -89,9 +90,14 @@ struct ShareDataWithParsedURL;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
+enum class TextIndicatorDismissalAnimation : uint8_t;
 
 #if ENABLE(DRAG_SUPPORT)
 struct DragItem;
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+struct ImageExtractionResult;
 #endif
 }
 
@@ -104,6 +110,7 @@ class WebPageProxy;
 }
 
 @class WebEvent;
+@class WebTextIndicatorLayer;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
 @class WKDataListSuggestionsControl;
@@ -226,6 +233,9 @@ enum class ProceedWithImageExtraction : bool {
     Yes
 };
 
+enum ImageExtractionRequestIdentifierType { };
+using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequestIdentifierType>;
+
 }
 
 @class WKFocusedElementInfo;
@@ -330,6 +340,9 @@ enum class ProceedWithImageExtraction : bool {
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
+
+    RefPtr<WebCore::TextIndicator> _textIndicator;
+    RetainPtr<WebTextIndicatorLayer> _textIndicatorLayer;
 
 #if USE(UICONTEXTMENU)
     RetainPtr<UITargetedPreview> _contextMenuInteractionTargetedPreview;
@@ -471,7 +484,7 @@ enum class ProceedWithImageExtraction : bool {
 #if ENABLE(IMAGE_EXTRACTION)
     RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _imageExtractionTimeoutGestureRecognizer;
-    BOOL _hasPendingImageExtraction;
+    Optional<WebKit::ImageExtractionRequestIdentifier> _pendingImageExtractionRequestIdentifier;
     Optional<WebCore::ElementContext> _elementPendingImageExtraction;
     Vector<BlockPtr<void(WebKit::ProceedWithImageExtraction)>> _actionsToPerformAfterPendingImageExtraction;
 #if USE(UICONTEXTMENU)
@@ -526,6 +539,7 @@ enum class ProceedWithImageExtraction : bool {
 
 - (void)setUpInteraction;
 - (void)cleanUpInteraction;
+- (void)cleanUpInteractionPreviewContainers;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
 
@@ -574,7 +588,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject;
 - (void)_updateInputContextAfterBlurringAndRefocusingElement;
 - (void)_elementDidBlur;
-- (void)_hideTargetedPreviewContainerViews;
 - (void)_didUpdateInputMode:(WebCore::InputMode)mode;
 - (void)_didUpdateEditorState;
 - (void)_hardwareKeyboardAvailabilityChanged;
@@ -670,6 +683,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didStartProvisionalLoadForMainFrame;
 - (void)_didCommitLoadForMainFrame;
 
+- (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator;
+- (void)setTextIndicatorAnimationProgress:(float)NSAnimationProgress;
+- (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
+
 @property (nonatomic, readonly) BOOL _shouldUseContextMenus;
 @property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange;
 @property (nonatomic, readonly) BOOL _shouldAvoidScrollingWhenFocusedContentIsVisible;
@@ -712,6 +729,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 #if ENABLE(IMAGE_EXTRACTION)
 - (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
+- (void)requestImageExtraction:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&)completion;
 #endif
 
 @end

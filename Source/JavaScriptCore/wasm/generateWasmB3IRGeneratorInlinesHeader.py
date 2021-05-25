@@ -40,12 +40,12 @@ opcodes = wasm.opcodes
 wasmB3IRGeneratorHFile = open(args[2], "w")
 
 opcodeRegex = re.compile('([a-zA-Z0-9]+)')
-argumentRegex = re.compile('(\@[0-9]+)')
+argumentRegex = re.compile(r'(\@[0-9]+)')
 decimalRegex = re.compile('([-]?[0-9]+)')
-whitespaceRegex = re.compile('\s+')
+whitespaceRegex = re.compile(r'\s+')
 commaRegex = re.compile('(,)')
-oparenRegex = re.compile('(\()')
-cparenRegex = re.compile('(\))')
+oparenRegex = re.compile(r'(\()')
+cparenRegex = re.compile(r'(\))')
 
 
 class Source:

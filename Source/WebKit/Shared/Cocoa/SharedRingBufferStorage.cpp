@@ -70,10 +70,27 @@ void ReadOnlySharedRingBufferStorage::updateFrameBounds()
         m_startFrame = m_endFrame = 0;
         return;
     }
-
-    auto pair = sharedBounds->boundsBuffer[sharedBounds->boundsBufferIndex.load(std::memory_order_acquire)];
+    unsigned boundsBufferIndex = sharedBounds->boundsBufferIndex.load(std::memory_order_acquire);
+    if (UNLIKELY(boundsBufferIndex >= boundsBufferSize)) {
+        m_startFrame = m_endFrame = 0;
+        return;
+    }
+    auto pair = sharedBounds->boundsBuffer[boundsBufferIndex];
     m_startFrame = pair.first;
     m_endFrame = pair.second;
+}
+
+size_t ReadOnlySharedRingBufferStorage::size() const
+{
+    if (!m_storage || m_storage->size() < sizeof(FrameBounds))
+        return 0;
+    return m_storage->size() - sizeof(FrameBounds);
+}
+
+bool ReadOnlySharedRingBufferStorage::allocate(size_t byteCount, const CAAudioStreamDescription& format, size_t frameCount)
+{
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void SharedRingBufferStorage::setStorage(RefPtr<SharedMemory>&& storage, const CAAudioStreamDescription& format, size_t frameCount)
@@ -83,11 +100,15 @@ void SharedRingBufferStorage::setStorage(RefPtr<SharedMemory>&& storage, const C
         m_storageChangedHandler(m_storage.get(), format, frameCount);
 }
 
-void SharedRingBufferStorage::allocate(size_t byteCount, const CAAudioStreamDescription& format, size_t frameCount)
+bool SharedRingBufferStorage::allocate(size_t byteCount, const CAAudioStreamDescription& format, size_t frameCount)
 {
     auto sharedMemory = SharedMemory::allocate(byteCount + sizeof(FrameBounds));
+    if (!sharedMemory)
+        return false;
+
     new (NotNull, sharedMemory->data()) FrameBounds;
     setStorage(WTFMove(sharedMemory), format, frameCount);
+    return true;
 }
 
 void SharedRingBufferStorage::deallocate()

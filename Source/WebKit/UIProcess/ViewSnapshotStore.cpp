@@ -95,7 +95,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
 
     snapshot->setRenderTreeSize(webPageProxy.renderTreeSize());
     snapshot->setDeviceScaleFactor(webPageProxy.deviceScaleFactor());
-    snapshot->setBackgroundColor(webPageProxy.scrollAreaBackgroundColor());
+    snapshot->setBackgroundColor(webPageProxy.pageExtendedBackgroundColor());
     snapshot->setViewScrollPosition(WebCore::roundedIntPoint(webPageProxy.viewScrollPosition()));
 
     item.setSnapshot(WTFMove(snapshot));

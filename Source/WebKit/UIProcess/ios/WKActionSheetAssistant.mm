@@ -825,12 +825,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_mediaControlsContextMenu);
     ASSERT(!_mediaControlsContextMenuCallback);
 
+    String menuTitle;
+    if (items.size() == 1) {
+        menuTitle = WTFMove(items[0].title);
+        items = WTFMove(items[0].children);
+    }
+
     if (items.isEmpty()) {
         completionHandler(WebCore::MediaControlsContextMenuItem::invalidID);
         return;
     }
 
-    _mediaControlsContextMenu = [UIMenu menuWithTitle:@"" children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(items)]];
+    _mediaControlsContextMenu = [UIMenu menuWithTitle:WTFMove(menuTitle) children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(items)]];
     _mediaControlsContextMenuTargetFrame = WTFMove(targetFrame);
     _mediaControlsContextMenuCallback = WTFMove(completionHandler);
 
@@ -1016,12 +1022,12 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
         break;
     case _WKElementActionTypeImageExtraction:
 #if ENABLE(IMAGE_EXTRACTION)
-        [delegate actionSheetAssistant:self handleImageExtraction:element.image title:element.title];
+        [delegate actionSheetAssistant:self handleImageExtraction:element.image imageURL:element.imageURL title:element.title imageBounds:element.boundingRect];
 #endif
         break;
     case _WKElementActionTypeRevealImage:
 #if ENABLE(IMAGE_EXTRACTION)
-        [delegate actionSheetAssistant:self handleRevealImage:element.image title:element.title];
+        [delegate actionSheetAssistant:self handleRevealImage:element.image imageURL:element.imageURL title:element.title imageBounds:element.boundingRect];
 #endif
         break;
     default:

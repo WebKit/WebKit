@@ -131,7 +131,6 @@ webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
 webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
-webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-embedded-objects.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-entry-and-password.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-formatted.html [ Failure ]
@@ -196,9 +195,6 @@ webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
 webkit.org/b/218349 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/218349 mathml/presentation/href-style.html [ ImageOnlyFailure ]
 
-# OpenGL issues
-webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
-
 # Parsing
 webkit.org/b/217421 fast/parser/entities-in-html.html [ Failure ]
 
@@ -228,6 +224,10 @@ webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-r
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Crash Failure Timeout Pass ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
+
+# WebXR is not yet supported in GTK
+webkit.org/b/208988 http/wpt/webxr [ Skip ]
+webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
@@ -975,7 +975,13 @@ webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 webkit.org/b/224590 fast/text/line-break-between-text-nodes-latin1.html [ ImageOnlyFailure ]
 webkit.org/b/224590 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html [ ImageOnlyFailure ]
 
-webkit.org/b/224967 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Failure ]
+webkit.org/b/224967 webkit.org/b/225659 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Crash Failure ]
+
+webkit.org/b/225644 compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
+webkit.org/b/225644 fast/repaint/fixed-table-cell.html [ ImageOnlyFailure ]
+webkit.org/b/225644 fast/repaint/fixed-table-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/225644 fast/repaint/fixed-table-overflow-zindex.html [ ImageOnlyFailure ]
+webkit.org/b/225644 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1010,6 +1016,14 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-terminate.https.html [ Crash ]
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
+
+webkit.org/b/225637 imported/w3c/web-platform-tests/fetch/content-length/content-length.html [ Crash ]
+# Crashing since r277601.
+webkit.org/b/225637 imported/w3c/web-platform-tests/eventsource/eventsource-close.htm [ Crash ]
+
+webkit.org/b/225921 editing/execCommand/print.html [ Crash ]
+webkit.org/b/225921 fast/media/print-restores-previous-mediatype.html [ Crash ]
+webkit.org/b/225921 printing/print-close-crash.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1148,11 +1162,7 @@ webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Fai
 
 # Tests that fail on the EWS queue since we enabled tests there (obsolete). TODO: the failures below should be filed under a different bug).
 webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure Pass ]
-webkit.org/b/186638 editing/execCommand/print.html [ Crash ]
 webkit.org/b/186638 editing/selection/select-bidi-run.html [ Timeout Pass ]
-webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Crash ]
-webkit.org/b/186638 fast/selectors/unqualified-hover-strict.html [ Failure ]
-webkit.org/b/186638 printing/print-close-crash.html [ Crash ]
 
 # Tests failing on the EWS queue.
 webkit.org/b/186638 fast/forms/select/popup-closes-on-blur.html [ Failure Pass ]
@@ -1214,9 +1224,6 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/197507 imported/blink/compositing/repaint/end-of-opacity-transition.html [ Timeout Pass ]
 webkit.org/b/197507 imported/blink/css3/calc/transition-asan-crash.html [ Timeout Pass ]
 
-webkit.org/b/175662 inspector/canvas/recording-2d-frameCount.html [ Failure ]
-webkit.org/b/175662 inspector/canvas/recording-2d-full.html [ Failure ]
-webkit.org/b/175662 inspector/canvas/recording-2d-memoryLimit.html [ Failure ]
 
 webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
 
@@ -1992,8 +1999,6 @@ webkit.org/b/191002 imported/w3c/web-platform-tests/intersection-observer/ [ Pas
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Skip ]
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Skip ]
 
-webkit.org/b/191003 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Failure ]
-
 webkit.org/b/191400 fast/block/basic/child-block-level-box-with-height-percent.html [ Failure ]
 webkit.org/b/191400 fast/block/basic/inline-content-with-floating-images2.html [ Failure ]
 webkit.org/b/191400 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
@@ -2028,10 +2033,6 @@ webkit.org/b/166536 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
 
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker.html [ Failure ]
-webkit.org/b/193322 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Failure ]
-
 webkit.org/b/193491 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Failure ]
 
 webkit.org/b/193493 fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
@@ -2049,7 +2050,6 @@ webkit.org/b/206000 compositing/clipping/border-radius-async-overflow-non-stacki
 
 webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 
-webkit.org/b/195712 inspector/canvas/recording-html-2d.html [ Failure ]
 
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure ]
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-002.html [ Failure ]
@@ -2071,8 +2071,6 @@ webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
-
-webkit.org/b/199872 [ Release ] http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
 webkit.org/b/201264 mathml/presentation/foreign-element-in-token.html [ Failure ]
@@ -2117,7 +2115,6 @@ webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/
 
 webkit.org/b/223980 editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
 
-webkit.org/b/223981 inspector/canvas/recording-2d-saves.html [ Failure ]
 
 webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-missing-varyings.html [ Failure ]
 webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]

@@ -32,9 +32,7 @@
 #include "EventLoop.h"
 #include "JSDOMGlobalObjectTask.h"
 #include "JSDOMGuardedObject.h"
-#include "JSDedicatedWorkerGlobalScope.h"
 #include "JSMicrotaskCallback.h"
-#include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/JSCInlines.h>
@@ -42,11 +40,6 @@
 #include <JavaScriptCore/JSProxy.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/Language.h>
-
-#if ENABLE(SERVICE_WORKER)
-#include "JSServiceWorkerGlobalScope.h"
-#endif
-
 
 namespace WebCore {
 using namespace JSC;
@@ -165,50 +158,5 @@ JSValue toJS(JSGlobalObject*, WorkerGlobalScope& workerGlobalScope)
     ASSERT(contextWrapper);
     return &contextWrapper->proxy();
 }
-
-JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(VM& vm, JSValue value)
-{
-    if (!value.isObject())
-        return nullptr;
-    const ClassInfo* classInfo = asObject(value)->classInfo(vm);
-    if (classInfo == JSDedicatedWorkerGlobalScope::info())
-        return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
-    if (classInfo == JSProxy::info())
-        return jsDynamicCast<JSDedicatedWorkerGlobalScope*>(vm, jsCast<JSProxy*>(asObject(value))->target());
-    return nullptr;
-}
-
-JSWorkerGlobalScope* toJSWorkerGlobalScope(VM& vm, JSValue value)
-{
-    if (!value.isObject())
-        return nullptr;
-    const ClassInfo* classInfo = asObject(value)->classInfo(vm);
-    if (classInfo == JSDedicatedWorkerGlobalScope::info())
-        return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
-
-#if ENABLE(SERVICE_WORKER)
-    if (classInfo == JSServiceWorkerGlobalScope::info())
-        return jsCast<JSServiceWorkerGlobalScope*>(asObject(value));
-#endif
-
-    if (classInfo == JSProxy::info())
-        return jsDynamicCast<JSWorkerGlobalScope*>(vm, jsCast<JSProxy*>(asObject(value))->target());
-
-    return nullptr;
-}
-
-#if ENABLE(SERVICE_WORKER)
-JSServiceWorkerGlobalScope* toJSServiceWorkerGlobalScope(VM& vm, JSValue value)
-{
-    if (!value.isObject())
-        return nullptr;
-    const ClassInfo* classInfo = asObject(value)->classInfo(vm);
-    if (classInfo == JSServiceWorkerGlobalScope::info())
-        return jsCast<JSServiceWorkerGlobalScope*>(asObject(value));
-    if (classInfo == JSProxy::info())
-        return jsDynamicCast<JSServiceWorkerGlobalScope*>(vm, jsCast<JSProxy*>(asObject(value))->target());
-    return nullptr;
-}
-#endif
 
 } // namespace WebCore

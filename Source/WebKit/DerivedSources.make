@@ -251,6 +251,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/webrtc/RemoteSampleBufferDisplayLayer \
 	GPUProcess/webrtc/RemoteMediaRecorder \
 	GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer \
+	GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager \
 	GPUProcess/GPUProcess \
 	GPUProcess/media/RemoteImageDecoderAVFProxy \
 	GPUProcess/media/RemoteLegacyCDMSessionProxy \

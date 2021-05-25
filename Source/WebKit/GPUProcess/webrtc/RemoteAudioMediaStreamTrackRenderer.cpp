@@ -77,7 +77,7 @@ RemoteAudioMediaStreamTrackRenderer::~RemoteAudioMediaStreamTrackRenderer()
 
 void RemoteAudioMediaStreamTrackRenderer::start()
 {
-    m_renderer->start();
+    m_renderer->start([] { });
 }
 
 void RemoteAudioMediaStreamTrackRenderer::stop()
@@ -100,7 +100,7 @@ void RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged(const Share
     MESSAGE_CHECK(WebAudioBufferList::isSupportedDescription(description, numberOfFrames));
     m_description = description;
 
-    m_ringBuffer = makeUniqueRef<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
+    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(ipcHandle.handle), description, numberOfFrames);
     m_audioBufferList = makeUnique<WebAudioBufferList>(m_description);
 }
 

@@ -207,21 +207,17 @@ static uint64_t getDirectorySize(const String& directoryPath)
     paths.append(directoryPath);
     while (!paths.isEmpty()) {
         auto path = paths.takeFirst();
-        if (FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::No)) {
-            auto newPaths = FileSystem::listDirectory(path, "*"_s);
-            for (auto& newPath : newPaths) {
+        if (FileSystem::fileType(path) == FileSystem::FileType::Directory) {
+            auto fileNames = FileSystem::listDirectory(path);
+            for (auto& fileName : fileNames) {
                 // Files in /Blobs directory are hard link.
-                auto fileName = FileSystem::lastComponentOfPathIgnoringTrailingSlash(newPath);
                 if (fileName == "Blobs")
                     continue;
-                paths.append(newPath);
+                paths.append(FileSystem::pathByAppendingComponent(path, fileName));
             }
             continue;
         }
-
-        long long fileSize = 0;
-        FileSystem::getFileSize(path, fileSize);
-        directorySize += fileSize;
+        directorySize += FileSystem::fileSize(path).valueOr(0);
     }
     return directorySize;
 }
@@ -464,7 +460,7 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
     m_pendingWriteCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()]() mutable {
 
-        String directoryPath = FileSystem::directoryName(filename);
+        String directoryPath = FileSystem::parentPath(filename);
         if (!FileSystem::fileExists(directoryPath))
             FileSystem::makeAllDirectories(directoryPath);
 
@@ -538,7 +534,7 @@ void Engine::writeSizeFile(const String& path, uint64_t size, CompletionHandler<
         return completionHandler();
 
     m_ioQueue->dispatch([path = path.isolatedCopy(), size, completionHandler = WTFMove(completionHandler)]() mutable {
-        LockHolder locker(globalSizeFileLock);
+        Locker locker { globalSizeFileLock };
         auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
 
         if (FileSystem::isHandleValid(fileHandle)) {
@@ -558,7 +554,7 @@ Optional<uint64_t> Engine::readSizeFile(const String& path)
 {
     ASSERT(!RunLoop::isMain());
 
-    LockHolder locker(globalSizeFileLock);
+    Locker locker { globalSizeFileLock };
     auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
     auto closeFileHandle = makeScopeExit([&] {
         FileSystem::closeFile(fileHandle);
@@ -567,8 +563,8 @@ Optional<uint64_t> Engine::readSizeFile(const String& path)
     if (!FileSystem::isHandleValid(fileHandle))
         return WTF::nullopt;
 
-    long long fileSize = 0;
-    if (!FileSystem::getFileSize(path, fileSize) || !fileSize)
+    auto fileSize = FileSystem::fileSize(path).valueOr(0);
+    if (!fileSize)
         return WTF::nullopt;
 
     unsigned bytesToRead;
@@ -615,9 +611,10 @@ void Engine::getDirectories(CompletionHandler<void(const Vector<String>&)>&& com
 {
     m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<String> folderPaths;
-        for (auto& filename : FileSystem::listDirectory(path, "*")) {
-            if (FileSystem::fileIsDirectory(filename, FileSystem::ShouldFollowSymbolicLinks::No))
-                folderPaths.append(filename.isolatedCopy());
+        for (auto& fileName : FileSystem::listDirectory(path)) {
+            auto filePath = FileSystem::pathByAppendingComponent(path, fileName);
+            if (FileSystem::fileType(filePath) == FileSystem::FileType::Directory)
+                folderPaths.append(filePath.isolatedCopy());
         }
 
         RunLoop::main().dispatch([folderPaths = WTFMove(folderPaths), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -701,10 +698,11 @@ void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandle
     ASSERT(RunLoop::isMain());
 
     m_ioQueue->dispatch([path = m_rootPath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        LockHolder locker(globalSizeFileLock);
-        for (auto& filename : FileSystem::listDirectory(path, "*")) {
-            if (FileSystem::fileIsDirectory(filename, FileSystem::ShouldFollowSymbolicLinks::No))
-                FileSystem::deleteNonEmptyDirectory(filename);
+        Locker locker { globalSizeFileLock };
+        for (auto& fileName : FileSystem::listDirectory(path)) {
+            auto filePath = FileSystem::pathByAppendingComponent(path, fileName);
+            if (FileSystem::fileType(filePath) == FileSystem::FileType::Directory)
+                FileSystem::deleteNonEmptyDirectory(filePath);
         }
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });
@@ -761,7 +759,7 @@ void Engine::deleteNonEmptyDirectoryOnBackgroundThread(const String& path, Compl
     ASSERT(RunLoop::isMain());
 
     m_ioQueue->dispatch([path = path.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        LockHolder locker(globalSizeFileLock);
+        Locker locker { globalSizeFileLock };
         FileSystem::deleteNonEmptyDirectory(path);
 
         RunLoop::main().dispatch(WTFMove(completionHandler));

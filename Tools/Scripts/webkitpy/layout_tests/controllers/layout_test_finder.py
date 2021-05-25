@@ -32,7 +32,6 @@ import logging
 import re
 
 from webkitpy.common import find_files
-from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.port.base import Port
 

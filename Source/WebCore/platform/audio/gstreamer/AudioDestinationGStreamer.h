@@ -58,8 +58,6 @@ private:
     GRefPtr<GstElement> m_src;
     CompletionHandler<void(bool)> m_startupCompletionHandler;
     CompletionHandler<void(bool)> m_stopCompletionHandler;
-    Lock m_setStateLock;
-    Condition m_setStateCondition;
 };
 
 } // namespace WebCore

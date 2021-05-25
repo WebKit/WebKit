@@ -44,9 +44,13 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
     AudioObjectPropertyAddress address {
         kAudioDevicePropertyDeviceUID,
         kAudioDevicePropertyScopeInput,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+        kAudioObjectPropertyElementMain
+#else
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
         ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     };
     UInt32 dataSize = sizeof(uniqueID);
     auto err = AudioObjectGetPropertyData(static_cast<UInt32>(deviceID), &address, 0, nullptr, &dataSize, &uniqueID);
@@ -62,9 +66,13 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
     address = {
         kAudioDevicePropertyDataSource,
         scope,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+        kAudioObjectPropertyElementMain
+#else
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
         ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     };
     uint32_t sourceID;
     dataSize = sizeof(sourceID);
@@ -74,9 +82,13 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
         address = {
             kAudioDevicePropertyDataSourceNameForIDCFString,
             scope,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+            kAudioObjectPropertyElementMain
+#else
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             kAudioObjectPropertyElementMaster
             ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
         };
         dataSize = sizeof(translation);
         err = AudioObjectGetPropertyData(static_cast<UInt32>(deviceID), &address, 0, nullptr, &dataSize, &translation);
@@ -86,9 +98,13 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
         address = {
             kAudioObjectPropertyName,
             kAudioObjectPropertyScopeGlobal,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+            kAudioObjectPropertyElementMain
+#else
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             kAudioObjectPropertyElementMaster
             ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
         };
         dataSize = sizeof(localizedName);
         err = AudioObjectGetPropertyData(static_cast<UInt32>(deviceID), &address, 0, nullptr, &dataSize, &localizedName);
@@ -123,9 +139,13 @@ CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& 
     AudioObjectPropertyAddress address {
         kAudioDevicePropertyDeviceIsAlive,
         kAudioObjectPropertyScopeGlobal,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+        kAudioObjectPropertyElementMain
+#else
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
         ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     };
     UInt32 state = 0;
     UInt32 dataSize = sizeof(state);
@@ -138,9 +158,13 @@ CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& 
     address = {
         property,
         kAudioObjectPropertyScopeGlobal,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+        kAudioObjectPropertyElementMain
+#else
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
         ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     };
     AudioDeviceID defaultID = kAudioDeviceUnknown;
     dataSize = sizeof(defaultID);
@@ -156,9 +180,13 @@ Vector<AudioDeviceID> CoreAudioCaptureDevice::relatedAudioDeviceIDs(AudioDeviceI
     AudioObjectPropertyAddress property = {
         kAudioDevicePropertyRelatedDevices,
         kAudioDevicePropertyScopeOutput,
+#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
+        kAudioObjectPropertyElementMain
+#else
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
         ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     };
     OSStatus error = AudioObjectGetPropertyDataSize(deviceID, &property, 0, 0, &size);
     if (error || !size)

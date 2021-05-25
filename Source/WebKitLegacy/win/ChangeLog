@@ -1,3 +1,263 @@
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * Plugins/PluginMainThreadScheduler.cpp:
+        (WebCore::PluginMainThreadScheduler::scheduleCall):
+        (WebCore::PluginMainThreadScheduler::registerPlugin):
+        (WebCore::PluginMainThreadScheduler::unregisterPlugin):
+        (WebCore::PluginMainThreadScheduler::dispatchCallsForPlugin):
+
+2021-05-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277913.
+        https://bugs.webkit.org/show_bug.cgi?id=226140
+
+        Caused multiple layout-test crash on mac debug queues
+
+        Reverted changeset:
+
+        "Replace LockHolder with Locker in local variables"
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+        https://trac.webkit.org/changeset/277913
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * Plugins/PluginMainThreadScheduler.cpp:
+        (WebCore::PluginMainThreadScheduler::scheduleCall):
+        (WebCore::PluginMainThreadScheduler::registerPlugin):
+        (WebCore::PluginMainThreadScheduler::unregisterPlugin):
+        (WebCore::PluginMainThreadScheduler::dispatchCallsForPlugin):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in WebKit/WebKitLegacy/Tools as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226127
+
+        Reviewed by Alex Christensen.
+
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+        (WKQCA::CAD3DRenderer::swapChain):
+        (WKQCA::CAD3DRenderer::renderAndPresent):
+        (WKQCA::CAD3DRenderer::renderToImage):
+        * WebKitQuartzCoreAdditions/CAView.cpp:
+        (WKQCA::CAView::releaseAllD3DResources):
+        (WKQCA::CAView::CAView):
+        (WKQCA::CAView::~CAView):
+        (WKQCA::CAView::setLayer):
+        (WKQCA::CAView::update):
+        (WKQCA::CAView::drawToWindow):
+        (WKQCA::CAView::drawToImage):
+        (WKQCA::CAView::drawIntoDC):
+        (WKQCA::CAView::setShouldInvertColors):
+        (WKQCA::CAView::scheduleNextDraw):
+        (WKQCA::CAView::displayLinkReachedCAMediaTime):
+        (WKQCA::CAView::contextDidChange):
+        (WKQCA::CAView::updateSoon):
+        (WKQCA::CAView::updateViewsNow):
+        (WKQCA::CAView::d3dDevice9):
+        * WebLocalizableStrings.cpp:
+        (findCachedString):
+        (cacheString):
+
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        Use inherits<T> instead of toJSDOMWindow() if the value is never a JSProxy.
+
+        * WebView.cpp:
+        (WebView::reportException):
+
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Add support for creating/accessing/setting non-sRGB ImageData via canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225841
+
+        Reviewed by Darin Adler.
+
+        Add support for tests enabling the CanvasColorSpaceEnabled preference.
+
+        * WebPreferences.cpp:
+        (WebPreferences::canvasColorSpaceEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete WebSQL code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=225739
+
+        Reviewed by Sihui Liu.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy / prefixed WebAudio implementation
+        https://bugs.webkit.org/show_bug.cgi?id=225832
+
+        Reviewed by Darin Adler.
+
+        Stop explicitly disabled with prefixed WebAudio implementation given that
+        it no longer exists.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop "get" prefix from WTF::FileSystem's getFileModificationTime() / getFileCreationTime()
+        https://bugs.webkit.org/show_bug.cgi?id=225812
+
+        Reviewed by Darin Adler.
+
+        Update code base due to WTF API change.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::refresh):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused FileSystem::homeDirectoryPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225808
+
+        Reviewed by Anders Carlsson.
+
+        Fix Window-specific code that was calling FileSystem::homeDirectoryPath(),
+        which would always return the empty string on Windows. Call
+        FileSystem::roamingUserSpecificStorageDirectory() since it returns the
+        %AppData% folder and this is what the code actually wants.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName()
+        https://bugs.webkit.org/show_bug.cgi?id=225806
+
+        Reviewed by Alex Christensen.
+
+        Rename FileSystem::pathGetFileName() to FileSystem::pathFileName(), as we avoid "get" prefixes in WebKit.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::fileExistsAndIsNotDisabled const):
+        * Plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::PluginPackage):
+        * WebDownloadCurl.cpp:
+        (WebDownload::didReceiveResponse):
+
+2021-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Add textIndicator bounce for AppHighlights on scroll.
+        https://bugs.webkit.org/show_bug.cgi?id=225727
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClient.h:
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::loadPersistentMetadataCache):
+
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        * WebKitStatistics.cpp:
+        (WebKitStatistics::comClassNameCounts): Use append instead of
+        appendNumber.
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        Update code now that WebCore passes a CompletionHandler instead of a
+        NotificationPermissionCallback.
+
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        (WebDesktopNotificationsDelegate::requestPermission):
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Queue notification permission requests for the same origin on WebKit side
+        https://bugs.webkit.org/show_bug.cgi?id=225701
+        <rdar://76804977>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove some dead code.
+
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Update FileSystem::listDirectory() call sites to deal with the fact that:
+        - The function now returns file names instead of full file paths
+        - The callers now have to do filtering by themselves if they need it
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::getPluginPathsInDirectories const):
+
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make WebCore::HitTestRequest::RequestType an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=225597
+
+        Reviewed by Sam Weinig.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read):
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent):
+        (WebView::gestureNotify):
+        (WebView::elementAtPoint):
+
 2021-05-09  Darin Adler  <darin@apple.com>
 
         Remove all remaining uses of the String::toInt family of functions

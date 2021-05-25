@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010 Google Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,15 +31,17 @@
 
 #pragma once
 
-#include "DOMTokenList.h"
 #include "HTMLFormControlElement.h"
 
 namespace WebCore {
+
+class DOMTokenList;
 
 class HTMLOutputElement final : public HTMLFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLOutputElement);
 public:
     static Ref<HTMLOutputElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLOutputElement> create(Document&);
 
     String value() const;
     void setValue(const String&);
@@ -46,26 +49,20 @@ public:
     void setDefaultValue(const String&);
     DOMTokenList& htmlFor();
     
-    bool canContainRangeEndPoint() const final { return false; }
-
 private:
     HTMLOutputElement(const QualifiedName&, Document&, HTMLFormElement*);
 
+    bool canContainRangeEndPoint() const final { return false; }
     bool computeWillValidate() const final { return false; }
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     const AtomString& formControlType() const final;
     bool isEnumeratable() const final { return true; }
     bool supportLabels() const final { return true; }
     bool supportsFocus() const final;
-    void childrenChanged(const ChildChange&) final;
     void reset() final;
 
-    void setTextContentInternal(const String&);
-
-    bool m_isDefaultValueMode;
-    bool m_isSetTextContentInProgress;
-    String m_defaultValue;
-    std::unique_ptr<DOMTokenList> m_tokens;
+    String m_defaultValueOverride;
+    std::unique_ptr<DOMTokenList> m_forTokens;
 };
 
 } // namespace WebCore

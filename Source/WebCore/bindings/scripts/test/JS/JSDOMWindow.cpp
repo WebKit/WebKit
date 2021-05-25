@@ -201,11 +201,6 @@ JSValue JSDOMWindow::getConstructor(VM& vm, const JSGlobalObject* globalObject)
     return getDOMConstructor<JSDOMWindowDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-template<> inline JSDOMWindow* IDLAttribute<JSDOMWindow>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSDOMWindow*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
@@ -377,44 +372,6 @@ void JSDOMWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
-}
-
-#if ENABLE(BINDING_INTEGRITY)
-#if PLATFORM(WIN)
-#pragma warning(disable: 4483)
-extern "C" { extern void (*const __identifier("??_7DOMWindow@WebCore@@6B@")[])(); }
-#else
-extern "C" { extern void* _ZTVN7WebCore9DOMWindowE[]; }
-#endif
-#endif
-
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<DOMWindow>&& impl)
-{
-
-#if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
-#if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7DOMWindow@WebCore@@6B@");
-#else
-    void* expectedVTablePointer = &_ZTVN7WebCore9DOMWindowE[2];
-#endif
-
-    // If this fails DOMWindow does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<DOMWindow>::value, "DOMWindow is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // DOMWindow has subclasses. If DOMWindow has subclasses that get passed
-    // to toJS() we currently require DOMWindow you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
-#endif
-    return createWrapper<DOMWindow>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, DOMWindow& impl)
-{
-    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 DOMWindow* JSDOMWindow::toWrapped(JSC::VM& vm, JSC::JSValue value)

@@ -239,7 +239,7 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& re
         ts << " clipped";
     }
 
-    ts << " " << enclosingIntRect(renderer.absoluteClippedOverflowRect());
+    ts << " " << enclosingIntRect(renderer.absoluteClippedOverflowRectForRepaint());
 
     writeStyle(ts, renderer);
     return ts;

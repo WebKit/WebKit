@@ -116,11 +116,13 @@
 #import <WebCore/ShareData.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TouchAction.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebEvent.h>
+#import <WebCore/WebTextIndicatorLayer.h>
 #import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WebKit should not include WebKitLegacy headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -1056,6 +1058,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _layerTreeTransactionIdAtLastInteractionStart = { };
 
+#if USE(UICONTEXTMENU)
+    [self _removeContextMenuViewIfPossible];
+#endif // USE(UICONTEXTMENU)
+
 #if ENABLE(DRAG_SUPPORT)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
     [self teardownDragAndDropInteractions];
@@ -1110,6 +1116,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _tearDownImageExtraction];
 #endif
 
+    [self _removeContainerForContextMenuHintPreviews];
+    [self _removeContainerForDragPreviews];
+    [self _removeContainerForDropPreviews];
+
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
 
@@ -1118,6 +1128,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _cancelPendingKeyEventHandler];
 
     _cachedSelectedTextRange = nil;
+}
+
+- (void)cleanUpInteractionPreviewContainers
+{
+    [self _removeContainerForContextMenuHintPreviews];
 }
 
 - (void)_cancelPendingKeyEventHandler
@@ -1644,6 +1659,9 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
 
+    if (gestureRecognizer == _mouseGestureRecognizer)
+        return [_mouseGestureRecognizer mouseTouch] == touch;
+
     if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
         return touch.type != UITouchTypeIndirectPointer;
 #endif
@@ -1661,6 +1679,15 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         return touchActions == WebCore::TouchAction::PanX;
     }
 
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press
+{
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (gestureRecognizer == _mouseGestureRecognizer)
+        return NO;
+#endif
     return YES;
 }
 
@@ -4560,7 +4587,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 #endif
     [self _elementDidBlur];
     [self _cancelLongPressGestureRecognizer];
-    [self _hideTargetedPreviewContainerViews];
+    [self _removeContainerForContextMenuHintPreviews];
+    [self _removeContainerForDragPreviews];
+    [self _removeContainerForDropPreviews];
     [_webView _didCommitLoadForMainFrame];
 
     _textInteractionDidChangeFocusedElement = NO;
@@ -7631,45 +7660,75 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     auto container = adoptNS([[UIView alloc] init]);
     [container layer].anchorPoint = CGPointZero;
     [container layer].name = layerName;
-    [_interactionViewsContainerView addSubview:container.get()];
     return container;
 }
 
 - (UIView *)containerForDropPreviews
 {
-    if (!_dropPreviewContainerView)
+    if (!_dropPreviewContainerView) {
         _dropPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drop Preview Container"];
+        [_interactionViewsContainerView addSubview:_dropPreviewContainerView.get()];
+    }
 
     ASSERT([_dropPreviewContainerView superview]);
-    [_dropPreviewContainerView setHidden:NO];
     return _dropPreviewContainerView.get();
+}
+
+- (void)_removeContainerForDropPreviews
+{
+    if (!_dropPreviewContainerView)
+        return;
+
+    [std::exchange(_dropPreviewContainerView, nil) removeFromSuperview];
 }
 
 - (UIView *)containerForDragPreviews
 {
-    if (!_dragPreviewContainerView)
+    if (!_dragPreviewContainerView) {
         _dragPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drag Preview Container"];
+        [_interactionViewsContainerView addSubview:_dragPreviewContainerView.get()];
+    }
 
     ASSERT([_dragPreviewContainerView superview]);
-    [_dragPreviewContainerView setHidden:NO];
     return _dragPreviewContainerView.get();
+}
+
+- (void)_removeContainerForDragPreviews
+{
+    if (!_dragPreviewContainerView)
+        return;
+
+    [std::exchange(_dragPreviewContainerView, nil) removeFromSuperview];
 }
 
 - (UIView *)containerForContextMenuHintPreviews
 {
-    if (!_contextMenuHintContainerView)
+    if (!_contextMenuHintContainerView) {
         _contextMenuHintContainerView = [self _createPreviewContainerWithLayerName:@"Context Menu Hint Preview Container"];
 
+        RetainPtr<UIView> containerView;
+
+        if (auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(self.webView.UIDelegate)) {
+            if ([uiDelegate respondsToSelector:@selector(_contextMenuHintPreviewContainerViewForWebView:)])
+                containerView = [uiDelegate _contextMenuHintPreviewContainerViewForWebView:self.webView];
+        }
+
+        if (!containerView)
+            containerView = _interactionViewsContainerView;
+
+        [containerView addSubview:_contextMenuHintContainerView.get()];
+    }
+
     ASSERT([_contextMenuHintContainerView superview]);
-    [_contextMenuHintContainerView setHidden:NO];
     return _contextMenuHintContainerView.get();
 }
 
-- (void)_hideTargetedPreviewContainerViews
+- (void)_removeContainerForContextMenuHintPreviews
 {
-    [_dropPreviewContainerView setHidden:YES];
-    [_dragPreviewContainerView setHidden:YES];
-    [_contextMenuHintContainerView setHidden:YES];
+    if (!_contextMenuHintContainerView)
+        return;
+
+    [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
 }
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
@@ -7990,7 +8049,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
     [[WebItemProviderPasteboard sharedInstance] clearRegistrationLists];
     [self _restoreCalloutBarIfNeeded];
 
-    [std::exchange(_dragPreviewContainerView, nil) removeFromSuperview];
+    [self _removeContainerForDragPreviews];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [_editDropCaretView remove];
     _editDropCaretView = nil;
@@ -8429,7 +8488,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if ([self selectControl])
         return;
     
-    [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
+    [self _removeContainerForContextMenuHintPreviews];
 }
 
 #endif // USE(UICONTEXTMENU)
@@ -8926,7 +8985,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id <UIDropSession>)session
 {
-    [std::exchange(_dropPreviewContainerView, nil) removeFromSuperview];
+    [self _removeContainerForDropPreviews];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
     _dragDropInteractionState.clearAllDelayedItemPreviewProviders();
@@ -9566,7 +9625,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_doAfterPendingImageExtraction:(void(^)(WebKit::ProceedWithImageExtraction proceedWithImageExtraction))block
 {
-    if (_hasPendingImageExtraction)
+    if (self.hasPendingImageExtractionRequest)
         _actionsToPerformAfterPendingImageExtraction.append(makeBlockPtr(block));
     else
         block(WebKit::ProceedWithImageExtraction::No);
@@ -9574,13 +9633,74 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_invokeAllActionsToPerformAfterPendingImageExtraction:(WebKit::ProceedWithImageExtraction)proceedWithImageExtraction
 {
-    _hasPendingImageExtraction = NO;
+    _pendingImageExtractionRequestIdentifier = WTF::nullopt;
     _elementPendingImageExtraction = WTF::nullopt;
     for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
         block(proceedWithImageExtraction);
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
+
+- (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator
+{
+    if (_textIndicator == textIndicator.ptr())
+        return;
+    
+    [self teardownTextIndicatorLayer];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(startFadeOut) object:nil];
+    
+    _textIndicator = textIndicator.ptr();
+
+    CGRect frame = _textIndicator->textBoundingRectInRootViewCoordinates();
+    _textIndicatorLayer = adoptNS([[WebTextIndicatorLayer alloc] initWithFrame:frame
+        textIndicator:textIndicator margin:CGSizeZero offset:CGPointZero]);
+    
+    [[self layer] addSublayer:_textIndicatorLayer.get()];
+
+    if (_textIndicator->presentationTransition() != WebCore::TextIndicatorPresentationTransition::None)
+        [_textIndicatorLayer present];
+    
+    [self performSelector:@selector(startFadeOut) withObject:self afterDelay:WebCore::timeBeforeFadeStarts.value()];
+}
+
+- (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation
+{
+    RefPtr<WebCore::TextIndicator> textIndicator = WTFMove(_textIndicator);
+    
+    if ([_textIndicatorLayer isFadingOut])
+        return;
+
+    if (textIndicator && [_textIndicatorLayer indicatorWantsManualAnimation:*textIndicator] && [_textIndicatorLayer hasCompletedAnimation] && animation == WebCore::TextIndicatorDismissalAnimation::FadeOut) {
+        [self startFadeOut];
+        return;
+    }
+
+    [self teardownTextIndicatorLayer];
+}
+
+- (void)setTextIndicatorAnimationProgress:(float)animationProgress
+{
+    if (!_textIndicator)
+        return;
+
+    [_textIndicatorLayer setAnimationProgress:animationProgress];
+}
+
+- (void)teardownTextIndicatorLayer
+{
+    [_textIndicatorLayer removeFromSuperlayer];
+    _textIndicatorLayer = nil;
+}
+
+- (void)startFadeOut
+{
+    [_textIndicatorLayer setFadingOut:YES];
+        
+    [_textIndicatorLayer hideWithCompletionHandler:[weakSelf = WeakObjCPtr<WKContentView>(self)] {
+        auto strongSelf = weakSelf.get();
+        [strongSelf teardownTextIndicatorLayer];
+    }];
+}
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>

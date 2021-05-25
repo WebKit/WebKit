@@ -26,8 +26,8 @@
 #include "config.h"
 #include <wtf/TimingScope.h>
 
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 
 namespace WTF {
 
@@ -50,7 +50,7 @@ public:
     
     const CallData& addToTotal(const char* name, Seconds duration)
     {
-        auto locker = holdLock(lock);
+        Locker locker { lock };
         auto& result = totals.add(name, CallData()).iterator->value;
         ++result.callCount;
         result.maxDuration = std::max(result.maxDuration, duration);
@@ -59,8 +59,8 @@ public:
     }
 
 private:
-    HashMap<const char*, CallData> totals;
-    Lock lock;
+    HashMap<const char*, CallData> totals WTF_GUARDED_BY_LOCK(lock);
+    CheckedLock lock;
 };
 
 State& state()

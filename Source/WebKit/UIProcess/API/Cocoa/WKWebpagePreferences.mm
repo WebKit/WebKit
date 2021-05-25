@@ -32,7 +32,6 @@
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebContentMode.h"
 #import "_WKCustomHeaderFieldsInternal.h"
-#import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>

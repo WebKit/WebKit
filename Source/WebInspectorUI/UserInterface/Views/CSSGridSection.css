@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.css-grid-section .node-display-name,
-.css-grid-section .editor-group > .editor > label {
-    margin-inline: 5px;
+.css-grid-section .node-display-name {
+    margin-inline: 5px 4px;
 }
 
 .css-grid-section .node-overlay-list {
@@ -64,5 +63,13 @@
 }
 
 .css-grid-section .toggle-all {
-    margin-inline-end: 7px;
+    padding-inline-start: 4px;
+}
+
+.css-grid-section :is(.setting-editor, .node-overlay-list-item-container, .heading) input[type="checkbox"] {
+    margin-inline-end: 0;
+}
+
+.css-grid-section .setting-editor > input[type="checkbox"] {
+    font-size: revert;
 }

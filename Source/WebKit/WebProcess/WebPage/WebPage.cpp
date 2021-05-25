@@ -152,6 +152,7 @@
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/BackForwardController.h>
+#include <WebCore/CachedPage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/ContactsRequestData.h>
@@ -605,7 +606,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     pageConfiguration.userScriptsShouldWaitUntilNotification = parameters.userScriptsShouldWaitUntilNotification;
     pageConfiguration.loadsSubresources = parameters.loadsSubresources;
-    pageConfiguration.loadsFromNetwork = parameters.loadsFromNetwork;
+    pageConfiguration.allowedNetworkHosts = parameters.allowedNetworkHosts;
     pageConfiguration.shouldRelaxThirdPartyCookieBlocking = parameters.shouldRelaxThirdPartyCookieBlocking;
     pageConfiguration.httpsUpgradeEnabled = parameters.httpsUpgradeEnabled;
 
@@ -781,7 +782,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     webPageCounter.increment();
 #endif
 
-#if ENABLE(SCROLLING_THREAD) && !PLATFORM(GTK)
+#if ENABLE(SCROLLING_THREAD)
     if (m_useAsyncScrolling)
         webProcess.eventDispatcher().addScrollingTreeForPage(this);
 #endif
@@ -1562,8 +1563,7 @@ void WebPage::close()
         m_remoteObjectRegistry->close();
     ASSERT(!m_remoteObjectRegistry);
 #endif
-
-#if ENABLE(SCROLLING_THREAD) && !PLATFORM(GTK)
+#if ENABLE(SCROLLING_THREAD)
     if (m_useAsyncScrolling)
         webProcess.eventDispatcher().removeScrollingTreeForPage(this);
 #endif
@@ -2448,6 +2448,11 @@ void WebPage::postInjectedBundleMessage(const String& messageName, const UserDat
     injectedBundle->didReceiveMessageToPage(this, messageName, webProcess.transformHandlesToObjects(userData.object()).get());
 }
 
+void WebPage::setUnderPageBackgroundColorOverride(WebCore::Color&& underPageBackgroundColorOverride)
+{
+    m_page->setUnderPageBackgroundColorOverride(WTFMove(underPageBackgroundColorOverride));
+}
+
 #if !PLATFORM(IOS_FAMILY)
 
 void WebPage::setHeaderPageBanner(PageBanner* pageBanner)
@@ -2684,7 +2689,8 @@ void WebPage::pageDidScroll()
 
     m_pageScrolledHysteresis.impulse();
 
-    send(Messages::WebPageProxy::PageDidScroll());
+    auto scrollPosition = m_page->mainFrame().view()->scrollPosition();
+    send(Messages::WebPageProxy::PageDidScroll(scrollPosition));
 }
 
 void WebPage::pageStoppedScrolling()
@@ -2858,7 +2864,7 @@ static bool isContextClick(const PlatformMouseEvent& event)
 static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, WebPage* page)
 {
     IntPoint point = page->corePage()->mainFrame().view()->windowToContents(platformMouseEvent.position());
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent,  HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent,  HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult result = page->corePage()->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
 
     Frame* frame = &page->corePage()->mainFrame();
@@ -3596,6 +3602,37 @@ void WebPage::resumeActiveDOMObjectsAndAnimations()
     m_page->resumeActiveDOMObjectsAndAnimations();
 }
 
+void WebPage::suspend(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "suspend: m_page=%p", m_page.get());
+    if (!m_page)
+        return completionHandler(false);
+
+    freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+
+    m_cachedPage = BackForwardCache::singleton().suspendPage(*m_page);
+    ASSERT(m_cachedPage);
+    if (auto mainFrame = m_mainFrame->coreFrame())
+        mainFrame->loader().detachFromAllOpenedFrames();
+    completionHandler(true);
+}
+
+void WebPage::resume(CompletionHandler<void(bool)>&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "resume: m_page=%p", m_page.get());
+    if (!m_page)
+        return completionHandler(false);
+
+    auto cachedPage = std::exchange(m_cachedPage, nullptr);
+    ASSERT(cachedPage);
+    if (!cachedPage)
+        return completionHandler(false);
+
+    cachedPage->restore(*m_page);
+    unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+    completionHandler(true);
+}
+
 IntPoint WebPage::screenToRootView(const IntPoint& point)
 {
     IntPoint windowPoint;
@@ -3959,6 +3996,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(IPC_TESTING_API)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
+
+    WebProcess::singleton().parentProcessConnection()->setIgnoreInvalidMessageForTesting();
+    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+        gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #endif
 
 #if ENABLE(WEB_AUTHN) && PLATFORM(IOS)
@@ -4621,11 +4662,6 @@ void WebPage::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geol
     geolocationPermissionRequestManager().didReceiveGeolocationPermissionDecision(geolocationID, authorizationToken);
 }
 #endif
-
-void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
-{
-    notificationPermissionRequestManager()->didReceiveNotificationPermissionDecision(notificationID, allowed);
-}
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -5717,7 +5753,7 @@ void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent,  HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent,  HitTestRequest::Type::AllowChildFrameContent };
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto& frame = result.innerNonSharedNode() ? *result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     auto range = frame.rangeForPoint(result.roundedPointInInnerNodeFrame());
@@ -7227,6 +7263,11 @@ bool WebPage::usesEphemeralSession() const
 
 void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+        gpuProcessConnection->configureLoggingChannel(channelName, state, level);
+#endif
+
     send(Messages::WebPageProxy::ConfigureLoggingChannel(channelName, state, level));
 }
 
@@ -7418,9 +7459,9 @@ void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, co
 
     downcast<HTMLElement>(*elementToUpdate).updateWithImageExtractionResult(WTFMove(result));
     auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
-        HitTestRequest::ReadOnly,
-        HitTestRequest::Active,
-        HitTestRequest::AllowVisibleChildFrameContentOnly,
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::Active,
+        HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
     });
 
     auto nodeAtLocation = makeRefPtr(hitTestResult.innerNonSharedNode());
@@ -7550,13 +7591,13 @@ void WebPage::createMediaSessionCoordinator(const String& identifier, Completion
         return;
     }
 
-    auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
-    auto coordinator = RemoteMediaSessionCoordinator::create(*this, identifier);
-    m_remoteMediaSessionCoordinator = coordinator.ptr();
-    m_mediaSessionCoordinator = MediaSessionCoordinator::create(coordinator.get());
-    session.setCoordinator(m_mediaSessionCoordinator.get());
-
+    m_page->setMediaSessionCoordinator(RemoteMediaSessionCoordinator::create(*this, identifier));
     completionHandler(true);
+}
+
+void WebPage::invalidateMediaSessionCoordinator()
+{
+    m_page->invalidateMediaSessionCoordinator();
 }
 #endif
 

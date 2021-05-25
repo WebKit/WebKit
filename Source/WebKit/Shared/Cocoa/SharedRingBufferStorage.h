@@ -47,7 +47,7 @@ public:
 
 protected:
     // WebCore::CARingBufferStorage
-    void allocate(size_t, const WebCore::CAAudioStreamDescription& format, size_t frameCount) override { }
+    bool allocate(size_t byteCount, const WebCore::CAAudioStreamDescription& format, size_t frameCount) override;
     void deallocate() override { }
     void* data() final;
     void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) final;
@@ -56,6 +56,7 @@ protected:
     uint64_t currentEndFrame() const final { return m_endFrame; }
     void updateFrameBounds() final;
     void flush() final;
+    size_t size() const final;
 
     static constexpr unsigned boundsBufferSize { 32 };
     struct FrameBounds {
@@ -81,7 +82,7 @@ public:
 
 private:
     // WebCore::CARingBufferStorage
-    void allocate(size_t, const WebCore::CAAudioStreamDescription& format, size_t frameCount) final;
+    bool allocate(size_t byteCount, const WebCore::CAAudioStreamDescription& format, size_t frameCount) final;
     void deallocate() final;
     void setCurrentFrameBounds(uint64_t startFrame, uint64_t endFrame) final;
 

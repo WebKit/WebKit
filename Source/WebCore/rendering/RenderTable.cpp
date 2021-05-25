@@ -433,6 +433,7 @@ void RenderTable::layout()
     bool sectionMoved = false;
     LayoutUnit movedSectionLogicalTop;
     unsigned sectionCount = 0;
+    bool shouldCacheIntrinsicContentLogicalHeightForFlexItem = true;
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     {
@@ -528,9 +529,10 @@ void RenderTable::layout()
             section->layoutRows();
 
         if (!topSection() && computedLogicalHeight > totalSectionLogicalHeight && !document().inQuirksMode()) {
-            // Completely empty tables (with no sections or anything) should at least honor specified height
-            // in strict mode.
-            setLogicalHeight(logicalHeight() + computedLogicalHeight);
+            // Completely empty tables (with no sections or anything) should at least honor their
+            // overriding or specified height in strict mode, but this value will not be cached.
+            shouldCacheIntrinsicContentLogicalHeightForFlexItem = false;
+            setLogicalHeight(hasOverridingLogicalHeight() ? overridingLogicalHeight() : logicalHeight() + computedLogicalHeight);
         }
 
         LayoutUnit sectionLogicalLeft = style().isLeftToRightDirection() ? borderStart() : borderEnd();
@@ -599,8 +601,9 @@ void RenderTable::layout()
     
     // FIXME: This value isn't the intrinsic content logical height, but we need
     // to update the value as its used by flexbox layout. crbug.com/367324
-    cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
-    
+    if (shouldCacheIntrinsicContentLogicalHeightForFlexItem)
+        cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
+
     m_columnLogicalWidthChanged = false;
     clearNeedsLayout();
 }

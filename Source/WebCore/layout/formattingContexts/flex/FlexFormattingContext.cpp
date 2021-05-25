@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
 #include "InlineRect.h"
 #include "InvalidationState.h"
@@ -58,7 +59,7 @@ LayoutUnit FlexFormattingContext::usedContentHeight() const
     return LayoutUnit { lines.last().bottom() - lines.first().top() };
 }
 
-FormattingContext::IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
+IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
 {
     return { };
 }
@@ -115,6 +116,11 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
             continue;
         formattingState.setIntrinsicWidthConstraintsForBox(flexItem, geometry.intrinsicWidthConstraints(flexItem));
     }
+}
+
+FlexFormattingGeometry FlexFormattingContext::geometry() const
+{
+    return FlexFormattingGeometry(*this);
 }
 
 }

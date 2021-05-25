@@ -133,7 +133,7 @@ inline bool AbstractSlotVisitor::addOpaqueRoot(void* ptr)
 inline bool AbstractSlotVisitor::containsOpaqueRoot(void* ptr) const
 {
     bool found = m_opaqueRoots.contains(ptr);
-    if (UNLIKELY(m_needsExtraOpaqueRootHandling)) {
+    if (UNLIKELY(found && m_needsExtraOpaqueRootHandling)) {
         auto* nonConstThis = const_cast<AbstractSlotVisitor*>(this);
         nonConstThis->didFindOpaqueRoot(ptr);
     }

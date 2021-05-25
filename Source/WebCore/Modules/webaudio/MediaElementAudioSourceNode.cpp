@@ -86,7 +86,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
     m_muted = wouldTaintOrigin();
 
     if (numberOfChannels != m_sourceNumberOfChannels || sourceSampleRate != m_sourceSampleRate) {
-        if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || sourceSampleRate < minSampleRate || sourceSampleRate > maxSampleRate) {
+        if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels || sourceSampleRate < minSampleRate || sourceSampleRate > maxSampleRate) {
             // process() will generate silence for these uninitialized values.
             LOG(Media, "MediaElementAudioSourceNode::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
             m_sourceNumberOfChannels = 0;
@@ -98,7 +98,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
         m_sourceSampleRate = sourceSampleRate;
 
         // Synchronize with process().
-        auto locker = holdLock(m_processLock);
+        Locker locker { m_processLock };
 
         if (sourceSampleRate != sampleRate()) {
             double scaleFactor = sourceSampleRate / sampleRate();
@@ -110,7 +110,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
 
         {
             // The context must be locked when changing the number of output channels.
-            BaseAudioContext::AutoLocker contextLocker(context());
+            Locker contextLocker { context().graphLock() };
 
             // Do any necesssary re-configuration to the output's number of channels.
             output(0)->setNumberOfChannels(numberOfChannels);
@@ -155,15 +155,16 @@ void MediaElementAudioSourceNode::process(size_t numberOfFrames)
         return;
     }
 
-    // Use tryHoldLock() to avoid contention in the real-time audio thread.
+    // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of
     // reconfiguring its playback engine, so we output silence in this case.
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker) {
+    if (!m_processLock.tryLock()) {
         // We failed to acquire the lock.
         outputBus->zero();
         return;
     }
+
+    Locker locker { AdoptLock, m_processLock };
     if (m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
         outputBus->zero();
         return;

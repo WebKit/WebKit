@@ -28,6 +28,7 @@
 #include "NativeWebWheelEvent.h"
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/WallTime.h>
 
 namespace WebKit {
 
@@ -37,11 +38,14 @@ public:
     // If this returns true, use nextEventToDispatch() to get the event to dispatch.
     bool shouldDispatchEvent(const NativeWebWheelEvent&);
     Optional<WebWheelEvent> nextEventToDispatch();
-    
+
     NativeWebWheelEvent takeOldestEventBeingProcessed();
 
     bool hasEventsBeingProcessed() const { return !m_eventsBeingProcessed.isEmpty(); }
     
+    bool shouldCoalesceEventsDuringDeceleration() const { return m_shouldCoalesceEventsDuringDeceleration; }
+    void setShouldCoalesceEventsDuringDeceleration(bool shouldCoalsce) { m_shouldCoalesceEventsDuringDeceleration = shouldCoalsce; }
+
     void clear();
 
 private:
@@ -50,10 +54,16 @@ private:
     static bool canCoalesce(const WebWheelEvent&, const WebWheelEvent&);
     static WebWheelEvent coalesce(const WebWheelEvent&, const WebWheelEvent&);
 
+    static bool isMomentumPhaseEvent(const WebWheelEvent&);
+
     bool shouldDispatchEventNow(const WebWheelEvent&) const;
 
     Deque<NativeWebWheelEvent, 2> m_wheelEventQueue;
     Deque<std::unique_ptr<CoalescedEventSequence>> m_eventsBeingProcessed;
+
+    WallTime m_lastEventTime;
+    WallTime m_lastDispatchedEventTime;
+    bool m_shouldCoalesceEventsDuringDeceleration { false };
 };
 
 } // namespace WebKit

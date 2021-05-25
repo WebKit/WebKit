@@ -39,7 +39,7 @@ LocalAllocator::LocalAllocator(BlockDirectory* directory)
     : m_directory(directory)
     , m_freeList(directory->m_cellSize)
 {
-    auto locker = holdLock(directory->m_localAllocatorsLock);
+    Locker locker { directory->m_localAllocatorsLock };
     directory->m_localAllocators.append(this);
 }
 
@@ -54,7 +54,7 @@ void LocalAllocator::reset()
 LocalAllocator::~LocalAllocator()
 {
     if (isOnList()) {
-        auto locker = holdLock(m_directory->m_localAllocatorsLock);
+        Locker locker { m_directory->m_localAllocatorsLock };
         remove();
     }
     

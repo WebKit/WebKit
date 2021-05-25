@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,26 @@
 
 #pragma once
 
-#include "AudioContextOptions.h"
 #include "BaseAudioContext.h"
 #include "DefaultAudioDestinationNode.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "PlatformMediaSession.h"
 #include "VisibilityChangeClient.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class DOMWindow;
+class HTMLMediaElement;
+class MediaStream;
+class MediaStreamAudioDestinationNode;
+class MediaStreamAudioSourceNode;
 
+struct AudioContextOptions;
 struct AudioTimestamp;
 
-class AudioContext
+class AudioContext final
     : public BaseAudioContext
     , public MediaProducer
     , public MediaCanStartListener
@@ -48,15 +53,16 @@ class AudioContext
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&& = { });
+    static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     ~AudioContext();
 
     WEBCORE_EXPORT static void setDefaultSampleRateForTesting(Optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
 
-    DefaultAudioDestinationNode& destination();
-    const DefaultAudioDestinationNode& destination() const;
+    DefaultAudioDestinationNode& destination() final { return m_destinationNode.get(); }
+    const DefaultAudioDestinationNode& destination() const final { return m_destinationNode.get(); }
+
     double baseLatency();
 
     AudioTimestamp getOutputTimestamp(DOMWindow&);
@@ -77,6 +83,8 @@ public:
 
     void startRendering();
 
+    void isPlayingAudioDidChange();
+
     // Restrictions to change default behaviors.
     enum BehaviorRestrictionFlags {
         NoRestrictions = 0,
@@ -88,9 +96,8 @@ public:
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
-protected:
-    explicit AudioContext(Document&, IsLegacyWebKitAudioContext, const AudioContextOptions& = { });
-    AudioContext(Document&, IsLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+private:
+    AudioContext(Document&, const AudioContextOptions&);
 
     bool willBeginPlayback();
 
@@ -98,7 +105,6 @@ protected:
     const Logger& logger() const final;
 #endif
 
-private:
     void constructCommon();
 
     bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }
@@ -106,33 +112,38 @@ private:
 
     bool willPausePlayback();
 
+    void uninitialize() final;
+    bool isOfflineContext() const final { return false; }
+
     // MediaProducer
-    MediaProducer::MediaStateFlags mediaState() const override;
-    void pageMutedStateDidChange() override;
+    MediaProducer::MediaStateFlags mediaState() const final;
+    void pageMutedStateDidChange() final;
 
     // PlatformMediaSessionClient
-    PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::MediaType::WebAudio; }
-    PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::MediaType::WebAudio; }
-    void mayResumePlayback(bool shouldResume) override;
-    void suspendPlayback() override;
-    bool canReceiveRemoteControlCommands() const override { return false; }
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) override { }
-    bool supportsSeeking() const override { return false; }
-    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
+    PlatformMediaSession::MediaType mediaType() const final { return isSuspended() || isStopped() ? PlatformMediaSession::MediaType::None : PlatformMediaSession::MediaType::WebAudio; }
+    PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::WebAudio; }
+    void mayResumePlayback(bool shouldResume) final;
+    void suspendPlayback() final;
+    bool canReceiveRemoteControlCommands() const final { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final { }
+    bool supportsSeeking() const final { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
     // MediaCanStartListener.
-    void mediaCanStart(Document&) override;
+    void mediaCanStart(Document&) final;
 
     // VisibilityChangeClient
     void visibilityStateChanged() final;
 
     // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
 
+    UniqueRef<DefaultAudioDestinationNode> m_destinationNode;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
 
     BehaviorRestrictions m_restrictions { NoRestrictions };
@@ -143,3 +154,7 @@ private:
 };
 
 } // WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioContext)
+    static bool isType(const WebCore::BaseAudioContext& context) { return !context.isOfflineContext(); }
+SPECIALIZE_TYPE_TRAITS_END()

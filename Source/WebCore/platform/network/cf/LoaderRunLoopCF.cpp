@@ -58,7 +58,7 @@ CFRunLoopRef loaderRunLoop()
     if (!loaderRunLoopObject) {
         Thread::create("WebCore: CFNetwork Loader", [] {
             {
-                auto locker = holdLock(loaderRunLoopMutex);
+                Locker locker { loaderRunLoopMutex };
 
                 loaderRunLoopObject = CFRunLoopGetCurrent();
 

@@ -38,6 +38,10 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/Vector.h>
 
+namespace JSC {
+class AbstractSlotVisitor;
+}
+
 namespace WebCore {
 
 class Document;
@@ -101,7 +105,7 @@ public:
     void setHasTransientRegistration(Document&);
     bool canDeliver();
 
-    HashSet<Node*> observedNodes() const;
+    bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
     MutationCallback& callback() const { return m_callback.get(); }
 

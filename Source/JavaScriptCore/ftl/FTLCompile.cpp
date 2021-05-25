@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "FTLJITCode.h"
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
+#include "ThunkGenerators.h"
 #include <wtf/RecursableLambda.h>
 
 namespace JSC { namespace FTL {
@@ -70,10 +71,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (state.allocationFailed)
         return;
     
-    std::unique_ptr<RegisterAtOffsetList> registerOffsets =
-        makeUnique<RegisterAtOffsetList>(state.proc->calleeSaveRegisterAtOffsetList());
+    RegisterAtOffsetList registerOffsets = state.proc->calleeSaveRegisterAtOffsetList();
     if (shouldDumpDisassembly())
-        dataLog(tierName, "Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", *registerOffsets, "\n");
+        dataLog(tierName, "Unwind info for ", CodeBlockWithJITType(codeBlock, JITType::FTLJIT), ": ", registerOffsets, "\n");
     codeBlock->setCalleeSaveRegisters(WTFMove(registerOffsets));
     ASSERT(!(state.proc->frameSize() % sizeof(EncodedJSValue)));
     state.jitCode->common.frameRegisterCount = state.proc->frameSize() / sizeof(EncodedJSValue);
@@ -125,6 +125,14 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     // Emit the exception handler.
     *state.exceptionHandler = jit.label();
+#if ENABLE(EXTRA_CTI_THUNKS)
+    CCallHelpers::Jump handler = jit.jump();
+    VM* vmPtr = &vm;
+    jit.addLinkTask(
+        [=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(handler, CodeLocationLabel(vmPtr->getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+        });
+#else
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
     jit.prepareCallOperation(vm);
@@ -134,8 +142,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
         [=] (LinkBuffer& linkBuffer) {
             linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
         });
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
-    state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
+    state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
 
     if (state.finalizer->b3CodeLinkBuffer->didFailToAllocate()) {
         state.allocationFailed = true;

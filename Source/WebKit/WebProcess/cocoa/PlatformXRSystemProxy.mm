@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR)
 
+#import "PlatformXRCoordinator.h"
 #import "PlatformXRSystemMessages.h"
 #import "PlatformXRSystemProxyMessages.h"
 #import "WebPage.h"
@@ -81,6 +82,16 @@ void PlatformXRSystemProxy::shutDownTrackingAndRendering()
 void PlatformXRSystemProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& callback)
 {
     m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestFrame(), WTFMove(callback));
+}
+
+Optional<PlatformXR::LayerHandle> PlatformXRSystemProxy::createLayerProjection(uint32_t, uint32_t, bool)
+{
+    return PlatformXRCoordinator::defaultLayerHandle();
+}
+
+void PlatformXRSystemProxy::submitFrame()
+{
+    m_page.send(Messages::PlatformXRSystem::SubmitFrame());
 }
 
 void PlatformXRSystemProxy::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)

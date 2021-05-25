@@ -900,14 +900,14 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 #if ENABLE(DEVELOPER_MODE)
     const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
-        String parentDir = FileSystem::directoryName(FileSystem::stringFromFileSystemRepresentation(execDirectory));
+        String parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(execDirectory));
         bindIfExists(sandboxArgs, parentDir.utf8().data());
     }
 
     CString executablePath = getCurrentExecutablePath();
     if (!executablePath.isNull()) {
         // Our executable is `/foo/bar/bin/Process`, we want `/foo/bar` as a usable prefix
-        String parentDir = FileSystem::directoryName(FileSystem::directoryName(FileSystem::stringFromFileSystemRepresentation(executablePath.data())));
+        String parentDir = FileSystem::parentPath(FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath.data())));
         bindIfExists(sandboxArgs, parentDir.utf8().data());
     }
 #endif

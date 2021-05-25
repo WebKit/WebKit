@@ -1063,6 +1063,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ScriptExecutable.h
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h
+    runtime/SlowPathFunction.h
     runtime/SlowPathReturnType.h
     runtime/SmallStrings.h
     runtime/SourceOrigin.h

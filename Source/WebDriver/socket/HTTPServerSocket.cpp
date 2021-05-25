@@ -117,23 +117,12 @@ String HTTPRequestHandler::packHTTPMessage(HTTPRequestHandler::Response&& respon
     StringBuilder builder;
     const char* EOL = "\r\n";
 
-    builder.append("HTTP/1.0 ");
-    builder.appendNumber(response.statusCode);
-    builder.append(" ");
-    builder.append(response.statusCode == 200 ? "OK" : "ERROR");
-    builder.append(EOL);
+    builder.append("HTTP/1.0 ", response.statusCode, ' ', response.statusCode == 200 ? "OK" : "ERROR", EOL);
 
     if (!response.data.isNull()) {
-        builder.append("Content-Type: ");
-        builder.append(response.contentType);
-        builder.append(EOL);
-
-        builder.append("Content-Length: ");
-        builder.appendNumber(response.data.length());
-        builder.append(EOL);
-
-        builder.append("Cache-Control: no-cache");
-        builder.append(EOL);
+        builder.append("Content-Type: ", response.contentType, EOL,
+            "Content-Length: ", response.data.length(), EOL,
+            "Cache-Control: no-cache", EOL);
     }
 
     builder.append(EOL);

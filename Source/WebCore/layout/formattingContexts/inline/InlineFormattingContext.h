@@ -34,6 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineFormattingGeometry;
 class InlineFormattingState;
 class InvalidationState;
 class LineBox;
@@ -47,21 +48,6 @@ public:
     void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
-    class Quirks : public FormattingContext::Quirks {
-    public:
-        InlineLayoutUnit initialLineHeight() const;
-        bool hasSoftWrapOpportunityAtImage() const;
-        bool inlineLevelBoxAffectsLineBox(const LineBox::InlineLevelBox&, const LineBox&) const;
-
-    private:
-        friend class InlineFormattingContext;
-        Quirks(const InlineFormattingContext&);
-
-        const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Quirks::formattingContext()); }
-
-    };
-    InlineFormattingContext::Quirks quirks() const { return Quirks(*this); }
-
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
@@ -70,22 +56,7 @@ public:
 private:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
-    class Geometry : public FormattingContext::Geometry {
-    public:
-        LineBox lineBoxForLineContent(const LineBuilder::LineContent&);
-        InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
-
-        ContentHeightAndMargin inlineBlockContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
-        ContentWidthAndMargin inlineBlockContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&);
-
-    private:
-        friend class InlineFormattingContext;
-        Geometry(const InlineFormattingContext&);
-
-        const InlineFormattingContext& formattingContext() const { return downcast<InlineFormattingContext>(FormattingContext::Geometry::formattingContext()); }
-
-    };
-    InlineFormattingContext::Geometry geometry() const { return Geometry(*this); }
+    InlineFormattingGeometry geometry() const;
 
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
 
@@ -100,16 +71,6 @@ private:
     InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
 };
-
-inline InlineFormattingContext::Geometry::Geometry(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingContext::Geometry(inlineFormattingContext)
-{
-}
-
-inline InlineFormattingContext::Quirks::Quirks(const InlineFormattingContext& inlineFormattingContext)
-    : FormattingContext::Quirks(inlineFormattingContext)
-{
-}
 
 }
 }

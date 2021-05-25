@@ -41,6 +41,7 @@ JSApplePayPaymentAuthorizationResult.cpp
 JSApplePayPaymentAuthorizedEvent.cpp
 JSApplePayPaymentContact.cpp
 JSApplePayPaymentMethod.cpp
+JSApplePayPaymentMethodModeDetails.cpp
 JSApplePayPaymentMethodModeUpdate.cpp
 JSApplePayPaymentMethodSelectedEvent.cpp
 JSApplePayPaymentMethodType.cpp
@@ -182,6 +183,7 @@ page/cocoa/PerformanceLoggingCocoa.mm
 page/cocoa/ResourceUsageOverlayCocoa.mm
 page/cocoa/ResourceUsageThreadCocoa.mm
 page/cocoa/SettingsBaseCocoa.mm
+page/cocoa/WebTextIndicatorLayer.mm
 page/ios/ContentChangeObserver.cpp
 page/ios/DOMTimerHoldingTank.cpp
 page/ios/EventHandlerIOS.mm
@@ -236,7 +238,6 @@ platform/cf/RunLoopObserver.cpp
 platform/cf/SharedBufferCF.cpp
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
 platform/cocoa/CoreVideoSoftLink.cpp
-platform/cocoa/DataDetectorsCoreSoftLink.mm @no-unify
 platform/cocoa/DragDataCocoa.mm
 platform/cocoa/DragImageCocoa.mm
 platform/cocoa/FileMonitorCocoa.mm
@@ -480,6 +481,7 @@ platform/ios/wak/WebCoreThreadRun.cpp
 platform/ios/wak/WebCoreThreadSystemInterface.cpp
 platform/mac/BlocklistUpdater.mm
 platform/mac/CursorMac.mm @no-unify
+platform/mac/DataDetectorHighlight.mm
 platform/mac/HIDDevice.cpp
 platform/mac/HIDElement.cpp
 platform/mac/KeyEventMac.mm @no-unify
@@ -526,14 +528,15 @@ platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm
 platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm
+platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp
+platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp
+platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/ios/AVAudioSessionCaptureDevice.mm
 platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @no-unify
 platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @no-unify
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 platform/mediastream/mac/AVCaptureDeviceManager.mm @no-unify
 platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
-platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp
-platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/mac/BaseAudioSharedUnit.cpp
 platform/mediastream/mac/CoreAudioCaptureDevice.cpp
 platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp

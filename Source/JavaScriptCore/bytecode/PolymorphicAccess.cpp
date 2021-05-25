@@ -40,6 +40,7 @@
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
 #include "SuperSampler.h"
+#include "ThunkGenerators.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 
@@ -226,6 +227,14 @@ void AccessGenerationState::emitExplicitExceptionHandler()
                 linkBuffer.link(jumpToOSRExitExceptionHandler, originalHandler.nativeCode);
             });
     } else {
+#if ENABLE(EXTRA_CTI_THUNKS)
+        CCallHelpers::Jump jumpToExceptionHandler = jit->jump();
+        VM* vm = &m_vm;
+        jit->addLinkTask(
+            [=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(vm->getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+            });
+#else
         jit->setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&m_vm));
         jit->prepareCallOperation(m_vm);
         CCallHelpers::Call lookupExceptionHandlerCall = jit->call(OperationPtrTag);
@@ -234,6 +243,7 @@ void AccessGenerationState::emitExplicitExceptionHandler()
                 linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
             });
         jit->jumpToExceptionHandler(m_vm);
+#endif
     }
 }
 
@@ -376,20 +386,6 @@ void PolymorphicAccess::visitAggregateImpl(Visitor& visitor)
 }
 
 DEFINE_VISIT_AGGREGATE(PolymorphicAccess);
-
-size_t PolymorphicAccess::extraMemoryInBytes() const
-{
-    size_t size = 0;
-    size += m_list.sizeInBytes();
-    // FIXME: Account for the size of the various access cases.
-    size += m_list.size() * sizeof(AccessCase);
-    if (m_stubRoutine)
-        size += sizeof(JITStubRoutine) + m_stubRoutine->code().size();
-    if (m_watchpoints)
-        size += sizeof(WatchpointsOnStructureStubInfo) + m_watchpoints->extraMemoryInBytes();
-    size += m_weakReferences.byteSize();
-    return size;
-}
 
 void PolymorphicAccess::dump(PrintStream& out) const
 {
@@ -734,7 +730,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
     }
 
-    LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
+    LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate()) {
         if (PolymorphicAccessInternal::verbose)
             dataLog("Did fail to allocate.\n");

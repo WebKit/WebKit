@@ -28,21 +28,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-import errno
 import logging
 import math
 import re
-import os
-import signal
-import socket
-import subprocess
-import sys
-import time
 
-from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.port.driver import DriverInput
-from webkitpy.port.driver import DriverOutput
 
 DEFAULT_TEST_RUNNER_COUNT = 4
 
@@ -251,10 +241,10 @@ class PerfTest(object):
         return '\n'.join(filtered_lines)
 
     _lines_to_ignore = [
-        re.compile("^\s+$"),
+        re.compile(r"^\s+$"),
         # Following are for handle existing test like Dromaeo
         re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
-        re.compile('frame \"[^"]+\" - has \d+ onunload handler\(s\)'),
+        re.compile('frame \"[^"]+\" - has \\d+ onunload handler\\(s\\)'),
         # Following is for html5.html
         re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/""")),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),

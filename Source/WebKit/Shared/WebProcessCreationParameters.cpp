@@ -88,10 +88,12 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << textCheckerState;
     encoder << fullKeyboardAccessEnabled;
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     encoder << hasMouseDevice;
 #endif
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     encoder << hasStylusDevice;
+#endif
     encoder << defaultRequestTimeoutInterval;
     encoder << backForwardCacheCapacity;
 #if PLATFORM(COCOA)
@@ -127,7 +129,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
 #if PLATFORM(COCOA)
-    IPC::encode(encoder, networkATSContext.get());
+    encoder << networkATSContext;
 #endif
 
 #if PLATFORM(WAYLAND)
@@ -309,12 +311,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.fullKeyboardAccessEnabled))
         return false;
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     if (!decoder.decode(parameters.hasMouseDevice))
         return false;
 #endif
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     if (!decoder.decode(parameters.hasStylusDevice))
         return false;
+#endif
     if (!decoder.decode(parameters.defaultRequestTimeoutInterval))
         return false;
     if (!decoder.decode(parameters.backForwardCacheCapacity))
@@ -383,7 +387,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(COCOA)
-    if (!IPC::decode(decoder, parameters.networkATSContext))
+    if (!decoder.decode(parameters.networkATSContext))
         return false;
 #endif
 

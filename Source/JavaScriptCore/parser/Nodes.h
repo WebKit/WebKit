@@ -36,7 +36,7 @@
 #include "SymbolTable.h"
 #include "VariableEnvironment.h"
 #include <wtf/MathExtras.h>
-#include <wtf/SmallPtrSet.h>
+#include <wtf/SmallSet.h>
 
 namespace JSC {
 
@@ -53,7 +53,7 @@ namespace JSC {
     class RegisterID;
     class ScopeNode;
 
-    typedef SmallPtrSet<UniquedStringImpl*> UniquedStringImplPtrSet;
+    typedef SmallSet<UniquedStringImpl*> UniquedStringImplPtrSet;
 
     enum class Operator : uint8_t {
         Equal,
@@ -213,6 +213,7 @@ namespace JSC {
         virtual bool isFunctionCall() const { return false; }
         virtual bool isDeleteNode() const { return false; }
         virtual bool isOptionalChain() const { return false; }
+        virtual bool isPrivateIdentifier() const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label&, Label&, FallThroughMode);
 
@@ -681,6 +682,21 @@ namespace JSC {
 
         const Identifier& m_ident;
         JSTextPosition m_start;
+    };
+
+    // Dummy expression to hold the LHS of `#x in obj`.
+    class PrivateIdentifierNode final : public ExpressionNode {
+    public:
+        PrivateIdentifierNode(const JSTokenLocation&, const Identifier&);
+
+        const Identifier& value() const { return m_ident; }
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final { RELEASE_ASSERT_NOT_REACHED(); }
+
+        bool isPrivateIdentifier() const final { return true; }
+
+        const Identifier& m_ident;
     };
 
     class ElementNode final : public ParserArenaFreeable {

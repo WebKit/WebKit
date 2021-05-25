@@ -62,6 +62,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_registrableDomain(m_data.scriptURL)
     , m_scriptResourceMap(WTFMove(scriptResourceMap))
     , m_terminationTimer(*this, &SWServerWorker::terminationTimerFired)
+    , m_lastNavigationWasAppBound(m_server->clientIsAppBoundForRegistrableDomain(m_registrableDomain))
 {
     m_data.scriptURL.removeFragmentIdentifier();
 
@@ -86,7 +87,18 @@ ServiceWorkerContextData SWServerWorker::contextData() const
 {
     ASSERT(m_registration);
 
-    return { WTF::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_scriptResourceMap };
+    return { WTF::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppBound, m_scriptResourceMap };
+}
+
+void SWServerWorker::updateAppBoundValue(LastNavigationWasAppBound lastNavigationWasAppBound)
+{
+    m_lastNavigationWasAppBound = lastNavigationWasAppBound;
+
+    if (!isRunning())
+        return;
+
+    if (auto* connection = contextConnection())
+        connection->updateAppBoundValue(identifier(), lastNavigationWasAppBound);
 }
 
 void SWServerWorker::terminate(CompletionHandler<void()>&& callback)

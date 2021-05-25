@@ -393,7 +393,7 @@ void EventTarget::visitJSEventListeners(Visitor& visitor)
     if (!data)
         return;
     
-    auto locker = holdLock(data->eventListenerMap.lock());
+    Locker locker { data->eventListenerMap.lock() };
     EventListenerIterator iterator(&data->eventListenerMap);
     while (auto* listener = iterator.nextListener())
         listener->visitJSFunction(visitor);

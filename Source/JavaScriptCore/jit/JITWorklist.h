@@ -55,7 +55,6 @@ public:
     void poll(VM&);
     
     void compileLater(CodeBlock*, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0));
-    void compileNow(CodeBlock*, BytecodeIndex loopOSREntryBytecodeIndex = BytecodeIndex(0));
     
     static JITWorklist& ensureGlobalWorklist();
     static JITWorklist* existingGlobalWorklistOrNull();

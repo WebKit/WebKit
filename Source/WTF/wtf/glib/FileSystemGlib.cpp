@@ -29,7 +29,6 @@
 #include <glib/gstdio.h>
 #include <sys/file.h>
 #include <wtf/EnumTraits.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
@@ -120,49 +119,19 @@ String filenameForDisplay(const String& string)
 #endif
 }
 
-bool getFileSize(PlatformFileHandle handle, long long& resultSize)
+Optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
     GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
     if (!info)
-        return false;
+        return WTF::nullopt;
 
-    resultSize = g_file_info_get_size(info.get());
-    return true;
+    return g_file_info_get_size(info.get());
 }
 
-Optional<WallTime> getFileCreationTime(const String&)
+Optional<WallTime> fileCreationTime(const String&)
 {
     // FIXME: Is there a way to retrieve file creation time with Gtk on platforms that support it?
     return WTF::nullopt;
-}
-
-String homeDirectoryPath()
-{
-    return stringFromFileSystemRepresentation(g_get_home_dir());
-}
-
-Vector<String> listDirectory(const String& path, const String& filter)
-{
-    Vector<String> entries;
-
-    auto filename = fileSystemRepresentation(path);
-    if (!validRepresentation(filename))
-        return entries;
-
-    GUniquePtr<GDir> dir(g_dir_open(filename.data(), 0, nullptr));
-    if (!dir)
-        return entries;
-
-    GUniquePtr<GPatternSpec> pspec(g_pattern_spec_new((filter.utf8()).data()));
-    while (const char* name = g_dir_read_name(dir.get())) {
-        if (!g_pattern_match_string(pspec.get(), name))
-            continue;
-
-        GUniquePtr<gchar> entry(g_build_filename(filename.data(), name, nullptr));
-        entries.append(stringFromFileSystemRepresentation(entry.get()));
-    }
-
-    return entries;
 }
 
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const String& suffix)

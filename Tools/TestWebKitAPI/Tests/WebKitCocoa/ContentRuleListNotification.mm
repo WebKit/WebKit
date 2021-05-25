@@ -43,10 +43,8 @@
 #import <WebKit/_WKContentRuleListAction.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/SHA1.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
-#import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
 
 static bool receivedNotification;
@@ -221,34 +219,11 @@ TEST(ContentRuleList, PerformedActionForURL)
     EXPECT_TRUE(expectedNotifications == notificationList);
 }
 
-static String webSocketAcceptValue(const Vector<char>& request)
-{
-    constexpr auto* keyHeaderField = "Sec-WebSocket-Key: ";
-    const char* keyBegin = strnstr(request.data(), keyHeaderField, request.size()) + strlen(keyHeaderField);
-    EXPECT_NOT_NULL(keyBegin);
-    const char* keyEnd = strnstr(keyBegin, "\r\n", request.size() + (keyBegin - request.data()));
-    EXPECT_NOT_NULL(keyEnd);
-
-    constexpr auto* webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-    SHA1 sha1;
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(keyBegin), keyEnd - keyBegin);
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
-    SHA1::Digest hash;
-    sha1.computeHash(hash);
-    return base64Encode(hash.data(), SHA1::hashSize);
-}
-
 TEST(ContentRuleList, ResourceTypes)
 {
     using namespace TestWebKitAPI;
     HTTPServer webSocketServer([](Connection connection) {
-        connection.receiveHTTPRequest([=](Vector<char>&& request) {
-            connection.send(HTTPResponse(101, {
-                { "Upgrade", "websocket" },
-                { "Connection", "Upgrade" },
-                { "Sec-WebSocket-Accept", webSocketAcceptValue(request) }
-            }).serialize(HTTPResponse::IncludeContentLength::No));
-        });
+        connection.webSocketHandshake();
     });
     auto serverPort = webSocketServer.port();
 

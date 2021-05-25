@@ -36,14 +36,11 @@
 #include "AudioUtilities.h"
 #include "FloatConversion.h"
 #include "ScriptExecutionContext.h"
-#include "WebKitAudioBufferSourceNode.h"
-#include "WebKitAudioPannerNode.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitAudioBufferSourceNode);
 
 constexpr double DefaultGrainDuration = 0.020; // 20ms
 
@@ -93,7 +90,6 @@ AudioBufferSourceNode::AudioBufferSourceNode(BaseAudioContext& context)
 
 AudioBufferSourceNode::~AudioBufferSourceNode()
 {
-    clearPannerNode();
     uninitialize();
 }
 
@@ -106,13 +102,13 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         return;
     }
 
-    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker) {
-        // Too bad - tryHoldLock() failed. We must be in the middle of changing buffers and were already outputting silence anyway.
+    // The audio thread can't block on this lock, so we use tryLock() instead.
+    if (!m_processLock.tryLock()) {
+        // Too bad - tryLock() failed. We must be in the middle of changing buffers and were already outputting silence anyway.
         outputBus.zero();
         return;
     }
+    Locker locker { AdoptLock, m_processLock };
 
     if (!buffer()) {
         outputBus.zero();
@@ -146,9 +142,6 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         return;
     }
 
-    // Apply the gain (in-place) to the output bus.
-    float totalGain = legacyGainValue();
-    outputBus.copyWithGainFrom(outputBus, totalGain);
     outputBus.clearSilentFlag();
 }
 
@@ -419,21 +412,21 @@ ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     ASSERT(isMainThread());
     DEBUG_LOG(LOGIDENTIFIER);
 
-    if (buffer && m_wasBufferSet && shouldThrowOnAttemptToOverwriteBuffer())
+    if (buffer && m_wasBufferSet)
         return Exception { InvalidStateError, "The buffer was already set"_s };
 
     // The context must be locked since changing the buffer can re-configure the number of channels that are output.
-    BaseAudioContext::AutoLocker contextLocker(context());
+    Locker contextLocker { context().graphLock() };
     
     // This synchronizes with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
     
     if (buffer) {
         m_wasBufferSet = true;
 
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
-        ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
+        ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels);
 
         output(0)->setNumberOfChannels(numberOfChannels);
 
@@ -484,7 +477,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     context().sourceNodeWillBeginPlayback(*this);
 
     // This synchronizes with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     m_isGrain = true;
     m_grainOffset = grainOffset;
@@ -537,10 +530,6 @@ void AudioBufferSourceNode::adjustGrainParameters()
 
 double AudioBufferSourceNode::totalPitchRate()
 {
-    double dopplerRate = 1.0;
-    if (m_legacyPannerNode)
-        dopplerRate = m_legacyPannerNode->dopplerRate();
-    
     // Incorporate buffer's sample-rate versus AudioContext's sample-rate.
     // Normally it's not an issue because buffers are loaded at the AudioContext's sample-rate, but we can handle it in any case.
     double sampleRateFactor = 1.0;
@@ -550,7 +539,7 @@ double AudioBufferSourceNode::totalPitchRate()
     double basePitchRate = playbackRate().finalValue();
     double detune = pow(2, m_detune->finalValue() / 1200);
 
-    double totalRate = dopplerRate * sampleRateFactor * basePitchRate * detune;
+    double totalRate = sampleRateFactor * basePitchRate * detune;
 
     totalRate = std::clamp(totalRate, -MaxRate, MaxRate);
     
@@ -565,24 +554,6 @@ double AudioBufferSourceNode::totalPitchRate()
 bool AudioBufferSourceNode::propagatesSilence() const
 {
     return !isPlayingOrScheduled() || hasFinished() || !m_buffer;
-}
-
-void AudioBufferSourceNode::setPannerNode(WebKitAudioPannerNode* pannerNode)
-{
-    if (m_legacyPannerNode != pannerNode && !hasFinished())
-        m_legacyPannerNode = pannerNode;
-}
-
-void AudioBufferSourceNode::clearPannerNode()
-{
-    m_legacyPannerNode = nullptr;
-}
-
-void AudioBufferSourceNode::finish()
-{
-    clearPannerNode();
-    ASSERT(!m_legacyPannerNode);
-    AudioScheduledSourceNode::finish();
 }
 
 } // namespace WebCore

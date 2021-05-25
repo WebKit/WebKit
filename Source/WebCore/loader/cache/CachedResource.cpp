@@ -78,7 +78,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
 static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
 {
     if (type == CachedResource::Type::Script)
-        return 0_s;
+        return 5_s;
 
     return MemoryCache::singleton().deadDecodedDataDeletionInterval();
 }
@@ -244,7 +244,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
     // So no need for extra fields for MainResource.
     if (type() != Type::MainResource)
-        frameLoader.addExtraFieldsToRequest(m_resourceRequest, IsMainResource::No);
+        frameLoader.updateRequestAndAddExtraFields(m_resourceRequest, IsMainResource::No);
 
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
     // We should look into removing the expectation of that knowledge from the platform network stacks.
@@ -485,8 +485,10 @@ void CachedResource::responseReceived(const ResourceResponse& response)
 
 void CachedResource::clearLoader()
 {
-    ASSERT(m_loader);
-    m_identifierForLoadWithoutResourceLoader = m_loader->identifier();
+    if (m_loader)
+        m_identifierForLoadWithoutResourceLoader = m_loader->identifier();
+    else
+        ASSERT_NOT_REACHED();
     m_loader = nullptr;
     deleteIfPossible();
 }

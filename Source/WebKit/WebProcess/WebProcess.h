@@ -109,6 +109,7 @@ struct ServiceWorkerContextData;
 
 namespace WebKit {
 
+class AudioMediaStreamTrackRendererInternalUnitManager;
 class EventDispatcher;
 class GamepadData;
 class GPUProcessConnection;
@@ -201,13 +202,15 @@ public:
 
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool hasMouseDevice() const { return m_hasMouseDevice; }
     void setHasMouseDevice(bool);
 #endif
 
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     bool hasStylusDevice() const { return m_hasStylusDevice; }
     void setHasStylusDevice(bool);
+#endif
 
     WebFrame* webFrame(WebCore::FrameIdentifier) const;
     Vector<WebFrame*> webFrames() const;
@@ -242,6 +245,9 @@ public:
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     LibWebRTCCodecs& libWebRTCCodecs();
+#endif
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    AudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactory& legacyCDMFactory();
@@ -614,11 +620,13 @@ private:
 
     bool m_fullKeyboardAccessEnabled { false };
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool m_hasMouseDevice { false };
 #endif
 
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     bool m_hasStylusDevice { false };
+#endif
 
     HashMap<WebCore::FrameIdentifier, WebFrame*> m_frameMap;
 
@@ -635,6 +643,9 @@ private:
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
+#endif
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
 #endif
 

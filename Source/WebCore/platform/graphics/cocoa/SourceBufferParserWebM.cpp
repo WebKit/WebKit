@@ -628,6 +628,12 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
         m_status = m_parser->Feed(this, &m_reader);
         if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock) {
             m_reader->reclaimSegments();
+
+            // Audio tracks are grouped into meta-samples of a duration no more than m_minimumSampleDuration.
+            // But at the end of a file, no more audio data may be incoming, so flush and emit any pending
+            // audio buffers.
+            flushPendingAudioBuffers();
+
             completionHandler();
             return;
         }

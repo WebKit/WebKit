@@ -101,7 +101,7 @@ void SplitElementCommand::doReapply()
 }
 
 #ifndef NDEBUG
-void SplitElementCommand::getNodesInCommand(HashSet<Node*>& nodes)
+void SplitElementCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
     addNodeAndDescendants(m_element1.get(), nodes);
     addNodeAndDescendants(m_element2.ptr(), nodes);

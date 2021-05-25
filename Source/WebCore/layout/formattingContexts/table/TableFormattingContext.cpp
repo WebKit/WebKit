@@ -37,6 +37,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
+#include "TableFormattingGeometry.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -269,12 +270,13 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
+    auto geometry = this->geometry();
     auto& grid = formattingState().tableGrid();
     auto& cellBox = cell.box();
     auto& cellBoxGeometry = formattingState().boxGeometry(cellBox);
 
-    cellBoxGeometry.setBorder(geometry().computedCellBorder(cell));
-    cellBoxGeometry.setPadding(geometry().computedPadding(cellBox, availableHorizontalSpace));
+    cellBoxGeometry.setBorder(geometry.computedCellBorder(cell));
+    cellBoxGeometry.setPadding(geometry.computedPadding(cellBox, availableHorizontalSpace));
     // Internal table elements do not have margins.
     cellBoxGeometry.setHorizontalMargin({ });
     cellBoxGeometry.setVerticalMargin({ });
@@ -291,7 +293,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
     cellBoxGeometry.setContentBoxWidth(availableSpaceForContent);
 
     if (cellBox.hasInFlowOrFloatingChild()) {
-        auto constraintsForCellContent = geometry().constraintsForInFlowContent(cellBox);
+        auto constraintsForCellContent = geometry.constraintsForInFlowContent(cellBox);
         constraintsForCellContent.vertical.logicalHeight = usedCellHeight;
         auto invalidationState = InvalidationState { };
         // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell
@@ -300,10 +302,17 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
         floatingStateForCellContent.clear();
         LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, constraintsForCellContent);
     }
-    cellBoxGeometry.setContentBoxHeight(geometry().cellHeigh(cellBox));
+    auto contentBoxHeight = geometry.cellBoxContentHeight(cellBox);
+    if (auto computedHeight = geometry.computedHeight(cellBox)) {
+        auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox.style().boxSizing() == BoxSizing::BorderBox;
+        if (heightUsesBorderBox)
+            *computedHeight -= cellBoxGeometry.verticalMarginBorderAndPadding();
+        contentBoxHeight = std::max(contentBoxHeight, *computedHeight);
+    }
+    cellBoxGeometry.setContentBoxHeight(contentBoxHeight);
 }
 
-FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
+IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
 {
     ASSERT(!root().isSizeContainmentBox());
     // Tables have a slighty different concept of shrink to fit. It's really only different with non-auto "width" values, where
@@ -370,7 +379,7 @@ UniqueRef<TableGrid> TableFormattingContext::ensureTableGrid(const ContainerBox&
     return tableGrid;
 }
 
-FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColumns()
+IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColumns()
 {
     auto& formattingState = this->formattingState();
     auto& grid = formattingState.tableGrid();
@@ -412,7 +421,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
         fixedWidthColumns.append(fixedWidth());
     }
 
-    Vector<FormattingContext::IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
+    Vector<IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
     // 3. Collect he min/max width for each column but ignore column spans for now.
     Vector<SlotPosition> spanningCellPositionList;
     size_t numberOfActualColumns = 0;
@@ -428,7 +437,7 @@ FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedPre
                 continue;
             }
             auto columnFixedWidth = fixedWidthColumns[columnIndex];
-            auto widthConstraints = !columnFixedWidth ? slot.widthConstraints() : FormattingContext::IntrinsicWidthConstraints { *columnFixedWidth, *columnFixedWidth };
+            auto widthConstraints = !columnFixedWidth ? slot.widthConstraints() : IntrinsicWidthConstraints { *columnFixedWidth, *columnFixedWidth };
             columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
             columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
         }
@@ -512,6 +521,11 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
         row.setLogicalTop(rowLogicalTop);
         rowLogicalTop += distributedVerticalSpaces[rowIndex] + grid.verticalSpacing();
     }
+}
+
+TableFormattingGeometry TableFormattingContext::geometry() const
+{
+    return TableFormattingGeometry(*this, formattingState().tableGrid());
 }
 
 }

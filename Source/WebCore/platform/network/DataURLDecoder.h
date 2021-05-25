@@ -41,7 +41,7 @@ struct Result {
     String mimeType;
     String charset;
     String contentType;
-    Vector<char> data;
+    Vector<uint8_t> data;
 };
 
 using DecodeCompletionHandler = WTF::Function<void (Optional<Result>)>;

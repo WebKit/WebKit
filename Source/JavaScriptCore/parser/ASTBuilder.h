@@ -207,6 +207,10 @@ public:
 
         return new (m_parserArena) ResolveNode(location, ident, start);
     }
+    ExpressionNode* createPrivateIdentifierNode(const JSTokenLocation& location, const Identifier& ident)
+    {
+        return new (m_parserArena) PrivateIdentifierNode(location, ident);
+    }
     ExpressionNode* createObjectLiteral(const JSTokenLocation& location) { return new (m_parserArena) ObjectLiteralNode(location); }
     ExpressionNode* createObjectLiteral(const JSTokenLocation& location, PropertyListNode* properties) { return new (m_parserArena) ObjectLiteralNode(location, properties); }
 

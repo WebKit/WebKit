@@ -1073,6 +1073,9 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
         r.setNeedsLayout(MarkOnlyThis);
         r.layoutIfNeeded();
     }
+    
+    if (view().frameView().layoutContext().layoutState()->isPaginated() && is<RenderBlockFlow>(*this))
+        downcast<RenderBlockFlow>(*this).adjustSizeContainmentChildForPagination(r, r.logicalTop());
 }
 
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly)
@@ -2282,8 +2285,8 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
 void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     ASSERT(!childrenInline());
-    
-    computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    if (!shouldApplySizeContainment(*this))
+        computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
 

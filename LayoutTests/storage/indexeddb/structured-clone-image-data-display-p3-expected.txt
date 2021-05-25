@@ -1,0 +1,33 @@
+Test structured clone of ImageData with a display-p3 colorSpace.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+store = db.createObjectStore('storeName')
+This index is not used, but evaluating key path on each put() call will exercise (de)serialization:
+store.createIndex('indexName', 'dummyKeyPath')
+
+Testing ImageData: { colorSpace: "display-p3" }
+canvas = document.createElement('canvas')
+canvas.width = 8
+canvas.height = 8
+test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8, { colorSpace: "display-p3" })
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object ImageData]"
+PASS result.width is test_data.width
+PASS result.height is test_data.height
+PASS result.data.length is test_data.data.length
+PASS result.colorSpace is test_data.colorSpace
+PASS result data matches
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

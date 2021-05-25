@@ -256,7 +256,7 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     {
-        auto locker = holdLock(thisObject->m_gcLock);
+        Locker locker { thisObject->m_gcLock };
 
         for (auto& structure : thisObject->structures(locker).values())
             visitor.append(structure);

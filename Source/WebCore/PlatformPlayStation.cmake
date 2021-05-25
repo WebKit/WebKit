@@ -82,11 +82,21 @@ list(APPEND WebCore_LIBRARIES
     WPE::libwpe
 )
 
-PLAYSTATION_COPY_SHARED_LIBRARIES(WebCore_CopySharedLibs
+# Find the extras needed to copy for EGL besides the libraries
+set(EGL_EXTRAS)
+foreach (EGL_EXTRA_NAME ${EGL_EXTRA_NAMES})
+    find_file(${EGL_EXTRA_NAME}_FOUND ${EGL_EXTRA_NAME} PATH_SUFFIXES bin)
+    if (${EGL_EXTRA_NAME}_FOUND)
+        list(APPEND EGL_EXTRAS ${${EGL_EXTRA_NAME}_FOUND})
+    endif ()
+endforeach ()
+
+PLAYSTATION_COPY_REQUIREMENTS(WebCore_CopySharedLibs
     FILES
         ${CURL_LIBRARIES}
         ${Cairo_LIBRARIES}
         ${EGL_LIBRARIES}
+        ${EGL_EXTRAS}
         ${FREETYPE_LIBRARIES}
         ${Fontconfig_LIBRARIES}
         ${HarfBuzz_LIBRARIES}

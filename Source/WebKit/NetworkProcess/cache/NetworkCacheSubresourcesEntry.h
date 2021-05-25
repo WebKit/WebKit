@@ -59,12 +59,16 @@ public:
 
     bool isFirstParty() const;
 
+    bool isAppBound() const { return m_isAppBound; }
+    void setIsAppBound(bool isAppBound) { m_isAppBound = isAppBound; }
+
 private:
     Key m_key;
     WallTime m_lastSeen;
     WallTime m_firstSeen;
     bool m_isTransient { false };
     bool m_isSameSite { false };
+    bool m_isAppBound { false };
     URL m_firstPartyForCookies;
     WebCore::HTTPHeaderMap m_requestHeaders;
     WebCore::ResourceLoadPriority m_priority;
@@ -93,7 +97,7 @@ public:
 
     const Key& key() const { return m_key; }
     WallTime timeStamp() const { return m_timeStamp; }
-    const Vector<SubresourceInfo>& subresources() const { return m_subresources; }
+    Vector<SubresourceInfo>& subresources() { return m_subresources; }
 
     void updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>&);
 

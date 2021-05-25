@@ -431,6 +431,8 @@ namespace JSC { namespace DFG {
     macro(MakeRope, NodeResultJS) \
     macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(InById, NodeResultBoolean | NodeMustGenerate) \
+    macro(HasPrivateName, NodeResultBoolean | NodeMustGenerate) \
+    macro(HasPrivateBrand, NodeResultBoolean | NodeMustGenerate) \
     macro(ProfileType, NodeMustGenerate) \
     macro(ProfileControlFlow, NodeMustGenerate) \
     macro(SetFunctionName, NodeMustGenerate) \

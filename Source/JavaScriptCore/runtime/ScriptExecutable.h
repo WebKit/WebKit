@@ -130,16 +130,6 @@ private:
 protected:
     ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, Intrinsic);
 
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-
-#if ENABLE(CODEBLOCK_SAMPLING)
-        if (SamplingTool* sampler = vm.interpreter->sampler())
-            sampler->notifyOfScope(vm, this);
-#endif
-    }
-
     void recordParse(CodeFeatures features, bool hasCapturedVariables)
     {
         m_features = features;

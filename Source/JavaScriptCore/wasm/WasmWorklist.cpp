@@ -112,14 +112,14 @@ private:
 
         ASSERT(!plan->hasWork() || plan->multiThreaded());
         if (plan->hasWork() && !wasMultiThreaded && plan->multiThreaded()) {
-            LockHolder locker(*worklist.m_lock);
+            Locker locker { *worklist.m_lock };
             element.setToNextPriority();
             worklist.m_queue.enqueue(WTFMove(element));
             worklist.m_planEnqueued->notifyAll(locker);
             return complete(locker);
         }
 
-        return complete(holdLock(*worklist.m_lock));
+        return complete(Locker { *worklist.m_lock });
     }
 
     const char* name() const final
@@ -150,7 +150,7 @@ void Worklist::QueueElement::setToNextPriority()
 
 void Worklist::enqueue(Ref<Plan> plan)
 {
-    LockHolder locker(*m_lock);
+    Locker locker { *m_lock };
 
     if (ASSERT_ENABLED) {
         for (const auto& element : m_queue)
@@ -169,7 +169,7 @@ void Worklist::enqueue(Ref<Plan> plan)
 void Worklist::completePlanSynchronously(Plan& plan)
 {
     {
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         m_queue.decreaseKey([&] (QueueElement& element) {
             if (element.plan == &plan) {
                 element.priority = Priority::Synchronous;
@@ -189,7 +189,7 @@ void Worklist::completePlanSynchronously(Plan& plan)
 
 void Worklist::stopAllPlansForContext(Context& context)
 {
-    LockHolder locker(*m_lock);
+    Locker locker { *m_lock };
     Vector<QueueElement> elements;
     while (!m_queue.isEmpty()) {
         QueueElement element = m_queue.dequeue();
@@ -218,7 +218,7 @@ Worklist::Worklist()
 {
     unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? kernTCSMAwareNumberOfProcessorCores() : 1;
     m_threads.reserveCapacity(numberOfCompilationThreads);
-    LockHolder locker(*m_lock);
+    Locker locker { *m_lock };
     for (unsigned i = 0; i < numberOfCompilationThreads; i++)
         m_threads.uncheckedAppend(makeUnique<Worklist::Thread>(locker, *this));
 }
@@ -226,7 +226,7 @@ Worklist::Worklist()
 Worklist::~Worklist()
 {
     {
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         m_queue.enqueue({ Priority::Shutdown, nextTicket(), nullptr });
         m_planEnqueued->notifyAll(locker);
     }

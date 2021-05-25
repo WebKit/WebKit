@@ -32,10 +32,10 @@
 #if ENABLE(WEBGL) && USE(OPENGL_ES)
 
 #include "ExtensionsGLOpenGLES.h"
-#include "ImageData.h"
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include "PixelBuffer.h"
 
 #include <ANGLE/ShaderLang.h>
 
@@ -45,7 +45,6 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
 {
     if (!makeContextCurrent())
         return;
-
 
     auto attributes = contextAttributes();
 
@@ -65,11 +64,12 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
 }
 
-RefPtr<ImageData> GraphicsContextGLOpenGL::readPixelsForPaintResults()
+Optional<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 {
-    auto imageData = ImageData::create(getInternalFramebufferSize());
-    if (!imageData)
-        return nullptr;
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
+    auto pixelBuffer = PixelBuffer::tryCreate(format, getInternalFramebufferSize());
+    if (!pixelBuffer)
+        return WTF::nullopt;
 
     GLint packAlignment = 4;
     bool mustRestorePackAlignment = false;
@@ -79,12 +79,12 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::readPixelsForPaintResults()
         mustRestorePackAlignment = true;
     }
 
-    ::glReadPixels(0, 0, imageData->width(), imageData->height(), GL_RGBA, GL_UNSIGNED_BYTE, imageData->data().data());
+    ::glReadPixels(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->data().data());
 
     if (mustRestorePackAlignment)
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
-    return imageData;
+    return pixelBuffer;
 }
 
 bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)

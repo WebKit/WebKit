@@ -24,7 +24,6 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.common.checkout.changelog import *
 
 import logging
-import re
 
 _log = logging.getLogger(__name__)
 

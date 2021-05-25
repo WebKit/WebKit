@@ -186,7 +186,7 @@ class CrashLogs(object):
         return crash_logs
 
     def get_timestamp_from_log(self, log_contents):
-        date_match = re.search('Date/Time:\s+(.+?)\n', log_contents)
+        date_match = re.search('Date/Time:\\s+(.+?)\n', log_contents)
         if not date_match:
             return None
         try:

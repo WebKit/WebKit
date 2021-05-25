@@ -758,7 +758,7 @@ public:
         ASSERT(to);
         ASSERT(to->vm().heapProfiler()->activeHeapAnalyzer() == this);
 
-        auto locker = holdLock(m_mutex);
+        Locker locker { m_mutex };
 
         if (from && from != to) {
             m_successors.ensure(from, [] {

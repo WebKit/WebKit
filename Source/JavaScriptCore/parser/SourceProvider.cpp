@@ -48,7 +48,7 @@ static Lock providerIdLock;
 
 void SourceProvider::getID()
 {
-    LockHolder lock(&providerIdLock);
+    Locker locker { providerIdLock };
     if (!m_id) {
         static intptr_t nextProviderID = 0;
         m_id = ++nextProviderID;

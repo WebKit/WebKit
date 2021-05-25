@@ -1025,10 +1025,8 @@ String Decimal::toString() const
                 builder.append(digits[i]);
         }
 
-        if (adjustedExponent) {
-            builder.append(adjustedExponent < 0 ? "e" : "e+");
-            builder.appendNumber(adjustedExponent);
-        }
+        if (adjustedExponent)
+            builder.append(adjustedExponent < 0 ? "e" : "e+", adjustedExponent);
     }
     return builder.toString();
 }

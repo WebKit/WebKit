@@ -99,6 +99,12 @@ void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::Device::F
         xrCoordinator->scheduleAnimationFrame(m_page, WTFMove(completionHandler));
 }
 
+void PlatformXRSystem::submitFrame()
+{
+    if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
+        xrCoordinator->submitFrame(m_page);
+}
+
 }
 
 #if USE(APPLE_INTERNAL_SDK)

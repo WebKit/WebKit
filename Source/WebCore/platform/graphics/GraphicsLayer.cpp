@@ -35,7 +35,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
@@ -598,11 +597,7 @@ FloatRect GraphicsLayer::adjustCoverageRectForMovement(const FloatRect& coverage
 String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
 {
     // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
-    StringBuilder id;
-    id.appendLiteral("-|transition");
-    id.appendNumber(static_cast<int>(property));
-    id.append('-');
-    return id.toString();
+    return makeString("-|transition", static_cast<int>(property), '-');
 }
 
 void GraphicsLayer::suspendAnimations(MonotonicTime)

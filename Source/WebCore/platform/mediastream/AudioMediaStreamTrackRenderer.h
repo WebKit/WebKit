@@ -45,7 +45,7 @@ public:
     static std::unique_ptr<AudioMediaStreamTrackRenderer> create();
     virtual ~AudioMediaStreamTrackRenderer() = default;
 
-    virtual void start() = 0;
+    virtual void start(CompletionHandler<void()>&&) = 0;
     virtual void stop() = 0;
     virtual void clear() = 0;
     // May be called on a background thread. It should only be called after start/before stop is called.

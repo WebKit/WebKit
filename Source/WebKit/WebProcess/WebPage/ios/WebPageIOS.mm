@@ -656,7 +656,7 @@ void WebPage::advanceToNextMisspelling(bool)
 
 IntRect WebPage::rectForElementAtInteractionLocation() const
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_lastInteractionLocation, hitType);
     Node* hitNode = result.innerNode();
     if (!hitNode || !hitNode->renderer())
@@ -1569,9 +1569,9 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
     }
 
     auto hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, {
-        HitTestRequest::ReadOnly,
-        HitTestRequest::Active,
-        HitTestRequest::AllowVisibleChildFrameContentOnly,
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::Active,
+        HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
     });
 
     auto targetNode = makeRefPtr(hitTest.targetNode());
@@ -2181,7 +2181,7 @@ static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Fram
 
 void WebPage::setFocusedFrameBeforeSelectingTextAtLocation(const IntPoint& point)
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto* hitNode = result.innerNode();
     if (hitNode && hitNode->renderer())
@@ -2638,7 +2638,7 @@ static inline bool isObscuredElement(Element& element)
     auto topDocument = makeRef(element.document().topDocument());
     auto elementRectInMainFrame = element.clientRect();
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::IgnoreClipping };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::IgnoreClipping };
     HitTestResult result(elementRectInMainFrame.center());
 
     topDocument->hitTest(hitType, result);
@@ -2850,7 +2850,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     
 static void selectionPositionInformation(WebPage& page, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, hitType);
     Node* hitNode = result.innerNode();
 
@@ -2906,7 +2906,7 @@ static void textInteractionPositionInformation(WebPage& page, const HTMLInputEle
     if (!input.list())
         return;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     HitTestResult result = page.corePage()->mainFrame().eventHandler().hitTestResultAtPoint(request.point, hitType);
     if (result.innerNode() == input.dataListButtonElement())
         info.preventTextInteraction = true;
@@ -3024,14 +3024,14 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
 
     auto& eventHandler = m_page->mainFrame().eventHandler();
-    auto hitTestRequestTypes = OptionSet<HitTestRequest::RequestType> {
-        HitTestRequest::ReadOnly,
-        HitTestRequest::AllowFrameScrollbars,
-        HitTestRequest::AllowVisibleChildFrameContentOnly,
+    auto hitTestRequestTypes = OptionSet<HitTestRequest::Type> {
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::AllowFrameScrollbars,
+        HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
     };
 
     if (request.disallowUserAgentShadowContent)
-        hitTestRequestTypes.add(HitTestRequest::DisallowUserAgentShadowContent);
+        hitTestRequestTypes.add(HitTestRequest::Type::DisallowUserAgentShadowContent);
 
     auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitTestRequestTypes);
     if (auto* hitFrame = hitTestResult.innerNodeFrame()) {
@@ -4179,36 +4179,59 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-static bool hasMouseDevice()
+static bool isMousePrimaryPointingDevice()
 {
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
-    return WebProcess::singleton().hasMouseDevice();
-#elif HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(MACCATALYST)
+#if PLATFORM(MACCATALYST)
     return true;
 #else
     return false;
 #endif
 }
 
+static bool hasAccessoryMousePointingDevice()
+{
+    if (isMousePrimaryPointingDevice())
+        return true;
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    if (WebProcess::singleton().hasMouseDevice())
+        return true;
+#endif
+
+    return false;
+}
+
+static bool hasAccessoryStylusPointingDevice()
+{
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+    if (WebProcess::singleton().hasStylusDevice())
+        return true;
+#endif
+
+    return false;
+}
+
 bool WebPage::hoverSupportedByPrimaryPointingDevice() const
 {
-    return false;
+    return isMousePrimaryPointingDevice();
 }
 
 bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 {
-    return hasMouseDevice();
+    return hasAccessoryMousePointingDevice();
 }
 
 Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
 {
-    return PointerCharacteristics::Coarse;
+    return isMousePrimaryPointingDevice() ? PointerCharacteristics::Fine : PointerCharacteristics::Coarse;
 }
 
 OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
 {
-    OptionSet<PointerCharacteristics> result(PointerCharacteristics::Coarse);
-    if (hasMouseDevice() || WebProcess::singleton().hasStylusDevice())
+    OptionSet<PointerCharacteristics> result;
+    if (auto pointerCharacteristicsOfPrimaryPointingDevice = this->pointerCharacteristicsOfPrimaryPointingDevice())
+        result.add(*pointerCharacteristicsOfPrimaryPointingDevice);
+    if (hasAccessoryMousePointingDevice() || hasAccessoryStylusPointingDevice())
         result.add(PointerCharacteristics::Fine);
     return result;
 }

@@ -44,7 +44,7 @@ messages -> RemoteMediaSessionCoordinatorProxy NotRefCounted {
 
     PlaybackStateChanged(enum:uint8_t WebCore::MediaSessionPlaybackState state);
 
-    CoordinatorStateChanged(enum:uint8_t WebCore::MediaSessionCoordinatorState state);
+    TrackIdentifierChanged(String trackIdentifier) final
 }
 
 #endif

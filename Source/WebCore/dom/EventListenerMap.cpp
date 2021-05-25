@@ -82,7 +82,7 @@ bool EventListenerMap::containsActive(const AtomString& eventType) const
 
 void EventListenerMap::clear()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     assertNoActiveIterators();
 
@@ -117,7 +117,7 @@ static inline size_t findListener(const EventListenerVector& listeners, EventLis
 
 void EventListenerMap::replace(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options& options)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     assertNoActiveIterators();
 
@@ -132,7 +132,7 @@ void EventListenerMap::replace(const AtomString& eventType, EventListener& oldLi
 
 bool EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     assertNoActiveIterators();
 
@@ -162,7 +162,7 @@ static bool removeListenerFromVector(EventListenerVector& listeners, EventListen
 
 bool EventListenerMap::remove(const AtomString& eventType, EventListener& listener, bool useCapture)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     assertNoActiveIterators();
 
@@ -202,7 +202,7 @@ static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVe
 
 void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     assertNoActiveIterators();
 

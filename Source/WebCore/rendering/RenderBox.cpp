@@ -2304,7 +2304,7 @@ void RenderBox::deleteLineBoxWrapper()
     m_inlineBoxWrapper = nullptr;
 }
 
-LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderBox::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
@@ -2312,7 +2312,7 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().frameView().layoutContext().layoutDelta());
-    return computeRectForRepaint(r, repaintContainer);
+    return computeRect(r, repaintContainer, context);
 }
 
 LayoutRect RenderBox::computeVisibleRectUsingPaintOffset(const LayoutRect& rect) const
@@ -2860,6 +2860,14 @@ void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height)
 
 void RenderBox::updateLogicalHeight()
 {
+    if (shouldApplySizeContainment(*this) && !isRenderGrid()) {
+        // We need the exact width of border and padding here, yet we can't use borderAndPadding* interfaces.
+        // Because these interfaces evetually call borderAfter/Before, and RenderBlock::borderBefore
+        // adds extra border to fieldset by adding intrinsicBorderForFieldset which is not needed here.
+        auto borderAndPadding = RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
+        setLogicalHeight(borderAndPadding + scrollbarLogicalHeight());
+    }
+
     cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
     auto computedValues = computeLogicalHeight(logicalHeight(), logicalTop());
     setLogicalHeight(computedValues.m_extent);
@@ -3553,6 +3561,11 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
     return heightResult;
 }
 
+static inline bool isVerticalLRChildInHorizontalTBParent(const RenderBox& child, RenderObject& parent)
+{
+    return !child.isHorizontalWritingMode() && child.style().isFlippedLinesWritingMode() && parent.isHorizontalWritingMode() && !parent.style().isFlippedBlocksWritingMode();
+}
+
 static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRight, const RenderBox* child, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalWidth, RenderFragmentContainer* fragment)
 {
     if (!logicalLeft.isAuto() || !logicalRight.isAuto())
@@ -3573,14 +3586,14 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
         return;
     }
 
-    // FIXME: The static distance computation has not been patched for mixed writing modes yet.
+    // FIXME: The static distance computation has not been fully patched for mixed writing modes yet.
     if (parentDirection == TextDirection::LTR) {
-        LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock.borderLogicalLeft();
+        LayoutUnit staticPosition = isVerticalLRChildInHorizontalTBParent(*child, *parent) ? child->layer()->staticBlockPosition() - containerBlock.borderBefore() : child->layer()->staticInlinePosition() - containerBlock.borderLogicalLeft();
         for (auto* current = parent; current && current != &containerBlock; current = current->container()) {
             if (!is<RenderBox>(*current))
                 continue;
             const auto& renderBox = downcast<RenderBox>(*current);
-            staticPosition += renderBox.logicalLeft();
+            staticPosition += isVerticalLRChildInHorizontalTBParent(*child, *parent) ? renderBox.logicalTop() : renderBox.logicalLeft();
             if (renderBox.isInFlowPositioned())
                 staticPosition += renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().width() : renderBox.offsetForInFlowPosition().height();
             if (fragment && is<RenderBlock>(*current)) {
@@ -3984,7 +3997,7 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
     }
 
     computedValues.m_position = logicalLeftValue + marginLogicalLeftValue;
-    computeLogicalLeftPositionedOffset(computedValues.m_position, this, computedValues.m_extent, containerBlock, containerLogicalWidth);
+    computeLogicalLeftPositionedOffset(computedValues.m_position, this, computedValues.m_extent + bordersPlusPadding, containerBlock, containerLogicalWidth);
 }
 
 static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom, const RenderBox* child, const RenderBoxModelObject& containerBlock)
@@ -3992,14 +4005,17 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
     if (!logicalTop.isAuto() || !logicalBottom.isAuto())
         return;
     
-    // FIXME: The static distance computation has not been patched for mixed writing modes.
-    LayoutUnit staticLogicalTop = child->layer()->staticBlockPosition() - containerBlock.borderBefore();
+    RenderObject* parent = child->parent();
+    bool isParentDirectionLTR = parent->style().direction() == TextDirection::LTR;
+
+    // FIXME: The static distance computation has not been fully patched for mixed writing modes.
+    LayoutUnit staticLogicalTop = isVerticalLRChildInHorizontalTBParent(*child, *parent) && isParentDirectionLTR ? child->layer()->staticInlinePosition() - containerBlock.borderLogicalLeft() : child->layer()->staticBlockPosition() - containerBlock.borderBefore();
     for (RenderElement* container = child->parent(); container && container != &containerBlock; container = container->container()) {
         if (!is<RenderBox>(*container))
             continue;
         const auto& renderBox = downcast<RenderBox>(*container);
         if (!is<RenderTableRow>(renderBox))
-            staticLogicalTop += renderBox.logicalTop();
+            staticLogicalTop += isVerticalLRChildInHorizontalTBParent(*child, *parent) && isParentDirectionLTR ? renderBox.logicalLeft() : renderBox.logicalTop();
         if (renderBox.isInFlowPositioned())
             staticLogicalTop += renderBox.isHorizontalWritingMode() ? renderBox.offsetForInFlowPosition().height() : renderBox.offsetForInFlowPosition().width();
     }
@@ -4278,7 +4294,7 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
 
     // Use computed values to calculate the vertical position.
     computedValues.m_position = logicalTopValue + computedValues.m_margins.m_before;
-    computeLogicalTopPositionedOffset(computedValues.m_position, this, logicalHeightValue, containerBlock, containerLogicalHeight);
+    computeLogicalTopPositionedOffset(computedValues.m_position, this, logicalHeightValue + bordersPlusPadding, containerBlock, containerLogicalHeight);
 }
 
 void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValues& computedValues) const
@@ -4446,6 +4462,7 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
     }
 
     LayoutUnit logicalLeftPos = logicalLeftValue + marginLogicalLeftAlias;
+    // Border and padding have already been included in computedValues.m_extent.
     computeLogicalLeftPositionedOffset(logicalLeftPos, this, computedValues.m_extent, containerBlock, containerLogicalWidth);
     computedValues.m_position = logicalLeftPos;
 }
@@ -4575,6 +4592,7 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
 
     // Use computed values to calculate the vertical position.
     LayoutUnit logicalTopPos = logicalTopValue + marginBeforeAlias;
+    // Border and padding have already been included in computedValues.m_extent.
     computeLogicalTopPositionedOffset(logicalTopPos, this, computedValues.m_extent, containerBlock, containerLogicalHeight);
     computedValues.m_position = logicalTopPos;
 }
@@ -4857,7 +4875,8 @@ bool RenderBox::isUnsplittableForPagination() const
     return isReplaced()
         || hasUnsplittableScrollingOverflow()
         || (parent() && isWritingModeRoot())
-        || (isFloating() && style().styleType() == PseudoId::FirstLetter && style().initialLetterDrop() > 0);
+        || (isFloating() && style().styleType() == PseudoId::FirstLetter && style().initialLetterDrop() > 0)
+        || shouldApplySizeContainment(*this);
 }
 
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const

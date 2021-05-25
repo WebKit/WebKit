@@ -36,6 +36,7 @@
 #include "IDBTransactionMode.h"
 #include "IndexedDB.h"
 #include "Timer.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 
@@ -253,8 +254,8 @@ private:
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
-    mutable Lock m_referencedObjectStoreLock;
-    HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores;
+    mutable CheckedLock m_referencedObjectStoreLock;
+    HashMap<String, std::unique_ptr<IDBObjectStore>> m_referencedObjectStores WTF_GUARDED_BY_LOCK(m_referencedObjectStoreLock);
     HashMap<uint64_t, std::unique_ptr<IDBObjectStore>> m_deletedObjectStores;
 
     HashSet<RefPtr<IDBRequest>> m_openRequests;

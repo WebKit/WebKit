@@ -1659,7 +1659,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     m_page->contextMenuController().clearContextMenu();
 
     IntPoint documentPoint(m_page->mainFrame().view()->windowToContents(logicalCoords));
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, hitType);
     Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
 
@@ -1931,7 +1931,7 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
     IntPoint logicalGestureBeginPoint(gestureBeginPoint);
     logicalGestureBeginPoint.scale(inverseScaleFactor, inverseScaleFactor);
 
-    HitTestRequest request { OptionSet<HitTestRequest::RequestType> { HitTestRequest::ReadOnly, HitTestRequest::DisallowUserAgentShadowContent } };
+    HitTestRequest request { OptionSet<HitTestRequest::Type> { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::DisallowUserAgentShadowContent } };
     for (RefPtr<Frame> childFrame = &m_page->mainFrame(); childFrame; childFrame = EventHandler::subframeForTargetNode(m_gestureTargetNode.get())) {
         FrameView* frameView = childFrame->view();
         if (!frameView)
@@ -4124,7 +4124,7 @@ HRESULT WebView::elementAtPoint(_In_ LPPOINT point, _COM_Outptr_opt_ IPropertyBa
     webCorePoint.scale(inverseScaleFactor, inverseScaleFactor);
     HitTestResult result = HitTestResult(webCorePoint);
     if (frame->contentRenderer()) {
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         result = frame->eventHandler().hitTestResultAtPoint(webCorePoint, hitType);
     }
     *elementDictionary = WebElementPropertyBag::createInstance(result);
@@ -5305,7 +5305,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->webSQLEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setWebSQLDisabled(!enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setWebSQLEnabled(enabled);
 
     hr = prefsPrivate->visualViewportAPIEnabled(&enabled);
     if (FAILED(hr))
@@ -5534,7 +5534,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(true);
-    settings.setPrefixedWebAudioEnabled(false);
 #endif // ENABLE(WEB_AUDIO)
 
 #if ENABLE(WEBGL)
@@ -5667,6 +5666,8 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings.setOverscrollBehaviorEnabled(!!enabled);
+
+    settings.setCanvasColorSpaceEnabled(m_preferences->canvasColorSpaceEnabled());
 
     return S_OK;
 }
@@ -6615,7 +6616,7 @@ HRESULT WebView::reportException(_In_ JSContextRef context, _In_ JSValueRef exce
     JSC::JSLockHolder lock(globalObject);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    if (!toJSDOMWindow(globalObject->vm(), globalObject))
+    if (!globalObject->inherits<JSDOMWindow>(globalObject->vm()))
         return E_FAIL;
 
     WebCore::reportException(globalObject, toJS(globalObject, exception));

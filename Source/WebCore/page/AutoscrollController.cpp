@@ -127,7 +127,7 @@ void AutoscrollController::updateAutoscrollRenderer()
     RenderObject* renderer = m_autoscrollRenderer;
 
 #if ENABLE(PAN_SCROLLING)
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult hitTest = m_autoscrollRenderer->frame().eventHandler().hitTestResultAtPoint(m_panScrollStartPos, hitType);
 
     if (Node* nodeAtPoint = hitTest.innerNode())

@@ -347,14 +347,14 @@ LayoutSize RenderTableCell::offsetFromContainer(RenderElement& container, const 
     return offset;
 }
 
-LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderTableCell::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     // If the table grid is dirty, we cannot get reliable information about adjoining cells,
     // so we ignore outside borders. This should not be a problem because it means that
     // the table is going to recalculate the grid, relayout and repaint its current rect, which
     // includes any outside borders of this cell.
     if (!table()->collapseBorders() || table()->needsSectionRecalc())
-        return RenderBlockFlow::clippedOverflowRectForRepaint(repaintContainer);
+        return RenderBlockFlow::clippedOverflowRect(repaintContainer, context);
 
     bool rtl = !styleForCellFlow().isLeftToRightDirection();
     LayoutUnit outlineSize { style().outlineSize() };
@@ -392,7 +392,7 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModel
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().frameView().layoutContext().layoutDelta());
-    return computeRectForRepaint(r, repaintContainer);
+    return computeRect(r, repaintContainer, context);
 }
 
 Optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const

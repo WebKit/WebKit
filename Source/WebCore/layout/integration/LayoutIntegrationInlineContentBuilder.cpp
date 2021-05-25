@@ -30,6 +30,7 @@
 
 #include "BidiResolver.h"
 #include "InlineFormattingContext.h"
+#include "InlineFormattingGeometry.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
@@ -366,7 +367,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineFormattingStat
 void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingContext& inlineFormattingContext, InlineContent& inlineContent) const
 {
     auto& inlineFormattingState = inlineFormattingContext.formattingState();
-    auto inlineQuirks = inlineFormattingContext.quirks();
+    auto inlineFormattingGeometry = Layout::InlineFormattingGeometry { inlineFormattingContext };
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
         if (!lineBox.hasInlineBox())
@@ -381,7 +382,7 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
             auto inlineBoxRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineQuirks.inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox) });
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineFormattingGeometry.inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox) });
         }
     }
 }

@@ -30,6 +30,7 @@
 
 #include "JIT.h"
 #include "VMInlines.h"
+#include <wtf/CompilationThread.h>
 
 namespace JSC {
 
@@ -44,15 +45,15 @@ public:
     
     void compileInThread()
     {
-        m_jit.compileWithoutLinking(JITCompilationCanFail);
+        m_jit.compileAndLinkWithoutFinalizing(JITCompilationCanFail);
         
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         m_isFinishedCompiling = true;
     }
     
-    void finalize()
+    void finalize(bool needsFence)
     {
-        CompilationResult result = m_jit.link();
+        CompilationResult result = m_jit.finalizeOnMainThread();
         switch (result) {
         case CompilationFailed:
             CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));
@@ -61,6 +62,8 @@ public:
             m_codeBlock->m_didFailJITCompilation = true;
             return;
         case CompilationSuccessful:
+            if (needsFence)
+                WTF::crossModifyingCodeFence();
             dataLogLnIf(Options::verboseOSR(), "    JIT compilation successful.");
             m_codeBlock->ownerExecutable()->installCode(m_codeBlock);
             m_codeBlock->jitSoon();
@@ -76,15 +79,15 @@ public:
     
     bool isFinishedCompiling()
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_lock };
         return m_isFinishedCompiling;
     }
     
-    static void compileNow(CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
+    static void compileOnMainThreadNow(CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     {
         Plan plan(codeBlock, loopOSREntryBytecodeIndex);
         plan.compileInThread();
-        plan.finalize();
+        plan.finalize(false);
     }
     
 private:
@@ -135,26 +138,37 @@ private:
             
             // Make sure that the main thread realizes that we just compiled something. Notifying
             // a condition is basically free if nobody is waiting.
-            LockHolder locker(*m_worklist.m_lock);
+            Locker locker { *m_worklist.m_lock };
             m_worklist.m_condition->notifyAll(locker);
         }
         
         m_myPlans.clear();
         
-        LockHolder locker(*m_worklist.m_lock);
+        Locker locker { *m_worklist.m_lock };
         m_worklist.m_numAvailableThreads++;
         return WorkResult::Continue;
     }
 
+    void threadDidStart() final
+    {
+        m_compilationScope = makeUnique<CompilationScope>();
+    }
+    
+    void threadIsStopping(const AbstractLocker&) final
+    {
+        m_compilationScope = nullptr;
+    }
+
     JITWorklist& m_worklist;
     Plans m_myPlans;
+    std::unique_ptr<CompilationScope> m_compilationScope;
 };
 
 JITWorklist::JITWorklist()
     : m_lock(Box<Lock>::create())
     , m_condition(AutomaticThreadCondition::create())
 {
-    LockHolder locker(*m_lock);
+    Locker locker { *m_lock };
     m_thread = new Thread(locker, *this);
 }
 
@@ -170,7 +184,7 @@ bool JITWorklist::completeAllForVM(VM& vm)
     for (;;) {
         Vector<RefPtr<Plan>, 32> myPlans;
         {
-            LockHolder locker(*m_lock);
+            Locker locker { *m_lock };
             for (;;) {
                 bool didFindUnfinishedPlan = false;
                 m_plans.removeAllMatching(
@@ -209,7 +223,7 @@ void JITWorklist::poll(VM& vm)
     DeferGC deferGC(vm.heap);
     Plans myPlans;
     {
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         m_plans.removeAllMatching(
             [&] (RefPtr<Plan>& plan) {
                 if (&plan->vm() != &vm)
@@ -235,14 +249,14 @@ void JITWorklist::compileLater(CodeBlock* codeBlock, BytecodeIndex loopOSREntryB
     }
     
     if (!Options::useConcurrentJIT()) {
-        Plan::compileNow(codeBlock, loopOSREntryBytecodeIndex);
+        Plan::compileOnMainThreadNow(codeBlock, loopOSREntryBytecodeIndex);
         return;
     }
     
     codeBlock->jitSoon();
 
     {
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         
         if (m_planned.contains(codeBlock))
             return;
@@ -273,47 +287,15 @@ void JITWorklist::compileLater(CodeBlock* codeBlock, BytecodeIndex loopOSREntryB
     // This works around the issue. If the concurrent JIT thread is convoyed, we revert to main
     // thread compiles. This is probably not as good as if we had multiple JIT threads. Maybe we
     // can do that someday.
-    Plan::compileNow(codeBlock, loopOSREntryBytecodeIndex);
-}
-
-void JITWorklist::compileNow(CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
-{
-    VM& vm = codeBlock->vm();
-    DeferGC deferGC(vm.heap);
-    if (codeBlock->jitType() != JITType::InterpreterThunk)
-        return;
-    
-    bool isPlanned;
-    {
-        LockHolder locker(*m_lock);
-        isPlanned = m_planned.contains(codeBlock);
-    }
-    
-    if (isPlanned) {
-        RELEASE_ASSERT(Options::useConcurrentJIT());
-        // This is expensive, but probably good enough.
-        completeAllForVM(vm);
-    }
-    
-    // Now it might be compiled!
-    if (codeBlock->jitType() != JITType::InterpreterThunk)
-        return;
-    
-    // We do this in case we had previously attempted, and then failed, to compile with the
-    // baseline JIT.
-    codeBlock->resetJITData();
-    
-    // OK, just compile it.
-    JIT::compile(vm, codeBlock, JITCompilationMustSucceed, loopOSREntryBytecodeIndex);
-    codeBlock->ownerExecutable()->installCode(codeBlock);
+    Plan::compileOnMainThreadNow(codeBlock, loopOSREntryBytecodeIndex);
 }
 
 void JITWorklist::finalizePlans(Plans& myPlans)
 {
     for (RefPtr<Plan>& plan : myPlans) {
-        plan->finalize();
+        plan->finalize(true);
         
-        LockHolder locker(*m_lock);
+        Locker locker { *m_lock };
         m_planned.remove(plan->codeBlock());
     }
 }

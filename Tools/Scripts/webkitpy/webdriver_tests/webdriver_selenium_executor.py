@@ -21,11 +21,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
-import sys
-
-from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.webkit_finder import WebKitFinder
 
 pytest_runner = None
 

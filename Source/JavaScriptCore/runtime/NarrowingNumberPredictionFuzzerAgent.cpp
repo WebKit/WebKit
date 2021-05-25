@@ -37,7 +37,7 @@ NarrowingNumberPredictionFuzzerAgent::NarrowingNumberPredictionFuzzerAgent(VM& v
 
 SpeculatedType NarrowingNumberPredictionFuzzerAgent::getPrediction(CodeBlock* codeBlock, const CodeOrigin& codeOrigin, SpeculatedType original)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     if (!(original && speculationChecked(original, SpecBytecodeNumber)))
         return original;

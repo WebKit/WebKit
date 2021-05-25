@@ -32,9 +32,11 @@
 #import "WebPageGroupProxy.h"
 #import <WebCore/WebCoreObjCExtras.h>
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation WKWebProcessPlugInPageGroup {
     API::ObjectStorage<WebKit::WebPageGroupProxy> _bundlePageGroup;
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSString *)identifier
 {

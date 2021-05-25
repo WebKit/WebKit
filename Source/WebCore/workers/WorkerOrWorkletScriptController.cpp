@@ -119,14 +119,14 @@ bool WorkerOrWorkletScriptController::isExecutionForbidden() const
 
 void WorkerOrWorkletScriptController::scheduleExecutionTermination()
 {
-    if (m_isTerminatingExecution)
-        return;
-
     {
         // The mutex provides a memory barrier to ensure that once
         // termination is scheduled, isTerminatingExecution() will
         // accurately reflect that lexicalGlobalObject when called from another thread.
-        LockHolder locker(m_scheduledTerminationMutex);
+        Locker locker { m_scheduledTerminationLock };
+        if (m_isTerminatingExecution)
+            return;
+
         m_isTerminatingExecution = true;
     }
     m_vm->notifyNeedTermination();
@@ -135,7 +135,7 @@ void WorkerOrWorkletScriptController::scheduleExecutionTermination()
 bool WorkerOrWorkletScriptController::isTerminatingExecution() const
 {
     // See comments in scheduleExecutionTermination regarding mutex usage.
-    LockHolder locker(m_scheduledTerminationMutex);
+    Locker locker { m_scheduledTerminationLock };
     return m_isTerminatingExecution;
 }
 

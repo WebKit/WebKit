@@ -1,3 +1,201 @@
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * WebView/WebView.mm:
+        (-[WebView _synchronizeCustomFixedPositionLayoutRect]):
+        (-[WebView _setCustomFixedPositionLayoutRectInWebThread:synchronize:]):
+        (-[WebView _setCustomFixedPositionLayoutRect:]):
+        (-[WebView _fetchCustomFixedPositionLayoutRect:]):
+
+2021-05-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277913.
+        https://bugs.webkit.org/show_bug.cgi?id=226140
+
+        Caused multiple layout-test crash on mac debug queues
+
+        Reverted changeset:
+
+        "Replace LockHolder with Locker in local variables"
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+        https://trac.webkit.org/changeset/277913
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * WebView/WebView.mm:
+        (-[WebView _synchronizeCustomFixedPositionLayoutRect]):
+        (-[WebView _setCustomFixedPositionLayoutRectInWebThread:synchronize:]):
+        (-[WebView _setCustomFixedPositionLayoutRect:]):
+        (-[WebView _fetchCustomFixedPositionLayoutRect:]):
+
+2021-05-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Adopt QLItem in WKImageExtractionPreviewController
+        https://bugs.webkit.org/show_bug.cgi?id=226114
+        rdar://76657718
+
+        Reviewed by Tim Horton.
+
+        Adopt the new QuickLookUI softlinking header in PAL.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController webViewClosed]):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace more static Locks with CheckedLocks in WebKit / WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=226093
+
+        Reviewed by Darin Adler.
+
+        Replace more static Locks with CheckedLocks so that we can benefit from Clang Thread Safety Analysis.
+
+        * DOM/DOMInternal.mm:
+        (getDOMWrapper):
+        (addDOMWrapper):
+        (removeDOMWrapper):
+
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        Use inherits<T> instead of toJSDOMWindow() if the value is never a JSProxy.
+
+        * WebView/WebView.mm:
+        (+[WebView _reportException:inContext:]):
+
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::wrapCryptoKey const):
+        (WebChromeClient::unwrapCryptoKey const):
+        Update to use new Optional returning defaultWebCryptoMasterKey().
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::save):
+        Update to use new Optional returning base64Decode().
+
+2021-05-17  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] WebContent process should not pull audio session category from the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=225826
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setAudioSessionCategoryOverride:]):
+
+2021-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete WebSQL code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=225739
+
+        Reviewed by Sihui Liu.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
+2021-05-13  Megan Gardner  <megan_gardner@apple.com>
+
+        Add textIndicator bounce for AppHighlights on scroll.
+        https://bugs.webkit.org/show_bug.cgi?id=225727
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setTextIndicator const):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView quickLookWithEvent:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController webView:didHandleScrollWheel:]):
+        (-[WebImmediateActionController _cancelImmediateAction]):
+        (-[WebImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+        (-[WebImmediateActionController _defaultAnimationController]):
+        (-[WebImmediateActionController menuItemDidClose:]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        * WebView/WebView.mm:
+        (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+        (-[WebView _setTextIndicator:]):
+        (-[WebView _setTextIndicator:withLifetime:]):
+        (-[WebView _clearTextIndicatorWithAnimation:]):
+        (-[WebView _showDictionaryLookupPopup:]):
+        (-[WebView _dictionaryLookupPopoverWillClose:]):
+        * WebView/WebViewInternal.h:
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        Update code now that WebCore passes a CompletionHandler instead of a
+        NotificationPermissionCallback.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        * WebCoreSupport/WebNotificationClient.mm:
+        (WebNotificationClient::requestPermission):
+        (-[WebNotificationPolicyListener initWithCompletionHandler:]):
+        (-[WebNotificationPolicyListener allow]):
+        (-[WebNotificationPolicyListener deny]):
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Queue notification permission requests for the same origin on WebKit side
+        https://bugs.webkit.org/show_bug.cgi?id=225701
+        <rdar://76804977>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove some dead code.
+
+        * WebCoreSupport/WebNotificationClient.h:
+        * WebCoreSupport/WebNotificationClient.mm:
+
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make WebCore::HitTestRequest::RequestType an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=225597
+
+        Reviewed by Sam Weinig.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary const):
+        * WebView/WebFrame.mm:
+        (-[WebFrame elementAtPoint:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView elementAtPoint:allowShadowContent:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController performHitTestAtPoint:]):
+
 2021-05-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Remove the one use of String::toInt from WebKitLegacy

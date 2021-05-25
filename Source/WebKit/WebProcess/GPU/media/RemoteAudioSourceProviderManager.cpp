@@ -127,7 +127,7 @@ void RemoteAudioSourceProviderManager::RemoteAudio::setStorage(const SharedMemor
     // Take ownership of shared memory and mark it as media-related memory.
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
 
-    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
+    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
 }
 

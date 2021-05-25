@@ -35,7 +35,7 @@
 
 #include <mutex>
 #include <unicode/ucol.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/text/StringView.h>
 
 #if OS(DARWIN) && USE(CF)
@@ -45,11 +45,10 @@
 
 namespace WTF {
 
-static UCollator* cachedCollator;
+static CheckedLock cachedCollatorLock;
+static UCollator* cachedCollator WTF_GUARDED_BY_LOCK(cachedCollatorLock);
 static char* cachedCollatorLocale;
 static bool cachedCollatorShouldSortLowercaseFirst;
-
-static Lock cachedCollatorMutex;
 
 #if !(OS(DARWIN) && USE(CF))
 
@@ -106,7 +105,7 @@ Collator::Collator(const char* locale, bool shouldSortLowercaseFirst)
     UErrorCode status = U_ZERO_ERROR;
 
     {
-        auto locker = holdLock(cachedCollatorMutex);
+        Locker locker { cachedCollatorLock };
         if (cachedCollator && localesMatch(cachedCollatorLocale, locale) && cachedCollatorShouldSortLowercaseFirst == shouldSortLowercaseFirst) {
             m_collator = cachedCollator;
             m_locale = cachedCollatorLocale;
@@ -136,7 +135,7 @@ Collator::Collator(const char* locale, bool shouldSortLowercaseFirst)
 
 Collator::~Collator()
 {
-    auto locker = holdLock(cachedCollatorMutex);
+    Locker locker { cachedCollatorLock };
     if (cachedCollator) {
         ucol_close(cachedCollator);
         fastFree(cachedCollatorLocale);

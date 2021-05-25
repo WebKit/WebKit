@@ -30,7 +30,6 @@
 #
 
 import copy
-import glob
 import os
 import re
 import subprocess
@@ -39,7 +38,6 @@ import time
 import xml.dom.minidom
 
 from optparse import OptionParser
-from string import Template
 from os.path import normpath
 
 __version__ = "2.5-prerelease"

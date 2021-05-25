@@ -643,7 +643,7 @@ bool WebFrame::hasVerticalScrollbar() const
     return view->verticalScrollbar();
 }
 
-RefPtr<InjectedBundleHitTestResult> WebFrame::hitTest(const IntPoint point, OptionSet<HitTestRequest::RequestType> types) const
+RefPtr<InjectedBundleHitTestResult> WebFrame::hitTest(const IntPoint point, OptionSet<HitTestRequest::Type> types) const
 {
     if (!m_coreFrame)
         return nullptr;

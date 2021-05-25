@@ -46,7 +46,7 @@ void GetterSetter::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(GetterSetter);
 
-JSValue callGetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter)
+JSValue GetterSetter::callGetter(JSGlobalObject* globalObject, JSValue thisValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -54,31 +54,29 @@ JSValue callGetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSet
     // We work around that by checking here.
     RETURN_IF_EXCEPTION(scope, scope.exception()->value());
 
-    JSObject* getter = jsCast<GetterSetter*>(getterSetter)->getter();
+    JSObject* getter = this->getter();
 
-    auto callData = getCallData(vm, getter);
-    RELEASE_AND_RETURN(scope, call(globalObject, getter, callData, base, ArgList()));
+    auto callData = JSC::getCallData(vm, getter);
+    RELEASE_AND_RETURN(scope, call(globalObject, getter, callData, thisValue, ArgList()));
 }
 
-bool callSetter(JSGlobalObject* globalObject, JSValue base, JSValue getterSetter, JSValue value, ECMAMode ecmaMode)
+bool GetterSetter::callSetter(JSGlobalObject* globalObject, JSValue thisValue, JSValue value, bool shouldThrow)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    GetterSetter* getterSetterObj = jsCast<GetterSetter*>(getterSetter);
+    JSObject* setter = this->setter();
 
-    if (getterSetterObj->isSetterNull())
-        return typeError(globalObject, scope, ecmaMode.isStrict(), ReadonlyPropertyWriteError);
-
-    JSObject* setter = getterSetterObj->setter();
+    if (setter->type() == NullSetterFunctionType)
+        return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
     MarkedArgumentBuffer args;
     args.append(value);
     ASSERT(!args.hasOverflowed());
 
-    auto callData = getCallData(vm, setter);
+    auto callData = JSC::getCallData(vm, setter);
     scope.release();
-    call(globalObject, setter, callData, base, args);
+    call(globalObject, setter, callData, thisValue, args);
     return true;
 }
 

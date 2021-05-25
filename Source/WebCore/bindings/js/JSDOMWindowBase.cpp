@@ -282,23 +282,6 @@ JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
     return frame.script().globalObject(world);
 }
 
-JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
-{
-    if (!value.isObject())
-        return nullptr;
-
-    while (!value.isNull()) {
-        JSObject* object = asObject(value);
-        const ClassInfo* classInfo = object->classInfo(vm);
-        if (classInfo == JSDOMWindow::info())
-            return jsCast<JSDOMWindow*>(object);
-        if (classInfo == JSWindowProxy::info())
-            return jsDynamicCast<JSDOMWindow*>(vm, jsCast<JSWindowProxy*>(object)->window());
-        value = object->getPrototypeDirect(vm);
-    }
-    return nullptr;
-}
-
 DOMWindow& incumbentDOMWindow(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
     return asJSDOMWindow(&callerGlobalObject(lexicalGlobalObject, callFrame))->wrapped();

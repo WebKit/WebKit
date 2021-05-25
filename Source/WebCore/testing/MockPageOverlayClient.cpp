@@ -88,17 +88,8 @@ void MockPageOverlayClient::didMoveToPage(PageOverlay& overlay, Page* page)
 
 void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {
-    StringBuilder message;
-    message.appendLiteral("MockPageOverlayClient::drawRect dirtyRect (");
-    message.appendNumber(dirtyRect.x());
-    message.appendLiteral(", ");
-    message.appendNumber(dirtyRect.y());
-    message.appendLiteral(", ");
-    message.appendNumber(dirtyRect.width());
-    message.appendLiteral(", ");
-    message.appendNumber(dirtyRect.height());
-    message.appendLiteral(")");
-    overlay.page()->mainFrame().document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, message.toString());
+    overlay.page()->mainFrame().document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
+        makeString("MockPageOverlayClient::drawRect dirtyRect (", dirtyRect.x(), ", ", dirtyRect.y(), ", ", dirtyRect.width(), ", ", dirtyRect.height(), ')'));
 
     GraphicsContextStateSaver stateSaver(context);
 
@@ -117,14 +108,8 @@ void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& cont
 
 bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouseEvent& event)
 {
-    StringBuilder message;
-    message.appendLiteral("MockPageOverlayClient::mouseEvent location (");
-    message.appendNumber(event.position().x());
-    message.appendLiteral(", ");
-    message.appendNumber(event.position().y());
-    message.appendLiteral(")");
-    overlay.page()->mainFrame().document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, message.toString());
-
+    overlay.page()->mainFrame().document()->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
+        makeString("MockPageOverlayClient::mouseEvent location (", event.position().x(), ", ", event.position().y(), ')'));
     return false;
 }
 

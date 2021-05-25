@@ -59,7 +59,7 @@ GraphicsContext::GraphicsContextImplFactory GraphicsContextImplCairo::createFact
 }
 
 GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, PlatformContextCairo& platformContext)
-    : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
+    : GraphicsContextImpl(context)
     , m_platformContext(platformContext)
     , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext))
 {
@@ -68,7 +68,7 @@ GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, Pla
 }
 
 GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, cairo_t* cairoContext)
-    : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
+    : GraphicsContextImpl(context)
     , m_ownedPlatformContext(makeUnique<PlatformContextCairo>(cairoContext))
     , m_platformContext(*m_ownedPlatformContext)
     , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext))

@@ -258,7 +258,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandl
         return;
     }
 
-    auto locker = holdLock(_printingCallbackMutex);
+    Locker locker { _printingCallbackMutex };
 
     ASSERT([self _hasPageRects]);
     ASSERT(_printedPagesData.isEmpty());
@@ -372,7 +372,7 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
 {
     ASSERT(RunLoop::isMain());
 
-    auto locker = holdLock(view->_printingCallbackMutex);
+    Locker locker { view->_printingCallbackMutex };
 
     // We may have received page rects while a message to call this function traveled from secondary thread to main one.
     if ([view _hasPageRects]) {

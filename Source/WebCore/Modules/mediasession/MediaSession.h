@@ -48,6 +48,7 @@ class Document;
 class HTMLMediaElement;
 class MediaMetadata;
 class MediaSessionCoordinator;
+class MediaSessionCoordinatorPrivate;
 class Navigator;
 
 class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public EventTargetWithInlineData {
@@ -77,7 +78,7 @@ public:
     void setReadyState(MediaSessionReadyState);
 
     MediaSessionCoordinator* coordinator() const { return m_coordinator.get(); }
-    WEBCORE_EXPORT void setCoordinator(MediaSessionCoordinator*);
+    WEBCORE_EXPORT void createCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
@@ -131,6 +132,8 @@ private:
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "MediaSession"; }
     bool virtualHasPendingActivity() const final;
+    void suspend(ReasonForSuspension) final;
+    void stop() final;
 
     RefPtr<HTMLMediaElement> activeMediaElement() const;
 

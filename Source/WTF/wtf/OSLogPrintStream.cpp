@@ -48,7 +48,7 @@ std::unique_ptr<OSLogPrintStream> OSLogPrintStream::open(const char* subsystem, 
 
 void OSLogPrintStream::vprintf(const char* format, va_list argList)
 {
-    auto lock = holdLock(m_stringLock);
+    Locker lock { m_stringLock };
     size_t offset = m_offset;
     size_t freeBytes = m_string.length() - offset;
     va_list backup;

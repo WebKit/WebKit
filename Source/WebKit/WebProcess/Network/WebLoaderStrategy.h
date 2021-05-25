@@ -52,7 +52,7 @@ public:
     ~WebLoaderStrategy() final;
     
     void loadResource(WebCore::Frame&, WebCore::CachedResource&, WebCore::ResourceRequest&&, const WebCore::ResourceLoaderOptions&, CompletionHandler<void(RefPtr<WebCore::SubresourceLoader>&&)>&&) final;
-    void loadResourceSynchronously(WebCore::FrameLoader&, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::ClientCredentialPolicy, const WebCore::FetchOptions&, const WebCore::HTTPHeaderMap&, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) final;
+    void loadResourceSynchronously(WebCore::FrameLoader&, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::ClientCredentialPolicy, const WebCore::FetchOptions&, const WebCore::HTTPHeaderMap&, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<uint8_t>& data) final;
     void pageLoadCompleted(WebCore::Page&) final;
     void browsingContextRemoved(WebCore::Frame&) final;
 
@@ -101,7 +101,7 @@ private:
     struct SyncLoadResult {
         WebCore::ResourceResponse response;
         WebCore::ResourceError error;
-        Vector<char> data;
+        Vector<uint8_t> data;
     };
     Optional<SyncLoadResult> tryLoadingSynchronouslyUsingURLSchemeHandler(WebCore::FrameLoader&, ResourceLoadIdentifier, const WebCore::ResourceRequest&);
     SyncLoadResult loadDataURLSynchronously(const WebCore::ResourceRequest&);

@@ -41,10 +41,10 @@ nonInclusiveTerms = [
     [ "slave", "slave" ]
 ]
 
-IGNORE_DIRECTORIES = ['.svn', '.git', 'autoinstalled', 'buildstream']
+IGNORE_DIRECTORIES = ['.svn', '.git', 'autoinstalled', 'buildstream', 'node_modules']
 IGNORE_FILES_STARTING_WITH = ('ChangeLog')
 IGNORE_FILES_ENDING_WITH = ('.log', '.order', '.pyc', '.swp', '.xcuserstate', '.db', '.db-shm', '.db-wal')
-IGNORE_FILE_NAMES = ['report-non-inclusive-language']
+IGNORE_FILE_NAMES = ['report-non-inclusive-language', 'inclusive_language.py']
 
 parser = argparse.ArgumentParser(description='Report counts and locations of non-inclusive terms.')
 parser.add_argument('--verbose', '-v', action='store_true');
@@ -66,6 +66,8 @@ for subroot, directories, files in os.walk(root):
         if file.endswith(IGNORE_FILES_ENDING_WITH):
             continue
         if file in IGNORE_FILE_NAMES:
+            continue
+        if os.path.islink(os.path.join(subroot, file)):
             continue
         handle = open(os.path.join(subroot, file), "r")
         for line in handle.readlines():

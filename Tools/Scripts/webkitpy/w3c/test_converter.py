@@ -97,11 +97,11 @@ class _W3CTestConverter(HTMLParser):
         self.test_harness_re = re.compile('/resources/testharness')
 
         self.prefixed_properties = self.read_webkit_prefixed_css_property_list(css_property_file)
-        prop_regex = '([\s{]|^)(' + "|".join(prop.replace('-webkit-', '') for prop in self.prefixed_properties) + ')(\s+:|:)'
+        prop_regex = r'([\s{]|^)(' + "|".join(prop.replace('-webkit-', '') for prop in self.prefixed_properties) + r')(\s+:|:)'
         self.prop_re = re.compile(prop_regex)
 
         self.prefixed_property_values = self.legacy_read_webkit_prefixed_css_property_list(css_property_value_file)
-        prop_value_regex = '(:\s*|^\s*)(' + "|".join(value.replace('-webkit-', '') for value in self.prefixed_property_values) + ')(\s*;|\s*}|\s*$)'
+        prop_value_regex = r'(:\s*|^\s*)(' + "|".join(value.replace('-webkit-', '') for value in self.prefixed_property_values) + r')(\s*;|\s*}|\s*$)'
         self.prop_value_re = re.compile(prop_value_regex)
 
     def output(self):
@@ -127,7 +127,7 @@ class _W3CTestConverter(HTMLParser):
         unprefixed_properties = set()
         for property_name in property_names:
             # Find properties starting with the -webkit- prefix.
-            match = re.match('-webkit-([\w|-]*)', property_name)
+            match = re.match(r'-webkit-([\w|-]*)', property_name)
             if match:
                 prefixed_properties.append(match.group(1))
             else:
@@ -148,7 +148,7 @@ class _W3CTestConverter(HTMLParser):
             # Property name is always first on the line.
             property_name = line.split(' ', 1)[0]
             # Find properties starting with the -webkit- prefix.
-            match = re.match('-webkit-([\w|-]*)', property_name)
+            match = re.match(r'-webkit-([\w|-]*)', property_name)
             if match:
                 prefixed_properties.append(match.group(1))
             else:

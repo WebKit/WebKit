@@ -24,7 +24,7 @@
 #include "FEGaussianBlur.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include "ShadowBlur.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
@@ -99,16 +99,16 @@ void FEDropShadow::platformApplySoftware()
 
     ShadowBlur contextShadow(blurRadius, offset, m_shadowColor);
 
-    // TODO: Direct pixel access to ImageBuffer would avoid copying the ImageData.
+    PixelBufferFormat format { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, resultColorSpace() };
     IntRect shadowArea(IntPoint(), resultImage->logicalSize());
-    auto imageData = resultImage->getImageData(AlphaPremultiplication::Premultiplied, shadowArea);
-    if (!imageData)
+    auto pixelBuffer = resultImage->getPixelBuffer(format, shadowArea);
+    if (!pixelBuffer)
         return;
 
-    auto& srcPixelArray = imageData->data();
-    contextShadow.blurLayerImage(srcPixelArray.data(), imageData->size(), 4 * imageData->size().width());
+    auto& sourcePixelArray = pixelBuffer->data();
+    contextShadow.blurLayerImage(sourcePixelArray.data(), pixelBuffer->size(), 4 * pixelBuffer->size().width());
     
-    resultImage->putImageData(AlphaPremultiplication::Premultiplied, *imageData, shadowArea);
+    resultImage->putPixelBuffer(*pixelBuffer, shadowArea);
 
     resultContext.setCompositeOperation(CompositeOperator::SourceIn);
     resultContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), m_shadowColor);

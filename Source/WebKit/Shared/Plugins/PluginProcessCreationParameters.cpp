@@ -46,7 +46,7 @@ void PluginProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << terminationTimeout;
 #if PLATFORM(COCOA)
     encoder << acceleratedCompositingPort;
-    IPC::encode(encoder, networkATSContext.get());
+    encoder << networkATSContext;
 #endif
 }
 
@@ -61,7 +61,7 @@ bool PluginProcessCreationParameters::decode(IPC::Decoder& decoder, PluginProces
 #if PLATFORM(COCOA)
     if (!decoder.decode(result.acceleratedCompositingPort))
         return false;
-    if (!IPC::decode(decoder, result.networkATSContext))
+    if (!decoder.decode(result.networkATSContext))
         return false;
 #endif
 

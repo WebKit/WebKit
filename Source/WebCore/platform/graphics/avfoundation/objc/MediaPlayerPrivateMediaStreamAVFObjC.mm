@@ -32,6 +32,7 @@
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "LocalSampleBufferDisplayLayer.h"
+#import "MediaSessionManagerCocoa.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
 #import "VideoLayerManagerObjC.h"
@@ -174,6 +175,12 @@ MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaStreamAVFObjC final : public MediaPlayerFactory {
+public:
+    MediaPlayerFactoryMediaStreamAVFObjC()
+    {
+        MediaSessionManagerCocoa::ensureCodecsRegistered();
+    }
+
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream; };
 
@@ -247,9 +254,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sampl
     if (!m_visible)
         return;
 
-    auto locker = tryHoldLock(m_sampleBufferDisplayLayerLock);
-    if (!locker)
+    if (!m_sampleBufferDisplayLayerLock.tryLock())
         return;
+    Locker locker { AdoptLock, m_sampleBufferDisplayLayerLock };
 
     if (!m_canEnqueueDisplayLayer || !m_sampleBufferDisplayLayer || m_sampleBufferDisplayLayer->didFail())
         return;
@@ -272,7 +279,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
 {
     if (!isMainThread()) {
         {
-            auto locker = holdLock(m_currentVideoSampleLock);
+            Locker locker { m_currentVideoSampleLock };
             m_currentVideoSample = &sample;
         }
         callOnMainThread([weakThis = makeWeakPtr(this), hasChangedOrientation]() mutable {
@@ -284,7 +291,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
 
             RefPtr<MediaSample> sample;
             {
-                auto locker = holdLock(weakThis->m_currentVideoSampleLock);
+                Locker locker { weakThis->m_currentVideoSampleLock };
                 sample = WTFMove(weakThis->m_currentVideoSample);
             }
             if (!sample)
@@ -396,7 +403,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 {
-    auto locker = holdLock(m_sampleBufferDisplayLayerLock);
+    Locker locker { m_sampleBufferDisplayLayerLock };
 
     m_canEnqueueDisplayLayer = false;
     if (m_sampleBufferDisplayLayer)
@@ -1055,7 +1062,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::CurrentFramePainter::reset()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()
 {
-    auto locker = holdLock(m_sampleBufferDisplayLayerLock);
+    Locker locker { m_sampleBufferDisplayLayerLock };
     if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
 }

@@ -168,7 +168,7 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
         }
     }
     
-    auto locker = holdLock(footer.m_lock);
+    Locker locker { footer.m_lock };
 
     ASSERT(!isFreeListed());
     

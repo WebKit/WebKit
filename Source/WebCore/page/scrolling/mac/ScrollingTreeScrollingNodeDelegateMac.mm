@@ -220,9 +220,31 @@ bool ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDeltaOnAxis(float s
 std::unique_ptr<ScrollControllerTimer> ScrollingTreeScrollingNodeDelegateMac::createTimer(Function<void()>&& function)
 {
     return WTF::makeUnique<ScrollControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = makeRef(scrollingNode())] {
-        LockHolder locker(protectedNode->scrollingTree().treeMutex());
+        Locker locker { protectedNode->scrollingTree().treeLock() };
         function();
     });
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback(ScrollController&)
+{
+    if (!m_scrollControllerAnimationTimer)
+        m_scrollControllerAnimationTimer = WTF::makeUnique<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>>(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired);
+
+    if (m_scrollControllerAnimationTimer->isActive())
+        return;
+
+    m_scrollControllerAnimationTimer->startRepeating(1_s / 60.);
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback(ScrollController&)
+{
+    if (m_scrollControllerAnimationTimer)
+        m_scrollControllerAnimationTimer->stop();
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired()
+{
+    m_scrollController.animationCallback(MonotonicTime::now());
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const PlatformWheelEvent& wheelEvent) const

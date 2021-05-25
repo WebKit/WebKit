@@ -112,6 +112,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
         contentSecurityPolicyImposition,
         DefersLoadingPolicy::AllowDefersLoading,
         cachingPolicy };
+    loaderOptions.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     loaderOptions.destination = m_destination;
     auto cachedRequest = createPotentialAccessControlRequest(WTFMove(request), WTFMove(loaderOptions), *m_document, m_crossOriginMode);
     if (m_element)

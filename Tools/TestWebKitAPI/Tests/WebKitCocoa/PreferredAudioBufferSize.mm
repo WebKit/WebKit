@@ -91,7 +91,7 @@ TEST_F(PreferredAudioBufferSize, WebAudio)
 
 TEST_F(PreferredAudioBufferSize, VideoOnly)
 {
-    runPlayingTestWithPageNamed(@"video-without-audio", 512);
+    runPlayingTestWithPageNamed(@"video-without-audio", 4096);
 }
 
 TEST_F(PreferredAudioBufferSize, VideoWithAudio)

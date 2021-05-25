@@ -428,7 +428,9 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::BundlePageGroup:
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN;
         wrapper = [WKWebProcessPlugInPageGroup alloc];
+        ALLOW_DEPRECATED_DECLARATIONS_END;
         break;
 
     case Type::BundleRangeHandle:

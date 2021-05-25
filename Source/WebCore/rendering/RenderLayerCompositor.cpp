@@ -1537,7 +1537,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
     if (!layer.renderer().style().hasAutoUsedZIndex())
         logString.append(" z-index: ", layer.renderer().style().usedZIndex());
 
-    logString.append(" (", logReasonsForCompositing(layer), ") ");
+    logString.append(" (", logOneReasonForCompositing(layer), ") ");
 
     if (backing->graphicsLayer()->contentsOpaque() || backing->paintsIntoCompositedAncestor() || backing->foregroundLayer() || backing->backgroundLayer()) {
         logString.append('[');
@@ -2770,91 +2770,46 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
     return reasons;
 }
 
-#if !LOG_DISABLED
-const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer& layer)
+static const char* compositingReasonToString(CompositingReason reason)
 {
-    OptionSet<CompositingReason> reasons = reasonsForCompositing(layer);
+    switch (reason) {
+    case CompositingReason::Transform3D: return "3D transform";
+    case CompositingReason::Video: return "video";
+    case CompositingReason::Canvas: return "canvas";
+    case CompositingReason::Plugin: return "plugin";
+    case CompositingReason::IFrame: return "iframe";
+    case CompositingReason::BackfaceVisibilityHidden: return "backface-visibility: hidden";
+    case CompositingReason::ClipsCompositingDescendants: return "clips compositing descendants";
+    case CompositingReason::Animation: return "animation";
+    case CompositingReason::Filters: return "filters";
+    case CompositingReason::PositionFixed: return "position: fixed";
+    case CompositingReason::PositionSticky: return "position: sticky";
+    case CompositingReason::OverflowScrolling: return "async overflow scrolling";
+    case CompositingReason::Stacking: return "stacking";
+    case CompositingReason::Overlap: return "overlap";
+    case CompositingReason::OverflowScrollPositioning: return "overflow scroll positioning";
+    case CompositingReason::NegativeZIndexChildren: return "negative z-index children";
+    case CompositingReason::TransformWithCompositedDescendants: return "transform with composited descendants";
+    case CompositingReason::OpacityWithCompositedDescendants: return "opacity with composited descendants";
+    case CompositingReason::MaskWithCompositedDescendants: return "mask with composited descendants";
+    case CompositingReason::ReflectionWithCompositedDescendants: return "reflection with composited descendants";
+    case CompositingReason::FilterWithCompositedDescendants: return "filter with composited descendants";
+    case CompositingReason::BlendingWithCompositedDescendants: return "blending with composited descendants";
+    case CompositingReason::IsolatesCompositedBlendingDescendants: return "isolates composited blending descendants";
+    case CompositingReason::Perspective: return "perspective";
+    case CompositingReason::Preserve3D: return "preserve-3d";
+    case CompositingReason::WillChange: return "will-change";
+    case CompositingReason::Root: return "root";
+    case CompositingReason::Model: return "model";
+    }
+    return "";
+}
 
-    if (reasons & CompositingReason::Transform3D)
-        return "3D transform";
-
-    if (reasons & CompositingReason::Video)
-        return "video";
-
-    if (reasons & CompositingReason::Canvas)
-        return "canvas";
-
-    if (reasons & CompositingReason::Plugin)
-        return "plugin";
-
-    if (reasons & CompositingReason::IFrame)
-        return "iframe";
-
-    if (reasons & CompositingReason::BackfaceVisibilityHidden)
-        return "backface-visibility: hidden";
-
-    if (reasons & CompositingReason::ClipsCompositingDescendants)
-        return "clips compositing descendants";
-
-    if (reasons & CompositingReason::Animation)
-        return "animation";
-
-    if (reasons & CompositingReason::Filters)
-        return "filters";
-
-    if (reasons & CompositingReason::PositionFixed)
-        return "position: fixed";
-
-    if (reasons & CompositingReason::PositionSticky)
-        return "position: sticky";
-
-    if (reasons & CompositingReason::OverflowScrolling)
-        return "async overflow scrolling";
-
-    if (reasons & CompositingReason::Stacking)
-        return "stacking";
-
-    if (reasons & CompositingReason::Overlap)
-        return "overlap";
-
-    if (reasons & CompositingReason::NegativeZIndexChildren)
-        return "negative z-index children";
-
-    if (reasons & CompositingReason::TransformWithCompositedDescendants)
-        return "transform with composited descendants";
-
-    if (reasons & CompositingReason::OpacityWithCompositedDescendants)
-        return "opacity with composited descendants";
-
-    if (reasons & CompositingReason::MaskWithCompositedDescendants)
-        return "mask with composited descendants";
-
-    if (reasons & CompositingReason::ReflectionWithCompositedDescendants)
-        return "reflection with composited descendants";
-
-    if (reasons & CompositingReason::FilterWithCompositedDescendants)
-        return "filter with composited descendants";
-
-#if ENABLE(CSS_COMPOSITING)
-    if (reasons & CompositingReason::BlendingWithCompositedDescendants)
-        return "blending with composited descendants";
-
-    if (reasons & CompositingReason::IsolatesCompositedBlendingDescendants)
-        return "isolates composited blending descendants";
-#endif
-
-    if (reasons & CompositingReason::Perspective)
-        return "perspective";
-
-    if (reasons & CompositingReason::Preserve3D)
-        return "preserve-3d";
-
-    if (reasons & CompositingReason::Root)
-        return "root";
-
-    if (reasons & CompositingReason::Model)
-        return "model";
-
+#if !LOG_DISABLED
+const char* RenderLayerCompositor::logOneReasonForCompositing(const RenderLayer& layer)
+{
+    for (auto reason : reasonsForCompositing(layer))
+        return compositingReasonToString(reason);
     return "";
 }
 #endif
@@ -3816,7 +3771,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLa
 
     if (!m_layerForTopOverhangArea) {
         m_layerForTopOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForTopOverhangArea->setName("top overhang");
+        m_layerForTopOverhangArea->setName(MAKE_STATIC_STRING_IMPL("top overhang"));
         m_scrolledContentsLayer->addChildBelow(*m_layerForTopOverhangArea, m_rootContentsLayer.get());
     }
 
@@ -3835,7 +3790,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
 
     if (!m_layerForBottomOverhangArea) {
         m_layerForBottomOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForBottomOverhangArea->setName("bottom overhang");
+        m_layerForBottomOverhangArea->setName(MAKE_STATIC_STRING_IMPL("bottom overhang"));
         m_scrolledContentsLayer->addChildBelow(*m_layerForBottomOverhangArea, m_rootContentsLayer.get());
     }
 
@@ -3863,7 +3818,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 
     if (!m_layerForHeader) {
         m_layerForHeader = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForHeader->setName("header");
+        m_layerForHeader->setName(MAKE_STATIC_STRING_IMPL("header"));
         m_scrolledContentsLayer->addChildAbove(*m_layerForHeader, m_rootContentsLayer.get());
         m_renderView.frameView().addPaintPendingMilestones(DidFirstFlushForHeaderLayer);
     }
@@ -3900,7 +3855,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 
     if (!m_layerForFooter) {
         m_layerForFooter = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_layerForFooter->setName("footer");
+        m_layerForFooter->setName(MAKE_STATIC_STRING_IMPL("footer"));
         m_scrolledContentsLayer->addChildAbove(*m_layerForFooter, m_rootContentsLayer.get());
     }
 
@@ -3924,14 +3879,16 @@ void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
         return;
 
     Color backgroundColor;
-    if (page().settings().useThemeColorForScrollAreaBackgroundColor())
-        backgroundColor = page().themeColor();
-    if (page().settings().useSampledPageTopColorForScrollAreaBackgroundColor() && !backgroundColor.isValid())
-        backgroundColor = page().sampledPageTopColor();
-    if (!backgroundColor.isValid())
-        backgroundColor = m_rootExtendedBackgroundColor;
 
-    m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
+    if (m_renderView.settings().backgroundShouldExtendBeyondPage()) {
+        backgroundColor = ([&] {
+            if (auto underPageBackgroundColorOverride = page().underPageBackgroundColorOverride(); underPageBackgroundColorOverride.isValid())
+                return underPageBackgroundColorOverride;
+
+            return m_rootExtendedBackgroundColor;
+        })();
+        m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
+    }
 
     if (!backgroundColor.isValid())
         m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
@@ -4026,7 +3983,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresOverhangAreasLayer()) {
         if (!m_layerForOverhangAreas) {
             m_layerForOverhangAreas = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_layerForOverhangAreas->setName("overhang areas");
+            m_layerForOverhangAreas->setName(MAKE_STATIC_STRING_IMPL("overhang areas"));
             m_layerForOverhangAreas->setDrawsContent(false);
 
             float topContentInset = m_renderView.frameView().topContentInset();
@@ -4035,11 +3992,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setSize(overhangAreaSize);
             m_layerForOverhangAreas->setPosition(FloatPoint(0, topContentInset));
             m_layerForOverhangAreas->setAnchorPoint(FloatPoint3D());
-
-            if (m_renderView.settings().backgroundShouldExtendBeyondPage())
-                m_layerForOverhangAreas->setBackgroundColor(m_renderView.frameView().documentBackgroundColor());
-            else
-                m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
+            updateLayerForOverhangAreasBackgroundColor();
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.
@@ -4051,7 +4004,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresContentShadowLayer()) {
         if (!m_contentShadowLayer) {
             m_contentShadowLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_contentShadowLayer->setName("content shadow");
+            m_contentShadowLayer->setName(MAKE_STATIC_STRING_IMPL("content shadow"));
             m_contentShadowLayer->setSize(m_rootContentsLayer->size());
             m_contentShadowLayer->setPosition(m_rootContentsLayer->position());
             m_contentShadowLayer->setAnchorPoint(FloatPoint3D());
@@ -4068,7 +4021,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForHorizontalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForHorizontalScrollbar->setAllowsBackingStoreDetaching(false);
             m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
-            m_layerForHorizontalScrollbar->setName("horizontal scrollbar container");
+            m_layerForHorizontalScrollbar->setName(MAKE_STATIC_STRING_IMPL("horizontal scrollbar container"));
 #if PLATFORM(COCOA) && USE(CA)
             m_layerForHorizontalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
@@ -4089,7 +4042,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForVerticalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForVerticalScrollbar->setAllowsBackingStoreDetaching(false);
             m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
-            m_layerForVerticalScrollbar->setName("vertical scrollbar container");
+            m_layerForVerticalScrollbar->setName(MAKE_STATIC_STRING_IMPL("vertical scrollbar container"));
 #if PLATFORM(COCOA) && USE(CA)
             m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
@@ -4110,7 +4063,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForScrollCorner = GraphicsLayer::create(graphicsLayerFactory(), *this);
             m_layerForScrollCorner->setAllowsBackingStoreDetaching(false);
             m_layerForScrollCorner->setShowDebugBorder(m_showDebugBorders);
-            m_layerForScrollCorner->setName("scroll corner");
+            m_layerForScrollCorner->setName(MAKE_STATIC_STRING_IMPL("scroll corner"));
 #if PLATFORM(COCOA) && USE(CA)
             m_layerForScrollCorner->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
@@ -4130,7 +4083,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
     if (!m_rootContentsLayer) {
         m_rootContentsLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-        m_rootContentsLayer->setName("content root");
+        m_rootContentsLayer->setName(MAKE_STATIC_STRING_IMPL("content root"));
         IntRect overflowRect = snappedIntRect(m_renderView.layoutOverflowRect());
         m_rootContentsLayer->setSize(FloatSize(overflowRect.maxX(), overflowRect.maxY()));
         m_rootContentsLayer->setPosition(FloatPoint());
@@ -4153,17 +4106,17 @@ void RenderLayerCompositor::ensureRootLayer()
 
             // Create a layer to host the clipping layer and the overflow controls layers.
             m_overflowControlsHostLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_overflowControlsHostLayer->setName("overflow controls host");
+            m_overflowControlsHostLayer->setName(MAKE_STATIC_STRING_IMPL("overflow controls host"));
 
             m_scrolledContentsLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrolledContents);
-            m_scrolledContentsLayer->setName("frame scrolled contents");
+            m_scrolledContentsLayer->setName(MAKE_STATIC_STRING_IMPL("frame scrolled contents"));
             m_scrolledContentsLayer->setAnchorPoint({ });
 
 #if PLATFORM(IOS_FAMILY)
             if (m_renderView.settings().asyncFrameScrollingEnabled()) {
                 m_scrollContainerLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrollContainer);
 
-                m_scrollContainerLayer->setName("scroll container");
+                m_scrollContainerLayer->setName(MAKE_STATIC_STRING_IMPL("scroll container"));
                 m_scrollContainerLayer->setMasksToBounds(true);
                 m_scrollContainerLayer->setAnchorPoint({ });
 
@@ -4175,7 +4128,7 @@ void RenderLayerCompositor::ensureRootLayer()
             // account for clipping and top content inset (see FrameView::yPositionForInsetClipLayer()).
             if (!m_scrollContainerLayer) {
                 m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-                m_clipLayer->setName("frame clipping");
+                m_clipLayer->setName(MAKE_STATIC_STRING_IMPL("frame clipping"));
                 m_clipLayer->setMasksToBounds(true);
                 m_clipLayer->setAnchorPoint({ });
 
@@ -5053,6 +5006,11 @@ TextStream& operator<<(TextStream& ts, CompositingPolicy compositingPolicy)
     case CompositingPolicy::Conservative: ts << "conservative"; break;
     }
     return ts;
+}
+
+TextStream& operator<<(TextStream& ts, CompositingReason compositingReason)
+{
+    return ts << compositingReasonToString(compositingReason);
 }
 
 #if PLATFORM(IOS_FAMILY)

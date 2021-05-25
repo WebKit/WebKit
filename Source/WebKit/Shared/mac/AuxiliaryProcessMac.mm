@@ -315,25 +315,20 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
 
 static String sandboxFilePath(const String& directoryPath, const CString& header)
 {
-    StringBuilder sandboxFile;
-    sandboxFile.append(directoryPath);
-    sandboxFile.append("/CompiledSandbox+");
-
     // Make the filename semi-unique based on the contents of the header.
+
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(header.data(), header.length());
-    Vector<uint8_t> hash = crypto->computeHash();
-    String readableHash = WTF::base64URLEncode(hash.data(), hash.size());
+    auto hash = crypto->computeHash();
 
-    sandboxFile.append(readableHash);
-    return sandboxFile.toString();
+    return makeString(directoryPath, "/CompiledSandbox+", base64URLEncoded(hash.data(), hash.size()));
 }
 
 static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
 {
-    if (!FileSystem::fileIsDirectory(info.parentDirectoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+    if (FileSystem::fileTypeFollowingSymlinks(info.parentDirectoryPath) != FileSystem::FileType::Directory) {
         FileSystem::makeAllDirectories(info.parentDirectoryPath);
-        if (!FileSystem::fileIsDirectory(info.parentDirectoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+        if (FileSystem::fileTypeFollowingSymlinks(info.parentDirectoryPath) != FileSystem::FileType::Directory) {
             WTFLogAlways("%s: Could not create sandbox directory\n", getprogname());
             return false;
         }
@@ -363,8 +358,7 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
         if (!rootless_check_datavault_flag(directoryPath.data(), storageClass))
             return true;
 
-        bool isDirectory = FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::No);
-        if (isDirectory) {
+        if (FileSystem::fileType(info.directoryPath) == FileSystem::FileType::Directory) {
             if (!FileSystem::deleteNonEmptyDirectory(info.directoryPath))
                 return false;
         } else {
@@ -379,14 +373,14 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
         return false;
     }
 #else
-    bool hasSandboxDirectory = FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes);
+    bool hasSandboxDirectory = FileSystem::fileTypeFollowingSymlinks(info.directoryPath) == FileSystem::FileType::Directory;
     if (!hasSandboxDirectory) {
         if (FileSystem::makeAllDirectories(info.directoryPath)) {
-            ASSERT(FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes));
+            ASSERT(FileSystem::fileTypeFollowingSymlinks(info.directoryPath) == FileSystem::FileType::Directory);
             hasSandboxDirectory = true;
         } else {
             // We may have raced with someone else making it. That's ok.
-            hasSandboxDirectory = FileSystem::fileIsDirectory(info.directoryPath, FileSystem::ShouldFollowSymbolicLinks::Yes);
+            hasSandboxDirectory = FileSystem::fileTypeFollowingSymlinks(info.directoryPath) == FileSystem::FileType::Directory;
         }
     }
 

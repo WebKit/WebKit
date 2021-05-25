@@ -58,7 +58,7 @@ public:
     virtual void positionStateChanged(const Optional<WebCore::MediaPositionState>&) = 0;
     virtual void readyStateChanged(WebCore::MediaSessionReadyState) = 0;
     virtual void playbackStateChanged(WebCore::MediaSessionPlaybackState) = 0;
-    virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) = 0;
+    virtual void trackIdentifierChanged(const String&) = 0;
 
     virtual void setClient(WeakPtr<WebCore::MediaSessionCoordinatorClient> client) { m_client = client; }
 

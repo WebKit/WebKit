@@ -99,6 +99,8 @@ void ImageBufferCairoBackend::transformColorSpace(DestinationColorSpace srcColor
         || (destColorSpace != DestinationColorSpace::LinearSRGB && destColorSpace != DestinationColorSpace::SRGB))
         return;
 
+    m_parameters.colorSpace = destColorSpace;
+
     if (destColorSpace == DestinationColorSpace::LinearSRGB) {
         static const std::array<uint8_t, 256> linearRgbLUT = [] {
             std::array<uint8_t, 256> array;
@@ -130,10 +132,7 @@ String ImageBufferCairoBackend::toDataURL(const String& mimeType, Optional<doubl
     if (encodedImage.isEmpty())
         return "data:,";
 
-    Vector<char> base64Data;
-    base64Encode(encodedImage.data(), encodedImage.size(), base64Data);
-
-    return "data:" + mimeType + ";base64," + base64Data;
+    return makeString("data:", mimeType, ";base64,", base64Encoded(encodedImage.data(), encodedImage.size()));
 }
 
 Vector<uint8_t> ImageBufferCairoBackend::toData(const String& mimeType, Optional<double> quality) const

@@ -129,6 +129,7 @@ my (
     $networkCacheStaleWhileRevalidateSupport,
     $notificationsSupport,
     $offscreenCanvasSupport,
+    $offscreenCanvasInWorkersSupport,
     $thunderSupport,
     $orientationEventsSupport,
     $overflowScrollingTouchSupport,
@@ -423,6 +424,9 @@ my @features = (
 
     { option => "offscreen-canvas", desc => "Toggle OffscreenCanvas support",
       define => "ENABLE_OFFSCREEN_CANVAS", value => \$offscreenCanvasSupport },
+
+    { option => "offscreen-canvas-in-workers", desc => "Toggle OffscreenCanvas in Workers support",
+      define => "ENABLE_OFFSCREEN_CANVAS_IN_WORKERS", value => \$offscreenCanvasInWorkersSupport },
 
     { option => "thunder", desc => "Toggle Thunder CDM support",
       define => "ENABLE_THUNDER", value => \$thunderSupport },

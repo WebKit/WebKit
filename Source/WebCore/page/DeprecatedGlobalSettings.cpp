@@ -154,7 +154,7 @@ void DeprecatedGlobalSettings::setAudioSessionCategoryOverride(unsigned sessionC
 
 unsigned DeprecatedGlobalSettings::audioSessionCategoryOverride()
 {
-    return AudioSession::sharedSession().categoryOverride();
+    return static_cast<unsigned>(AudioSession::sharedSession().categoryOverride());
 }
 
 void DeprecatedGlobalSettings::setNetworkDataUsageTrackingEnabled(bool trackingEnabled)

@@ -61,7 +61,7 @@ OpcodeID FileBasedFuzzerAgentBase::opcodeAliasForLookupKey(const OpcodeID& opcod
 
 SpeculatedType FileBasedFuzzerAgentBase::getPrediction(CodeBlock* codeBlock, const CodeOrigin& codeOrigin, SpeculatedType original)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     ScriptExecutable* ownerExecutable = codeBlock->ownerExecutable();
     const auto& sourceURL = ownerExecutable->sourceURL();

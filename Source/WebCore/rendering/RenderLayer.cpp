@@ -177,6 +177,8 @@ public:
     bool fixed() const { return m_fixed; }
     void setFixed(bool fixed) { m_fixed = fixed; }
 
+    void setOverflowClipRectAffectedByRadius() { m_overflowClipRect.setAffectedByRadius(true); }
+
     bool operator==(const ClipRects& other) const
     {
         return m_overflowClipRect == other.overflowClipRect()
@@ -812,7 +814,7 @@ void RenderLayer::updateLayerListsIfNeeded()
 String RenderLayer::name() const
 {
     StringBuilder name;
-    name.append(renderer().debugDescription());
+    name.append(renderer().description());
 
     if (isReflection())
         name.appendLiteral(" (reflection)");
@@ -4488,7 +4490,8 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
         }
-    }
+    } else if (renderer().hasOverflowClip() && transform() && renderer().style().hasBorderRadius())
+        clipRects.setOverflowClipRectAffectedByRadius();
 
     LOG_WITH_STREAM(ClipRects, stream << "RenderLayer " << this << " calculateClipRects " << clipRectsContext << " computed " << clipRects);
 }
@@ -4558,9 +4561,11 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
     // Update the clip rects that will be passed to child layers.
     if (renderer().hasClipOrOverflowClip()) {
         // This layer establishes a clip of some kind.
-        if (renderer().hasOverflowClip() && (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)) {
-            foregroundRect.intersect(downcast<RenderBox>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy));
-            if (renderer().style().hasBorderRadius())
+        if (renderer().hasOverflowClip()) {
+            if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip) {
+                foregroundRect.intersect(downcast<RenderBox>(renderer()).overflowClipRect(toLayoutPoint(offsetFromRootLocal), nullptr, clipRectsContext.overlayScrollbarSizeRelevancy));
+                foregroundRect.setAffectedByRadius(true);
+            } else if (transform() && renderer().style().hasBorderRadius())
                 foregroundRect.setAffectedByRadius(true);
         }
 

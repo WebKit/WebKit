@@ -1996,16 +1996,6 @@ bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef prefere
     return toImpl(preferencesRef)->punchOutWhiteBackgroundsInDarkMode();
 }
 
-void WKPreferencesSetWebSQLDisabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setWebSQLDisabled(flag);
-}
-
-bool WKPreferencesGetWebSQLDisabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->webSQLDisabled();
-}
-
 void WKPreferencesSetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setCaptureAudioInUIProcessEnabled(flag);
@@ -2226,4 +2216,13 @@ void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef)
 {
     return false;
+}
+
+void WKPreferencesSetWebSQLDisabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetWebSQLDisabled(WKPreferencesRef preferencesRef)
+{
+    return true;
 }

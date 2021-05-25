@@ -155,9 +155,8 @@ void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secu
     "ldY9avcTGSwbwoiuIqv0jTL1fHFnzy3RHMLDh+Lpvolc5DSrSJHCP5WuK0eeJXhr"
     "T5oQpHL9z/cCDLAKCKRa4uV0fhEdOWBqyR9p8y5jJtye72t6CuFUV5iqcpF4BH4f"
     "j2VNHwsSrJwkD4QUGlUtH7vwnQmyCFxZMmWAJg==");
-    Vector<uint8_t> certDER;
-    base64Decode(certPEM, certDER, WTF::Base64DecodeOptions::Base64Default);
-    ssl::unique_ptr<CRYPTO_BUFFER> cert(CRYPTO_BUFFER_new(certDER.data(), certDER.size(), nullptr));
+    auto certDER = base64Decode(certPEM);
+    ssl::unique_ptr<CRYPTO_BUFFER> cert(CRYPTO_BUFFER_new(certDER->data(), certDER->size(), nullptr));
     ASSERT(cert);
 
     // This is a test key from BoringSSL.
@@ -412,9 +411,8 @@ Vector<uint8_t> TCPServer::testCertificate()
     "G3PFnYbW8urH0NSJG/W+/9DA+Y7Aa0cs4TPpuBGZ0NU1W94OoCMo4lkO6H/y6Leu"
     "3vjZD3y9kZk7mre9XHwkI8MdK5s=");
     
-    Vector<uint8_t> vector;
-    base64Decode(pemEncodedCertificate, vector, WTF::Base64DecodeOptions::Base64Default);
-    return vector;
+    auto decodedCertificate = base64Decode(pemEncodedCertificate);
+    return WTFMove(*decodedCertificate);
 }
 
 Vector<uint8_t> TCPServer::testPrivateKey()
@@ -471,9 +469,8 @@ Vector<uint8_t> TCPServer::testPrivateKey()
     "dEObvcpShP22ItOVjSampRuAuRG26ZemEbGCI3J6Mqx3y6m+6HwultsgtdzDgrFe"
     "qJfU8bbdbu2pi47Y4FdJK0HLffl5Rw==");
 
-    Vector<uint8_t> vector;
-    base64Decode(pemEncodedPrivateKey, vector, WTF::Base64DecodeOptions::Base64Default);
-    return vector;
+    auto decodedPrivateKey = base64Decode(pemEncodedPrivateKey);
+    return WTFMove(*decodedPrivateKey);
 }
     
 } // namespace TestWebKitAPI

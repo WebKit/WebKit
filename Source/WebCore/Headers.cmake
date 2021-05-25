@@ -237,7 +237,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSCSSStyleDeclarationCustom.h
     bindings/js/JSDOMBinding.h
     bindings/js/JSDOMBindingSecurity.h
-    bindings/js/JSDOMCastedThisErrorBehavior.h
+    bindings/js/JSDOMCastThisValue.h
     bindings/js/JSDOMConvert.h
     bindings/js/JSDOMConvertAny.h
     bindings/js/JSDOMConvertBase.h
@@ -608,6 +608,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     history/BackForwardItemIdentifier.h
     history/CachedFrame.h
     history/CachedFramePlatformData.h
+    history/CachedPage.h
     history/HistoryItem.h
 
     html/Autocapitalize.h
@@ -905,6 +906,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/NavigatorIsLoggedIn.h
     page/PDFImageCachingPolicy.h
     page/Page.h
+    page/PageColorSampler.h
     page/PageConfiguration.h
     page/PageConsoleClient.h
     page/PageGroup.h
@@ -1289,6 +1291,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PathUtilities.h
     platform/graphics/Pattern.h
     platform/graphics/PixelBuffer.h
+    platform/graphics/PixelBufferFormat.h
     platform/graphics/PixelFormat.h
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformImage.h

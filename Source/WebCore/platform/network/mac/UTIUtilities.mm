@@ -26,7 +26,7 @@
 #import "config.h"
 #import "UTIUtilities.h"
 
-#import <wtf/Lock.h>
+#import <wtf/CheckedLock.h>
 #import <wtf/MainThread.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/TinyLRUCache.h>
@@ -112,7 +112,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     static String createKeyForStorage(const String& key) { return key.isolatedCopy(); }
 };
 
-static TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePolicy>& cacheUTIFromMimeType()
+static CheckedLock cacheUTIFromMIMETypeLock;
+static TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePolicy>& cacheUTIFromMIMEType() WTF_REQUIRES_LOCK(cacheUTIFromMIMETypeLock)
 {
     static NeverDestroyed<TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePolicy>> cache;
     return cache;
@@ -120,9 +121,8 @@ static TinyLRUCache<String, RetainPtr<CFStringRef>, 16, UTIFromMIMETypeCachePoli
 
 String UTIFromMIMEType(const String& mimeType)
 {
-    static Lock lock;
-    auto locker = holdLock(lock);
-    return cacheUTIFromMimeType().get(mimeType).get();
+    Locker locker { cacheUTIFromMIMETypeLock };
+    return cacheUTIFromMIMEType().get(mimeType).get();
 }
 
 bool isDeclaredUTI(const String& UTI)

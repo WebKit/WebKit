@@ -30,43 +30,67 @@
 
 namespace WebCore {
 
-static double timingValue(NSDictionary *timingData, NSString *key)
+static Box<NetworkLoadMetrics> packageTimingData(double fetchStart, double domainLookupStart, double domainLookupEnd, double connectStart, double secureConnectionStart, double connectEnd, double requestStart, double responseStart, bool reusedTLSConnection, NSString *protocol)
 {
-    if (id object = [timingData objectForKey:key])
-        return [object doubleValue];
-    return 0.0;
+    auto timing = Box<NetworkLoadMetrics>::create();
+
+    timing->fetchStart = Seconds(fetchStart);
+    timing->domainLookupStart = Seconds(domainLookupStart <= 0 ? -1 : domainLookupStart - fetchStart);
+    timing->domainLookupEnd = Seconds(domainLookupEnd <= 0 ? -1 : domainLookupEnd - fetchStart);
+    timing->connectStart = Seconds(connectStart <= 0 ? -1 : connectStart - fetchStart);
+    if (reusedTLSConnection && [protocol isEqualToString:@"https"])
+        timing->secureConnectionStart = reusedTLSConnectionSentinel;
+    else
+        timing->secureConnectionStart = Seconds(secureConnectionStart <= 0 ? -1 : secureConnectionStart - fetchStart);
+    timing->connectEnd = Seconds(connectEnd <= 0 ? -1 : connectEnd - fetchStart);
+    timing->requestStart = Seconds(requestStart <= 0 ? 0 : requestStart - fetchStart);
+    timing->responseStart = Seconds(responseStart <= 0 ? 0 : responseStart - fetchStart);
+
+    // NOTE: responseEnd is not populated in this code path.
+
+    return timing;
 }
-    
-Box<NetworkLoadMetrics> copyTimingData(NSDictionary *timingData)
+
+Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskTransactionMetrics *incompleteMetrics)
 {
+    return packageTimingData(
+        incompleteMetrics.fetchStartDate.timeIntervalSince1970,
+        incompleteMetrics.domainLookupStartDate.timeIntervalSince1970,
+        incompleteMetrics.domainLookupEndDate.timeIntervalSince1970,
+        incompleteMetrics.connectStartDate.timeIntervalSince1970,
+        incompleteMetrics.secureConnectionStartDate.timeIntervalSince1970,
+        incompleteMetrics.connectEndDate.timeIntervalSince1970,
+        incompleteMetrics.requestStartDate.timeIntervalSince1970,
+        incompleteMetrics.responseStartDate.timeIntervalSince1970,
+        incompleteMetrics.reusedConnection,
+        incompleteMetrics.response.URL.scheme
+    );
+}
+
+Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection)
+{
+    NSDictionary *timingData = [connection _timingData];
     if (!timingData)
         return nullptr;
 
-    Box<NetworkLoadMetrics> timing = Box<NetworkLoadMetrics>::create();
+    auto timingValue = [](NSDictionary *timingData, NSString *key) {
+        if (id object = [timingData objectForKey:key])
+            return [object doubleValue];
+        return 0.0;
+    };
 
-    // This is not the navigationStart time in monotonic time, but the other times are relative to this time
-    // and only the differences between times are stored.
-    double referenceStart = timingValue(timingData, @"_kCFNTimingDataFetchStart");
-
-    double domainLookupStart = timingValue(timingData, @"_kCFNTimingDataDomainLookupStart");
-    double domainLookupEnd = timingValue(timingData, @"_kCFNTimingDataDomainLookupEnd");
-    double connectStart = timingValue(timingData, @"_kCFNTimingDataConnectStart");
-    double secureConnectionStart = timingValue(timingData, @"_kCFNTimingDataSecureConnectionStart");
-    double connectEnd = timingValue(timingData, @"_kCFNTimingDataConnectEnd");
-    double requestStart = timingValue(timingData, @"_kCFNTimingDataRequestStart");
-    double responseStart = timingValue(timingData, @"_kCFNTimingDataResponseStart");
-
-    timing->fetchStart = Seconds(referenceStart);
-    timing->domainLookupStart = Seconds(domainLookupStart <= 0 ? -1 : domainLookupStart - referenceStart);
-    timing->domainLookupEnd = Seconds(domainLookupEnd <= 0 ? -1 : domainLookupEnd - referenceStart);
-    timing->connectStart = Seconds(connectStart <= 0 ? -1 : connectStart - referenceStart);
-    timing->secureConnectionStart = Seconds(secureConnectionStart <= 0 ? -1 : secureConnectionStart - referenceStart);
-    timing->connectEnd = Seconds(connectEnd <= 0 ? -1 : connectEnd - referenceStart);
-    timing->requestStart = Seconds(requestStart <= 0 ? 0 : requestStart - referenceStart);
-    timing->responseStart = Seconds(responseStart <= 0 ? 0 : responseStart - referenceStart);
-
-    // NOTE: responseEnd is not populated in this code path.
-    return timing;
+    return packageTimingData(
+        timingValue(timingData, @"_kCFNTimingDataFetchStart"),
+        timingValue(timingData, @"_kCFNTimingDataDomainLookupStart"),
+        timingValue(timingData, @"_kCFNTimingDataDomainLookupEnd"),
+        timingValue(timingData, @"_kCFNTimingDataConnectStart"),
+        timingValue(timingData, @"_kCFNTimingDataSecureConnectionStart"),
+        timingValue(timingData, @"_kCFNTimingDataConnectEnd"),
+        timingValue(timingData, @"_kCFNTimingDataRequestStart"),
+        timingValue(timingData, @"_kCFNTimingDataResponseStart"),
+        timingValue(timingData, @"_kCFNTimingDataConnectionReused"),
+        connection.currentRequest.URL.scheme
+    );
 }
     
 }

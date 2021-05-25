@@ -183,12 +183,12 @@ class TestParser(object):
         elements_with_src_attributes = doc.findAll(src=re.compile('.*'))
         elements_with_href_attributes = doc.findAll(href=re.compile('.*'))
 
-        url_pattern = re.compile('url\(.*\)')
+        url_pattern = re.compile(r'url\(.*\)')
         urls = []
         for url in doc.findAll(text=url_pattern):
             for url in re.findall(url_pattern, url):
-                url = re.sub('url\([\'\"]?', '', url)
-                url = re.sub('[\'\"]?\)', '', url)
+                url = re.sub('url\\([\'\"]?', '', url)
+                url = re.sub('[\'\"]?\\)', '', url)
                 urls.append(url)
 
         src_paths = [src_tag['src'] for src_tag in elements_with_src_attributes]

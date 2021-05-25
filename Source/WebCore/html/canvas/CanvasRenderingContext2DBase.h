@@ -32,6 +32,7 @@
 #include "CanvasLineJoin.h"
 #include "CanvasPath.h"
 #include "CanvasRenderingContext.h"
+#include "CanvasRenderingContext2DSettings.h"
 #include "CanvasStyle.h"
 #include "CanvasTextAlign.h"
 #include "CanvasTextBaseline.h"
@@ -42,6 +43,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"
+#include "ImageDataSettings.h"
 #include "ImageSmoothingQuality.h"
 #include "Path.h"
 #include "PlatformLayer.h"
@@ -78,10 +80,12 @@ using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasEle
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
 protected:
-    CanvasRenderingContext2DBase(CanvasBase&, bool usesCSSCompatibilityParseMode);
+    CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
 public:
     virtual ~CanvasRenderingContext2DBase();
+
+    const CanvasRenderingContext2DSettings& getContextAttributes() const { return m_settings; }
 
     float lineWidth() const { return state().lineWidth; }
     void setLineWidth(float);
@@ -186,11 +190,12 @@ public:
 
     ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
     ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    ExceptionOr<Ref<CanvasGradient>> createConicGradient(float angleInRadians, float x, float y);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasImageSource&&, const String& repetition);
 
-    RefPtr<ImageData> createImageData(ImageData&) const;
-    ExceptionOr<RefPtr<ImageData>> createImageData(int width, int height) const;
-    ExceptionOr<RefPtr<ImageData>> getImageData(int sx, int sy, int sw, int sh) const;
+    ExceptionOr<Ref<ImageData>> createImageData(ImageData&) const;
+    ExceptionOr<Ref<ImageData>> createImageData(int width, int height, Optional<ImageDataSettings>) const;
+    ExceptionOr<Ref<ImageData>> getImageData(int sx, int sy, int sw, int sh, Optional<ImageDataSettings>) const;
     void putImageData(ImageData&, int dx, int dy);
     void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
 
@@ -328,6 +333,9 @@ private:
     bool isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
+    PixelFormat pixelFormat() const final;
+    DestinationColorSpace colorSpace() const final;
+
     void unwindStateStack();
     void realizeSavesLoop();
 
@@ -395,6 +403,7 @@ private:
     bool m_usesCSSCompatibilityParseMode;
     bool m_usesDisplayListDrawing { false };
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
+    CanvasRenderingContext2DSettings m_settings;
 };
 
 } // namespace WebCore

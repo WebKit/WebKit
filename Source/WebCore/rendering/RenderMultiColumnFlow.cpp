@@ -203,6 +203,12 @@ void RenderMultiColumnFlow::updateMinimumPageHeight(const RenderBlock* block, La
         multicolSet->updateMinimumColumnHeight(minHeight);
 }
 
+void RenderMultiColumnFlow::updateSpaceShortageForSizeContainment(const RenderBlock* block, LayoutUnit offset, LayoutUnit shortage)
+{
+    if (auto* multicolSet = downcast<RenderMultiColumnSet>(fragmentAtBlockOffset(block, offset)))
+        multicolSet->updateSpaceShortageForSizeContainment(shortage);
+}
+
 RenderFragmentContainer* RenderMultiColumnFlow::fragmentAtBlockOffset(const RenderBox* box, LayoutUnit offset, bool extendLastFragment) const
 {
     if (!m_inLayout)

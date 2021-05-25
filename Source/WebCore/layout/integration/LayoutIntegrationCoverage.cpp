@@ -635,6 +635,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             return false;
         if (style.minHeight().isPercent() || style.maxHeight().isPercent())
             return false;
+        if (style.boxShadow())
+            return false;
         return true;
     };
 #endif

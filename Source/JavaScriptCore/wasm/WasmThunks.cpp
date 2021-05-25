@@ -53,7 +53,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.breakpoint(); // We should not reach this.
 
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
     linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationWasmToJSException));
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw exception from Wasm");
 }
@@ -67,7 +67,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     jit.addPtr(CCallHelpers::TrustedImm32(-stackSpace), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
     auto jumpToExceptionHandler = jit.jump();
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
     linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw stack overflow from Wasm");
 }
@@ -93,7 +93,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
 
     jit.emitFunctionEpilogue();
     jit.ret();
-    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Trigger OMG entry tier up");
 }
 #endif
@@ -112,7 +112,7 @@ Thunks& Thunks::singleton()
 
 MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(ThunkGenerator generator)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     return stub(locker, generator);
 }
 
@@ -133,7 +133,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(const AbstractLocker& locker,
 
 MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::existingStub(ThunkGenerator generator)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     auto iter = m_stubs.find(generator);
     if (iter != m_stubs.end())

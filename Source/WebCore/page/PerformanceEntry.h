@@ -44,10 +44,10 @@ public:
     virtual ~PerformanceEntry();
 
     const String& name() const { return m_name; }
-    double startTime() const { return m_startTime; }
-    double duration() const { return m_duration; }
+    virtual double startTime() const { return m_startTime; }
+    virtual double duration() const { return m_duration; }
 
-    enum class Type {
+    enum class Type : uint8_t {
         Navigation  = 1 << 0,
         Mark        = 1 << 1,
         Measure     = 1 << 2,
@@ -55,15 +55,10 @@ public:
         Paint       = 1 << 4
     };
 
-    virtual Type type() const = 0;
+    virtual Type performanceEntryType() const = 0;
     virtual ASCIILiteral entryType() const = 0;
 
     static Optional<Type> parseEntryTypeString(const String& entryType);
-
-    bool isResource() const { return type() == Type::Resource; }
-    bool isMark() const { return type() == Type::Mark; }
-    bool isMeasure() const { return type() == Type::Measure; }
-    bool isPaint() const { return type() == Type::Paint; }
 
     static bool startTimeCompareLessThan(const RefPtr<PerformanceEntry>& a, const RefPtr<PerformanceEntry>& b)
     {

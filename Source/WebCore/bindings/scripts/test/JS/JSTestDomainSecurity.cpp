@@ -183,16 +183,6 @@ void JSTestDomainSecurity::destroy(JSC::JSCell* cell)
     thisObject->JSTestDomainSecurity::~JSTestDomainSecurity();
 }
 
-template<> inline JSTestDomainSecurity* IDLAttribute<JSTestDomainSecurity>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestDomainSecurity*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestDomainSecurity* IDLOperation<JSTestDomainSecurity>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestDomainSecurity*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurityConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

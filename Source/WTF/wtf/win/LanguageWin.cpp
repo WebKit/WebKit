@@ -57,7 +57,7 @@ static String localeInfo(LCTYPE localeType, const String& fallback)
 
 static String platformLanguage()
 {
-    auto locker = holdLock(platformLanguageMutex);
+    Locker locker { platformLanguageMutex };
 
     static String computedDefaultLanguage;
     if (!computedDefaultLanguage.isEmpty())

@@ -37,6 +37,7 @@
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "StyleSheetContents.h"
 
 namespace WebCore {

@@ -126,7 +126,7 @@ class Bug(object):
 
     def commit_revision(self):
         # Sort the comments in reverse order as we want the latest committed revision.
-        r = re.compile("Committed r(?P<svn_revision>\d+)")
+        r = re.compile(r"Committed r(?P<svn_revision>\d+)")
         for comment in sorted(self.comments(), key=lambda comment: comment['text'], reverse=True):
             rev = r.search(comment['text'])
             if rev:

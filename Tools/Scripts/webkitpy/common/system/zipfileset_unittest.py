@@ -21,10 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import shutil
-import tempfile
 import unittest
-import zipfile
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.zipfileset import ZipFileSet

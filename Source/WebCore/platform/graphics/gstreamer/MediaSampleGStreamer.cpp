@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2016 Metrological Group B.V.
  * Copyright (C) 2016, 2017, 2018 Igalia S.L
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +23,7 @@
 #include "MediaSampleGStreamer.h"
 
 #include "GStreamerCommon.h"
-
+#include "PixelBuffer.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <algorithm>
@@ -97,14 +98,19 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, Media
     return adoptRef(*gstreamerMediaSample);
 }
 
-Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(Vector<uint8_t>&& bgraData, const IntSize& size, const IntSize& destinationSize, double frameRate)
+Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& pixelBuffer, const IntSize& destinationSize, double frameRate)
 {
     ensureGStreamerInitialized();
+    
+    auto size = pixelBuffer.size();
 
-    size_t sizeInBytes = bgraData.sizeInBytes();
-    auto* data = bgraData.releaseBuffer().leakPtr();
-    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, data, sizeInBytes, 0, sizeInBytes, data, [](gpointer data) {
-        WTF::VectorMalloc::free(data);
+    auto data = pixelBuffer.takeData();
+    auto sizeInBytes = data->byteLength();
+    auto dataBaseAddress = data->data();
+    auto leakedData = &data.leakRef();
+
+    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, dataBaseAddress, sizeInBytes, 0, sizeInBytes, leakedData, [](gpointer userData) {
+        static_cast<JSC::Uint8ClampedArray*>(userData)->deref();
     }));
 
     auto width = size.width();

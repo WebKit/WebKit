@@ -32,6 +32,7 @@
 #include "AuthenticationChallenge.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "NetworkLoadMetrics.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
@@ -238,7 +239,7 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading()
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading(handle=%p) (%s)", handle, handle->firstRequest().url().string().utf8().data());
 
-        handle->client()->didFinishLoading(handle);
+        handle->client()->didFinishLoading(handle, NetworkLoadMetrics { });
         if (protectedThis->m_messageQueue) {
             protectedThis->m_messageQueue->kill();
             protectedThis->m_messageQueue = nullptr;

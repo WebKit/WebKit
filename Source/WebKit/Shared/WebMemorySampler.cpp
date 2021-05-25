@@ -172,11 +172,9 @@ void WebMemorySampler::appendCurrentMemoryUsageToFile(FileSystem::PlatformFileHa
     if (!memoryStats.values.isEmpty()) {
         statString.append(separator);
         for (size_t i = 0; i < memoryStats.values.size(); ++i) {
-            statString.append('\n');
-            statString.append(separator);
-            statString.append(memoryStats.keys[i]);
+            statString.append('\n', separator, memoryStats.keys[i]);
             appendSpaces(statString, 35 - memoryStats.keys[i].length());
-            statString.appendNumber(memoryStats.values[i]);
+            statString.append(memoryStats.values[i]);
         }
     }
     statString.append('\n');

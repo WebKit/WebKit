@@ -39,6 +39,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <pal/SessionID.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -49,9 +50,9 @@ Ref<MemoryObjectStore> MemoryObjectStore::create(PAL::SessionID sessionID, const
     return adoptRef(*new MemoryObjectStore(sessionID, info));
 }
 
-MemoryObjectStore::MemoryObjectStore(PAL::SessionID sessionID, const IDBObjectStoreInfo& info)
+MemoryObjectStore::MemoryObjectStore(PAL::SessionID, const IDBObjectStoreInfo& info)
     : m_info(info)
-    , m_serializationContext(IDBSerializationContext::getOrCreateIDBSerializationContext(sessionID))
+    , m_serializationContext(IDBSerializationContext::getOrCreateForCurrentThread())
 {
 }
 

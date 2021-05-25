@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,6 @@
 #endif
 
 namespace JSC {
-
-#if ENABLE(MASM_PROBE)
 
 extern "C" JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampolineId, ctiMasmProbeTrampoline);
@@ -763,7 +761,6 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     move(TrustedImmPtr(arg), RegisterID::ebx);
     call(RegisterID::eax, CFunctionPtrTag);
 }
-#endif // ENABLE(MASM_PROBE)
 
 MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUID(unsigned level)
 {

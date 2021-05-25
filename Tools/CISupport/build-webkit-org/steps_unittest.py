@@ -276,7 +276,7 @@ class TestCleanBuildIfScheduled(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/CISupport/clean-build', '--platform=ios-14', '--release'],
+                command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-14', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='deleted WebKitBuild directory')
@@ -292,7 +292,7 @@ class TestCleanBuildIfScheduled(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/CISupport/clean-build', '--platform=ios-simulator-14', '--debug'],
+                command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-simulator-14', '--debug'],
             ) + 2
             + ExpectShell.log('stdio', stdout='Unexpected error.'),
         )
@@ -702,7 +702,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='lldb-webkit-test')
@@ -716,7 +716,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
@@ -730,7 +730,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=2, errors=0)'),
         )
@@ -745,7 +745,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=0, errors=2)'),
         )
@@ -760,7 +760,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=30, errors=2)'),
         )
@@ -990,4 +990,40 @@ class TestSetPermissions(BuildStepMixinAdditions, unittest.TestCase):
             + 1,
         )
         self.expectOutcome(result=FAILURE, state_string='failed (1) (failure)')
+        return self.runStep()
+
+
+class TestSVNCleanup(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(SVNCleanup())
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['svn', 'cleanup'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Run svn cleanup')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(SVNCleanup())
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                command=['svn', 'cleanup'],
+            ) + 2
+            + ExpectShell.log('stdio', stdout='Unexpected error.'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Run svn cleanup (failure)')
         return self.runStep()

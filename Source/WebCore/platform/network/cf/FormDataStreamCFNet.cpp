@@ -189,7 +189,7 @@ static bool openNextStream(FormStreamFields* form)
 {
     // CFReadStreamOpen() can cause this function to be re-entered from another thread before it returns.
     // One example when this can occur is when the stream being opened has no data. See <rdar://problem/23550269>.
-    LockHolder locker(form->streamIsBeingOpenedOrClosedLock);
+    Locker locker { form->streamIsBeingOpenedOrClosedLock };
 
     // Skip over any streams we can't open.
     if (!advanceCurrentStream(form))
@@ -229,7 +229,7 @@ static void formFinalize(CFReadStreamRef stream, void* context)
 
     callOnMainThread([form] {
         {
-            LockHolder locker(form->streamIsBeingOpenedOrClosedLock);
+            Locker locker { form->streamIsBeingOpenedOrClosedLock };
             closeCurrentStream(form);
         }
         delete form;
@@ -299,7 +299,7 @@ static Boolean formCanRead(CFReadStreamRef stream, void* context)
 static void formClose(CFReadStreamRef, void* context)
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
-    LockHolder locker(form->streamIsBeingOpenedOrClosedLock);
+    Locker locker { form->streamIsBeingOpenedOrClosedLock };
 
     closeCurrentStream(form);
 }

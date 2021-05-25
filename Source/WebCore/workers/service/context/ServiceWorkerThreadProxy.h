@@ -82,6 +82,7 @@ public:
     void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
     WEBCORE_EXPORT void setLastNavigationWasAppBound(bool);
+    WEBCORE_EXPORT bool lastNavigationWasAppBound();
 
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, ServiceWorkerContextData&&, String&& userAgent, CacheStorageProvider&, StorageBlockingPolicy);

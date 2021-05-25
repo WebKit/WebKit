@@ -30,7 +30,7 @@
 
 #include "ShareableBitmap.h"
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/ImageData.h>
+#include <WebCore/PixelBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
@@ -158,19 +158,14 @@ RefPtr<Image> ImageBufferShareableBitmapBackend::copyImage(BackingStoreCopy, Pre
     return m_bitmap->createImage();
 }
 
-Vector<uint8_t> ImageBufferShareableBitmapBackend::toBGRAData() const
+Optional<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
-    return ImageBufferBackend::toBGRAData(m_bitmap->data());
+    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_bitmap->data());
 }
 
-RefPtr<ImageData> ImageBufferShareableBitmapBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
 {
-    return ImageBufferBackend::getImageData(outputFormat, srcRect, m_bitmap->data());
-}
-
-void ImageBufferShareableBitmapBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
-{
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, m_bitmap->data());
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->data());
 }
 
 } // namespace WebKit

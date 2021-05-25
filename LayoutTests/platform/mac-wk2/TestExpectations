@@ -873,8 +873,6 @@ webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pas
 
 webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 
-webkit.org/b/207474 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
-
 webkit.org/b/207476 webgpu/whlsl/store-to-property-updates-properly.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207508 webgpu/whlsl/textures-load.html [ Pass ImageOnlyFailure ]
@@ -1157,9 +1155,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 [ arm64 ] fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not.html [ ImageOnlyFailure ]
 
-# rdar://66807554
-webkit.org/b/216155 [ Mojave+ Debug ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
-
 webkit.org/b/215581 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html [ Pass Failure ]
 
 webkit.org/b/215606 webgpu/whlsl/do-while-loop-break.html [ Pass ImageOnlyFailure ]
@@ -1348,8 +1343,6 @@ webkit.org/b/219214 inspector/canvas/console-record-2d.html [ Pass Timeout ]
 
 webkit.org/b/224032 [ arm64 ] tiled-drawing/top-content-inset-fixed-attachment-cover-local.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/222277 media/media-fragments [ Skip ]
-
 webkit.org/b/224135 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html [ Pass Timeout ]
 
 webkit.org/b/224294 [ Debug ] inspector/indexeddb/requestDatabaseNames.html [ Pass Failure ]
@@ -1360,17 +1353,11 @@ webkit.org/b/224463 [ BigSur arm64 ] webrtc/disable-encryption.html [ Pass Timeo
 webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
 http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]
 
-webkit.org/b/221985 fast/mediastream/audio-track-enabled.html [ Pass Failure ]
-
 webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout ]
 
 webkit.org/b/224690 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/224696 [ arm64 ] http/wpt/webrtc/change-encoded-transform.html [ Pass Crash ]
-
 webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html [ Pass Crash ]
-
-webkit.org/b/224845 [ BigSur Debug arm64 ] http/wpt/preload/change-link-rel-attribute.html [ Pass Crash ]
 
 webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 
@@ -1391,3 +1378,27 @@ webkit.org/b/225527 [ BigSur Release arm64 ] http/tests/workers/service/self_reg
 webkit.org/b/224788 [ BugSur Release arm64 ] inspector/css/node-styles-refreshed.html [ Pass Failure ]
 
 webkit.org/b/224784 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]
+
+webkit.org/b/207474 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
+
+webkit.org/b/225529 [ BigSur Release arm64 ] scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html [ Pass Failure ]
+
+webkit.org/b/225534 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html [ Pass Crash ]
+
+webkit.org/b/225533 [ BigSur Release arm64 ] mathml/scripts-removeChild.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/224783 [ BigSur arm64 ] http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Pass Failure ]
+
+webkit.org/b/225666 http/tests/cache/disk-cache/redirect-chain-limits.html [ Slow ]
+
+webkit.org/b/225665 [ Release arm64 ] http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Slow ]
+
+webkit.org/b/225664 editing/selection/move-by-character-brute-force.html [ Slow ]
+
+webkit.org/b/225669 imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
+
+webkit.org/b/225667 http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Slow ]
+
+webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Slow ]
+
+webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Failure ]

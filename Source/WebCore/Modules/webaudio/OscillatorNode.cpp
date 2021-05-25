@@ -349,13 +349,13 @@ void OscillatorNode::process(size_t framesToProcess)
     if (framesToProcess > m_phaseIncrements.size())
         return;
 
-    // The audio thread can't block on this lock, so we use tryHoldLock() instead.
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker) {
-        // Too bad - tryHoldLock() failed. We must be in the middle of changing wave-tables.
+    // The audio thread can't block on this lock, so we use tryLock() instead.
+    if (!m_processLock.tryLock()) {
+        // Too bad - tryLock() failed. We must be in the middle of changing wave-tables.
         outputBus.zero();
         return;
     }
+    Locker locker { AdoptLock, m_processLock };
 
     // We must access m_periodicWave only inside the lock.
     if (!m_periodicWave.get()) {
@@ -431,7 +431,7 @@ void OscillatorNode::setPeriodicWave(PeriodicWave& periodicWave)
     ASSERT(isMainThread());
     
     // This synchronizes with process().
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
     m_periodicWave = &periodicWave;
     m_type = OscillatorType::Custom;
 }

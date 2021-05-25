@@ -712,7 +712,7 @@ static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, 
         return attachment;
     }
 
-    bool isDirectory = FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes);
+    bool isDirectory = FileSystem::fileTypeFollowingSymlinks(path) == FileSystem::FileType::Directory;
     String contentType = typeForAttachmentElement(explicitContentType);
     if (contentType.isEmpty()) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -727,11 +727,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     Optional<uint64_t> fileSizeForDisplay;
-    if (!isDirectory) {
-        long long fileSize;
-        FileSystem::getFileSize(path, fileSize);
-        fileSizeForDisplay = fileSize;
-    }
+    if (!isDirectory)
+        fileSizeForDisplay = FileSystem::fileSize(path).valueOr(0);
 
     frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
 
@@ -746,7 +743,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return image;
     }
 
-    attachment->updateAttributes(WTFMove(fileSizeForDisplay), contentType, FileSystem::pathGetFileName(path));
+    attachment->updateAttributes(WTFMove(fileSizeForDisplay), contentType, FileSystem::pathFileName(path));
     return attachment;
 }
 

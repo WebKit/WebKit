@@ -438,6 +438,27 @@ TEST(WebKit, AllowsContentJavaScript)
 }
 #endif
 
+TEST(WebKit, AllowsContentJavaScriptFromDefaultPreferences)
+{
+    RetainPtr<WKWebpagePreferences> preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setAllowsContentJavaScript:NO];
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setDefaultWebpagePreferences:preferences.get()];
+
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadHTMLString:@"<script>var foo = 'bar'</script>"];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"foo" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_TRUE([[error description] containsString:@"Can't find variable: foo"]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(WebKit, SPIJavascriptMarkupVsAPIContentJavaScript)
 {
     // There's not a dynamically configuration setting for javascript markup,

@@ -41,6 +41,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -87,7 +88,7 @@ private:
         digest->addBytes(certificateData->data, certificateData->len);
 
         auto hash = digest->computeHash();
-        return base64Encode(reinterpret_cast<const char*>(hash.data()), hash.size());
+        return base64EncodeToString(hash);
     }
 
     HashSet<String> m_certificates;

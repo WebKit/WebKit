@@ -658,7 +658,7 @@ bool DragController::canProcessDrag(const DragData& dragData)
     if (!m_page.mainFrame().contentRenderer())
         return false;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     result = m_page.mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
 
     auto* dragNode = result.innerNonSharedNode();
@@ -942,7 +942,7 @@ Optional<HitTestResult> DragController::hitTestResultForDragStart(Frame& source,
     if (!source.view() || !source.contentRenderer())
         return WTF::nullopt;
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     auto hitTestResult = source.eventHandler().hitTestResultAtPoint(location, hitType);
 
     bool sourceContainsHitNode = element.containsIncludingShadowDOM(hitTestResult.innerNode());

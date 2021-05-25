@@ -208,7 +208,7 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
     m_startTime = mediaTime;
     m_frameChunkSize = frameChunkSize;
 
-    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames);
+    m_ringBuffer = CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_buffer = makeUnique<WebAudioBufferList>(description, numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
 

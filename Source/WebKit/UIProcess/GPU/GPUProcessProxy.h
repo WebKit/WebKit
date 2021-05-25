@@ -35,6 +35,7 @@
 #include "ProcessThrottlerClient.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxyMessagesReplies.h"
+#include <WebCore/PageIdentifier.h>
 #include <memory>
 #include <pal/SessionID.h>
 

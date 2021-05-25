@@ -33,6 +33,7 @@
 #include "SQLTransactionBackend.h"
 #include "SQLTransactionStateMachine.h"
 #include "SQLValue.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 
@@ -138,8 +139,8 @@ private:
     bool m_readOnly { false };
     bool m_hasVersionMismatch { false };
 
-    Lock m_statementMutex;
-    Deque<std::unique_ptr<SQLStatement>> m_statementQueue;
+    CheckedLock m_statementLock;
+    Deque<std::unique_ptr<SQLStatement>> m_statementQueue WTF_GUARDED_BY_LOCK(m_statementLock);
 
     std::unique_ptr<SQLStatement> m_currentStatement;
 

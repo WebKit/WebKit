@@ -27,13 +27,13 @@
 
 #if (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)
 
+#include "DataDetectorHighlight.h"
 #include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
-#include "Range.h"
 #include "Timer.h"
 #include <wtf/MonotonicTime.h>
-
-typedef struct __DDHighlight *DDHighlightRef;
+#include <wtf/OptionSet.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
     
@@ -42,7 +42,7 @@ class Page;
 
 struct GapRects;
 
-class ServicesOverlayController : private PageOverlay::Client {
+class ServicesOverlayController : private DataDetectorHighlightClient, private PageOverlay::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ServicesOverlayController(Page&);
@@ -52,48 +52,6 @@ public:
     void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);
 
 private:
-    class Highlight : public RefCounted<Highlight>, private GraphicsLayerClient {
-        WTF_MAKE_NONCOPYABLE(Highlight);
-    public:
-        static Ref<Highlight> createForSelection(ServicesOverlayController&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
-        static Ref<Highlight> createForTelephoneNumber(ServicesOverlayController&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
-        ~Highlight();
-
-        void invalidate();
-
-        DDHighlightRef ddHighlight() const { return m_ddHighlight.get(); }
-        const SimpleRange& range() const { return m_range; }
-        GraphicsLayer& layer() const { return m_graphicsLayer.get(); }
-
-        enum {
-            TelephoneNumberType = 1 << 0,
-            SelectionType = 1 << 1,
-        };
-        typedef uint8_t Type;
-        Type type() const { return m_type; }
-
-        void fadeIn();
-        void fadeOut();
-
-        void setDDHighlight(DDHighlightRef);
-
-    private:
-        Highlight(ServicesOverlayController&, Type, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
-
-        // GraphicsLayerClient
-        void notifyFlushRequired(const GraphicsLayer*) override;
-        void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& inClip, GraphicsLayerPaintBehavior) override;
-        float deviceScaleFactor() const override;
-
-        void didFinishFadeOutAnimation();
-
-        ServicesOverlayController* m_controller;
-        RetainPtr<DDHighlightRef> m_ddHighlight;
-        SimpleRange m_range;
-        Ref<GraphicsLayer> m_graphicsLayer;
-        Type m_type;
-    };
-
     // PageOverlay::Client
     void willMoveToPage(PageOverlay&, Page*) override;
     void didMoveToPage(PageOverlay&, Page*) override;
@@ -102,37 +60,31 @@ private:
     void didScrollFrame(PageOverlay&, Frame&) override;
 
     void createOverlayIfNeeded();
-    void handleClick(const IntPoint&, Highlight&);
+    void handleClick(const IntPoint&, DataDetectorHighlight&);
 
-    void drawHighlight(Highlight&, GraphicsContext&);
+    void drawHighlight(DataDetectorHighlight&, GraphicsContext&);
 
-    void invalidateHighlightsOfType(Highlight::Type);
+    void invalidateHighlightsOfType(DataDetectorHighlight::Type);
     void buildPotentialHighlightsIfNeeded();
 
-    void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<Highlight>>&, Highlight::Type);
-    void removeAllPotentialHighlightsOfType(Highlight::Type);
+    void replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<DataDetectorHighlight>>&, DataDetectorHighlight::Type);
+    void removeAllPotentialHighlightsOfType(DataDetectorHighlight::Type);
     void buildPhoneNumberHighlights();
     void buildSelectionHighlight();
 
     void determineActiveHighlight(bool& mouseIsOverButton);
     void clearActiveHighlight();
-    Highlight* activeHighlight() const { return m_activeHighlight.get(); }
+    DataDetectorHighlight* activeHighlight() const final { return m_activeHighlight.get(); }
 
-    Highlight* findTelephoneNumberHighlightContainingSelectionHighlight(Highlight&);
+    DataDetectorHighlight* findTelephoneNumberHighlightContainingSelectionHighlight(DataDetectorHighlight&);
 
     bool hasRelevantSelectionServices();
 
-    bool mouseIsOverHighlight(Highlight&, bool& mouseIsOverButton) const;
-    Seconds remainingTimeUntilHighlightShouldBeShown(Highlight*) const;
+    bool mouseIsOverHighlight(DataDetectorHighlight&, bool& mouseIsOverButton) const;
+    Seconds remainingTimeUntilHighlightShouldBeShown(DataDetectorHighlight*) const;
     void determineActiveHighlightTimerFired();
 
-    static bool highlightsAreEquivalent(const Highlight*, const Highlight*);
-
     Vector<SimpleRange> telephoneNumberRangesForFocusedFrame();
-
-    void didCreateHighlight(Highlight*);
-    void willDestroyHighlight(Highlight*);
-    void didFinishFadingOutHighlight(Highlight*);
 
     Frame& mainFrame() const;
     Page& page() const { return m_page; }
@@ -140,24 +92,22 @@ private:
     Page& m_page;
     PageOverlay* m_servicesOverlay { nullptr };
 
-    RefPtr<Highlight> m_activeHighlight;
-    RefPtr<Highlight> m_nextActiveHighlight;
-    HashSet<RefPtr<Highlight>> m_potentialHighlights;
-    HashSet<RefPtr<Highlight>> m_animatingHighlights;
+    RefPtr<DataDetectorHighlight> m_activeHighlight;
+    RefPtr<DataDetectorHighlight> m_nextActiveHighlight;
+    HashSet<RefPtr<DataDetectorHighlight>> m_potentialHighlights;
+    HashSet<RefPtr<DataDetectorHighlight>> m_animatingHighlights;
+    WeakHashSet<DataDetectorHighlight> m_highlights;
 
-    HashSet<Highlight*> m_highlights;
-
-    // FIXME: These should move onto Highlight.
     Vector<LayoutRect> m_currentSelectionRects;
     bool m_isTextOnly { false };
 
-    Highlight::Type m_dirtyHighlightTypes { 0 };
+    OptionSet<DataDetectorHighlight::Type> m_dirtyHighlightTypes;
 
     MonotonicTime m_lastSelectionChangeTime;
     MonotonicTime m_nextActiveHighlightChangeTime;
     MonotonicTime m_lastMouseUpTime;
 
-    RefPtr<Highlight> m_currentMouseDownOnButtonHighlight;
+    RefPtr<DataDetectorHighlight> m_currentMouseDownOnButtonHighlight;
     IntPoint m_mousePosition;
 
     Timer m_determineActiveHighlightTimer;

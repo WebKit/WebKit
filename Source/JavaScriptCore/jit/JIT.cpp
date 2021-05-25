@@ -93,9 +93,9 @@ void JIT::emitEnterOptimizationCheck()
     skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     ASSERT(!m_bytecodeIndex.offset());
 
-    copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
+    copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-    callOperation(operationOptimize, &vm(), m_bytecodeIndex.asBits());
+    callOperationNoExceptionCheck(operationOptimize, &vm(), m_bytecodeIndex.asBits());
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
     farJump(returnValueGPR, GPRInfo::callFrameRegister);
     skipOptimize.link(this);
@@ -252,11 +252,6 @@ void JIT::privateCompileMainPass()
 
         m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(m_bytecodeIndex));
 
-#if ENABLE(OPCODE_SAMPLING)
-        if (m_bytecodeIndex > 0) // Avoid the overhead of sampling op_enter twice.
-            sampleInstruction(currentInstruction);
-#endif
-
         m_labels[m_bytecodeIndex.offset()] = label();
 
         if (JITInternal::verbose)
@@ -275,17 +270,17 @@ void JIT::privateCompileMainPass()
             updateTopCallFrame();
 
         unsigned bytecodeOffset = m_bytecodeIndex.offset();
-#if ENABLE(MASM_PROBE)
         if (UNLIKELY(Options::traceBaselineJITExecution())) {
             CodeBlock* codeBlock = m_codeBlock;
             probeDebug([=] (Probe::Context& ctx) {
                 dataLogLn("JIT [", bytecodeOffset, "] ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }
-#endif
 
         switch (opcodeID) {
         DEFINE_SLOW_OP(in_by_val)
+        DEFINE_SLOW_OP(has_private_name)
+        DEFINE_SLOW_OP(has_private_brand)
         DEFINE_SLOW_OP(less)
         DEFINE_SLOW_OP(lesseq)
         DEFINE_SLOW_OP(greater)
@@ -520,10 +515,6 @@ void JIT::privateCompileSlowCases()
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
 
-    FixedVector<RareCaseProfile> rareCaseProfiles;
-    if (shouldEmitProfiling())
-        rareCaseProfiles = FixedVector<RareCaseProfile>(m_bytecodeCountHavingSlowCase);
-    
     unsigned bytecodeCountHavingSlowCase = 0;
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
         m_bytecodeIndex = iter->to;
@@ -534,17 +525,12 @@ void JIT::privateCompileSlowCases()
 
         const Instruction* currentInstruction = m_codeBlock->instructions().at(m_bytecodeIndex).ptr();
         
-        RareCaseProfile* rareCaseProfile = nullptr;
-        if (shouldEmitProfiling())
-            rareCaseProfile = &rareCaseProfiles.at(bytecodeCountHavingSlowCase);
-
         if (JITInternal::verbose)
             dataLogLn("Baseline JIT emitting slow code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
 
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeIndex.offset(), label());
 
-#if ENABLE(MASM_PROBE)
         if (UNLIKELY(Options::traceBaselineJITExecution())) {
             OpcodeID opcodeID = currentInstruction->opcodeID();
             unsigned bytecodeOffset = m_bytecodeIndex.offset();
@@ -553,7 +539,6 @@ void JIT::privateCompileSlowCases()
                 dataLogLn("JIT [", bytecodeOffset, "] SLOW ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }
-#endif
 
         switch (currentInstruction->opcodeID()) {
         DEFINE_SLOWCASE_OP(op_add)
@@ -652,9 +637,6 @@ void JIT::privateCompileSlowCases()
         RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen.");
         RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen.");
         
-        if (shouldEmitProfiling())
-            add32(TrustedImm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
-
         emitJumpSlowToHot(jump(), 0);
         ++bytecodeCountHavingSlowCase;
     }
@@ -668,16 +650,13 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_privateBrandAccessIndex == m_privateBrandAccesses.size());
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
 
-    if (shouldEmitProfiling())
-        m_codeBlock->setRareCaseProfiles(WTFMove(rareCaseProfiles));
-
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
     m_bytecodeIndex = BytecodeIndex();
 #endif
 }
 
-void JIT::compileWithoutLinking(JITCompilationEffort effort)
+void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
     MonotonicTime before { };
     if (UNLIKELY(computeCompileTimes()))
@@ -746,11 +725,6 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
     Label beginLabel(this);
-
-    sampleCodeBlock(m_codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-    sampleInstruction(m_codeBlock->instructions().begin());
-#endif
 
     int frameTopOffset = stackPointerOffsetFor(m_codeBlock) * sizeof(Register);
     unsigned maxFrameSize = -frameTopOffset;
@@ -842,7 +816,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
-    m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_codeBlock, effort));
+    m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_codeBlock, LinkBuffer::Profile::BaselineJIT, effort));
 
     MonotonicTime after { };
     if (UNLIKELY(computeCompileTimes())) {
@@ -856,14 +830,16 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         
         dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", m_linkBuffer->size(), " bytes in ", (after - before).milliseconds(), " ms.\n");
     }
+
+    link();
 }
 
-CompilationResult JIT::link()
+void JIT::link()
 {
     LinkBuffer& patchBuffer = *m_linkBuffer;
     
     if (patchBuffer.didFailToAllocate())
-        return CompilationFailed;
+        return;
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (auto& record : m_switches) {
@@ -901,13 +877,17 @@ CompilationResult JIT::link()
         }
     }
 
-    for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
-        HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
-        // FIXME: <rdar://problem/39433318>.
-        handler.nativeCode = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_labels[handler.target]);
+#if ENABLE(EXTRA_CTI_THUNKS)
+    if (!m_exceptionChecks.empty())
+        patchBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+    if (!m_exceptionChecksWithCallFrameRollback.empty())
+        patchBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
+#endif
+
+    for (auto& record : m_nearJumps) {
+        if (record.target)
+            patchBuffer.link(record.from, record.target);
     }
-
-
     for (auto& record : m_nearCalls) {
         if (record.callee)
             patchBuffer.link(record.from, record.callee);
@@ -916,7 +896,7 @@ CompilationResult JIT::link()
         if (record.callee)
             patchBuffer.link(record.from, record.callee);
     }
-    
+
     finalizeInlineCaches(m_getByIds, patchBuffer);
     finalizeInlineCaches(m_getByVals, patchBuffer);
     finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
@@ -928,7 +908,11 @@ CompilationResult JIT::link()
     finalizeInlineCaches(m_privateBrandAccesses, patchBuffer);
 
     if (m_byValCompilationInfo.size()) {
+#if ENABLE(EXTRA_CTI_THUNKS)
+        CodeLocationLabel exceptionHandler(vm().getCTIStub(handleExceptionGenerator).retaggedCode<ExceptionHandlerPtrTag>());
+#else
         CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_exceptionHandler);
+#endif
 
         for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
             PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
@@ -959,10 +943,9 @@ CompilationResult JIT::link()
 
     for (auto& compilationInfo : m_callCompilationInfo) {
         CallLinkInfo& info = *compilationInfo.callLinkInfo;
-        info.setCallLocations(
-            CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOfNearCall<JSInternalPtrTag>(compilationInfo.callReturnLocation)),
-            CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.hotPathBegin)),
-            patchBuffer.locationOfNearCall<JSInternalPtrTag>(compilationInfo.hotPathOther));
+        info.setCodeLocations(
+            patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.slowPathStart),
+            patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.doneLocation));
     }
 
     {
@@ -974,12 +957,11 @@ CompilationResult JIT::link()
         m_codeBlock->setJITCodeMap(jitCodeMapBuilder.finalize());
     }
 
-    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
-
     if (UNLIKELY(Options::dumpDisassembly())) {
         m_disassembler->dump(patchBuffer);
         patchBuffer.didAlreadyDisassemble();
     }
+
     if (UNLIKELY(m_compilation)) {
         if (Options::disassembleBaselineForProfiler())
             m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
@@ -987,25 +969,54 @@ CompilationResult JIT::link()
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        m_codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
+        m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer);
     
     CodeRef<JSEntryPtrTag> result = FINALIZE_CODE(
         patchBuffer, JSEntryPtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::BaselineJIT)).data());
     
-    m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
-        static_cast<double>(result.size()) /
-        static_cast<double>(m_codeBlock->instructionsSize()));
+    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
+    m_jitCode = adoptRef(*new DirectJITCode(result, withArityCheck, JITType::BaselineJIT));
+
+    if (JITInternal::verbose)
+        dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start().untaggedPtr(), result.executableMemory()->end().untaggedPtr());
+}
+
+CompilationResult JIT::finalizeOnMainThread()
+{
+    RELEASE_ASSERT(!isCompilationThread());
+
+    if (!m_jitCode)
+        return CompilationFailed;
+
+    for (auto pair : m_virtualCalls) {
+        auto callLocation = m_linkBuffer->locationOfNearCall<JITThunkPtrTag>(pair.first);
+
+        CallLinkInfo& info = pair.second;
+        MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(*m_vm, info);
+        info.setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, *m_vm));
+        MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
+    }
 
     {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
         m_codeBlock->shrinkToFit(locker, CodeBlock::ShrinkMode::LateShrink);
     }
-    m_codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(result, withArityCheck, JITType::BaselineJIT)));
 
-    if (JITInternal::verbose)
-        dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start().untaggedPtr(), result.executableMemory()->end().untaggedPtr());
+    for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
+        HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
+        // FIXME: <rdar://problem/39433318>.
+        handler.nativeCode = m_codeBlock->jitCodeMap().find(BytecodeIndex(handler.target)).retagged<ExceptionHandlerPtrTag>();
+    }
+
+    if (m_pcToCodeOriginMap)
+        m_codeBlock->setPCToCodeOriginMap(WTFMove(m_pcToCodeOriginMap));
+
+    m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
+        static_cast<double>(m_jitCode->size()) /
+        static_cast<double>(m_codeBlock->instructionsSize()));
+
+    m_codeBlock->setJITCode(m_jitCode.releaseNonNull());
 
     return CompilationSuccessful;
 }
@@ -1013,12 +1024,13 @@ CompilationResult JIT::link()
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 {
     doMainThreadPreparationBeforeCompile();
-    compileWithoutLinking(effort);
-    return link();
+    compileAndLinkWithoutFinalizing(effort);
+    return finalizeOnMainThread();
 }
 
 void JIT::privateCompileExceptionHandlers()
 {
+#if !ENABLE(EXTRA_CTI_THUNKS)
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         m_exceptionChecksWithCallFrameRollback.link(this);
 
@@ -1027,7 +1039,7 @@ void JIT::privateCompileExceptionHandlers()
         // operationLookupExceptionHandlerFromCallerFrame is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         prepareCallOperation(vm());
-        m_farCalls.append(FarCallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
+        m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
         jumpToExceptionHandler(vm());
     }
 
@@ -1040,9 +1052,10 @@ void JIT::privateCompileExceptionHandlers()
         // operationLookupExceptionHandler is passed one argument, the VM*.
         move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
         prepareCallOperation(vm());
-        m_farCalls.append(FarCallRecord(call(OperationPtrTag), BytecodeIndex(), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
+        m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
         jumpToExceptionHandler(vm());
     }
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 }
 
 void JIT::doMainThreadPreparationBeforeCompile()

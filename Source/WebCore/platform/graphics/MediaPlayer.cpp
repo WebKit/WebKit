@@ -37,6 +37,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformTimeRanges.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include "InbandTextTrackPrivate.h"
@@ -208,9 +209,9 @@ static MediaPlayerClient& nullMediaPlayerClient()
 
 static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&&);
 
-static Lock mediaEngineVectorLock;
+static CheckedLock mediaEngineVectorLock;
 
-static bool& haveMediaEnginesVector()
+static bool& haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
 {
     static bool haveVector;
     return haveVector;
@@ -233,7 +234,7 @@ void RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(RegisterRemotePla
     registerRemotePlayerCallback() = WTFMove(callback);
 }
 
-static void buildMediaEnginesVector()
+static void buildMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
 {
     ASSERT(mediaEngineVectorLock.isLocked());
 
@@ -287,7 +288,7 @@ static void buildMediaEnginesVector()
 static const Vector<std::unique_ptr<MediaPlayerFactory>>& installedMediaEngines()
 {
     {
-        auto locker = holdLock(mediaEngineVectorLock);
+        Locker locker { mediaEngineVectorLock };
         if (!haveMediaEnginesVector())
             buildMediaEnginesVector();
     }
@@ -1506,7 +1507,7 @@ Vector<RefPtr<PlatformTextTrack>> MediaPlayer::outOfBandTrackSources()
 
 void MediaPlayer::resetMediaEngines()
 {
-    auto locker = holdLock(mediaEngineVectorLock);
+    Locker locker { mediaEngineVectorLock };
 
     mutableInstalledMediaEnginesVector().clear();
     haveMediaEnginesVector() = false;

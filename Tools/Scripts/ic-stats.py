@@ -26,7 +26,7 @@
 import re
 import sys
 
-icStatRecord = re.compile(" +(\w+)\(([^,]+), ([^)]+)\)([^:]*): (\d+)")
+icStatRecord = re.compile(r" +(\w+)\(([^,]+), ([^)]+)\)([^:]*): (\d+)")
 getByIdPrefix = "OperationGetById"
 putByIdPrefix = "OperationPutById"
 

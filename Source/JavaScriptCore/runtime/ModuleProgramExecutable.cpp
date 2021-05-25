@@ -89,7 +89,7 @@ void ModuleProgramExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_moduleEnvironmentSymbolTable);
     visitor.append(thisObject->m_moduleProgramCodeBlock);
     if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
-        auto locker = holdLock(thisObject->cellLock());
+        Locker locker { thisObject->cellLock() };
         for (auto& entry : *map)
             visitor.append(entry.value);
     }

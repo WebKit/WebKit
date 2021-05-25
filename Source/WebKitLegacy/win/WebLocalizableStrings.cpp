@@ -169,12 +169,12 @@ static RetainPtr<CFStringRef> copyLocalizedStringFromBundle(WebLocalizableString
 static LocalizedString* findCachedString(WebLocalizableStringsBundle* stringsBundle, const String& key)
 {
     if (!stringsBundle) {
-        auto locker = holdLock(mainBundleLocStringsLock);
+        Locker locker { mainBundleLocStringsLock };
         return mainBundleLocStrings().get(key);
     }
 
     if (stringsBundle->bundle == WebKitLocalizableStringsBundle.bundle) {
-        auto locker = holdLock(frameworkLocStringsLock);
+        Locker locker { frameworkLocStringsLock };
         return frameworkLocStrings().get(key);
     }
 
@@ -184,12 +184,12 @@ static LocalizedString* findCachedString(WebLocalizableStringsBundle* stringsBun
 static void cacheString(WebLocalizableStringsBundle* stringsBundle, const String& key, LocalizedString* value)
 {
     if (!stringsBundle) {
-        auto locker = holdLock(mainBundleLocStringsLock);
+        Locker locker { mainBundleLocStringsLock };
         mainBundleLocStrings().set(key, value);
         return;
     }
 
-    auto locker = holdLock(frameworkLocStringsLock);
+    Locker locker { frameworkLocStringsLock };
     frameworkLocStrings().set(key, value);
 }
 

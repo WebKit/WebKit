@@ -838,16 +838,33 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_by_val)
     RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, GET_C(bytecode.m_base).jsValue(), GET_C(bytecode.m_property).jsValue(), &metadata.m_arrayProfile)));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_in_by_id)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_private_name)
 {
     BEGIN();
 
-    auto bytecode = pc->as<OpInById>();
-    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
+    auto bytecode = pc->as<OpHasPrivateName>();
+    auto baseValue = GET_C(bytecode.m_base).jsValue();
     if (!baseValue.isObject())
         THROW(createInvalidInParameterError(globalObject, baseValue));
 
-    RETURN(jsBoolean(asObject(baseValue)->hasProperty(globalObject, codeBlock->identifier(bytecode.m_property))));
+    auto propertyValue = GET_C(bytecode.m_property).jsValue();
+    ASSERT(propertyValue.isSymbol());
+    auto property = propertyValue.toPropertyKey(globalObject);
+    EXCEPTION_ASSERT(!throwScope.exception());
+
+    RETURN(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property)));
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_has_private_brand)
+{
+    BEGIN();
+
+    auto bytecode = pc->as<OpHasPrivateBrand>();
+    auto baseValue = GET_C(bytecode.m_base).jsValue();
+    if (!baseValue.isObject())
+        THROW(createInvalidInParameterError(globalObject, baseValue));
+
+    RETURN(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, GET_C(bytecode.m_brand).jsValue())));
 }
 
 template<OpcodeSize width>
@@ -952,35 +969,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_wide32)
 {
     BEGIN();
     return iteratorNextTryFastImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_del_by_val)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpDelByVal>();
-    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
-    JSObject* baseObject = baseValue.toObject(globalObject);
-    CHECK_EXCEPTION();
-    
-    JSValue subscript = GET_C(bytecode.m_property).jsValue();
-    
-    bool couldDelete;
-    
-    uint32_t i;
-    if (subscript.getUInt32(i))
-        couldDelete = baseObject->methodTable(vm)->deletePropertyByIndex(baseObject, globalObject, i);
-    else {
-        CHECK_EXCEPTION();
-        auto property = subscript.toPropertyKey(globalObject);
-        CHECK_EXCEPTION();
-        couldDelete = JSCell::deleteProperty(baseObject, globalObject, property);
-    }
-    CHECK_EXCEPTION();
-    
-    if (!couldDelete && bytecode.m_ecmaMode.isStrict())
-        THROW(createTypeError(globalObject, UnableToDeletePropertyError));
-    
-    RETURN(jsBoolean(couldDelete));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_strcat)
@@ -1273,18 +1261,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)
     unsigned numParamsToSkip = bytecode.m_numParametersToSkip;
     JSValue* argumentsToCopyRegion = callFrame->addressOfArgumentsStart() + numParamsToSkip;
     RETURN(constructArray(globalObject, structure, argumentsToCopyRegion, arraySize));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_id_with_this)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpGetByIdWithThis>();
-    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
-    JSValue baseValue = GET_C(bytecode.m_base).jsValue();
-    JSValue thisVal = GET_C(bytecode.m_thisValue).jsValue();
-    PropertySlot slot(thisVal, PropertySlot::PropertySlot::InternalMethodType::Get);
-    JSValue result = baseValue.get(globalObject, ident, slot);
-    RETURN_PROFILED(result);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)

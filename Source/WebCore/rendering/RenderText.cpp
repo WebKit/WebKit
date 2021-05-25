@@ -1577,7 +1577,7 @@ LayoutRect RenderText::linesVisualOverflowBoundingBox() const
     return m_lineBoxes.visualOverflowBoundingBox(*this);
 }
 
-LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderText::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     RenderObject* rendererToRepaint = containingBlock();
 
@@ -1588,9 +1588,9 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObjec
 
     // The renderer we chose to repaint may be an ancestor of repaintContainer, but we need to do a repaintContainer-relative repaint.
     if (repaintContainer && repaintContainer != rendererToRepaint && !rendererToRepaint->isDescendantOf(repaintContainer))
-        return repaintContainer->clippedOverflowRectForRepaint(repaintContainer);
+        return repaintContainer->clippedOverflowRect(repaintContainer, context);
 
-    return rendererToRepaint->clippedOverflowRectForRepaint(repaintContainer);
+    return rendererToRepaint->clippedOverflowRect(repaintContainer, context);
 }
 
 LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>* quads)

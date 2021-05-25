@@ -206,7 +206,7 @@ void RemoteInspectorClient::setBackendCommands(const Event& event)
     if (!event.message || event.message->isEmpty())
         return;
 
-    m_backendCommandsURL = makeString("data:text/javascript;base64,", base64Encode(event.message->utf8()));
+    m_backendCommandsURL = makeString("data:text/javascript;base64,", base64Encoded(event.message->utf8()));
 }
 
 void RemoteInspectorClient::setTargetList(const Event& event)

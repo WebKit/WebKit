@@ -268,9 +268,6 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
 
-# <rdar://problem/23500327> storage/websql/alter-to-info-table.html
-storage/websql/alter-to-info-table.html [ Pass Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 
@@ -981,6 +978,7 @@ accessibility/aria-sort-changed-notification.html [ Skip ]
 accessibility/aria-sort.html [ Skip ]
 accessibility/mac/aria-details.html [ Skip ]
 accessibility/mac/aria-errormessage.html [ Skip ]
+accessibility/mac/pseudo-element-text-markers.html [ Skip ]
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
@@ -1268,3 +1266,11 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
+
+[ BigSur ] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ Pass ImageOnlyFailure ]
+
+[ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
+
+webkit.org/b/224144 storage/websql/alter-to-info-table.html [ Skip ]

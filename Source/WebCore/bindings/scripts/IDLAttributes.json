@@ -71,6 +71,11 @@
             "values": ["*"],
             "supportsConjunction": true
         },
+        "ConditionalForWorker": {
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
+            "values": ["*"],
+            "supportsConjunction": true
+        },
         "ConditionallyReadWrite": {
             "contextsAllowed": ["attribute"],
             "values": ["*"],
@@ -117,9 +122,6 @@
             "contextsAllowed": ["interface"]
         },
         "CustomPreventExtensions": {
-            "contextsAllowed": ["interface"]
-        },
-        "CustomProxyToJSObject": {
             "contextsAllowed": ["interface"]
         },
         "CustomPushEventHandlerScope": {
@@ -244,9 +246,6 @@
             "values": ["*"]
         },
         "ImplementationLacksVTable": {
-            "contextsAllowed": ["interface"]
-        },
-        "ImplicitThis": {
             "contextsAllowed": ["interface"]
         },
         "InterfaceName": {

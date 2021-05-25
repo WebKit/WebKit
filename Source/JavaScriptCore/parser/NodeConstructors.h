@@ -209,6 +209,12 @@ namespace JSC {
         ASSERT(m_start.offset >= m_start.lineStartOffset);
     }
 
+    inline PrivateIdentifierNode::PrivateIdentifierNode(const JSTokenLocation& location, const Identifier& ident)
+        : ExpressionNode(location)
+        , m_ident(ident)
+    {
+    }
+
     inline ElementNode::ElementNode(int elision, ExpressionNode* node)
         : m_node(node)
         , m_elision(elision)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/Language.h>
 
+#include <wtf/CheckedLock.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +37,12 @@
 
 namespace WTF {
 
-static Lock userPreferredLanguagesMutex;
+static CheckedLock preferredLanguagesOverrideLock;
+static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(preferredLanguagesOverrideLock)
+{
+    static NeverDestroyed<Vector<String>> override;
+    return override;
+}
 
 typedef HashMap<void*, LanguageChangeObserverFunction> ObserverMap;
 static ObserverMap& observerMap()
@@ -78,24 +84,18 @@ String defaultLanguage()
     return emptyString();
 }
 
-static Vector<String>& preferredLanguagesOverride()
-{
-    static LazyNeverDestroyed<Vector<String>> override;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        override.construct();
-    });
-    return override;
-}
-
 Vector<String> userPreferredLanguagesOverride()
 {
+    Locker locker { preferredLanguagesOverrideLock };
     return preferredLanguagesOverride();
 }
 
 void overrideUserPreferredLanguages(const Vector<String>& override)
 {
-    preferredLanguagesOverride() = override;
+    {
+        Locker locker { preferredLanguagesOverrideLock };
+        preferredLanguagesOverride() = override;
+    }
     languageDidChange();
 }
 
@@ -111,7 +111,7 @@ static Vector<String> isolatedCopy(const Vector<String>& strings)
 Vector<String> userPreferredLanguages()
 {
     {
-        auto locker = holdLock(userPreferredLanguagesMutex);
+        Locker locker { preferredLanguagesOverrideLock };
         Vector<String>& override = preferredLanguagesOverride();
         if (!override.isEmpty())
             return isolatedCopy(override);

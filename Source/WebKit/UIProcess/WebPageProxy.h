@@ -42,7 +42,6 @@
 #include "MediaKeySystemPermissionRequestManagerProxy.h"
 #include "MediaPlaybackState.h"
 #include "MessageSender.h"
-#include "NotificationPermissionRequestManagerProxy.h"
 #include "PDFPluginIdentifier.h"
 #include "PageLoadState.h"
 #include "PasteboardAccessIntent.h"
@@ -505,6 +504,10 @@ public:
     void didEnterFullscreen();
     void didExitFullscreen();
 
+    void suspend(CompletionHandler<void(bool)>&&);
+    void resume(CompletionHandler<void(bool)>&&);
+    bool isSuspended() const { return m_isSuspended; }
+
     WebInspectorUIProxy* inspector() const;
     GeolocationPermissionRequestManagerProxy& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
 
@@ -669,7 +672,9 @@ public:
 
     WebCore::Color sampledPageTopColor() const { return m_sampledPageTopColor; }
 
-    WebCore::Color scrollAreaBackgroundColor() const;
+    WebCore::Color underPageBackgroundColor() const;
+    WebCore::Color underPageBackgroundColorOverride() const { return m_underPageBackgroundColorOverride; }
+    void setUnderPageBackgroundColorOverride(WebCore::Color&&);
 
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
@@ -1014,7 +1019,7 @@ public:
     void setCustomTextEncodingName(const String&);
     String customTextEncodingName() const { return m_customTextEncodingName; }
 
-    bool areActiveDOMObjectsAndAnimationsSuspended() const { return m_isPageSuspended; }
+    bool areActiveDOMObjectsAndAnimationsSuspended() const { return m_areActiveDOMObjectsAndAnimationsSuspended; }
     void resumeActiveDOMObjectsAndAnimations();
     void suspendActiveDOMObjectsAndAnimations();
 
@@ -1149,7 +1154,7 @@ public:
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
     void didCountStringMatches(const String&, uint32_t matchCount);
-    void setTextIndicator(const WebCore::TextIndicatorData&, uint64_t /* WebCore::TextIndicatorWindowLifetime */ lifetime = 0 /* Permanent */);
+    void setTextIndicator(const WebCore::TextIndicatorData&, uint64_t /* WebCore::TextIndicatorLifetime */ lifetime = 0 /* Permanent */);
     void setTextIndicatorAnimationProgress(float);
     void clearTextIndicator();
 
@@ -2067,7 +2072,7 @@ private:
     void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, CompletionHandler<void(WebCore::IntRect)>&&);
     void runBeforeUnloadConfirmPanel(WebCore::FrameIdentifier, FrameInfoData&&, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanelDelayedReply&&);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
-    void pageDidScroll();
+    void pageDidScroll(const WebCore::IntPoint&);
     void runOpenPanel(WebCore::FrameIdentifier, FrameInfoData&&, const WebCore::FileChooserSettings&);
     bool didChooseFilesForOpenPanelWithImageTranscoding(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);
     void showShareSheet(const WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
@@ -2105,6 +2110,7 @@ private:
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
     void sampledPageTopColorChanged(const WebCore::Color&);
+    WebCore::Color platformUnderPageBackgroundColor() const;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString);
     void didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured);
@@ -2125,7 +2131,7 @@ private:
 
     RefPtr<API::Navigation> launchProcessForReload();
 
-    void requestNotificationPermission(uint64_t notificationID, const String& originString);
+    void requestNotificationPermission(const String& originString, CompletionHandler<void(bool allowed)>&&);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
     void cancelNotification(uint64_t notificationID);
     void clearNotifications(const Vector<uint64_t>& notificationIDs);
@@ -2329,6 +2335,7 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
     WebWheelEventCoalescer& wheelEventCoalescer();
+    bool shouldCoalesceWheelEventsDuringDeceleration() const;
 
 #if HAVE(CVDISPLAYLINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
@@ -2596,7 +2603,6 @@ private:
 
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
     GeolocationPermissionRequestManagerProxy m_geolocationPermissionRequestManager;
-    NotificationPermissionRequestManagerProxy m_notificationPermissionRequestManager;
 
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
@@ -2650,9 +2656,12 @@ private:
     LayerHostingMode m_layerHostingMode { LayerHostingMode::InProcess };
 
     WebCore::Color m_themeColor;
+    WebCore::Color m_underPageBackgroundColorOverride;
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
     WebCore::Color m_sampledPageTopColor;
+
+    bool m_hasPendingUnderPageBackgroundColorOverrideToDispatch { false };
 
     bool m_useFixedLayout { false };
     WebCore::IntSize m_fixedLayoutSize;
@@ -2753,7 +2762,7 @@ private:
     RefPtr<WebCore::ValidationBubble> m_validationBubble;
 #endif
 
-    bool m_isPageSuspended { false };
+    bool m_areActiveDOMObjectsAndAnimationsSuspended { false };
     bool m_addsVisitedLinks { true };
 
     bool m_controlledByAutomation { false };
@@ -3015,6 +3024,7 @@ private:
 
     bool m_lastNavigationWasAppBound { false };
     bool m_isRunningModalJavaScriptDialog { false };
+    bool m_isSuspended { false };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
 

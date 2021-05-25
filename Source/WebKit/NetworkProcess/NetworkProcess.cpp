@@ -428,7 +428,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 
 void NetworkProcess::addSessionStorageQuotaManager(PAL::SessionID sessionID, uint64_t defaultQuota, uint64_t defaultThirdPartyQuota, const String& cacheRootPath, SandboxExtension::Handle& cacheRootPathHandle)
 {
-    LockHolder locker(m_sessionStorageQuotaManagersLock);
+    Locker locker { m_sessionStorageQuotaManagersLock };
     auto isNewEntry = m_sessionStorageQuotaManagers.ensure(sessionID, [defaultQuota, defaultThirdPartyQuota, &cacheRootPath] {
         return makeUnique<SessionStorageQuotaManager>(cacheRootPath, defaultQuota, defaultThirdPartyQuota);
     }).isNewEntry;
@@ -440,7 +440,7 @@ void NetworkProcess::addSessionStorageQuotaManager(PAL::SessionID sessionID, uin
 
 void NetworkProcess::removeSessionStorageQuotaManager(PAL::SessionID sessionID)
 {
-    LockHolder locker(m_sessionStorageQuotaManagersLock);
+    Locker locker { m_sessionStorageQuotaManagersLock };
     ASSERT(m_sessionStorageQuotaManagers.contains(sessionID));
     m_sessionStorageQuotaManagers.remove(sessionID);
 }
@@ -2379,7 +2379,7 @@ void NetworkProcess::addIndexedDatabaseSession(PAL::SessionID sessionID, String&
 
 void NetworkProcess::setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID sessionID, const String& idbRootPath)
 {
-    LockHolder locker(m_sessionStorageQuotaManagersLock);
+    Locker locker { m_sessionStorageQuotaManagersLock };
     auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID);
     ASSERT(sessionStorageQuotaManager);
     sessionStorageQuotaManager->setIDBRootPath(idbRootPath);
@@ -2393,7 +2393,7 @@ void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHand
 
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    LockHolder locker(m_sessionStorageQuotaManagersLock);
+    Locker locker { m_sessionStorageQuotaManagersLock };
     if (auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID)) {
         for (auto storageQuotaManager : sessionStorageQuotaManager->existingStorageQuotaManagers())
             storageQuotaManager->resetQuotaForTesting();
@@ -2498,7 +2498,7 @@ void NetworkProcess::requestStorageSpace(PAL::SessionID sessionID, const ClientO
 
 RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID sessionID, const ClientOrigin& origin)
 {
-    LockHolder locker(m_sessionStorageQuotaManagersLock);
+    Locker locker { m_sessionStorageQuotaManagersLock };
     auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID);
     if (!sessionStorageQuotaManager)
         return nullptr;

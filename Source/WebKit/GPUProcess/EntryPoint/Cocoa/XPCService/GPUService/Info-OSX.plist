@@ -28,6 +28,8 @@
 	<string>NSApplication</string>
 	<key>LSUIElement</key>
 	<true/>
+    <key>_STAttributionDisplayName</key>
+    <string>Website</string>
 	<key>XPCService</key>
 	<dict>
 		<key>ServiceType</key>

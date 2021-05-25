@@ -31,7 +31,6 @@
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
@@ -43,25 +42,33 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DOMFileSystem);
 
 struct ListedChild {
     String filename;
-    FileMetadata::Type type;
+    FileSystem::FileType type;
 
     ListedChild isolatedCopy() const { return { filename.isolatedCopy(), type }; }
 };
 
+static Optional<FileSystem::FileType> fileTypeIgnoringHiddenFiles(const String& fullPath)
+{
+    if (FileSystem::isHiddenFile(fullPath))
+        return WTF::nullopt;
+    return FileSystem::fileType(fullPath);
+}
+
 static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& fullPath)
 {
     ASSERT(!isMainThread());
-    if (!FileSystem::fileIsDirectory(fullPath, FileSystem::ShouldFollowSymbolicLinks::No))
+    if (FileSystem::fileType(fullPath) != FileSystem::FileType::Directory)
         return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
 
-    auto childPaths = FileSystem::listDirectory(fullPath, "*");
+    auto childNames = FileSystem::listDirectory(fullPath);
     Vector<ListedChild> listedChildren;
-    listedChildren.reserveInitialCapacity(childPaths.size());
-    for (auto& childPath : childPaths) {
-        auto metadata = FileSystem::fileMetadata(childPath);
-        if (!metadata || metadata.value().isHidden)
+    listedChildren.reserveInitialCapacity(childNames.size());
+    for (auto& childName : childNames) {
+        auto childPath = FileSystem::pathByAppendingComponent(fullPath, childName);
+        auto fileType = fileTypeIgnoringHiddenFiles(childPath);
+        if (!fileType)
             continue;
-        listedChildren.uncheckedAppend(ListedChild { FileSystem::pathGetFileName(childPath), metadata.value().type });
+        listedChildren.uncheckedAppend(ListedChild { childName, *fileType });
     }
     return listedChildren;
 }
@@ -77,10 +84,10 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecu
     for (auto& child : listedChildren.returnValue()) {
         String virtualPath = parentVirtualPath + "/" + child.filename;
         switch (child.type) {
-        case FileMetadata::Type::File:
+        case FileSystem::FileType::Regular:
             entries.uncheckedAppend(FileSystemFileEntry::create(context, fileSystem, virtualPath));
             break;
-        case FileMetadata::Type::Directory:
+        case FileSystem::FileType::Directory:
             entries.uncheckedAppend(FileSystemDirectoryEntry::create(context, fileSystem, virtualPath));
             break;
         default:
@@ -146,7 +153,7 @@ static bool isValidVirtualPath(StringView virtualPath)
 DOMFileSystem::DOMFileSystem(Ref<File>&& file)
     : m_name(createCanonicalUUIDString())
     , m_file(WTFMove(file))
-    , m_rootPath(FileSystem::directoryName(m_file->path()))
+    , m_rootPath(FileSystem::parentPath(m_file->path()))
     , m_workQueue(WorkQueue::create("DOMFileSystem work queue"))
 {
     ASSERT(!m_rootPath.endsWith('/'));
@@ -166,26 +173,18 @@ Ref<FileSystemEntry> DOMFileSystem::fileAsEntry(ScriptExecutionContext& context)
     return FileSystemFileEntry::create(context, *this, "/" + m_file->name());
 }
 
-static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, String&& virtualPath, FileMetadata::Type expectedType)
+static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, String&& virtualPath, FileSystem::FileType expectedType)
 {
     ASSERT(!isMainThread());
 
-    auto metadata = FileSystem::fileMetadata(fullPath);
-    if (!metadata || metadata.value().isHidden)
+    auto fileType = fileTypeIgnoringHiddenFiles(fullPath);
+    if (!fileType)
         return Exception { NotFoundError, "Path does not exist"_s };
 
-    if (metadata.value().type != expectedType)
+    if (*fileType != expectedType)
         return Exception { TypeMismatchError, "Entry at path does not have expected type" };
 
     return WTFMove(virtualPath);
-}
-
-static Optional<FileMetadata::Type> fileType(const String& fullPath)
-{
-    auto metadata = FileSystem::fileMetadata(fullPath);
-    if (!metadata || metadata.value().isHidden)
-        return WTF::nullopt;
-    return metadata.value().type;
 }
 
 // https://wicg.github.io/entries-api/#resolve-a-relative-path
@@ -271,7 +270,7 @@ void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& 
     ASSERT(virtualPath[0] == '/');
     auto fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([protectedThis = makeRef(*this), context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::Type::Directory);
+        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileSystem::FileType::Directory);
         callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
             if (validatedVirtualPath.hasException())
                 completionCallback(validatedVirtualPath.releaseException());
@@ -312,17 +311,17 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
     }
 
     m_workQueue->dispatch([protectedThis = makeRef(*this), context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        auto entryType = fileType(fullPath);
+        auto entryType = fileTypeIgnoringHiddenFiles(fullPath);
         callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
             if (!entryType) {
                 completionCallback(Exception { NotFoundError, "Cannot find entry at given path"_s });
                 return;
             }
             switch (entryType.value()) {
-            case FileMetadata::Type::Directory:
+            case FileSystem::FileType::Directory:
                 completionCallback(Ref<FileSystemEntry> { FileSystemDirectoryEntry::create(context, protectedThis.get(), resolvedVirtualPath) });
                 break;
-            case FileMetadata::Type::File:
+            case FileSystem::FileType::Regular:
                 completionCallback(Ref<FileSystemEntry> { FileSystemFileEntry::create(context, protectedThis.get(), resolvedVirtualPath) });
                 break;
             default:
@@ -338,7 +337,7 @@ void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemFileEntry
     auto virtualPath = fileEntry.virtualPath();
     auto fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), context = makeRef(context), completionCallback = WTFMove(completionCallback)]() mutable {
-        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::Type::File);
+        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileSystem::FileType::Regular);
         callOnMainThread([fullPath = crossThreadCopy(fullPath), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), context = WTFMove(context), completionCallback = WTFMove(completionCallback)]() mutable {
             if (validatedVirtualPath.hasException())
                 completionCallback(validatedVirtualPath.releaseException());

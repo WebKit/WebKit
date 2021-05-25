@@ -40,7 +40,7 @@
     [CallWith=Document] constructor(DOMString title, optional NotificationOptions options);
 
     [CallWith=Document] static readonly attribute NotificationPermission permission;
-    [CallWith=Document] static undefined requestPermission(optional NotificationPermissionCallback? deprecatedCallback); // FIXME: This should return a Promise<NotificationPermission>.
+    [CallWith=Document] static Promise<NotificationPermission> requestPermission(optional NotificationPermissionCallback? deprecatedCallback);
 
     // static readonly attribute unsigned long maxActions;
 

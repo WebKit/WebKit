@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,9 @@
 #endif
 
 namespace JSC {
+
+size_t LinkBuffer::s_profileCummulativeLinkedSizes[LinkBuffer::numberOfProfiles];
+size_t LinkBuffer::s_profileCummulativeLinkedCounts[LinkBuffer::numberOfProfiles];
 
 bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
 {
@@ -437,6 +440,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
 #endif // !ENABLE(BRANCH_COMPACTION)
 
     m_linkTasks = WTFMove(macroAssembler.m_linkTasks);
+    m_lateLinkTasks = WTFMove(macroAssembler.m_lateLinkTasks);
 }
 
 void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort effort)
@@ -469,14 +473,17 @@ void LinkBuffer::performFinalization()
 {
     for (auto& task : m_linkTasks)
         task->run(*this);
+    for (auto& task : m_lateLinkTasks)
+        task->run(*this);
 
 #ifndef NDEBUG
-    ASSERT(m_isJumpIsland || !isCompilationThread());
     ASSERT(!m_completed);
     ASSERT(isValid());
     m_completed = true;
 #endif
     
+    s_profileCummulativeLinkedSizes[static_cast<unsigned>(m_profile)] += m_size;
+    s_profileCummulativeLinkedCounts[static_cast<unsigned>(m_profile)]++;
     MacroAssembler::cacheFlush(code(), m_size);
 }
 
@@ -526,6 +533,77 @@ void LinkBuffer::dumpCode(void* code, size_t size)
 #endif
 }
 #endif
+
+void LinkBuffer::clearProfileStatistics()
+{
+    for (unsigned i = 0; i < numberOfProfiles; ++i) {
+        s_profileCummulativeLinkedSizes[i] = 0;
+        s_profileCummulativeLinkedCounts[i] = 0;
+    }
+}
+
+void LinkBuffer::dumpProfileStatistics(Optional<PrintStream*> outStream)
+{
+    struct Stat {
+        Profile profile;
+        size_t size;
+        size_t count;
+    };
+
+    Stat sortedStats[numberOfProfiles];
+    PrintStream& out = outStream ? *outStream.value() : WTF::dataFile();
+
+#define RETURN_LINKBUFFER_PROFILE_NAME(name) case Profile::name: return #name;
+    auto name = [] (Profile profile) -> const char* {
+        switch (profile) {
+            FOR_EACH_LINKBUFFER_PROFILE(RETURN_LINKBUFFER_PROFILE_NAME)
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+#undef RETURN_LINKBUFFER_PROFILE_NAME
+
+    size_t totalOfAllProfilesSize = 0;
+    auto dumpStat = [&] (const Stat& stat) {
+        char formattedName[21];
+        snprintf(formattedName, 21, "%20s", name(stat.profile));
+
+        const char* largerUnit = nullptr;
+        double sizeInLargerUnit = stat.size;
+        if (stat.size > 1 * MB) {
+            largerUnit = "MB";
+            sizeInLargerUnit = sizeInLargerUnit / MB;
+        } else if (stat.size > 1 * KB) {
+            largerUnit = "KB";
+            sizeInLargerUnit = sizeInLargerUnit / KB;
+        }
+
+        if (largerUnit)
+            out.print("  ", formattedName, ": ", stat.size, " (", sizeInLargerUnit, " ", largerUnit, ")");
+        else
+            out.print("  ", formattedName, ": ", stat.size);
+
+        if (!stat.count)
+            out.println();
+        else
+            out.println(" count ", stat.count, " avg size ", (stat.size / stat.count));
+    };
+
+    for (unsigned i = 0; i < numberOfProfiles; ++i) {
+        sortedStats[i].profile = static_cast<Profile>(i);
+        sortedStats[i].size = s_profileCummulativeLinkedSizes[i];
+        sortedStats[i].count = s_profileCummulativeLinkedCounts[i];
+        totalOfAllProfilesSize += s_profileCummulativeLinkedSizes[i];
+    }
+    sortedStats[static_cast<unsigned>(Profile::Total)].size = totalOfAllProfilesSize;
+    std::sort(&sortedStats[0], &sortedStats[numberOfProfilesExcludingTotal],
+        [] (Stat& a, Stat& b) -> bool {
+            return a.size > b.size;
+        });
+
+    out.println("Cummulative LinkBuffer profile sizes:");
+    for (unsigned i = 0; i < numberOfProfiles; ++i)
+        dumpStat(sortedStats[i]);
+}
 
 } // namespace JSC
 

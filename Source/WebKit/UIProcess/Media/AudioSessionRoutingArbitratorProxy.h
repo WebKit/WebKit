@@ -74,7 +74,7 @@ private:
     void endRoutingArbitration();
 
     WebProcessProxy& m_process;
-    WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::None };
+    WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
     ArbitrationStatus m_arbitrationStatus { ArbitrationStatus::None };
     WallTime m_arbitrationUpdateTime;
 

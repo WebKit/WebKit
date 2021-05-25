@@ -49,9 +49,9 @@ private:
     bool checkDatabaseValidity();
     void deleteAllDatabaseFiles();
     void verifySchemaVersion();
-    int executeSimpleSql(const String& sql, bool ignoreError = false);
+    int executeSQLStatement(Expected<SQLiteStatement, int>&&);
     void checkSQLiteReturnCode(int actual);
-    std::unique_ptr<SQLiteStatement> createPreparedStatement(const String& sql);
+    std::unique_ptr<SQLiteStatement> createPreparedStatement(ASCIILiteral sql);
 
     String m_databaseFilename;
     SQLiteDatabase m_database;

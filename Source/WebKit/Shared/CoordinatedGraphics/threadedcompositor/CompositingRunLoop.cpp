@@ -85,25 +85,25 @@ void CompositingRunLoop::performTask(Function<void ()>&& function)
 void CompositingRunLoop::performTaskSync(Function<void ()>&& function)
 {
     ASSERT(RunLoop::isMain());
-    LockHolder locker(m_dispatchSyncConditionMutex);
+    Locker locker { m_dispatchSyncConditionLock };
     m_runLoop->dispatch([this, function = WTFMove(function)] {
         function();
-        LockHolder locker(m_dispatchSyncConditionMutex);
+        Locker locker { m_dispatchSyncConditionLock };
         m_dispatchSyncCondition.notifyOne();
     });
-    m_dispatchSyncCondition.wait(m_dispatchSyncConditionMutex);
+    m_dispatchSyncCondition.wait(m_dispatchSyncConditionLock);
 }
 
 void CompositingRunLoop::suspend()
 {
-    LockHolder stateLocker(m_state.lock);
+    Locker stateLocker { m_state.lock };
     m_state.isSuspended = true;
     m_updateTimer.stop();
 }
 
 void CompositingRunLoop::resume()
 {
-    LockHolder stateLocker(m_state.lock);
+    Locker stateLocker { m_state.lock };
     m_state.isSuspended = false;
     if (m_state.update == UpdateState::Scheduled)
         m_updateTimer.startOneShot(0_s);
@@ -111,7 +111,7 @@ void CompositingRunLoop::resume()
 
 void CompositingRunLoop::scheduleUpdate()
 {
-    LockHolder stateLocker(m_state.lock);
+    Locker stateLocker { m_state.lock };
     scheduleUpdate(stateLocker);
 }
 
@@ -143,7 +143,7 @@ void CompositingRunLoop::stopUpdates()
 {
     // Stop everything.
 
-    LockHolder locker(m_state.lock);
+    Locker locker { m_state.lock };
     m_updateTimer.stop();
     m_state.update = UpdateState::Idle;
     m_state.pendingUpdate = false;
@@ -180,7 +180,7 @@ void CompositingRunLoop::updateTimerFired()
 {
     {
         // Scene update is now in progress.
-        LockHolder locker(m_state.lock);
+        Locker locker { m_state.lock };
         if (m_state.isSuspended)
             return;
         m_state.update = UpdateState::InProgress;

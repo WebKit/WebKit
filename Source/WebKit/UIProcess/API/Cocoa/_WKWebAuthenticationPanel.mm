@@ -68,7 +68,7 @@ static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NS
         [dictionary setObject:@"webauthn.get" forKey:@"type"];
         break;
     }
-    [dictionary setObject:WTF::base64URLEncode(challenge.bytes, challenge.length) forKey:@"challenge"];
+    [dictionary setObject:base64URLEncodeToString(challenge.bytes, challenge.length) forKey:@"challenge"];
     [dictionary setObject:origin forKey:@"origin"];
 
     return [NSJSONSerialization dataWithJSONObject:dictionary.get() options:NSJSONWritingSortedKeys error:nil];

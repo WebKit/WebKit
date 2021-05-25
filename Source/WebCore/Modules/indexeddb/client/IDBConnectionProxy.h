@@ -29,6 +29,7 @@
 #include "IDBDatabaseNameAndVersionRequest.h"
 #include "IDBResourceIdentifier.h"
 #include "TransactionOperation.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Forward.h>
@@ -127,7 +128,7 @@ public:
 
 private:
     void completeOpenDBRequest(const IDBResultData&);
-    bool hasRecordOfTransaction(const IDBTransaction&) const;
+    bool hasRecordOfTransaction(const IDBTransaction&) const WTF_REQUIRES_LOCK(m_transactionMapLock);
 
     void saveOperation(TransactionOperation&);
 
@@ -155,26 +156,23 @@ private:
     IDBConnectionToServer& m_connectionToServer;
     IDBConnectionIdentifier m_serverConnectionIdentifier;
 
-    HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
-    Lock m_databaseConnectionMapLock;
+    CheckedLock m_databaseConnectionMapLock;
+    CheckedLock m_openDBRequestMapLock;
+    CheckedLock m_transactionMapLock;
+    CheckedLock m_transactionOperationLock;
+    CheckedLock m_databaseInfoMapLock;
+    CheckedLock m_mainThreadTaskLock;
 
-    HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap;
-    Lock m_openDBRequestMapLock;
-
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
-    Lock m_transactionMapLock;
-
-    HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;
-    Lock m_transactionOperationLock;
-
-    HashMap<IDBResourceIdentifier, Ref<IDBDatabaseNameAndVersionRequest>> m_databaseInfoCallbacks;
-    Lock m_databaseInfoMapLock;
+    HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap WTF_GUARDED_BY_LOCK(m_databaseConnectionMapLock);
+    HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap WTF_GUARDED_BY_LOCK(m_openDBRequestMapLock);
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations WTF_GUARDED_BY_LOCK(m_transactionOperationLock);
+    HashMap<IDBResourceIdentifier, Ref<IDBDatabaseNameAndVersionRequest>> m_databaseInfoCallbacks WTF_GUARDED_BY_LOCK(m_databaseInfoMapLock);
 
     CrossThreadQueue<CrossThreadTask> m_mainThreadQueue;
-    Lock m_mainThreadTaskLock;
-    RefPtr<IDBConnectionToServer> m_mainThreadProtector;
+    RefPtr<IDBConnectionToServer> m_mainThreadProtector WTF_GUARDED_BY_LOCK(m_mainThreadTaskLock);
 };
 
 } // namespace IDBClient

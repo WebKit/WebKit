@@ -29,8 +29,10 @@ namespace WebCore {
 
 class ResourceRequest;
 
+enum class IsForDOMCookieAccess : bool { No, Yes };
+
 struct SameSiteInfo {
-    WEBCORE_EXPORT static SameSiteInfo create(const ResourceRequest&);
+    WEBCORE_EXPORT static SameSiteInfo create(const ResourceRequest&, IsForDOMCookieAccess = IsForDOMCookieAccess::No);
 
     bool isSameSite { false };
     bool isTopSite { false };

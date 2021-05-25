@@ -33,6 +33,7 @@
 #include <mutex>
 #include <stdint.h>
 #include <wtf/Atomics.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Expected.h>
 #include <wtf/FastTLS.h>
 #include <wtf/Function.h>
@@ -116,8 +117,8 @@ public:
     static Thread& current();
 
     // Set of all WTF::Thread created threads.
-    WTF_EXPORT_PRIVATE static HashSet<Thread*>& allThreads(const LockHolder&);
-    WTF_EXPORT_PRIVATE static Lock& allThreadsMutex();
+    WTF_EXPORT_PRIVATE static HashSet<Thread*>& allThreads() WTF_REQUIRES_LOCK(allThreadsLock());
+    WTF_EXPORT_PRIVATE static CheckedLock& allThreadsLock() WTF_RETURNS_LOCK(s_allThreadsLock);
 
     WTF_EXPORT_PRIVATE unsigned numberOfThreadGroups();
 
@@ -327,6 +328,8 @@ protected:
 #else
     static Thread* currentMayBeNull();
 #endif
+
+    static CheckedLock s_allThreadsLock;
 
     JoinableState m_joinableState { Joinable };
     bool m_isShuttingDown : 1;

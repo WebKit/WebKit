@@ -764,7 +764,7 @@ void Plan::cancel()
 
 void Plan::cleanMustHandleValuesIfNecessary()
 {
-    LockHolder locker(m_mustHandleValueCleaningLock);
+    Locker locker { m_mustHandleValueCleaningLock };
 
     if (!m_mustHandleValuesMayIncludeGarbage)
         return;

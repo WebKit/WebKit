@@ -79,14 +79,14 @@ void ScrollSnapAnimatorState::teardownAnimationForState(ScrollSnapState state)
     m_currentState = state;
 }
 
-FloatPoint ScrollSnapAnimatorState::currentAnimatedScrollOffset(bool& isAnimationComplete) const
+FloatPoint ScrollSnapAnimatorState::currentAnimatedScrollOffset(MonotonicTime currentTime, bool& isAnimationComplete) const
 {
     if (!m_momentumCalculator) {
         isAnimationComplete = true;
         return { };
     }
 
-    Seconds elapsedTime = MonotonicTime::now() - m_startTime;
+    Seconds elapsedTime = currentTime - m_startTime;
     isAnimationComplete = elapsedTime >= m_momentumCalculator->animationDuration();
     return m_momentumCalculator->scrollOffsetAfterElapsedTime(elapsedTime);
 }

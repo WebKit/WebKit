@@ -149,6 +149,8 @@ class EmptyChromeClient : public ChromeClient {
     void storeAppHighlight(AppHighlight&&) const final;
 #endif
 
+    void setTextIndicator(const TextIndicatorData&) const final;
+
     DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
 
     void runOpenPanel(Frame&, FileChooser&) final;

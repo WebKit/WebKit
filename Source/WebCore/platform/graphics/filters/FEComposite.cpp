@@ -27,7 +27,7 @@
 #include "FECompositeArithmeticNEON.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -229,21 +229,21 @@ void FEComposite::platformApplySoftware()
     FilterEffect* in2 = inputEffect(1);
 
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
-        auto* resultImage = createPremultipliedImageResult();
-        if (!resultImage)
+        auto& destinationPixelBuffer = createPremultipliedImageResult();
+        if (!destinationPixelBuffer)
             return;
         
-        auto& dstPixelArray = resultImage->data();
+        auto& destinationPixelArray = destinationPixelBuffer->data();
 
-        IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-        auto srcPixelArray = in->premultipliedResult(effectADrawingRect, operatingColorSpace());
-        if (!srcPixelArray)
+        IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+        auto sourcePixelArray = in->premultipliedResult(effectADrawingRect, operatingColorSpace());
+        if (!sourcePixelArray)
             return;
 
-        IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-        in2->copyPremultipliedResult(dstPixelArray, effectBDrawingRect, operatingColorSpace());
+        IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
+        in2->copyPremultipliedResult(destinationPixelArray, effectBDrawingRect, operatingColorSpace());
 
-        platformArithmeticSoftware(*srcPixelArray, dstPixelArray, m_k1, m_k2, m_k3, m_k4);
+        platformArithmeticSoftware(*sourcePixelArray, destinationPixelArray, m_k1, m_k2, m_k3, m_k4);
         return;
     }
 

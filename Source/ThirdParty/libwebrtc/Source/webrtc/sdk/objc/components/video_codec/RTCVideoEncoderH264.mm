@@ -338,6 +338,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   int32_t _width;
   int32_t _height;
   bool _useVCP;
+  bool _useBaseline;
   VTCompressionSessionRef _vtCompressionSession;
   VCPCompressionSessionRef _vcpCompressionSession;
   CVPixelBufferPoolRef _pixelBufferPool;
@@ -364,12 +365,12 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     _packetizationMode = RTCH264PacketizationModeNonInterleaved;
     _profile_level_id =
         webrtc::H264::ParseSdpProfileLevelId([codecInfo nativeSdpVideoFormat].parameters);
-    if (_profile_level_id) {
-      auto profile = ExtractProfile(*_profile_level_id);
-      _useVCP = [(__bridge NSString *)profile containsString: @"High"];
-    } else {
-      _useVCP = false;
-    }
+    _useBaseline = !_profile_level_id || ![(__bridge NSString *)ExtractProfile(*_profile_level_id) containsString: @"High"];
+#if ENABLE_VCP_FOR_H264_BASELINE
+    _useVCP = true;
+#else
+    _useVCP = !_useBaseline;
+#endif
     RTC_DCHECK(_profile_level_id);
     RTC_LOG(LS_INFO) << "Using profile " << CFStringToString(ExtractProfile(*_profile_level_id));
     RTC_CHECK([codecInfo.name isEqualToString:kRTCVideoCodecH264Name]);
@@ -783,7 +784,12 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 - (void)configureCompressionSession {
   RTC_DCHECK([self hasCompressionSession]);
   SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_RealTime, true);
-  SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_ProfileLevel, ExtractProfile(*_profile_level_id));
+#if ENABLE_VCP_FOR_H264_BASELINE
+  if (_useBaseline && _useVCP)
+    SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_ConstrainedBaseline_AutoLevel);
+  else
+#endif
+    SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_ProfileLevel, ExtractProfile(*_profile_level_id));
   SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
 #if ENABLE_VCP_ENCODER
   if (_useVCP) {

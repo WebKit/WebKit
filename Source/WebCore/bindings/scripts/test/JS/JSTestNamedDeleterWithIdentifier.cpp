@@ -229,11 +229,6 @@ bool JSTestNamedDeleterWithIdentifier::deletePropertyByIndex(JSCell* cell, JSGlo
     return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
 }
 
-template<> inline JSTestNamedDeleterWithIdentifier* IDLOperation<JSTestNamedDeleterWithIdentifier>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestNamedDeleterWithIdentifier*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedDeleterWithIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

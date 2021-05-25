@@ -102,6 +102,8 @@ public:
     virtual void setPageBreak(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*spaceShortage*/) { }
     virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*minHeight*/) { }
 
+    virtual void updateSpaceShortageForSizeContainment(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*shortage*/) { }
+
     virtual RenderFragmentContainer* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const;
 
     bool fragmentsHaveUniformLogicalWidth() const { return m_fragmentsHaveUniformLogicalWidth; }

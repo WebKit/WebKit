@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,14 +75,14 @@ void OMGPlan::work(CompilationEffort)
     auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, UINT32_MAX);
 
     if (UNLIKELY(!parseAndCompileResult)) {
-        fail(holdLock(m_lock), makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));
+        fail(Locker { m_lock }, makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));
         return;
     }
 
     Entrypoint omgEntrypoint;
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-        Base::fail(holdLock(m_lock), makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
+        Base::fail(Locker { m_lock }, makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
         return;
     }
 
@@ -104,7 +104,7 @@ void OMGPlan::work(CompilationEffort)
         // always call the fastest code. Any function linked after us will see our new code and the new callsites, which they
         // will update. It's also ok if they publish their code before we reset the instruction caches because after we release
         // the lock our code is ready to be published too.
-        LockHolder holder(m_codeBlock->m_lock);
+        Locker locker { m_codeBlock->m_lock };
 
         m_codeBlock->m_omgCallees[m_functionIndex] = callee.copyRef();
 
@@ -122,13 +122,13 @@ void OMGPlan::work(CompilationEffort)
 
         {
             if (BBQCallee* bbqCallee = m_codeBlock->m_bbqCallees[m_functionIndex].get()) {
-                auto locker = holdLock(bbqCallee->tierUpCount()->getLock());
+                Locker locker { bbqCallee->tierUpCount()->getLock() };
                 bbqCallee->setReplacement(callee.copyRef());
                 bbqCallee->tierUpCount()->m_compilationStatusForOMG = TierUpCount::CompilationStatus::Compiled;
             }
             if (m_codeBlock->m_llintCallees) {
                 LLIntCallee& llintCallee = m_codeBlock->m_llintCallees->at(m_functionIndex).get();
-                auto locker = holdLock(llintCallee.tierUpCounter().m_lock);
+                Locker locker { llintCallee.tierUpCounter().m_lock };
                 llintCallee.setReplacement(callee.copyRef());
                 llintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
             }
@@ -136,7 +136,7 @@ void OMGPlan::work(CompilationEffort)
     }
 
     dataLogLnIf(WasmOMGPlanInternal::verbose, "Finished OMG ", m_functionIndex);
-    complete(holdLock(m_lock));
+    complete(Locker { m_lock });
 }
 
 } } // namespace JSC::Wasm

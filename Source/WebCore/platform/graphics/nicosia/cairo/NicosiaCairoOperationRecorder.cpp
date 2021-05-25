@@ -73,7 +73,7 @@ auto createCommand() -> std::enable_if_t<std::is_base_of<OperationData<>, T>::va
 }
 
 CairoOperationRecorder::CairoOperationRecorder(GraphicsContext& context, PaintingOperations& commandList)
-    : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
+    : GraphicsContextImpl(context)
     , m_commandList(commandList)
 {
     m_stateStack.append({ { }, { }, FloatRect::infiniteRect() });

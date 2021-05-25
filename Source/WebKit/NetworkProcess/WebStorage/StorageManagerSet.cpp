@@ -163,13 +163,13 @@ void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
     ASSERT(RunLoop::isMain());
 
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
-    Locker<Lock> stateLocker(m_stateLock);
+    Locker stateLocker { m_stateLock };
     if (m_state != State::Running)
         return;
     m_state = State::WillSuspend;
 
     m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = completionHandlerCaller.release()] () mutable {
-        Locker<Lock> stateLocker(m_stateLock);
+        Locker stateLocker { m_stateLock };
         ASSERT(m_state != State::Suspended);
 
         if (m_state != State::WillSuspend) {
@@ -190,7 +190,7 @@ void StorageManagerSet::resume()
 {
     ASSERT(RunLoop::isMain());
 
-    Locker<Lock> stateLocker(m_stateLock);
+    Locker stateLocker { m_stateLock };
     auto previousState = m_state;
     m_state = State::Running;
     if (previousState == State::Suspended)

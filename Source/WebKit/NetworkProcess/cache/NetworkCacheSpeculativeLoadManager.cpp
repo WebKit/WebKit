@@ -93,6 +93,8 @@ static inline ResourceRequest constructRevalidationRequest(const Key& key, const
     revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
     revalidationRequest.setIsSameSite(subResourceInfo.isSameSite());
     revalidationRequest.setIsTopSite(subResourceInfo.isTopSite());
+    revalidationRequest.setIsAppBound(subResourceInfo.isAppBound());
+
     if (!key.partition().isEmpty())
         revalidationRequest.setCachePartition(key.partition());
     ASSERT_WITH_MESSAGE(key.range().isEmpty(), "range is not supported");
@@ -367,12 +369,12 @@ void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const Re
         m_pendingFrameLoads.add(frameID, pendingFrameLoad.copyRef());
 
         // Retrieve the subresources entry if it exists to start speculative revalidation and to update it.
-        retrieveSubresourcesEntry(resourceKey, [this, weakThis = makeWeakPtr(*this), frameID, pendingFrameLoad = WTFMove(pendingFrameLoad), isNavigatingToAppBoundDomain](std::unique_ptr<SubresourcesEntry> entry) {
+        retrieveSubresourcesEntry(resourceKey, [this, weakThis = makeWeakPtr(*this), frameID, pendingFrameLoad = WTFMove(pendingFrameLoad), requestIsAppBound = request.isAppBound(), isNavigatingToAppBoundDomain](std::unique_ptr<SubresourcesEntry> entry) {
             if (!weakThis)
                 return;
 
             if (entry)
-                startSpeculativeRevalidation(frameID, *entry, isNavigatingToAppBoundDomain);
+                startSpeculativeRevalidation(frameID, *entry, requestIsAppBound, isNavigatingToAppBoundDomain);
 
             pendingFrameLoad->setExistingSubresourcesEntry(WTFMove(entry));
         });
@@ -590,10 +592,11 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
     });
 }
 
-void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& frameID, SubresourcesEntry& entry, bool requestIsAppBound, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     for (auto& subresourceInfo : entry.subresources()) {
         auto& key = subresourceInfo.key();
+        subresourceInfo.setIsAppBound(requestIsAppBound);
         if (!subresourceInfo.isTransient())
             preloadEntry(key, subresourceInfo, frameID, isNavigatingToAppBoundDomain);
         else {

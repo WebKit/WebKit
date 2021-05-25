@@ -238,6 +238,10 @@ bool JSArray::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName prope
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSArray* thisObject = jsCast<JSArray*>(cell);
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
+
     thisObject->ensureWritable(vm);
 
     if (propertyName == vm.propertyNames->length) {
@@ -246,9 +250,6 @@ bool JSArray::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName prope
                 throwTypeError(globalObject, scope, "Array length is not writable"_s);
             return false;
         }
-
-        if (UNLIKELY(slot.thisValue() != thisObject))
-            RELEASE_AND_RETURN(scope, JSObject::definePropertyOnReceiver(globalObject, propertyName, value, slot));
 
         unsigned newLength = value.toUInt32(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
@@ -792,7 +793,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
         return true;
     
     DisallowGC disallowGC;
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     
     if (startIndex + count > vectorLength)
         count = vectorLength - startIndex;
@@ -980,7 +981,7 @@ bool JSArray::unshiftCountWithArrayStorage(JSGlobalObject* globalObject, unsigne
     // Need to have GC deferred around the unshiftCountSlowCase(), since that leaves the butterfly in
     // a weird state: some parts of it will be left uninitialized, which we will fill in here.
     DeferGC deferGC(vm.heap);
-    auto locker = holdLock(cellLock());
+    Locker locker { cellLock() };
     
     if (moveFront && storage->m_indexBias >= count) {
         // When moving Butterfly's head to adjust property-storage, we must take a structure lock.

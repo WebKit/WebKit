@@ -60,6 +60,13 @@ WebURLSchemeTask::~WebURLSchemeTask()
     ASSERT(RunLoop::isMain());
 }
 
+ResourceRequest WebURLSchemeTask::request() const
+{
+    ASSERT(RunLoop::isMain());
+    Locker locker { m_requestLock };
+    return m_request;
+}
+
 auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, ResourceRequest&& request,  Function<void(ResourceRequest&&)>&& completionHandler) -> ExceptionType
 {
     ASSERT(RunLoop::isMain());
@@ -83,7 +90,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
         m_syncResponse = response;
 
     {
-        LockHolder locker(m_requestLock);
+        Locker locker { m_requestLock };
         m_request = request;
     }
 
@@ -127,7 +134,7 @@ auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& respons
         m_syncResponse = response;
 
     {
-        LockHolder locker(m_requestLock);
+        Locker locker { m_requestLock };
         m_request = request;
     }
 
@@ -212,10 +219,10 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     m_completed = true;
     
     if (isSync()) {
-        Vector<char> data;
+        Vector<uint8_t> data;
         if (m_syncData) {
             data.resize(m_syncData->size());
-            memcpy(data.data(), reinterpret_cast<const char*>(m_syncData->data()), m_syncData->size());
+            memcpy(data.data(), reinterpret_cast<const uint8_t*>(m_syncData->data()), m_syncData->size());
         }
 
         m_syncCompletionHandler(m_syncResponse, error, WTFMove(data));
@@ -238,7 +245,7 @@ void WebURLSchemeTask::pageDestroyed()
     m_stopped = true;
     
     if (isSync()) {
-        LockHolder locker(m_requestLock);
+        Locker locker { m_requestLock };
         m_syncCompletionHandler({ }, failedCustomProtocolSyncLoad(m_request), { });
     }
 }
@@ -251,7 +258,7 @@ void WebURLSchemeTask::stop()
     m_stopped = true;
 
     if (isSync()) {
-        LockHolder locker(m_requestLock);
+        Locker locker { m_requestLock };
         m_syncCompletionHandler({ }, failedCustomProtocolSyncLoad(m_request), { });
     }
 }
@@ -259,7 +266,7 @@ void WebURLSchemeTask::stop()
 #if PLATFORM(COCOA)
 NSURLRequest *WebURLSchemeTask::nsRequest() const
 {
-    LockHolder locker(m_requestLock);
+    Locker locker { m_requestLock };
     return m_request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 #endif

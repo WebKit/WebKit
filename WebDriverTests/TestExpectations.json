@@ -75,8 +75,11 @@
             "testShouldNotSwitchMagicallyToTheTopWindow": {
                 "expected": {"all": {"slow": true}}
             },
+            "testShouldFocusOnTheReplacementWhenAFrameFollowsALinkToA_TopTargetedPage": {
+                "expected": {"all": {"status": ["FAIL"], "reason": "Marked fail upstream through annotations for remote and safari."}}
+            },
             "testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs": {
-                "expected": {"wpe": {"status": ["FAIL"], "reason": "Marked fail upstream through annotations for gtk and safari"}}
+                "expected": {"all": {"status": ["FAIL"], "reason": "Marked fail upstream through annotations for gtk and safari."}}
             }
         }
     },
@@ -181,6 +184,12 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
             },
             "testShouldFireKeyPressEvents": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "testWillSimulateAKeyPressWhenEnteringTextIntoInputElements" : {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "testWillSimulateAKeyPressWhenEnteringTextIntoTextAreas" : {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
             }
         }
@@ -325,6 +334,24 @@
 
     "imported/w3c/webdriver/tests/perform_actions/pointer.py": {
         "subtests": {
+            "test_drag_and_drop_with_draggable_element[0]": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/157179"},
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/214141"}
+                }
+            },
+            "test_drag_and_drop_with_draggable_element[300]": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/157179"},
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/214141"}
+                }
+            },
+            "test_drag_and_drop_with_draggable_element[800]": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/157179"},
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/214141"}
+                }
+            },
             "test_no_top_browsing_context": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
             },
@@ -790,6 +817,12 @@
     },
     "imported/w3c/webdriver/tests/element_send_keys/events.py": {
         "subtests": {
+            "test_form_control_send_text[input]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_form_control_send_text[textarea]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
             "test_not_blurred[input]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
             },
@@ -1201,6 +1234,13 @@
         }
     },
 
+    "imported/w3c/webdriver/tests/take_element_screenshot/iframe.py": {
+        "subtests": {
+            "test_frame_element": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/226134"}}
+            }
+        }
+    },
 
     "imported/w3c/webdriver/tests/take_element_screenshot/screenshot.py": {
         "subtests": {

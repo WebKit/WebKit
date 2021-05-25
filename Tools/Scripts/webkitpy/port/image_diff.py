@@ -90,7 +90,7 @@ class ImageDiffer(object):
                 break
 
             if output.startswith(b'Content-Length'):
-                m = re.match(b'Content-Length: (\d+)', output)
+                m = re.match(br'Content-Length: (\d+)', output)
                 content_length = int(string_utils.decode(m.group(1), target_type=str))
                 output_image = self._process.read_stdout(deadline, content_length)
                 output = self._process.read_stdout_line(deadline)

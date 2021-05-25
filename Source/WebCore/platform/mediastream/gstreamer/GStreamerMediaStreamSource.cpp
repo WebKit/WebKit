@@ -240,10 +240,21 @@ public:
 
     void trackStarted(MediaStreamTrackPrivate&) final { };
     void trackEnded(MediaStreamTrackPrivate&) final;
-    void trackEnabledChanged(MediaStreamTrackPrivate&) final { };
     void trackMutedChanged(MediaStreamTrackPrivate&) final { };
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { };
     void readyStateChanged(MediaStreamTrackPrivate&) final { };
+
+    void trackEnabledChanged(MediaStreamTrackPrivate&) final
+    {
+        GST_INFO_OBJECT(m_src.get(), "Track enabled: %s", boolForPrinting(m_track.enabled()));
+        if (m_blackFrame && !m_track.enabled()) {
+            m_enoughData = false;
+            m_needsDiscont = true;
+            gst_element_send_event(m_src.get(), gst_event_new_flush_start());
+            gst_element_send_event(m_src.get(), gst_event_new_flush_stop(FALSE));
+            pushBlackFrame();
+        }
+    }
 
     void videoSampleAvailable(MediaSample& sample) final
     {
@@ -251,28 +262,25 @@ public:
             return;
 
         auto* gstSample = static_cast<MediaSampleGStreamer*>(&sample)->platformSample().sample.gstSample;
+        auto* caps = gst_sample_get_caps(gstSample);
+        GstVideoInfo info;
+        gst_video_info_from_caps(&info, caps);
+
+        int width = GST_VIDEO_INFO_WIDTH(&info);
+        int height = GST_VIDEO_INFO_HEIGHT(&info);
+        if (m_lastKnownSize != IntSize(width, height)) {
+            m_lastKnownSize.setWidth(width);
+            m_lastKnownSize.setHeight(height);
+            updateBlackFrame(caps);
+        }
+
         if (m_track.enabled()) {
+            GST_TRACE_OBJECT(m_src.get(), "Pushing video frame from enabled track");
             pushSample(gstSample);
             return;
         }
 
-        // In case the track is disabled, emit a black I420 frame.
-        auto caps = adoptGRef(gst_caps_copy(gst_sample_get_caps(gstSample)));
-        gst_caps_set_simple(caps.get(), "format", G_TYPE_STRING, "I420", nullptr);
-
-        GstVideoInfo info;
-        gst_video_info_from_caps(&info, caps.get());
-
-        auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
-        {
-            GstMappedBuffer data(buffer, GST_MAP_WRITE);
-            auto yOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 1);
-            memset(data.data(), 0, yOffset);
-            memset(data.data() + yOffset, 128, data.size() - yOffset);
-        }
-        gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, GST_VIDEO_INFO_WIDTH(&info), GST_VIDEO_INFO_HEIGHT(&info), 3, info.offset, info.stride);
-        auto blackSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-        pushSample(blackSample.get());
+        pushBlackFrame();
     }
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription&, size_t) final
@@ -287,6 +295,32 @@ public:
     }
 
 private:
+    void updateBlackFrame(const GstCaps* sampleCaps)
+    {
+        GST_DEBUG_OBJECT(m_src.get(), "Updating black video frame");
+        auto caps = adoptGRef(gst_caps_copy(sampleCaps));
+        gst_caps_set_simple(caps.get(), "format", G_TYPE_STRING, "I420", nullptr);
+
+        GstVideoInfo info;
+        gst_video_info_from_caps(&info, caps.get());
+
+        auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
+        {
+            GstMappedBuffer data(buffer, GST_MAP_WRITE);
+            auto yOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 1);
+            memset(data.data(), 0, yOffset);
+            memset(data.data() + yOffset, 128, data.size() - yOffset);
+        }
+        gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, m_lastKnownSize.width(), m_lastKnownSize.height(), 3, info.offset, info.stride);
+        m_blackFrame = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
+    }
+
+    void pushBlackFrame()
+    {
+        GST_TRACE_OBJECT(m_src.get(), "Pushing black video frame");
+        pushSample(m_blackFrame.get());
+    }
+
     GstElement* m_parent { nullptr };
     MediaStreamTrackPrivate& m_track;
     GRefPtr<GstElement> m_src;
@@ -297,6 +331,8 @@ private:
     bool m_isObserving { false };
     RefPtr<AudioTrackPrivateMediaStream> m_audioTrack;
     RefPtr<VideoTrackPrivateMediaStream> m_videoTrack;
+    IntSize m_lastKnownSize;
+    GRefPtr<GstSample> m_blackFrame;
 };
 
 struct _WebKitMediaStreamSrcPrivate {

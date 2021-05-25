@@ -112,6 +112,8 @@ public:
         Webgl2
     };
 
+    static bool enabledForContext(ScriptExecutionContext&);
+
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, std::unique_ptr<DetachedOffscreenCanvas>&&);
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, HTMLCanvasElement&);

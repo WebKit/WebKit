@@ -136,7 +136,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
         case JSONLogValue::Type::JSON:
             if (builder.length()) {
                 m_jsonLogValues.append({ JSONLogValue::Type::String, builder.toString() });
-                builder.resize(0);
+                builder.clear();
             }
 
             m_jsonLogValues.append(message);

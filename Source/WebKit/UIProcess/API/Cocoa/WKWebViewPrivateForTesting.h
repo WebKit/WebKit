@@ -155,7 +155,7 @@ struct _WKMediaPositionState {
 - (void)positionStateChanged:(struct _WKMediaPositionState * _Nullable)state;
 - (void)readyStateChanged:(_WKMediaSessionReadyState)state;
 - (void)playbackStateChanged:(_WKMediaSessionPlaybackState)state;
-- (void)coordinatorStateChanged:(_WKMediaSessionCoordinatorState)state;
+- (void)trackIdentifierChanged:(NSString *)trackIdentifier;
 @end
 
 NS_ASSUME_NONNULL_END

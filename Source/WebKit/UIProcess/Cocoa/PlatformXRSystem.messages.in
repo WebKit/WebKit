@@ -30,6 +30,7 @@ messages -> PlatformXRSystem NotRefCounted {
     InitializeTrackingAndRendering()
     ShutDownTrackingAndRendering()
     RequestFrame() -> (struct PlatformXR::Device::FrameData frameData) Async
+    SubmitFrame()
 }
 
 #endif

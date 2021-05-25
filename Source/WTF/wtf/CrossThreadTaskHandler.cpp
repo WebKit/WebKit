@@ -57,7 +57,7 @@ void CrossThreadTaskHandler::postTaskReply(CrossThreadTask&& task)
 {
     m_taskReplyQueue.append(WTFMove(task));
 
-    Locker<Lock> locker(m_mainThreadReplyLock);
+    Locker locker { m_mainThreadReplyLock };
     if (m_mainThreadReplyScheduled)
         return;
 
@@ -84,7 +84,7 @@ void CrossThreadTaskHandler::taskRunLoop()
 void CrossThreadTaskHandler::handleTaskRepliesOnMainThread()
 {
     {
-        Locker<Lock> locker(m_mainThreadReplyLock);
+        Locker locker { m_mainThreadReplyLock };
         m_mainThreadReplyScheduled = false;
     }
 

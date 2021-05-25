@@ -556,6 +556,10 @@ void EmptyChromeClient::storeAppHighlight(AppHighlight&&) const
 }
 #endif
 
+void EmptyChromeClient::setTextIndicator(const TextIndicatorData&) const
+{
+}
+
 DisplayRefreshMonitorFactory* EmptyChromeClient::displayRefreshMonitorFactory() const
 {
     return EmptyDisplayRefreshMonitorFactory::sharedEmptyDisplayRefreshMonitorFactory();

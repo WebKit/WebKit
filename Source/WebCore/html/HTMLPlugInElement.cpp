@@ -469,7 +469,7 @@ bool HTMLPlugInElement::isReplacementObscured()
     auto height = viewRect.height();
     // Hit test the center and near the corners of the replacement text to ensure
     // it is visible and is not masked by other elements.
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::IgnoreClipping, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult result;
     HitTestLocation location { LayoutPoint { viewRect.center() } };
     ASSERT(!renderView->needsLayout());

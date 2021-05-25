@@ -33,6 +33,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/WebCoreBundleWin.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #endif
 
 namespace WebKit {
@@ -61,7 +62,7 @@ static void initializeRemoteInspectorServer(StringView address)
         return;
 
     auto host = address.substring(0, pos);
-    auto port = address.substring(pos + 1).toUInt64Strict();
+    auto port = parseInteger<uint16_t>(address.substring(pos + 1));
     if (!port)
         return;
 

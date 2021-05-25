@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator()
 #if !ENABLE(MALLOC_HEAP_BREAKDOWN)
     for (unsigned i = 0; i < m_blocks.size(); ++i) {
         void* block = m_blocks[i];
-        if (!m_committed[i])
+        if (!m_committed.quickGet(i))
             WTF::fastCommitAlignedMemory(block, MarkedBlock::blockSize);
         fastAlignedFree(block);
     }
@@ -59,11 +59,11 @@ void* IsoAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_debugHeap.memalign(MarkedBlock::blockSize, MarkedBlock::blockSize, true);
 #else
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     m_firstUncommitted = m_committed.findBit(m_firstUncommitted, false);
     if (m_firstUncommitted < m_blocks.size()) {
-        m_committed[m_firstUncommitted] = true;
+        m_committed.quickSet(m_firstUncommitted);
         void* result = m_blocks[m_firstUncommitted];
         WTF::fastCommitAlignedMemory(result, MarkedBlock::blockSize);
         return result;
@@ -77,7 +77,7 @@ void* IsoAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size
     m_blockIndices.add(result, index);
     if (m_blocks.capacity() != m_committed.size())
         m_committed.resize(m_blocks.capacity());
-    m_committed[index] = true;
+    m_committed.quickSet(index);
     return result;
 #endif
 }
@@ -87,12 +87,12 @@ void IsoAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     m_debugHeap.free(basePtr);
 #else
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     
     auto iter = m_blockIndices.find(basePtr);
     RELEASE_ASSERT(iter != m_blockIndices.end());
     unsigned index = iter->value;
-    m_committed[index] = false;
+    m_committed.quickClear(index);
     m_firstUncommitted = std::min(index, m_firstUncommitted);
     WTF::fastDecommitAlignedMemory(basePtr, MarkedBlock::blockSize);
 #endif

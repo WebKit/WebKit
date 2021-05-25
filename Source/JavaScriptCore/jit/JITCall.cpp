@@ -138,8 +138,6 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
 
     addSlowCase(branchIfEmpty(regT0));
 
-    sampleCodeBlock(m_codeBlock);
-    
     emitPutCallResult(bytecode);
 
     return true;
@@ -158,12 +156,10 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     load64(Address(stackPointerRegister, sizeof(Register) * CallFrameSlot::callee - sizeof(CallerFrameAndPC)), regT0);
-    emitVirtualCall(vm(), m_codeBlock->globalObject(), info);
+    m_virtualCalls.append(std::pair<Call, CallLinkInfo&> { emitUnlinkedVirtualCall(m_codeBlock->globalObject(), info), *info });
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
-    sampleCodeBlock(m_codeBlock);
-    
     emitPutCallResult(bytecode);
 }
 
@@ -192,8 +188,14 @@ bool JIT::compileTailCall(const OpTailCall& bytecode, CallLinkInfo* info, unsign
         ValueRecovery::inGPR(regT0, DataFormatJS);
     shuffleData.setupCalleeSaveRegisters(m_codeBlock);
     info->setFrameShuffleData(shuffleData);
-    CallFrameShuffler(*this, shuffleData).prepareForTailCall();
-    m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedNearTailCall();
+
+    JumpList slowPaths = info->emitTailCallFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::Yes, [&] {
+        CallFrameShuffler(*this, shuffleData).prepareForTailCall();
+    });
+    addSlowCase(slowPaths);
+    auto doneLocation = label();
+    m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
+    
     return true;
 }
 
@@ -232,34 +234,34 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     if (compileCallEval(bytecode))
         return;
 
-    DataLabelPtr addressOfLinkedFunctionCheck;
-    Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(nullptr));
-    addSlowCase(slowCase);
-
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
     info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), regT0);
     m_callCompilationInfo.append(CallCompilationInfo());
-    m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
 
-    if (compileTailCall(bytecode, info, callLinkInfoIndex)) {
+    if (compileTailCall(bytecode, info, callLinkInfoIndex))
         return;
-    }
 
     if (opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        emitRestoreCalleeSaves();
-        prepareForTailCallSlow();
-        m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedNearTailCall();
+        auto slowPaths = info->emitTailCallFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::Yes, [&] {
+            emitRestoreCalleeSaves();
+            prepareForTailCallSlow(regT2);
+        });
+        addSlowCase(slowPaths);
+        auto doneLocation = label();
+        m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
         return;
     }
 
-    m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedNearCall();
+    auto slowPaths = info->emitFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::Yes);
+    auto doneLocation = label();
+    addSlowCase(slowPaths);
+
+    m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
-    sampleCodeBlock(m_codeBlock);
-    
     emitPutCallResult(bytecode);
 }
 
@@ -271,16 +273,15 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
 
     linkAllSlowCases(iter);
 
+    m_callCompilationInfo[callLinkInfoIndex].slowPathStart = label();
+
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         emitRestoreCalleeSaves();
 
     move(TrustedImmPtr(m_codeBlock->globalObject()), regT3);
-    move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
+    m_callCompilationInfo[callLinkInfoIndex].callLinkInfo->emitSlowPath(*m_vm, *this);
 
-    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation =
-        emitNakedNearCall(m_vm->getCTIStub(linkCallThunkGenerator).retaggedCode<NoPtrTag>());
-
-    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs) {
+    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
         abortWithReason(JITDidReturnFromTailCall);
         return;
     }
@@ -288,8 +289,6 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
-    sampleCodeBlock(m_codeBlock);
-    
     auto bytecode = instruction->as<Op>();
     emitPutCallResult(bytecode);
 }

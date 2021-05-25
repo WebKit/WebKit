@@ -319,7 +319,7 @@ void EditCommandComposition::setRangeDeletedByUnapply(const VisiblePositionIndex
 }
 
 #ifndef NDEBUG
-void EditCommandComposition::getNodesInCommand(HashSet<Node*>& nodes)
+void EditCommandComposition::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
     for (auto& command : m_commands)
         command->getNodesInCommand(nodes);

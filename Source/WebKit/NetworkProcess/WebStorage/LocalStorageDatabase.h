@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/SQLiteDatabase.h>
-#include <wtf/RefCounted.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 class SQLiteStatementAutoResetScope;
@@ -62,13 +62,13 @@ private:
     bool migrateItemTableIfNeeded();
     bool databaseIsEmpty() const;
 
-    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, const String& query) const;
+    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query) const;
 
     String m_databasePath;
     mutable WebCore::SQLiteDatabase m_database;
     const unsigned m_quotaInBytes { 0 };
     bool m_isClosed { false };
-    Optional<unsigned> m_databaseSize;
+    Optional<uint64_t> m_databaseSize;
 
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_clearStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_insertStatement;

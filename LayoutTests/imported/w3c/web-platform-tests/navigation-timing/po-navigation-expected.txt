@@ -1,0 +1,7 @@
+PerformanceObservers: navigation
+
+Navigation will queue a PerformanceEntry.
+
+
+PASS navigation entry is observable
+

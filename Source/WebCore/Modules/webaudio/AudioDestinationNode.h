@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2020-2021, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,26 +25,21 @@
 
 #pragma once
 
-#include "AudioBus.h"
-#include "AudioIOCallback.h"
 #include "AudioNode.h"
-#include "ExceptionOr.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
-class AudioDestinationNode : public AudioNode, public AudioIOCallback {
+class AudioBus;
+struct AudioIOPosition;
+
+class AudioDestinationNode : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(AudioDestinationNode);
 public:
-    AudioDestinationNode(BaseAudioContext&, float sampleRate);
-    virtual ~AudioDestinationNode();
+    ~AudioDestinationNode();
     
     // AudioNode   
-    void process(size_t) override { }; // we're pulled by hardware so this is never called
-    
-    // The audio hardware calls render() to get the next render quantum of audio into destinationBus.
-    // It will optionally give us local/live audio input in sourceBus (if it's not 0).
-    void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition) override;
+    void process(size_t) final { } // we're pulled by hardware so this is never called
 
     float sampleRate() const final { return m_sampleRate; }
 
@@ -56,34 +52,24 @@ public:
     virtual void enableInput(const String& inputDeviceId) = 0;
 
     virtual void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) = 0;
-    virtual void resume(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
-    virtual void suspend(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
-    virtual void close(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void restartRendering() { }
-
-    virtual bool isPlaying() { return false; }
-    void isPlayingDidChange() override;
-    bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
-    void setMuted(bool muted) { m_muted = muted; }
 
     // AudioDestinationNodes are owned by the BaseAudioContext so we forward the refcounting to its BaseAudioContext.
     void ref() final;
     void deref() final;
 
 protected:
-    double tailTime() const override { return 0; }
-    double latencyTime() const override { return 0; }
+    AudioDestinationNode(BaseAudioContext&, float sampleRate);
 
-    void setIsSilent(bool);
-    void updateIsEffectivelyPlayingAudio();
+    double tailTime() const final { return 0; }
+    double latencyTime() const final { return 0; }
 
+    void renderQuantum(AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition);
+
+private:
     // Counts the number of sample-frames processed by the destination.
     std::atomic<size_t> m_currentSampleFrame { 0 };
-
     float m_sampleRate;
-    bool m_isSilent { true };
-    bool m_isEffectivelyPlayingAudio { false };
-    bool m_muted { false };
 };
 
 } // namespace WebCore

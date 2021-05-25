@@ -2255,7 +2255,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     JSValue value;
                     {
                         // ArrayStorage's Butterfly can be half-broken state.
-                        auto locker = holdLock(array->cellLock());
+                        Locker locker { array->cellLock() };
 
                         WTF::loadLoadFence();
                         Butterfly* butterfly = array->butterfly();
@@ -4208,6 +4208,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // value information.
         clobberWorld();
         filter(node->child1(), SpecObject);
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+    }
+
+    case HasPrivateName:
+    case HasPrivateBrand: {
+        clobberWorld();
+        filter(node->child1(), SpecObject);
+        filter(node->child2(), SpecSymbol);
         setNonCellTypeForNode(node, SpecBoolean);
         break;
     }

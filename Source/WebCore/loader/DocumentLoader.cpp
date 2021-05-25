@@ -72,6 +72,7 @@
 #include "NetworkLoadMetrics.h"
 #include "NetworkStorageSession.h"
 #include "Page.h"
+#include "Performance.h"
 #include "PingLoader.h"
 #include "PlatformStrategies.h"
 #include "PolicyChecker.h"
@@ -411,13 +412,20 @@ bool DocumentLoader::isLoading() const
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
 }
 
-void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
+void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
 {
     ASSERT(isMainThread());
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(resource))
         return;
 #endif
+
+    if (auto document = makeRefPtr(this->document())) {
+        if (auto domWindow = makeRefPtr(document->domWindow())) {
+            if (document->settings().performanceNavigationTimingAPIEnabled())
+                domWindow->performance().addNavigationTiming(*this, *document, resource, timing(), metrics);
+        }
+    }
 
     ASSERT_UNUSED(resource, m_mainResource == &resource);
     ASSERT(m_mainResource);

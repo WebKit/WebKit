@@ -131,7 +131,7 @@ void CurlRequest::cancel()
     ASSERT(isMainThread());
 
     {
-        auto locker = holdLock(m_statusMutex);
+        Locker locker { m_statusMutex };
         if (m_cancelled)
             return;
 
@@ -152,13 +152,13 @@ void CurlRequest::cancel()
 
 bool CurlRequest::isCancelled()
 {
-    auto locker = holdLock(m_statusMutex);
+    Locker locker { m_statusMutex };
     return m_cancelled;
 }
 
 bool CurlRequest::isCompletedOrCancelled()
 {
-    auto locker = holdLock(m_statusMutex);
+    Locker locker { m_statusMutex };
     return m_completed || m_cancelled;
 }
 
@@ -479,7 +479,7 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     }
 
     {
-        auto locker = holdLock(m_statusMutex);
+        Locker locker { m_statusMutex };
         m_completed = true;
     }
 }
@@ -643,7 +643,7 @@ void CurlRequest::completeDidReceiveResponse()
 void CurlRequest::setRequestPaused(bool paused)
 {
     {
-        LockHolder lock(m_pauseStateMutex);
+        Locker locker { m_pauseStateMutex };
 
         auto savedState = shouldBePaused();
         m_shouldSuspend = m_isPausedOfRequest = paused;
@@ -657,7 +657,7 @@ void CurlRequest::setRequestPaused(bool paused)
 void CurlRequest::setCallbackPaused(bool paused)
 {
     {
-        LockHolder lock(m_pauseStateMutex);
+        Locker locker { m_pauseStateMutex };
 
         auto savedState = shouldBePaused();
         m_isPausedOfCallback = paused;
@@ -692,7 +692,7 @@ void CurlRequest::pausedStatusChanged()
 
         bool needCancel { false };
         {
-            LockHolder lock(m_pauseStateMutex);
+            Locker locker { m_pauseStateMutex };
             bool paused = shouldBePaused();
 
             if (isHandlePaused() == paused)
@@ -742,20 +742,20 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
 
 void CurlRequest::enableDownloadToFile()
 {
-    LockHolder locker(m_downloadMutex);
+    Locker locker { m_downloadMutex };
     m_isEnabledDownloadToFile = true;
 }
 
 const String& CurlRequest::getDownloadedFilePath()
 {
-    LockHolder locker(m_downloadMutex);
+    Locker locker { m_downloadMutex };
     return m_downloadFilePath;
 }
 
 void CurlRequest::writeDataToDownloadFileIfEnabled(const SharedBuffer& buffer)
 {
     {
-        LockHolder locker(m_downloadMutex);
+        Locker locker { m_downloadMutex };
 
         if (!m_isEnabledDownloadToFile)
             return;
@@ -770,7 +770,7 @@ void CurlRequest::writeDataToDownloadFileIfEnabled(const SharedBuffer& buffer)
 
 void CurlRequest::closeDownloadFile()
 {
-    LockHolder locker(m_downloadMutex);
+    Locker locker { m_downloadMutex };
 
     if (m_downloadFileHandle == FileSystem::invalidPlatformFileHandle)
         return;
@@ -781,7 +781,7 @@ void CurlRequest::closeDownloadFile()
 
 void CurlRequest::cleanupDownloadFile()
 {
-    LockHolder locker(m_downloadMutex);
+    Locker locker { m_downloadMutex };
 
     if (!m_downloadFilePath.isEmpty()) {
         FileSystem::deleteFile(m_downloadFilePath);

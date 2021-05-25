@@ -274,7 +274,7 @@ class GitRepository(Repository):
             'revision': current_revision,
             'revisionIdentifier': revision_identifier,
             'previousCommit': previous_revision,
-            'time': datetime.fromtimestamp(commit_time).strftime(r'%Y-%m-%dT%H:%M:%S.%f'),
+            'time': datetime.utcfromtimestamp(commit_time).strftime(r'%Y-%m-%dT%H:%M:%S.%f'),
             'author': {'account': author_email, 'name': author_name},
             'message': message,
         }
@@ -286,9 +286,12 @@ class GitRepository(Repository):
         return None
 
     def _fetch_remote(self):
-        self._run_git_command(['pull', self._git_url])
         if self._report_svn_revision:
+            self._run_git_command(['pull'])
+            subprocess.check_call(['rm', '-rf', os.path.join(self._git_checkout, '.git/svn')])
             self._run_git_command(['svn', 'fetch'])
+        else:
+            self._run_git_command(['pull', self._git_url])
 
     def _fetch_all_hashes(self):
         self._fetch_remote()

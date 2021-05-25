@@ -737,11 +737,6 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 
     String applicationCacheFlatFileSubdirectoryName = websiteDataStore.applicationCacheFlatFileSubdirectoryName();
 
-    String webSQLDatabaseDirectory = websiteDataStore.resolvedDatabaseDirectory();
-    SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
-    if (!webSQLDatabaseDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(webSQLDatabaseDirectory, SandboxExtension::Type::ReadWrite, webSQLDatabaseDirectoryExtensionHandle);
-
     String mediaCacheDirectory = websiteDataStore.resolvedMediaCacheDirectory();
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     if (!mediaCacheDirectory.isEmpty())
@@ -767,8 +762,6 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(applicationCacheDirectory),
         WTFMove(applicationCacheDirectoryExtensionHandle),
         WTFMove(applicationCacheFlatFileSubdirectoryName),
-        WTFMove(webSQLDatabaseDirectory),
-        WTFMove(webSQLDatabaseDirectoryExtensionHandle),
         WTFMove(mediaCacheDirectory),
         WTFMove(mediaCacheDirectoryExtensionHandle),
         WTFMove(mediaKeyStorageDirectory),

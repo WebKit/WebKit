@@ -60,8 +60,7 @@ Vector<SecurityOriginData> WebMediaKeyStorageManager::getMediaKeyOrigins()
     if (m_mediaKeyStorageDirectory.isEmpty())
         return results;
 
-    for (auto& originPath : FileSystem::listDirectory(m_mediaKeyStorageDirectory, "*")) {
-        auto identifier = URL::fileURLWithFileSystemPath(originPath).lastPathComponent().toString();
+    for (auto& identifier : FileSystem::listDirectory(m_mediaKeyStorageDirectory)) {
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(identifier))
             results.append(*securityOrigin);
     }
@@ -71,15 +70,16 @@ Vector<SecurityOriginData> WebMediaKeyStorageManager::getMediaKeyOrigins()
 
 static void removeAllMediaKeyStorageForOriginPath(const String& originPath, WallTime startDate, WallTime endDate)
 {
-    Vector<String> mediaKeyPaths = FileSystem::listDirectory(originPath, "*");
+    Vector<String> mediaKeyNames = FileSystem::listDirectory(originPath);
 
-    for (const auto& mediaKeyPath : mediaKeyPaths) {
+    for (const auto& mediaKeyName : mediaKeyNames) {
+        auto mediaKeyPath = FileSystem::pathByAppendingComponent(originPath, mediaKeyName);
         String mediaKeyFile = FileSystem::pathByAppendingComponent(mediaKeyPath, "SecureStop.plist");
 
         if (!FileSystem::fileExists(mediaKeyFile))
             continue;
 
-        auto modificationTime = FileSystem::getFileModificationTime(mediaKeyFile);
+        auto modificationTime = FileSystem::fileModificationTime(mediaKeyFile);
         if (!modificationTime)
             continue;
         if (modificationTime.value() < startDate || modificationTime.value() > endDate)
@@ -106,9 +106,9 @@ void WebMediaKeyStorageManager::deleteMediaKeyEntriesModifiedBetweenDates(WallTi
     if (m_mediaKeyStorageDirectory.isEmpty())
         return;
 
-    Vector<String> originPaths = FileSystem::listDirectory(m_mediaKeyStorageDirectory, "*");
-    for (auto& originPath : originPaths)
-        removeAllMediaKeyStorageForOriginPath(originPath, startDate, endDate);
+    Vector<String> originNames = FileSystem::listDirectory(m_mediaKeyStorageDirectory);
+    for (auto& originName : originNames)
+        removeAllMediaKeyStorageForOriginPath(FileSystem::pathByAppendingComponent(m_mediaKeyStorageDirectory, originName), startDate, endDate);
 }
 
 void WebMediaKeyStorageManager::deleteAllMediaKeyEntries()
@@ -116,9 +116,9 @@ void WebMediaKeyStorageManager::deleteAllMediaKeyEntries()
     if (m_mediaKeyStorageDirectory.isEmpty())
         return;
 
-    Vector<String> originPaths = FileSystem::listDirectory(m_mediaKeyStorageDirectory, "*");
-    for (auto& originPath : originPaths)
-        removeAllMediaKeyStorageForOriginPath(originPath, -WallTime::infinity(), WallTime::infinity());
+    Vector<String> originNames = FileSystem::listDirectory(m_mediaKeyStorageDirectory);
+    for (auto& originName : originNames)
+        removeAllMediaKeyStorageForOriginPath(FileSystem::pathByAppendingComponent(m_mediaKeyStorageDirectory, originName), -WallTime::infinity(), WallTime::infinity());
 }
 
 }

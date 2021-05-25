@@ -86,6 +86,7 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
 {
     previousConnection.removeClient(*this);
     m_gpuProcessConnection = nullptr;
+    m_remoteResourceCacheProxy.remoteResourceCacheWasDestroyed();
 
     m_identifiersOfReusableHandles.clear();
     m_sharedDisplayListHandles.clear();
@@ -93,12 +94,11 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
     m_deferredWakeupMessageArguments = WTF::nullopt;
     m_remainingItemsToAppendBeforeSendingWakeup = 0;
 
-    for (auto& imageBuffer : m_remoteResourceCacheProxy.imageBuffers().values()) {
-        if (!imageBuffer)
-            continue;
-        send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer->logicalSize(), imageBuffer->renderingMode(), imageBuffer->resolutionScale(), imageBuffer->colorSpace(), imageBuffer->pixelFormat(), imageBuffer->renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        imageBuffer->clearBackend();
-    }
+    if (m_destroyGetPixelBufferSharedMemoryTimer.isActive())
+        m_destroyGetPixelBufferSharedMemoryTimer.stop();
+    m_getPixelBufferSemaphore = WTF::nullopt;
+    m_getPixelBufferSharedMemoryLength = 0;
+    m_getPixelBufferSharedMemory = nullptr;
 }
 
 IPC::Connection* RemoteRenderingBackendProxy::messageSenderConnection() const
@@ -125,6 +125,11 @@ bool RemoteRenderingBackendProxy::waitForDidFlush()
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
+void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
+{
+    send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer.logicalSize(), imageBuffer.renderingMode(), imageBuffer.resolutionScale(), imageBuffer.colorSpace(), imageBuffer.pixelFormat(), imageBuffer.renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat)
 {
     RefPtr<ImageBuffer> imageBuffer;
@@ -143,57 +148,57 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
         imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, resolutionScale, colorSpace, pixelFormat, *this);
 
     if (imageBuffer) {
-        send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat, imageBuffer->renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        createRemoteImageBuffer(*imageBuffer);
         return imageBuffer;
     }
 
     return nullptr;
 }
 
-SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetImageData(size_t dataSize, IPC::Timeout timeout)
+SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetPixelBuffer(size_t dataSize, IPC::Timeout timeout)
 {
     sendDeferredWakeupMessageIfNeeded();
 
-    bool needsSharedMemory = !m_getImageDataSharedMemory || dataSize > m_getImageDataSharedMemoryLength;
-    bool needsSemaphore = !m_getImageDataSemaphore;
+    bool needsSharedMemory = !m_getPixelBufferSharedMemory || dataSize > m_getPixelBufferSharedMemoryLength;
+    bool needsSemaphore = !m_getPixelBufferSemaphore;
 
     if (needsSharedMemory)
-        m_getImageDataSharedMemory = nullptr;
+        m_getPixelBufferSharedMemory = nullptr;
 
     SharedMemory::IPCHandle handle;
     IPC::Semaphore semaphore;
 
     if (needsSharedMemory && needsSemaphore)
-        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetImageData(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetImageData::Reply(handle, semaphore), renderingBackendIdentifier(), timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetPixelBuffer(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetPixelBuffer::Reply(handle, semaphore), renderingBackendIdentifier(), timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     else if (needsSharedMemory)
-        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetImageData(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetImageData::Reply(handle), renderingBackendIdentifier(), timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetPixelBuffer(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetPixelBuffer::Reply(handle), renderingBackendIdentifier(), timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     else if (needsSemaphore)
-        sendSync(Messages::RemoteRenderingBackend::SemaphoreForGetImageData(), Messages::RemoteRenderingBackend::SemaphoreForGetImageData::Reply(semaphore), renderingBackendIdentifier(), timeout);
+        sendSync(Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer(), Messages::RemoteRenderingBackend::SemaphoreForGetPixelBuffer::Reply(semaphore), renderingBackendIdentifier(), timeout);
 
     if (!handle.handle.isNull()) {
-        m_getImageDataSharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly);
-        m_getImageDataSharedMemoryLength = handle.dataSize;
+        m_getPixelBufferSharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly);
+        m_getPixelBufferSharedMemoryLength = handle.dataSize;
     }
     if (needsSemaphore)
-        m_getImageDataSemaphore = WTFMove(semaphore);
+        m_getPixelBufferSemaphore = WTFMove(semaphore);
 
-    if (m_destroyGetImageDataSharedMemoryTimer.isActive())
-        m_destroyGetImageDataSharedMemoryTimer.stop();
-    m_destroyGetImageDataSharedMemoryTimer.startOneShot(5_s);
+    if (m_destroyGetPixelBufferSharedMemoryTimer.isActive())
+        m_destroyGetPixelBufferSharedMemoryTimer.stop();
+    m_destroyGetPixelBufferSharedMemoryTimer.startOneShot(5_s);
 
-    return m_getImageDataSharedMemory.get();
+    return m_getPixelBufferSharedMemory.get();
 }
 
-bool RemoteRenderingBackendProxy::waitForGetImageDataToComplete(IPC::Timeout timeout)
+bool RemoteRenderingBackendProxy::waitForGetPixelBufferToComplete(IPC::Timeout timeout)
 {
-    ASSERT(m_getImageDataSemaphore);
-    return m_getImageDataSemaphore->waitFor(timeout);
+    ASSERT(m_getPixelBufferSemaphore);
+    return m_getPixelBufferSemaphore->waitFor(timeout);
 }
 
-void RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory()
+void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 {
-    m_getImageDataSharedMemory = nullptr;
-    send(Messages::RemoteRenderingBackend::DestroyGetImageDataSharedMemory(), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_getPixelBufferSharedMemory = nullptr;
+    send(Messages::RemoteRenderingBackend::DestroyGetPixelBufferSharedMemory(), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 String RemoteRenderingBackendProxy::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -211,15 +216,6 @@ Vector<uint8_t> RemoteRenderingBackendProxy::getDataForImageBuffer(const String&
 
     Vector<uint8_t> data;
     sendSync(Messages::RemoteRenderingBackend::GetDataForImageBuffer(mimeType, quality, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataForImageBuffer::Reply(data), renderingBackendIdentifier(), 1_s);
-    return data;
-}
-
-Vector<uint8_t> RemoteRenderingBackendProxy::getBGRADataForImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    sendDeferredWakeupMessageIfNeeded();
-
-    Vector<uint8_t> data;
-    sendSync(Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer(renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer::Reply(data), renderingBackendIdentifier(), 1_s);
     return data;
 }
 

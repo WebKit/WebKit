@@ -1,11 +1,5 @@
 There should be a green square below.
 
 
-FAIL #flex 1 assert_equals:
-<div id="flex">
-  <div id="multicol" data-expected-width="100" data-expected-height="100">
-    <div style="width:1000px; height:1px;"></div>
-  </div>
-</div>
-width expected 100 but got 784
+PASS #flex 1
 

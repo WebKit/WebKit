@@ -252,7 +252,7 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
 #if ENABLE(ENCRYPTED_MEDIA)
     {
-        LockHolder lock(m_cdmAttachmentMutex);
+        Locker cdmAttachmentLocker { m_cdmAttachmentLock };
         m_cdmAttachmentCondition.notifyAll();
     }
 #endif
@@ -1029,7 +1029,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 }
 bool MediaPlayerPrivateGStreamer::hasFirstVideoSampleReachedSink() const
 {
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
     return !!m_sample;
 }
 
@@ -2181,7 +2181,8 @@ void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, 
     g_object_set(element, "temp-template", newDownloadTemplate.get(), nullptr);
     GST_DEBUG_OBJECT(player->pipeline(), "Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.get());
 
-    player->purgeOldDownloadFiles(oldDownloadTemplate.get());
+    String newDownloadPrefixPath = newDownloadTemplate.get();
+    player->purgeOldDownloadFiles(newDownloadPrefixPath.replace("XXXXXX", ""));
 }
 
 void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer* player)
@@ -2202,16 +2203,18 @@ void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerP
     GST_DEBUG_OBJECT(player->pipeline(), "Unlinked media temporary file %s after creation", downloadFile.get());
 }
 
-void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const char* downloadFileTemplate)
+void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const String& downloadFilePrefixPath)
 {
-    if (!downloadFileTemplate)
+    if (downloadFilePrefixPath.isEmpty())
         return;
 
-    GUniquePtr<char> templatePath(g_path_get_dirname(downloadFileTemplate));
-    GUniquePtr<char> templateFile(g_path_get_basename(downloadFileTemplate));
-    String templatePattern = String(templateFile.get()).replace("X", "?");
+    auto templateDirectory = FileSystem::parentPath(downloadFilePrefixPath);
+    auto templatePrefix = FileSystem::pathFileName(downloadFilePrefixPath);
+    for (auto& fileName : FileSystem::listDirectory(templateDirectory)) {
+        if (!fileName.startsWith(templatePrefix))
+            continue;
 
-    for (auto& filePath : FileSystem::listDirectory(templatePath.get(), templatePattern)) {
+        auto filePath = FileSystem::pathByAppendingComponent(templateDirectory, fileName);
         if (UNLIKELY(!FileSystem::deleteFile(filePath))) {
             GST_WARNING("Couldn't unlink legacy media temporary file: %s", filePath.utf8().data());
             continue;
@@ -2890,7 +2893,7 @@ private:
 
 void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
 {
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
@@ -2918,7 +2921,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
     auto proxyOperation =
         [this, internalCompositingOperation](TextureMapperPlatformLayerProxy& proxy)
         {
-            LockHolder holder(proxy.lock());
+            Locker locker { proxy.lock() };
 
             if (!proxy.isActive())
                 return;
@@ -2936,7 +2939,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
     auto proxyOperation =
         [this, internalCompositingOperation](TextureMapperPlatformLayerProxy& proxy)
         {
-            LockHolder holder(proxy.lock());
+            Locker locker { proxy.lock() };
 
             if (!proxy.isActive())
                 return;
@@ -2961,7 +2964,7 @@ void MediaPlayerPrivateGStreamer::repaint()
 
     m_player->repaint();
 
-    LockHolder lock(m_drawMutex);
+    Locker locker { m_drawLock };
     m_drawCondition.notifyOne();
 }
 
@@ -3071,7 +3074,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
 
     bool shouldTriggerResize;
     {
-        auto sampleLocker = holdLock(m_sampleMutex);
+        Locker sampleLocker { m_sampleMutex };
         shouldTriggerResize = !m_sample;
         m_sample = sample;
     }
@@ -3100,17 +3103,17 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
     }
 
     if (!m_canRenderingBeAccelerated) {
-        LockHolder locker(m_drawMutex);
+        Locker locker { m_drawLock };
         if (m_isBeingDestroyed)
             return;
         m_drawTimer.startOneShot(0_s);
-        m_drawCondition.wait(m_drawMutex);
+        m_drawCondition.wait(m_drawLock);
         return;
     }
 
 #if USE(TEXTURE_MAPPER_GL)
     if (m_isUsingFallbackVideoSink) {
-        LockHolder lock(m_drawMutex);
+        Locker locker { m_drawLock };
         auto proxyOperation =
             [this](TextureMapperPlatformLayerProxy& proxy)
             {
@@ -3124,7 +3127,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
             return;
 #endif
         m_drawTimer.startOneShot(0_s);
-        m_drawCondition.wait(m_drawMutex);
+        m_drawCondition.wait(m_drawLock);
     } else
         pushTextureToCompositor();
 #endif // USE(TEXTURE_MAPPER_GL)
@@ -3146,7 +3149,7 @@ void MediaPlayerPrivateGStreamer::cancelRepaint(bool destroying)
     // This function is also used when destroying the player (destroying parameter is true), to release the gstreamer thread from
     // m_drawCondition and to ensure that new triggerRepaint calls won't wait on m_drawCondition.
     if (!m_canRenderingBeAccelerated) {
-        LockHolder locker(m_drawMutex);
+        Locker locker { m_drawLock };
         m_drawTimer.stop();
         m_isBeingDestroyed = destroying;
         m_drawCondition.notifyOne();
@@ -3161,7 +3164,7 @@ void MediaPlayerPrivateGStreamer::repaintCancelledCallback(MediaPlayerPrivateGSt
 #if USE(GSTREAMER_GL)
 void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 {
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
 
     if (m_sample) {
         // Allocate a new copy of the sample which has to be released. The copy is necessary so that
@@ -3177,10 +3180,14 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     bool shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux;
     auto proxyOperation = [shouldWait, pipeline = pipeline()](TextureMapperPlatformLayerProxy& proxy) {
         GST_DEBUG_OBJECT(pipeline, "Flushing video sample %s", shouldWait ? "synchronously" : "");
-        LockHolder locker(!shouldWait ? &proxy.lock() : nullptr);
-
-        if (proxy.isActive())
-            proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
+        if (shouldWait) {
+            if (proxy.isActive())
+                proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
+        } else {
+            Locker locker { proxy.lock() };
+            if (proxy.isActive())
+                proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
+        }
     };
 
 #if USE(NICOSIA)
@@ -3204,7 +3211,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!m_visible)
         return;
 
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
@@ -3273,7 +3280,7 @@ bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsCont
     if (premultiplyAlpha)
         return false;
 
-    auto sampleLocker = holdLock(m_sampleMutex);
+    Locker sampleLocker { m_sampleMutex };
 
     if (!GST_IS_SAMPLE(m_sample.get()))
         return false;
@@ -3404,7 +3411,7 @@ void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
     auto proxyOperation =
         [this](TextureMapperPlatformLayerProxy& proxy)
         {
-            LockHolder holder(proxy.lock());
+            Locker locker { proxy.lock() };
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
             std::unique_ptr<GStreamerHolePunchClient> holePunchClient = makeUnique<GStreamerHolePunchClient>(m_videoSink.get());
             layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
@@ -3544,7 +3551,7 @@ InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMess
 
     InitData initData;
     {
-        LockHolder lock(m_protectionMutex);
+        Locker locker { m_protectionMutex };
         ProtectionSystemEvents protectionSystemEvents(message);
         GST_TRACE_OBJECT(pipeline(), "found %zu protection events, %zu decryptors available", protectionSystemEvents.events().size(), protectionSystemEvents.availableSystems().size());
 
@@ -3573,8 +3580,9 @@ bool MediaPlayerPrivateGStreamer::waitForCDMAttachment()
 
     bool didCDMAttach = false;
     {
-        auto cdmAttachmentLocker = holdLock(m_cdmAttachmentMutex);
-        didCDMAttach = m_cdmAttachmentCondition.waitFor(m_cdmAttachmentMutex, 4_s, [this]() {
+        Locker cdmAttachmentLocker { m_cdmAttachmentLock };
+        didCDMAttach = m_cdmAttachmentCondition.waitFor(m_cdmAttachmentLock, 4_s, [this]() {
+            assertIsHeld(m_cdmAttachmentLock);
             return isCDMAttached();
         });
     }
@@ -3621,7 +3629,7 @@ void MediaPlayerPrivateGStreamer::cdmInstanceAttached(CDMInstance& instance)
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "CDM proxy instance %p dispatched as context", m_cdmInstance->proxy().get());
 
-    LockHolder lock(m_cdmAttachmentMutex);
+    Locker cdmAttachmentLocker { m_cdmAttachmentLock };
     // We must notify all waiters, since several demuxers can be simultaneously waiting for a CDM.
     m_cdmAttachmentCondition.notifyAll();
 }
@@ -3658,7 +3666,7 @@ void MediaPlayerPrivateGStreamer::attemptToDecryptWithLocalInstance()
 void MediaPlayerPrivateGStreamer::handleProtectionEvent(GstEvent* event)
 {
     {
-        LockHolder lock(m_protectionMutex);
+        Locker locker { m_protectionMutex };
         if (m_handledProtectionEvents.contains(GST_EVENT_SEQNUM(event))) {
             GST_DEBUG_OBJECT(pipeline(), "event %u already handled", GST_EVENT_SEQNUM(event));
             return;

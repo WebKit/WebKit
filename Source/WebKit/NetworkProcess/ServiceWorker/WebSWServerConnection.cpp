@@ -147,7 +147,7 @@ void WebSWServerConnection::controlClient(ServiceWorkerClientIdentifier clientId
         unregisterServiceWorkerClient(clientIdentifier);
     });
 
-    ServiceWorkerClientData data { clientIdentifier, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, request.url() };
+    ServiceWorkerClientData data { clientIdentifier, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, request.url(), request.isAppBound() ? WebCore::LastNavigationWasAppBound::Yes : WebCore::LastNavigationWasAppBound::No };
     registerServiceWorkerClient(SecurityOriginData { registration.key().topOrigin() }, WTFMove(data), registration.identifier(), request.httpUserAgent());
 }
 

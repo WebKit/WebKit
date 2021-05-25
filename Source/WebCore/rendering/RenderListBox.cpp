@@ -211,7 +211,7 @@ void RenderListBox::scrollToRevealSelection()
 
 void RenderListBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    maxLogicalWidth = m_optionsWidth + 2 * optionsSpacingHorizontal;
+    maxLogicalWidth = shouldApplySizeContainment(*this) ? 2 * optionsSpacingHorizontal : m_optionsWidth + 2 * optionsSpacingHorizontal;
     if (m_vBar)
         maxLogicalWidth += m_vBar->width();
     if (!style().width().isPercentOrCalculated())

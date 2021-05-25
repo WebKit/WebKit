@@ -39,6 +39,7 @@
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "PlaceholderRenderingContext.h"
+#include "RuntimeEnabledFeatures.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -71,6 +72,17 @@ WeakPtr<HTMLCanvasElement> DetachedOffscreenCanvas::takePlaceholderCanvas()
 {
     ASSERT(isMainThread());
     return std::exchange(m_placeholderCanvas, nullptr);
+}
+
+bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
+{
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    if (context.isWorkerGlobalScope())
+        return RuntimeEnabledFeatures::sharedFeatures().offscreenCanvasInWorkersEnabled();
+#endif
+
+    ASSERT(context.isDocument());
+    return true;
 }
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
@@ -213,7 +225,11 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
             return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
         }
 
-        m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this);
+        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+
+        m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this, WTFMove(settings));
         if (!m_context)
             return { { WTF::nullopt } };
 
@@ -417,7 +433,7 @@ void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
 void OffscreenCanvas::pushBufferToPlaceholder()
 {
     callOnMainThread([placeholderData = makeRef(*m_placeholderData)] () mutable {
-        auto locker = holdLock(placeholderData->bufferLock);
+        Locker locker { placeholderData->bufferLock };
         if (placeholderData->canvas && placeholderData->pendingCommitBuffer)
             placeholderData->canvas->setImageBufferAndMarkDirty(WTFMove(placeholderData->pendingCommitBuffer));
         placeholderData->pendingCommitBuffer = nullptr;
@@ -440,7 +456,7 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
             m_placeholderData->bufferPipeSource->handle(WTFMove(bufferCopy));
     }
 
-    auto locker = holdLock(m_placeholderData->bufferLock);
+    Locker locker { m_placeholderData->bufferLock };
     bool shouldPushBuffer = !m_placeholderData->pendingCommitBuffer;
     m_placeholderData->pendingCommitBuffer = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), DestinationColorSpace::SRGB, imageBuffer->context());
     if (m_placeholderData->pendingCommitBuffer && shouldPushBuffer)

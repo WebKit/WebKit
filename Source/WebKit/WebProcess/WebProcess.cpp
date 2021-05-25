@@ -29,6 +29,7 @@
 #include "APIFrameHandle.h"
 #include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
+#include "AudioMediaStreamTrackRendererInternalUnitManager.h"
 #include "AuthenticationManager.h"
 #include "AuxiliaryProcessMessages.h"
 #include "DrawingArea.h"
@@ -98,7 +99,6 @@
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/DNS.h>
 #include <WebCore/DOMWindow.h>
-#include <WebCore/DatabaseManager.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -457,7 +457,13 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     m_fullKeyboardAccessEnabled = parameters.fullKeyboardAccessEnabled;
 
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    m_hasMouseDevice = parameters.hasMouseDevice;
+#endif
+
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     m_hasStylusDevice = parameters.hasStylusDevice;
+#endif
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsEmptyDocument)
         registerURLSchemeAsEmptyDocument(scheme);
@@ -550,9 +556,6 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 {
     ASSERT(!m_sessionID);
     m_sessionID = parameters.sessionID;
-    
-    auto& databaseManager = DatabaseManager::singleton();
-    databaseManager.initialize(parameters.webSQLDatabaseDirectory);
 
     // FIXME: This should be constructed per data store, not per process.
     m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
@@ -982,7 +985,7 @@ void WebProcess::messagesAvailableForPort(const MessagePortIdentifier& identifie
     MessagePort::notifyMessageAvailable(identifier);
 }
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
 
 void WebProcess::setHasMouseDevice(bool hasMouseDevice)
 {
@@ -994,7 +997,9 @@ void WebProcess::setHasMouseDevice(bool hasMouseDevice)
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#endif // HAVE(MOUSE_DEVICE_OBSERVATION)
+
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
 
 void WebProcess::setHasStylusDevice(bool hasStylusDevice)
 {
@@ -1005,6 +1010,8 @@ void WebProcess::setHasStylusDevice(bool hasStylusDevice)
 
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
+
+#endif // HAVE(STYLUS_DEVICE_OBSERVATION)
 
 #if ENABLE(GAMEPAD)
 
@@ -1235,6 +1242,10 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         ASSERT(connectionInfo.auditToken);
         m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
+#if ENABLE(IPC_TESTING_API)
+        if (parentProcessConnection()->ignoreInvalidMessageForTesting())
+            m_gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
+#endif
 
         for (auto& page : m_pageMap.values()) {
             // If page is null, then it is currently being constructed.
@@ -1252,6 +1263,11 @@ void WebProcess::gpuProcessConnectionClosed(GPUProcessConnection& connection)
     ASSERT_UNUSED(connection, m_gpuProcessConnection == &connection);
 
     m_gpuProcessConnection = nullptr;
+
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    if (m_audioMediaStreamTrackRendererInternalUnitManager)
+        m_audioMediaStreamTrackRendererInternalUnitManager->gpuProcessConnectionClosed();
+#endif
 }
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -1260,6 +1276,15 @@ LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
     if (!m_libWebRTCCodecs)
         m_libWebRTCCodecs = LibWebRTCCodecs::create();
     return *m_libWebRTCCodecs;
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTrackRendererInternalUnitManager()
+{
+    if (!m_audioMediaStreamTrackRendererInternalUnitManager)
+        m_audioMediaStreamTrackRendererInternalUnitManager = makeUnique<AudioMediaStreamTrackRendererInternalUnitManager>();
+    return *m_audioMediaStreamTrackRendererInternalUnitManager;
 }
 #endif
 

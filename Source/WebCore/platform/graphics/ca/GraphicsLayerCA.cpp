@@ -1200,7 +1200,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
 #if ENABLE(TREE_DEBUGGING)
             m_contentsLayer->setName(makeString("contents color ", m_contentsLayer->layerID()));
 #else
-            m_contentsLayer->setName("contents color");
+            m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents color"));
 #endif
             contentsLayerChanged = true;
         }
@@ -1259,7 +1259,7 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
 #if ENABLE(TREE_DEBUGGING)
         m_contentsLayer->setName(makeString("contents model ", m_contentsLayer->layerID()));
 #else
-        m_contentsLayer->setName("contents model");
+        m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents model"));
 #endif
 
         m_contentsLayerPurpose = ContentsLayerPurpose::Model;
@@ -2351,7 +2351,7 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
         m_backdropLayer = createPlatformCALayer(PlatformCALayer::LayerTypeBackdropLayer, this);
         m_backdropLayer->setAnchorPoint(FloatPoint3D());
         m_backdropLayer->setMasksToBounds(true);
-        m_backdropLayer->setName("backdrop");
+        m_backdropLayer->setName(MAKE_STATIC_STRING_IMPL("backdrop"));
     }
 
     m_backdropLayer->setHidden(!m_contentsVisible);
@@ -2677,7 +2677,7 @@ void GraphicsLayerCA::updateContentsImage()
 #if ENABLE(TREE_DEBUGGING)
             m_contentsLayer->setName(makeString("contents image ", m_contentsLayer->layerID()));
 #else
-            m_contentsLayer->setName("contents image");
+            m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents image"));
 #endif
             setupContentsLayer(m_contentsLayer.get());
             // m_contentsLayer will be parented by updateSublayerList
@@ -2752,7 +2752,7 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
     if (!shapeMaskLayer) {
         shapeMaskLayer = createPlatformCALayer(PlatformCALayer::LayerTypeShapeLayer, this);
         shapeMaskLayer->setAnchorPoint({ });
-        shapeMaskLayer->setName("shape mask");
+        shapeMaskLayer->setName(MAKE_STATIC_STRING_IMPL("shape mask"));
     }
 
     // clippingLayer's boundsOrigin is roundedRect.rect().location(), and is non-zero to positioning descendant layers.
@@ -2786,7 +2786,7 @@ void GraphicsLayerCA::updateContentsRects()
 #if ENABLE(TREE_DEBUGGING)
             m_contentsClippingLayer->setName(makeString("contents clipping ", m_contentsClippingLayer->layerID()));
 #else
-            m_contentsClippingLayer->setName("contents clipping");
+            m_contentsClippingLayer->setName(MAKE_STATIC_STRING_IMPL("contents clipping"));
 #endif
             gainedOrLostClippingLayer = true;
         }

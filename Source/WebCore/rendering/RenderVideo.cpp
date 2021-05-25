@@ -123,6 +123,9 @@ bool RenderVideo::updateIntrinsicSize()
 
 LayoutSize RenderVideo::calculateIntrinsicSize()
 {
+    if (shouldApplySizeContainment(*this))
+        return LayoutSize();
+
     // Spec text from 4.8.6
     //
     // The intrinsic width of a video element's playback area is the intrinsic width 

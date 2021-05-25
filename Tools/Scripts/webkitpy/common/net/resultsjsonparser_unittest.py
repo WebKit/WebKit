@@ -37,7 +37,7 @@ from webkitpy.layout_tests.models import test_failures
 class ParsedJSONResultsTest(unittest.TestCase):
     # The real files have no whitespace, but newlines make this much more readable.
 
-    _example_full_results_json = """ADD_RESULTS({
+    _example_full_results_json = r"""ADD_RESULTS({
     "tests": {
         "fast": {
             "dom": {
@@ -90,7 +90,7 @@ class ParsedJSONResultsTest(unittest.TestCase):
     "uses_expectations_file": true
 });"""
 
-    _not_interrupted_example_full_results_json = """ADD_RESULTS({
+    _not_interrupted_example_full_results_json = r"""ADD_RESULTS({
     "tests": {
         "fast": {
             "dom": {

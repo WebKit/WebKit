@@ -203,7 +203,7 @@ private:
     void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     void didReceiveData(ResourceHandle*, const char*, unsigned, int encodedDataLength) override;
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength) override;
-    void didFinishLoading(ResourceHandle*) override;
+    void didFinishLoading(ResourceHandle*, const NetworkLoadMetrics&) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
     void wasBlocked(ResourceHandle*) override;
     void cannotShowURL(ResourceHandle*) override;

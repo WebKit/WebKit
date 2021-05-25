@@ -1052,8 +1052,8 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
     }
 
     {
-        LockHolder lock(WebGLProgram::instancesMutex());
-        for (auto& entry : WebGLProgram::instances(lock)) {
+        Locker locker { WebGLProgram::instancesLock() };
+        for (auto& entry : WebGLProgram::instances()) {
             if (entry.value == this) {
                 // Don't remove any WebGLProgram from the instances list, as they may still exist.
                 // Only remove the association with a WebGL context.
@@ -1236,12 +1236,12 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     m_context->paintRenderingResultsToCanvas(*base.buffer());
 }
 
-RefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()
+Optional<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer()
 {
     if (isContextLostOrPending())
-        return nullptr;
+        return WTF::nullopt;
     clearIfComposited(ClearCallerOther);
-    return m_context->paintRenderingResultsToImageData();
+    return m_context->paintRenderingResultsToPixelBuffer();
 }
 
 WebGLTexture::TextureExtensionFlag WebGLRenderingContextBase::textureExtensionFlags() const
@@ -1345,7 +1345,7 @@ void WebGLRenderingContextBase::activeTexture(GCGLenum texture)
 
 void WebGLRenderingContextBase::attachShader(WebGLProgram& program, WebGLShader& shader)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateWebGLProgramOrShader("attachShader", &program) || !validateWebGLProgramOrShader("attachShader", &shader))
         return;
@@ -1445,7 +1445,7 @@ bool WebGLRenderingContextBase::validateAndCacheBufferBinding(const AbstractLock
 
 void WebGLRenderingContextBase::bindBuffer(GCGLenum target, WebGLBuffer* buffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("bindBuffer", buffer))
         return;
@@ -1458,7 +1458,7 @@ void WebGLRenderingContextBase::bindBuffer(GCGLenum target, WebGLBuffer* buffer)
 
 void WebGLRenderingContextBase::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("bindFramebuffer", buffer))
         return;
@@ -1473,7 +1473,7 @@ void WebGLRenderingContextBase::bindFramebuffer(GCGLenum target, WebGLFramebuffe
 
 void WebGLRenderingContextBase::bindRenderbuffer(GCGLenum target, WebGLRenderbuffer* renderBuffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("bindRenderbuffer", renderBuffer))
         return;
@@ -1489,7 +1489,7 @@ void WebGLRenderingContextBase::bindRenderbuffer(GCGLenum target, WebGLRenderbuf
 
 void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* texture)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("bindTexture", texture))
         return;
@@ -2046,7 +2046,7 @@ void WebGLRenderingContextBase::setBoundVertexArrayObject(const AbstractLocker&,
 
 void WebGLRenderingContextBase::deleteBuffer(WebGLBuffer* buffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!deleteObject(locker, buffer))
         return;
@@ -2056,7 +2056,7 @@ void WebGLRenderingContextBase::deleteBuffer(WebGLBuffer* buffer)
 
 void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
 #if ENABLE(WEBXR)
     if (framebuffer && framebuffer->isOpaque()) {
@@ -2079,7 +2079,7 @@ void WebGLRenderingContextBase::deleteProgram(WebGLProgram* program)
     if (program)
         InspectorInstrumentation::willDestroyWebGLProgram(*program);
 
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     deleteObject(locker, program);
     // We don't reset m_currentProgram to 0 here because the deletion of the
@@ -2088,7 +2088,7 @@ void WebGLRenderingContextBase::deleteProgram(WebGLProgram* program)
 
 void WebGLRenderingContextBase::deleteRenderbuffer(WebGLRenderbuffer* renderbuffer)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!deleteObject(locker, renderbuffer))
         return;
@@ -2103,13 +2103,13 @@ void WebGLRenderingContextBase::deleteRenderbuffer(WebGLRenderbuffer* renderbuff
 
 void WebGLRenderingContextBase::deleteShader(WebGLShader* shader)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
     deleteObject(locker, shader);
 }
 
 void WebGLRenderingContextBase::deleteTexture(WebGLTexture* texture)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!deleteObject(locker, texture))
         return;
@@ -2171,7 +2171,7 @@ void WebGLRenderingContextBase::depthRange(GCGLfloat zNear, GCGLfloat zFar)
 
 void WebGLRenderingContextBase::detachShader(WebGLProgram& program, WebGLShader& shader)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateWebGLProgramOrShader("detachShader", &program) || !validateWebGLProgramOrShader("detachShader", &shader))
         return;
@@ -4784,7 +4784,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
                 // The UNSIGNED_INT_10F_11F_11F_REV type pack/unpack isn't implemented.
                 type = GraphicsContextGL::FLOAT;
             }
-            if (!m_context->extractImageData(pixels.get(), GraphicsContextGL::DataFormat::RGBA8, adjustedSourceImageRect, depth, unpackImageHeight, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
+            if (!m_context->extractPixelBuffer(pixels->pixelBuffer(), GraphicsContextGL::DataFormat::RGBA8, adjustedSourceImageRect, depth, unpackImageHeight, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
                 return { };
             }
@@ -6045,7 +6045,7 @@ void WebGLRenderingContextBase::uniformMatrix4fv(const WebGLUniformLocation* loc
 
 void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (!validateNullableWebGLObject("useProgram", program))
         return;
@@ -6112,7 +6112,7 @@ void WebGLRenderingContextBase::vertexAttrib4fv(GCGLuint index, Float32List&& v)
 
 void WebGLRenderingContextBase::vertexAttribPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, long long offset)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     if (isContextLostOrPending())
         return;
@@ -6307,7 +6307,7 @@ void WebGLRenderingContextBase::detachAndRemoveAllObjects()
     if (m_isPendingPolicyResolution)
         return;
 
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     while (m_contextObjects.size() > 0) {
         HashSet<WebGLContextObject*>::iterator it = m_contextObjects.begin();
@@ -7958,7 +7958,7 @@ void WebGLRenderingContextBase::dispatchContextChangedNotification()
 
 void WebGLRenderingContextBase::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& visitor)
 {
-    auto locker = holdLock(objectGraphLock());
+    Locker locker { objectGraphLock() };
 
     visitor.addOpaqueRoot(m_boundArrayBuffer.get());
 

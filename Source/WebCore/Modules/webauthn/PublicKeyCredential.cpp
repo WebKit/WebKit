@@ -54,7 +54,7 @@ AuthenticationExtensionsClientOutputs PublicKeyCredential::getClientExtensionRes
 }
 
 PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
-    : BasicCredential(WTF::base64URLEncode(response->rawId()->data(), response->rawId()->byteLength()), Type::PublicKey, Discovery::Remote)
+    : BasicCredential(base64URLEncodeToString(response->rawId()->data(), response->rawId()->byteLength()), Type::PublicKey, Discovery::Remote)
     , m_response(WTFMove(response))
 {
 }

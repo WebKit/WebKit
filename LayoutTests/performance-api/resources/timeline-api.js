@@ -4,6 +4,8 @@ if (self.importScripts)
 if (self.window)
     description("Basic Interface test for performance-timeline APIs.");
 
+let runningInWorker = !!self.importScripts;
+
 debug("PerformanceEntry");
 shouldBeDefined("PerformanceEntry");
 shouldBeTrue(`"name" in PerformanceEntry.prototype`);
@@ -21,14 +23,25 @@ shouldBeDefined(`Performance.prototype.getEntriesByType`);
 shouldBeDefined(`Performance.prototype.getEntriesByName`);
 
 shouldBeTrue(`performance.getEntries() instanceof Array`);
-shouldBeTrue(`performance.getEntries().length === 0`);
+if (runningInWorker) {
+    // Workers don't have PerformanceNavigationTiming.
+    shouldBeTrue(`performance.getEntries().length === 0`);
+} else {
+    shouldBeTrue(`performance.getEntries().length === 1`);
+}
 shouldNotThrow(`performance.mark("test");`);
-shouldBeTrue(`performance.getEntries().length === 1`);
-shouldBeTrue(`performance.getEntries()[0] instanceof PerformanceEntry`);
-shouldBeEqualToString(`performance.getEntries()[0].name`, "test");
-shouldBeEqualToString(`performance.getEntries()[0].entryType`, "mark");
-shouldBeTrue(`typeof performance.getEntries()[0].startTime === "number"`);
-shouldBeTrue(`typeof performance.getEntries()[0].duration === "number"`);
+if (runningInWorker) {
+    markIndex = 0;
+    shouldBeTrue(`performance.getEntries().length === 1`);
+} else {
+    markIndex = 1;
+    shouldBeTrue(`performance.getEntries().length === 2`);
+}
+shouldBeTrue(`performance.getEntries()[markIndex] instanceof PerformanceEntry`);
+shouldBeEqualToString(`performance.getEntries()[markIndex].name`, "test");
+shouldBeEqualToString(`performance.getEntries()[markIndex].entryType`, "mark");
+shouldBeTrue(`typeof performance.getEntries()[markIndex].startTime === "number"`);
+shouldBeTrue(`typeof performance.getEntries()[markIndex].duration === "number"`);
 
 shouldThrow(`performance.getEntriesByType()`);
 shouldBeTrue(`performance.getEntriesByType("not-real").length === 0`);
@@ -50,5 +63,5 @@ shouldBeTrue(`typeof performance.getEntriesByName("test")[0].duration === "numbe
 shouldBeTrue(`performance.getEntriesByName("test", "not-real").length === 0`);
 shouldBeTrue(`performance.getEntriesByName("test", "mark").length === 1`);
 
-if (self.importScripts)
+if (runningInWorker)
     finishJSTest();

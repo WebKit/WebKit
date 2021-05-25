@@ -113,6 +113,93 @@ describe("/api/report-commits/ with insert=true", function () {
         ]
     }
 
+    const emptyRevisionIdentifierCommits = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "revisionIdentifier": null,
+                "time": "2017-01-20T02:52:34.577Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+                "message": "a message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210949",
+                "previousCommit": "210948",
+                "revisionIdentifier": null,
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            },
+        ]
+    }
+
+    const emptyRevisionIdentifierAndValidRevisionIdentifierCommits = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "revisionIdentifier": null,
+                "time": "2017-01-20T02:52:34.577Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+                "message": "a message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210949",
+                "previousCommit": "210948",
+                "revisionIdentifier": "184276@main",
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            },
+        ]
+    }
+
+    const emptyRevisionIdentifierWithInvalidRevisionIdentifierCommits = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "revisionIdentifier": null,
+                "time": "2017-01-20T02:52:34.577Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+                "message": "a message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210949",
+                "revisionIdentifier": "",
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210950",
+                "revisionIdentifier": false,
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210950",
+                "revisionIdentifier": 0,
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            }
+        ]
+    }
+
     const invalidCommitRevisionIdentifierCommits = {
         "workerName": "someWorker",
         "workerPassword": "somePassword",
@@ -197,7 +284,15 @@ describe("/api/report-commits/ with insert=true", function () {
         });
     });
 
-    it("should reject an invalid revision label", async () => {
+    it("should reject with invalid revision identifier with empty revision identifier", async () => {
+        await addWorkerForReport(subversionCommit);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', emptyRevisionIdentifierWithInvalidRevisionIdentifierCommits);
+        assert.strictEqual(response['status'], 'InvalidRevisionIdentifier');
+        const rows = await TestServer.database().selectAll('commits');
+        assert.strictEqual(rows.length, 0);
+    });
+
+    it("should reject an invalid revision identifier", async () => {
         await addWorkerForReport(subversionCommit);
         const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', invalidCommitRevisionIdentifierCommits);
         assert.strictEqual(response['status'], 'InvalidRevisionIdentifier');
@@ -205,12 +300,79 @@ describe("/api/report-commits/ with insert=true", function () {
         assert.strictEqual(rows.length, 0);
     });
 
-    it("should reject with duplicated commit revision labels", async () => {
+    it("should reject with duplicated commit revision identifiers", async () => {
         await addWorkerForReport(subversionCommit);
         const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', duplicatedCommitRevisionIdentifierCommits);
         assert.strictEqual(response['status'], 'DuplicatedRevisionIdentifier');
         const rows = await TestServer.database().selectAll('commits');
         assert.strictEqual(rows.length, 0);
+    });
+
+    it("should store two commits with empty revision identifier", async () => {
+        await addWorkerForReport(emptyRevisionIdentifierCommits);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', emptyRevisionIdentifierCommits);
+        assert.strictEqual(response['status'], 'OK');
+        const db = TestServer.database();
+        const result = await Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
+
+        const commits = result[0];
+        const committers = result[1];
+        assert.strictEqual(commits.length, 2);
+        assert.strictEqual(committers.length, 2);
+
+        let reportedData = emptyRevisionIdentifierCommits.commits[0];
+        assert.strictEqual(commits[0]['revision'], reportedData['revision']);
+        assert.strictEqual(commits[0]['revision_identifier'], null);
+        assert.strictEqual(commits[0]['time'].toString(), new Date('2017-01-20 02:52:34.577').toString());
+        assert.strictEqual(commits[0]['message'], reportedData['message']);
+        assert.strictEqual(commits[0]['committer'], committers[0]['id']);
+        assert.strictEqual(commits[0]['previous_commit'], null);
+        assert.strictEqual(committers[0]['name'], reportedData['author']['name']);
+        assert.strictEqual(committers[0]['account'], reportedData['author']['account']);
+
+        reportedData = emptyRevisionIdentifierCommits.commits[1];
+        assert.strictEqual(commits[1]['revision'], reportedData['revision']);
+        assert.strictEqual(commits[0]['revision_identifier'], null);
+        assert.strictEqual(commits[1]['time'].toString(), new Date('2017-01-20 03:23:50.645').toString());
+        assert.strictEqual(commits[1]['message'], reportedData['message']);
+        assert.strictEqual(commits[1]['committer'], committers[1]['id']);
+        assert.strictEqual(commits[1]['previous_commit'], commits[0]['id']);
+        assert.strictEqual(committers[1]['name'], reportedData['author']['name']);
+        assert.strictEqual(committers[1]['account'], reportedData['author']['account']);
+
+    });
+
+    it("should store two commits with one empty revision identifier and one valid revision identifier", async () => {
+        await addWorkerForReport(emptyRevisionIdentifierAndValidRevisionIdentifierCommits);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', emptyRevisionIdentifierAndValidRevisionIdentifierCommits);
+        assert.strictEqual(response['status'], 'OK');
+        const db = TestServer.database();
+        const result = await Promise.all([db.selectAll('commits'), db.selectAll('committers')]);
+
+        const commits = result[0];
+        const committers = result[1];
+        assert.strictEqual(commits.length, 2);
+        assert.strictEqual(committers.length, 2);
+
+        let reportedData = emptyRevisionIdentifierAndValidRevisionIdentifierCommits.commits[0];
+        assert.strictEqual(commits[0]['revision'], reportedData['revision']);
+        assert.strictEqual(commits[0]['revision_identifier'], null);
+        assert.strictEqual(commits[0]['time'].toString(),  new Date('2017-01-20 02:52:34.577').toString());
+        assert.strictEqual(commits[0]['message'], reportedData['message']);
+        assert.strictEqual(commits[0]['committer'], committers[0]['id']);
+        assert.strictEqual(commits[0]['previous_commit'], null);
+        assert.strictEqual(committers[0]['name'], reportedData['author']['name']);
+        assert.strictEqual(committers[0]['account'], reportedData['author']['account']);
+
+        reportedData = emptyRevisionIdentifierAndValidRevisionIdentifierCommits.commits[1];
+        assert.strictEqual(commits[1]['revision'], reportedData['revision']);
+        assert.strictEqual(commits[1]['revision_identifier'], reportedData['revisionIdentifier']);
+        assert.strictEqual(commits[1]['time'].toString(),  new Date('2017-01-20 03:23:50.645').toString());
+        assert.strictEqual(commits[1]['message'], reportedData['message']);
+        assert.strictEqual(commits[1]['committer'], committers[1]['id']);
+        assert.strictEqual(commits[1]['previous_commit'], commits[0]['id']);
+        assert.strictEqual(committers[1]['name'], reportedData['author']['name']);
+        assert.strictEqual(committers[1]['account'], reportedData['author']['account']);
     });
 
     it("should store two commits from a valid worker", () => {
@@ -283,7 +445,7 @@ describe("/api/report-commits/ with insert=true", function () {
         });
     });
 
-    it("should update an existing commit with commit label if there is one", async () => {
+    it("should update an existing commit with revision identifier if there is one", async () => {
         const db = TestServer.database();
         const reportedData = subversionCommitWithRevisionIdentifier.commits[0];
         await addWorkerForReport(subversionCommitWithRevisionIdentifier);

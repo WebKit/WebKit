@@ -33,6 +33,7 @@
 #include "SQLiteDatabase.h"
 #include "SecurityOriginData.h"
 #include "SecurityOriginHash.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -67,17 +68,17 @@ public:
     // m_databaseGuard and m_openDatabaseMapGuard currently don't overlap.
     // notificationMutex() is currently independent of the other locks.
 
-    ExceptionOr<void> canEstablishDatabase(DatabaseContext&, const String& name, unsigned long long estimatedSize);
-    ExceptionOr<void> retryCanEstablishDatabase(DatabaseContext&, const String& name, unsigned long long estimatedSize);
+    ExceptionOr<void> canEstablishDatabase(DatabaseContext&, const String& name, uint64_t estimatedSize);
+    ExceptionOr<void> retryCanEstablishDatabase(DatabaseContext&, const String& name, uint64_t estimatedSize);
 
-    void setDatabaseDetails(const SecurityOriginData&, const String& name, const String& displayName, unsigned long long estimatedSize);
+    void setDatabaseDetails(const SecurityOriginData&, const String& name, const String& displayName, uint64_t estimatedSize);
     WEBCORE_EXPORT String fullPathForDatabase(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
 
     Vector<Ref<Database>> openDatabases();
     void addOpenDatabase(Database&);
     void removeOpenDatabase(Database&);
 
-    unsigned long long maximumSize(Database&);
+    uint64_t maximumSize(Database&);
 
     WEBCORE_EXPORT void closeAllDatabases(CurrentQueryBehavior = CurrentQueryBehavior::RunToCompletion);
 
@@ -86,9 +87,9 @@ public:
 
     DatabaseDetails detailsForNameAndOrigin(const String&, const SecurityOriginData&);
 
-    WEBCORE_EXPORT unsigned long long usage(const SecurityOriginData&);
-    WEBCORE_EXPORT unsigned long long quota(const SecurityOriginData&);
-    WEBCORE_EXPORT void setQuota(const SecurityOriginData&, unsigned long long);
+    WEBCORE_EXPORT uint64_t usage(const SecurityOriginData&);
+    WEBCORE_EXPORT uint64_t quota(const SecurityOriginData&);
+    WEBCORE_EXPORT void setQuota(const SecurityOriginData&, uint64_t);
     RefPtr<OriginLock> originLockFor(const SecurityOriginData&);
 
     WEBCORE_EXPORT void deleteAllDatabasesImmediately();
@@ -119,26 +120,26 @@ public:
 private:
     explicit DatabaseTracker(const String& databasePath);
 
-    ExceptionOr<void> hasAdequateQuotaForOrigin(const SecurityOriginData&, unsigned long long estimatedSize);
+    ExceptionOr<void> hasAdequateQuotaForOrigin(const SecurityOriginData&, uint64_t estimatedSize) WTF_REQUIRES_LOCK(m_databaseGuard);
 
-    bool hasEntryForOriginNoLock(const SecurityOriginData&);
-    String fullPathForDatabaseNoLock(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
-    Vector<String> databaseNamesNoLock(const SecurityOriginData&);
-    unsigned long long quotaNoLock(const SecurityOriginData&);
+    bool hasEntryForOriginNoLock(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
+    String fullPathForDatabaseNoLock(const SecurityOriginData&, const String& name, bool createIfDoesNotExist) WTF_REQUIRES_LOCK(m_databaseGuard);
+    Vector<String> databaseNamesNoLock(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard) WTF_REQUIRES_LOCK(m_databaseGuard);
+    uint64_t quotaNoLock(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
 
-    String trackerDatabasePath() const;
+    String trackerDatabasePath() const WTF_REQUIRES_LOCK(m_databaseGuard);
 
     enum TrackerCreationAction {
         DontCreateIfDoesNotExist,
         CreateIfDoesNotExist
     };
-    void openTrackerDatabase(TrackerCreationAction);
+    void openTrackerDatabase(TrackerCreationAction) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     String originPath(const SecurityOriginData&) const;
 
-    bool hasEntryForDatabase(const SecurityOriginData&, const String& databaseIdentifier);
+    bool hasEntryForDatabase(const SecurityOriginData&, const String& databaseIdentifier) WTF_REQUIRES_LOCK(m_databaseGuard);
 
-    bool addDatabase(const SecurityOriginData&, const String& name, const String& path);
+    bool addDatabase(const SecurityOriginData&, const String& name, const String& path) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     enum class DeletionMode {
         Immediate,
@@ -155,41 +156,41 @@ private:
     bool deleteOrigin(const SecurityOriginData&, DeletionMode);
     bool deleteDatabaseFile(const SecurityOriginData&, const String& name, DeletionMode);
 
-    void deleteOriginLockFor(const SecurityOriginData&);
+    void deleteOriginLockFor(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     using DatabaseSet = HashSet<Database*>;
     using DatabaseNameMap = HashMap<String, DatabaseSet*>;
     using DatabaseOriginMap = HashMap<SecurityOriginData, DatabaseNameMap*>;
 
-    Lock m_openDatabaseMapGuard;
-    mutable std::unique_ptr<DatabaseOriginMap> m_openDatabaseMap;
+    CheckedLock m_openDatabaseMapGuard;
+    mutable std::unique_ptr<DatabaseOriginMap> m_openDatabaseMap WTF_GUARDED_BY_LOCK(m_openDatabaseMapGuard);
 
     // This lock protects m_database, m_originLockMap, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
-    Lock m_databaseGuard;
-    SQLiteDatabase m_database;
+    CheckedLock m_databaseGuard;
+    SQLiteDatabase m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
     using OriginLockMap = HashMap<String, RefPtr<OriginLock>>;
-    OriginLockMap m_originLockMap;
+    OriginLockMap m_originLockMap WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
     String m_databaseDirectoryPath;
 
     DatabaseManagerClient* m_client { nullptr };
 
-    HashMap<SecurityOriginData, std::unique_ptr<HashCountedSet<String>>> m_beingCreated;
-    HashMap<SecurityOriginData, std::unique_ptr<HashSet<String>>> m_beingDeleted;
-    HashSet<SecurityOriginData> m_originsBeingDeleted;
-    bool isDeletingDatabaseOrOriginFor(const SecurityOriginData&, const String& name);
-    void recordCreatingDatabase(const SecurityOriginData&, const String& name);
-    void doneCreatingDatabase(const SecurityOriginData&, const String& name);
-    bool creatingDatabase(const SecurityOriginData&, const String& name);
-    bool canDeleteDatabase(const SecurityOriginData&, const String& name);
-    void recordDeletingDatabase(const SecurityOriginData&, const String& name);
-    void doneDeletingDatabase(const SecurityOriginData&, const String& name);
-    bool isDeletingDatabase(const SecurityOriginData&, const String& name);
-    bool canDeleteOrigin(const SecurityOriginData&);
-    bool isDeletingOrigin(const SecurityOriginData&);
-    void recordDeletingOrigin(const SecurityOriginData&);
-    void doneDeletingOrigin(const SecurityOriginData&);
+    HashMap<SecurityOriginData, std::unique_ptr<HashCountedSet<String>>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    HashMap<SecurityOriginData, std::unique_ptr<HashSet<String>>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    HashSet<SecurityOriginData> m_originsBeingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    bool isDeletingDatabaseOrOriginFor(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void recordCreatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void doneCreatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool creatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool canDeleteDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void recordDeletingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void doneDeletingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool isDeletingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool canDeleteOrigin(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
+    bool isDeletingOrigin(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void recordDeletingOrigin(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
+    void doneDeletingOrigin(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     static void scheduleForNotification();
     static void notifyDatabasesChanged();

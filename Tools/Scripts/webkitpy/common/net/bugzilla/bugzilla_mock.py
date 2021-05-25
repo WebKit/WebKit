@@ -31,7 +31,6 @@ import datetime
 import logging
 
 from webkitpy.common.net.bugzilla.bug import Bug
-from webkitpy.common.net.bugzilla.attachment import Attachment
 from webkitpy.common.config.committers import CommitterList, Reviewer
 
 _log = logging.getLogger(__name__)

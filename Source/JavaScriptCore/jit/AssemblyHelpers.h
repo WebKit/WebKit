@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -377,6 +377,11 @@ public:
         ASSERT(codeBlock);
 
         const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
+        emitRestoreCalleeSavesFor(calleeSaves);
+    }
+
+    void emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
+    {
         RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
         unsigned registerCount = calleeSaves->size();
         
@@ -457,7 +462,7 @@ public:
 
     void restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*&);
 
-    void copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
+    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() })
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
         GPRReg temp1 = usedRegisters.getFreeGPR(0);
@@ -465,14 +470,12 @@ public:
         FPRReg fpTemp = usedRegisters.getFreeFPR();
         ASSERT(temp2 != InvalidGPRReg);
 
-        ASSERT(codeBlock());
-
         // Copy saved calleeSaves on stack or unsaved calleeSaves in register to vm calleeSave buffer
         loadPtr(&topEntryFrame, temp1);
         addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), temp1);
 
         RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
-        const RegisterAtOffsetList* currentCalleeSaves = codeBlock()->calleeSaveRegisters();
+        const RegisterAtOffsetList* currentCalleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
         RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
         unsigned registerCount = allCalleeSaves->size();
 
@@ -1825,6 +1828,7 @@ public:
         functor(TypeofType::Undefined, true);
     }
     
+    Call emitUnlinkedVirtualCall(JSGlobalObject*, CallLinkInfo*);
     void emitVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
     
     void makeSpaceOnStackForCCall();

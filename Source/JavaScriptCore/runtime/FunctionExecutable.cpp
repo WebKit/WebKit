@@ -80,7 +80,7 @@ void FunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     if (RareData* rareData = thisObject->m_rareData.get()) {
         visitor.append(rareData->m_cachedPolyProtoStructure);
         if (TemplateObjectMap* map = rareData->m_templateObjectMap.get()) {
-            auto locker = holdLock(thisObject->cellLock());
+            Locker locker { thisObject->cellLock() };
             for (auto& entry : *map)
                 visitor.append(entry.value);
         }

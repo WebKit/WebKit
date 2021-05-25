@@ -236,28 +236,34 @@ CDMInstanceSession::KeyStatusVector KeyStore::convertToJSKeyStatusVector() const
 
 void CDMProxy::updateKeyStore(const KeyStore& newKeyStore)
 {
-    auto locker = holdLock(m_keysMutex);
+    Locker locker { m_keysLock };
     m_keyStore.merge(newKeyStore);
     LOG(EME, "EME - CDMProxy - updating key store from a session update");
     m_keysCondition.notifyAll();
 }
 
+const CDMInstanceProxy* CDMProxy::instance() const
+{
+    Locker locker { m_instanceLock };
+    return m_instance;
+}
+
 void CDMProxy::setInstance(CDMInstanceProxy* instance)
 {
-    auto locker = holdLock(m_instanceMutex);
+    Locker locker { m_instanceLock };
     m_instance = instance;
 }
 
 RefPtr<KeyHandle> CDMProxy::keyHandle(const KeyIDType& keyID) const
 {
-    auto locker = holdLock(m_keysMutex);
+    Locker locker { m_keysLock };
     ASSERT(m_keyStore.containsKeyID(keyID));
     return m_keyStore.keyHandle(keyID);
 }
 
 void CDMProxy::startedWaitingForKey() const
 {
-    auto locker = holdLock(m_instanceMutex);
+    Locker locker { m_instanceLock };
     LOG(EME, "EME - CDMProxy - started waiting for a key");
     ASSERT(m_instance);
     m_instance->startedWaitingForKey();
@@ -265,7 +271,7 @@ void CDMProxy::startedWaitingForKey() const
 
 void CDMProxy::stoppedWaitingForKey() const
 {
-    auto locker = holdLock(m_instanceMutex);
+    Locker locker { m_instanceLock };
     LOG(EME, "EME - CDMProxy - stopped waiting for a key");
     ASSERT(m_instance);
     m_instance->stoppedWaitingForKey();
@@ -289,9 +295,10 @@ Optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& keyID, W
     LOG(EME, "EME - CDMProxy - trying to wait for key ID %s", vectorToHexString(keyID).ascii().data());
     bool wasKeyAvailable = false;
     {
-        auto locker = holdLock(m_keysMutex);
+        Locker locker { m_keysLock };
 
-        m_keysCondition.waitFor(m_keysMutex, CDMProxy::MaxKeyWaitTimeSeconds, [this, keyID, client = WTFMove(client), &wasKeyAvailable]() {
+        m_keysCondition.waitFor(m_keysLock, CDMProxy::MaxKeyWaitTimeSeconds, [this, keyID, client = WTFMove(client), &wasKeyAvailable]() {
+            assertIsHeld(m_keysLock);
             if (!client || client->isAborting())
                 return true;
             wasKeyAvailable = keyAvailableUnlocked(keyID);
@@ -316,7 +323,7 @@ bool CDMProxy::keyAvailableUnlocked(const KeyIDType& keyID) const
 
 bool CDMProxy::keyAvailable(const KeyIDType& keyID) const
 {
-    auto locker = holdLock(m_keysMutex);
+    Locker locker { m_keysLock };
     return keyAvailableUnlocked(keyID);
 }
 

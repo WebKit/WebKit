@@ -97,7 +97,7 @@ class SCM:
         return filenames
 
     def strip_r_from_svn_revision(self, svn_revision):
-        match = re.match("^r(?P<svn_revision>\d+)", unicode(svn_revision))
+        match = re.match(r"^r(?P<svn_revision>\d+)", unicode(svn_revision))
         if (match):
             return match.group('svn_revision')
         return svn_revision

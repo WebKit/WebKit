@@ -48,7 +48,7 @@ constexpr uint64_t maxGeneratedKeyValue = 0x20000000000000;
 MemoryIDBBackingStore::MemoryIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)
     , m_sessionID(sessionID)
-    , m_serializationContext(IDBSerializationContext::getOrCreateIDBSerializationContext(sessionID))
+    , m_serializationContext(IDBSerializationContext::getOrCreateForCurrentThread())
 {
 }
 

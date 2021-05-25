@@ -40,6 +40,7 @@
 #include "JSCInlines.h"
 #include "JSONObject.h"
 #include "JSString.h"
+#include "LinkBuffer.h"
 #include "Options.h"
 #include "Parser.h"
 #include "ProbeContext.h"
@@ -688,6 +689,11 @@ JSC_DEFINE_CUSTOM_GETTER(runtimeArrayLengthGetter, (JSGlobalObject* globalObject
     return JSValue::encode(jsNumber(thisObject->getLength()));
 }
 
+static const struct CompactHashIndex staticCustomAccessorTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
 static JSC_DECLARE_CUSTOM_GETTER(testStaticAccessorGetter);
 static JSC_DECLARE_CUSTOM_SETTER(testStaticAccessorPutter);
 
@@ -708,36 +714,19 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticAccessorPutter, (JSGlobalObject* globalObject
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
     
-    JSValue receiver = JSValue::decode(thisValue);
-    JSObject* thisObject = receiver.isObject() ? asObject(receiver) : receiver.synthesizePrototype(globalObject);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
     RELEASE_ASSERT(thisObject);
 
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testField")), JSValue::decode(value));
 }
 
-static const struct CompactHashIndex staticCustomAccessorTableIndex[9] = {
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { -1, -1 },
-    { 0, 8 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 1, -1 },
-};
-
-static const struct HashTableValue staticCustomAccessorTableValues[3] = {
+static const struct HashTableValue staticCustomAccessorTableValues[1] = {
     { "testStaticAccessor", static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticAccessorPutter) } },
-    { "testStaticAccessorDontEnum", PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), (intptr_t)static_cast<PutValueFunc>(testStaticAccessorPutter) } },
-    { "testStaticAccessorReadOnly", PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticAccessorGetter), 0 } },
 };
 
 static const struct HashTable staticCustomAccessorTable =
-    { 3, 7, true, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
+    { 1, 1, true, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
 
 class StaticCustomAccessor : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -802,25 +791,17 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutter, (JSGlobalObject* globalObject, E
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValue")), JSValue::decode(value));
 }
 
-static const struct CompactHashIndex staticCustomValueTableIndex[8] = {
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
+static const struct CompactHashIndex staticCustomValueTableIndex[2] = {
     { 0, -1 },
     { -1, -1 },
 };
 
-static const struct HashTableValue staticCustomValueTableValues[3] = {
-    { "testStaticValue", static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutter) } },
-    { "testStaticValueNoSetter", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
-    { "testStaticValueReadOnly", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
+static const struct HashTableValue staticCustomValueTableValues[1] = {
+    { "testStaticValue", static_cast<unsigned>(PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutPropertySlot::PutValueFunc>(testStaticValuePutter) } },
 };
 
 static const struct HashTable staticCustomValueTable =
-    { 3, 7, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
+    { 1, 1, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
 
 class StaticCustomValue : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -858,7 +839,6 @@ public:
 
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
 public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
@@ -1937,6 +1917,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionDumpRegisters);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpCell);
 static JSC_DECLARE_HOST_FUNCTION(functionIndexingMode);
 static JSC_DECLARE_HOST_FUNCTION(functionInlineCapacity);
+static JSC_DECLARE_HOST_FUNCTION(functionClearLinkBufferStats);
+static JSC_DECLARE_HOST_FUNCTION(functionLinkBufferStats);
 static JSC_DECLARE_HOST_FUNCTION(functionValue);
 static JSC_DECLARE_HOST_FUNCTION(functionGetPID);
 static JSC_DECLARE_HOST_FUNCTION(functionHaveABadTime);
@@ -2003,6 +1985,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionSetUserPreferredLanguages);
 static JSC_DECLARE_HOST_FUNCTION(functionICUVersion);
 static JSC_DECLARE_HOST_FUNCTION(functionICUHeaderVersion);
 static JSC_DECLARE_HOST_FUNCTION(functionAssertEnabled);
+static JSC_DECLARE_HOST_FUNCTION(functionAsanEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionIsMemoryLimited);
 static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
@@ -2536,6 +2519,32 @@ JSC_DEFINE_HOST_FUNCTION(functionInlineCapacity, (JSGlobalObject* globalObject, 
     return encodedJSUndefined();
 }
 
+// Clears the LinkBuffer profile statistics.
+// Usage: $vm.clearLinkBufferStats()
+JSC_DEFINE_HOST_FUNCTION(functionClearLinkBufferStats, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+#if ENABLE(ASSEMBLER)
+    LinkBuffer::clearProfileStatistics();
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
+// Dumps the LinkBuffer profile statistics as a string.
+// Usage: $vm.print($vm.linkBufferStats())
+JSC_DEFINE_HOST_FUNCTION(functionLinkBufferStats, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+#if ENABLE(ASSEMBLER)
+    WTF::StringPrintStream stream;
+    LinkBuffer::dumpProfileStatistics(&stream);
+    return JSValue::encode(jsString(globalObject->vm(), stream.toString()));
+#else
+    UNUSED_PARAM(globalObject);
+    return JSValue::encode(jsUndefined());
+#endif
+}
+
 // Gets the dataLog dump of a given JS value as a string.
 // Usage: $vm.print("value = " + $vm.value(jsValue))
 JSC_DEFINE_HOST_FUNCTION(functionValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -2604,7 +2613,7 @@ JSC_DEFINE_HOST_FUNCTION(functionIsHavingABadTime, (JSGlobalObject* globalObject
 // options are not frozen. For the jsc shell, the --disableOptionsFreezingForTesting
 // argument needs to be passed in on the command line.
 
-#if ENABLE(MASM_PROBE)
+#if ENABLE(ASSEMBLER)
 static void callWithStackSizeProbeFunction(Probe::State* state)
 {
     JSGlobalObject* globalObject = bitwise_cast<JSGlobalObject*>(state->arg);
@@ -2622,7 +2631,7 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
     MarkedArgumentBuffer args;
     call(globalObject, function, callData, jsUndefined(), args);
 }
-#endif // ENABLE(MASM_PROBE)
+#endif // ENABLE(ASSEMBLER)
 
 JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASAN, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -2640,7 +2649,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     if (!isSupportedByPlatform)
         return throwVMError(globalObject, throwScope, "Not supported for this platform");
 
-#if ENABLE(MASM_PROBE)
+#if ENABLE(ASSEMBLER)
     if (g_jscConfig.isPermanentlyFrozen() || !g_jscConfig.disabledFreezingForTesting)
         return throwVMError(globalObject, throwScope, "Options are frozen");
 
@@ -2712,10 +2721,10 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     throwScope.release();
     return encodedJSUndefined();
 
-#else // not ENABLE(MASM_PROBE)
+#else // not ENABLE(ASSEMBLER)
     UNUSED_PARAM(callFrame);
     return throwVMError(globalObject, throwScope, "Not supported for this platform");
-#endif // ENABLE(MASM_PROBE)
+#endif // ENABLE(ASSEMBLER)
 }
 
 // Creates a new global object.
@@ -3531,6 +3540,12 @@ JSC_DEFINE_HOST_FUNCTION(functionAssertEnabled, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsBoolean(ASSERT_ENABLED));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionAsanEnabled, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(ASAN_ENABLED));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionIsMemoryLimited, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -3633,6 +3648,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "indexingMode", functionIndexingMode, 1);
     addFunction(vm, "inlineCapacity", functionInlineCapacity, 1);
+    addFunction(vm, "clearLinkBufferStats", functionClearLinkBufferStats, 0);
+    addFunction(vm, "linkBufferStats", functionLinkBufferStats, 0);
     addFunction(vm, "value", functionValue, 1);
     addFunction(vm, "getpid", functionGetPID, 0);
 
@@ -3721,6 +3738,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "icuHeaderVersion", functionICUHeaderVersion, 0);
 
     addFunction(vm, "assertEnabled", functionAssertEnabled, 0);
+    addFunction(vm, "asanEnabled", functionAsanEnabled, 0);
 
     addFunction(vm, "isMemoryLimited", functionIsMemoryLimited, 0);
     addFunction(vm, "useJIT", functionUseJIT, 0);

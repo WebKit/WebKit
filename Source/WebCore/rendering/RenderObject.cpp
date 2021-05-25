@@ -968,7 +968,7 @@ void RenderObject::repaintSlowRepaintObject() const
 
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
 {
-    return snappedIntRect(absoluteClippedOverflowRect());
+    return snappedIntRect(absoluteClippedOverflowRectForRepaint());
 }
     
 LayoutRect RenderObject::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
@@ -978,15 +978,15 @@ LayoutRect RenderObject::rectWithOutlineForRepaint(const RenderLayerModelObject*
     return r;
 }
 
-LayoutRect RenderObject::clippedOverflowRectForRepaint(const RenderLayerModelObject*) const
+LayoutRect RenderObject::clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const
 {
     ASSERT_NOT_REACHED();
     return LayoutRect();
 }
 
-LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderObject::computeRect(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    return *computeVisibleRectInContainer(rect, repaintContainer, visibleRectContextForRepaint());
+    return *computeVisibleRectInContainer(rect, repaintContainer, context);
 }
 
 FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect& rect, const RenderLayerModelObject* repaintContainer) const
@@ -1225,11 +1225,11 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         const auto& box = downcast<RenderBox>(*this);
         if (box.hasRenderOverflow()) {
             auto layoutOverflow = box.layoutOverflowRect();
-            stream << " (layout overflow " << layoutOverflow.x().toInt() << "," << layoutOverflow.y().toInt() << " " << layoutOverflow.width().toInt() << "x" << layoutOverflow.height().toInt() << ")";
+            stream << " (layout overflow " << layoutOverflow.x() << "," << layoutOverflow.y() << " " << layoutOverflow.width() << "x" << layoutOverflow.height() << ")";
             
             if (box.hasVisualOverflow()) {
                 auto visualOverflow = box.visualOverflowRect();
-                stream << " (visual overflow " << visualOverflow.x().toInt() << "," << visualOverflow.y().toInt() << " " << visualOverflow.width().toInt() << "x" << visualOverflow.height().toInt() << ")";
+                stream << " (visual overflow " << visualOverflow.x() << "," << visualOverflow.y() << " " << visualOverflow.width() << "x" << visualOverflow.height() << ")";
             }
         }
     }
@@ -1974,7 +1974,7 @@ static Vector<FloatRect> absoluteRectsForRangeInText(const SimpleRange& range, T
     auto textQuads = renderer->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(RenderObject::BoundingRectBehavior::UseSelectionHeight), behavior.contains(RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
 
     if (behavior.contains(RenderObject::BoundingRectBehavior::RespectClipping)) {
-        auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRect();
+        auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRectForRepaint();
         Vector<FloatRect> clippedRects;
         clippedRects.reserveInitialCapacity(textQuads.size());
         for (auto& quad : textQuads) {
@@ -2410,6 +2410,17 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
 
 #endif
 
+String RenderObject::description() const
+{
+    StringBuilder builder;
+
+    builder.append(renderName(), ' ');
+    if (node())
+        builder.append(' ', node()->description());
+    
+    return builder.toString();
+}
+
 String RenderObject::debugDescription() const
 {
     StringBuilder builder;
@@ -2497,4 +2508,9 @@ void showRenderTree(const WebCore::RenderObject* object)
 bool WebCore::shouldApplyLayoutContainment(const WebCore::RenderObject& renderer)
 {
     return renderer.style().containsLayout() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow());
+}
+
+bool WebCore::shouldApplySizeContainment(const WebCore::RenderObject& renderer)
+{
+    return renderer.style().containsSize() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isTableCaption()) && !renderer.isTable();
 }

@@ -37,6 +37,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
+#include "ImageDataSettings.h"
 #include "InspectorCanvasAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InstrumentingAgents.h"

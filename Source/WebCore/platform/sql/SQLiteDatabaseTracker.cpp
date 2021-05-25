@@ -27,26 +27,25 @@
 #include "SQLiteDatabaseTracker.h"
 
 #include <mutex>
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 
 namespace WebCore {
 
 namespace SQLiteDatabaseTracker {
 
-static SQLiteDatabaseTrackerClient* s_staticSQLiteDatabaseTrackerClient = nullptr;
-static unsigned s_transactionInProgressCounter = 0;
-
-static Lock transactionInProgressMutex;
+static CheckedLock transactionInProgressLock;
+static SQLiteDatabaseTrackerClient* s_staticSQLiteDatabaseTrackerClient WTF_GUARDED_BY_LOCK(transactionInProgressLock) { nullptr };
+static unsigned s_transactionInProgressCounter WTF_GUARDED_BY_LOCK(transactionInProgressLock) { 0 };
 
 void setClient(SQLiteDatabaseTrackerClient* client)
 {
-    auto locker = holdLock(transactionInProgressMutex);
+    Locker locker { transactionInProgressLock };
     s_staticSQLiteDatabaseTrackerClient = client;
 }
 
 void incrementTransactionInProgressCount()
 {
-    auto locker = holdLock(transactionInProgressMutex);
+    Locker locker { transactionInProgressLock };
     if (!s_staticSQLiteDatabaseTrackerClient)
         return;
 
@@ -57,7 +56,7 @@ void incrementTransactionInProgressCount()
 
 void decrementTransactionInProgressCount()
 {
-    auto locker = holdLock(transactionInProgressMutex);
+    Locker locker { transactionInProgressLock };
     if (!s_staticSQLiteDatabaseTrackerClient)
         return;
 
@@ -70,7 +69,7 @@ void decrementTransactionInProgressCount()
 
 bool hasTransactionInProgress()
 {
-    auto locker = holdLock(transactionInProgressMutex);
+    Locker locker { transactionInProgressLock };
     return !s_staticSQLiteDatabaseTrackerClient || s_transactionInProgressCounter > 0;
 }
 

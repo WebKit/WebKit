@@ -58,8 +58,6 @@ typedef struct _GFileIOStream GFileIOStream;
 
 namespace WTF {
 
-struct FileMetadata;
-
 namespace FileSystemImpl {
 
 // PlatformFileHandle
@@ -107,37 +105,37 @@ enum class MappedFileMode {
     Private,
 };
 
-enum class ShouldFollowSymbolicLinks { No, Yes };
-
 WTF_EXPORT_PRIVATE bool fileExists(const String&);
 WTF_EXPORT_PRIVATE bool deleteFile(const String&);
 WTF_EXPORT_PRIVATE bool deleteEmptyDirectory(const String&);
 WTF_EXPORT_PRIVATE bool moveFile(const String& oldPath, const String& newPath);
-WTF_EXPORT_PRIVATE bool getFileSize(const String&, long long& result);
-WTF_EXPORT_PRIVATE bool getFileSize(PlatformFileHandle, long long& result);
-WTF_EXPORT_PRIVATE Optional<WallTime> getFileModificationTime(const String&);
-WTF_EXPORT_PRIVATE Optional<WallTime> getFileCreationTime(const String&); // Not all platforms store file creation time.
-WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadata(const String& path);
-WTF_EXPORT_PRIVATE Optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
-WTF_EXPORT_PRIVATE bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
+WTF_EXPORT_PRIVATE Optional<uint64_t> fileSize(const String&); // Follows symlinks.
+WTF_EXPORT_PRIVATE Optional<uint64_t> fileSize(PlatformFileHandle);
+WTF_EXPORT_PRIVATE Optional<WallTime> fileModificationTime(const String&);
+WTF_EXPORT_PRIVATE bool updateFileModificationTime(const String& path); // Sets modification time to now.
+WTF_EXPORT_PRIVATE Optional<WallTime> fileCreationTime(const String&); // Not all platforms store file creation time.
+WTF_EXPORT_PRIVATE bool isHiddenFile(const String&);
 WTF_EXPORT_PRIVATE String pathByAppendingComponent(const String& path, const String& component);
 WTF_EXPORT_PRIVATE String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
 WTF_EXPORT_PRIVATE String lastComponentOfPathIgnoringTrailingSlash(const String& path);
 WTF_EXPORT_PRIVATE bool makeAllDirectories(const String& path);
-WTF_EXPORT_PRIVATE String homeDirectoryPath();
-WTF_EXPORT_PRIVATE String pathGetFileName(const String&);
-WTF_EXPORT_PRIVATE String directoryName(const String&);
-WTF_EXPORT_PRIVATE bool getVolumeFreeSpace(const String&, uint64_t&);
+WTF_EXPORT_PRIVATE String pathFileName(const String&);
+WTF_EXPORT_PRIVATE String parentPath(const String&);
+WTF_EXPORT_PRIVATE Optional<uint64_t> volumeFreeSpace(const String&);
 WTF_EXPORT_PRIVATE Optional<int32_t> getFileDeviceId(const CString&);
 WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);
+
+enum class FileType { Regular, Directory, SymbolicLink };
+WTF_EXPORT_PRIVATE Optional<FileType> fileType(const String&);
+WTF_EXPORT_PRIVATE Optional<FileType> fileTypeFollowingSymlinks(const String&);
 
 WTF_EXPORT_PRIVATE void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });
 
 bool canExcludeFromBackup(); // Returns true if any file can ever be excluded from backup.
 bool excludeFromBackup(const String&); // Returns true if successful.
 
-WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path, const String& filter);
+WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path); // Returns file names, not full paths.
 
 WTF_EXPORT_PRIVATE CString fileSystemRepresentation(const String&);
 WTF_EXPORT_PRIVATE String stringFromFileSystemRepresentation(const char*);
@@ -169,6 +167,7 @@ WTF_EXPORT_PRIVATE bool appendFileContentsToFileHandle(const String& path, Platf
 WTF_EXPORT_PRIVATE bool hardLink(const String& targetPath, const String& linkPath);
 // Hard links a file if possible, copies it if not.
 WTF_EXPORT_PRIVATE bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath);
+WTF_EXPORT_PRIVATE Optional<uint64_t> hardLinkCount(const String& path);
 
 #if USE(FILE_LOCK)
 WTF_EXPORT_PRIVATE bool lockFile(PlatformFileHandle, OptionSet<FileLockMode>);
@@ -200,6 +199,11 @@ WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix);
+
+// Allow reading cloud files with no local copy.
+enum class PolicyScope : uint8_t { Process, Thread };
+WTF_EXPORT_PRIVATE bool setAllowsMaterializingDatalessFiles(bool, PolicyScope);
+WTF_EXPORT_PRIVATE Optional<bool> allowsMaterializingDatalessFiles(PolicyScope);
 #endif
 
 WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);

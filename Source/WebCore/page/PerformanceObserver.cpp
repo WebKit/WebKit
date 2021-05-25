@@ -31,6 +31,7 @@
 #include "InspectorInstrumentation.h"
 #include "Performance.h"
 #include "PerformanceObserverEntryList.h"
+#include "RuntimeEnabledFeatures.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
@@ -107,6 +108,11 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     return { };
 }
 
+Vector<RefPtr<PerformanceEntry>> PerformanceObserver::takeRecords()
+{
+    return std::exchange(m_entriesToDeliver, { });
+}
+
 void PerformanceObserver::disconnect()
 {
     if (m_performance)
@@ -114,6 +120,7 @@ void PerformanceObserver::disconnect()
 
     m_registered = false;
     m_entriesToDeliver.clear();
+    m_typeFilter = { };
 }
 
 void PerformanceObserver::queueEntry(PerformanceEntry& entry)
@@ -130,7 +137,7 @@ void PerformanceObserver::deliver()
     if (!context)
         return;
 
-    Vector<RefPtr<PerformanceEntry>> entries = WTFMove(m_entriesToDeliver);
+    Vector<RefPtr<PerformanceEntry>> entries = std::exchange(m_entriesToDeliver, { });
     auto list = PerformanceObserverEntryList::create(WTFMove(entries));
 
     InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_s);
@@ -141,11 +148,12 @@ void PerformanceObserver::deliver()
 Vector<String> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& context)
 {
     Vector<String> entryTypes = {
-        // FIXME: <https://webkit.org/b/184363> Add support for Navigation Timing Level 2
-        // "navigation"_s,
         "mark"_s,
-        "measure"_s
+        "measure"_s,
     };
+
+    if (context.settingsValues().performanceNavigationTimingAPIEnabled)
+        entryTypes.append("navigation"_s);
 
     if (is<Document>(context) && downcast<Document>(context).supportsPaintTiming())
         entryTypes.append("paint"_s);

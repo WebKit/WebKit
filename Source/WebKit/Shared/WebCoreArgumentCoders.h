@@ -30,7 +30,6 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/ImageData.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/MediaSelectionOption.h>
@@ -148,6 +147,7 @@ struct EventTrackingRegions;
 struct ExceptionDetails;
 struct FontAttributes;
 struct FileChooserSettings;
+struct ImageExtractionDataDetectorInfo;
 struct RawFile;
 struct ShareData;
 struct ShareDataWithParsedURL;
@@ -613,6 +613,11 @@ template<> struct ArgumentCoder<WebCore::FilterOperation> {
     static void encode(Encoder&, const WebCore::FilterOperation&);
 };
 WARN_UNUSED_RETURN bool decodeFilterOperation(Decoder&, RefPtr<WebCore::FilterOperation>&);
+
+template<> struct ArgumentCoder<RefPtr<WebCore::FilterOperation>> {
+    static void encode(Encoder&, const RefPtr<WebCore::FilterOperation>&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RefPtr<WebCore::FilterOperation>&);
+};
 #endif
 
 template<> struct ArgumentCoder<WebCore::BlobPart> {
@@ -804,18 +809,6 @@ template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {
 };
 #endif
 
-template<> struct ArgumentCoder<RefPtr<WebCore::ImageData>> {
-    template<typename Encoder>
-    static void encode(Encoder&, const RefPtr<WebCore::ImageData>&);
-    static Optional<RefPtr<WebCore::ImageData>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::ImageData>> {
-    template<typename Encoder>
-    static void encode(Encoder&, const Ref<WebCore::ImageData>&);
-    static Optional<Ref<WebCore::ImageData>> decode(Decoder&);
-};
-
 #if HAVE(PASSKIT_INSTALLMENTS)
 template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {
     static void encode(Encoder&, const WebCore::PaymentInstallmentConfiguration&);
@@ -836,6 +829,17 @@ template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo> {
     static Optional<WebCore::GraphicsContextGL::ActiveInfo> decode(Decoder&);
 };
 #endif
+
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+
+template<> struct ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo> {
+    static void encode(Encoder&, const WebCore::ImageExtractionDataDetectorInfo&);
+    static WARN_UNUSED_RETURN Optional<WebCore::ImageExtractionDataDetectorInfo> decode(Decoder&);
+    static void encodePlatformData(Encoder&, const WebCore::ImageExtractionDataDetectorInfo&);
+    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ImageExtractionDataDetectorInfo&);
+};
+
+#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
 
 } // namespace IPC
 
@@ -1024,5 +1028,14 @@ template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesti
     >;
 };
 #endif
+
+template<> struct EnumTraits<WebCore::ScrollSnapStrictness> {
+    using values = EnumValues<
+        WebCore::ScrollSnapStrictness,
+        WebCore::ScrollSnapStrictness::None,
+        WebCore::ScrollSnapStrictness::Proximity,
+        WebCore::ScrollSnapStrictness::Mandatory
+    >;
+};
 
 } // namespace WTF

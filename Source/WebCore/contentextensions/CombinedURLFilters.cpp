@@ -103,10 +103,8 @@ static String prefixTreeVertexToString(const PrefixTreeVertex& vertex, const Has
 
     auto actionsSlot = actions.find(&vertex);
     if (actionsSlot != actions.end()) {
-        for (uint64_t action : actionsSlot->value) {
-            builder.appendNumber(action);
-            builder.append(',');
-        }
+        for (uint64_t action : actionsSlot->value)
+            builder.append(action, ',');
     }
     builder.append('\n');
     return builder.toString();

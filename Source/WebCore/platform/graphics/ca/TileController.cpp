@@ -756,32 +756,22 @@ int TileController::rightMarginWidth() const
 
 Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, TileGrid& grid)
 {
-    auto layer = m_tileCacheLayer->createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid, tileRect.size());
+    float temporaryScaleFactor = owningGraphicsLayer()->platformCALayerContentsScaleMultiplierForNewTiles(m_tileCacheLayer);
+    m_hasTilesWithTemporaryScaleFactor |= temporaryScaleFactor != 1;
 
+    auto layer = m_tileCacheLayer->createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerTypeTiledBackingTileLayer, &grid, tileRect.size());
     layer->setAnchorPoint(FloatPoint3D());
     layer->setPosition(tileRect.location());
     layer->setBorderColor(m_tileDebugBorderColor);
     layer->setBorderWidth(m_tileDebugBorderWidth);
     layer->setEdgeAntialiasingMask(0);
     layer->setOpaque(m_tilesAreOpaque);
-
-    StringBuilder nameBuilder;
-    nameBuilder.append("tile at ");
-    nameBuilder.appendNumber(tileRect.location().x());
-    nameBuilder.append(',');
-    nameBuilder.appendNumber(tileRect.location().y());
-    layer->setName(nameBuilder.toString());
-
-    float temporaryScaleFactor = owningGraphicsLayer()->platformCALayerContentsScaleMultiplierForNewTiles(m_tileCacheLayer);
-    m_hasTilesWithTemporaryScaleFactor |= temporaryScaleFactor != 1;
-
+    layer->setName(makeString("tile at ", tileRect.location().x(), ',', tileRect.location().y()));
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
     layer->setWantsDeepColorBackingStore(m_wantsDeepColorBackingStore);
     layer->setSupportsSubpixelAntialiasedText(m_supportsSubpixelAntialiasedText);
-
     layer->setNeedsDisplay();
-
     return layer;
 }
 

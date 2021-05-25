@@ -175,13 +175,13 @@ private:
     bool missingReferenceToObservedDomains();
     void migrateDataToNewTablesIfNecessary();
     void destroyStatements();
-    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, const String&, const String&) const;
+    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral, const String&) const;
 
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndUpdateSchemaIfNecessary();
     String getDomainStringFromDomainID(unsigned) const;
-    String getSubStatisticStatement(const String&) const;
+    ASCIILiteral getSubStatisticStatement(const String&) const;
     void appendSubStatisticList(StringBuilder&, const String& tableName, const String& domain) const;
     void mergeStatistic(const ResourceLoadStatistics&);
     void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);

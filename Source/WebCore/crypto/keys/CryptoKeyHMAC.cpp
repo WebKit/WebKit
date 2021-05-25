@@ -103,8 +103,8 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorith
         return nullptr;
     if (keyData.k.isNull())
         return nullptr;
-    Vector<uint8_t> octetSequence;
-    if (!base64URLDecode(keyData.k, octetSequence))
+    auto octetSequence = base64URLDecode(keyData.k);
+    if (!octetSequence)
         return nullptr;
     if (!callback(hash, keyData.alg))
         return nullptr;
@@ -115,14 +115,14 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorith
     if (keyData.ext && !keyData.ext.value() && extractable)
         return nullptr;
 
-    return CryptoKeyHMAC::importRaw(lengthBits, hash, WTFMove(octetSequence), extractable, usages);
+    return CryptoKeyHMAC::importRaw(lengthBits, hash, WTFMove(*octetSequence), extractable, usages);
 }
 
 JsonWebKey CryptoKeyHMAC::exportJwk() const
 {
     JsonWebKey result;
     result.kty = "oct";
-    result.k = base64URLEncode(m_key);
+    result.k = base64URLEncodeToString(m_key);
     result.key_ops = usages();
     result.ext = extractable();
     return result;

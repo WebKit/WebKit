@@ -52,7 +52,7 @@ public:
 
     void setCompleted()
     {
-        auto locker = holdLock(m_stateMutex);
+        Locker locker { m_stateMutex };
 
         ASSERT(!m_completed);
         m_completed = true;
@@ -129,7 +129,7 @@ static void HandleRunSource(void *info)
 
     WebThreadRunQueue queueCopy;
     {
-        auto locker = holdLock(runQueueMutex);
+        Locker locker { runQueueMutex };
         queueCopy = *runQueue;
         runQueue->clear();
     }
@@ -153,7 +153,7 @@ static void _WebThreadRun(void (^block)(void), bool synchronous)
         state = new WebThreadBlockState;
 
     {
-        auto locker = holdLock(runQueueMutex);
+        Locker locker { runQueueMutex };
         runQueue->append(WebThreadBlock(block, state));
     }
 

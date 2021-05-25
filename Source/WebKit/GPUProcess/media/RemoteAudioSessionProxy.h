@@ -78,7 +78,7 @@ private:
     IPC::Connection& connection();
 
     GPUConnectionToWebProcess& m_gpuConnection;
-    WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::None };
+    WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     size_t m_preferredBufferSize { 0 };
     bool m_active { false };

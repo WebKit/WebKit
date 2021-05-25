@@ -189,10 +189,10 @@ bool PrivateClickMeasurement::EphemeralSourceNonce::isValid() const
 {
     // FIXME: Investigate if we can do with a simple length check instead of decoding.
     // https://bugs.webkit.org/show_bug.cgi?id=221945
-    Vector<uint8_t> digest;
-    if (!base64URLDecode(nonce, digest))
+    auto digest = base64URLDecode(nonce);
+    if (!digest)
         return false;
-    return digest.size() == EphemeralSourceNonceRequiredNumberOfBytes;
+    return digest->size() == EphemeralSourceNonceRequiredNumberOfBytes;
 }
 
 void PrivateClickMeasurement::setEphemeralSourceNonce(EphemeralSourceNonce&& nonce)

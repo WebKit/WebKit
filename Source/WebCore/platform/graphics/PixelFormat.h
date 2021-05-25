@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/EnumTraits.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -35,6 +36,8 @@ enum class PixelFormat : uint8_t {
     RGB10,
     RGB10A8,
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, PixelFormat);
 
 }
 

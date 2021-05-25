@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArgumentCodersCF_h
-#define ArgumentCodersCF_h
+#pragma once
 
+#include "ArgumentCoder.h"
 #include <Security/SecCertificate.h>
 #include <Security/SecTrust.h>
 #include <wtf/RetainPtr.h>
@@ -34,71 +34,156 @@
 #include <Security/SecKeychainItem.h>
 #endif
 
+typedef struct CGColorSpace* CGColorSpaceRef;
+
 namespace IPC {
 
 class Encoder;
 class Decoder;
 
-// CFArrayRef
-void encode(Encoder&, CFArrayRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFArrayRef>& result);
+// NOTE: These coders are structured such that they expose encoder functions for both CFType and RetainPtr<CFType>
+// but only a decoder only for RetainPtr<CFType>.
 
-// CFBooleanRef
-void encode(Encoder&, CFBooleanRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFBooleanRef>& result);
-
-// CFDataRef
-void encode(Encoder&, CFDataRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDataRef>& result);
-
-// CFDateRef
-void encode(Encoder&, CFDateRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDateRef>& result);
-
-// CFDictionaryRef
-void encode(Encoder&, CFDictionaryRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDictionaryRef>& result);
-
-// CFNumberRef
-void encode(Encoder&, CFNumberRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFNumberRef>& result);
-
-// CFStringRef
-void encode(Encoder&, CFStringRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFStringRef>& result);
+template<typename T>
+struct CFRetainPtrArgumentCoder {
+    template<typename Encoder> static void encode(Encoder& encoder, const RetainPtr<T>& retainPtr)
+    {
+        ArgumentCoder<T>::encode(encoder, retainPtr.get());
+    }
+};
 
 // CFTypeRef
-void encode(Encoder&, CFTypeRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFTypeRef>& result);
+template<> struct ArgumentCoder<CFTypeRef> {
+    template<typename Encoder> static void encode(Encoder&, CFTypeRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFTypeRef>> : CFRetainPtrArgumentCoder<CFTypeRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFTypeRef>&);
+};
+
+// CFArrayRef
+template<> struct ArgumentCoder<CFArrayRef> {
+    template<typename Encoder> static void encode(Encoder&, CFArrayRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFArrayRef>> : CFRetainPtrArgumentCoder<CFArrayRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFArrayRef>&);
+};
+
+// CFBooleanRef
+template<> struct ArgumentCoder<CFBooleanRef> {
+    template<typename Encoder> static void encode(Encoder&, CFBooleanRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFBooleanRef>> : CFRetainPtrArgumentCoder<CFBooleanRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFBooleanRef>&);
+};
+
+// CFDataRef
+template<> struct ArgumentCoder<CFDataRef> {
+    template<typename Encoder> static void encode(Encoder&, CFDataRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFDataRef>> : CFRetainPtrArgumentCoder<CFDataRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDataRef>&);
+};
+
+// CFDateRef
+template<> struct ArgumentCoder<CFDateRef> {
+    template<typename Encoder> static void encode(Encoder&, CFDateRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFDateRef>> : CFRetainPtrArgumentCoder<CFDateRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDateRef>&);
+};
+
+// CFDictionaryRef
+template<> struct ArgumentCoder<CFDictionaryRef> {
+    template<typename Encoder> static void encode(Encoder&, CFDictionaryRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFDictionaryRef>> : CFRetainPtrArgumentCoder<CFDictionaryRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFDictionaryRef>&);
+};
+
+// CFNumberRef
+template<> struct ArgumentCoder<CFNumberRef> {
+    template<typename Encoder> static void encode(Encoder&, CFNumberRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFNumberRef>> : CFRetainPtrArgumentCoder<CFNumberRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFNumberRef>&);
+};
+
+// CFStringRef
+template<> struct ArgumentCoder<CFStringRef> {
+    template<typename Encoder> static void encode(Encoder&, CFStringRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFStringRef>> : CFRetainPtrArgumentCoder<CFStringRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFStringRef>&);
+};
 
 // CFURLRef
-void encode(Encoder&, CFURLRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFURLRef>& result);
+template<> struct ArgumentCoder<CFURLRef> {
+    template<typename Encoder> static void encode(Encoder&, CFURLRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CFURLRef>> : CFRetainPtrArgumentCoder<CFURLRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CFURLRef>&);
+};
+
+// CGColorSpaceRef
+template<> struct ArgumentCoder<CGColorSpaceRef> {
+    template<typename Encoder> static void encode(Encoder&, CGColorSpaceRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<CGColorSpaceRef>> : CFRetainPtrArgumentCoder<CGColorSpaceRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<CGColorSpaceRef>&);
+};
 
 // SecCertificateRef
-void encode(Encoder&, SecCertificateRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecCertificateRef>& result);
+template<> struct ArgumentCoder<SecCertificateRef> {
+    template<typename Encoder> static void encode(Encoder&, SecCertificateRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<SecCertificateRef>> : CFRetainPtrArgumentCoder<SecCertificateRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecCertificateRef>&);
+};
 
 #if HAVE(SEC_KEYCHAIN)
 // SecKeychainItemRef
-void encode(Encoder&, SecKeychainItemRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecKeychainItemRef>& result);
+template<> struct ArgumentCoder<SecKeychainItemRef> {
+    template<typename Encoder> static void encode(Encoder&, SecKeychainItemRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<SecKeychainItemRef>> : CFRetainPtrArgumentCoder<SecKeychainItemRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecKeychainItemRef>&);
+};
 #endif
 
 #if HAVE(SEC_ACCESS_CONTROL)
 // SecAccessControlRef
-void encode(Encoder&, SecAccessControlRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecAccessControlRef>& result);
+template<> struct ArgumentCoder<SecAccessControlRef> {
+    template<typename Encoder> static void encode(Encoder&, SecAccessControlRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<SecAccessControlRef>> : CFRetainPtrArgumentCoder<SecAccessControlRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecAccessControlRef>&);
+};
 #endif
 
 #if HAVE(SEC_TRUST_SERIALIZATION)
 // SecTrustRef
-void encode(Encoder&, SecTrustRef);
-WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecTrustRef>&);
+template<> struct ArgumentCoder<SecTrustRef> {
+    template<typename Encoder> static void encode(Encoder&, SecTrustRef);
+};
+
+template<> struct ArgumentCoder<RetainPtr<SecTrustRef>> : CFRetainPtrArgumentCoder<SecTrustRef> {
+    static WARN_UNUSED_RETURN bool decode(Decoder&, RetainPtr<SecTrustRef>&);
+};
 #endif
 
 CFTypeRef tokenNullptrTypeRef();
 
 } // namespace IPC
-
-#endif // ArgumentCodersCF_h

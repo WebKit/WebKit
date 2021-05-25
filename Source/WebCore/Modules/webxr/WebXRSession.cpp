@@ -529,7 +529,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
         auto frame = WebXRFrame::create(*this, WebXRFrame::IsAnimationFrame::Yes);
         //  2.Let frame be session’s animation frame.
         //  3.Set frame’s time to frameTime.
-        frame->setTime(static_cast<DOMHighResTimeStamp>(frameData.predictedDisplayTime));
+        frame->setTime(static_cast<DOMHighResTimeStamp>(m_frameData.predictedDisplayTime));
 
         // 4. For each view in list of views, set view’s viewport modifiable flag to true.
         // 5. If the active flag of any view in the list of views has changed since the last XR animation frame, update the viewports.
@@ -555,9 +555,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
 
             // 6.4.Apply frame updates for frame.
             if (m_inputInitialized)
-                m_inputSources->update(now, frameData.inputSources);
-
-            frame->setFrameData(WTFMove(frameData));
+                m_inputSources->update(now, m_frameData.inputSources);
 
             // 6.5.For each entry in session’s list of currently running animation frame callbacks, in order:
             for (auto& callback : callbacks) {

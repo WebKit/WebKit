@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE(PENCILKIT_TEXT_INPUT)
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
 
 @interface WKStylusDeviceObserver : NSObject
 
@@ -38,4 +38,4 @@
 
 @end
 
-#endif // HAVE(PENCILKIT_TEXT_INPUT)
+#endif // HAVE(STYLUS_DEVICE_OBSERVATION)

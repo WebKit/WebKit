@@ -181,16 +181,6 @@ void JSTestSetLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)
     thisObject->JSTestSetLikeWithOverriddenOperations::~JSTestSetLikeWithOverriddenOperations();
 }
 
-template<> inline JSTestSetLikeWithOverriddenOperations* IDLAttribute<JSTestSetLikeWithOverriddenOperations>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestSetLikeWithOverriddenOperations*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestSetLikeWithOverriddenOperations* IDLOperation<JSTestSetLikeWithOverriddenOperations>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestSetLikeWithOverriddenOperations*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

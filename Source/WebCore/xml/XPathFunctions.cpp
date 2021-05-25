@@ -329,7 +329,7 @@ Value FunId::evaluate() const
     
     TreeScope& contextScope = evaluationContext().node->treeScope();
     NodeSet result;
-    HashSet<Node*> resultSet;
+    HashSet<Ref<Node>> resultSet;
 
     unsigned startPos = 0;
     unsigned length = idList.length();
@@ -347,7 +347,7 @@ Value FunId::evaluate() const
         // If there are several nodes with the same id, id() should return the first one.
         // In WebKit, getElementById behaves so, too, although its behavior in this case is formally undefined.
         Node* node = contextScope.getElementById(toStringView(idList).substring(startPos, endPos - startPos));
-        if (node && resultSet.add(node).isNewEntry)
+        if (node && resultSet.add(*node).isNewEntry)
             result.append(node);
         
         startPos = endPos;

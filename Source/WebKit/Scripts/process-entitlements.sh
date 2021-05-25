@@ -25,6 +25,7 @@ function mac_process_webcontent_entitlements()
             plistbuddy Add :com.apple.private.pac.exception bool YES
             plistbuddy Add :com.apple.private.security.message-filter bool YES
             plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
+            plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
         fi
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
@@ -49,6 +50,7 @@ function mac_process_gpu_entitlements()
         then
             plistbuddy Add :com.apple.developer.videotoolbox.client-sandboxed-decoder bool YES
             plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
+            plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
@@ -160,6 +162,7 @@ function maccatalyst_process_webcontent_entitlements()
         plistbuddy Add :com.apple.private.pac.exception bool YES
         plistbuddy Add :com.apple.private.security.message-filter bool YES
         plistbuddy Add :com.apple.UIKit.view-service-wants-custom-idiom-and-scale bool YES
+        plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
     fi
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
     then
@@ -173,6 +176,7 @@ function maccatalyst_process_gpu_entitlements()
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
+    plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
 }
 
 function maccatalyst_process_network_entitlements()
@@ -208,6 +212,7 @@ function ios_family_process_webcontent_entitlements()
 {
     plistbuddy Add :com.apple.QuartzCore.secure-mode bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+    plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.pac.shared_region_id string WebContent
@@ -237,6 +242,7 @@ function ios_family_process_gpu_entitlements()
 {
     plistbuddy Add :com.apple.QuartzCore.secure-mode bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+    plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES

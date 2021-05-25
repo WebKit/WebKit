@@ -78,16 +78,14 @@ namespace JSC {
     template<PtrTag tag>
     struct CallRecord {
         MacroAssembler::Call from;
-        BytecodeIndex bytecodeIndex;
         FunctionPtr<tag> callee;
 
         CallRecord()
         {
         }
 
-        CallRecord(MacroAssembler::Call from, BytecodeIndex bytecodeIndex, FunctionPtr<tag> callee)
+        CallRecord(MacroAssembler::Call from, FunctionPtr<tag> callee)
             : from(from)
-            , bytecodeIndex(bytecodeIndex)
             , callee(callee)
         {
         }
@@ -95,6 +93,17 @@ namespace JSC {
 
     using FarCallRecord = CallRecord<OperationPtrTag>;
     using NearCallRecord = CallRecord<JSInternalPtrTag>;
+
+    struct NearJumpRecord {
+        MacroAssembler::Jump from;
+        CodeLocationLabel<JITThunkPtrTag> target;
+
+        NearJumpRecord() = default;
+        NearJumpRecord(MacroAssembler::Jump from, CodeLocationLabel<JITThunkPtrTag> target)
+            : from(from)
+            , target(target)
+        { }
+    };
 
     struct JumpTable {
         MacroAssembler::Jump from;
@@ -177,9 +186,8 @@ namespace JSC {
     };
 
     struct CallCompilationInfo {
-        MacroAssembler::DataLabelPtr hotPathBegin;
-        MacroAssembler::Call hotPathOther;
-        MacroAssembler::Call callReturnLocation;
+        MacroAssembler::Label slowPathStart;
+        MacroAssembler::Label doneLocation;
         CallLinkInfo* callLinkInfo;
     };
 
@@ -188,6 +196,7 @@ namespace JSC {
     class JIT_CLASS_ALIGNMENT JIT : private JSInterfaceJIT {
         friend class JITSlowPathCall;
         friend class JITStubCall;
+        friend class JITThunks;
 
         using MacroAssembler::Jump;
         using MacroAssembler::JumpList;
@@ -205,8 +214,8 @@ namespace JSC {
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
 
-        void compileWithoutLinking(JITCompilationEffort);
-        CompilationResult link();
+        void compileAndLinkWithoutFinalizing(JITCompilationEffort);
+        CompilationResult finalizeOnMainThread();
 
         void doMainThreadPreparationBeforeCompile();
         
@@ -261,6 +270,7 @@ namespace JSC {
         void privateCompileMainPass();
         void privateCompileLinkPass();
         void privateCompileSlowCases();
+        void link();
         CompilationResult privateCompile(JITCompilationEffort);
         
         void privateCompileGetByVal(const ConcurrentJSLocker&, ByValInfo*, ReturnAddressPtr, JITArrayMode);
@@ -279,7 +289,7 @@ namespace JSC {
         Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = call(OperationPtrTag);
-            m_farCalls.append(FarCallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
+            m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 
@@ -287,7 +297,7 @@ namespace JSC {
         Call appendCallWithSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
         {
             Call functionCall = callWithSlowPathReturnType(OperationPtrTag);
-            m_farCalls.append(FarCallRecord(functionCall, m_bytecodeIndex, function.retagged<OperationPtrTag>()));
+            m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
 #endif
@@ -343,11 +353,8 @@ namespace JSC {
         template<typename Op>
         void emitPutCallResult(const Op&);
 
-        enum class CompileOpStrictEqType { StrictEq, NStrictEq };
-        template<typename Op>
-        void compileOpStrictEq(const Instruction*, CompileOpStrictEqType);
-        template<typename Op>
-        void compileOpStrictEqJump(const Instruction*, CompileOpStrictEqType);
+        template<typename Op> void compileOpStrictEq(const Instruction*);
+        template<typename Op> void compileOpStrictEqJump(const Instruction*);
         enum class CompileOpEqType { Eq, NEq };
         void compileOpEqJumpSlow(Vector<SlowCaseEntry>::iterator&, CompileOpEqType, int jumpTarget);
         bool isOperandConstantDouble(VirtualRegister);
@@ -776,6 +783,26 @@ namespace JSC {
         template <typename Op, typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
         void emitMathICSlow(JITUnaryMathIC<Generator>*, const Instruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
 
+#if ENABLE(EXTRA_CTI_THUNKS)
+        // Thunk generators.
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_id_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_val_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_with_this_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_val_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_id_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_val_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_private_name_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_to_scopeGenerator(VM&);
+
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_ret_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
+#endif
+
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
             return iter++->from;
@@ -912,8 +939,9 @@ namespace JSC {
 
         void updateTopCallFrame();
 
-        Call emitNakedNearCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
-        Call emitNakedNearTailCall(CodePtr<NoPtrTag> function = CodePtr<NoPtrTag>());
+        Call emitNakedNearCall(CodePtr<NoPtrTag> function = { });
+        Call emitNakedNearTailCall(CodePtr<NoPtrTag> function = { });
+        Jump emitNakedNearJump(CodePtr<JITThunkPtrTag> function = { });
 
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
@@ -937,16 +965,6 @@ namespace JSC {
 
 #if ENABLE(SAMPLING_COUNTERS)
         void emitCount(AbstractSamplingCounter&, int32_t = 1);
-#endif
-
-#if ENABLE(OPCODE_SAMPLING)
-        void sampleInstruction(const Instruction*, bool = false);
-#endif
-
-#if ENABLE(CODEBLOCK_SAMPLING)
-        void sampleCodeBlock(CodeBlock*);
-#else
-        void sampleCodeBlock(CodeBlock*) {}
 #endif
 
 #if ENABLE(DFG_JIT)
@@ -975,6 +993,7 @@ namespace JSC {
 
         Vector<FarCallRecord> m_farCalls;
         Vector<NearCallRecord> m_nearCalls;
+        Vector<NearJumpRecord> m_nearJumps;
         Vector<Label> m_labels;
         HashMap<BytecodeIndex, Label> m_checkpointLabels;
         Vector<JITGetByIdGenerator> m_getByIds;
@@ -999,7 +1018,9 @@ namespace JSC {
 
         JumpList m_exceptionChecks;
         JumpList m_exceptionChecksWithCallFrameRollback;
+#if !ENABLE(EXTRA_CTI_THUNKS)
         Label m_exceptionHandler;
+#endif
 
         unsigned m_getByIdIndex { UINT_MAX };
         unsigned m_getByValIndex { UINT_MAX };
@@ -1021,6 +1042,7 @@ namespace JSC {
         RefPtr<Profiler::Compilation> m_compilation;
 
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
+        std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
 
         HashMap<const Instruction*, void*> m_instructionToMathIC;
         HashMap<const Instruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
@@ -1029,6 +1051,10 @@ namespace JSC {
         bool m_canBeOptimizedOrInlined;
         bool m_shouldEmitProfiling;
         BytecodeIndex m_loopOSREntryBytecodeIndex;
+
+        RefPtr<DirectJITCode> m_jitCode;
+
+        Vector<std::pair<Call, CallLinkInfo&>> m_virtualCalls;
     };
 
 } // namespace JSC

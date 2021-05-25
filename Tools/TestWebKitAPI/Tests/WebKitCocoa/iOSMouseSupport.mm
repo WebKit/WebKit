@@ -370,9 +370,7 @@ TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-
-#if PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
 
 @interface WKMouseDeviceObserver
 + (WKMouseDeviceObserver *)sharedInstance;
@@ -524,7 +522,7 @@ TEST(iOSMouseSupport, MouseLaterConnected)
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: fine"]);
 }
 
-#endif // PLATFORM(IOS)
+#endif // HAVE(MOUSE_DEVICE_OBSERVATION)
 
 #if PLATFORM(MACCATALYST)
 
@@ -534,9 +532,9 @@ TEST(iOSMouseSupport, MouseAlwaysConnected)
 
     [webView synchronouslyLoadHTMLString:@""];
 
-    EXPECT_FALSE([webView evaluateMediaQuery:@"hover"]);
-    EXPECT_TRUE([webView evaluateMediaQuery:@"hover: none"]);
-    EXPECT_FALSE([webView evaluateMediaQuery:@"hover: hover"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"hover"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"hover: none"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"hover: hover"]);
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-hover"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-hover: none"]);
@@ -544,17 +542,15 @@ TEST(iOSMouseSupport, MouseAlwaysConnected)
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: none"]);
-    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: coarse"]);
-    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: fine"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"pointer: coarse"]);
+    EXPECT_TRUE([webView evaluateMediaQuery:@"pointer: fine"]);
 
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer"]);
     EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: none"]);
-    EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: coarse"]);
+    EXPECT_FALSE([webView evaluateMediaQuery:@"any-pointer: coarse"]);
     EXPECT_TRUE([webView evaluateMediaQuery:@"any-pointer: fine"]);
 }
 
 #endif // PLATFORM(MACCATALYST)
-
-#endif // HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #endif // PLATFORM(IOS) || PLATFORM(MACCATALYST)

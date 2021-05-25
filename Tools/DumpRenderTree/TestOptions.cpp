@@ -158,6 +158,7 @@ const TestFeatures& TestOptions::defaults()
             { "ModernMediaControlsEnabled", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OverscrollBehaviorEnabled", true },
+            { "PerformanceNavigationTimingAPIEnabled", true },
             { "PluginsEnabled", true },
             { "PrivateClickMeasurementEnabled", false },
             { "RequestIdleCallbackEnabled", false },

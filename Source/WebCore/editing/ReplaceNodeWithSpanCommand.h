@@ -53,7 +53,7 @@ private:
     void doUnapply() override;
     
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Node*>&) override;
+    void getNodesInCommand(HashSet<Ref<Node>>&) override;
 #endif
 
     Ref<HTMLElement> m_elementToReplace;

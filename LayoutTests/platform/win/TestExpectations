@@ -287,6 +287,8 @@ fast/gradients/conic-gradient-alpha.html [ Skip ]
 fast/gradients/conic-gradient-extended-stops.html [ Skip ]
 fast/gradients/conic-gradient.html [ Skip ]
 fast/gradients/conic-two-hints.html [ Skip ]
+fast/canvas/canvas-conic-gradient-angle.html [ Skip ]
+fast/canvas/canvas-conic-gradient-center.html [ Skip ]
 
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
@@ -649,6 +651,7 @@ fast/dom/timer-throttling-hidden-page.html [ Skip ]
 # TODO CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
 css3/blending/ [ Skip ]
 transitions/blendmode-transitions.html [ Skip ]
+fast/css/visited-link-mix-blend-mode.html [ Skip ]
 
 # Backdrop Filters do not work on Windows
 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ] 
@@ -4407,7 +4410,8 @@ webkit.org/b/207499 webanimations/transform-accelerated-animation-finishes-befor
 
 webkit.org/b/209426 http/wpt/css/css-animations/start-animation-001.html  [ Pass Failure ]
 
-webkit.org/b/209455 http/tests/misc/last-modified-parsing.html [ Failure ]
+webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure ]
+webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure ]
 
 webkit.org/b/209583 webanimations/no-scheduling-while-filling-accelerated.html [ Skip ]
 
@@ -4631,4 +4635,7 @@ webexposed/counter-style-image-symbols-not-exposed.html [ Skip ]
 
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
-fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled.html [ Skip ]
+# Non-sRGB color spaces are not currently supported by the Windows port.
+fast/canvas/canvas-color-space-display-p3.html [ Skip ]
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]

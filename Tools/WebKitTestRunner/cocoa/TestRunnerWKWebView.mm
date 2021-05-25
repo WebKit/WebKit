@@ -602,4 +602,14 @@ static bool isQuickboardViewController(UIViewController *viewController)
     [super _appBoundNavigationDataForDomain:domain completionHandler:completionHandler];
 }
 
+- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler
+{
+    [super _didLoadAppBoundRequest:completionHandler];
+}
+
+- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler
+{
+    [super _didLoadNonAppBoundRequest:completionHandler];
+}
+
 @end

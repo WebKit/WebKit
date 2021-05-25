@@ -332,6 +332,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         case "shadowOffsetY":
             return "shadow";
 
+        case "createConicGradient":
         case "createLinearGradient":
         case "createPattern":
         case "createRadialGradient":

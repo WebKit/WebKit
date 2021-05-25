@@ -38,9 +38,9 @@ class CachedPage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CachedPage(Page&);
-    ~CachedPage();
+    WEBCORE_EXPORT ~CachedPage();
 
-    void restore(Page&);
+    WEBCORE_EXPORT void restore(Page&);
     void clear();
 
     Page& page() const { return m_page; }

@@ -75,7 +75,7 @@ void MergeIdenticalElementsCommand::doUnapply()
 }
 
 #ifndef NDEBUG
-void MergeIdenticalElementsCommand::getNodesInCommand(HashSet<Node*>& nodes)
+void MergeIdenticalElementsCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
     addNodeAndDescendants(m_element1.ptr(), nodes);
     addNodeAndDescendants(m_element2.ptr(), nodes);

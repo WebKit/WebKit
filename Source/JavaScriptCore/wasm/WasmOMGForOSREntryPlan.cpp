@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,14 +78,14 @@ void OMGForOSREntryPlan::work(CompilationEffort)
     auto parseAndCompileResult = parseAndCompile(context, function, signature, unlinkedCalls, osrEntryScratchBufferSize, m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_loopIndex);
 
     if (UNLIKELY(!parseAndCompileResult)) {
-        fail(holdLock(m_lock), makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));
+        fail(Locker { m_lock }, makeString(parseAndCompileResult.error(), "when trying to tier up ", String::number(m_functionIndex)));
         return;
     }
 
     Entrypoint omgEntrypoint;
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-        Base::fail(holdLock(m_lock), makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
+        Base::fail(Locker { m_lock }, makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
         return;
     }
 
@@ -100,7 +100,7 @@ void OMGForOSREntryPlan::work(CompilationEffort)
     {
         MacroAssembler::repatchPointer(parseAndCompileResult.value()->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
 
-        auto locker = holdLock(m_codeBlock->m_lock);
+        Locker locker { m_codeBlock->m_lock };
         for (auto& call : callee->wasmToWasmCallsites()) {
             MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
             if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
@@ -118,14 +118,14 @@ void OMGForOSREntryPlan::work(CompilationEffort)
             switch (m_callee->compilationMode()) {
             case CompilationMode::LLIntMode: {
                 LLIntCallee* llintCallee = static_cast<LLIntCallee*>(m_callee.ptr());
-                auto locker = holdLock(llintCallee->tierUpCounter().m_lock);
+                Locker locker { llintCallee->tierUpCounter().m_lock };
                 llintCallee->setOSREntryCallee(callee.copyRef());
                 llintCallee->tierUpCounter().m_loopCompilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
                 break;
             }
             case CompilationMode::BBQMode: {
                 BBQCallee* bbqCallee = static_cast<BBQCallee*>(m_callee.ptr());
-                auto locker = holdLock(bbqCallee->tierUpCount()->getLock());
+                Locker locker { bbqCallee->tierUpCount()->getLock() };
                 bbqCallee->setOSREntryCallee(callee.copyRef());
                 bbqCallee->tierUpCount()->osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
                 bbqCallee->tierUpCount()->m_compilationStatusForOMGForOSREntry = TierUpCount::CompilationStatus::Compiled;
@@ -137,7 +137,7 @@ void OMGForOSREntryPlan::work(CompilationEffort)
         }
     }
     dataLogLnIf(WasmOMGForOSREntryPlanInternal::verbose, "Finished OMGForOSREntry ", m_functionIndex);
-    complete(holdLock(m_lock));
+    complete(Locker { m_lock });
 }
 
 } } // namespace JSC::Wasm

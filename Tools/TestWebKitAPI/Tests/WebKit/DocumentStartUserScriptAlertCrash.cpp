@@ -50,7 +50,7 @@ TEST(WebKit, DocumentStartUserScriptAlertCrashTest)
 {
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DocumentStartUserScriptAlertCrashTestPageGroup"))); 
 
-    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DocumentStartUserScriptAlertCrashTest", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DocumentStartUserScriptAlertCrashTest"));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageUIClientV0 uiClient;

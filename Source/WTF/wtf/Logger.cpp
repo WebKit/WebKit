@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-Lock loggerObserverLock;
+CheckedLock loggerObserverLock;
 
 String Logger::LogSiteIdentifier::toString() const
 {

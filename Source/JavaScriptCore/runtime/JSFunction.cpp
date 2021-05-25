@@ -403,7 +403,15 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
     if (function->isHostOrBuiltinFunction())
         return JSValue::encode(jsNull());
 
-    if (!function->jsExecutable()->hasCallerAndArgumentsProperties())
+    if (function->jsExecutable()->isInStrictContext())
+        return JSValue::encode(jsNull());
+
+    // Prevent bodies (private implementations) of generator / async functions from being exposed.
+    // They are called by @generatorResume() & friends, expecting certain arguments, and crash otherwise.
+    // Also, hide generator / async function wrappers for consistency and because it's on standards track:
+    // https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#get-functionprototypecaller (step 14)
+    SourceParseMode parseMode = function->jsExecutable()->parseMode();
+    if (isGeneratorParseMode(parseMode) || isAsyncFunctionParseMode(parseMode))
         return JSValue::encode(jsNull());
 
     return JSValue::encode(caller);
@@ -520,6 +528,10 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
         else
             rareData->setHasModifiedNameForNonHostFunction();
     }
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
+
 
     if (thisObject->isHostOrBuiltinFunction()) {
         PropertyStatus propertyType = thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, globalObject, propertyName);

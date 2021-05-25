@@ -82,7 +82,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FrameSnapshotting.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
 #include "GCReachableRef.h"
@@ -125,7 +124,6 @@
 #include "IDBOpenDBRequest.h"
 #include "IdleCallbackController.h"
 #include "ImageBitmapRenderingContext.h"
-#include "ImageBuffer.h"
 #include "ImageLoader.h"
 #include "ImageOverlayController.h"
 #include "InspectorInstrumentation.h"
@@ -178,11 +176,9 @@
 #include "Range.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderChildIterator.h"
-#include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLineBreak.h"
-#include "RenderStyle.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -1390,13 +1386,13 @@ void Document::setReadyState(ReadyState readyState)
         if (!m_documentTiming.domLoading)
             m_documentTiming.domLoading = MonotonicTime::now();
         break;
-    case Interactive:
-        if (!m_documentTiming.domInteractive)
-            m_documentTiming.domInteractive = MonotonicTime::now();
-        break;
     case Complete:
         if (!m_documentTiming.domComplete)
             m_documentTiming.domComplete = MonotonicTime::now();
+        FALLTHROUGH;
+    case Interactive:
+        if (!m_documentTiming.domInteractive)
+            m_documentTiming.domInteractive = MonotonicTime::now();
         break;
     }
 
@@ -3273,7 +3269,7 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     if (!view()->isVisuallyNonEmpty() || view()->needsLayout())
         return;
 
-    if (!view()->hasContenfulDescendants())
+    if (!view()->hasContentfulDescendants())
         return;
 
     if (!ContentfulPaintChecker::qualifiesForContentfulPaint(*view()))
@@ -3281,8 +3277,6 @@ void Document::enqueuePaintTimingEntryIfNeeded()
 
     domWindow()->performance().reportFirstContentfulPaint();
     m_didEnqueueFirstContentfulPaint = true;
-
-    determineSampledPageTopColor();
 }
 
 ExceptionOr<void> Document::write(Document* responsibleDocument, SegmentedString&& text)
@@ -3901,204 +3895,6 @@ void Document::themeColorChanged()
 
     if (auto* page = this->page())
         page->chrome().client().themeColorChanged();
-
-#if ENABLE(RUBBER_BANDING)
-    if (auto* view = renderView()) {
-        if (view->usesCompositing())
-            view->compositor().updateLayerForOverhangAreasBackgroundColor();
-    }
-#endif // ENABLE(RUBBER_BANDING)
-}
-
-static bool isValidPageSampleLocation(Document& document, const IntPoint& location)
-{
-    // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
-
-    constexpr OptionSet<HitTestRequest::RequestType> hitTestRequestTypes { HitTestRequest::ReadOnly, HitTestRequest::IgnoreCSSPointerEventsProperty, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::CollectMultipleElements, HitTestRequest::IncludeAllElementsUnderPoint };
-    HitTestResult hitTestResult(location);
-    document.hitTest(hitTestRequestTypes, hitTestResult);
-
-    for (auto& hitTestNode : hitTestResult.listBasedTestResult()) {
-        auto& node = hitTestNode.get();
-
-        auto* renderer = node.renderer();
-        if (!renderer)
-            return false;
-
-        // Skip images (both `<img>` and CSS `background-image`) as they're likely not a solid color.
-        if (is<RenderImage>(renderer) || renderer->style().hasBackgroundImage())
-            return false;
-
-        // Skip nodes with animations as the sample may get an odd color if the animation is in-progress.
-        if (renderer->style().hasTransitions() || renderer->style().hasAnimations())
-            return false;
-
-        // Skip `<canvas>` but only if they've been drawn into. Guess this by seeing if there's already
-        // a `CanvasRenderingContext`, which is only created by JavaScript.
-        if (is<HTMLCanvasElement>(node) && downcast<HTMLCanvasElement>(node).renderingContext())
-            return false;
-
-        // Skip 3rd-party `<iframe>` as the content likely won't match the rest of the page.
-        if (is<HTMLIFrameElement>(node) && !areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(node).location(), document.url()))
-            return false;
-    }
-
-    return true;
-}
-
-static Optional<Lab<float>> samplePageColor(Document& document, IntPoint&& location)
-{
-    // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
-
-    if (!isValidPageSampleLocation(document, location))
-        return WTF::nullopt;
-
-    ASSERT(document.view());
-    auto snapshot = snapshotFrameRect(document.view()->frame(), IntRect(location, IntSize(1, 1)), SnapshotOptionsExcludeSelectionHighlighting | SnapshotOptionsPaintEverythingExcludingSelection);
-    if (!snapshot)
-        return WTF::nullopt;
-
-    auto snapshotData = snapshot->toBGRAData();
-    return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });
-}
-
-static double colorDifference(Lab<float>& lhs, Lab<float>& rhs)
-{
-    return sqrt(pow(rhs.lightness - lhs.lightness, 2) + pow(rhs.a - lhs.a, 2) + pow(rhs.b - lhs.b, 2));
-}
-
-static Lab<float> averageColor(Lab<float> colors[], size_t count)
-{
-    float totalLightness = 0;
-    float totalA = 0;
-    float totalB = 0;
-    for (size_t i = 0; i < count; ++i) {
-        totalLightness += colors[i].lightness;
-        totalA += colors[i].a;
-        totalB += colors[i].b;
-    }
-    return {
-        totalLightness / count,
-        totalA / count,
-        totalB / count,
-        1,
-    };
-}
-
-void Document::determineSampledPageTopColor()
-{
-    if (m_sampledPageTopColor.isValid())
-        return;
-
-    auto maxDifference = settings().sampledPageTopColorMaxDifference();
-    if (maxDifference <= 0)
-        return;
-
-    if (!isTopDocument())
-        return;
-
-    auto* frameView = view();
-    if (!frameView)
-        return;
-
-    auto notifyDidSamplePageTopColorOnScopeExit = makeScopeExit([&] {
-        if (auto* page = this->page())
-            page->chrome().client().sampledPageTopColorChanged();
-    });
-
-    // Decrease the width by one pixel so that the last snapshot is within bounds and not off-by-one.
-    auto frameWidth = frameView->contentsWidth() - 1;
-
-    constexpr auto numSnapshots = 5;
-    size_t nonMatchingColorIndex = numSnapshots;
-
-    Lab<float> snapshots[numSnapshots];
-    double differences[numSnapshots - 1];
-
-    auto shouldStopAfterFindingNonMatchingColor = [&] (size_t i) -> bool {
-        // Bail if the non-matching color is not the first or last snapshot, or there already is an non-matching color.
-        if ((i && i < numSnapshots - 1) || nonMatchingColorIndex != numSnapshots)
-            return true;
-
-        nonMatchingColorIndex = i;
-        return false;
-    };
-
-    for (size_t i = 0; i < numSnapshots; ++i) {
-        auto snapshot = samplePageColor(*this, IntPoint(frameWidth * i / (numSnapshots - 1), 0));
-        if (!snapshot) {
-            if (shouldStopAfterFindingNonMatchingColor(i))
-                return;
-            continue;
-        }
-
-        snapshots[i] = *snapshot;
-
-        if (i) {
-            // Each `difference` item compares `i` with `i - 1` so if the first comparison (`i == 1`)
-            // is too large of a difference, we should treat `i - 1` (i.e. `0`) as the problem since
-            // we only allow for non-matching colors being the first or last sampled color.
-            auto effectiveNonMatchingColorIndex = i == 1 ? 0 : i;
-
-            differences[i - 1] = colorDifference(snapshots[i - 1], snapshots[i]);
-            if (differences[i - 1] > maxDifference) {
-                if (shouldStopAfterFindingNonMatchingColor(effectiveNonMatchingColorIndex))
-                    return;
-                continue;
-            }
-
-            double cumuluativeDifference = 0;
-            for (size_t j = 0; j < i; ++j) {
-                if (j == nonMatchingColorIndex)
-                    continue;
-                cumuluativeDifference += differences[j];
-            }
-            if (cumuluativeDifference > maxDifference) {
-                if (shouldStopAfterFindingNonMatchingColor(effectiveNonMatchingColorIndex)) {
-                    // If we haven't already identified a non-matching snapshot and the difference between the first
-                    // and second snapshots or the second-to-last and last snapshots is less than the maximum, mark
-                    // the first/last snapshot as non-matching to give a chance for the rest of the snapshots to match.
-                    if (nonMatchingColorIndex == numSnapshots && (!i || i == numSnapshots - 1) && cumuluativeDifference - differences[i - 1] <= maxDifference) {
-                        nonMatchingColorIndex = effectiveNonMatchingColorIndex;
-                        continue;
-                    }
-                    return;
-                }
-                continue;
-            }
-        }
-    }
-
-    // Decrease the height by one pixel so that the last snapshot is within bounds and not off-by-one.
-    auto minHeight = settings().sampledPageTopColorMinHeight() - 1;
-    if (minHeight > 0) {
-        if (nonMatchingColorIndex) {
-            if (auto leftMiddleSnapshot = samplePageColor(*this, IntPoint(0, minHeight))) {
-                if (colorDifference(*leftMiddleSnapshot, snapshots[0]) > maxDifference)
-                    return;
-            }
-        }
-
-        if (nonMatchingColorIndex != numSnapshots - 1) {
-            if (auto rightMiddleSnapshot = samplePageColor(*this, IntPoint(frameWidth, minHeight))) {
-                if (colorDifference(*rightMiddleSnapshot, snapshots[numSnapshots - 1]) > maxDifference)
-                    return;
-            }
-        }
-    }
-
-    auto snapshotsToAverage = snapshots;
-    auto validSnapshotCount = numSnapshots;
-    if (!nonMatchingColorIndex) {
-        // Skip the first snapshot by moving the pointer that indicates where the snapshot array
-        // starts and decreasing the count of snapshots to average.
-        ++snapshotsToAverage;
-        --validSnapshotCount;
-    } else if (nonMatchingColorIndex == numSnapshots - 1) {
-        // Skip the last snapshot by decreasing the count of snapshots to average.
-        --validSnapshotCount;
-    }
-    m_sampledPageTopColor = averageColor(snapshotsToAverage, validSnapshotCount);
 }
 
 #if ENABLE(DARK_MODE_CSS)
@@ -7492,26 +7288,26 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             elementsToSetHover.append(element);
     }
 
-    if (!elementsToClearActive.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToClearActive)
-            element->setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
-    if (!elementsToSetActive.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetActive.last(), CSSSelector::PseudoClassActive, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToSetActive)
-            element->setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
-    if (!elementsToClearHover.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToClearHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToClearHover)
-            element->setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
-    if (!elementsToSetHover.isEmpty()) {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*elementsToSetHover.last(), CSSSelector::PseudoClassHover, Style::InvalidationScope::Descendants);
-        for (auto& element : elementsToSetHover)
-            element->setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
-    }
+    auto changeState = [](auto& elements, auto pseudoClassType, auto&& setter) {
+        if (elements.isEmpty())
+            return;
+        Style::PseudoClassChangeInvalidation styleInvalidation { *elements.last(), pseudoClassType, Style::InvalidationScope::Descendants };
+        for (auto& element : elements)
+            setter(*element);
+    };
+
+    changeState(elementsToClearActive, CSSSelector::PseudoClassActive, [](auto& element) {
+        element.setActive(false, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
+    changeState(elementsToSetActive, CSSSelector::PseudoClassActive, [](auto& element) {
+        element.setActive(true, false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
+    changeState(elementsToClearHover, CSSSelector::PseudoClassHover, [](auto& element) {
+        element.setHovered(false, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
+    changeState(elementsToSetHover, CSSSelector::PseudoClassHover, [](auto& element) {
+        element.setHovered(true, Style::InvalidationScope::SelfChildrenAndSiblings);
+    });
 }
 
 bool Document::haveStylesheetsLoaded() const
@@ -8496,6 +8292,7 @@ void Document::updateMainArticleElementAfterLayout()
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+
 bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain& domain)
 {
     return m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction == domain;
@@ -8513,29 +8310,20 @@ void Document::wasLoadedWithDataTransferFromPrevalentResource()
 
 void Document::downgradeReferrerToRegistrableDomain()
 {
-    auto referrerStr = referrer();
-    if (referrerStr.isEmpty())
+    URL referrerURL { { }, referrer() };
+    if (referrerURL.isEmpty())
         return;
 
-    URL referrerURL { URL(), referrerStr };
-    auto referrerPort = referrerURL.port();
-    RegistrableDomain referrerRegistrableDomain { referrerURL };
-    auto referrerRegistrableDomainStr = referrerRegistrableDomain.string();
-    if (referrerRegistrableDomainStr.isEmpty())
+    auto domainString = RegistrableDomain { referrerURL }.string();
+    if (domainString.isEmpty())
         return;
 
-    StringBuilder builder;
-    builder.append(referrerURL.protocol());
-    builder.appendLiteral("://");
-    builder.append(referrerRegistrableDomainStr);
-    if (referrerPort) {
-        builder.append(':');
-        builder.appendNumber(*referrerPort);
-    }
-    builder.append('/');
-
-    m_referrerOverride = builder.toString();
+    if (auto port = referrerURL.port())
+        m_referrerOverride = makeString(referrerURL.protocol(), "://", domainString, ':', *port, '/');
+    else
+        m_referrerOverride = makeString(referrerURL.protocol(), "://", domainString, '/');
 }
+
 #endif
 
 void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)

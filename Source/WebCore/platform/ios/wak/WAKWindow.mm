@@ -384,14 +384,14 @@ static RetainPtr<WebEvent>& currentEvent()
 
 - (void)setExposedScrollViewRect:(CGRect)exposedScrollViewRect
 {
-    LockHolder locker(&_exposedScrollViewRectLock);
+    Locker locker { _exposedScrollViewRectLock };
     _exposedScrollViewRect = exposedScrollViewRect;
 }
 
 - (CGRect)exposedScrollViewRect
 {
     {
-        LockHolder locker(&_exposedScrollViewRectLock);
+        Locker locker { _exposedScrollViewRectLock };
         if (!CGRectIsNull(_exposedScrollViewRect))
             return _exposedScrollViewRect;
     }

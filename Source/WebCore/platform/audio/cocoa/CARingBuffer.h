@@ -42,7 +42,7 @@ class CARingBufferStorage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CARingBufferStorage() = default;
-    virtual void allocate(size_t, const CAAudioStreamDescription& format, size_t frameCount) = 0;
+    virtual bool allocate(size_t, const CAAudioStreamDescription& format, size_t frameCount) = 0;
     virtual void deallocate() = 0;
     virtual void* data() = 0;
     virtual void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) = 0;
@@ -51,6 +51,7 @@ public:
     virtual uint64_t currentStartFrame() const = 0;
     virtual uint64_t currentEndFrame() const = 0;
     virtual void flush() = 0;
+    virtual size_t size() const = 0;
 };
 
 class CARingBufferStorageVector final : public CARingBufferStorage {
@@ -59,7 +60,7 @@ public:
     ~CARingBufferStorageVector() = default;
 
 private:
-    void allocate(size_t byteCount, const CAAudioStreamDescription&, size_t) final { m_buffer.grow(byteCount); }
+    bool allocate(size_t byteCount, const CAAudioStreamDescription&, size_t) final;
     void deallocate() final { m_buffer.clear(); }
     void* data() final { return m_buffer.data(); }
     void getCurrentFrameBounds(uint64_t& startTime, uint64_t& endTime) final;
@@ -67,6 +68,7 @@ private:
     uint64_t currentStartFrame() const final;
     uint64_t currentEndFrame() const final;
     void flush() final;
+    size_t size() const final { return m_buffer.size(); }
 
     struct TimeBounds {
         TimeBounds()
@@ -91,15 +93,16 @@ class CARingBuffer {
 public:
     WEBCORE_EXPORT CARingBuffer();
     WEBCORE_EXPORT explicit CARingBuffer(UniqueRef<CARingBufferStorage>&&);
-    WEBCORE_EXPORT CARingBuffer(UniqueRef<CARingBufferStorage>&&, const CAAudioStreamDescription&, size_t frameCount);
     WEBCORE_EXPORT ~CARingBuffer();
+
+    WEBCORE_EXPORT static UniqueRef<CARingBuffer> adoptStorage(UniqueRef<CARingBufferStorage>&&, const CAAudioStreamDescription&, size_t frameCount);
 
     enum Error {
         Ok,
         TooMuch, // fetch start time is earlier than buffer start time and fetch end time is later than buffer end time
     };
 
-    WEBCORE_EXPORT void allocate(const CAAudioStreamDescription&, size_t frameCount);
+    WEBCORE_EXPORT bool allocate(const CAAudioStreamDescription&, size_t frameCount);
     WEBCORE_EXPORT void deallocate();
 
     WEBCORE_EXPORT Error store(const AudioBufferList*, size_t frameCount, uint64_t startFrame);
@@ -126,6 +129,8 @@ private:
 
     void getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint64_t& endFrame);
     void fetchInternal(AudioBufferList*, size_t frameCount, uint64_t startFrame, FetchMode);
+
+    void initializeAfterAllocation(const CAAudioStreamDescription& format, size_t frameCount);
 
     uint64_t currentStartFrame() const;
     uint64_t currentEndFrame() const;

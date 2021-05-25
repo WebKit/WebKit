@@ -40,10 +40,11 @@
 
 namespace WebCore {
 
-Lock& WorkerOrWorkletThread::workerOrWorkletThreadsLock()
+CheckedLock WorkerOrWorkletThread::s_workerOrWorkletThreadsLock;
+
+CheckedLock& WorkerOrWorkletThread::workerOrWorkletThreadsLock()
 {
-    static Lock mutex;
-    return mutex;
+    return s_workerOrWorkletThreadsLock;
 }
 
 HashSet<WorkerOrWorkletThread*>& WorkerOrWorkletThread::workerOrWorkletThreads()
@@ -56,13 +57,13 @@ HashSet<WorkerOrWorkletThread*>& WorkerOrWorkletThread::workerOrWorkletThreads()
 WorkerOrWorkletThread::WorkerOrWorkletThread(const String& identifier)
     : m_identifier(identifier)
 {
-    auto locker = holdLock(workerOrWorkletThreadsLock());
+    Locker locker { workerOrWorkletThreadsLock() };
     workerOrWorkletThreads().add(this);
 }
 
 WorkerOrWorkletThread::~WorkerOrWorkletThread()
 {
-    auto locker = holdLock(workerOrWorkletThreadsLock());
+    Locker locker { workerOrWorkletThreadsLock() };
     ASSERT(workerOrWorkletThreads().contains(this));
     workerOrWorkletThreads().remove(this);
 }
@@ -108,7 +109,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
         // Mutex protection is necessary to ensure that we don't change m_globalScope
         // while WorkerThread::stop() is accessing it. Note that WorkerThread::stop() can
         // be called before we've finished creating the WorkerGlobalScope.
-        auto locker = holdLock(m_threadCreationAndGlobalScopeLock);
+        Locker locker { m_threadCreationAndGlobalScopeLock };
         m_globalScope = createGlobalScope();
 
         // When running out of memory, createGlobalScope() may return null because we could not allocate a JSC::VM.
@@ -157,7 +158,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     {
         // Mutex protection is necessary to ensure that we don't change m_globalScope
         // while WorkerThread::stop is accessing it.
-        auto locker = holdLock(m_threadCreationAndGlobalScopeLock);
+        Locker locker { m_threadCreationAndGlobalScopeLock };
 
         // Delay the destruction of the WorkerGlobalScope context until after we've unlocked the
         // m_threadCreationAndWorkerGlobalScopeMutex. This is needed because destructing the
@@ -186,7 +187,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 void WorkerOrWorkletThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
-    auto locker = holdLock(m_threadCreationAndGlobalScopeLock);
+    Locker locker { m_threadCreationAndGlobalScopeLock };
 
     if (m_thread)
         return;
@@ -206,8 +207,7 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
     // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
     // WorkerThread::workerThread() while we're accessing it. Note also that stop() can
     // be called before m_workerGlobalScope is fully created.
-    auto locker = tryHoldLock(m_threadCreationAndGlobalScopeLock);
-    if (!locker) {
+    if (!m_threadCreationAndGlobalScopeLock.tryLock()) {
         // The thread is still starting, spin the runloop and try again to avoid deadlocks if the worker thread
         // needs to interact with the main thread during startup.
         callOnMainThread([this, stoppedCallback = WTFMove(stoppedCallback)]() mutable {
@@ -215,6 +215,7 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
         });
         return;
     }
+    Locker locker { AdoptLock, m_threadCreationAndGlobalScopeLock };
 
     // If the thread is suspended, resume it now so that we can dispatch the cleanup tasks below.
     if (m_isSuspended)
@@ -269,7 +270,7 @@ void WorkerOrWorkletThread::resume()
 
 void WorkerOrWorkletThread::releaseFastMallocFreeMemoryInAllThreads()
 {
-    auto locker = holdLock(workerOrWorkletThreadsLock());
+    Locker locker { workerOrWorkletThreadsLock() };
     for (auto* workerOrWorkletThread : workerOrWorkletThreads()) {
         workerOrWorkletThread->runLoop().postTask([] (ScriptExecutionContext&) {
             WTF::releaseFastMallocFreeMemory();

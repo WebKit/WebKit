@@ -31,6 +31,7 @@
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
 
+#include <wtf/CheckedLock.h>
 #include <wtf/FunctionTraits.h>
 #include <wtf/SimpleStats.h>
 
@@ -45,7 +46,7 @@ BlockDirectory::BlockDirectory(size_t cellSize)
 
 BlockDirectory::~BlockDirectory()
 {
-    auto locker = holdLock(m_localAllocatorsLock);
+    Locker locker { m_localAllocatorsLock };
     while (!m_localAllocators.isEmpty())
         m_localAllocators.begin()->remove();
 }
@@ -134,7 +135,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
             ASSERT(m_bits.numBits() == oldCapacity);
             ASSERT(m_blocks.capacity() > oldCapacity);
             
-            LockHolder locker(m_bitvectorLock);
+            Locker locker { m_bitvectorLock };
             subspace()->didResizeBits(m_blocks.capacity());
             m_bits.resize(m_blocks.capacity());
         }
@@ -168,7 +169,7 @@ void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock wil
     m_freeBlockIndices.append(block->index());
     
     forEachBitVector(
-        holdLock(m_bitvectorLock),
+        Locker { m_bitvectorLock },
         [&](auto vectorRef) {
             vectorRef[block->index()] = false;
         });
@@ -216,7 +217,7 @@ void BlockDirectory::stopAllocatingForGood()
             allocator->stopAllocatingForGood();
         });
 
-    auto locker = holdLock(m_localAllocatorsLock);
+    Locker locker { m_localAllocatorsLock };
     while (!m_localAllocators.isEmpty())
         m_localAllocators.begin()->remove();
 }
@@ -333,7 +334,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlock
         {
             if (m_done)
                 return nullptr;
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             m_index = m_directory.m_bits.markingNotEmpty().findBit(m_index, true);
             if (m_index >= m_directory.m_blocks.size()) {
                 m_done = true;
@@ -343,9 +344,9 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlock
         }
         
     private:
-        BlockDirectory& m_directory;
-        size_t m_index { 0 };
-        Lock m_lock;
+        BlockDirectory& m_directory WTF_GUARDED_BY_LOCK(m_lock);
+        size_t m_index WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+        CheckedLock m_lock;
         bool m_done { false };
     };
     

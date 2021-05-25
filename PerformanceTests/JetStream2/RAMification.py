@@ -40,8 +40,8 @@ groupTests = ["typescript,acorn-wtb,Air,pdfjs,crypto-aes-SP", "splay,FlightPlann
 luaTests = [("hello_world-LJF", "LuaJSFight/hello_world.js", 5), ("list_search-LJF", "LuaJSFight/list_search.js", 5), ("lists-LJF", "LuaJSFight/lists.js", 5), ("string_lists-LJF", "LuaJSFight/string_lists.js", 5), ("richards", "LuaJSFight/richards.js", 5)]
 
 oneMB = float(1024 * 1024)
-footprintRE = re.compile("Current Footprint: (\d+(?:.\d+)?)")
-peakFootprintRE = re.compile("Peak Footprint: (\d+(?:.\d+)?)")
+footprintRE = re.compile(r"Current Footprint: (\d+(?:.\d+)?)")
+peakFootprintRE = re.compile(r"Peak Footprint: (\d+(?:.\d+)?)")
 
 TestResult = collections.namedtuple("TestResult", ["name", "returnCode", "footprint", "peakFootprint", "vmmapOutput"])
 

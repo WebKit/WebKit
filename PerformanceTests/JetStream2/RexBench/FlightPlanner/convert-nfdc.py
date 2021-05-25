@@ -36,7 +36,7 @@
 
 import re
 
-latLongRE = re.compile('\s*(\d+)-(\d{2})-(\d{2}.\d{3,8})([NS])\s*(\d+)-(\d{2})-(\d{2}.\d{3,8})([EW])')
+latLongRE = re.compile(r'\s*(\d+)-(\d{2})-(\d{2}.\d{3,8})([NS])\s*(\d+)-(\d{2})-(\d{2}.\d{3,8})([EW])')
 statesAbbreviationsToExclude = ['AK', 'HI']
 navaidsToInclude = ['VOR', 'NDB']
 airwayFixTypes = frozenset(['CN', 'NDB/DME', 'NDB', 'MIL-REP-PT', 'REP-PT', 'RNAV', 'VOR', 'VOR/DME', 'VORTAC'])

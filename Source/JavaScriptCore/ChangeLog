@@ -1,3 +1,2597 @@
+2021-05-23  Mark Lam  <mark.lam@apple.com>
+
+        Remove ENABLE(MASM_PROBE) flag.
+        https://bugs.webkit.org/show_bug.cgi?id=226154
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssembler.cpp:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerMIPS.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerPrinter.cpp:
+        * assembler/MacroAssemblerPrinter.h:
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/ProbeContext.cpp:
+        * assembler/ProbeContext.h:
+        * assembler/ProbeFrame.h:
+        * assembler/ProbeStack.cpp:
+        * assembler/ProbeStack.h:
+        * assembler/testmasm.cpp:
+        (JSC::isSpecialGPR):
+        (JSC::testClearBits64WithMask):
+        (JSC::testClearBits64WithMaskTernary):
+        (JSC::testShiftAndAdd):
+        (JSC::testProbeModifiesStackValues):
+        (JSC::run):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirPrintSpecial.cpp:
+        * b3/air/AirPrintSpecial.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES):
+
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Use CheckedLock in even more places
+        https://bugs.webkit.org/show_bug.cgi?id=226152
+
+        Reviewed by Darin Adler.
+
+        Use CheckedLock in even more places to benefit from Clang Thread Safety Analysis.
+
+        * API/JSVirtualMachine.mm:
+        (WTF_REQUIRES_LOCK):
+        * API/glib/JSCVirtualMachine.cpp:
+        * bytecode/StructureStubInfo.h:
+        * bytecode/SuperSampler.cpp:
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::codeBlockForVMTrapPC):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::WTF_GUARDED_BY_LOCK):
+        * disassembler/Disassembler.cpp:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::parallelNotEmptyBlockSource):
+        * heap/Heap.h:
+        * heap/IsoSubspacePerVM.h:
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h:
+
+2021-05-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed. Fix JSC Debug tests for r277926. 
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeCTIThunks):
+        Address oversight, made visible by the assertion added in r277850.
+
+2021-05-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226145
+
+        Reviewed by Darin Adler.
+
+        Drop WTF::tryHoldLock() as it is incompatible with Clang Thread Safety Analysis.
+        Instead, use the following pattern which is supported:
+        ```
+        if (lock.tryLock()) {
+            Locker locker { AdoptLock, lock };
+            // ...
+        }
+        ```
+
+        * heap/Heap.cpp:
+        (JSC::Heap::resumeThePeriphery):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+
+2021-05-22  Mark Lam  <mark.lam@apple.com>
+
+        Use singleton thunks for virtual calls.
+        https://bugs.webkit.org/show_bug.cgi?id=226149
+        rdar://problem/78357604
+
+        Reviewed by Yusuke Suzuki.
+
+        Change virtualThunkFor() to return 1 of 6 possible singleton thunks.
+        These thunks are cached via vm.jitStubs->ctiStubs().
+
+        This change saves us ~16M of executable JIT memory (for the unique thunks) on a
+        single run of Speedometer2.  On an M1 Mac, switching to singleton thunks here also
+        appears to be a 1.012x speed up on Speedometer2.  Performance is neutral on
+        JetStream2.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        * jit/JITThunks.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::virtualThunkForRegularCall):
+        (JSC::virtualThunkForRegularConstruct):
+        (JSC::virtualThunkForTailCall):
+        (JSC::virtualThunkForTailConstruct):
+        (JSC::virtualThunkForConstructCall):
+        (JSC::virtualThunkForConstructConstruct):
+        * runtime/VM.cpp:
+        (JSC::VM::getCTIInternalFunctionTrampolineFor):
+        * runtime/VM.h:
+
+2021-05-22  Mark Lam  <mark.lam@apple.com>
+
+        Enhance Link Buffer stats to have more fine grain profiles, and to collect count information.
+        https://bugs.webkit.org/show_bug.cgi?id=226151
+        rdar://problem/78359436
+
+        Reviewed by Yusuke Suzuki.
+
+        And also add a total of the sizes.
+        Also added $vm.clearLinkBufferStats() which resets all the stats to 0.
+
+        Here's an example of that the new stats look like:
+
+            Cummulative LinkBuffer profile sizes:
+                       BaselineJIT: 61092032 (58.261902 MB) count 11621 avg size 5257
+                               DFG: 35387904 (33.748535 MB) count 11143 avg size 3175
+                       InlineCache: 19639155 (18.729358 MB) count 283890 avg size 69
+                      VirtualThunk: 14256800 (13.596344 MB) count 43900 avg size 324
+                        DFGOSRExit: 7636736 (7.282959 MB) count 5235 avg size 1458
+                               FTL: 4927616 (4.699341 MB) count 5269 avg size 935
+                              Wasm: 2134688 (2.035797 MB) count 847 avg size 2520
+                           YarrJIT: 1320928 (1.259735 MB) count 2075 avg size 636
+                        FTLOSRExit: 1084096 (1.033875 MB) count 417 avg size 2599
+                         WasmThunk: 41408 (40.437500 KB) count 252 avg size 164
+                          FTLThunk: 25088 (24.500000 KB) count 426 avg size 58
+                     ExtraCTIThunk: 5984 (5.843750 KB) count 95 avg size 62
+                  SpecializedThunk: 3456 (3.375000 KB) count 19 avg size 181
+                             Thunk: 1760 (1.718750 KB) count 10 avg size 176
+                BoundFunctionThunk: 864 count 3 avg size 288
+                        LLIntThunk: 608 count 18 avg size 33
+                          DFGThunk: 608 count 1 avg size 608
+                       DFGOSREntry: 160 count 1 avg size 160
+                        JumpIsland: 0
+                            CSSJIT: 0
+                     Uncategorized: 0
+                             Total: 147559891 (140.724078 MB)
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::performFinalization):
+        (JSC::LinkBuffer::clearProfileStatistics):
+        (JSC::LinkBuffer::dumpProfileStatistics):
+        * assembler/LinkBuffer.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/ExecutableAllocator.cpp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_get_by_val_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_private_name_prepareCallGenerator):
+        (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+        (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+        (JSC::JIT::slow_op_del_by_id_prepareCallGenerator):
+        (JSC::JIT::slow_op_del_by_val_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_by_id_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_by_id_with_this_prepareCallGenerator):
+        (JSC::JIT::slow_op_put_by_id_prepareCallGenerator):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::generateThunk):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::handleExceptionGenerator):
+        (JSC::handleExceptionWithCallFrameRollbackGenerator):
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+        (JSC::checkExceptionGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::boundFunctionCallGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::generateThunkWithJumpToPrologue):
+        (JSC::LLInt::generateThunkWithJumpToLLIntReturnPoint):
+        (JSC::LLInt::getHostCallReturnValueThunk):
+        (JSC::LLInt::createJSGateThunk):
+        (JSC::LLInt::createWasmGateThunk):
+        (JSC::LLInt::createTailCallGate):
+        (JSC::LLInt::loopOSREntryGateThunk):
+        (JSC::LLInt::entryOSREntryGateThunk):
+        (JSC::LLInt::wasmOSREntryGateThunk):
+        (JSC::LLInt::exceptionHandlerGateThunk):
+        (JSC::LLInt::returnFromLLIntGateThunk):
+        (JSC::LLInt::tagGateThunk):
+        (JSC::LLInt::untagGateThunk):
+        (JSC::LLInt::jitCagePtrThunk):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
+2021-05-22  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Support Ergonomic Brand Checks proposal (`#x in obj`)
+        https://bugs.webkit.org/show_bug.cgi?id=221093
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        This patch implements the following Stage 3 proposal (behind a runtime option):
+        https://github.com/tc39/proposal-private-fields-in-in
+
+        Specifically, it extends the `in` keyword to allow the LHS to be a private name,
+        thereby allowing users to implement Array.isArray-esque brand checks for their own classes
+        *without* having to wrap a private member get in a try-catch.
+
+        For example:
+        ```
+        class C {
+            #x;
+            static isC(obj) { return #x in obj; }
+        }
+        ```
+
+        This is done by adding two new bytecode ops, HasPrivateName and HasPrivateBrand. For the moment,
+        these are implemented without fast paths, as we should do so for InByVal first and then have these follow suit.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitHasPrivateName):
+        (JSC::BytecodeGenerator::emitHasPrivateBrand):
+        (JSC::BytecodeGenerator::emitCheckPrivateBrand):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::InNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasPrivateName):
+        (JSC::DFG::SpeculativeJIT::compileHasPrivateBrand):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasPrivateBrand):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createPrivateIdentifierNode):
+        * parser/NodeConstructors.h:
+        (JSC::PrivateIdentifierNode::PrivateIdentifierNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isPrivateIdentifier const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createPrivateIdentifierNode):
+        * parser/VariableEnvironment.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::hasPrivateField):
+        (JSC::JSObject::hasPrivateBrand):
+        (JSC::JSObject::checkPrivateBrand):
+        * runtime/OptionsList.h:
+
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::deletePrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        * API/JSValue.mm:
+        (handerForStructTag):
+        * API/tests/testapi.cpp:
+        (testCAPIViaCpp):
+        * assembler/testmasm.cpp:
+        (JSC::run):
+        * b3/air/testair.cpp:
+        * b3/testb3_1.cpp:
+        (run):
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::setSlow):
+        (JSC::DirectEvalCodeCache::clear):
+        (JSC::DirectEvalCodeCache::visitAggregateImpl):
+        * bytecode/SuperSampler.cpp:
+        (JSC::initializeSuperSampler):
+        (JSC::resetSuperSamplerState):
+        (JSC::printSuperSamplerState):
+        (JSC::enableSuperSampler):
+        (JSC::disableSuperSampler):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::codeBlockForVMTrapPC):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::~Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::isActiveForVM const):
+        (JSC::DFG::Worklist::enqueue):
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::removeNonCompilingPlansForVM):
+        (JSC::DFG::Worklist::queueLength):
+        (JSC::DFG::Worklist::dump const):
+        (JSC::DFG::Worklist::setNumberOfThreads):
+        * dfg/DFGWorklistInlines.h:
+        (JSC::DFG::Worklist::iterateCodeBlocksForGC):
+        * disassembler/Disassembler.cpp:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::addBlock):
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterateCurrentlyExecuting):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::add):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::waitForCollector):
+        (JSC::Heap::requestCollection):
+        (JSC::Heap::notifyIsSafeToCollect):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didReachTermination):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        (Inspector::InspectorScriptProfilerAgent::stopSamplingWhenDisconnecting):
+        * inspector/remote/RemoteConnectionToTarget.cpp:
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::registerTarget):
+        (Inspector::RemoteInspector::unregisterTarget):
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateClientCapabilities):
+        (Inspector::RemoteInspector::setClient):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupCompleted):
+        (Inspector::RemoteInspector::stop):
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteTargetHandleRunSourceGlobal):
+        (Inspector::RemoteTargetQueueTaskOnGlobalQueue):
+        (Inspector::RemoteTargetHandleRunSourceWithInfo):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::queueTaskOnPrivateRunLoop):
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::setParentProcessInformation):
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedProxyApplicationSetupMessage):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::close):
+        (Inspector::RemoteInspectorXPCConnection::closeFromMessage):
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::setupConnection):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::receivedGetTargetListMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedCloseMessage):
+        (Inspector::RemoteInspector::setup):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::didReceive):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::didClose):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::setup):
+        (Inspector::RemoteInspector::setupInspectorClient):
+        (Inspector::RemoteInspector::frontendDidClose):
+        (Inspector::RemoteInspector::sendMessageToBackend):
+        (Inspector::RemoteInspector::startAutomationSession):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet):
+        (Inspector::RemoteInspectorSocketEndpoint::isListening):
+        (Inspector::RemoteInspectorSocketEndpoint::workerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::createClient):
+        (Inspector::RemoteInspectorSocketEndpoint::disconnect):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateClient):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateListener):
+        (Inspector::RemoteInspectorSocketEndpoint::getPort const):
+        (Inspector::RemoteInspectorSocketEndpoint::recvIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::sendIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::send):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::addToCommittedByteCount):
+        (JSC::CLoopStack::committedByteCount):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+        * jit/ICStats.cpp:
+        (JSC::ICStats::ICStats):
+        (JSC::ICStats::~ICStats):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::existingCTIStub):
+        (JSC::JITThunks::ctiSlowPathFunctionStub):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::compileInThread):
+        (JSC::JITWorklist::Plan::isFinishedCompiling):
+        (JSC::JITWorklist::JITWorklist):
+        (JSC::JITWorklist::completeAllForVM):
+        (JSC::JITWorklist::poll):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::finalizePlans):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::getID):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        (JSC::Profiler::Database::notifyDestruction):
+        (JSC::Profiler::Database::addCompilation):
+        (JSC::Profiler::Database::logEvent):
+        (JSC::Profiler::Database::addDatabaseToAtExit):
+        (JSC::Profiler::Database::removeDatabaseFromAtExit):
+        (JSC::Profiler::Database::removeFirstAtExitDatabase):
+        * profiler/ProfilerUID.cpp:
+        (JSC::Profiler::UID::create):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::scheduleWorkSoon):
+        (JSC::DeferredWorkTimer::didResumeScriptExecutionOwner):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::timerLoop):
+        (JSC::SamplingProfiler::shutdown):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::noticeJSLockAcquisition):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::registerForReportAtExit):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::willDestroyVM):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::isValidExecutableMemory):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::ThreadCountHolder):
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::~ThreadCountHolder):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::addCompletionTask):
+        (JSC::Wasm::Plan::waitForCompletion):
+        (JSC::Wasm::Plan::tryRemoveContextAndCancelIfLast):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::signatureFor):
+        (JSC::Wasm::SignatureInformation::tryCleanup):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::enqueue):
+        (JSC::Wasm::Worklist::completePlanSynchronously):
+        (JSC::Wasm::Worklist::stopAllPlansForContext):
+        (JSC::Wasm::Worklist::Worklist):
+        (JSC::Wasm::Worklist::~Worklist):
+
+2021-05-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277913.
+        https://bugs.webkit.org/show_bug.cgi?id=226140
+
+        Caused multiple layout-test crash on mac debug queues
+
+        Reverted changeset:
+
+        "Replace LockHolder with Locker in local variables"
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+        https://trac.webkit.org/changeset/277913
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Remove WTF::holdLock() / WTF::holdLockIf()
+        https://bugs.webkit.org/show_bug.cgi?id=226135
+
+        Reviewed by Darin Adler.
+
+        Remove WTF::holdLock() / WTF::holdLockIf() because they are not compatible with
+        Clang Thread Safety Analysis. All call sites have been converted to use the Locker
+        constructor directly.
+
+        * heap/LockDuringMarking.h:
+        (JSC::lockDuringMarking):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::deletePrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        * API/JSValue.mm:
+        (handerForStructTag):
+        * API/tests/testapi.cpp:
+        (testCAPIViaCpp):
+        * assembler/testmasm.cpp:
+        (JSC::run):
+        * b3/air/testair.cpp:
+        * b3/testb3_1.cpp:
+        (run):
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::setSlow):
+        (JSC::DirectEvalCodeCache::clear):
+        (JSC::DirectEvalCodeCache::visitAggregateImpl):
+        * bytecode/SuperSampler.cpp:
+        (JSC::initializeSuperSampler):
+        (JSC::resetSuperSamplerState):
+        (JSC::printSuperSamplerState):
+        (JSC::enableSuperSampler):
+        (JSC::disableSuperSampler):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::codeBlockForVMTrapPC):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::~Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::isActiveForVM const):
+        (JSC::DFG::Worklist::enqueue):
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::removeNonCompilingPlansForVM):
+        (JSC::DFG::Worklist::queueLength):
+        (JSC::DFG::Worklist::dump const):
+        (JSC::DFG::Worklist::setNumberOfThreads):
+        * dfg/DFGWorklistInlines.h:
+        (JSC::DFG::Worklist::iterateCodeBlocksForGC):
+        * disassembler/Disassembler.cpp:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::addBlock):
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterateCurrentlyExecuting):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::add):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::runBeginPhase):
+        (JSC::Heap::waitForCollector):
+        (JSC::Heap::requestCollection):
+        (JSC::Heap::notifyIsSafeToCollect):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didReachTermination):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        (Inspector::InspectorScriptProfilerAgent::stopSamplingWhenDisconnecting):
+        * inspector/remote/RemoteConnectionToTarget.cpp:
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::registerTarget):
+        (Inspector::RemoteInspector::unregisterTarget):
+        (Inspector::RemoteInspector::updateTarget):
+        (Inspector::RemoteInspector::updateClientCapabilities):
+        (Inspector::RemoteInspector::setClient):
+        (Inspector::RemoteInspector::setupFailed):
+        (Inspector::RemoteInspector::setupCompleted):
+        (Inspector::RemoteInspector::stop):
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteTargetHandleRunSourceGlobal):
+        (Inspector::RemoteTargetQueueTaskOnGlobalQueue):
+        (Inspector::RemoteTargetHandleRunSourceWithInfo):
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::targetClosed):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        (Inspector::RemoteConnectionToTarget::queueTaskOnPrivateRunLoop):
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::updateAutomaticInspectionCandidate):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        (Inspector::RemoteInspector::setParentProcessInformation):
+        (Inspector::RemoteInspector::xpcConnectionReceivedMessage):
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        (Inspector::RemoteInspector::receivedProxyApplicationSetupMessage):
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::close):
+        (Inspector::RemoteInspectorXPCConnection::closeFromMessage):
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage):
+        (Inspector::RemoteInspectorXPCConnection::handleEvent):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::setupConnection):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::sendMessageToRemote):
+        (Inspector::RemoteInspector::receivedGetTargetListMessage):
+        (Inspector::RemoteInspector::receivedDataMessage):
+        (Inspector::RemoteInspector::receivedCloseMessage):
+        (Inspector::RemoteInspector::setup):
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp:
+        (Inspector::RemoteInspectorConnectionClient::didReceive):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::didClose):
+        (Inspector::RemoteInspector::start):
+        (Inspector::RemoteInspector::pushListingsSoon):
+        (Inspector::RemoteInspector::setup):
+        (Inspector::RemoteInspector::setupInspectorClient):
+        (Inspector::RemoteInspector::frontendDidClose):
+        (Inspector::RemoteInspector::sendMessageToBackend):
+        (Inspector::RemoteInspector::startAutomationSession):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet):
+        (Inspector::RemoteInspectorSocketEndpoint::isListening):
+        (Inspector::RemoteInspectorSocketEndpoint::workerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::createClient):
+        (Inspector::RemoteInspectorSocketEndpoint::disconnect):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateClient):
+        (Inspector::RemoteInspectorSocketEndpoint::invalidateListener):
+        (Inspector::RemoteInspectorSocketEndpoint::getPort const):
+        (Inspector::RemoteInspectorSocketEndpoint::recvIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::sendIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::send):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::addToCommittedByteCount):
+        (JSC::CLoopStack::committedByteCount):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+        * jit/ICStats.cpp:
+        (JSC::ICStats::ICStats):
+        (JSC::ICStats::~ICStats):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::existingCTIStub):
+        (JSC::JITThunks::ctiSlowPathFunctionStub):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::compileInThread):
+        (JSC::JITWorklist::Plan::isFinishedCompiling):
+        (JSC::JITWorklist::JITWorklist):
+        (JSC::JITWorklist::completeAllForVM):
+        (JSC::JITWorklist::poll):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::finalizePlans):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::getID):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        (JSC::Profiler::Database::notifyDestruction):
+        (JSC::Profiler::Database::addCompilation):
+        (JSC::Profiler::Database::logEvent):
+        (JSC::Profiler::Database::addDatabaseToAtExit):
+        (JSC::Profiler::Database::removeDatabaseFromAtExit):
+        (JSC::Profiler::Database::removeFirstAtExitDatabase):
+        * profiler/ProfilerUID.cpp:
+        (JSC::Profiler::UID::create):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::scheduleWorkSoon):
+        (JSC::DeferredWorkTimer::didResumeScriptExecutionOwner):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::timerLoop):
+        (JSC::SamplingProfiler::shutdown):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::noticeJSLockAcquisition):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::registerForReportAtExit):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::startTimer):
+        (JSC::Watchdog::willDestroyVM):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::isValidExecutableMemory):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::ThreadCountHolder):
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::~ThreadCountHolder):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::addCompletionTask):
+        (JSC::Wasm::Plan::waitForCompletion):
+        (JSC::Wasm::Plan::tryRemoveContextAndCancelIfLast):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::signatureFor):
+        (JSC::Wasm::SignatureInformation::tryCleanup):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::enqueue):
+        (JSC::Wasm::Worklist::completePlanSynchronously):
+        (JSC::Wasm::Worklist::stopAllPlansForContext):
+        (JSC::Wasm::Worklist::Worklist):
+        (JSC::Wasm::Worklist::~Worklist):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in JSC as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226116
+
+        Reviewed by Mark Lam.
+
+        Stop using holdLock() in JSC as it is not compatible with Clang thread safety analysis
+        (WTF::CheckedLock). Use the Locker constructor instead.
+
+        I'll eventually get rid of the holdLock() definition once I have managed to get rid of
+        all its usages.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVMWrapperCache addWrapper:forJSContextGroupRef:]):
+        (+[JSVMWrapperCache wrapperForJSContextGroupRef:]):
+        (-[JSVirtualMachine addExternalRememberedObject:]):
+        (-[JSVirtualMachine addManagedReference:withOwner:]):
+        (-[JSVirtualMachine removeManagedReference:withOwner:]):
+        (scanExternalObjectGraph):
+        (scanExternalRememberedSet):
+        * API/glib/JSCVirtualMachine.cpp:
+        (addWrapper):
+        (removeWrapper):
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * assembler/PerfLog.cpp:
+        (JSC::PerfLog::PerfLog):
+        (JSC::PerfLog::log):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitAggregateImpl):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::considerCaching):
+        (JSC::StructureStubInfo::clearBufferedStructures):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::visitChildrenImpl):
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::~BlockDirectory):
+        (JSC::BlockDirectory::removeBlock):
+        (JSC::BlockDirectory::stopAllocatingForGood):
+        (JSC::BlockDirectory::parallelNotEmptyBlockSource):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::remove):
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterate):
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocatorForSlow):
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::runNotRunningPhase):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::finishRelinquishingConn):
+        (JSC::visitSamplingProfiler):
+        (JSC::Heap::setBonusVisitorTask):
+        (JSC::Heap::runTaskInParallel):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::buildSnapshot):
+        (JSC::HeapSnapshotBuilder::analyzeNode):
+        (JSC::HeapSnapshotBuilder::analyzeEdge):
+        (JSC::HeapSnapshotBuilder::analyzePropertyNameEdge):
+        (JSC::HeapSnapshotBuilder::analyzeVariableNameEdge):
+        (JSC::HeapSnapshotBuilder::analyzeIndexEdge):
+        (JSC::HeapSnapshotBuilder::setOpaqueRootReachabilityReasonForCell):
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeAlignedMemory):
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::parallelNotEmptyMarkedBlockSource):
+        (JSC::IsoCellSet::addSlow):
+        (JSC::IsoCellSet::didRemoveBlock):
+        (JSC::IsoCellSet::sweepToFreeList):
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        * heap/IsoSubspacePerVM.cpp:
+        (JSC::IsoSubspacePerVM::forVM):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::LocalAllocator):
+        (JSC::LocalAllocator::~LocalAllocator):
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+        (JSC::MarkedBlock::noteMarkedSlow):
+        (JSC::MarkedBlock::Handle::dumpState):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::isLive):
+        * heap/MarkingConstraint.cpp:
+        (JSC::MarkingConstraint::doParallelWork):
+        * heap/MarkingConstraintSolver.cpp:
+        (JSC::MarkingConstraintSolver::addParallelTask):
+        (JSC::MarkingConstraintSolver::runExecutionThread):
+        * heap/ParallelSourceAdapter.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::updateMutatorIsStopped):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::performIncrementOfDraining):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::drainInParallelPassively):
+        (JSC::SlotVisitor::waitForTermination):
+        (JSC::SlotVisitor::donateAll):
+        (JSC::SlotVisitor::didRace):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::parallelDirectorySource):
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachMarkedCellInParallel):
+        * inspector/JSInjectedScriptHost.cpp:
+        * jit/ExecutableAllocator.cpp:
+        * jsc.cpp:
+        (Worker::Worker):
+        (Worker::~Worker):
+        (Worker::dequeue):
+        (Workers::broadcast):
+        (Workers::report):
+        (Workers::tryGetReport):
+        (Workers::getReport):
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::doWork):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::visitChildrenImpl):
+        * runtime/FileBasedFuzzerAgentBase.cpp:
+        (JSC::FileBasedFuzzerAgentBase::getPrediction):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::visitChildrenImpl):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::detach):
+        (JSC::JSArrayBufferView::slowDownAndWasteMemory):
+        * runtime/JSCell.h:
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::visitChildrenImpl):
+        (JSC::JSFinalizationRegistry::finalizeUnconditionally):
+        (JSC::JSFinalizationRegistry::takeDeadHoldingsValue):
+        (JSC::JSFinalizationRegistry::registerTarget):
+        (JSC::JSFinalizationRegistry::unregister):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildrenImpl):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::visitChildrenImpl):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::Manager::timerDidFire):
+        (JSC::JSRunLoopTimer::Manager::registerVM):
+        (JSC::JSRunLoopTimer::Manager::unregisterVM):
+        (JSC::JSRunLoopTimer::Manager::scheduleTimer):
+        (JSC::JSRunLoopTimer::Manager::cancelTimer):
+        (JSC::JSRunLoopTimer::Manager::timeUntilFire):
+        (JSC::JSRunLoopTimer::timerDidFire):
+        (JSC::JSRunLoopTimer::setTimeUntilFire):
+        (JSC::JSRunLoopTimer::cancelTimer):
+        (JSC::JSRunLoopTimer::addTimerSetNotification):
+        (JSC::JSRunLoopTimer::removeTimerSetNotification):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findVariableIndex):
+        (JSC::JSSegmentedVariableObject::addVariables):
+        (JSC::JSSegmentedVariableObject::visitChildrenImpl):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::visitChildrenImpl):
+        * runtime/NarrowingNumberPredictionFuzzerAgent.cpp:
+        (JSC::NarrowingNumberPredictionFuzzerAgent::getPrediction):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::visitChildrenImpl):
+        * runtime/RandomizingFuzzerAgent.cpp:
+        (JSC::RandomizingFuzzerAgent::getPrediction):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::RegExp::deleteCode):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::createTemplateObject):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::add):
+        (JSC::SparseArrayValueMap::remove):
+        (JSC::SparseArrayValueMap::getConcurrently):
+        (JSC::SparseArrayValueMap::visitChildrenImpl):
+        * runtime/Structure.cpp:
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::setBrandTransition):
+        * runtime/StructureCache.cpp:
+        (JSC::StructureCache::createEmptyStructure):
+        (JSC::StructureCache::emptyObjectStructureConcurrently):
+        * runtime/VM.cpp:
+        (JSC::waitForVMDestruction):
+        (JSC::VM::~VM):
+        (JSC::VM::gatherScratchBufferRoots):
+        (JSC::VM::scratchBufferForSize):
+        (JSC::VM::clearScratchBuffers):
+        (JSC::VM::addLoopHintExecutionCounter):
+        (JSC::VM::getLoopHintExecutionCounter):
+        (JSC::VM::removeLoopHintExecutionCounter):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        (JSC::VMTraps::willDestroyVM):
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::handleTraps):
+        (JSC::VMTraps::takeTopPriorityTrap):
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<BucketType>::visitOutputConstraints):
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::finishCreation):
+        * runtime/WeakMapImplInlines.h:
+        (JSC::WeakMapImpl<WeakMapBucket>::rehash):
+        * runtime/WideningNumberPredictionFuzzerAgent.cpp:
+        (JSC::WideningNumberPredictionFuzzerAgent::getPrediction):
+        * tools/CompilerTimingScope.cpp:
+        * tools/FunctionOverrides.cpp:
+        (JSC::FunctionOverrides::FunctionOverrides):
+        (JSC::FunctionOverrides::reinstallOverrides):
+        (JSC::FunctionOverrides::initializeOverrideFor):
+        * tools/Integrity.cpp:
+        (JSC::Integrity::Random::reloadAndCheckShouldAuditSlow):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::add):
+        (JSC::VMInspector::remove):
+        (JSC::VMInspector::codeBlockForMachinePC):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        * wasm/WasmCalleeRegistry.h:
+        (JSC::Wasm::CalleeRegistry::registerCallee):
+        (JSC::Wasm::CalleeRegistry::unregisterCallee):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        (JSC::Wasm::CodeBlock::waitUntilFinished):
+        (JSC::Wasm::CodeBlock::compileAsync):
+        * wasm/WasmContext.cpp:
+        (JSC::Wasm::Context::scratchBufferForSize):
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::parseAndValidateModule):
+        (JSC::Wasm::EntryPlan::prepare):
+        (JSC::Wasm::EntryPlan::compileFunctions):
+        * wasm/WasmEntryPlan.h:
+        (JSC::Wasm::EntryPlan::tryReserveCapacity):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::setFunctionWrapper):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        (JSC::Wasm::LLIntPlan::completeInStreaming):
+        (JSC::Wasm::LLIntPlan::didCompileFunctionInStreaming):
+        (JSC::Wasm::LLIntPlan::didFailInStreaming):
+        * wasm/WasmMachineThreads.cpp:
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::growShared):
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::getOrCreateCodeBlock):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::triggerOMGReplacementCompile):
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmSignatureInlines.h:
+        (JSC::Wasm::SignatureInformation::get):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmStreamingCompiler.cpp:
+        (JSC::Wasm::StreamingCompiler::didCompileFunction):
+        (JSC::Wasm::StreamingCompiler::finalize):
+        (JSC::Wasm::StreamingCompiler::fail):
+        (JSC::Wasm::StreamingCompiler::cancel):
+        * wasm/WasmStreamingPlan.cpp:
+        (JSC::Wasm::StreamingPlan::work):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::Table::visitAggregateImpl):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::Thunks::stub):
+        (JSC::Wasm::Thunks::existingStub):
+        * wasm/WasmWorklist.cpp:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildrenImpl):
+
+2021-05-21  Mark Lam  <mark.lam@apple.com>
+
+        Remove the unnecessary use of CompileOpStrictEqType.
+        https://bugs.webkit.org/show_bug.cgi?id=226121
+
+        Reviewed by Saam Barati and Robin Morisset.
+
+        We're already emitting template code.  Might as well make the relevant condition
+        checks a build time check on the opcode type the template is specializing on
+        instead of a runtime check on a passed in CompileOpStrictEqType.
+
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+
+2021-05-21  Mark Lam  <mark.lam@apple.com>
+
+        Introducing JITThunks::preinitializeCTIThunks().
+        https://bugs.webkit.org/show_bug.cgi?id=226105
+
+        Reviewed by Geoffrey Garen.
+
+        We're basically renaming JITThunks::preinitializeExtraCTIThunks() to
+        JITThunks::preinitializeCTIThunks() and making it not conditional on
+        #if ENABLE(EXTRA_CTI_THUNKS).  Some thunks need to be initialized independent of
+        #if ENABLE(EXTRA_CTI_THUNKS).
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeCTIThunks):
+        (JSC::JITThunks::preinitializeExtraCTIThunks): Deleted.
+        * jit/JITThunks.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
+2021-05-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late-ish May 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=225990
+
+        Unreviewed non-unified build fixes.
+
+        * jit/CCallHelpers.cpp: Add missing LinkBuffer.h header.
+
+2021-05-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+        https://bugs.webkit.org/show_bug.cgi?id=226018
+
+        Reviewed by Jonathan Bedard.
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+
+2021-05-20  Saam Barati  <sbarati@apple.com>
+
+        [ Catalina Release JSC] A large number of JSC test appear to be flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=225998
+        <rdar://problem/78235001>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is fixing some fallout from moving JIT::link() to a background
+        thread:
+        1. We can't shrink the CodeBlock's constant pool on a background thread
+        since we read from it without grabbing a lock on the main thread (when
+        reading things off the stack in slow path calls).
+        2. We can't create GCAwareJITStubRoutines on the compilation thread, since
+        creating a GCAwareJITStubRoutines adds to a global hash table inside Heap. This
+        means that we have to do that step of emitting virtual calls for eval when
+        we're finalizing code on the main thread.
+        
+        This patch also makes it so that a baseline JIT compilation thread is
+        correctly marked as such.
+
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::add):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitUnlinkedVirtualCall):
+        (JSC::AssemblyHelpers::emitVirtualCall):
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        (JSC::JIT::finalizeOnMainThread):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        * jit/JITWorklist.cpp:
+
+2021-05-20  Saam Barati  <sbarati@apple.com>
+
+        Make polymorphic calls play nice with Data Call ICs
+        https://bugs.webkit.org/show_bug.cgi?id=225793
+
+        Reviewed by Robin Morisset.
+
+        This patch makes it so that Polymorphic stubs don't repatch when using
+        Data Call ICs. We add a branch to the Data IC fast path to see if we're
+        polymorphic. If we are, then we either call or tail call the polymorphic
+        stub, depending on the CallLinkInfo's call type. This patch also changes
+        the polymorphic stub to handle being called instead of jumped to, since that
+        will now happen for Data ICs of non tail calls.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setMonomorphicCallee):
+        (JSC::CallLinkInfo::callee):
+        (JSC::CallLinkInfo::visitWeak):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::revertCallToStub):
+        (JSC::CallLinkInfo::setStub):
+        (JSC::CallLinkInfo::emitFirstInstructionForDataIC): Deleted.
+        * bytecode/CallLinkInfo.h:
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+
+2021-05-20  Tuomas Karkkainen  <tuomas.webkit@apple.com>
+
+        $vm should have a function for checking if ASan is enabled similar to $vm.assertEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=226019
+
+        Reviewed by Mark Lam.
+
+        Add method $vm.asanEnabled(), which parallels $vm.assertEnabled(), and allows checking at
+        runtime whether the current JavaScriptCore build is instrumented with AddressSanitizer.
+
+        * tools/JSDollarVM.cpp:
+
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
+        AbstractSlotVisitor::containsOpaqueRoot() should only declare didFindOpaqueRoot if the root is actually found.
+        https://bugs.webkit.org/show_bug.cgi?id=226000
+        rdar://78208014
+
+        Reviewed by Robin Morisset.
+
+        It was erroneously calling didFindOpaqueRoot() all the time even when the root is
+        not found.  This only affects the GC verifier tool.  It has no effect on production
+        code.
+
+        * heap/AbstractSlotVisitorInlines.h:
+        (JSC::AbstractSlotVisitor::containsOpaqueRoot const):
+
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
+        Speed up debug validation in CacheableIdentifier::createFromIdentifierOwnedByCodeBlock().
+        https://bugs.webkit.org/show_bug.cgi?id=225948
+
+        Not reviewed.
+
+        Build fix after r277727.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hasIdentifier):
+
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
+        Ripping out broken Baseline JIT rare case profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=225983
+
+        Reviewed by Saam Barati and Robin Morisset.
+
+        The profiling has been broken in recent times.  Fixing it to work does not appear
+        to improve performance.  Ripping out the profiling appears to not hurt performance.
+        However, ripping out the profiling appears to save on code size generated for the
+        Baseline JIT.
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 73299112 (69.903481 MB)  65910128 (62.856796 MB)  0.90x (reduction)
+                   DFG: 36850540 (35.143414 MB)  36374400 (34.689331 MB)  0.99x
+                 Thunk: 23128652 (22.057201 MB)  22892292 (21.831791 MB)  0.99x
+           InlineCache: 22210972 (21.182034 MB)  22083508 (21.060474 MB)  0.99x
+                   FTL: 6065064 (5.784096 MB)    6128080 (5.844193 MB)    1.01x
+                  Wasm: 2305124 (2.198338 MB)    2309732 (2.202732 MB)    1.00x
+               YarrJIT: 1522712 (1.452171 MB)    1536104 (1.464943 MB)    1.01x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        Cumulative diff since the start of this effort to put more code in JIT thunks:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  65910128 (62.856796 MB)  0.74x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36374400 (34.689331 MB)  0.93x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  22892292 (21.831791 MB)  0.99x
+           InlineCache: 22027416 (21.006981 MB)  22083508 (21.060474 MB)  1.00x
+                   FTL: 6575772 (6.271145 MB)    6128080 (5.844193 MB)    0.93x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2309732 (2.202732 MB)    1.00x
+               YarrJIT: 1538956 (1.467663 MB)    1536104 (1.464943 MB)    1.00x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        Benchmarking was done with Speedometer2 and JetSteam2 on an M1 Mac.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::JITData::size const):
+        (JSC::CodeBlock::dumpValueProfiles):
+        (JSC::CodeBlock::setRareCaseProfiles): Deleted.
+        (JSC::CodeBlock::rareCaseProfileForBytecodeIndex): Deleted.
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeIndex): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::likelyToTakeSlowCase): Deleted.
+        (JSC::CodeBlock::couldTakeSlowCase): Deleted.
+        * bytecode/ValueProfile.h:
+        (JSC::RareCaseProfile::RareCaseProfile): Deleted.
+        (JSC::getRareCaseProfileBytecodeIndex): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+
+2021-05-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC} Remove exception checks from non-throwing function calls in Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=224920
+
+        Reviewed by Tadeu Zagallo.
+
+        These functions are not taking JSGlobalObject and will not throw an error.
+        Use callOperationNoExceptionCheck instead to avoid emitting unnecessary exception checks.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+
+2021-05-19  Robin Morisset  <rmorisset@apple.com>
+
+        Fix typo in AirUseCounts
+        https://bugs.webkit.org/show_bug.cgi?id=225977
+        rdar://78210501
+
+        Reviewed by Mark Lam.
+
+        I had just messed up a copy-and-paste, using "gp" instead of "fp" in code that deals with floating point values.
+        This did not show in my tests, probably because few functions have more floating point temporaries than non-floating-point.
+
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+
+2021-05-18  Darin Adler  <darin@apple.com>
+
+        Move CFStringRef and NSString support from StringBuilder into StringConcatenateCF
+        https://bugs.webkit.org/show_bug.cgi?id=225839
+
+        Reviewed by Sam Weinig.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage): Use StringBuilder::clear instead of
+        StringBuilder::resize; no advantage to the latter after calling StringBuilder::toString.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty): Update for name change of
+        StringBuilder::resize to StringBuilder::shrink.
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::stringRepresentation): Ditto.
+
+2021-05-19  Mark Lam  <mark.lam@apple.com>
+
+        Speed up debug validation in CacheableIdentifier::createFromIdentifierOwnedByCodeBlock().
+        https://bugs.webkit.org/show_bug.cgi?id=225948
+        rdar://78175542
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Introduce CodeBlock::hasIdentifier() so that we can encapsulate the identifier
+           search better.  Change CacheableIdentifier::createFromIdentifierOwnedByCodeBlock()
+           to call this method instead of rolling its own identifier search.
+
+        2. If the CodeBlock is pathological and has a ridiculous number of identifiers
+           to search, create a cached hash set of the identifiers, and use that for
+           doing the search instead.
+
+           Apparently, YouTube can have a single JS function with 2177689 bytecodes, where
+           a large portion of those are put_by_ids.  The function also has some 17k+
+           identifiers.  With that may bytecodes doing a validation search on 17k+
+           identifiers in a Debug build, the site can become un-useable.  This optimization
+           brings it back from un-useable to barely tolerable on the Debug build.
+
+        3. Also fetch the UnlinkedCodeBlock from the WriteBarrier field just once in
+           CodeBlock::identifier() and CodeBlock::hasIdentifier().  This may not matter
+           on a Release build, but it can add up on a Debug build, which is already slow.
+           We should try to avoid doing redundant validation via the WriteBarrier access.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::identifier const):
+        (JSC::CodeBlock::hasIdentifier):
+        * bytecode/CodeBlock.h:
+        * runtime/CacheableIdentifierInlines.h:
+        (JSC::CacheableIdentifier::createFromIdentifierOwnedByCodeBlock):
+
+2021-05-19  Saam Barati  <sbarati@apple.com>
+
+        Link Baseline JIT code off the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=225940
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes JIT::link() able to run on compiler threads.
+        Most of what the function was already doing happily remains the
+        same. This patch moves a few operations to JIT::finalizeOnMainThread
+        for things that can't happen on the compiler thread:
+        - Adding data to some global hash tables which aren't synchronized.
+        - Setting the JITCode.
+        - Setting the code pointer for exception handlers.
+        - Some other metadata the Sampling Profiler looks at.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::link):
+        (JSC::JIT::finalizeOnMainThread):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::compileWithoutLinking): Deleted.
+        * jit/JIT.h:
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::compileInThread):
+        (JSC::JITWorklist::Plan::finalize):
+        (JSC::JITWorklist::Plan::compileOnMainThreadNow):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileOnMainThreadNow):
+        (JSC::JITWorklist::finalizePlans):
+        (JSC::JITWorklist::Plan::compileNow): Deleted.
+        (JSC::JITWorklist::compileNow): Deleted.
+        * jit/JITWorklist.h:
+
+2021-05-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Prune CommonSlowPaths of JITPropertyAccess functions
+        https://bugs.webkit.org/show_bug.cgi?id=225953
+
+        Reviewed by Mark Lam.
+
+        A few bytecode operations with slow paths in JITPropertyAccess appear to have either redundant or unnecessary
+        "common" slow paths; namely, get_private_name and del_by_val already have LLInt slow paths, while in_by_id
+        and get_by_id_with_this can have their "common" slow path moved to be LLInt-specific.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CommonSlowPaths.h:
+
+2021-05-18  Robin Morisset  <rmorisset@apple.com>
+
+        Make AirAllocateRegistersByGraphColoring use less memory
+        https://bugs.webkit.org/show_bug.cgi?id=225848
+
+        Reviewed by Filip Pizlo.
+
+        We've had some jetsam problems caused by the main Air register allocator, which caused us to lower Options::maximumTmpsForGraphColoring.
+        Hence this patch tries to improve the memory usage of the allocator. It includes several changes:
+        - Change the datastructure used for representing the interference graph. Before it was effectively a HashSet<std::pair<uint16_t, uint16_t>. Now, it is either a Bitvector (for n < 400 for now, can be tweaked easily), or a Vector<LikelyDenseUnsignedIntegerSet<uint16_t>> otherwise.
+        LikelyDenseUnsignedIntegerSet is a new datastructure introduced by this patch, it is either a HashSet if very sparse, or a BitVector + an amount to shift it by.
+        This is by far the largest memory reduction in this patch, it reduces the maximum memory used for an interference graph in tsf-wasm in JetStream2 from 16MB to 700kB, and in mruby-wasm.aotoki.dev from 262MB to 20MB (the later only happen when we increase Options::maximumTmpsForGraphColoring.. this is the exact function which caused us to lower it).
+        Its effect on smaller functions in JetStream2 is rarely as dramatic but always an improvement, and improvements between 2x and 5x are extremely common (10x to 30x are significantly rarer but do occur).
+        - In order to easily test this change and any further change to this datastructure, the old approach was preserved as InterferenceHashSet, and a template to run two such datastructures in parallel, checking their equivalence was added: InstrumentedInterferenceGraph. Running with it and reportInterferenceGraphMemoryUse set to true was used to compute the numbers given above.
+        - There was already some template parameter to change the size of the tmp indices from unsigned to uint16_t but the code failed to compile unless it was unsigned. I fixed this, made more consistent use of it, and switched to uint16_t in the very common case that we have less than 65k Tmps (we can have more despite the option because of spilling). This halved the memory usage of various other datastructures in the register allocator
+        - unspillableTmps was a HashSet<unsigned>. Since it is often quite dense (often around 20% on JetStream2), I replaced it by a Bitvector instead
+        - m_biases was a HashMap<IndexType, HashSet<IndexType>>. Since it is extremely rare that the sets have more than 8 elements (from looking at some instrumented run of JetStream2), I replaced it by HashMap<IndexType, SmallSet<IndexType>>. This not only significantly reduces memory, but nearly halves the time spent in assignColors(around 80ms -> 40ms in JetStream 2)
+        - UseCounts was needlessly general: it is only used by the register allocator (all other references to UseCounts refer to the completely different B3::UseCounts), so there is no point in it computing, and then storing lots of irrelevant data. A float is also more than enough precision (especially since it is pretty much always 1, 10, 100, or 1000 in practice…). Also, since we only need it indexed by Tmps, we can use a Vector with AbsoluteTmpMapper instead of its HashMap. These changes are not just memory savings, they also make selectSpill way faster (570ms -> 250ms on my machine on JetStream2)
+        - While I was at it, I did a couple of other tweaks to the logic of selectSpill. In particular, instead of having to check for isFastTmp every time, I just put the fast tmps directly in unspillableTmps, which prevents them from getting added to m_spillWorklist in the first place. This + a bit of clean-up (for example putting an early exit instead of setting score to infinity in the case of dead tmps) resulted in a further perf win (to roughly 200ms spent in selectSpill() on JetStream2)
+
+        All together, this patch reduces the time spent in the register allocator by roughly 15 to 20% in JetStream2 (tested both with the Briggs and the IRC allocators on my MBP 2019).
+
+        I do not yet have precise performance numbers for this exact patch, but benchmarking a previous version of it (with a less optimized interference graph) resulted in significant RAMification improvements (around 1%), and more surprisingly some JetStream2 improvements on weaker machines (e.g. an iPhone 7 gained > 1%). I believe these gains come either from less trashing of the caches, or less contention caused by the memory traffic.
+        I will try to update the bugzilla with more up-to-date thorough results when I get them.
+
+        This patch does not increase Options::maximumTmpsForGraphColoring, I intend to do that in a separate patch to make it easier to revert in case of a problem.
+
+        * b3/B3ReduceLoopStrength.cpp:
+        (JSC::B3::ReduceLoopStrength::reduceByteCopyLoopsToMemcpy):
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        (JSC::B3::Air::allocateRegistersByGraphColoring):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::forEachFastTmp const):
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        (JSC::B3::Air::UseCounts::isConstDef const):
+        (JSC::B3::Air::UseCounts::numWarmUsesAndDefs const):
+        (JSC::B3::Air::UseCounts::dump const):
+        * parser/Nodes.h:
+
+2021-05-18  Saam Barati  <sbarati@apple.com>
+
+        Add Data Call ICs that don't repatch and use them in the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=225321
+        <rdar://problem/77773796>
+
+        Reviewed by Michael Saboff.
+
+        This patch adds Data ICs for calls. Data ICs for calls work by loading a code 
+        pointer from CallLinkInfo, and indirect calling that pointer. This means that
+        to repatch such an IC, all we need to do is replace a code pointer inside
+        CallLinkInfo. No need to repatch the JIT code.
+        
+        The current implementation only does this for monomorphic calls. We still
+        repatch the JIT code for polymorphic calls. In a followup, we will also
+        opt polymorphic call ICs into data-based calls:
+        https://bugs.webkit.org/show_bug.cgi?id=225793
+        
+        This patch only uses Data Call ICs for the Baseline JIT. Even with that, it
+        reduces the number of calls to cacheFlush by ~45% on JetStream2.
+        
+        Performance is neutral on AS Macs, but it paves the way towards doing
+        unlinked JITting in JSC.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::addLateLinkTask):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/LinkBuffer.h:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CallLinkInfo::fastPathStart):
+        (JSC::CallLinkInfo::slowPathStart):
+        (JSC::CallLinkInfo::doneLocation):
+        (JSC::CallLinkInfo::setMonomorphicCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        (JSC::CallLinkInfo::emitFirstInstructionForDataIC):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::emitFastPath):
+        (JSC::CallLinkInfo::emitTailCallFastPath):
+        (JSC::CallLinkInfo::emitSlowPath):
+        (JSC::CallLinkInfo::emitDirectFastPath):
+        (JSC::CallLinkInfo::emitDirectTailCallFastPath):
+        (JSC::CallLinkInfo::initializeDirectCall):
+        (JSC::CallLinkInfo::setDirectCallTarget):
+        (JSC::CallLinkInfo::setSlowPathCallDestination):
+        (JSC::CallLinkInfo::revertCallToStub):
+        (JSC::CallLinkInfo::setStub):
+        (JSC::CallLinkInfo::callReturnLocation): Deleted.
+        (JSC::CallLinkInfo::patchableJump): Deleted.
+        (JSC::CallLinkInfo::hotPathBegin): Deleted.
+        (JSC::CallLinkInfo::setCallee): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::calleeGPR const):
+        (JSC::CallLinkInfo::isDataIC const):
+        (JSC::CallLinkInfo::setUsesDataICs):
+        (JSC::CallLinkInfo::setCodeLocations):
+        (JSC::CallLinkInfo::offsetOfCallee):
+        (JSC::CallLinkInfo::offsetOfMonomorphicCallDestination):
+        (JSC::CallLinkInfo::offsetOfSlowPathCallDestination):
+        (JSC::CallLinkInfo::setCallLocations): Deleted.
+        (JSC::CallLinkInfo::hotPathOther): Deleted.
+        (JSC::CallLinkInfo::setStub): Deleted.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addJSCall):
+        (JSC::DFG::JITCompiler::addJSDirectCall):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectCallRecord::JSDirectCallRecord):
+        (JSC::DFG::JITCompiler::addJSDirectTailCall): Deleted.
+        (JSC::DFG::JITCompiler::JSDirectTailCallRecord::JSDirectTailCallRecord): Deleted.
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::callerReturnPC):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::emitJITCodeOver):
+        * jit/CCallHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::unlink):
+        * jit/Repatch.cpp:
+        (JSC::linkSlowPathTo):
+        (JSC::linkSlowFor):
+        (JSC::linkMonomorphicCall):
+        (JSC::linkDirectCall):
+        (JSC::revertCall):
+        (JSC::unlinkCall):
+        (JSC::linkPolymorphicCall):
+        (JSC::linkFor): Deleted.
+        (JSC::linkDirectFor): Deleted.
+        (JSC::unlinkFor): Deleted.
+        * jit/Repatch.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
+2021-05-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276655.
+        https://bugs.webkit.org/show_bug.cgi?id=225930
+
+        caused a 2% PLT regression
+
+        Reverted changeset:
+
+        "StructureStubInfo and PolymorphicAccess should account for
+        their non-GC memory"
+        https://bugs.webkit.org/show_bug.cgi?id=225113
+        https://trac.webkit.org/changeset/276655
+
+2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Temporarily revert r276592 as it breaks some native apps
+        https://bugs.webkit.org/show_bug.cgi?id=225917
+
+        Unreviewed, revert.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        * debugger/DebuggerScope.h:
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.h:
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter):
+        * runtime/CustomGetterSetter.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::put):
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::put):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::doPutPropertySecurityCheck):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::doPutPropertySecurityCheck):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::prototypeChainMayInterceptStoreTo):
+        (JSC::definePropertyOnReceiverSlow): Deleted.
+        (JSC::JSObject::definePropertyOnReceiver): Deleted.
+        (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::doPutPropertySecurityCheck):
+        (JSC::JSObject::hasNonReifiedStaticProperties): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+        (JSC::JSObject::putInlineForJSObject):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putInlineFast): Deleted.
+        * runtime/JSProxy.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::overridesGetOwnPropertySlot const):
+        (JSC::TypeInfo::overridesAnyFormOfGetOwnPropertyNames const):
+        (JSC::TypeInfo::hasPutPropertySecurityCheck const):
+        (JSC::TypeInfo::hasStaticPropertyTable const): Deleted.
+        (JSC::TypeInfo::overridesPut const): Deleted.
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        (JSC::lookupPut):
+        * runtime/PropertySlot.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::put):
+        * runtime/ProxyObject.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::context const):
+        (JSC::PutPropertySlot::type const):
+        (JSC::PutPropertySlot::isInitialization const):
+        (JSC::PutPropertySlot::isTaintedByOpaqueObject const): Deleted.
+        (JSC::PutPropertySlot::setIsTaintedByOpaqueObject): Deleted.
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::StringPrototype::create):
+        * runtime/StringPrototype.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+        * runtime/Structure.h:
+        (JSC::Structure::takesSlowPathInDFGForImpureProperty):
+        (JSC::Structure::hasNonReifiedStaticProperties const): Deleted.
+        * tools/JSDollarVM.cpp:
+
+2021-05-18  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation] Fix PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=225913
+
+        Reviewed by Don Olmstead.
+
+        Fix PlayStation port
+
+        * jsc.cpp: Include LinkBuffer.h.
+
+2021-05-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [JSCOnly] Non unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=225872
+
+        Unreviewed non-unified build fixes.
+
+        * jit/JITPropertyAccess.cpp: Add missing ThunkGenerators.h header.
+        * jit/SlowPathCall.cpp: Add missing JITInlines.h and ThunkGenerators.h headers.
+        * wasm/js/WebAssemblyFunctionBase.h: Add missing WasmFormat.h header.
+
+2021-05-17  Saam Barati  <sbarati@apple.com>
+
+        Enable JS to emit sign posts and trace points under Options::exposeProfilersOnGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=225895
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::asTracePointInt):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::asSignpostString):
+        (JSC::JSGlobalObject::init):
+
+2021-05-17  Geoffrey Garen  <ggaren@apple.com>
+
+        StructureRareData::m_replacementWatchpointSets should not be a pointer to a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=225840
+
+        Reviewed by Mark Lam.
+
+        HashMap is already just one pointer. Making it a pointer to a pointer
+        causes heap fragmentation. Worth about 1MB on GMail.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::ensurePropertyReplacementWatchpointSet):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::didReplaceProperty):
+        (JSC::Structure::propertyReplacementWatchpointSet):
+        * runtime/StructureRareData.h:
+
+2021-05-17  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r271119): Object methods defined with shorthand notation cannot access "caller" in non-strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=225277
+
+        Reviewed by Darin Adler.
+
+        This patch loosens `function.caller` to allow non-strict getters, setters, arrow functions,
+        and ES6 methods to be returned as callers, fixing web compatibility.
+
+        The intent of r230662 is preserved: generator / async functions are never exposed. There is
+        no good way to acquire wrapper function from the internal body one, nor from its arguments.
+        Also, this behavior is on standards track [1] (seems to be considered desirable).
+
+        [1]: https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#get-functionprototypecaller (step 14)
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
+2021-05-16  Mark Lam  <mark.lam@apple.com>
+
+        Implement baseline op_enter, op_ret, op_check_traps, op_throw using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225846
+
+        Reviewed by Filip Pizlo.
+
+        op_enter, op_ret, op_check_traps are 3 of the most common opcodes.  Throwing in
+        op_throw because it's easy.
+
+        In this patch, the following changes were also made:
+
+        1. Renamed copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer() to
+           copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer().
+
+           It is only used by the baseline JIT.  Changed it to always operate on
+           RegisterAtOffsetList::llintBaselineCalleeSaveRegisters().  This removes the
+           dependency on a current codeBlock being compiled, and allows us to use it
+           for a JIT thunk.
+
+        2. Added JIT::emitNakedNearJump() to make it easy to emit direct jumps to JIT thunks.
+
+           Currently, it is only used by op_ret and op_throw.
+
+        3. Changed some thunks to use emitNonPatchableExceptionCheck() instead
+           emitExceptionCheck() to make it explicit that these are not intended to be
+           patchable.
+
+        With this patch, --dumpLinkBufferStats shows the following changes in emitted
+        JIT code size (using a single run of the CLI version of JetStream2 on AS Mac)
+        comparing to current tip of tree:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 77429400 (73.842430 MB)  72407904 (69.053558 MB)  0.94x (reduction)
+                   DFG: 36160880 (34.485703 MB)  36622176 (34.925629 MB)  1.01x
+                 Thunk: 23159024 (22.086166 MB)  23295448 (22.216270 MB)  1.01x
+           InlineCache: 22068348 (21.046017 MB)  22157236 (21.130787 MB)  1.00x
+                   FTL: 6004736 (5.726562 MB)    6030536 (5.751167 MB)    1.00x
+                  Wasm: 2429204 (2.316669 MB)    2300872 (2.194283 MB)    0.95x (probably noise)
+               YarrJIT: 1522488 (1.451958 MB)    1522616 (1.452080 MB)    1.00x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        Cumulative diff since the start of this effort to put more code in JIT thunks:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  72407904 (69.053558 MB)  0.81x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36622176 (34.925629 MB)  0.94x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  23295448 (22.216270 MB)  1.00x
+           InlineCache: 22027416 (21.006981 MB)  22157236 (21.130787 MB)  1.01x
+                   FTL: 6575772 (6.271145 MB)    6030536 (5.751167 MB)    0.92x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2300872 (2.194283 MB)    1.00x
+               YarrJIT: 1538956 (1.467663 MB)    1522616 (1.452080 MB)    0.99x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::sub64):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor):
+        (JSC::AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer):
+        (JSC::AssemblyHelpers::copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        (JSC::NearJumpRecord::NearJumpRecord):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearJump):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emitSlow_op_check_traps):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeExtraCTIThunks):
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::generateThunk):
+
+2021-05-16  Keith Miller  <keith_miller@apple.com>
+
+        IsoAlignedMemoryAllocator should use BitVector
+        https://bugs.webkit.org/show_bug.cgi?id=225852
+
+        Reviewed by Mark Lam.
+
+        Right now IsoAlignedMemoryAllocator uses FastBitVector, which does
+        not have inline storage for small sizes. However, it's not
+        uncommon for IsoAlignedMemoryAllocator to be holding onto only a
+        few blocks. Those blocks may exist for a long time, which some
+        data indicates causes IsoAlignedMemoryAllocator's FastBitVector to
+        pin a full physical page for one 8 byte allocation. Since
+        accessing the commited blocks list is not a particularly hot
+        operation, we should just use a BitVector instead.
+
+        This seems to be perf neutral on benchmarks.
+
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator):
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeAlignedMemory):
+        * heap/IsoAlignedMemoryAllocator.h:
+
+2021-05-16  Saam Barati  <sbarati@apple.com>
+
+        DFGVarargsForwardingPhase shouldn't consult Flush
+        https://bugs.webkit.org/show_bug.cgi?id=225824
+
+        Reviewed by Filip Pizlo and Yusuke Suzuki.
+
+        In the Varargs Forwarding Phase, we were treating Flush as if it
+        were any other form of node that interferes with an argument
+        via clobbering a stack location.
+        
+        This isn't how Flush works though. It doesn't have execution
+        semantics at the node's graph location. Instead, Flush means that
+        any variable it's linked to in CPS should be flushed to the stack
+        between it and the Flush.
+        
+        The semantics of arguments is that they're already flushed to the
+        stack, and they've always been. Seeing a Flush node doesn't prevent
+        arguments elimination, we already know the arguments are on the stack,
+        and all we're searching for is if there is an interference operation
+        that says it'll clobber that stack slot. Flush isn't an interference operation.
+        
+        This is a 0.5% Speedometer progression.
+
+        * dfg/DFGVarargsForwardingPhase.cpp:
+
+2021-05-15  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Turn callGetter() / callSetter() into instance methods
+        https://bugs.webkit.org/show_bug.cgi?id=225831
+
+        Reviewed by Ross Kirsling.
+
+        1. Turn callGetter() / callSetter() into instance methods to simplify their signatures.
+        2. Rename `base` parameter to `thisValue`, avoiding similarity with slotBase().
+        3. Accept `bool shouldThrow` in callSetter() since ECMAMode is cumbersome to construct.
+        4. Replace isSetterNull(), which does LIKELY(inherits), with direct JSType check.
+        5. Introduce getCallData(VM&, JSCell*) overload to avoid extra checks / casts.
+        6. Move isValidCallee() to JSCell and handle primitives gracefully.
+
+        No behavior change. Advances provided callSetter() microbenchmark by 2%.
+
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::callGetter):
+        (JSC::GetterSetter::callSetter):
+        (JSC::callGetter): Deleted.
+        (JSC::callSetter): Deleted.
+        * runtime/GetterSetter.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::isValidCallee): Deleted.
+        * runtime/JSCJSValue.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isValidCallee const):
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/JSObjectInlines.h:
+        (JSC::getCallData):
+        (JSC::getConstructData):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter const):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::put):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop FileSystem::fileMetadata() / fileMetadataFollowingSymlinks()
+        https://bugs.webkit.org/show_bug.cgi?id=225820
+
+        Reviewed by Darin Adler.
+
+        Update our code base because of the FileSystem API changes.
+
+        * API/JSScript.mm:
+        (validateBytecodeCachePath):
+
+2021-05-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION (r277221): 2 test262 tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=225819
+
+        Reviewed by Alexey Shvayka.
+
+        Undo the other part of r277221's code consolidation --
+        I'd forgotten that this exists to enforce a evaluation order on AggregateError's arguments.
+
+        * runtime/AggregateError.cpp:
+        (JSC::createAggregateError):
+
+2021-05-14  Mark Lam  <mark.lam@apple.com>
+
+        Implement Baseline JIT property access slow paths using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225771
+
+        Reviewed by Yusuke Suzuki and Saam Barati.
+
+        This patch applies the following strategy to Baseline JIT property access slow paths:
+
+        1. If the slow path operation call is not patchable, emit a near call to a JIT
+           thunk to do the entire operation call.
+
+        2. If the slow path operation call is patachable, emit a near call to a prepare
+           call JIT thunk before the patchable operation call, and a near call to an exception
+           check JIT thunk after.
+
+        This strategy reduces the amount of instructions emitted for all the slow paths.
+        Performance is expected to be neutral or slightly improved due to the reduced
+        compile times and better cache locality.
+
+        With this patch, --dumpLinkBufferStats shows the following changes in emitted
+        JIT code size (using a single run of the CLI version of JetStream2 on AS Mac)
+        comparing to current tip of tree:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 84624776 (80.704475 MB)  77429400 (73.842430 MB)  0.91x (reduction)
+                   DFG: 36415264 (34.728302 MB)  36160880 (34.485703 MB)  0.99x
+                 Thunk: 23130336 (22.058807 MB)  23159024 (22.086166 MB)  1.00x
+           InlineCache: 21969728 (20.951965 MB)  22068348 (21.046017 MB)  1.00x
+                   FTL: 6097336 (5.814873 MB)    6004736 (5.726562 MB)    0.98x
+                  Wasm: 2301956 (2.195316 MB)    2429204 (2.316669 MB)    1.06x (probably noise)
+               YarrJIT: 1522488 (1.451958 MB)    1522488 (1.451958 MB)    1.00x
+                CSSJIT: 0
+         Uncategorized: 0
+
+        Comparing to tip of tree at the start of this effort to move put slow paths in
+        JIT thunks:
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  77429400 (73.842430 MB)  0.87x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36160880 (34.485703 MB)  0.92x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  23159024 (22.086166 MB)  1.00x
+           InlineCache: 22027416 (21.006981 MB)  22068348 (21.046017 MB)  1.00x
+                   FTL: 6575772 (6.271145 MB)    6004736 (5.726562 MB)    0.91x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2429204 (2.316669 MB)    1.05x (probably noise)
+               YarrJIT: 1538956 (1.467663 MB)    1522488 (1.451958 MB)    0.99x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        This patch has passed the JSC tests on AS Mac, and also a subset of the JSC tests
+        (as a smoke test) on x86_64.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfGlobalObject):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+        (JSC::AssemblyHelpers::emitNonPatchableExceptionCheck):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::slow_op_get_by_val_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::slow_op_get_private_name_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::slow_op_del_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::slow_op_del_by_val_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::slow_op_get_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::slow_op_get_by_id_with_this_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::slow_op_put_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::preinitializeExtraCTIThunks):
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+        (JSC::checkExceptionGenerator):
+        * jit/ThunkGenerators.h:
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::getFileSize() to FileSystem::fileSize()
+        https://bugs.webkit.org/show_bug.cgi?id=225798
+
+        Reviewed by Alex Christensen.
+
+        Update code path to due to the API change.
+
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::backendCommands const):
+        * jsc.cpp:
+
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Follow-up fix for: Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+        rdar://78000283
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json): Removed a stray single quote mark that
+        meant we produced a JSON file that could not be parsed.
+
+2021-05-13  Patrick Angle  <pangle@apple.com>
+
+        [REGRESSION: r271876] Web Inspector: [Cocoa] Remote inspection crashes when using WEB_THREAD
+        https://bugs.webkit.org/show_bug.cgi?id=225794
+
+        Reviewed by Devin Rousso.
+
+        For WEB_THREAD, move `callback` in `dispatchAsyncOnTarget` to `block` scope to ensure it is available for the
+        lifetime of the block.
+
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::dispatchAsyncOnTarget):
+
+2021-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        m_calleeSaveRegisters should not be a pointer to a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=225787
+
+        Reviewed by Keith Miller.
+
+        Ben found this through memory stress testing.
+
+        RegisterAtOffsetList is effectively just a pointer. unique_ptr<RegisterAtOffsetList>
+        is a pointer to a pointer. RegisterAtOffsetList is long-lived, so it
+        creates heap page fragmentation.
+
+        Worth 3MB on Ben's test.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setCalleeSaveRegisters):
+        (JSC::CodeBlock::calleeSaveRegisters const): Use a fence before setting
+        m_hasCalleeSaveRegisters to ensure that all writes have completed before
+        the struct becomes visible.
+
+        * bytecode/CodeBlock.h: Use RegisterAtOffsetList directly instead of 
+        unique_ptr<RegisterAtOffsetList> to avoid a long-lived lonely 8 byte
+        allocation.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile): Updated for type change.
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * API/JSScript.mm:
+        (validateBytecodeCachePath):
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::fileIsDirectory(path, followSymlinks) to isDirectory(path) / isDirectoryFollowingSymlinks(path)
+        https://bugs.webkit.org/show_bug.cgi?id=225772
+
+        Reviewed by Darin Adler.
+
+        Update code base due to API naming change.
+
+        * API/JSScript.mm:
+        (validateBytecodeCachePath):
+
+2021-05-13  Darin Adler  <darin@apple.com>
+
+        Remove StringBuilder::appendNumber
+        https://bugs.webkit.org/show_bug.cgi?id=225732
+
+        Reviewed by Sam Weinig.
+
+        * API/JSContextRef.cpp:
+        (BacktraceFunctor::operator() const): Use append instead of appendNumber.
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (PingPongStackOverflowObject_hasInstance): Ditto.
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json): Ditto.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::toString const): Use makeString instead of StringBuilder.
+
+        * runtime/ConsoleClient.cpp:
+        (JSC::appendURLAndPosition): Ditto.
+        (JSC::ConsoleClient::printConsoleMessageWithArguments): Use append instead of appendNumber.
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue): Ditto.
+        * runtime/Options.cpp:
+        (JSC::OptionReader::Option::dump const): Ditto.
+
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::toString const): Use makeString instead of StringBuilder.
+
+2021-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        ConservativeRoots triggers page demand on Speedometer
+        https://bugs.webkit.org/show_bug.cgi?id=225676
+
+        Reviewed by Filip Pizlo.
+
+        Use a 2048 item / 16kB inline buffer. That's about 10% bigger than the
+        max capacity observed on Speedometer, and small enough to reasonably fit
+        on the stack.
+
+        Removed the separate out of line capacity because it was smaller than
+        the new inline capacity.
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::grow):
+        * heap/ConservativeRoots.h:
+
+2021-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Implement some common Baseline JIT slow paths using JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=225682
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements the following changes:
+
+        1. Implement exception handling thunks:
+           a. handleExceptionGenerator, which calls operationLookupExceptionHandler().
+           b. handleExceptionWithCallFrameRollbackGenerator, which calls
+              operationLookupExceptionHandlerFromCallerFrame().
+
+           All the JIT tiers were emitting their own copy of these routines to call these
+           operation, one per CodeBlock.  We now emit 2 thunks for these and have all the
+           tiers just jump to them.
+
+           PolymorphicAccess also now uses the handleExceptionGenerator thunk.
+
+           DFG::JITCompiler::compileExceptionHandlers() has one small behavior difference
+           before it calls operationLookupExceptionHandlerFromCallerFrame(): it first
+           re-sets the top of stack for the function where we are about to throw a
+           StackOverflowError from.  This re-setting of top of stack is useless because
+           we're imminently unwinding out of at least this frame for the StackOverflowError.
+           Hence, it is ok to use the handleExceptionWithCallFrameRollbackGenerator thunk
+           here as well.  Note that no other tiers does this re-setting of top of stack.
+
+           FTLLowerDFGToB3 has one case using operationLookupExceptionHandlerFromCallerFrame()
+           which cannot be refactored to use these thunks because it does additional
+           work to throw a StackOverflowError.  A different thunk will be needed.  I left
+           it alone for now.
+
+        2. Introduce JITThunks::existingCTIStub(ThunkGenerator, NoLockingNecessaryTag) so
+           that a thunk can get a pointer to another thunk without locking the JITThunks
+           lock.  Otherwise, deadlock ensues.
+
+        3. Change SlowPathCall to emit and use thunks instead of emitting a blob of code
+           to call a slow path function for every bytecode in a CodeBlock.
+
+        4. Introduce JITThunks::ctiSlowPathFunctionStub() to manage these SlowPathFunction
+           thunks.
+
+        5. Introduce JITThunks::preinitializeAggressiveCTIThunks() to initialize these
+           thunks at VM initialization time.  Pre-initializing them has multiple benefits:
+           a. the thunks are not scattered through out JIT memory, thereby reducing
+              fragmentation.
+           b. we don't spend time at runtime compiling them when the user is interacting
+              with the VM.  Conceptually, these thunks can be VM independent and can be
+              shared by VMs process-wide.  However, it will require some additional work.
+              For now, the thunks remain bound to a specific VM instance.
+
+        These changes are only enabled when ENABLE(EXTRA_CTI_THUNKS), which is currently
+        only available for ARM64 and non-Windows x86_64.
+
+        This patch has passed JSC tests on AS Mac.
+
+        With this patch, --dumpLinkBufferStats shows the following changes in emitted
+        JIT code size (using a single run of the CLI version of JetStream2 on AS Mac):
+
+                        Base                     New                      Diff
+
+           BaselineJIT: 89089964 (84.962811 MB)  84624776 (80.704475 MB)  0.95x (reduction)
+                   DFG: 39117360 (37.305222 MB)  36415264 (34.728302 MB)  0.93x (reduction)
+                 Thunk: 23230968 (22.154778 MB)  23130336 (22.058807 MB)  1.00x
+           InlineCache: 22027416 (21.006981 MB)  21969728 (20.951965 MB)  1.00x
+                   FTL: 6575772 (6.271145 MB)    6097336 (5.814873 MB)    0.93x (reduction)
+                  Wasm: 2302724 (2.196049 MB)    2301956 (2.195316 MB)    1.00x
+               YarrJIT: 1538956 (1.467663 MB)    1522488 (1.451958 MB)    0.99x
+                CSSJIT: 0                        0
+         Uncategorized: 0                        0
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfInstructionsRawPointer):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::existingCTIStub):
+        (JSC::JITThunks::ctiSlowPathFunctionStub):
+        (JSC::JITThunks::preinitializeExtraCTIThunks):
+        * jit/JITThunks.h:
+        * jit/SlowPathCall.cpp: Added.
+        (JSC::JITSlowPathCall::call):
+        (JSC::JITSlowPathCall::generateThunk):
+        * jit/SlowPathCall.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::handleExceptionGenerator):
+        (JSC::handleExceptionWithCallFrameRollbackGenerator):
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/CommonSlowPaths.h:
+        * runtime/SlowPathFunction.h: Added.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
+2021-05-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277346.
+        https://bugs.webkit.org/show_bug.cgi?id=225705
+
+        Introduced a (rare) deadlock
+
+        Reverted changeset:
+
+        "ConservativeRoots triggers page demand on Speedometer"
+        https://bugs.webkit.org/show_bug.cgi?id=225676
+        https://trac.webkit.org/changeset/277346
+
+2021-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Remove dead code around ENABLE(OPCODE_SAMPLING) and ENABLE(CODEBLOCK_SAMPLING).
+        https://bugs.webkit.org/show_bug.cgi?id=225699
+
+        Reviewed by Tadeu Zagallo.
+
+        This code revolves around an Interpreter::sampler() method which returns a
+        SamplingTool*.  Neither the Interpreter method nor the SamplingTool class exists
+        anymore.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlines.h:
+        (JSC::JIT::sampleInstruction): Deleted.
+        (JSC::JIT::sampleCodeBlock): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::finishCreation): Deleted.
+
+2021-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        ConservativeRoots triggers page demand on Speedometer
+        https://bugs.webkit.org/show_bug.cgi?id=225676
+
+        Reviewed by Saam Barati.
+
+        Use a Vector instead of OSAllocator to avoid mmap() and page fault --
+        and, like, come on.
+
+        Bump default inlineCapacity up to 1024 because we seem to overflow
+        frequently.
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::ConservativeRoots):
+        (JSC::ConservativeRoots::~ConservativeRoots):
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::grow): Deleted.
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::roots const):
+        (JSC::ConservativeRoots::size const): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::append):
+        * heap/VerifierSlotVisitor.cpp:
+        (JSC::VerifierSlotVisitor::append):
+
+2021-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Tune number of threads for AS
+        https://bugs.webkit.org/show_bug.cgi?id=225635
+
+        Reviewed by Mark Lam.
+
+        Using 4 GC markers (which really means 3 parallel GC worker threads -- the mutator thread is
+        the 4th), 2 DFG threads, and 2 FTL threads seems to be more optimal than going off ncpu.
+
+        ~1% JetStream2 speed-up, ~1% Speedometer2 speed-up.
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+
+2021-05-10  Mark Lam  <mark.lam@apple.com>
+
+        Removed unused CallRecord::bytecodeIndex field.
+        https://bugs.webkit.org/show_bug.cgi?id=225627
+
+        Reviewed by Yusuke Suzuki.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearCall):
+        (JSC::JIT::emitNakedNearTailCall):
+
+2021-05-10  Mark Lam  <mark.lam@apple.com>
+
+        Add support to collect stats on cumulative LinkBuffer linked sizes based on profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=225617
+
+        Reviewed by Saam Barati.
+
+        There are 2 ways to dump the stats:
+        1. Specify --dumpLinkBufferStats as an argument to the jsc shell.
+        2. Call $vm.dumpLinkBufferStats() from your JS script to get the stats as a string.
+           e.g.
+                $vm.print($vm.dumpLinkBufferStats());
+
+        Here's an example of what the dump looks like:
+
+            Cummulative LinkBuffer profile sizes:
+                       BaselineJIT: 79480320 (75.798340 MB)
+                               DFG: 36108672 (34.435913 MB)
+                             Thunk: 22495360 (21.453247 MB)
+                       InlineCache: 19538521 (18.633386 MB)
+                               FTL: 5186240 (4.945984 MB)
+                              Wasm: 1998272 (1.905701 MB)
+                           YarrJIT: 1331072 (1.269409 MB)
+                            CSSJIT: 0
+                     Uncategorized: 0
+
+        The stats are currently grouped into some coarse profiles.  If needed, we can
+        break these down into more fine grain profiles later.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::performFinalization):
+        (JSC::LinkBuffer::dumpProfileStatistics):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        * bytecode/InlineAccess.cpp:
+        (JSC::linkCodeInline):
+        (JSC::InlineAccess::rewireStubAsJump):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::jitWriteThunkGenerator):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITMathIC.h:
+        (JSC::JITMathIC::generateOutOfLine):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutPrivateNameWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::stringGetByValGenerator):
+        (JSC::boundFunctionCallGenerator):
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        (jscmain):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::generateThunkWithJumpToPrologue):
+        (JSC::LLInt::generateThunkWithJumpToLLIntReturnPoint):
+        (JSC::LLInt::getHostCallReturnValueThunk):
+        (JSC::LLInt::createJSGateThunk):
+        (JSC::LLInt::createWasmGateThunk):
+        (JSC::LLInt::createTailCallGate):
+        (JSC::LLInt::loopOSREntryGateThunk):
+        (JSC::LLInt::entryOSREntryGateThunk):
+        (JSC::LLInt::wasmOSREntryGateThunk):
+        (JSC::LLInt::exceptionHandlerGateThunk):
+        (JSC::LLInt::returnFromLLIntGateThunk):
+        (JSC::LLInt::tagGateThunk):
+        (JSC::LLInt::untagGateThunk):
+        (JSC::LLInt::jitCagePtrThunk):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGEntryTierUpThunkGenerator):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * yarr/YarrJIT.cpp:
+
 2021-05-08  Darin Adler  <darin@apple.com>
 
         Remove calls to the String::toInt family of functions from JavaScriptCore

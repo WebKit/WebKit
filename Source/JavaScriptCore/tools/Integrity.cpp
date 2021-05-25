@@ -44,7 +44,7 @@ Random::Random(VM& vm)
 
 bool Random::reloadAndCheckShouldAuditSlow(VM& vm)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     if (!Options::randomIntegrityAuditRate()) {
         m_triggerBits = 0; // Never trigger, and don't bother reloading.

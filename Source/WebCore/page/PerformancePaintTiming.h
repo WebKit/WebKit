@@ -44,13 +44,9 @@ private:
     }
 
     ASCIILiteral entryType() const final { return "paint"_s; }
-    Type type() const final { return Type::Paint; }
+    Type performanceEntryType() const final { return Type::Paint; }
 
     ~PerformancePaintTiming() = default;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformancePaintTiming)
-    static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isPaint(); }
-SPECIALIZE_TYPE_TRAITS_END()

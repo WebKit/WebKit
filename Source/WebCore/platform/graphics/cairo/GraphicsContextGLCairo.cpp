@@ -33,8 +33,8 @@
 #include "CairoUtilities.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
-#include "ImageData.h"
 #include "ImageSource.h"
+#include "PixelBuffer.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
@@ -106,15 +106,15 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<ImageData>&& imageData, const IntSize& canvasSize, GraphicsContext& context)
+void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, PixelBuffer&& pixelBuffer, const IntSize& canvasSize, GraphicsContext& context)
 {
-    ASSERT(!imageData->size().isEmpty());
+    ASSERT(!pixelBuffer.size().isEmpty());
     if (canvasSize.isEmpty())
         return;
 
     // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
-    size_t totalBytes = imageData->data().byteLength();
-    uint8_t* pixels = imageData->data().data();
+    size_t totalBytes = pixelBuffer.data().byteLength();
+    uint8_t* pixels = pixelBuffer.data().data();
     for (size_t i = 0; i < totalBytes; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
 
@@ -126,10 +126,10 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
         }
     }
 
-    auto imageSize = imageData->size();
+    auto imageSize = pixelBuffer.size();
 
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
-        imageData->data().data(), CAIRO_FORMAT_ARGB32, imageData->width(), imageData->height(), imageData->width() * 4));
+        pixelBuffer.data().data(), CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
 
     auto image = NativeImage::create(WTFMove(imageSurface));
 

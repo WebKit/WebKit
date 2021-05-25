@@ -38,6 +38,7 @@
 #import "SynchronousLoaderClient.h"
 #import "WebCoreURLResponse.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 
@@ -97,7 +98,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
 
 - (void)detachHandle
 {
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
 
     m_handle = nullptr;
 
@@ -155,7 +156,7 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
     [self callFunctionOnMainThread:WTFMove(work)];
     m_semaphore.wait();
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
     if (!m_handle)
         return nil;
 
@@ -213,7 +214,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self callFunctionOnMainThread:WTFMove(work)];
     m_semaphore.wait();
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
     if (!m_handle)
         return NO;
 
@@ -252,7 +253,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         ResourceResponse resourceResponse(r.get());
         resourceResponse.setSource(ResourceResponse::Source::Network);
-        resourceResponse.setDeprecatedNetworkLoadMetrics(ResourceHandle::getConnectionTimingData(connection.get()));
+        resourceResponse.setDeprecatedNetworkLoadMetrics(copyTimingData(connection.get()));
 
         m_handle->didReceiveResponse(WTFMove(resourceResponse), [self, protectedSelf = WTFMove(protectedSelf)] {
             m_semaphore.signal();
@@ -314,11 +315,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", m_handle, connection);
 
-    auto work = [self = self, protectedSelf = retainPtr(self)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), connection = retainPtr(connection)] () mutable {
         if (!m_handle || !m_handle->client())
             return;
 
-        m_handle->client()->didFinishLoading(m_handle);
+        if (auto metrics = copyTimingData(connection.get())) {
+            double responseEndTime = [[[connection _timingData] objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue];
+            metrics->responseEnd = Seconds(responseEndTime <= 0 ? metrics->responseStart.value() : responseEndTime - metrics->fetchStart.value());
+            metrics->markComplete();
+            m_handle->client()->didFinishLoading(m_handle, *metrics);
+        } else {
+            NetworkLoadMetrics emptyMetrics;
+            emptyMetrics.markComplete();
+            m_handle->client()->didFinishLoading(m_handle, emptyMetrics);
+        }
+
         if (m_messageQueue) {
             m_messageQueue->kill();
             m_messageQueue = nullptr;
@@ -374,7 +385,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self callFunctionOnMainThread:WTFMove(work)];
     m_semaphore.wait();
 
-    LockHolder lock(m_mutex);
+    Locker locker { m_lock };
     if (!m_handle)
         return nil;
 

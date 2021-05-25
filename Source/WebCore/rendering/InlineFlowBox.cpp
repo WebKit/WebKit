@@ -508,7 +508,7 @@ void InlineFlowBox::adjustMaxAscentAndDescent(LayoutUnit& maxAscent, LayoutUnit&
             continue; // Positioned placeholders don't affect calculations.
 
         if ((child->verticalAlign() == VerticalAlign::Top || child->verticalAlign() == VerticalAlign::Bottom) && verticalAlignApplies(child->renderer())) {
-            int lineHeight = child->lineHeight();
+            auto lineHeight = child->lineHeight();
             if (child->verticalAlign() == VerticalAlign::Top) {
                 if (maxAscent + maxDescent < lineHeight)
                     maxDescent = lineHeight - maxAscent;

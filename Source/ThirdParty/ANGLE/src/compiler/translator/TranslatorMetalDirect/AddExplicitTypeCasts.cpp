@@ -44,7 +44,8 @@ class Rewriter : public TIntermRebuild
             }
             else if (retType.isVector())
             {
-                if (argCount == 1)
+                //1 element arrays need to be accounted for.
+                if (argCount == 1 && !retType.isArray())
                 {
                     TIntermTyped &arg   = GetArg(callNode, 0);
                     const TType argType = arg.getType();

@@ -3617,11 +3617,11 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
             return;
         if (!priv->preferences->acceleratedCompositingEnabled()) {
             priv->preferences->setAcceleratedCompositingEnabled(true);
-            priv->preferences->setThreadedScrollingEnabled(true);
             changed = true;
         }
         if (!priv->preferences->forceCompositingMode()) {
             priv->preferences->setForceCompositingMode(true);
+            priv->preferences->setThreadedScrollingEnabled(true);
             changed = true;
         }
         break;
@@ -3630,24 +3630,24 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
             return;
         if (priv->preferences->acceleratedCompositingEnabled()) {
             priv->preferences->setAcceleratedCompositingEnabled(false);
-            priv->preferences->setThreadedScrollingEnabled(false);
             changed = true;
         }
 
         if (priv->preferences->forceCompositingMode()) {
             priv->preferences->setForceCompositingMode(false);
+            priv->preferences->setThreadedScrollingEnabled(false);
             changed = true;
         }
         break;
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
         if (!priv->preferences->acceleratedCompositingEnabled() && HardwareAccelerationManager::singleton().canUseHardwareAcceleration()) {
             priv->preferences->setAcceleratedCompositingEnabled(true);
-            priv->preferences->setThreadedScrollingEnabled(true);
             changed = true;
         }
 
         if (priv->preferences->forceCompositingMode() && !HardwareAccelerationManager::singleton().forceHardwareAcceleration()) {
             priv->preferences->setForceCompositingMode(false);
+            priv->preferences->setThreadedScrollingEnabled(false);
             changed = true;
         }
         break;

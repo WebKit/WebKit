@@ -40,7 +40,7 @@ public:
     {
         if (!m_otherLock.tryLock())
             return;
-        Locker holdLock { AdoptLockTag { }, m_otherLock };
+        Locker holdLock { AdoptLock, m_otherLock };
         m_otherValue = value;
     }
     // This function can be used to manually check that compile fails.

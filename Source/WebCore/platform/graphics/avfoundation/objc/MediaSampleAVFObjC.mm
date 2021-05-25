@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "MediaSampleAVFObjC.h"
 
+#import "PixelBuffer.h"
 #import "PixelBufferConformerCV.h"
 #import <JavaScriptCore/JSCInlines.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
@@ -41,31 +42,38 @@ WTF_DECLARE_CF_TYPE_TRAIT(CMSampleBuffer);
 
 namespace WebCore {
 
-static void deallocateVectorBuffer(void* array, const void*)
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(PixelBuffer&& pixelBuffer)
 {
-    WTF::VectorMalloc::free(array);
-}
+    auto size = pixelBuffer.size();
+    auto width = size.width();
+    auto height = size.height();
 
-RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(Vector<uint8_t>&& array, unsigned width, unsigned height)
-{
-    CVPixelBufferRef pixelBufferRaw = nullptr;
-    auto data = array.releaseBuffer().leakPtr();
-    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, data, width * 4, deallocateVectorBuffer, data, nullptr, &pixelBufferRaw);
-    auto pixelBuffer = adoptCF(pixelBufferRaw);
-    if (!pixelBuffer) {
-        deallocateVectorBuffer(data, nullptr);
+    auto data = pixelBuffer.takeData();
+    auto dataBaseAddress = data->data();
+    auto leakedData = &data.leakRef();
+    
+    auto derefBuffer = [] (void* context, const void*) {
+        static_cast<JSC::Uint8ClampedArray*>(context)->deref();
+    };
+
+    CVPixelBufferRef cvPixelBufferRaw = nullptr;
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, leakedData, nullptr, &cvPixelBufferRaw);
+
+    auto cvPixelBuffer = adoptCF(cvPixelBufferRaw);
+    if (!cvPixelBuffer) {
+        derefBuffer(leakedData, nullptr);
         return nullptr;
     }
     ASSERT_UNUSED(status, !status);
 
     CMVideoFormatDescriptionRef formatDescriptionRaw = nullptr;
-    status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &formatDescriptionRaw);
+    status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, cvPixelBuffer.get(), &formatDescriptionRaw);
     ASSERT(!status);
     auto formatDescription = adoptCF(formatDescriptionRaw);
 
     CMSampleTimingInfo sampleTimingInformation = { kCMTimeInvalid, kCMTimeInvalid, kCMTimeInvalid };
     CMSampleBufferRef sampleBufferRaw = nullptr;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
+    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, cvPixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
     ASSERT(!status);
     auto sampleBuffer = adoptCF(sampleBufferRaw);
 

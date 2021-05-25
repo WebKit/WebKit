@@ -243,14 +243,12 @@ void QuickTimePluginReplacement::postEvent(const String& eventName)
 
 static JSValue *jsValueWithDataInContext(NSData *data, const String& mimeType, JSContext *context)
 {
-    Vector<char> base64Data;
-    base64Encode([data bytes], [data length], base64Data);
-
+    // FIXME: Add makeCFString/makeNSString to avoid unnecessary String allocation.
     String data64;
     if (!mimeType.isEmpty())
-        data64 = "data:" + mimeType + ";base64," + base64Data;
+        data64 = makeString("data:", mimeType, ";base64,", base64Encoded([data bytes], [data length]));
     else
-        data64 = "data:text/plain;base64," + base64Data;
+        data64 = makeString("data:text/plain;base64,", base64Encoded([data bytes], [data length]));
 
     return [JSValue valueWithObject:(id)data64.createCFString().get() inContext:context];
 }
@@ -342,9 +340,7 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *item, JSConte
         id value = item.value;
         NSString *mimeType = [[item extraAttributes] objectForKey:@"MIMEtype"];
         if ([value isKindOfClass:[NSData class]] && mimeType) {
-            Vector<char> base64Data;
-            base64Encode([value bytes], [value length], base64Data);
-            String data64 = "data:" + String(mimeType) + ";base64," + base64Data;
+            auto data64 = makeString("data:", String(mimeType), ";base64,", base64Encoded([value bytes], [value length]));
             [dictionary setObject:(__bridge NSString *)data64.createCFString().get() forKey:@"value"];
         } else
             [dictionary setObject:value forKey:@"value"];

@@ -476,20 +476,34 @@
     (sysctl-name
         "hw.activecpu"
         "hw.availcpu"
+        "hw.cacheconfig" ;; <rdar://problem/78213563>
         "hw.cachelinesize"
+        "hw.cachesize" ;; <rdar://problem/78213563>
+        "hw.cpufamily" ;; <rdar://problem/15721872>
+        "hw.cpusubfamily"
+        "hw.cputhreadtype"
         "hw.cputype"
+        "hw.l1dcachesize" ;; <rdar://problem/15721872>
+        "hw.l1icachesize" ;; <rdar://problem/15721872>
         "hw.l2cachesize"
+        "hw.l3cachesize" ;; <rdar://problem/15721872>
         "hw.logicalcpu"
         "hw.logicalcpu_max"
         "hw.ncpu"
         "hw.machine"
         "hw.memsize"
         "hw.model"
+        "hw.ncpu" ;; <rdar://problem/76782530>
+        "hw.nperflevels" ;; <rdar://problem/76782530>
+        "hw.pagesize" ;; <rdar://problem/76782530>
         "hw.pagesize_compat"
         "hw.physicalcpu"
         "hw.physicalcpu_max"
+        "hw.physmem" ;; <rdar://problem/76782530>
+        "hw.vectorunit" ;; <rdar://problem/76782530>
         "kern.bootargs"
         "kern.hostname"
+        "kern.hv_vmm_present"
         "kern.memorystatus_level"
         "kern.osproductversion"
         "kern.osrelease"
@@ -497,7 +511,10 @@
         "kern.osversion"
         "kern.secure_kernel"
         "kern.version"
-        "vm.footprint_suspend"))
+        "vm.footprint_suspend")
+    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/70973527>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
+)
 
 (allow iokit-get-properties
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")

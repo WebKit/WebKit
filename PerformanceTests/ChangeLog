@@ -1,3 +1,43 @@
+2021-05-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+        https://bugs.webkit.org/show_bug.cgi?id=226018
+
+        Reviewed by Jonathan Bedard.
+
+        Fix Python 3.6+ DeprecationWarnings about unknown escapes
+
+        * JetStream2/RAMification.py:
+        * JetStream2/RexBench/FlightPlanner/convert-nfdc.py:
+        * RexBench/FlightPlanner/convert-nfdc.py:
+
+2021-05-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [MotionMark] Temporarily remove the focus test
+        https://bugs.webkit.org/show_bug.cgi?id=225714
+
+        Reviewed by Geoffrey Garen.
+
+        The focus test is causing unacceptably high variance on test results. Initial investigation
+        indicates that this is related to secondary and tertiary interactions between the browser's
+        runloop and the compositor's runloop. Not only that, but the variable cost of the focus test
+        seems to affect the variance on the subtests which run after it.
+
+        This patch temporarily removes the focus test, just so we can get a stronger signal of
+        browsers' true performance, while we do a deeper analysis of the focus test.
+
+        Because the focus test's score is lower than the average score of the subtests, removing it
+        causes scores in all browsers to increase:
+
+                             | WebKit | Chrome | Firefox
+        ================================================
+        Score with Focus     |   1020 |    550 |    962
+        Score without Focus  |   1623 |    874 |   1101
+        Stddev with Focus    |   9.3% |   2.3% |   2.9%
+        Stddev without Focus |   0.7% |   0.5% |   7.9%
+
+        * MotionMark/resources/runner/tests.js:
+
 2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards

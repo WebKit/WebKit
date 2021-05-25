@@ -117,7 +117,7 @@ void SearchPopupMenuDB::loadRecentSearches(const String& name, Vector<RecentSear
     m_loadSearchTermsForNameStatement->bindText(1, name);
     while (m_loadSearchTermsForNameStatement->step() == SQLITE_ROW) {
         // We are choosing not to use or store search times on Windows at this time, so for now it's OK to use a "distant past" time as a placeholder.
-        searches.append({ m_loadSearchTermsForNameStatement->getColumnText(0), -WallTime::infinity() });
+        searches.append({ m_loadSearchTermsForNameStatement->columnText(0), -WallTime::infinity() });
     }
     m_loadSearchTermsForNameStatement->reset();
 }
@@ -130,25 +130,25 @@ bool SearchPopupMenuDB::checkDatabaseValidity()
     if (!m_database.tableExists("Search"))
         return false;
 
-    SQLiteStatement integrity(m_database, "PRAGMA quick_check;");
-    if (integrity.prepare() != SQLITE_OK) {
+    auto integrity = m_database.prepareStatement("PRAGMA quick_check;"_s);
+    if (!integrity) {
         LOG_ERROR("Failed to execute database integrity check");
         return false;
     }
 
-    int resultCode = integrity.step();
+    int resultCode = integrity->step();
     if (resultCode != SQLITE_ROW) {
         LOG_ERROR("Integrity quick_check step returned %d", resultCode);
         return false;
     }
 
-    int columns = integrity.columnCount();
+    int columns = integrity->columnCount();
     if (columns != 1) {
         LOG_ERROR("Received %i columns performing integrity check, should be 1", columns);
         return false;
     }
 
-    String resultText = integrity.getColumnText(0);
+    String resultText = integrity->columnText(0);
 
     if (resultText != "ok") {
         LOG_ERROR("Search autosave database integrity check failed - %s", resultText.ascii().data());
@@ -188,7 +188,7 @@ bool SearchPopupMenuDB::openDatabase()
     }
 
     if (!existsDatabaseFile) {
-        if (!FileSystem::makeAllDirectories(FileSystem::directoryName(m_databaseFilename)))
+        if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_databaseFilename)))
             LOG_ERROR("Failed to create the search autosave database path %s", m_databaseFilename.utf8().data());
 
         m_database.open(m_databaseFilename);
@@ -204,7 +204,7 @@ bool SearchPopupMenuDB::openDatabase()
 
     bool databaseValidity = true;
     if (!existsDatabaseFile || !m_database.tableExists("Search"))
-        databaseValidity = databaseValidity && (executeSimpleSql(createSearchTableSQL) == SQLITE_DONE);
+        databaseValidity = databaseValidity && (executeSQLStatement(m_database.prepareStatement(createSearchTableSQL)) == SQLITE_DONE);
 
     if (!databaseValidity) {
         // give up create database at this time (search terms will not be saved)
@@ -224,17 +224,19 @@ bool SearchPopupMenuDB::openDatabase()
 
 void SearchPopupMenuDB::closeDatabase()
 {
-    if (m_database.isOpen()) {
-        m_loadSearchTermsForNameStatement->finalize();
-        m_insertSearchTermStatement->finalize();
-        m_removeSearchTermsForNameStatement->finalize();
-        m_database.close();
-    }
+    if (!m_database.isOpen())
+        return;
+
+    m_loadSearchTermsForNameStatement = nullptr;
+    m_insertSearchTermStatement = nullptr;
+    m_removeSearchTermsForNameStatement = nullptr;
+    m_database.close();
 }
 
 void SearchPopupMenuDB::verifySchemaVersion()
 {
-    int version = SQLiteStatement(m_database, "PRAGMA user_version").getColumnInt(0);
+    auto statement = m_database.prepareStatement("PRAGMA user_version"_s);
+    int version = statement ? statement->columnInt(0) : 0;
     if (version == schemaVersion)
         return;
 
@@ -252,7 +254,8 @@ void SearchPopupMenuDB::verifySchemaVersion()
     }
 
     // Update version
-    executeSimpleSql(makeString("PRAGMA user_version=", schemaVersion));
+
+    executeSQLStatement(m_database.prepareStatementSlow(makeString("PRAGMA user_version=", schemaVersion)));
 }
 
 void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)
@@ -269,25 +272,26 @@ void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)
     }
 }
 
-int SearchPopupMenuDB::executeSimpleSql(const String& sql, bool ignoreError)
+int SearchPopupMenuDB::executeSQLStatement(Expected<SQLiteStatement, int>&& statement)
 {
-    SQLiteStatement statement(m_database, sql);
-    int ret = statement.prepareAndStep();
-    statement.finalize();
+    if (!statement) {
+        checkSQLiteReturnCode(statement.error());
+        return statement.error();
+    }
 
-    checkSQLiteReturnCode(ret);
-    if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW && !ignoreError)
-        LOG_ERROR("Failed to execute %s error: %s", sql.ascii().data(), m_database.lastErrorMsg());
-
+    int ret = statement->step();
+    if (ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW)
+        LOG_ERROR("Failed to execute SQL error: %s", m_database.lastErrorMsg());
     return ret;
 }
 
-std::unique_ptr<SQLiteStatement> SearchPopupMenuDB::createPreparedStatement(const String& sql)
+std::unique_ptr<SQLiteStatement> SearchPopupMenuDB::createPreparedStatement(ASCIILiteral sql)
 {
-    auto statement = makeUnique<SQLiteStatement>(m_database, sql);
-    int ret = statement->prepare();
-    ASSERT_UNUSED(ret, ret == SQLITE_OK);
-    return statement;
+    auto statement = m_database.prepareHeapStatement(sql);
+    ASSERT(statement);
+    if (!statement)
+        return nullptr;
+    return statement.value().moveToUniquePtr();
 }
 
 }

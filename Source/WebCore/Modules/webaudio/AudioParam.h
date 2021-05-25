@@ -32,7 +32,6 @@
 #include "AudioParamTimeline.h"
 #include "AudioSummingJunction.h"
 #include "AutomationRate.h"
-#include "WebKitAudioContext.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <sys/types.h>
 #include <wtf/LoggerHelper.h>

@@ -30,7 +30,6 @@
     Exposed=AudioWorklet,
     Conditional=WEB_AUDIO,
     JSGenerateToNativeObject,
-    ImplicitThis,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
     Global=(Worklet,AudioWorklet),

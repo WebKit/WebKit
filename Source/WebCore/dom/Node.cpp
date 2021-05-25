@@ -95,17 +95,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Node);
 using namespace HTMLNames;
 
 #if DUMP_NODE_STATISTICS
-static HashSet<Node*>& liveNodeSet()
+static WeakHashSet<Node>& liveNodeSet()
 {
-    static NeverDestroyed<HashSet<Node*>> liveNodes;
+    static NeverDestroyed<WeakHashSet<Node>> liveNodes;
     return liveNodes;
 }
 
 static const char* stringForRareDataUseType(NodeRareData::UseType useType)
 {
     switch (useType) {
-    case NodeRareData::UseType::ConnectedFrameCount:
-        return "ConnectedFrameCount";
     case NodeRareData::UseType::NodeList:
         return "NodeList";
     case NodeRareData::UseType::MutationObserver:
@@ -175,15 +173,15 @@ void Node::dumpStatistics()
     HashMap<uint16_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
-    for (auto* node : liveNodeSet()) {
-        if (node->hasRareData()) {
+    for (auto& node : liveNodeSet()) {
+        if (node.hasRareData()) {
             ++nodesWithRareData;
-            if (is<Element>(*node)) {
+            if (is<Element>(node)) {
                 ++elementsWithRareData;
-                if (downcast<Element>(*node).hasNamedNodeMap())
+                if (downcast<Element>(node).hasNamedNodeMap())
                     ++elementsWithNamedNodeMap;
             }
-            auto* rareData = node->rareData();
+            auto* rareData = node.rareData();
             auto useTypes = is<Element>(node) ? static_cast<ElementRareData*>(rareData)->useTypes() : rareData->useTypes();
             unsigned useTypeCount = 0;
             for (auto type : useTypes) {
@@ -197,12 +195,12 @@ void Node::dumpStatistics()
                 mixedRareDataUseCount++;
         }
 
-        switch (node->nodeType()) {
+        switch (node.nodeType()) {
             case ELEMENT_NODE: {
                 ++elementNodes;
 
                 // Tag stats
-                Element& element = downcast<Element>(*node);
+                Element& element = downcast<Element>(node);
                 HashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
                 if (!result.isNewEntry)
                     result.iterator->value++;
@@ -248,7 +246,7 @@ void Node::dumpStatistics()
                 break;
             }
             case DOCUMENT_FRAGMENT_NODE: {
-                if (node->isShadowRoot())
+                if (node.isShadowRoot())
                     ++shadowRootNodes;
                 else
                     ++fragmentNodes;
@@ -257,7 +255,7 @@ void Node::dumpStatistics()
         }
     }
 
-    printf("Number of Nodes: %d\n\n", liveNodeSet().size());
+    printf("Number of Nodes: %d\n\n", liveNodeSet().computeSize());
     printf("Number of Nodes with RareData: %zu\n", nodesWithRareData);
     printf("  Mixed use: %zu\n", mixedRareDataUseCount);
     for (auto it : rareDataSingleUseTypeCounts)
@@ -295,10 +293,9 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, nodeCounter, ("WebCoreNode"
 #ifndef NDEBUG
 static bool shouldIgnoreLeaks = false;
 
-static HashSet<Node*>& ignoreSet()
+static WeakHashSet<Node>& ignoreSet()
 {
-    static NeverDestroyed<HashSet<Node*>> ignore;
-
+    static NeverDestroyed<WeakHashSet<Node>> ignore;
     return ignore;
 }
 
@@ -322,13 +319,13 @@ void Node::trackForDebugging()
 {
 #ifndef NDEBUG
     if (shouldIgnoreLeaks)
-        ignoreSet().add(this);
+        ignoreSet().add(*this);
     else
         nodeCounter.increment();
 #endif
 
 #if DUMP_NODE_STATISTICS
-    liveNodeSet().add(this);
+    liveNodeSet().add(*this);
 #endif
 }
 
@@ -353,12 +350,12 @@ Node::~Node()
     ASSERT(!m_adoptionIsRequired);
 
 #ifndef NDEBUG
-    if (!ignoreSet().remove(this))
+    if (!ignoreSet().remove(*this))
         nodeCounter.decrement();
 #endif
 
 #if DUMP_NODE_STATISTICS
-    liveNodeSet().remove(this);
+    liveNodeSet().remove(*this);
 #endif
 
     RELEASE_ASSERT(!renderer());
@@ -1592,7 +1589,7 @@ ExceptionOr<void> Node::setTextContent(const String& text)
         return setNodeValue(text);
     case ELEMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE:
-        downcast<ContainerNode>(*this).replaceAllChildrenWithNewText(text);
+        downcast<ContainerNode>(*this).stringReplaceAll(text);
         return { };
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
@@ -1755,6 +1752,12 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 
     // No parent - no conversion needed
     return p;
+}
+
+String Node::description() const
+{
+    auto name = nodeName();
+    return makeString(name.isEmpty() ? "<none>" : "", name);
 }
 
 String Node::debugDescription() const
@@ -2224,7 +2227,7 @@ EventTargetData* Node::eventTargetDataConcurrently()
     // world is stopped. We don't have to hold the lock when the world is stopped, because a stopped world
     // means that we will never mutate the event target data map.
     JSC::VM* vm = commonVMOrNull();
-    auto locker = holdLockIf(s_eventTargetDataMapLock, vm && vm->heap.worldIsRunning());
+    Locker locker { vm && vm->heap.worldIsRunning() ? &s_eventTargetDataMapLock : nullptr };
     return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
 }
 
@@ -2236,7 +2239,7 @@ EventTargetData& Node::ensureEventTargetData()
     JSC::VM* vm = commonVMOrNull();
     RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
 
-    auto locker = holdLock(s_eventTargetDataMapLock);
+    Locker locker { s_eventTargetDataMapLock };
     setHasEventTargetData(true);
     return *eventTargetDataMap().add(this, makeUnique<EventTargetData>()).iterator->value;
 }
@@ -2245,7 +2248,7 @@ void Node::clearEventTargetData()
 {
     JSC::VM* vm = commonVMOrNull();
     RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
-    auto locker = holdLock(s_eventTargetDataMapLock);
+    Locker locker { s_eventTargetDataMapLock };
     eventTargetDataMap().remove(this);
 }
 

@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from buildbot.process import buildstep, factory, logobserver, properties
-from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
+from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source.svn import SVN
 
@@ -130,10 +130,36 @@ class ConfigureBuild(buildstep.BuildStep):
 
 
 class CheckOutSource(SVN, object):
+    name = 'clean-and-update-working-directory'
+    haltOnFailure = False
+
     def __init__(self, **kwargs):
         kwargs['repourl'] = 'https://svn.webkit.org/repository/webkit/trunk'
         kwargs['mode'] = 'incremental'
+        kwargs['logEnviron'] = False
         super(CheckOutSource, self).__init__(**kwargs)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            self.build.addStepsAfterCurrentStep([SVNCleanup()])
+
+        if self.results != SUCCESS:
+            return {'step': 'Failed to updated working directory'}
+        else:
+            return {'step': 'Cleaned and updated working directory'}
+
+
+class SVNCleanup(shell.ShellCommand):
+    name = 'svn-cleanup'
+    command = ['svn', 'cleanup']
+    descriptionDone = ['Run svn cleanup']
+
+    def __init__(self, **kwargs):
+        super(SVNCleanup, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)
+
+    def evaluateCommand(self, cmd):
+        self.build.buildFinished(['svn issue, retrying build'], RETRY)
+        return super(SVNCleanup, self).evaluateCommand(cmd)
 
 
 class InstallWin32Dependencies(shell.Compile):
@@ -153,21 +179,21 @@ class TriggerCrashLogSubmission(shell.Compile):
     name = "trigger-crash-log-submission"
     description = ["triggering crash log submission"]
     descriptionDone = ["triggered crash log submission"]
-    command = ["python", "./Tools/CISupport/trigger-crash-log-submission"]
+    command = ["python3", "Tools/CISupport/trigger-crash-log-submission"]
 
 
 class WaitForCrashCollection(shell.Compile):
     name = "wait-for-crash-collection"
     description = ["waiting for crash collection to quiesce"]
     descriptionDone = ["crash collection has quiesced"]
-    command = ["python", "./Tools/CISupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
+    command = ["python3", "Tools/CISupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
 
 
 class CleanBuildIfScheduled(shell.Compile):
     name = "delete-WebKitBuild-directory"
     description = ["deleting WebKitBuild directory"]
     descriptionDone = ["deleted WebKitBuild directory"]
-    command = ["python", "./Tools/CISupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/CISupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
     def start(self):
         if not self.getProperty('is_clean'):
@@ -180,7 +206,7 @@ class DeleteStaleBuildFiles(shell.Compile):
     name = "delete-stale-build-files"
     description = ["deleting stale build files"]
     descriptionDone = ["deleted stale build files"]
-    command = ["python", "./Tools/CISupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+    command = ["python3", "Tools/CISupport/delete-stale-build-files", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
     def start(self):
         if self.getProperty('is_clean'):  # Nothing to be done if WebKitBuild had been removed.
@@ -296,7 +322,7 @@ class CompileJSCOnly(CompileWebKit):
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/CISupport/built-product-archive",
+    command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-built-product"
     description = ["archiving built product"]
@@ -305,7 +331,7 @@ class ArchiveBuiltProduct(shell.ShellCommand):
 
 
 class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
-    command = ["python", "./Tools/CISupport/built-product-archive",
+    command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
 
 
@@ -332,7 +358,7 @@ class GenerateMiniBrowserBundle(shell.ShellCommand):
 
 
 class ExtractBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/CISupport/built-product-archive",
+    command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "extract"]
     name = "extract-built-product"
     description = ["extracting built product"]
@@ -711,7 +737,7 @@ class RunLLDBWebKitTests(RunPythonTests):
     description = ["lldb-webkit-tests running"]
     descriptionDone = ["lldb-webkit-tests"]
     command = [
-        "python",
+        "python3",
         "./Tools/Scripts/test-lldb-webkit",
         "--verbose",
         "--no-build",
@@ -862,22 +888,22 @@ class RunGLibAPITests(shell.Test):
         messages = []
         self.statusLine = []
 
-        foundItems = re.findall("Unexpected failures \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected failures \((\d+)\)", logText)
         if foundItems:
             failedTests = int(foundItems[0])
             messages.append("%d failures" % failedTests)
 
-        foundItems = re.findall("Unexpected crashes \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected crashes \((\d+)\)", logText)
         if foundItems:
             crashedTests = int(foundItems[0])
             messages.append("%d crashes" % crashedTests)
 
-        foundItems = re.findall("Unexpected timeouts \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected timeouts \((\d+)\)", logText)
         if foundItems:
             timedOutTests = int(foundItems[0])
             messages.append("%d timeouts" % timedOutTests)
 
-        foundItems = re.findall("Unexpected passes \((\d+)\)", logText)
+        foundItems = re.findall(r"Unexpected passes \((\d+)\)", logText)
         if foundItems:
             newPassTests = int(foundItems[0])
             messages.append("%d new passes" % newPassTests)
@@ -935,10 +961,10 @@ class RunWebDriverTests(shell.Test):
 
         self.failuresCount = 0
         self.newPassesCount = 0
-        foundItems = re.findall("^Unexpected .+ \((\d+)\)", logText, re.MULTILINE)
+        foundItems = re.findall(r"^Unexpected .+ \((\d+)\)", logText, re.MULTILINE)
         if foundItems:
             self.failuresCount = int(foundItems[0])
-        foundItems = re.findall("^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
+        foundItems = re.findall(r"^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
         if foundItems:
             self.newPassesCount = int(foundItems[0])
 

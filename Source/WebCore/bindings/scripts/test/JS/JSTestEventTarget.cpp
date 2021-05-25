@@ -221,11 +221,6 @@ void JSTestEventTarget::getOwnPropertyNames(JSObject* object, JSGlobalObject* le
     JSObject::getOwnPropertyNames(object, lexicalGlobalObject, propertyNames, mode);
 }
 
-template<> inline JSTestEventTarget* IDLOperation<JSTestEventTarget>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestEventTarget*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestEventTargetConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

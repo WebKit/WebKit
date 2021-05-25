@@ -72,7 +72,7 @@ void ArtworkImageLoader::requestImageResource()
 void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
     ASSERT_UNUSED(resource, &resource == m_cachedImage);
-    if (m_cachedImage->loadFailedOrCanceled() || !m_cachedImage->image() || !m_cachedImage->image()->data() || m_cachedImage->image()->data()->isEmpty()) {
+    if (m_cachedImage->loadFailedOrCanceled() || m_cachedImage->errorOccurred() || !m_cachedImage->image() || !m_cachedImage->image()->data() || m_cachedImage->image()->data()->isEmpty()) {
         m_callback(nullptr);
         return;
     }

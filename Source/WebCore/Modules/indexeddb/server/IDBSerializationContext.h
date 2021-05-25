@@ -28,7 +28,6 @@
 #include "JSIDBSerializationGlobalObject.h"
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/StructureInlines.h>
-#include <pal/SessionID.h>
 
 namespace JSC {
 class CallFrame;
@@ -41,7 +40,7 @@ namespace IDBServer {
 
 class IDBSerializationContext : public RefCounted<IDBSerializationContext> {
 public:
-    static Ref<IDBSerializationContext> getOrCreateIDBSerializationContext(PAL::SessionID);
+    static Ref<IDBSerializationContext> getOrCreateForCurrentThread();
 
     ~IDBSerializationContext();
 
@@ -49,12 +48,12 @@ public:
     JSC::JSGlobalObject& globalObject();
 
 private:
-    IDBSerializationContext(PAL::SessionID);
+    explicit IDBSerializationContext(Thread&);
     void initializeVM();
 
     RefPtr<JSC::VM> m_vm;
     JSC::Strong<JSIDBSerializationGlobalObject> m_globalObject;
-    PAL::SessionID m_sessionID;
+    Thread& m_thread;
 };
 
 } // namespace IDBServer

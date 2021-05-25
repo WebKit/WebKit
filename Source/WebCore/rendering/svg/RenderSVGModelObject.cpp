@@ -47,7 +47,7 @@ RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& st
 {
 }
 
-LayoutRect RenderSVGModelObject::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
@@ -101,7 +101,7 @@ void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyl
 {
     if (diff == StyleDifference::Layout) {
         setNeedsBoundariesUpdate();
-        if (style().hasTransform())
+        if (style().hasTransform() || (oldStyle && oldStyle->hasTransform()))
             setNeedsTransformUpdate();
     }
     RenderElement::styleDidChange(diff, oldStyle);

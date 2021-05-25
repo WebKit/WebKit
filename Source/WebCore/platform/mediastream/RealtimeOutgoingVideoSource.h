@@ -33,6 +33,7 @@
 #include "LibWebRTCMacros.h"
 #include "MediaStreamTrackPrivate.h"
 #include <Timer.h>
+#include <wtf/CheckedLock.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -141,8 +142,8 @@ private:
     Timer m_blackFrameTimer;
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
 
-    mutable Lock m_sinksLock;
-    HashSet<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;
+    mutable CheckedLock m_sinksLock;
+    HashSet<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks WTF_GUARDED_BY_LOCK(m_sinksLock);
     bool m_areSinksAskingToApplyRotation { false };
 
     bool m_enabled { true };

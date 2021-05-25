@@ -14,7 +14,6 @@
 
         function start() {
             var xhrChild = window.frames[1];
-            // xhrChild.XHR.open('GET', null, true);
             xhrChild.XHR.open("GET", "../../xmlhttprequest/resources/reply.xml", false);
             xhrChild.XHR.send("");
 
@@ -26,7 +25,7 @@
 <body>
     <p>This tests that frame used when setting eventListeners on an XMLHttpRequest using addEventListener, 
        is the requests frame. (rdar://problem/5426142).  This test passes if you don't see an alert dialog with
-       the domain of "localhost" in it and an "Unsafe JavaScript" warning is logged to the console.</p>
+       the domain of "localhost" in it and no warnings are logged to the console.</p>
     <iframe id="targetChild" src=""></iframe>
     <iframe src="resources/childWithXMLHttpRequest.html" onload="onloadForXHRChild();"></iframe>
 </body>

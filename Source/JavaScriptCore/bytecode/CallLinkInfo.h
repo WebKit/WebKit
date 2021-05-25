@@ -30,12 +30,14 @@
 #include "CodeSpecializationKind.h"
 #include "PolymorphicCallStubRoutine.h"
 #include "WriteBarrier.h"
+#include <wtf/Function.h>
 #include <wtf/SentinelLinkedList.h>
 
 namespace JSC {
 
 #if ENABLE(JIT)
 
+class CCallHelpers;
 class FunctionCodeBlock;
 class JSFunction;
 enum OpcodeID : unsigned;
@@ -163,15 +165,36 @@ public:
         m_calleeGPR = calleeGPR;
     }
 
-    void setCallLocations(
-        CodeLocationLabel<JSInternalPtrTag> callReturnLocationOrPatchableJump,
-        CodeLocationLabel<JSInternalPtrTag> hotPathBeginOrSlowPathStart,
-        CodeLocationNearCall<JSInternalPtrTag> hotPathOther)
+    GPRReg calleeGPR() const { return m_calleeGPR; }
+    
+    enum class UseDataIC : uint8_t {
+        Yes,
+        No
+    };
+
+private:
+    MacroAssembler::JumpList emitFastPathImpl(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
+public:
+    MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC) WARN_UNUSED_RETURN;
+    MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
+    void emitDirectFastPath(CCallHelpers&);
+    void emitDirectTailCallFastPath(CCallHelpers&, WTF::Function<void()> prepareForTailCall);
+    void emitSlowPath(VM&, CCallHelpers&);
+    void revertCallToStub();
+
+    bool isDataIC() const { return static_cast<UseDataIC>(m_useDataIC) == UseDataIC::Yes; }
+    void setUsesDataICs(UseDataIC useDataIC) { m_useDataIC = static_cast<unsigned>(useDataIC); }
+
+    void setCodeLocations(
+        CodeLocationLabel<JSInternalPtrTag> slowPathStart,
+        CodeLocationLabel<JSInternalPtrTag> doneLocation)
     {
-        m_callReturnLocationOrPatchableJump = callReturnLocationOrPatchableJump;
-        m_hotPathBeginOrSlowPathStart = hotPathBeginOrSlowPathStart;
-        m_hotPathOther = hotPathOther;
+        if (!isDataIC())
+            u.codeIC.m_slowPathStart = slowPathStart;
+        m_doneLocation = doneLocation;
     }
+
+    void initializeDirectCall();
 
     bool allowStubs() const { return m_allowStubs; }
 
@@ -180,23 +203,19 @@ public:
         m_allowStubs = false;
     }
 
-    CodeLocationNearCall<JSInternalPtrTag> callReturnLocation();
-    CodeLocationJump<JSInternalPtrTag> patchableJump();
-    CodeLocationDataLabelPtr<JSInternalPtrTag> hotPathBegin();
+    CodeLocationLabel<JSInternalPtrTag> fastPathStart();
     CodeLocationLabel<JSInternalPtrTag> slowPathStart();
+    CodeLocationLabel<JSInternalPtrTag> doneLocation();
 
-    CodeLocationNearCall<JSInternalPtrTag> hotPathOther()
-    {
-        return m_hotPathOther;
-    }
-
-    void setCallee(VM&, JSCell*, JSObject* callee);
+    void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag>);
+    void setSlowPathCallDestination(MacroAssemblerCodePtr<JSEntryPtrTag>);
     void clearCallee();
     JSObject* callee();
 
     void setCodeBlock(VM&, JSCell*, FunctionCodeBlock*);
     void clearCodeBlock();
     FunctionCodeBlock* codeBlock();
+    void setDirectCallTarget(CodeLocationLabel<JSEntryPtrTag>);
 
     void setLastSeenCallee(VM&, const JSCell* owner, JSObject* callee);
     void clearLastSeenCallee();
@@ -206,12 +225,7 @@ public:
     void setExecutableDuringCompilation(ExecutableBase*);
     ExecutableBase* executable();
     
-    void setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
-    {
-        clearStub();
-        m_stub = WTFMove(newStub);
-    }
-
+    void setStub(Ref<PolymorphicCallStubRoutine>&&);
     void clearStub();
 
     PolymorphicCallStubRoutine* stub() const
@@ -311,6 +325,21 @@ public:
         return OBJECT_OFFSETOF(CallLinkInfo, m_slowPathCount);
     }
 
+    static ptrdiff_t offsetOfCallee()
+    {
+        return OBJECT_OFFSETOF(CallLinkInfo, m_calleeOrCodeBlock);
+    }
+
+    static ptrdiff_t offsetOfMonomorphicCallDestination()
+    {
+        return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_monomorphicCallDestination);
+    }
+
+    static ptrdiff_t offsetOfSlowPathCallDestination()
+    {
+        return OBJECT_OFFSETOF(CallLinkInfo, m_slowPathCallDestination);
+    }
+
     GPRReg calleeGPR()
     {
         return m_calleeGPR;
@@ -352,10 +381,25 @@ public:
     }
 
 private:
-    uint32_t m_maxArgumentCountIncludingThis { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
-    CodeLocationLabel<JSInternalPtrTag> m_callReturnLocationOrPatchableJump;
-    CodeLocationLabel<JSInternalPtrTag> m_hotPathBeginOrSlowPathStart;
-    CodeLocationNearCall<JSInternalPtrTag> m_hotPathOther;
+    CodeLocationLabel<JSInternalPtrTag> m_fastPathStart;
+    CodeLocationLabel<JSInternalPtrTag> m_doneLocation;
+    MacroAssemblerCodePtr<JSEntryPtrTag> m_slowPathCallDestination;
+    union UnionType {
+        UnionType() 
+            : dataIC { nullptr, InvalidGPRReg }
+        { }
+        struct DataIC {
+            MacroAssemblerCodePtr<JSEntryPtrTag> m_monomorphicCallDestination;
+            GPRReg m_callLinkInfoGPR;
+        } dataIC;
+
+        struct {
+            CodeLocationNearCall<JSInternalPtrTag> m_callLocation;
+            CodeLocationDataLabelPtr<JSInternalPtrTag> m_calleeLocation;
+            CodeLocationLabel<JSInternalPtrTag> m_slowPathStart;
+        } codeIC;
+    } u;
+
     WriteBarrier<JSCell> m_calleeOrCodeBlock;
     WriteBarrier<JSCell> m_lastSeenCalleeOrExecutable;
     RefPtr<PolymorphicCallStubRoutine> m_stub;
@@ -369,8 +413,10 @@ private:
     bool m_allowStubs : 1;
     bool m_clearedByJettison : 1;
     unsigned m_callType : 4; // CallType
+    unsigned m_useDataIC : 1; // UseDataIC
     GPRReg m_calleeGPR { InvalidGPRReg };
     uint32_t m_slowPathCount { 0 };
+    uint32_t m_maxArgumentCountIncludingThis { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
 };
 
 inline CodeOrigin getCallLinkInfoCodeOrigin(CallLinkInfo& callLinkInfo)

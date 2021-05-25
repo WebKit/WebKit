@@ -33,13 +33,12 @@
 namespace WebCore {
 
 class AudioBuffer;
-class WebKitAudioPannerNode;
 struct AudioBufferSourceOptions;
 
 // AudioBufferSourceNode is an AudioNode representing an audio source from an in-memory audio asset represented by an AudioBuffer.
 // It generally will be used for short sounds which require a high degree of scheduling flexibility (can playback in rhythmically perfect ways).
 
-class AudioBufferSourceNode : public AudioScheduledSourceNode {
+class AudioBufferSourceNode final : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(AudioBufferSourceNode);
 public:
     static Ref<AudioBufferSourceNode> create(BaseAudioContext&, float sampleRate);
@@ -76,15 +75,8 @@ public:
     AudioParam& detune() { return m_detune.get(); }
     AudioParam& playbackRate() { return m_playbackRate.get(); }
 
-    // If a panner node is set, then we can incorporate doppler shift into the playback pitch rate.
-    void setPannerNode(WebKitAudioPannerNode*);
-    void clearPannerNode();
-
     // If we are no longer playing, propogate silence ahead to downstream nodes.
     bool propagatesSilence() const final;
-
-    // AudioScheduledSourceNode
-    void finish() final;
 
     const char* activeDOMObjectName() const override { return "AudioBufferSourceNode"; }
 
@@ -94,9 +86,6 @@ protected:
 private:
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
-
-    virtual double legacyGainValue() const { return 1.0; }
-    virtual bool shouldThrowOnAttemptToOverwriteBuffer() const { return true; }
 
     ExceptionOr<void> startPlaying(double when, double grainOffset, Optional<double> grainDuration);
     void adjustGrainParameters();
@@ -137,12 +126,8 @@ private:
     double m_wasGrainDurationGiven { false };
 
     // totalPitchRate() returns the instantaneous pitch rate (non-time preserving).
-    // It incorporates the base pitch rate, any sample-rate conversion factor from the buffer, and any doppler shift from an associated panner node.
+    // It incorporates the base pitch rate, any sample-rate conversion factor from the buffer.
     double totalPitchRate();
-
-    // We optionally keep track of a panner node which has a doppler shift that is incorporated into
-    // the pitch rate.
-    AudioConnectionRefPtr<WebKitAudioPannerNode> m_legacyPannerNode;
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
     mutable Lock m_processLock;

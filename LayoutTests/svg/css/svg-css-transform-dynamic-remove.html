@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+    .container[min-width~="400px"] g {
+        transform: translate(-100px, 0);
+    }
+</style>
+<body>
+    <div class="container" min-width="400px">
+        <svg>
+            <g>
+                <rect width="100" height="100" fill="green"/>
+            </g>
+        </svg>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        requestAnimationFrame(() => {
+            const container = document.querySelector(".container");
+            container.removeAttribute("min-width");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    </script>
+</body>

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static bool shouldUseFileMapping(size_t fileSize)
+static bool shouldUseFileMapping(uint64_t fileSize)
 {
     return fileSize >= pageSize();
 }
@@ -56,7 +56,7 @@ String SWScriptStorage::sha2Hash(const String& input) const
     auto inputUtf8 = input.utf8();
     crypto->addBytes(inputUtf8.data(), inputUtf8.length());
     auto hash = crypto->computeHash();
-    return WTF::base64URLEncode(hash.data(), hash.size());
+    return base64URLEncodeToString(hash.data(), hash.size());
 }
 
 String SWScriptStorage::sha2Hash(const URL& input) const
@@ -84,7 +84,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     ASSERT(!isMainThread());
 
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
-    FileSystem::makeAllDirectories(FileSystem::directoryName(scriptPath));
+    FileSystem::makeAllDirectories(FileSystem::parentPath(scriptPath));
 
     auto iterateOverBufferAndWriteData = [&](const Function<bool(const uint8_t*, size_t)>& writeData) {
         for (auto it = script.buffer()->begin(); it != script.buffer()->end(); ++it)
@@ -120,14 +120,14 @@ ScriptBuffer SWScriptStorage::retrieve(const ServiceWorkerRegistrationKey& regis
     ASSERT(!isMainThread());
 
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
-    long long fileSize = 0;
-    if (!FileSystem::getFileSize(scriptPath, fileSize)) {
-        RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::retrieve: Failure to retrieve %s, FileSystem::getFileSize() failed", scriptPath.utf8().data());
+    auto fileSize = FileSystem::fileSize(scriptPath);
+    if (!fileSize) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::retrieve: Failure to retrieve %s, FileSystem::fileSize() failed", scriptPath.utf8().data());
         return { };
     }
 
     // FIXME: Do we need to disable file mapping in more cases to avoid having too many file descriptors open?
-    return SharedBuffer::createWithContentsOfFile(scriptPath, FileSystem::MappedFileMode::Private, shouldUseFileMapping(fileSize) ? SharedBuffer::MayUseFileMapping::Yes : SharedBuffer::MayUseFileMapping::No);
+    return SharedBuffer::createWithContentsOfFile(scriptPath, FileSystem::MappedFileMode::Private, shouldUseFileMapping(*fileSize) ? SharedBuffer::MayUseFileMapping::Yes : SharedBuffer::MayUseFileMapping::No);
 }
 
 void SWScriptStorage::clear(const ServiceWorkerRegistrationKey& registrationKey)

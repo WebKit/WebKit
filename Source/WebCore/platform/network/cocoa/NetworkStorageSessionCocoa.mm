@@ -39,6 +39,7 @@
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 @interface NSURL ()
 - (CFURLRef)_cfurl;
@@ -349,31 +350,23 @@ std::pair<String, bool> NetworkStorageSession::cookiesForSession(const URL& firs
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    RetainPtr<NSArray> cookies = cookiesForURL(firstParty, sameSiteInfo, url, frameID, pageID, shouldAskITP, shouldRelaxThirdPartyCookieBlocking);
-    if (!cookies || ![cookies count])
-        return { String(), false }; // Return a null string, not an empty one that StringBuilder would create below.
+    auto cookies = cookiesForURL(firstParty, sameSiteInfo, url, frameID, pageID, shouldAskITP, shouldRelaxThirdPartyCookieBlocking);
+    if (![cookies count])
+        return { String(), false }; // Return a null string; StringBuilder below would create an empty one.
 
     StringBuilder cookiesBuilder;
     bool didAccessSecureCookies = false;
     for (NSHTTPCookie *cookie in cookies.get()) {
         if (![[cookie name] length])
             continue;
-
         if (!includeHTTPOnly && [cookie isHTTPOnly])
             continue;
-
         if ([cookie isSecure]) {
             didAccessSecureCookies = true;
             if (includeSecureCookies == IncludeSecureCookies::No)
                 continue;
         }
-
-        if (!cookiesBuilder.isEmpty())
-            cookiesBuilder.appendLiteral("; ");
-
-        cookiesBuilder.append([cookie name]);
-        cookiesBuilder.append('=');
-        cookiesBuilder.append([cookie value]);
+        cookiesBuilder.append(cookiesBuilder.isEmpty() ? "" : "; ", [cookie name], '=', [cookie value]);
     }
     return { cookiesBuilder.toString(), didAccessSecureCookies };
 

@@ -867,7 +867,7 @@ void run(const char* filter)
                     for (;;) {
                         RefPtr<SharedTask<void()>> task;
                         {
-                            LockHolder locker(lock);
+                            Locker locker { lock };
                             if (tasks.isEmpty())
                                 return;
                             task = tasks.takeFirst();

@@ -363,13 +363,13 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     if (value.isNumber()) {
         if (value.isInt32())
-            builder.appendNumber(value.asInt32());
+            builder.append(value.asInt32());
         else {
             double number = value.asNumber();
             if (!std::isfinite(number))
                 builder.appendLiteral("null");
             else
-                builder.appendNumber(number);
+                builder.append(number);
         }
         return StringifySucceeded;
     }
@@ -575,7 +575,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             // This only occurs when get an undefined value or a symbol value for
             // an object property. In this case we don't want the separator and
             // property name that we already appended, so roll back.
-            builder.resize(rollBackPoint);
+            builder.shrink(rollBackPoint);
             break;
     }
 

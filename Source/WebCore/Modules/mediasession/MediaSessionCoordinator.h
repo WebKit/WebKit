@@ -48,6 +48,7 @@ public:
 
     void join(DOMPromiseDeferred<void>&&);
     ExceptionOr<void> leave();
+    void close();
 
     String identifier() const { return m_privateCoordinator->identifier(); }
     MediaSessionCoordinatorState state() const { return m_state; }
@@ -66,6 +67,7 @@ private:
     explicit MediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
 
     // MediaSession::Observer
+    void metadataChanged(const RefPtr<MediaMetadata>&) final;
     void positionStateChanged(const Optional<MediaPositionState>&) final;
     void playbackStateChanged(MediaSessionPlaybackState) final;
     void readyStateChanged(MediaSessionReadyState) final;
@@ -75,6 +77,7 @@ private:
     void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&&) final;
     void pauseSession(CompletionHandler<void(bool)>&&) final;
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
+    void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
     bool currentPositionApproximatelyEqualTo(double) const;
 
@@ -85,7 +88,7 @@ private:
 
     WeakPtr<MediaSession> m_session;
     MediaSessionCoordinatorState m_state { MediaSessionCoordinatorState::Waiting };
-    Ref<MediaSessionCoordinatorPrivate> m_privateCoordinator;
+    RefPtr<MediaSessionCoordinatorPrivate> m_privateCoordinator;
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 };

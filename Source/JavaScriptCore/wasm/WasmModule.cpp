@@ -81,7 +81,7 @@ void Module::validateAsync(Context* context, Vector<uint8_t>&& source, Module::A
 Ref<CodeBlock> Module::getOrCreateCodeBlock(Context* context, MemoryMode mode)
 {
     RefPtr<CodeBlock> codeBlock;
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     codeBlock = m_codeBlocks[static_cast<uint8_t>(mode)];
     // If a previous attempt at a compile errored out, let's try again.
     // Compilations from valid modules can fail because OOM and cancellation.

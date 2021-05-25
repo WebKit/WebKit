@@ -86,7 +86,7 @@ MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator& allocator, MetaAllocator
 
 MetaAllocatorHandle::~MetaAllocatorHandle()
 {
-    auto locker = holdLock(allocator().m_lock);
+    Locker locker { allocator().m_lock };
     allocator().release(locker, *this);
 }
 
@@ -96,7 +96,7 @@ void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
     ASSERT(newSizeInBytes <= sizeInBytes);
 
     MetaAllocator& allocator = this->allocator();
-    LockHolder locker(&allocator.m_lock);
+    Locker locker { allocator.m_lock };
 
     newSizeInBytes = allocator.roundUp(newSizeInBytes);
     
@@ -287,7 +287,7 @@ void MetaAllocator::addFreeSpaceFromReleasedHandle(FreeSpacePtr start, size_t si
 void MetaAllocator::addFreshFreeSpace(void* start, size_t sizeInBytes)
 {
     Config::AssertNotFrozenScope assertNotFrozenScope;
-    LockHolder locker(&m_lock);
+    Locker locker { m_lock };
     m_bytesReserved += sizeInBytes;
     addFreeSpace(FreeSpacePtr::makeFromRawPointer(start), sizeInBytes);
 }
@@ -295,7 +295,7 @@ void MetaAllocator::addFreshFreeSpace(void* start, size_t sizeInBytes)
 size_t MetaAllocator::debugFreeSpaceSize()
 {
 #ifndef NDEBUG
-    LockHolder locker(&m_lock);
+    Locker locker { m_lock };
     size_t result = 0;
     for (FreeSpaceNode* node = m_freeSpaceSizeMap.first(); node; node = node->successor())
         result += node->sizeInBytes();

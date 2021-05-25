@@ -117,28 +117,14 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {
-    if (m_sandboxExtension) {
-        if (!m_sandboxExtension->consumePermanently()) {
+    if (auto sandboxExtension = std::exchange(m_sandboxExtension, nullptr)) {
+        if (!sandboxExtension->consumePermanently()) {
             WTFLogAlways("InjectedBundle::load failed - Could not consume bundle sandbox extension for [%s].\n", m_path.utf8().data());
             return false;
         }
-
-        m_sandboxExtension = nullptr;
-    }
-    
-    RetainPtr<CFStringRef> injectedBundlePathStr = m_path.createCFString();
-    if (!injectedBundlePathStr) {
-        WTFLogAlways("InjectedBundle::load failed - Could not create the path string.\n");
-        return false;
-    }
-    
-    RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(0, injectedBundlePathStr.get(), kCFURLPOSIXPathStyle, false));
-    if (!bundleURL) {
-        WTFLogAlways("InjectedBundle::load failed - Could not create the url from the path string.\n");
-        return false;
     }
 
-    m_platformBundle = [[NSBundle alloc] initWithURL:(__bridge NSURL *)bundleURL.get()];
+    m_platformBundle = [[NSBundle alloc] initWithPath:m_path];
     if (!m_platformBundle) {
         WTFLogAlways("InjectedBundle::load failed - Could not create the bundle.\n");
         return false;
@@ -146,12 +132,10 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 
     WKBundleAdditionalClassesForParameterCoderFunctionPtr additionalClassesForParameterCoderFunction = nullptr;
     WKBundleInitializeFunctionPtr initializeFunction = nullptr;
-    if (RetainPtr<CFURLRef> executableURL = adoptCF(CFBundleCopyExecutableURL([m_platformBundle _cfBundle]))) {
-        static constexpr size_t maxPathSize = 4096;
-        char pathToExecutable[maxPathSize];
-        if (CFURLGetFileSystemRepresentation(executableURL.get(), true, bitwise_cast<uint8_t*>(pathToExecutable), maxPathSize)) {
-            // We don't hold onto this handle anywhere more permanent since we never dlcose.
-            if (void* handle = dlopen(pathToExecutable, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST)) {
+    if (NSString *executablePath = m_platformBundle.executablePath) {
+        if (dlopen_preflight(executablePath.fileSystemRepresentation)) {
+            // We don't hold onto this handle anywhere more permanent since we never dlclose.
+            if (void* handle = dlopen(executablePath.fileSystemRepresentation, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST)) {
                 additionalClassesForParameterCoderFunction = bitwise_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(dlsym(handle, "WKBundleAdditionalClassesForParameterCoder"));
                 initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(dlsym(handle, "WKBundleInitialize"));
             }
@@ -159,14 +143,17 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     }
         
     if (!initializeFunction) {
-        if (![m_platformBundle load]) {
-            WTFLogAlways("InjectedBundle::load failed - Could not load the executable from the bundle.\n");
+        NSError *error;
+        if (![m_platformBundle preflightAndReturnError:&error]) {
+            NSLog(@"InjectedBundle::load failed - preflightAndReturnError failed, error: %@", error);
+            return nil;
+        }
+        if (![m_platformBundle loadAndReturnError:&error]) {
+            NSLog(@"InjectedBundle::load failed - loadAndReturnError failed, error: %@", error);
             return false;
         }
-    }
-
-    if (!initializeFunction)
         initializeFunction = bitwise_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
+    }
 
     if (!additionalClassesForParameterCoderFunction)
         additionalClassesForParameterCoderFunction = bitwise_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleAdditionalClassesForParameterCoder")));

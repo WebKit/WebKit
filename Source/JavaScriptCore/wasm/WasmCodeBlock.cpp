@@ -50,7 +50,7 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
 
     if (Options::useWasmLLInt()) {
         m_plan = adoptRef(*new LLIntPlan(context, makeRef(moduleInformation), m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             if (m_plan->failed()) {
                 m_errorMessage = m_plan->errorMessage();
                 setCompilationFinished();
@@ -77,7 +77,7 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
 #if ENABLE(WEBASSEMBLY_B3JIT)
     else {
         m_plan = adoptRef(*new BBQPlan(context, makeRef(moduleInformation), CompilerMode::FullCompile, createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             if (m_plan->failed()) {
                 m_errorMessage = m_plan->errorMessage();
                 setCompilationFinished();
@@ -119,7 +119,7 @@ void CodeBlock::waitUntilFinished()
 {
     RefPtr<Plan> plan;
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         plan = m_plan;
     }
 
@@ -134,7 +134,7 @@ void CodeBlock::compileAsync(Context* context, AsyncCompilationCallback&& task)
 {
     RefPtr<Plan> plan;
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         plan = m_plan;
     }
 

@@ -806,10 +806,9 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // If no cropping, resizing, flipping, etc. are needed, then simply use the
     // resulting ImageBuffer directly.
     auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
-    if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size()
-        && sourceRectangle.returnValue().size() == outputSize
-        && options.imageOrientation == ImageBitmapOptions::Orientation::None) {
-        bitmapData->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
+    if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.imageOrientation == ImageBitmapOptions::Orientation::None) {
+        bitmapData->putPixelBuffer(imageData->pixelBuffer(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
+        
         auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData)));
         // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
         promise.resolve(WTFMove(imageBitmap));
@@ -823,7 +822,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         resolveWithBlankImageBuffer(scriptExecutionContext, true, WTFMove(promise));
         return;
     }
-    tempBitmapData->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
+    tempBitmapData->putPixelBuffer(imageData->pixelBuffer(), IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), imageOrientationForOrientation(options.imageOrientation) });
 

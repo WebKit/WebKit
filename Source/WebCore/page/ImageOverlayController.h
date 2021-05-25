@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "LayoutRect.h"
 #include "PageOverlay.h"
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

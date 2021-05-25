@@ -183,16 +183,6 @@ void JSTestMapLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)
     thisObject->JSTestMapLikeWithOverriddenOperations::~JSTestMapLikeWithOverriddenOperations();
 }
 
-template<> inline JSTestMapLikeWithOverriddenOperations* IDLAttribute<JSTestMapLikeWithOverriddenOperations>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestMapLikeWithOverriddenOperations*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestMapLikeWithOverriddenOperations* IDLOperation<JSTestMapLikeWithOverriddenOperations>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestMapLikeWithOverriddenOperations*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

@@ -88,6 +88,17 @@ void XRDeviceProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& call
         m_xrSystem->requestFrame(WTFMove(callback));
 }
 
+Optional<PlatformXR::LayerHandle> XRDeviceProxy::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
+{
+    return m_xrSystem ? m_xrSystem->createLayerProjection(width, height, alpha) : WTF::nullopt;
+}
+
+void XRDeviceProxy::submitFrame(Vector<PlatformXR::Device::Layer>&&)
+{
+    if (m_xrSystem)
+        m_xrSystem->submitFrame();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEBXR)

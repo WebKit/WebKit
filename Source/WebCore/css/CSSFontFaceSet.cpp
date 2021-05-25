@@ -510,8 +510,13 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
                 return true;
             return false;
         });
-        for (auto& candidate : candidateFontFaces)
+        CSSFontFace* previousCandidate = nullptr;
+        for (auto& candidate : candidateFontFaces) {
+            if (&candidate.get() == previousCandidate)
+                continue;
+            previousCandidate = &candidate.get();
             face->appendFontFace(candidate.get());
+        }
     }
 
     return face.get();

@@ -35,6 +35,7 @@
 
 #include <CoreText/SFNTLayoutTypes.h>
 
+#include <wtf/CheckedLock.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -845,7 +846,7 @@ public:
     {
         auto folded = FontCascadeDescription::foldedFamilyName(familyName);
         {
-            auto locker = holdLock(m_familyNameToFontDescriptorsLock);
+            Locker locker { m_familyNameToFontDescriptorsLock };
             auto it = m_familyNameToFontDescriptors.find(folded);
             if (it != m_familyNameToFontDescriptors.end())
                 return *it->value;
@@ -871,7 +872,7 @@ public:
             return makeUnique<InstalledFontFamily>();
         }();
 
-        auto locker = holdLock(m_familyNameToFontDescriptorsLock);
+        Locker locker { m_familyNameToFontDescriptorsLock };
         return *m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
     }
 
@@ -895,7 +896,7 @@ public:
     void clear()
     {
         {
-            auto locker = holdLock(m_familyNameToFontDescriptorsLock);
+            Locker locker { m_familyNameToFontDescriptorsLock };
             m_familyNameToFontDescriptors.clear();
         }
         m_postScriptNameToFontDescriptors.clear();
@@ -909,8 +910,8 @@ private:
     {
     }
 
-    Lock m_familyNameToFontDescriptorsLock;
-    HashMap<String, std::unique_ptr<InstalledFontFamily>> m_familyNameToFontDescriptors;
+    CheckedLock m_familyNameToFontDescriptorsLock;
+    HashMap<String, std::unique_ptr<InstalledFontFamily>> m_familyNameToFontDescriptors WTF_GUARDED_BY_LOCK(m_familyNameToFontDescriptorsLock);
     HashMap<String, InstalledFont> m_postScriptNameToFontDescriptors;
     AllowUserInstalledFonts m_allowUserInstalledFonts;
 };

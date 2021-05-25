@@ -40,8 +40,8 @@ private:
     const char* renderName() const override { return "RenderSVGHiddenContainer"; }
 
     void paint(PaintInfo&, const LayoutPoint&) final;
-    
-    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject*) const final { return LayoutRect(); }
+
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final { return LayoutRect(); }
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) final;

@@ -58,6 +58,7 @@ private:
     void playSession(Optional<double>, Optional<double>, CompletionHandler<void(bool)>&&);
     void pauseSession(CompletionHandler<void(bool)>&&);
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&);
+    void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);
 
     // MediaSessionCoordinatorPrivate overrides.
     String identifier() const final { return m_identifier; }
@@ -71,7 +72,7 @@ private:
     void positionStateChanged(const Optional<WebCore::MediaPositionState>&) final;
     void readyStateChanged(WebCore::MediaSessionReadyState) final;
     void playbackStateChanged(WebCore::MediaSessionPlaybackState) final;
-    void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
+    void trackIdentifierChanged(const String&) final;
 
     const char* logClassName() const { return "RemoteMediaSessionCoordinator"; }
     WTFLogChannel& logChannel() const;

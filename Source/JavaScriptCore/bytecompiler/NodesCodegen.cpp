@@ -3206,6 +3206,24 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 
 RegisterID* InNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (m_expr1->isPrivateIdentifier()) {
+        RefPtr<RegisterID> base = generator.emitNode(m_expr2);
+
+        auto identifier = static_cast<PrivateIdentifierNode*>(m_expr1)->value();
+        auto privateTraits = generator.getPrivateTraits(identifier);
+        Variable var = generator.variable(identifier);
+        RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
+
+        if (privateTraits.isField()) {
+            RefPtr<RegisterID> privateName = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, DoNotThrowIfNotFound);
+            return generator.emitHasPrivateName(generator.finalDestination(dst, base.get()), base.get(), privateName.get());
+        }
+
+        ASSERT(privateTraits.isPrivateMethodOrAccessor());
+        RefPtr<RegisterID> privateBrand = generator.emitGetPrivateBrand(generator.newTemporary(), scope.get(), privateTraits.isStatic());
+        return generator.emitHasPrivateBrand(generator.finalDestination(dst, base.get()), base.get(), privateBrand.get(), privateTraits.isStatic());
+    }
+
     if (isNonIndexStringElement(*m_expr1)) {
         RefPtr<RegisterID> base = generator.emitNode(m_expr2);
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());

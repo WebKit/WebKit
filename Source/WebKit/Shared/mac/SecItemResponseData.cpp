@@ -42,7 +42,7 @@ void SecItemResponseData::encode(IPC::Encoder& encoder) const
     encoder << static_cast<int64_t>(m_resultCode);
     encoder << static_cast<bool>(m_resultObject);
     if (m_resultObject)
-        IPC::encode(encoder, m_resultObject.get());
+        encoder << m_resultObject;
 }
 
 Optional<SecItemResponseData> SecItemResponseData::decode(IPC::Decoder& decoder)
@@ -56,7 +56,7 @@ Optional<SecItemResponseData> SecItemResponseData::decode(IPC::Decoder& decoder)
         return WTF::nullopt;
 
     RetainPtr<CFTypeRef> result;
-    if (expectResultObject && !IPC::decode(decoder, result))
+    if (expectResultObject && !decoder.decode(result))
         return WTF::nullopt;
 
     return {{ static_cast<OSStatus>(resultCode), WTFMove(result) }};

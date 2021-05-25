@@ -353,6 +353,12 @@ static void overrideDefaults()
             Options::gcIncrementScale() = 0;
     }
 
+#if PLATFORM(MAC) && CPU(ARM64)
+    Options::numberOfGCMarkers() = 4;
+    Options::numberOfDFGCompilerThreads() = 2;
+    Options::numberOfFTLCompilerThreads() = 2;
+#endif
+
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
     // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
@@ -1079,33 +1085,26 @@ void OptionReader::Option::dump(StringBuilder& builder) const
         builder.append(m_bool ? "true" : "false");
         break;
     case Options::Type::Unsigned:
-        builder.appendNumber(m_unsigned);
+        builder.append(m_unsigned);
         break;
     case Options::Type::Size:
-        builder.appendNumber(m_size);
+        builder.append(m_size);
         break;
     case Options::Type::Double:
         builder.append(m_double);
         break;
     case Options::Type::Int32:
-        builder.appendNumber(m_int32);
+        builder.append(m_int32);
         break;
     case Options::Type::OptionRange:
         builder.append(m_optionRange.rangeString());
         break;
-    case Options::Type::OptionString: {
-        const char* option = m_optionString;
-        if (!option)
-            option = "";
-        builder.append('"');
-        builder.append(option);
-        builder.append('"');
+    case Options::Type::OptionString:
+        builder.append('"', m_optionString ? m_optionString : "", '"');
         break;
-    }
-    case Options::Type::GCLogLevel: {
+    case Options::Type::GCLogLevel:
         builder.append(GCLogging::levelAsString(m_gcLogLevel));
         break;
-    }
     }
 }
 

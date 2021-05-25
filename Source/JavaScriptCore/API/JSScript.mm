@@ -38,7 +38,6 @@
 #import "JSVirtualMachineInternal.h"
 #import "Symbol.h"
 #import <sys/stat.h>
-#import <wtf/FileMetadata.h>
 #import <wtf/FileSystem.h>
 #import <wtf/SHA1.h>
 #import <wtf/Scope.h>
@@ -77,20 +76,20 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     String systemPath = cachePathURL.fileSystemPath();
 
-    if (auto metadata = FileSystem::fileMetadata(systemPath)) {
-        if (metadata->type != FileMetadata::Type::File) {
+    if (auto fileType = FileSystem::fileType(systemPath)) {
+        if (*fileType != FileSystem::FileType::Regular) {
             createError([NSString stringWithFormat:@"Cache path `%@` already exists and is not a file", static_cast<NSString *>(systemPath)], error);
             return false;
         }
     }
 
-    String directory = FileSystem::directoryName(systemPath);
+    String directory = FileSystem::parentPath(systemPath);
     if (directory.isNull()) {
         createError([NSString stringWithFormat:@"Cache path `%@` does not contain in a valid directory", static_cast<NSString *>(systemPath)], error);
         return false;
     }
 
-    if (!FileSystem::fileIsDirectory(directory, FileSystem::ShouldFollowSymbolicLinks::No)) {
+    if (FileSystem::fileType(directory) != FileSystem::FileType::Directory) {
         createError([NSString stringWithFormat:@"Cache directory `%@` is not a directory or does not exist", static_cast<NSString *>(directory)], error);
         return false;
     }

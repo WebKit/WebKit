@@ -68,7 +68,6 @@ set(WTF_PUBLIC_HEADERS
     FastBitVector.h
     FastMalloc.h
     FastTLS.h
-    FileMetadata.h
     FilePrintStream.h
     FileSystem.h
     FixedVector.h
@@ -112,6 +111,7 @@ set(WTF_PUBLIC_HEADERS
     KeyValuePair.h
     LEBDecoder.h
     Language.h
+    LikelyDenseUnsignedIntegerSet.h
     ListDump.h
     ListHashSet.h
     Liveness.h
@@ -236,7 +236,7 @@ set(WTF_PUBLIC_HEADERS
     SinglyLinkedList.h
     SinglyLinkedListWithTail.h
     SixCharacterHash.h
-    SmallPtrSet.h
+    SmallSet.h
     SoftLinking.h
     SortedArrayMap.h
     SpanningTree.h
@@ -414,6 +414,7 @@ set(WTF_SOURCES
     JSONValues.cpp
     JSValueMalloc.cpp
     Language.cpp
+    LikelyDenseUnsignedIntegerSet.cpp
     Lock.cpp
     LockedPrintStream.cpp
     Logger.cpp
@@ -444,7 +445,7 @@ set(WTF_SOURCES
     Seconds.cpp
     SegmentedVector.cpp
     SixCharacterHash.cpp
-    SmallPtrSet.cpp
+    SmallSet.cpp
     StackBounds.cpp
     StackPointer.cpp
     StackStats.cpp

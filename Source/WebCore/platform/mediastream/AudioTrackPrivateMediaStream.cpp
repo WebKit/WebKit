@@ -159,13 +159,14 @@ void AudioTrackPrivateMediaStream::updateRenderer()
 void AudioTrackPrivateMediaStream::startRenderer()
 {
     ASSERT(isMainThread());
-    if (m_isPlaying)
+    if (m_isPlaying || !m_renderer)
         return;
 
     m_isPlaying = true;
-    if (m_renderer)
-        m_renderer->start();
-    m_audioSource->addAudioSampleObserver(*this);
+    m_renderer->start([protectedThis = makeRef(*this)] {
+        if (protectedThis->m_isPlaying)
+            protectedThis->m_audioSource->addAudioSampleObserver(protectedThis.get());
+    });
 }
 
 void AudioTrackPrivateMediaStream::stopRenderer()

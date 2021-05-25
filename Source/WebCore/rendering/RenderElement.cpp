@@ -621,24 +621,23 @@ RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& rend
     return RenderPtr<RenderObject>(&renderer);
 }
 
+static inline RenderBlock* nearestNonAnonymousContainingBlockIncludingSelf(RenderElement* renderer)
+{
+    while (renderer && (!is<RenderBlock>(*renderer) || renderer->isAnonymousBlock()))
+        renderer = renderer->containingBlock();
+    return downcast<RenderBlock>(renderer);
+}
+
 RenderBlock* RenderElement::containingBlockForFixedPosition() const
 {
-    auto* renderer = parent();
-    while (renderer && !renderer->canContainFixedPositionObjects())
-        renderer = renderer->parent();
-
-    ASSERT(!renderer || !renderer->isAnonymousBlock());
-    return downcast<RenderBlock>(renderer);
+    auto* ancestor = parent();
+    while (ancestor && !ancestor->canContainFixedPositionObjects())
+        ancestor = ancestor->parent();
+    return nearestNonAnonymousContainingBlockIncludingSelf(ancestor);
 }
 
 RenderBlock* RenderElement::containingBlockForAbsolutePosition() const
 {
-    auto nearestNonAnonymousContainingBlockIncludingSelf = [&] (auto* renderer) {
-        while (renderer && (!is<RenderBlock>(*renderer) || renderer->isAnonymousBlock()))
-            renderer = renderer->containingBlock();
-        return downcast<RenderBlock>(renderer);
-    };
-
     if (is<RenderInline>(*this) && style().position() == PositionType::Relative) {
         // A relatively positioned RenderInline forwards its absolute positioned descendants to
         // its nearest non-anonymous containing block (to avoid having positioned objects list in RenderInlines).
@@ -1344,7 +1343,7 @@ bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewpor
 
     // Compute viewport rect if it was not provided.
     const IntRect& visibleRect = optionalViewportRect ? *optionalViewportRect : frameView.windowToContents(frameView.windowClipRect());
-    return visibleRect.intersects(enclosingIntRect(absoluteClippedOverflowRect()));
+    return visibleRect.intersects(enclosingIntRect(absoluteClippedOverflowRectForRepaint()));
 }
 
 bool RenderElement::isVisibleIgnoringGeometry() const
@@ -1377,7 +1376,7 @@ bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
         backgroundIsPaintedByRoot = !rootRenderer.hasBackground();
     }
 
-    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? view().backgroundRect() : absoluteClippedOverflowRect();
+    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? view().backgroundRect() : absoluteClippedOverflowRectForRepaint();
     if (!documentRect.intersects(enclosingIntRect(backgroundPaintingRect)))
         return false;
 

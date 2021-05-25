@@ -177,7 +177,7 @@ bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTest
     }
 
     // Accessibility wants to return SVG containers, if appropriate.
-    if (request.type() & HitTestRequest::AccessibilityHitTest && m_objectBoundingBox.contains(localPoint)) {
+    if (request.type() & HitTestRequest::Type::AccessibilityHitTest && m_objectBoundingBox.contains(localPoint)) {
         updateHitTestResult(result, LayoutPoint(localPoint));
         if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, localPoint) == HitTestProgress::Stop)
             return true;

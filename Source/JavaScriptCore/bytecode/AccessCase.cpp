@@ -1580,11 +1580,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         // Stuff for custom getters/setters.
         CCallHelpers::Call operationCall;
 
-        // Stuff for JS getters/setters.
-        CCallHelpers::DataLabelPtr addressOfLinkFunctionCheck;
-        CCallHelpers::Call fastPathCall;
-        CCallHelpers::Call slowPathCall;
-
         // This also does the necessary calculations of whether or not we're an
         // exception handling call site.
         AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall();
@@ -1701,24 +1696,22 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                         virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
             }
 
-            CCallHelpers::Jump slowCase = jit.branchPtrWithPatch(
-                CCallHelpers::NotEqual, loadedValueGPR, addressOfLinkFunctionCheck,
-                CCallHelpers::TrustedImmPtr(nullptr));
+            auto slowCase = access.callLinkInfo()->emitFastPath(jit, loadedValueGPR, loadedValueGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2, JITCode::isOptimizingJIT(codeBlock->jitType()) ? CallLinkInfo::UseDataIC::No : CallLinkInfo::UseDataIC::Yes);
+            auto doneLocation = jit.label();
 
-            fastPathCall = jit.nearCall();
             if (m_type == Getter)
                 jit.setupResults(valueRegs);
             done.append(jit.jump());
 
             slowCase.link(&jit);
+            auto slowPathStart = jit.label();
             jit.move(loadedValueGPR, GPRInfo::regT0);
 #if USE(JSVALUE32_64)
             // We *always* know that the getter/setter, if non-null, is a cell.
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
 #endif
-            jit.move(CCallHelpers::TrustedImmPtr(access.callLinkInfo()), GPRInfo::regT2);
             jit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
-            slowPathCall = jit.nearCall();
+            access.callLinkInfo()->emitSlowPath(vm, jit);
             if (m_type == Getter)
                 jit.setupResults(valueRegs);
             done.append(jit.jump());
@@ -1735,15 +1728,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             bool callHasReturnValue = isGetter();
             restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
 
-            jit.addLinkTask([=, &vm] (LinkBuffer& linkBuffer) {
-                this->as<GetterSetterAccessCase>().callLinkInfo()->setCallLocations(
-                    CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowPathCall)),
-                    CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(addressOfLinkFunctionCheck)),
-                    linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastPathCall));
-
-                linkBuffer.link(
-                    slowPathCall,
-                    CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(linkCallThunkGenerator).code()));
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                this->as<GetterSetterAccessCase>().callLinkInfo()->setCodeLocations(
+                    linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
+                    linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
             });
         } else {
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);

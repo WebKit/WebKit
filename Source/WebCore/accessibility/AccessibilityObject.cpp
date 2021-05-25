@@ -808,7 +808,7 @@ bool AccessibilityObject::press()
     Element* hitTestElement = nullptr;
     Document* document = this->document();
     if (document) {
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AccessibilityHitTest };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
         HitTestResult hitTestResult { clickPoint() };
         document->hitTest(hitType, hitTestResult);
         if (auto* innerNode = hitTestResult.innerNode()) {

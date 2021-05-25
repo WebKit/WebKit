@@ -71,5 +71,12 @@ interface EventSendingController {
     undefined releaseTouchPoint(long index);
     undefined cancelTouchPoint(long index);
 #endif
+
+#if defined(ENABLE_MAC_GESTURE_EVENTS) && ENABLE_MAC_GESTURE_EVENTS
+    // Gesture events.
+    undefined scaleGestureStart(double scale);
+    undefined scaleGestureChange(double scale);
+    undefined scaleGestureEnd(double scale);
+#endif
 };
 

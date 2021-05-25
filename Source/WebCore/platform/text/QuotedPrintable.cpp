@@ -40,7 +40,7 @@ static const size_t maximumLineLength = 76;
 
 static const char crlfLineEnding[] = "\r\n";
 
-static size_t lengthOfLineEndingAtIndex(const char* input, size_t inputLength, size_t index)
+static size_t lengthOfLineEndingAtIndex(const uint8_t* input, size_t inputLength, size_t index)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < inputLength);
     if (input[index] == '\n')
@@ -55,19 +55,19 @@ static size_t lengthOfLineEndingAtIndex(const char* input, size_t inputLength, s
     return 0;
 }
 
-void quotedPrintableEncode(const Vector<char>& in, Vector<char>& out)
+Vector<uint8_t> quotedPrintableEncode(const Vector<uint8_t>& input)
 {
-    quotedPrintableEncode(in.data(), in.size(), out);
+    return quotedPrintableEncode(input.data(), input.size());
 }
 
-void quotedPrintableEncode(const char* input, size_t inputLength, Vector<char>& out)
+Vector<uint8_t> quotedPrintableEncode(const uint8_t* input, size_t inputLength)
 {
-    out.clear();
-    out.reserveCapacity(inputLength);
+    Vector<uint8_t> out;
+    out.reserveInitialCapacity(inputLength);
     size_t currentLineLength = 0;
     for (size_t i = 0; i < inputLength; ++i) {
         bool isLastCharacter = (i == inputLength - 1);
-        char currentCharacter = input[i];
+        uint8_t currentCharacter = input[i];
         bool requiresEncoding = false;
         // All non-printable ASCII characters and = require encoding.
         if ((currentCharacter < ' ' || currentCharacter > '~' || currentCharacter == '=') && currentCharacter != '\t')
@@ -112,18 +112,20 @@ void quotedPrintableEncode(const char* input, size_t inputLength, Vector<char>& 
             currentLineLength++;
         }
     }
+
+    return out;
 }
 
-void quotedPrintableDecode(const Vector<char>& in, Vector<char>& out)
+Vector<uint8_t> quotedPrintableDecode(const Vector<uint8_t>& input)
 {
-    quotedPrintableDecode(in.data(), in.size(), out);
+    return quotedPrintableDecode(input.data(), input.size());
 }
 
-void quotedPrintableDecode(const char* data, size_t dataLength, Vector<char>& out)
+Vector<uint8_t> quotedPrintableDecode(const uint8_t* data, size_t dataLength)
 {
-    out.clear();
+    Vector<uint8_t> out;
     if (!dataLength)
-        return;
+        return out;
 
     for (size_t i = 0; i < dataLength; ++i) {
         char currentCharacter = data[i];
@@ -149,8 +151,9 @@ void quotedPrintableDecode(const char* data, size_t dataLength, Vector<char>& ou
             out.append(lowerCharacter);
             continue;
         }
-        out.append(static_cast<char>(toASCIIHexValue(upperCharacter, lowerCharacter)));
+        out.append(toASCIIHexValue(upperCharacter, lowerCharacter));
     }
+    return out;
 }
 
 }

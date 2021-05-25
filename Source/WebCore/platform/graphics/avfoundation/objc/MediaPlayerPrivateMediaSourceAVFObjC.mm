@@ -34,6 +34,7 @@
 #import "CDMSessionAVStreamSession.h"
 #import "GraphicsContext.h"
 #import "Logging.h"
+#import "MediaSessionManagerCocoa.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
@@ -199,6 +200,12 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+public:
+    MediaPlayerFactoryMediaSourceAVFObjC()
+    {
+        MediaSessionManagerCocoa::ensureCodecsRegistered();
+    }
+
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE; };
 
@@ -322,6 +329,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal()
     }
 
     ALWAYS_LOG(LOGIDENTIFIER);
+#if PLATFORM(IOS_FAMILY)
+    m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
+#endif
     m_playing = true;
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
@@ -1169,6 +1179,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [audioRenderer setMuted:m_player->muted()];
     [audioRenderer setVolume:m_player->volume()];
     [audioRenderer setAudioTimePitchAlgorithm:(m_player->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
+#if PLATFORM(MAC)
+    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+    if ([audioRenderer respondsToSelector:@selector(setIsUnaccompaniedByVisuals:)])
+        [audioRenderer setIsUnaccompaniedByVisuals:!m_player->isVideoPlayer()];
+    ALLOW_NEW_API_WITHOUT_GUARDS_END
+#endif
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
     auto deviceId = m_player->audioOutputDeviceIdOverride();

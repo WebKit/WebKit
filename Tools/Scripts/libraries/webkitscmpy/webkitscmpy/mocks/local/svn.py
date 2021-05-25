@@ -25,6 +25,7 @@ import os
 import re
 
 from datetime import datetime
+from mock import patch
 
 from webkitcorepy import mocks
 from webkitscmpy import local
@@ -154,6 +155,12 @@ class Svn(mocks.Subprocess):
                 )
             ),
         )
+
+    def __enter__(self):
+        # TODO: Use shutil directly when Python 2.7 is removed
+        from whichcraft import which
+        self.patches.append(patch('whichcraft.which', lambda cmd: dict(svn=self.executable).get(cmd, which(cmd))))
+        return super(Svn, self).__enter__()
 
     @property
     def branch(self):

@@ -46,7 +46,7 @@ void WebPreferences::platformInitializeStore()
 
     setAcceleratedCompositingEnabled(compositingState.acceleratedCompositingEnabled);
     setForceCompositingMode(compositingState.forceCompositingMode);
-    setThreadedScrollingEnabled(compositingState.acceleratedCompositingEnabled);
+    setThreadedScrollingEnabled(compositingState.forceCompositingMode);
 }
 
 } // namespace WebKit

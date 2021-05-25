@@ -58,4 +58,24 @@ typedef NS_ENUM(NSInteger, QLPreviewStyle) {
 @property QLPreviewStyle previewStyle;
 @end
 
+@interface QLItem : NSObject <QLPreviewItem>
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
+
+@class UTType;
+@interface QLItem (Staging_74299451)
+- (instancetype)initWithDataProvider:(id /* <QLPreviewItemDataProvider> */)data contentType:(UTType *)contentType previewTitle:(NSString *)previewTitle;
+@end
+
+#endif
+
+#if HAVE(QUICKLOOK_ITEM_PREVIEW_OPTIONS)
+
+@interface QLItem (Staging_77864637)
+@property (nonatomic, copy) NSDictionary *previewOptions;
+@end
+
+#endif

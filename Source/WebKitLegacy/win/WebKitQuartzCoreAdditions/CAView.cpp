@@ -114,16 +114,16 @@ void CAView::releaseAllD3DResources()
 
     Vector<Ref<Handle>> viewsToRelease;
     {
-        auto locker = holdLock(globalStateLock);
+        Locker locker { globalStateLock };
         viewsToRelease = WTF::map(views(), [] (auto& handle) { return handle.copyRef(); });
     }
 
     for (auto& handle : viewsToRelease) {
-        auto locker = holdLock(handle->lock());
+        Locker locker { handle->lock() };
         CAView* view = handle->view();
         if (!view)
             continue;
-        auto viewLocker = holdLock(view->m_lock);
+        Locker viewLocker { view->m_lock };
         view->m_swapChain = nullptr;
         view->m_d3dPostProcessingContext = nullptr;
     }
@@ -137,7 +137,7 @@ inline CAView::CAView(DrawingDestination destination)
     , m_context(adoptCF(CACFContextCreate(0)))
 {
     {
-        auto locker = holdLock(globalStateLock);
+        Locker locker { globalStateLock };
         views().add(m_handle.copyRef());
     }
 
@@ -151,7 +151,7 @@ CAView::~CAView()
     m_layer = nullptr;
 
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         m_context = nullptr;
     }
 
@@ -161,7 +161,7 @@ CAView::~CAView()
     RefPtr<CVDisplayLink> linkToStop;
 
     {
-        auto locker = holdLock(m_displayLinkLock);
+        Locker locker { m_displayLinkLock };
         linkToStop = WTFMove(m_displayLink);
     }
 
@@ -171,11 +171,11 @@ CAView::~CAView()
     update(nullptr, CGRectZero);
 
     {
-        auto locker = holdLock(m_handle->lock());
+        Locker locker { m_handle->lock() };
         m_handle->clear();
     }
 
-    auto locker = holdLock(globalStateLock);
+    Locker locker { globalStateLock };
 
     views().remove(m_handle.copyRef());
     if (!views().isEmpty())
@@ -205,14 +205,14 @@ void CAView::setLayer(CACFLayerRef layer)
 
     CACFLayerSetFrame(m_layer.get(), m_bounds);
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     CACFContextSetLayer(m_context.get(), m_layer.get());
 }
 
 void CAView::update(CWindow window, const CGRect& bounds)
 {
     {
-        auto locker = holdLock(globalStateLock);
+        Locker locker { globalStateLock };
 
         // Ensure our message window is created on the thread that called CAView::update.
         if (!messageWindow)
@@ -229,7 +229,7 @@ void CAView::update(CWindow window, const CGRect& bounds)
     bool boundsChanged;
 
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
 
         boundsChanged = !CGRectEqualToRect(m_bounds, bounds);
 
@@ -292,7 +292,7 @@ void CAView::invalidateRects(const CGRect* rects, size_t count)
 
 void CAView::drawToWindow()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     drawToWindowInternal();
 }
 
@@ -315,7 +315,7 @@ RefPtr<Image> CAView::drawToImage(CGPoint& imageOrigin, CFTimeInterval& nextDraw
     imageOrigin = CGPointZero;
     nextDrawTime = std::numeric_limits<CFTimeInterval>::infinity();
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     RefPtr<Image> image;
     bool willUpdateSoon;
@@ -431,7 +431,7 @@ void CAView::drawIntoDC(HDC dc)
     }
 
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
 
         CARenderContext* renderContext = static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get()));
         CARenderContextLock(renderContext);
@@ -456,13 +456,13 @@ void CAView::drawIntoDC(HDC dc)
 
 void CAView::setShouldInvertColors(bool shouldInvertColors)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_shouldInvertColors = shouldInvertColors;
 }
 
 void CAView::scheduleNextDraw(CFTimeInterval mediaTime)
 {
-    auto locker = holdLock(m_displayLinkLock);
+    Locker locker { m_displayLinkLock };
 
     if (!m_context)
         return;
@@ -491,7 +491,7 @@ void CAView::displayLinkReachedCAMediaTime(CVDisplayLink* displayLink, CFTimeInt
     ASSERT(m_destination == DrawingDestinationWindow);
 
     {
-        auto locker = holdLock(m_displayLinkLock);
+        Locker locker { m_displayLinkLock };
         if (!m_displayLink)
             return;
         ASSERT_UNUSED(displayLink, displayLink == m_displayLink);
@@ -500,7 +500,7 @@ void CAView::displayLinkReachedCAMediaTime(CVDisplayLink* displayLink, CFTimeInt
             return;
     }
 
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     drawToWindowInternal();
 }
 
@@ -517,7 +517,7 @@ void CAView::contextDidChangeCallback(void* object, void* info, void*)
 void CAView::contextDidChange()
 {
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
 
         // Our layer's rendered appearance once again matches our bounds, so it's safe to draw.
         m_drawingProhibited = false;
@@ -534,7 +534,7 @@ void CAView::contextDidChange()
 void CAView::updateSoon()
 {
     {
-        auto locker = holdLock(globalStateLock);
+        Locker locker { globalStateLock };
         viewsNeedingUpdate().add(m_handle.copyRef());
     }
     // It doesn't matter what timer ID we pass here, as long as it's nonzero.
@@ -549,16 +549,16 @@ void CAView::updateViewsNow(HWND window, UINT, UINT_PTR timerID, DWORD)
 
     HashSet<Ref<CAView::Handle>> viewsToUpdate;
     {
-        auto locker = holdLock(globalStateLock);
+        Locker locker { globalStateLock };
         viewsNeedingUpdate().swap(viewsToUpdate);
     }
 
     for (auto& handle : viewsToUpdate) {
-        auto locker = holdLock(handle->lock());
+        Locker locker { handle->lock() };
         CAView* view = handle->view();
         if (!view)
             continue;
-        auto viewLocker = holdLock(view->m_lock);
+        Locker viewLocker { view->m_lock };
         view->update(view->m_window, view->m_bounds);
     }
 }
@@ -567,7 +567,7 @@ IDirect3DDevice9* CAView::d3dDevice9()
 {
     // Hold the lock while we return the shared d3d device. The caller is responsible for retaining
     // the device before returning to ensure that it is not released.
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     return CAD3DRenderer::shared().d3dDevice9();
 }

@@ -92,12 +92,6 @@ extern "C" void * _ReturnAddress(void);
 #define OUR_RETURN_ADDRESS removeCodePtrTag(__builtin_return_address(0))
 #endif
 
-#if ENABLE(OPCODE_SAMPLING)
-#define CTI_SAMPLER vm.interpreter->sampler()
-#else
-#define CTI_SAMPLER 0
-#endif
-
 
 JSC_DEFINE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock* codeBlock))
 {
@@ -468,6 +462,45 @@ JSC_DEFINE_JIT_OPERATION(operationInByVal, EncodedJSValue, (JSGlobalObject* glob
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, JSValue::decode(key))));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationHasPrivateName, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue key))
+{
+    SuperSamplerScope superSamplerScope(false);
+    
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (!base->isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, base));
+        return encodedJSValue();
+    }
+
+    JSValue propertyValue = JSValue::decode(key);
+    ASSERT(propertyValue.isSymbol());
+    auto property = propertyValue.toPropertyKey(globalObject);
+    EXCEPTION_ASSERT(!scope.exception());
+
+    return JSValue::encode(jsBoolean(asObject(base)->hasPrivateField(globalObject, property)));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationHasPrivateBrand, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue brand))
+{
+    SuperSamplerScope superSamplerScope(false);
+    
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    if (!base->isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, base));
+        return encodedJSValue();
+    }
+
+    return JSValue::encode(jsBoolean(asObject(base)->hasPrivateBrand(globalObject, JSValue::decode(brand))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdStrict, void, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t rawCacheableIdentifier))
@@ -1392,7 +1425,7 @@ JSC_DEFINE_JIT_OPERATION(operationLinkCall, SlowPathReturnType, (CallFrame* call
             if (!callLinkInfo->seenOnce())
                 callLinkInfo->setSeen();
             else
-                linkFor(vm, calleeFrame, *callLinkInfo, nullptr, internalFunction, codePtr);
+                linkMonomorphicCall(vm, calleeFrame, *callLinkInfo, nullptr, internalFunction, codePtr);
 
             void* linkedTarget = codePtr.executableAddress();
             return encodeResult(linkedTarget, reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
@@ -1440,7 +1473,7 @@ JSC_DEFINE_JIT_OPERATION(operationLinkCall, SlowPathReturnType, (CallFrame* call
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        linkFor(vm, calleeFrame, *callLinkInfo, codeBlock, callee, codePtr);
+        linkMonomorphicCall(vm, calleeFrame, *callLinkInfo, codeBlock, callee, codePtr);
 
     return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }

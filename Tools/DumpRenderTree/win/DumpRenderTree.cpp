@@ -1106,7 +1106,7 @@ static void sizeWebViewForCurrentTest()
 
 static String findFontFallback(const char* pathOrUrl)
 {
-    String pathToFontFallback = FileSystem::directoryName(pathOrUrl);
+    String pathToFontFallback = FileSystem::parentPath(pathOrUrl);
 
     wchar_t fullPath[_MAX_PATH];
     if (!_wfullpath(fullPath, pathToFontFallback.wideCharacters().data(), _MAX_PATH))

@@ -430,7 +430,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 #endif
     auto jumpToHostCallThunk = jit.jump();
 
-    LinkBuffer linkBuffer(jit, nullptr, JITCompilationCanFail);
+    LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate()))
         return nullptr;
 

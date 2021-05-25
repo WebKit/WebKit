@@ -104,7 +104,7 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
     {
         let contentViewConstructorOptions = super.contentViewConstructorOptions;
         if (this.representedObject.resourceType === WI.Resource.Type.Image)
-            contentViewConstructorOptions.disableDropZone = true;
+            contentViewConstructorOptions.disableInteractions = true;
         return contentViewConstructorOptions;
     }
 

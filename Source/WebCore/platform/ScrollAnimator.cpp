@@ -56,6 +56,7 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     , m_scrollController(*this)
+    , m_scrollControllerAnimationTimer(*this, &ScrollAnimator::scrollControllerAnimationTimerFired)
 #endif
     , m_scrollAnimation(makeUnique<ScrollAnimationSmooth>(
         [this]() -> ScrollExtents {
@@ -333,6 +334,24 @@ std::unique_ptr<ScrollControllerTimer> ScrollAnimator::createTimer(Function<void
         function();
     });
 }
+
+void ScrollAnimator::startAnimationCallback(ScrollController&)
+{
+    if (m_scrollControllerAnimationTimer.isActive())
+        return;
+        
+    m_scrollControllerAnimationTimer.startRepeating(1_s / 60.);
+}
+
+void ScrollAnimator::stopAnimationCallback(ScrollController&)
+{
+    m_scrollControllerAnimationTimer.stop();
+}
+
+void ScrollAnimator::scrollControllerAnimationTimerFired()
+{
+    m_scrollController.animationCallback(MonotonicTime::now());
+}
 #endif
 
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
@@ -358,6 +377,11 @@ void ScrollAnimator::cancelAnimations()
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     m_scrollAnimation->stop();
 #endif
+}
+
+void ScrollAnimator::contentsResized() const
+{
+    m_scrollAnimation->updateVisibleLengths();
 }
 
 void ScrollAnimator::willEndLiveResize()

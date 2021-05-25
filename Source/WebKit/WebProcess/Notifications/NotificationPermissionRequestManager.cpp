@@ -43,14 +43,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if ENABLE(NOTIFICATIONS)
-static uint64_t generateRequestID()
-{
-    static uint64_t uniqueRequestID = 1;
-    return uniqueRequestID++;
-}
-#endif
-
 Ref<NotificationPermissionRequestManager> NotificationPermissionRequestManager::create(WebPage* page)
 {
     return adoptRef(*new NotificationPermissionRequestManager(page));
@@ -67,58 +59,52 @@ NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPa
 }
 #endif
 
-#if ENABLE(NOTIFICATIONS)
-void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, RefPtr<NotificationPermissionCallback>&& callback)
+NotificationPermissionRequestManager::~NotificationPermissionRequestManager()
 {
-    auto permission = permissionLevel(origin);
-    if (permission != NotificationClient::Permission::Default) {
-        if (callback)
-            callback->handleEvent(permission);
+#if ENABLE(NOTIFICATIONS)
+    auto requestsPerOrigin = std::exchange(m_requestsPerOrigin, { });
+    for (auto& permissionHandlers : requestsPerOrigin.values())
+        callPermissionHandlersWith(permissionHandlers, Permission::Denied);
+#endif
+}
+
+#if ENABLE(NOTIFICATIONS)
+void NotificationPermissionRequestManager::startRequest(const SecurityOriginData& securityOrigin, PermissionHandler&& permissionHandler)
+{
+    auto permission = permissionLevel(securityOrigin);
+    if (permission != Permission::Default)
+        return permissionHandler(permission);
+
+    auto addResult = m_requestsPerOrigin.add(securityOrigin, PermissionHandlers { });
+    addResult.iterator->value.append(WTFMove(permissionHandler));
+    if (!addResult.isNewEntry)
         return;
-    }
 
-    uint64_t requestID = generateRequestID();
-    m_originToIDMap.set(origin, requestID);
-    m_idToOriginMap.set(requestID, origin);
-    m_idToCallbackMap.set(requestID, WTFMove(callback));
-    m_page->send(Messages::WebPageProxy::RequestNotificationPermission(requestID, origin->toString()));
+    m_page->sendWithAsyncReply(Messages::WebPageProxy::RequestNotificationPermission(securityOrigin.toString()), [this, protectedThis = makeRef(*this), permissionHandler = WTFMove(permissionHandler), securityOrigin](bool allowed) mutable {
+        WebProcess::singleton().supplement<WebNotificationManager>()->didUpdateNotificationDecision(securityOrigin.toString(), allowed);
+
+        auto permissionHandlers = m_requestsPerOrigin.take(securityOrigin);
+        callPermissionHandlersWith(permissionHandlers, allowed ? Permission::Granted : Permission::Denied);
+    });
 }
-#endif
 
-void NotificationPermissionRequestManager::cancelRequest(SecurityOrigin* origin)
+void NotificationPermissionRequestManager::callPermissionHandlersWith(PermissionHandlers& permissionHandlers, Permission permission)
 {
-#if ENABLE(NOTIFICATIONS)
-    uint64_t id = m_originToIDMap.take(origin);
-    if (!id)
-        return;
-    
-    m_idToOriginMap.remove(id);
-    m_idToCallbackMap.remove(id);
-#else
-    UNUSED_PARAM(origin);
-#endif
+    for (auto& permissionHandler : permissionHandlers)
+        permissionHandler(permission);
 }
-
-bool NotificationPermissionRequestManager::hasPendingPermissionRequests(SecurityOrigin* origin) const
-{
-#if ENABLE(NOTIFICATIONS)
-    return m_originToIDMap.contains(origin);
-#else
-    UNUSED_PARAM(origin);
-    return false;
 #endif
-}
 
-NotificationClient::Permission NotificationPermissionRequestManager::permissionLevel(SecurityOrigin* securityOrigin)
+auto NotificationPermissionRequestManager::permissionLevel(const SecurityOriginData& securityOrigin) -> Permission
 {
 #if ENABLE(NOTIFICATIONS)
     if (!m_page->corePage()->settings().notificationsEnabled())
-        return NotificationClient::Permission::Denied;
+        return Permission::Denied;
     
-    return WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(securityOrigin);
+    return WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(securityOrigin.toString());
 #else
     UNUSED_PARAM(securityOrigin);
-    return NotificationClient::Permission::Denied;
+    return Permission::Denied;
 #endif
 }
 
@@ -137,31 +123,6 @@ void NotificationPermissionRequestManager::removeAllPermissionsForTesting()
 #if ENABLE(NOTIFICATIONS)
     WebProcess::singleton().supplement<WebNotificationManager>()->removeAllPermissionsForTesting();
 #endif
-}
-
-void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision(uint64_t requestID, bool allowed)
-{
-#if ENABLE(NOTIFICATIONS)
-    if (!isRequestIDValid(requestID))
-        return;
-
-    RefPtr<WebCore::SecurityOrigin> origin = m_idToOriginMap.take(requestID);
-    if (!origin)
-        return;
-
-    m_originToIDMap.remove(origin);
-
-    WebProcess::singleton().supplement<WebNotificationManager>()->didUpdateNotificationDecision(origin->toString(), allowed);
-
-    RefPtr<NotificationPermissionCallback> callback = m_idToCallbackMap.take(requestID);
-    if (!callback)
-        return;
-    
-    callback->handleEvent(allowed ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied);
-#else
-    UNUSED_PARAM(requestID);
-    UNUSED_PARAM(allowed);
-#endif    
 }
 
 } // namespace WebKit

@@ -37,21 +37,21 @@ static bool clientReceivedMessageFromEndpoint = false;
 static constexpr auto testMessageFromEndpoint = "test-message-from-endpoint";
 static constexpr auto testMessageFromClient = "test-message-from-client";
 
-class XPCEndpoint : public WebKit::XPCEndpoint {
+class XPCEndpoint final : public WebKit::XPCEndpoint {
 private:
-    const char* xpcEndpointMessageNameKey() const override
+    const char* xpcEndpointMessageNameKey() const final
     {
         return nullptr;
     }
-    const char* xpcEndpointMessageName() const override
+    const char* xpcEndpointMessageName() const final
     {
         return nullptr;
     }
-    const char* xpcEndpointNameKey() const override
+    const char* xpcEndpointNameKey() const final
     {
         return nullptr;
     }
-    void handleEvent(xpc_connection_t connection, xpc_object_t event) override
+    void handleEvent(xpc_connection_t connection, xpc_object_t event) final
     {
         String messageName = xpc_dictionary_get_string(event, XPCEndpoint::xpcMessageNameKey);
         if (messageName == testMessageFromClient) {
@@ -64,15 +64,15 @@ private:
     }
 };
 
-class XPCEndpointClient : public WebKit::XPCEndpointClient {
+class XPCEndpointClient final : public WebKit::XPCEndpointClient {
 private:
-    void handleEvent(xpc_object_t event) override
+    void handleEvent(xpc_object_t event) final
     {
         String messageName = xpc_dictionary_get_string(event, XPCEndpoint::xpcMessageNameKey);
         if (messageName == testMessageFromEndpoint)
             clientReceivedMessageFromEndpoint = true;
     }
-    void didConnect() override
+    void didConnect() final
     {
         auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromClient);

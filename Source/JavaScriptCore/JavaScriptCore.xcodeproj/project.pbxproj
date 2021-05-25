@@ -1988,6 +1988,7 @@
 		FE7497E6209001B10003565B /* JSCPtrTag.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7497E5209001B00003565B /* JSCPtrTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
 		FE80C1971D775CDD008510C0 /* CatchScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80C1961D775B27008510C0 /* CatchScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE8C0312264A6911001A44AD /* SlowPathFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8C0311264A6910001A44AD /* SlowPathFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE8DE54B23AC1DAD005C9142 /* CacheableIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8DE54A23AC1DAD005C9142 /* CacheableIdentifier.h */; };
 		FE8DE54D23AC1E86005C9142 /* CacheableIdentifierInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8DE54C23AC1E86005C9142 /* CacheableIdentifierInlines.h */; };
 		FE912B4F2531193300FABDDF /* AbstractSlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = FE912B4E2531193300FABDDF /* AbstractSlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4010,6 +4011,7 @@
 		6A38CFA71E32B58B0060206F /* AsyncStackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncStackTrace.cpp; sourceTree = "<group>"; };
 		6A38CFA81E32B58B0060206F /* AsyncStackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncStackTrace.h; sourceTree = "<group>"; };
 		6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerEvalEnabler.h; sourceTree = "<group>"; };
+		6B731CC02647A8370014646F /* SlowPathCall.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SlowPathCall.cpp; sourceTree = "<group>"; };
 		6BA93C9590484C5BAD9316EA /* JSScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetcher.h; sourceTree = "<group>"; };
 		6BCCEC0325D1FA27000F391D /* VerifierSlotVisitorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerifierSlotVisitorInlines.h; sourceTree = "<group>"; };
 		70113D491A8DB093003848C4 /* IteratorOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorOperations.cpp; sourceTree = "<group>"; };
@@ -5362,6 +5364,7 @@
 		FE80C1961D775B27008510C0 /* CatchScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CatchScope.h; sourceTree = "<group>"; };
 		FE80C1981D775FB4008510C0 /* CatchScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CatchScope.cpp; sourceTree = "<group>"; };
 		FE80C19A1D7768FD008510C0 /* ExceptionEventLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionEventLocation.cpp; sourceTree = "<group>"; };
+		FE8C0311264A6910001A44AD /* SlowPathFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowPathFunction.h; sourceTree = "<group>"; };
 		FE8DE54A23AC1DAD005C9142 /* CacheableIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheableIdentifier.h; sourceTree = "<group>"; };
 		FE8DE54C23AC1E86005C9142 /* CacheableIdentifierInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheableIdentifierInlines.h; sourceTree = "<group>"; };
 		FE8DE54E23AC3A8E005C9142 /* CacheableIdentifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CacheableIdentifier.cpp; sourceTree = "<group>"; };
@@ -6302,6 +6305,7 @@
 				0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */,
 				0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */,
 				0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */,
+				6B731CC02647A8370014646F /* SlowPathCall.cpp */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
 				E3F23A7B1ECF13E500978D99 /* Snippet.h */,
 				FE187A0C1C02EBA70038BBCA /* SnippetOperand.h */,
@@ -7836,6 +7840,7 @@
 				A7299DA017D12848005F5FF9 /* SetPrototype.h */,
 				0F2B66D617B6B5AB00A7AE3F /* SimpleTypedArrayController.cpp */,
 				0F2B66D717B6B5AB00A7AE3F /* SimpleTypedArrayController.h */,
+				FE8C0311264A6910001A44AD /* SlowPathFunction.h */,
 				0F5B4A321C84F0D600F1B17E /* SlowPathReturnType.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
@@ -10242,6 +10247,7 @@
 				86E3C612167BABD7006D760A /* JSValue.h in Headers */,
 				86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */,
 				53E1F8F82154715A0001DDBC /* JSValuePrivate.h in Headers */,
+				FE8C0312264A6911001A44AD /* SlowPathFunction.h in Headers */,
 				BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */,
 				86E3C615167BABD7006D760A /* JSVirtualMachine.h in Headers */,
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,

@@ -117,7 +117,7 @@ public:
     bool isSpecified() const;
     bool isSpecifiedOrIntrinsic() const;
 
-    float nonNanCalculatedValue(int maxValue) const;
+    float nonNanCalculatedValue(float maxValue) const;
 
 private:
     bool isLegacyIntrinsic() const;

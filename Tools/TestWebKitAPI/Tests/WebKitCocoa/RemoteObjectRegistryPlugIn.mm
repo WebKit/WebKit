@@ -134,4 +134,9 @@
     [localObject doSomethingWithCompletionHandler:^{ }];
 }
 
+- (void)getGroupIdentifier:(void(^)(NSString *))completionHandler
+{
+    completionHandler([_browserContextController _groupIdentifier]);
+}
+
 @end

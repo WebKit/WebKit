@@ -27,6 +27,7 @@
 #include "DFANode.h"
 
 #include "DFA.h"
+#include <wtf/HashMap.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 

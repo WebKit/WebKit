@@ -473,6 +473,9 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 #pragma mark - Form Control Refresh
 
+// FIXME: Remove once <rdar://problem/76430376> is in an SDK.
+#define UIMenuOptionsPrivateRemoveLineLimitForChildren (1 << 6)
+
 @implementation WKSelectPicker {
     __weak WKContentView *_view;
     CGPoint _interactionPoint;
@@ -582,7 +585,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
                 currentIndex++;
             }
 
-            UIMenu *groupMenu = [UIMenu menuWithTitle:groupText image:nil identifier:nil options:UIMenuOptionsDisplayInline children:groupedItems];
+            UIMenu *groupMenu = [UIMenu menuWithTitle:groupText image:nil identifier:nil options:(UIMenuOptionsDisplayInline | UIMenuOptionsPrivateRemoveLineLimitForChildren) children:groupedItems];
             [items addObject:groupMenu];
             continue;
         }
@@ -593,7 +596,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
         currentIndex++;
     }
 
-    return [UIMenu menuWithTitle:@"" children:items];
+    return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsPrivateRemoveLineLimitForChildren children:items];
 }
 
 - (UIAction *)actionForOptionItem:(const OptionItem&)option withIndex:(NSInteger)optionIndex
@@ -740,15 +743,124 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 @end
 
-static const CGFloat nextPreviousSpacerWidth = 6.0f;
-static const CGFloat sectionHeaderCollapseButtonSize = 14.0f;
-static const CGFloat sectionHeaderCollapseButtonTransitionDuration = 0.2f;
-static const CGFloat sectionHeaderMargin = 16.0f;
-static const CGFloat selectPopoverLength = 320.0f;
-static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
+@interface WKSelectPickerGroupHeaderView : UIView
+@property (nonatomic, readonly) NSInteger section;
+@end
 
 @interface WKSelectPickerTableViewController : UITableViewController
+- (void)didTapSelectPickerGroupHeaderView:(WKSelectPickerGroupHeaderView *)headerView;
 @end
+
+static const CGFloat groupHeaderMargin = 16.0f;
+static const CGFloat groupHeaderLabelImageMargin = 4.0f;
+static const CGFloat groupHeaderCollapseButtonTransitionDuration = 0.3f;
+
+@implementation WKSelectPickerGroupHeaderView {
+    RetainPtr<UILabel> _label;
+    RetainPtr<UIImageView> _collapseIndicatorView;
+
+    WeakObjCPtr<WKSelectPickerTableViewController> _tableViewController;
+
+    BOOL _collapsed;
+}
+
+- (instancetype)initWithGroupName:(NSString *)groupName section:(NSInteger)section
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _section = section;
+
+    auto tapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapHeader:)]);
+    [self addGestureRecognizer:tapGestureRecognizer.get()];
+
+    _label = adoptNS([[UILabel alloc] init]);
+    [_label setText:groupName];
+    [_label setFont:WKSelectPickerGroupHeaderView.preferredFont];
+    [_label setAdjustsFontForContentSizeCategory:YES];
+    [_label setAdjustsFontSizeToFitWidth:NO];
+    [_label setLineBreakMode:NSLineBreakByTruncatingTail];
+    [self addSubview:_label.get()];
+
+    _collapseIndicatorView = adoptNS([[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.down"]]);
+    [_collapseIndicatorView setPreferredSymbolConfiguration:[UIImageSymbolConfiguration configurationWithFont:WKSelectPickerGroupHeaderView.preferredFont scale:UIImageSymbolScaleSmall]];
+    [_collapseIndicatorView setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+    [self addSubview:_collapseIndicatorView.get()];
+
+    [_label setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [NSLayoutConstraint activateConstraints:@[
+        [[_label leadingAnchor] constraintEqualToAnchor:[self leadingAnchor] constant:WKSelectPickerGroupHeaderView.preferredMargin],
+        [[_label trailingAnchor] constraintEqualToAnchor:[_collapseIndicatorView leadingAnchor] constant:-groupHeaderLabelImageMargin],
+        [[_label topAnchor] constraintEqualToAnchor:[self topAnchor] constant:0],
+    ]];
+
+    [_collapseIndicatorView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [NSLayoutConstraint activateConstraints:@[
+        [[_collapseIndicatorView trailingAnchor] constraintEqualToAnchor:[self trailingAnchor] constant:-WKSelectPickerGroupHeaderView.preferredMargin],
+        [[_collapseIndicatorView topAnchor] constraintEqualToAnchor:[_label topAnchor] constant:0],
+        [[_collapseIndicatorView bottomAnchor] constraintEqualToAnchor:[_label bottomAnchor] constant:0],
+    ]];
+
+    return self;
+}
+
+- (void)setCollapsed:(BOOL)collapsed animated:(BOOL)animated
+{
+    if (_collapsed == collapsed)
+        return;
+
+    _collapsed = collapsed;
+
+    auto animations = [protectedSelf = retainPtr(self)] {
+        auto layoutDirectionMultipler = ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[protectedSelf semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight) ? -1.0f : 1.0f;
+        auto transform = protectedSelf->_collapsed ? CGAffineTransformMakeRotation(layoutDirectionMultipler * M_PI / 2) : CGAffineTransformIdentity;
+        [protectedSelf->_collapseIndicatorView setTransform:transform];
+    };
+
+    if (animated)
+        [UIView animateWithDuration:groupHeaderCollapseButtonTransitionDuration animations:animations];
+    else
+        animations();
+}
+
+- (void)setTableViewController:(WKSelectPickerTableViewController *)tableViewController
+{
+    _tableViewController = tableViewController;
+}
+
+- (void)didTapHeader:(id)sender
+{
+    [_tableViewController didTapSelectPickerGroupHeaderView:self];
+    [self setCollapsed:!_collapsed animated:YES];
+}
+
++ (UIFont *)preferredFont
+{
+    UIFontDescriptor *descriptor = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleTitle3];
+    descriptor = [descriptor fontDescriptorByAddingAttributes:@{
+        UIFontDescriptorTraitsAttribute: @{
+            UIFontWeightTrait: @(UIFontWeightSemibold)
+        }
+    }];
+
+    return [UIFont fontWithDescriptor:descriptor size:0];
+}
+
++ (CGFloat)preferredMargin
+{
+    return groupHeaderMargin;
+}
+
++ (CGFloat)preferredHeight
+{
+    return WKSelectPickerGroupHeaderView.preferredFont.lineHeight + WKSelectPickerGroupHeaderView.preferredMargin;
+}
+
+@end
+
+static const CGFloat nextPreviousSpacerWidth = 6.0f;
+static const CGFloat selectPopoverLength = 320.0f;
+static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 @implementation WKSelectPickerTableViewController {
     __weak WKContentView *_contentView;
@@ -838,7 +950,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     if (!section)
         return tableView.layoutMargins.left;
 
-    return self.groupHeaderFont.lineHeight + sectionHeaderMargin;
+    return WKSelectPickerGroupHeaderView.preferredHeight;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -877,44 +989,16 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     if (!section)
         return nil;
 
-    auto sectionView = adoptNS([[UIView alloc] init]);
+    auto headerView = adoptNS([[WKSelectPickerGroupHeaderView alloc] initWithGroupName:[self tableView:tableView titleForHeaderInSection:section] section:section]);
+    [headerView setCollapsed:[_collapsedSections containsObject:@(section)] animated:NO];
+    [headerView setTableViewController:self];
 
-    auto sectionLabel = adoptNS([[UILabel alloc] init]);
-    [sectionLabel setText:[self tableView:tableView titleForHeaderInSection:section]];
-    [sectionLabel setFont:self.groupHeaderFont];
-    [sectionLabel setAdjustsFontForContentSizeCategory:YES];
-    [sectionLabel setAdjustsFontSizeToFitWidth:NO];
-    [sectionLabel setLineBreakMode:NSLineBreakByTruncatingTail];
-    [sectionView addSubview:sectionLabel.get()];
-
-    [sectionLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [NSLayoutConstraint activateConstraints:@[
-        [[sectionLabel leadingAnchor] constraintEqualToAnchor:[sectionView leadingAnchor] constant:sectionHeaderMargin],
-        [[sectionLabel topAnchor] constraintEqualToAnchor:[sectionView topAnchor] constant:0],
-    ]];
-
-    auto collapseButton = adoptNS([[UIButton alloc] init]);
-    [collapseButton setTag:section];
-    [collapseButton setImage:[UIImage systemImageNamed:@"chevron.down" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:sectionHeaderCollapseButtonSize weight:UIImageSymbolWeightSemibold]] forState:UIControlStateNormal];
-    [collapseButton addTarget:self action:@selector(collapseSection:) forControlEvents:UIControlEventTouchUpInside];
-    [sectionView addSubview:collapseButton.get()];
-
-    if ([_collapsedSections containsObject:@(section)])
-        [collapseButton setTransform:CGAffineTransformMakeRotation(-M_PI / 2)];
-
-    [collapseButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [NSLayoutConstraint activateConstraints:@[
-        [[collapseButton trailingAnchor] constraintEqualToAnchor:[sectionView trailingAnchor] constant:-sectionHeaderMargin],
-        [[collapseButton topAnchor] constraintEqualToAnchor:[sectionLabel topAnchor] constant:0],
-        [[collapseButton bottomAnchor] constraintEqualToAnchor:[sectionLabel bottomAnchor] constant:0],
-    ]];
-
-    return sectionView.autorelease();
+    return headerView.autorelease();
 }
 
-- (void)collapseSection:(UIButton *)button
+- (void)didTapSelectPickerGroupHeaderView:(WKSelectPickerGroupHeaderView *)headerView
 {
-    NSInteger section = button.tag;
+    NSInteger section = headerView.section;
     NSInteger rowCount = [self numberOfRowsInGroup:section];
 
     NSMutableArray *indexPaths = [NSMutableArray arrayWithCapacity:rowCount];
@@ -929,13 +1013,6 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
         [_collapsedSections addObject:object];
         [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
     }
-
-    [UIView animateWithDuration:sectionHeaderCollapseButtonTransitionDuration animations:^{
-        if (CGAffineTransformEqualToTransform(button.transform, CGAffineTransformIdentity))
-            button.transform = CGAffineTransformMakeRotation(-M_PI / 2);
-        else
-            button.transform = CGAffineTransformIdentity;
-    }];
 }
 
 - (NSInteger)findItemIndexAt:(NSIndexPath *)indexPath
@@ -996,6 +1073,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     [cell textLabel].text = option->text;
     [cell textLabel].enabled = !option->disabled;
     [cell setUserInteractionEnabled:!option->disabled];
+    [cell imageView].preferredSymbolConfiguration = [UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody scale:UIImageSymbolScaleLarge];
 
     if (option->isSelected)
         [cell imageView].image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
@@ -1107,9 +1185,11 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([presentationController isKindOfClass:[_UISheetPresentationController class]]) {
             _UISheetPresentationController *sheetPresentationController = (_UISheetPresentationController *)presentationController;
             sheetPresentationController._detents = @[_UISheetDetent._mediumDetent, _UISheetDetent._largeDetent];
+        ALLOW_DEPRECATED_DECLARATIONS_END
             sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
             sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
         }

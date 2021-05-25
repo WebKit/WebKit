@@ -260,9 +260,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
             if (!isWebGLType(contextId))
                 return Optional<RenderingContext> { WTF::nullopt };
             auto version = toWebGLVersion(contextId);
-            if (version == WebGLVersion::WebGL1 && !m_context->isWebGL1())
-                return Optional<RenderingContext> { WTF::nullopt };
-            if (version != WebGLVersion::WebGL1 && m_context->isWebGL1())
+            if ((version == WebGLVersion::WebGL1) != m_context->isWebGL1())
                 return Optional<RenderingContext> { WTF::nullopt };
             if (is<WebGLRenderingContext>(*m_context))
                 return Optional<RenderingContext> { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
@@ -372,11 +370,8 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type,
     // Make sure we don't use more pixel memory than the system can support.
     size_t requestedPixelMemory = 4 * width() * height();
     if (activePixelMemory() + requestedPixelMemory > maxActivePixelMemory()) {
-        StringBuilder stringBuilder;
-        stringBuilder.appendLiteral("Total canvas memory use exceeds the maximum limit (");
-        stringBuilder.appendNumber(maxActivePixelMemory() / 1024 / 1024);
-        stringBuilder.appendLiteral(" MB).");
-        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, stringBuilder.toString());
+        auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
+        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return nullptr;
     }
 
@@ -490,11 +485,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(WebGLVersion type,
         if (!m_context->isWebGL())
             return nullptr;
 
-        // The phrasing of these checks avoids compile-time guards for WebGL2 support.
-        if (type == WebGLVersion::WebGL1 && !m_context->isWebGL1())
-            return nullptr;
-
-        if (type != WebGLVersion::WebGL1 && m_context->isWebGL1())
+        if ((type == WebGLVersion::WebGL1) != m_context->isWebGL1())
             return nullptr;
     }
 
@@ -743,7 +734,7 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
 #if USE(CG)
     // Try to get ImageData first, as that may avoid lossy conversions.
     if (auto imageData = getImageData())
-        return UncachedString { dataURL(*imageData, encodingMIMEType, quality) };
+        return UncachedString { dataURL(imageData->pixelBuffer(), encodingMIMEType, quality) };
 #endif
 
     makeRenderingResultsAvailable();
@@ -774,7 +765,7 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
 #if USE(CG)
     if (auto imageData = getImageData()) {
         RefPtr<Blob> blob;
-        Vector<uint8_t> blobData = data(*imageData, encodingMIMEType, quality);
+        Vector<uint8_t> blobData = data(imageData->pixelBuffer(), encodingMIMEType, quality);
         if (!blobData.isEmpty())
             blob = Blob::create(&document(), WTFMove(blobData), encodingMIMEType);
         callback->scheduleCallback(context, WTFMove(blob));
@@ -812,7 +803,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (is<WebGLRenderingContextBase>(m_context.get())) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logCanvasRead(document());
-        return downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToImageData();
+        return ImageData::create(downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer());
     }
 #endif
     return nullptr;
@@ -822,18 +813,27 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
 
 RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 {
+#if PLATFORM(COCOA) || USE(GSTREAMER)
     auto* imageBuffer = buffer();
     if (!imageBuffer)
         return nullptr;
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
+    makeRenderingResultsAvailable();
+
+    // FIXME: This can likely be optimized quite a bit, especially in the cases where
+    // the ImageBuffer is backed by GPU memory already and/or is in the GPU process by
+    // specializing toMediaSample() in ImageBufferBackend to not use getPixelBuffer().
+    auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB }, { { }, imageBuffer->logicalSize() });
+    if (!pixelBuffer)
+        return nullptr;
+
 #if PLATFORM(COCOA)
-    makeRenderingResultsAvailable();
-    return MediaSampleAVFObjC::createImageSample(imageBuffer->toBGRAData(), width(), height());
+    return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer));
 #elif USE(GSTREAMER)
-    makeRenderingResultsAvailable();
-    return MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), size());
+    return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
+#endif
 #else
     return nullptr;
 #endif
@@ -930,22 +930,16 @@ void HTMLCanvasElement::createImageBuffer() const
 
     // Perform multiplication as floating point to avoid overflow
     if (float(width()) * height() > maxCanvasArea) {
-        StringBuilder stringBuilder;
-        stringBuilder.appendLiteral("Canvas area exceeds the maximum limit (width * height > ");
-        stringBuilder.appendNumber(maxCanvasArea);
-        stringBuilder.appendLiteral(").");
-        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, stringBuilder.toString());
+        auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea, ").");
+        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return;
     }
     
     // Make sure we don't use more pixel memory than the system can support.
     size_t requestedPixelMemory = 4 * width() * height();
     if (activePixelMemory() + requestedPixelMemory > maxActivePixelMemory()) {
-        StringBuilder stringBuilder;
-        stringBuilder.appendLiteral("Total canvas memory use exceeds the maximum limit (");
-        stringBuilder.appendNumber(maxActivePixelMemory() / 1024 / 1024);
-        stringBuilder.appendLiteral(" MB).");
-        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, stringBuilder.toString());
+        auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
+        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return;
     }
 

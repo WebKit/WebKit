@@ -63,7 +63,8 @@ public:
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-        auto thisObject = jsEventTargetCast(vm, callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::sloppy()));
+        auto thisValue = callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::strict());
+        auto thisObject = jsEventTargetCast(vm, thisValue.isUndefinedOrNull() ? JSC::JSValue(&lexicalGlobalObject) : thisValue);
         if (UNLIKELY(!thisObject))
             return throwThisTypeError(lexicalGlobalObject, throwScope, "EventTarget", operationName);
 

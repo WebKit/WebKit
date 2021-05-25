@@ -123,6 +123,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentContact.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentContact.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethod.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethod.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodModeDetails.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodModeDetails.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodModeUpdate.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodModeUpdate.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayPaymentMethodSelectedEvent.cpp
@@ -1180,6 +1182,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContextSettin
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageBitmapRenderingContextSettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageData.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageDataSettings.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageDataSettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageSmoothingQuality.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSImageSmoothingQuality.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInnerHTML.cpp
@@ -1604,6 +1608,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMeasureOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceMeasureOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceNavigation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceNavigation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceNavigationTiming.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceNavigationTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceObserverCallback.cpp

@@ -209,7 +209,7 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
                 baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
             RELEASE_ASSERT(callLinkInfo);
 
-            jumpTarget = callLinkInfo->callReturnLocation().retagged<JSEntryPtrTag>();
+            jumpTarget = callLinkInfo->doneLocation().retagged<JSEntryPtrTag>();
             break;
         }
 

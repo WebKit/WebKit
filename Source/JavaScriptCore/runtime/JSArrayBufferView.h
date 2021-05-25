@@ -169,6 +169,8 @@ protected:
     
     JS_EXPORT_PRIVATE JSArrayBufferView(VM&, ConstructionContext&);
     JS_EXPORT_PRIVATE void finishCreation(VM&);
+    
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     DECLARE_VISIT_CHILDREN;
     

@@ -100,7 +100,7 @@ void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattin
     auto& boxGeometry = layoutState().geometryForBox(formattingContextRoot);
 
     if (formattingContextRoot.hasInFlowOrFloatingChild()) {
-        auto constraintsForInFlowContent = FormattingContext::ConstraintsForInFlowContent { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), { } } };
+        auto constraintsForInFlowContent = ConstraintsForInFlowContent { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), { } } };
         formattingContext->layoutInFlowContent(invalidationState, constraintsForInFlowContent);
     }
 
@@ -108,7 +108,7 @@ void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattin
     // It constructs an FC for descendant boxes and runs layout on them. The formattingContextRoot is laid out in the FC in which it lives (parent formatting context).
     // It also means that the formattingContextRoot has to have a valid/clean geometry at this point.
     {
-        auto constraints = FormattingContext::ConstraintsForOutOfFlowContent { { boxGeometry.paddingBoxLeft(), boxGeometry.paddingBoxWidth() },
+        auto constraints = ConstraintsForOutOfFlowContent { { boxGeometry.paddingBoxLeft(), boxGeometry.paddingBoxWidth() },
             { boxGeometry.paddingBoxTop(), boxGeometry.paddingBoxHeight() }, boxGeometry.contentBoxWidth() };
         formattingContext->layoutOutOfFlowContent(invalidationState, constraints);
     }

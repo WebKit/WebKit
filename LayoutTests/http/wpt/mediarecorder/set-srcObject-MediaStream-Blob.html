@@ -33,6 +33,7 @@ promise_test(async (test) => {
 
     video1.srcObject = blob;
     video2.srcObject = blob;
+    await video1.play();
     await video2.play();
 
     assert_equals(video1.duration, video2.duration);

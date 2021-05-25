@@ -39,7 +39,6 @@ enum CredentialPersistence {
 };
 
 class CredentialBase {
-
 public:
     WEBCORE_EXPORT bool isEmpty() const;
     
@@ -51,6 +50,8 @@ public:
     bool encodingRequiresPlatformData() const { return false; }
 
     WEBCORE_EXPORT static bool compare(const Credential&, const Credential&);
+
+    WEBCORE_EXPORT String serializationForBasicAuthorizationHeader() const;
 
 protected:
     WEBCORE_EXPORT CredentialBase();

@@ -53,6 +53,7 @@
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
+#include <WebCore/FloatQuad.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/GraphicsContext.h>
@@ -102,7 +103,6 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include <WebCore/FloatQuad.h>
 #include <WebCore/SelectionGeometry.h>
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS_FAMILY)
@@ -114,6 +114,10 @@
 #if ENABLE(MEDIA_STREAM)
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/MediaConstraints.h>
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+#include <WebCore/ImageExtractionResult.h>
 #endif
 
 // FIXME: Seems like we could use std::tuple to cut down the code below a lot!
@@ -2360,6 +2364,28 @@ bool ArgumentCoder<FilterOperations>::decode(Decoder& decoder, FilterOperations&
 
     return true;
 }
+
+void ArgumentCoder<RefPtr<WebCore::FilterOperation>>::encode(Encoder& encoder, const RefPtr<WebCore::FilterOperation>& operation)
+{
+    encoder << !!operation;
+    if (operation)
+        encoder << *operation;
+}
+
+WARN_UNUSED_RETURN bool ArgumentCoder<RefPtr<WebCore::FilterOperation>>::decode(Decoder& decoder, RefPtr<WebCore::FilterOperation>& value)
+{
+    Optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull)
+        return false;
+    
+    if (!decodeFilterOperation(decoder, value)) {
+        value = nullptr;
+        return false;
+    }
+    return true;
+}
+
 #endif // !USE(COORDINATED_GRAPHICS)
 
 void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
@@ -3114,77 +3140,6 @@ Optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMInstan
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
-template<typename Encoder>
-void ArgumentCoder<Ref<WebCore::ImageData>>::encode(Encoder& encoder, const Ref<WebCore::ImageData>& imageData)
-{
-    encoder << imageData->size();
-
-    auto& rawData = imageData->data();
-    encoder << static_cast<uint64_t>(rawData.byteLength());
-    encoder.encodeFixedLengthData(rawData.data(), rawData.byteLength(), 1);
-}
-
-template
-void ArgumentCoder<Ref<WebCore::ImageData>>::encode<Encoder>(Encoder&, const Ref<WebCore::ImageData>&);
-template
-void ArgumentCoder<Ref<WebCore::ImageData>>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Ref<WebCore::ImageData>&);
-
-Optional<Ref<WebCore::ImageData>> ArgumentCoder<Ref<WebCore::ImageData>>::decode(Decoder& decoder)
-{
-    Optional<IntSize> imageDataSize;
-    decoder >> imageDataSize;
-    if (!imageDataSize)
-        return WTF::nullopt;
-
-    Optional<uint64_t> dataLength;
-    decoder >> dataLength;
-    if (!dataLength)
-        return WTF::nullopt;
-
-    auto rawData = Uint8ClampedArray::createUninitialized(*dataLength);
-    if (!decoder.decodeFixedLengthData(rawData->data(), rawData->length(), 1))
-        return WTF::nullopt;
-
-    auto imageData = ImageData::create(*imageDataSize, WTFMove(rawData));
-    if (!imageData)
-        return WTF::nullopt;
-
-    return { imageData.releaseNonNull() };
-}
-
-template<typename Encoder>
-void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(Encoder& encoder, const RefPtr<WebCore::ImageData>& imageData)
-{
-    if (!imageData) {
-        encoder << false;
-        return;
-    }
-
-    encoder << true;
-    ArgumentCoder<Ref<WebCore::ImageData>>::encode(encoder, imageData.copyRef().releaseNonNull());
-}
-
-template
-void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(Encoder&, const RefPtr<WebCore::ImageData>&);
-
-template
-void ArgumentCoder<RefPtr<WebCore::ImageData>>::encode(StreamConnectionEncoder&, const RefPtr<WebCore::ImageData>&);
-
-Optional<RefPtr<WebCore::ImageData>> ArgumentCoder<RefPtr<WebCore::ImageData>>::decode(Decoder& decoder)
-{
-    bool isEngaged;
-    if (!decoder.decode(isEngaged))
-        return WTF::nullopt;
-
-    if (!isEngaged)
-        return { nullptr };
-
-    auto result = ArgumentCoder<Ref<WebCore::ImageData>>::decode(decoder);
-    if (!result)
-        return WTF::nullopt;
-    return { WTFMove(*result) };
-}
-
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 void ArgumentCoder<WebCore::GraphicsContextGLAttributes>::encode(Encoder& encoder, const WebCore::GraphicsContextGLAttributes& attributes)
 {
@@ -3268,5 +3223,30 @@ Optional<WebCore::GraphicsContextGL::ActiveInfo> ArgumentCoder<WebCore::Graphics
 }
 
 #endif
+
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+
+void ArgumentCoder<ImageExtractionDataDetectorInfo>::encode(Encoder& encoder, const ImageExtractionDataDetectorInfo& info)
+{
+    encodePlatformData(encoder, info);
+    encoder << info.normalizedQuads;
+}
+
+Optional<ImageExtractionDataDetectorInfo> ArgumentCoder<ImageExtractionDataDetectorInfo>::decode(Decoder& decoder)
+{
+    ImageExtractionDataDetectorInfo result;
+    if (!decodePlatformData(decoder, result))
+        return WTF::nullopt;
+
+    Optional<Vector<FloatQuad>> normalizedQuads;
+    decoder >> normalizedQuads;
+    if (!normalizedQuads)
+        return WTF::nullopt;
+
+    result.normalizedQuads = WTFMove(*normalizedQuads);
+    return WTFMove(result);
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
 
 } // namespace IPC

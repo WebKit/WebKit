@@ -426,6 +426,45 @@ static void firePageHideEventRecursively(Frame& frame)
         firePageHideEventRecursively(*child);
 }
 
+std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSuspension forceSuspension)
+{
+    page.mainFrame().loader().stopForBackForwardCache();
+
+    if (forceSuspension == ForceSuspension::No && !canCache(page))
+        return nullptr;
+
+    ASSERT_WITH_MESSAGE(!page.isUtilityPage(), "Utility pages such as SVGImage pages should never go into BackForwardCache");
+
+    setBackForwardCacheState(page, Document::AboutToEnterBackForwardCache);
+
+    // Focus the main frame, defocusing a focused subframe (if we have one). We do this here,
+    // before the page enters the back/forward cache, while we still can dispatch DOM blur/focus events.
+    if (page.focusController().focusedFrame())
+        page.focusController().setFocusedFrame(&page.mainFrame());
+
+    // Fire the pagehide event in all frames.
+    firePageHideEventRecursively(page.mainFrame());
+
+    destroyRenderTree(page.mainFrame());
+
+    // Stop all loads again before checking if we can still cache the page after firing the pagehide
+    // event, since the page may have started ping loads in its pagehide event handler.
+    page.mainFrame().loader().stopForBackForwardCache();
+
+    // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
+    // could have altered the page in a way that could prevent caching.
+    if (forceSuspension == ForceSuspension::No && !canCache(page)) {
+        setBackForwardCacheState(page, Document::NotInBackForwardCache);
+        return nullptr;
+    }
+
+    setBackForwardCacheState(page, Document::InBackForwardCache);
+
+    // Make sure we don't fire any JS events in this scope.
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    return makeUnique<CachedPage>(page);
+}
+
 bool BackForwardCache::addIfCacheable(HistoryItem& item, Page* page)
 {
     if (item.isInBackForwardCache())
@@ -434,43 +473,15 @@ bool BackForwardCache::addIfCacheable(HistoryItem& item, Page* page)
     if (!page)
         return false;
 
-    page->mainFrame().loader().stopForBackForwardCache();
-
-    if (!canCache(*page))
+    auto cachedPage = trySuspendPage(*page, ForceSuspension::No);
+    if (!cachedPage)
         return false;
-
-    ASSERT_WITH_MESSAGE(!page->isUtilityPage(), "Utility pages such as SVGImage pages should never go into BackForwardCache");
-
-    setBackForwardCacheState(*page, Document::AboutToEnterBackForwardCache);
-
-    // Focus the main frame, defocusing a focused subframe (if we have one). We do this here,
-    // before the page enters the back/forward cache, while we still can dispatch DOM blur/focus events.
-    if (page->focusController().focusedFrame())
-        page->focusController().setFocusedFrame(&page->mainFrame());
-
-    // Fire the pagehide event in all frames.
-    firePageHideEventRecursively(page->mainFrame());
-
-    destroyRenderTree(page->mainFrame());
-
-    // Stop all loads again before checking if we can still cache the page after firing the pagehide
-    // event, since the page may have started ping loads in its pagehide event handler.
-    page->mainFrame().loader().stopForBackForwardCache();
-
-    // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
-    // could have altered the page in a way that could prevent caching.
-    if (!canCache(*page)) {
-        setBackForwardCacheState(*page, Document::NotInBackForwardCache);
-        return false;
-    }
-
-    setBackForwardCacheState(*page, Document::InBackForwardCache);
 
     {
         // Make sure we don't fire any JS events in this scope.
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        item.setCachedPage(makeUnique<CachedPage>(*page));
+        item.setCachedPage(WTFMove(cachedPage));
         item.m_pruningReason = PruningReason::None;
         m_items.add(&item);
     }
@@ -479,6 +490,13 @@ bool BackForwardCache::addIfCacheable(HistoryItem& item, Page* page)
     RELEASE_LOG(BackForwardCache, "BackForwardCache::addIfCacheable item: %s, size: %u / %u", item.identifier().string().utf8().data(), pageCount(), maxSize());
 
     return true;
+}
+
+std::unique_ptr<CachedPage> BackForwardCache::suspendPage(Page& page)
+{
+    RELEASE_LOG(BackForwardCache, "BackForwardCache::suspendPage()");
+
+    return trySuspendPage(page, ForceSuspension::Yes);
 }
 
 std::unique_ptr<CachedPage> BackForwardCache::take(HistoryItem& item, Page* page)

@@ -119,6 +119,11 @@ private:
     void doneDeferringTouchStart(bool preventNativeGestures) override;
     void doneDeferringTouchEnd(bool preventNativeGestures) override;
 #endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&) final;
+#endif
+
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
     Ref<WebCore::ValidationBubble> createValidationBubble(const String& message, const WebCore::ValidationBubble::Settings&) final;
 
@@ -138,8 +143,8 @@ private:
     RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) final;
 #endif
 
-    void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorWindowLifetime) override;
-    void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) override;
+    void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime) override;
+    void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation) override;
     void setTextIndicatorAnimationProgress(float) override;
 
     void showSafeBrowsingWarning(const SafeBrowsingWarning&, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&) override;
@@ -292,6 +297,8 @@ private:
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
     void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) final;
 #endif
+
+    WebCore::Color contentViewBackgroundColor() final;
 
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;

@@ -389,7 +389,7 @@ public:
     void setInlineBoxWrapper(InlineElementBox*);
     void deleteLineBoxWrapper();
 
-    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
     Optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const
 override;
     void repaintDuringLayoutIfMoved(const LayoutRect&);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
@@ -52,12 +53,12 @@ public:
     WEBCORE_EXPORT void resetQuotaForTesting();
 private:
     StorageQuotaManager(uint64_t quota, UsageGetter&&, QuotaIncreaseRequester&&);
-    bool tryGrantRequest(uint64_t);
+    bool tryGrantRequest(uint64_t) WTF_REQUIRES_LOCK(m_quotaCountDownLock);
 
     void updateQuotaBasedOnUsage();
 
-    Lock m_quotaCountDownLock;
-    uint64_t m_quotaCountDown { 0 };
+    CheckedLock m_quotaCountDownLock;
+    uint64_t m_quotaCountDown WTF_GUARDED_BY_LOCK(m_quotaCountDownLock) { 0 };
     uint64_t m_quota { 0 };
     uint64_t m_usage { 0 };
 

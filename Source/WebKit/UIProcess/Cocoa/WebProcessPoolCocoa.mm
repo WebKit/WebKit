@@ -189,15 +189,20 @@ void WebProcessPool::platformInitialize()
 }
 
 #if PLATFORM(IOS_FAMILY)
-String WebProcessPool::cookieStorageDirectory()
+String WebProcessPool::cacheDirectoryInContainerOrHomeDirectory(const String& subpath)
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
         path = NSHomeDirectory();
 
-    path = path + "/Library/Cookies";
+    path = path + subpath;
     path = stringByResolvingSymlinksInPath(path);
     return path;
+}
+
+String WebProcessPool::cookieStorageDirectory()
+{
+    return cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_s);
 }
 #endif
 
@@ -217,7 +222,7 @@ static bool isInternalInstall()
 #if PLATFORM(IOS_FAMILY)
     static bool isInternal = MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
 #else
-    static bool isInternal = FileSystem::fileIsDirectory("/AppleInternal", FileSystem::ShouldFollowSymbolicLinks::No);
+    static bool isInternal = FileSystem::fileType("/AppleInternal") == FileSystem::FileType::Directory;
 #endif
     return isInternal;
 }
@@ -436,11 +441,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.overrideUserInterfaceIdiomAndScale = { _UIApplicationCatalystUserInterfaceIdiom(), _UIApplicationCatalystScaleFactor() };
 #endif
 
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
     parameters.hasMouseDevice = [[WKMouseDeviceObserver sharedInstance] hasMouseDevice];
 #endif
 
-#if HAVE(PENCILKIT_TEXT_INPUT)
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
     parameters.hasStylusDevice = [[WKStylusDeviceObserver sharedInstance] hasStylusDevice];
 #endif
 
@@ -488,12 +493,7 @@ String WebProcessPool::parentBundleDirectory()
 
 String WebProcessPool::networkingCachesDirectory()
 {
-    String path = pathForProcessContainer();
-    if (path.isEmpty())
-        path = NSHomeDirectory();
-
-    path = path + "/Library/Caches/com.apple.WebKit.Networking/";
-    path = stringByResolvingSymlinksInPath(path);
+    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
 
     NSError *error = nil;
     NSString* nsPath = path;
@@ -507,12 +507,7 @@ String WebProcessPool::networkingCachesDirectory()
 
 String WebProcessPool::webContentCachesDirectory()
 {
-    String path = pathForProcessContainer();
-    if (path.isEmpty())
-        path = NSHomeDirectory();
-
-    path = path + "/Library/Caches/com.apple.WebKit.WebContent/";
-    path = stringByResolvingSymlinksInPath(path);
+    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/"_s);
 
     NSError *error = nil;
     NSString* nsPath = path;

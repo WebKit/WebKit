@@ -165,8 +165,6 @@ function installDependenciesWithApt {
         hunspell \
         hunspell-en-us \
         hunspell-en-gb \
-        libapache2-mod-php \
-        php-json \
         libcgi-pm-perl \
         libgpg-error-dev \
         psmisc \
@@ -362,7 +360,6 @@ function installDependenciesWithPacman {
         hunspell \
         hunspell-en \
         hunspell-en_GB \
-        php-apache \
         libgpg-error \
         psmisc \
         pulseaudio \
@@ -551,8 +548,6 @@ function installDependenciesWithDnf {
         libgpg-error-devel \
         mod_ssl \
         perl-CGI \
-        php \
-        php-json \
         psmisc \
         pulseaudio-utils \
         pygobject3-base \

@@ -110,7 +110,6 @@ class UnsuspendableActiveDOMObject;
 class VoidCallback;
 class WebAnimation;
 class WebGLRenderingContext;
-class WebKitAudioContext;
 class WindowProxy;
 class XMLHttpRequest;
 
@@ -656,6 +655,8 @@ public:
     String elementBufferingPolicy(HTMLMediaElement&);
     double privatePlayerVolume(const HTMLMediaElement&);
     bool privatePlayerMuted(const HTMLMediaElement&);
+    bool isMediaElementHidden(const HTMLMediaElement&);
+
     ExceptionOr<void> setOverridePreferredDynamicRangeMode(HTMLMediaElement&, const String&);
 #endif
 
@@ -714,7 +715,7 @@ public:
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    void setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>&, StringView restrictionsString);
+    void setAudioContextRestrictions(AudioContext&, StringView restrictionsString);
     void useMockAudioDestinationCocoa();
 #endif
 
@@ -844,6 +845,7 @@ public:
     bool supportsAudioSession() const;
     String audioSessionCategory() const;
     double preferredAudioBufferSize() const;
+    double currentAudioBufferSize() const;
     bool audioSessionActive() const;
 
     void storeRegistrationsOnDisk(DOMPromiseDeferred<void>&&);
@@ -1193,7 +1195,6 @@ private:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    RefPtr<MediaSessionCoordinator> m_mediaSessionCoordinator;
     RefPtr<MockMediaSessionCoordinator> m_mockMediaSessionCoordinator;
 #endif
 };

@@ -250,6 +250,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_switch_char:
     case op_in_by_val:
     case op_in_by_id:
+    case op_has_private_name:
+    case op_has_private_brand:
     case op_get_scope:
     case op_get_from_scope:
     case op_get_enumerable_length:

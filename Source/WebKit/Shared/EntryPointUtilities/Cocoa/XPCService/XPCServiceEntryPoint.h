@@ -118,8 +118,8 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (!delegate.getClientIdentifier(parameters.clientIdentifier))
         exit(EXIT_FAILURE);
 
-    if (!delegate.getClientBundleIdentifier(parameters.clientBundleIdentifier))
-        exit(EXIT_FAILURE);
+    // The host process may not have a bundle identifier (e.g. a command line app), so don't require one.
+    delegate.getClientBundleIdentifier(parameters.clientBundleIdentifier);
 
     if (!delegate.getClientSDKVersion(parameters.clientSDKVersion))
         exit(EXIT_FAILURE);

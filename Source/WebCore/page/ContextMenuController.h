@@ -70,7 +70,7 @@ public:
 #endif
 
 private:
-    std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&, OptionSet<HitTestRequest::RequestType> hitType, ContextMenuContext::Type);
+    std::unique_ptr<ContextMenu> maybeCreateContextMenu(Event&, OptionSet<HitTestRequest::Type> hitType, ContextMenuContext::Type);
     void showContextMenu(Event&);
     
     void appendItem(ContextMenuItem&, ContextMenu* parentMenu);

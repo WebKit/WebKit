@@ -78,16 +78,13 @@ public:
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
-
-    using TextTrackCueFormat = WebCore::InbandTextTrackPrivate::CueFormat;
-    TextTrackCueFormat cueFormat() const final { return m_format; }
+    AtomString inBandMetadataTrackDispatchType() const final { return m_inBandMetadataTrackDispatchType; }
 
     using TextTrackKind = WebCore::InbandTextTrackPrivate::Kind;
     TextTrackKind kind() const final { return m_kind; }
 
     using TextTrackMode = WebCore::InbandTextTrackPrivate::Mode;
     void setMode(TextTrackMode) final;
-    TextTrackMode mode() const final { return m_mode; }
 
     bool isClosedCaptions() const final { return m_isClosedCaptions; }
     bool isSDH() const final { return m_isSDH; }
@@ -104,13 +101,12 @@ private:
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };
+    AtomString m_inBandMetadataTrackDispatchType;
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
     TrackPrivateRemoteIdentifier m_identifier;
 
-    TextTrackCueFormat m_format { TextTrackCueFormat::Generic };
     TextTrackKind m_kind { TextTrackKind::None };
-    TextTrackMode m_mode { TextTrackMode::Disabled };
     bool m_isClosedCaptions { false };
     bool m_isSDH { false };
     bool m_containsOnlyForcedSubtitles { false };

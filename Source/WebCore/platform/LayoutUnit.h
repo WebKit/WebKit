@@ -150,8 +150,8 @@ public:
     int round() const
     {
         if (m_value > 0)
-            return saturatedAddition(rawValue(), kFixedPointDenominator / 2) / kFixedPointDenominator;
-        return saturatedSubtraction(rawValue(), (kFixedPointDenominator / 2) - 1) / kFixedPointDenominator;
+            return saturatedSum<int>(rawValue(), kFixedPointDenominator / 2) / kFixedPointDenominator;
+        return saturatedDifference<int>(rawValue(), (kFixedPointDenominator / 2) - 1) / kFixedPointDenominator;
     }
 
     int floor() const
@@ -588,7 +588,7 @@ inline LayoutUnit operator/(unsigned long long a, const LayoutUnit& b)
 inline LayoutUnit operator+(const LayoutUnit& a, const LayoutUnit& b)
 {
     LayoutUnit returnVal;
-    returnVal.setRawValue(saturatedAddition(a.rawValue(), b.rawValue()));
+    returnVal.setRawValue(saturatedSum<int>(a.rawValue(), b.rawValue()));
     return returnVal;
 }
 
@@ -625,7 +625,7 @@ inline double operator+(const double a, const LayoutUnit& b)
 inline LayoutUnit operator-(const LayoutUnit& a, const LayoutUnit& b)
 {
     LayoutUnit returnVal;
-    returnVal.setRawValue(saturatedSubtraction(a.rawValue(), b.rawValue()));
+    returnVal.setRawValue(saturatedDifference<int>(a.rawValue(), b.rawValue()));
     return returnVal;
 }
 
@@ -691,7 +691,7 @@ inline LayoutUnit operator%(int a, const LayoutUnit& b)
 
 inline LayoutUnit& operator+=(LayoutUnit& a, const LayoutUnit& b)
 {
-    a.setRawValue(saturatedAddition(a.rawValue(), b.rawValue()));
+    a.setRawValue(saturatedSum<int>(a.rawValue(), b.rawValue()));
     return a;
 }
 
@@ -721,7 +721,7 @@ inline LayoutUnit& operator-=(LayoutUnit& a, int b)
 
 inline LayoutUnit& operator-=(LayoutUnit& a, const LayoutUnit& b)
 {
-    a.setRawValue(saturatedSubtraction(a.rawValue(), b.rawValue()));
+    a.setRawValue(saturatedDifference<int>(a.rawValue(), b.rawValue()));
     return a;
 }
 

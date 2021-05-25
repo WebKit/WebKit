@@ -93,7 +93,7 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
     RenderBlock::paint(childPaintInfo, childPoint);
 }
 
-LayoutRect RenderSVGForeignObject::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderSVGForeignObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }

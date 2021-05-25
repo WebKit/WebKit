@@ -36,7 +36,8 @@
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
 
@@ -85,8 +86,9 @@ public:
     void waitForDidFlushOnSecondaryThread(WebCore::DisplayList::FlushIdentifier targetFlushIdentifier)
     {
         ASSERT(!isMainRunLoop());
-        auto locker = holdLock(m_receivedFlushIdentifierLock);
+        Locker locker { m_receivedFlushIdentifierLock };
         m_receivedFlushIdentifierChangedCondition.wait(m_receivedFlushIdentifierLock, [&] {
+            assertIsHeld(m_receivedFlushIdentifierLock);
             return m_receivedFlushIdentifier == targetFlushIdentifier;
         });
 
@@ -110,11 +112,18 @@ protected:
 
     WebCore::RenderingMode renderingMode() const override { return BaseDisplayListImageBuffer::renderingMode(); }
 
-    bool hasPendingFlush() const { return m_sentFlushIdentifier != m_receivedFlushIdentifier; }
+    // It is safe to access m_receivedFlushIdentifier from the main thread without locking since it
+    // only gets modified on the main thread.
+    bool hasPendingFlush() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+    {
+        ASSERT(isMainRunLoop());
+        return m_sentFlushIdentifier != m_receivedFlushIdentifier;
+    }
 
     void didFlush(WebCore::DisplayList::FlushIdentifier flushIdentifier) override
     {
-        auto locker = holdLock(m_receivedFlushIdentifierLock);
+        ASSERT(isMainRunLoop());
+        Locker locker { m_receivedFlushIdentifierLock };
         m_receivedFlushIdentifier = flushIdentifier;
         m_receivedFlushIdentifierChangedCondition.notifyAll();
     }
@@ -165,13 +174,6 @@ protected:
         return m_remoteRenderingBackendProxy->getDataForImageBuffer(mimeType, quality, m_renderingResourceIdentifier);
     }
 
-    Vector<uint8_t> toBGRAData() const override
-    {
-        if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return { };
-
-        return m_remoteRenderingBackendProxy->getBGRADataForImageBuffer(m_renderingResourceIdentifier);
-    }
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::BackingStoreCopy::CopyBackingStore) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
@@ -194,38 +196,38 @@ protected:
         return bitmap->createImage();
     }
 
-    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect) const override
+    Optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return nullptr;
+            return WTF::nullopt;
 
-        auto imageData = WebCore::ImageData::create(srcRect.size());
-        if (!imageData)
-            return nullptr;
-        size_t dataSize = imageData->data().byteLength();
+        auto pixelBuffer = WebCore::PixelBuffer::tryCreate(destinationFormat, srcRect.size());
+        if (!pixelBuffer)
+            return WTF::nullopt;
+        size_t dataSize = pixelBuffer->data().byteLength();
 
         IPC::Timeout timeout = 5_s;
-        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize, timeout);
+        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetPixelBuffer(dataSize, timeout);
         if (!sharedMemory)
-            return nullptr;
+            return WTF::nullopt;
 
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-        mutableThis.m_drawingContext.recorder().getImageData(outputFormat, srcRect);
+        mutableThis.m_drawingContext.recorder().getPixelBuffer(destinationFormat, srcRect);
         mutableThis.flushDrawingContextAsync();
 
-        if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete(timeout))
-            memcpy(imageData->data().data(), sharedMemory->data(), dataSize);
+        if (m_remoteRenderingBackendProxy->waitForGetPixelBufferToComplete(timeout))
+            memcpy(pixelBuffer->data().data(), sharedMemory->data(), dataSize);
         else
-            memset(imageData->data().data(), 0, dataSize);
-        return imageData;
+            memset(pixelBuffer->data().data(), 0, dataSize);
+        return pixelBuffer;
     }
 
-    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
+    void putPixelBuffer(const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
     {
-        // The math inside ImageData::create() doesn't agree with the math inside ImageBufferBackend::putImageData() about how m_resolutionScale interacts with the data in the ImageBuffer.
-        // This means that putImageData() is only called when resolutionScale() == 1.
+        // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
+        // This means that putPixelBuffer() is only called when resolutionScale() == 1.
         ASSERT(resolutionScale() == 1);
-        m_drawingContext.recorder().putImageData(inputFormat, imageData, srcRect, destPoint, destFormat);
+        m_drawingContext.recorder().putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
     }
 
     bool prefersPreparationForDisplay() override { return true; }
@@ -339,9 +341,9 @@ protected:
     }
 
     WebCore::DisplayList::FlushIdentifier m_sentFlushIdentifier;
-    Lock m_receivedFlushIdentifierLock;
-    Condition m_receivedFlushIdentifierChangedCondition;
-    WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier;
+    CheckedLock m_receivedFlushIdentifierLock;
+    CheckedCondition m_receivedFlushIdentifierChangedCondition;
+    WebCore::DisplayList::FlushIdentifier m_receivedFlushIdentifier WTF_GUARDED_BY_LOCK(m_receivedFlushIdentifierLock); // Only modified on the main thread but may get queried on a secondary thread.
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 };
 

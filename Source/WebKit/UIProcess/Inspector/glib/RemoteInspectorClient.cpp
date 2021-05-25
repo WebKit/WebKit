@@ -194,13 +194,11 @@ void RemoteInspectorClient::setupConnection(Ref<SocketConnection>&& connection)
 void RemoteInspectorClient::setBackendCommands(const char* backendCommands)
 {
     if (!backendCommands || !backendCommands[0]) {
-        m_backendCommandsURL = String();
+        m_backendCommandsURL = { };
         return;
     }
 
-    Vector<char> base64Data;
-    base64Encode(backendCommands, strlen(backendCommands), base64Data);
-    m_backendCommandsURL = "data:text/javascript;base64," + base64Data;
+    m_backendCommandsURL = makeString("data:text/javascript;base64,", base64Encoded(backendCommands, strlen(backendCommands)));
 }
 
 void RemoteInspectorClient::connectionDidClose()

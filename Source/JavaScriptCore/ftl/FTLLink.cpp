@@ -145,6 +145,9 @@ void link(State& state)
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
             CCallHelpers::Call callArityCheck = jit.call(OperationPtrTag);
 
+#if ENABLE(EXTRA_CTI_THUNKS)
+            auto jumpToExceptionHandler = jit.branch32(CCallHelpers::LessThan, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
+#else
             auto noException = jit.branch32(CCallHelpers::GreaterThanOrEqual, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
             jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
             jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
@@ -152,6 +155,7 @@ void link(State& state)
             CCallHelpers::Call callLookupExceptionHandlerFromCallerFrame = jit.call(OperationPtrTag);
             jit.jumpToExceptionHandler(vm);
             noException.link(&jit);
+#endif // ENABLE(EXTRA_CTI_THUNKS)
 
             if (ASSERT_ENABLED) {
                 jit.load64(vm.addressOfException(), GPRInfo::regT1);
@@ -168,13 +172,17 @@ void link(State& state)
             jit.untagReturnAddress();
             mainPathJumps.append(jit.jump());
 
-            linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
+            linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
             if (linkBuffer->didFailToAllocate()) {
                 state.allocationFailed = true;
                 return;
             }
             linkBuffer->link(callArityCheck, FunctionPtr<OperationPtrTag>(codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck));
+#if ENABLE(EXTRA_CTI_THUNKS)
+            linkBuffer->link(jumpToExceptionHandler, CodeLocationLabel(vm.getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
+#else
             linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame));
+#endif
             linkBuffer->link(callArityFixup, FunctionPtr<JITThunkPtrTag>(vm.getCTIStub(arityFixupGenerator).code()));
             linkBuffer->link(mainPathJumps, state.generatedFunction);
         }
@@ -193,7 +201,7 @@ void link(State& state)
         jit.untagReturnAddress();
         CCallHelpers::Jump mainPathJump = jit.jump();
         
-        linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
+        linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
         if (linkBuffer->didFailToAllocate()) {
             state.allocationFailed = true;
             return;

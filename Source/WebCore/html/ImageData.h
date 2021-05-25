@@ -29,37 +29,46 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "ImageDataSettings.h"
+#include "IntSize.h"
 #include "PixelBuffer.h"
+#include "PredefinedColorSpace.h"
+#include <JavaScriptCore/Uint8ClampedArray.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh);
+    WEBCORE_EXPORT static Ref<ImageData> create(PixelBuffer&&);
+    WEBCORE_EXPORT static RefPtr<ImageData> create(Optional<PixelBuffer>&&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&);
-    WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&);
-    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, Optional<unsigned> sh);
+    WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&, PredefinedColorSpace);
+    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, Optional<ImageDataSettings> = WTF::nullopt);
+    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh, Optional<ImageDataSettings>);
+    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, Optional<unsigned> sh, Optional<ImageDataSettings>);
+
     WEBCORE_EXPORT ~ImageData();
 
-    const IntSize& size() const { return m_pixelBuffer.size(); }
-    int width() const { return m_pixelBuffer.size().width(); }
-    int height() const { return m_pixelBuffer.size().height(); }
+    static PredefinedColorSpace computeColorSpace(Optional<ImageDataSettings>, PredefinedColorSpace defaultColorSpace = PredefinedColorSpace::SRGB);
 
-    Uint8ClampedArray& data() const { return m_pixelBuffer.data(); }
+    const IntSize& size() const { return m_size; }
 
-    Ref<ImageData> deepClone() const;
+    int width() const { return m_size.width(); }
+    int height() const { return m_size.height(); }
+    Uint8ClampedArray& data() const { return m_data.get(); }
+    PredefinedColorSpace colorSpace() const { return m_colorSpace; }
 
-    DestinationColorSpace colorSpace() const { return m_pixelBuffer.colorSpace(); }
-    PixelFormat format() const { return m_pixelBuffer.format(); }
+    PixelBuffer pixelBuffer() const;
 
 private:
-    explicit ImageData(PixelBuffer&&);
+    explicit ImageData(const IntSize&, Ref<JSC::Uint8ClampedArray>&&, PredefinedColorSpace);
 
-    static Checked<unsigned, RecordOverflow> dataSize(const IntSize&);
-
-    PixelBuffer m_pixelBuffer;
+    IntSize m_size;
+    Ref<JSC::Uint8ClampedArray> m_data;
+    PredefinedColorSpace m_colorSpace;
 };
 
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ImageData&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ImageData&);
 
 } // namespace WebCore

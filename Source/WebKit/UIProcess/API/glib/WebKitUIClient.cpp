@@ -22,6 +22,7 @@
 
 #include "APIUIClient.h"
 #include "DrawingAreaProxy.h"
+#include "NotificationPermissionRequest.h"
 #include "WebKitDeviceInfoPermissionRequestPrivate.h"
 #include "WebKitFileChooserRequestPrivate.h"
 #include "WebKitGeolocationPermissionRequestPrivate.h"
@@ -305,7 +306,7 @@ private:
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(deviceInfoPermissionRequest.get()));
     }
 
-    void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, Function<void(bool)>&& completionHandler) final
+    void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&& completionHandler) final
     {
         GRefPtr<WebKitNotificationPermissionRequest> notificationPermissionRequest = adoptGRef(webkitNotificationPermissionRequestCreate(NotificationPermissionRequest::create(WTFMove(completionHandler)).ptr()));
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(notificationPermissionRequest.get()));

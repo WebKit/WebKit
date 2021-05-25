@@ -40,7 +40,12 @@ public:
     bool hasReplacedLogicalHeight() const;
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
-    LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
+    LayoutSize intrinsicSize() const final
+    {
+        if (shouldApplySizeContainment(*this))
+            return LayoutSize();
+        return m_intrinsicSize;
+    }
     
     RoundedRect roundedContentBoxRect() const;
     
@@ -89,7 +94,7 @@ private:
     void computePreferredLogicalWidths() final;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
-    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
+    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) final;
     

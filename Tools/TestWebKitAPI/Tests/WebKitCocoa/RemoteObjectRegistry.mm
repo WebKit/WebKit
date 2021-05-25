@@ -33,6 +33,7 @@
 #import "TestNavigationDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
@@ -48,6 +49,7 @@ TEST(RemoteObjectRegistry, Basic)
     @autoreleasepool {
         NSString * const testPlugInClassName = @"RemoteObjectRegistryPlugIn";
         auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
+        configuration.get()._groupIdentifier = @"testGroupIdentifier";
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
         isDone = false;
@@ -149,6 +151,14 @@ TEST(RemoteObjectRegistry, Basic)
             EXPECT_WK_STREQ([(NSHTTPURLResponse *)deserializedResponse allHeaderFields][@"testFieldName"], "testFieldValue");
             EXPECT_WK_STREQ(deserializedChallenge.protectionSpace.realm, "testRealm");
             EXPECT_WK_STREQ(deserializedError.domain, "testDomain");
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+
+        isDone = false;
+        
+        [object getGroupIdentifier:^(NSString *identifier) {
+            EXPECT_WK_STREQ(identifier, "testGroupIdentifier");
             isDone = true;
         }];
         TestWebKitAPI::Util::run(&isDone);

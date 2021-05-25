@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum class AudioContextState { Suspended, Running, Interrupted, Closed };
+enum class AudioContextState : uint8_t { Suspended, Running, Interrupted, Closed };
 
 }

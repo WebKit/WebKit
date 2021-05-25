@@ -71,26 +71,19 @@ void WebNotificationClient::notificationControllerDestroyed()
     delete this;
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, RefPtr<NotificationPermissionCallback>&& callback)
+void WebNotificationClient::requestPermission(ScriptExecutionContext& context, PermissionHandler&& permissionHandler)
 {
-    m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), WTFMove(callback));
-}
-
-bool WebNotificationClient::hasPendingPermissionRequests(ScriptExecutionContext* context) const
-{
-    return m_page->notificationPermissionRequestManager()->hasPendingPermissionRequests(context->securityOrigin());
-}
-
-void WebNotificationClient::cancelRequestsForPermission(ScriptExecutionContext* context)
-{
-    m_page->notificationPermissionRequestManager()->cancelRequest(context->securityOrigin());
+    auto* securityOrigin = context.securityOrigin();
+    if (!securityOrigin)
+        return permissionHandler(NotificationClient::Permission::Denied);
+    m_page->notificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTFMove(permissionHandler));
 }
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
-    if (!context || !context->isDocument())
+    if (!context || !context->isDocument() || !context->securityOrigin())
         return NotificationClient::Permission::Denied;
-    return m_page->notificationPermissionRequestManager()->permissionLevel(context->securityOrigin());
+    return m_page->notificationPermissionRequestManager()->permissionLevel(context->securityOrigin()->data());
 }
 
 } // namespace WebKit

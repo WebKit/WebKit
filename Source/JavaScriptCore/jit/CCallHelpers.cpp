@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "LinkBuffer.h"
 #include "ShadowChicken.h"
 
 namespace JSC {
@@ -69,6 +70,16 @@ void CCallHelpers::ensureShadowChickenPacket(VM& vm, GPRReg shadowPacket, GPRReg
     ok.link(this);
     addPtr(TrustedImm32(sizeof(ShadowChicken::Packet)), shadowPacket, scratch2);
     storePtr(scratch2, Address(scratch1NonArgGPR));
+}
+
+void CCallHelpers::emitJITCodeOver(MacroAssemblerCodePtr<JSInternalPtrTag> where, WTF::Function<void(CCallHelpers&)> emitCode, const char* description)
+{
+    CCallHelpers jit;
+    emitCode(jit);
+
+    constexpr bool needsBranchCompaction = false;
+    LinkBuffer linkBuffer(jit, where, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
+    FINALIZE_CODE(linkBuffer, NoPtrTag, description);
 }
 
 } // namespace JSC

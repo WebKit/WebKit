@@ -887,7 +887,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/CISupport/clean-build', '--platform=ios-11', '--release'],
+                        command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-11', '--release'],
                         )
             + 0,
         )
@@ -900,7 +900,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/CISupport/clean-build', '--platform=ios-simulator-11', '--debug'],
+                        command=['python3', 'Tools/CISupport/clean-build', '--platform=ios-simulator-11', '--debug'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
@@ -951,7 +951,7 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=120,
                         logEnviron=False,
-                        command=['del', '.git\index.lock'],
+                        command=['del', r'.git\index.lock'],
                         )
             + 0,
         )
@@ -1751,16 +1751,16 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         rc = self.runStep()
         self.assertEqual(self.getProperty(self.property_exceed_failure_limit), True)
         self.assertEqual(self.getProperty(self.property_failures),
-                            ['imported/blink/storage/indexeddb/blob-valid-before-commit.html',
-                             'imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html',
-                             'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html'])
+                         ['imported/blink/storage/indexeddb/blob-valid-before-commit.html',
+                          'imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/global/constructor.any.worker.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/global/toString.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.html',
+                          'imported/w3c/web-platform-tests/wasm/jsapi/interface.any.worker.html'])
         return rc
 
     def test_parse_results_json_flakes(self):
@@ -1934,6 +1934,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -1943,7 +1944,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
         )
@@ -1954,6 +1955,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -1963,7 +1965,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
@@ -1992,6 +1994,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2001,7 +2004,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test1', 'test2'],
                         )
             + 0,
         )
@@ -2012,6 +2015,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2021,7 +2025,7 @@ class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittes
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
                                  '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--exit-after-n-failures', '10', '--skip-failing-tests', '--guard-malloc',
-                                 '--iterations', 100],
+                                 '--iterations', 100, 'test'],
                         )
             + ExpectShell.log('stdio', stdout='9 failures found.')
             + 2,
@@ -2822,7 +2826,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         dir_names = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
         for dir_name in dir_names:
             FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/{}/test-name.html'.format(dir_name).encode('utf-8')
-            self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
             rc = self.runStep()
             self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
@@ -2832,7 +2836,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
         suffixes = ['-expected', '-expected-mismatch', '-ref', '-notref']
         for suffix in suffixes:
             FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/http/tests/events/device-motion-{}.html'.format(suffix).encode('utf-8')
-            self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
             rc = self.runStep()
             self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
@@ -2840,7 +2844,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_ignore_non_layout_test_in_html_directory(self):
         self.setupStep(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: '+++ LayoutTests/html/test.txt'.encode('utf-8')
-        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+        self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
@@ -2848,7 +2852,7 @@ class TestFindModifiedLayoutTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_non_relevant_patch(self):
         self.setupStep(FindModifiedLayoutTests())
         FindModifiedLayoutTests._get_patch = lambda x: b'Sample patch which does not modify any layout test'
-        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+        self.expectOutcome(result=SKIPPED, state_string='Patch doesn\'t have relevant changes')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_tests'), None)
         return rc
@@ -2869,7 +2873,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'archive'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'archive'],
                         )
             + 0,
         )
@@ -2883,7 +2887,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'archive'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'archive'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
@@ -2908,11 +2912,9 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('patch_id', '1234')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='WebKitBuild/release.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='WebKitBuild/release.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
@@ -2929,11 +2931,9 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('patch_id', '1234')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='WebKitBuild/release.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='WebKitBuild/release.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 1,
         )
@@ -3069,7 +3069,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'extract'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=ios-simulator',  '--release', 'extract'],
                         )
             + 0,
         )
@@ -3083,7 +3083,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'extract'],
+                        command=['python3', 'Tools/CISupport/built-product-archive', '--platform=mac-sierra',  '--debug', 'extract'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
@@ -3127,7 +3127,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
                                               '--patch_id', '1234',
                                               '--identifier', 'mac-highsierra-x86_64-release',
                                               '--archive', 'public_html/archives/mac-highsierra-x86_64-release/1234.zip',
-                                             ])
+                                              ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Transferred archive to S3')
@@ -3146,7 +3146,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
                                               '--patch_id', '1234',
                                               '--identifier', 'ios-simulator-12-x86_64-debug',
                                               '--archive', 'public_html/archives/ios-simulator-12-x86_64-debug/1234.zip',
-                                             ])
+                                              ])
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to transfer archive to S3')
@@ -3162,6 +3162,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SKIPPED, state_string='Transferred archive to S3 (skipped)')
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.runStep()
+
 
 class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -3341,7 +3342,7 @@ Failed
     TestWTF.WTF_Expected.Unexpected
         **FAIL** WTF_Expected.Unexpected
 
-        Tools\TestWebKitAPI\Tests\WTF\Expected.cpp:96
+        Tools\\TestWebKitAPI\\Tests\\WTF\\Expected.cpp:96
         Value of: s1
           Actual: oops
         Expected: s0
@@ -3604,11 +3605,9 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildnumber', '12')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='layout-test-results.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='layout-test-results.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
@@ -3626,11 +3625,9 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildnumber', '120')
         self.expectHidden(False)
         self.expectRemoteCommands(
-            Expect('uploadFile', dict(
-                                        workersrc='layout-test-results.zip', workdir='wkdir',
-                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
-                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
-                                     ))
+            Expect('uploadFile', dict(workersrc='layout-test-results.zip', workdir='wkdir',
+                                      blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                      writer=ExpectRemoteRef(remotetransfer.FileWriter)))
             + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
             + 0,
         )
@@ -3661,7 +3658,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
                                               '-d',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
-                                             ])
+                                              ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
@@ -3681,7 +3678,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                               'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun.zip',
                                               '-d',
                                               'public_html/results/iOS-12-Simulator-WK2-Tests-EWS/r1234-12-rerun',
-                                             ])
+                                              ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
@@ -3701,7 +3698,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip',
                                               '-d',
                                               'public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12',
-                                             ])
+                                              ])
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='failed (2) (failure)')

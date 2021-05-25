@@ -164,11 +164,6 @@ JSValue JSWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObject* global
     return getDOMConstructor<JSWorkerGlobalScopeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-template<> inline JSWorkerGlobalScope* IDLAttribute<JSWorkerGlobalScope>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSWorkerGlobalScope*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
@@ -271,44 +266,6 @@ void JSWorkerGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
-}
-
-#if ENABLE(BINDING_INTEGRITY)
-#if PLATFORM(WIN)
-#pragma warning(disable: 4483)
-extern "C" { extern void (*const __identifier("??_7WorkerGlobalScope@WebCore@@6B@")[])(); }
-#else
-extern "C" { extern void* _ZTVN7WebCore17WorkerGlobalScopeE[]; }
-#endif
-#endif
-
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<WorkerGlobalScope>&& impl)
-{
-
-#if ENABLE(BINDING_INTEGRITY)
-    const void* actualVTablePointer = getVTablePointer(impl.ptr());
-#if PLATFORM(WIN)
-    void* expectedVTablePointer = __identifier("??_7WorkerGlobalScope@WebCore@@6B@");
-#else
-    void* expectedVTablePointer = &_ZTVN7WebCore17WorkerGlobalScopeE[2];
-#endif
-
-    // If this fails WorkerGlobalScope does not have a vtable, so you need to add the
-    // ImplementationLacksVTable attribute to the interface definition
-    static_assert(std::is_polymorphic<WorkerGlobalScope>::value, "WorkerGlobalScope is not polymorphic");
-
-    // If you hit this assertion you either have a use after free bug, or
-    // WorkerGlobalScope has subclasses. If WorkerGlobalScope has subclasses that get passed
-    // to toJS() we currently require WorkerGlobalScope you to opt out of binding hardening
-    // by adding the SkipVTableValidation attribute to the interface IDL definition
-    RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
-#endif
-    return createWrapper<WorkerGlobalScope>(globalObject, WTFMove(impl));
-}
-
-JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, WorkerGlobalScope& impl)
-{
-    return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
 WorkerGlobalScope* JSWorkerGlobalScope::toWrapped(JSC::VM& vm, JSC::JSValue value)

@@ -93,9 +93,9 @@ private:
     void verifySchemaVersion();
     void deleteAllTables();
 
-    void createPrepareStatement(const String&);
+    void createPrepareStatement(ASCIILiteral);
     SQLiteStatement& preparedStatement(const String&);
-    bool executeSql(const String&);
+    bool executeSQLStatement(Expected<SQLiteStatement, int>&&);
 
     bool deleteCookieInternal(const String& name, const String& domain, const String& path);
     bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);

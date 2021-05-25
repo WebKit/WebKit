@@ -32,7 +32,6 @@ for layout tests.
 
 import logging
 import re
-import sys
 
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
 from webkitpy.layout_tests.models.test_configuration import (
@@ -106,7 +105,7 @@ class TestExpectationParser(object):
     """Provides parsing facilities for lines in the test_expectation.txt file."""
 
     BUG_MODIFIER_PREFIX = 'bug'
-    BUG_MODIFIER_REGEX = 'bug\d+'
+    BUG_MODIFIER_REGEX = r'bug\d+'
     REBASELINE_MODIFIER = 'rebaseline'
     PASS_EXPECTATION = 'pass'
     SKIP_MODIFIER = 'skip'
@@ -199,7 +198,7 @@ class TestExpectationParser(object):
             elif modifier.startswith(self.BUG_MODIFIER_PREFIX):
                 has_bugid = True
                 if re.match(self.BUG_MODIFIER_REGEX, modifier):
-                    expectation_line.warnings.append('BUG\d+ is not allowed, must be one of BUGWK\d+, or a non-numeric bug identifier.')
+                    expectation_line.warnings.append(r'BUG\d+ is not allowed, must be one of BUGWK\d+, or a non-numeric bug identifier.')
                 else:
                     expectation_line.parsed_bug_modifiers.append(modifier)
             else:
@@ -345,7 +344,7 @@ class TestExpectationParser(object):
                 if token.startswith(WEBKIT_BUG_PREFIX):
                     bugs.append(token.replace(WEBKIT_BUG_PREFIX, 'BUGWK'))
                 else:
-                    match = re.match('Bug\((\w+)\)$', token)
+                    match = re.match(r'Bug\((\w+)\)$', token)
                     if not match:
                         warnings.append('unrecognized bug identifier "%s"' % token)
                         break

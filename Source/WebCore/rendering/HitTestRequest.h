@@ -29,16 +29,17 @@ namespace WebCore {
 
 class HitTestRequest {
 public:
-    enum RequestType {
-        ReadOnly = 1 << 1,
-        Active = 1 << 2,
-        Move = 1 << 3,
-        Release = 1 << 4,
-        IgnoreCSSPointerEventsProperty = 1 << 5,
-        IgnoreClipping = 1 << 6,
-        SVGClipContent = 1 << 7,
-        TouchEvent = 1 << 8,
-        DisallowUserAgentShadowContent = 1 << 9,
+    enum class Type {
+        ReadOnly = 1 << 0,
+        Active = 1 << 1,
+        Move = 1 << 2,
+        Release = 1 << 3,
+        IgnoreCSSPointerEventsProperty = 1 << 4,
+        IgnoreClipping = 1 << 5,
+        SVGClipContent = 1 << 6,
+        TouchEvent = 1 << 7,
+        DisallowUserAgentShadowContent = 1 << 8,
+        DisallowUserAgentShadowContentExceptForImageOverlays = 1 << 9,
         AllowFrameScrollbars = 1 << 10,
         AllowChildFrameContent = 1 << 11,
         AllowVisibleChildFrameContentOnly = 1 << 12,
@@ -50,37 +51,39 @@ public:
         IncludeAllElementsUnderPoint = 1 << 16,
     };
 
-    HitTestRequest(OptionSet<RequestType> requestType = { ReadOnly, Active, DisallowUserAgentShadowContent })
-        : m_requestType { requestType }
+    HitTestRequest(OptionSet<Type> type = { Type::ReadOnly, Type::Active, Type::DisallowUserAgentShadowContent })
+        : m_type { type }
     {
-        ASSERT_IMPLIES(requestType.contains(IncludeAllElementsUnderPoint), requestType.contains(CollectMultipleElements));
+        ASSERT(!type.containsAll({ Type::DisallowUserAgentShadowContentExceptForImageOverlays, Type::DisallowUserAgentShadowContent }));
+        ASSERT_IMPLIES(type.contains(Type::IncludeAllElementsUnderPoint), type.contains(Type::CollectMultipleElements));
     }
 
-    bool readOnly() const { return m_requestType.contains(ReadOnly); }
-    bool active() const { return m_requestType.contains(Active); }
-    bool move() const { return m_requestType.contains(Move); }
-    bool release() const { return m_requestType.contains(Release); }
-    bool ignoreCSSPointerEventsProperty() const { return m_requestType.contains(IgnoreCSSPointerEventsProperty); }
-    bool ignoreClipping() const { return m_requestType.contains(IgnoreClipping); }
-    bool svgClipContent() const { return m_requestType.contains(SVGClipContent); }
-    bool touchEvent() const { return m_requestType.contains(TouchEvent); }
+    bool readOnly() const { return m_type.contains(Type::ReadOnly); }
+    bool active() const { return m_type.contains(Type::Active); }
+    bool move() const { return m_type.contains(Type::Move); }
+    bool release() const { return m_type.contains(Type::Release); }
+    bool ignoreCSSPointerEventsProperty() const { return m_type.contains(Type::IgnoreCSSPointerEventsProperty); }
+    bool ignoreClipping() const { return m_type.contains(Type::IgnoreClipping); }
+    bool svgClipContent() const { return m_type.contains(Type::SVGClipContent); }
+    bool touchEvent() const { return m_type.contains(Type::TouchEvent); }
     bool mouseEvent() const { return !touchEvent(); }
-    bool disallowsUserAgentShadowContent() const { return m_requestType.contains(DisallowUserAgentShadowContent); }
-    bool allowsFrameScrollbars() const { return m_requestType.contains(AllowFrameScrollbars); }
-    bool allowsChildFrameContent() const { return m_requestType.contains(AllowChildFrameContent); }
-    bool allowsVisibleChildFrameContent() const { return m_requestType.contains(AllowVisibleChildFrameContentOnly); }
-    bool isChildFrameHitTest() const { return m_requestType.contains(ChildFrameHitTest); }
-    bool resultIsElementList() const { return m_requestType.contains(CollectMultipleElements); }
-    bool includesAllElementsUnderPoint() const { return m_requestType.contains(IncludeAllElementsUnderPoint); }
+    bool disallowsUserAgentShadowContent() const { return m_type.contains(Type::DisallowUserAgentShadowContent); }
+    bool disallowsUserAgentShadowContentExceptForImageOverlays() const { return m_type.contains(Type::DisallowUserAgentShadowContentExceptForImageOverlays); }
+    bool allowsFrameScrollbars() const { return m_type.contains(Type::AllowFrameScrollbars); }
+    bool allowsChildFrameContent() const { return m_type.contains(Type::AllowChildFrameContent); }
+    bool allowsVisibleChildFrameContent() const { return m_type.contains(Type::AllowVisibleChildFrameContentOnly); }
+    bool isChildFrameHitTest() const { return m_type.contains(Type::ChildFrameHitTest); }
+    bool resultIsElementList() const { return m_type.contains(Type::CollectMultipleElements); }
+    bool includesAllElementsUnderPoint() const { return m_type.contains(Type::IncludeAllElementsUnderPoint); }
 
     // Convenience functions
     bool touchMove() const { return move() && touchEvent(); }
     bool touchRelease() const { return release() && touchEvent(); }
 
-    OptionSet<RequestType> type() const { return m_requestType; }
+    OptionSet<Type> type() const { return m_type; }
 
 private:
-    OptionSet<RequestType> m_requestType;
+    OptionSet<Type> m_type;
 };
 
 } // namespace WebCore

@@ -306,13 +306,13 @@ static inline Optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
 
 static inline void encodeDataInternal(Encoder& encoder, NSData *data)
 {
-    encode(encoder, (__bridge CFDataRef)data);
+    encoder << (__bridge CFDataRef)data;
 }
 
 static inline Optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
 {
     RetainPtr<CFDataRef> data;
-    if (!decode(decoder, data))
+    if (!decoder.decode(data))
         return WTF::nullopt;
     return { adoptNS((NSData *)data.leakRef()) };
 }
@@ -321,13 +321,13 @@ static inline Optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
 
 static inline void encodeDateInternal(Encoder& encoder, NSDate *date)
 {
-    encode(encoder, (__bridge CFDateRef)date);
+    encoder << (__bridge CFDateRef)date;
 }
 
 static inline Optional<RetainPtr<id>> decodeDateInternal(Decoder& decoder)
 {
     RetainPtr<CFDateRef> date;
-    if (!decode(decoder, date))
+    if (!decoder.decode(date))
         return WTF::nullopt;
     return { adoptNS((NSDate *)date.leakRef()) };
 }
@@ -414,13 +414,13 @@ static Optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
 
 static inline void encodeNumberInternal(Encoder& encoder, NSNumber *number)
 {
-    encode(encoder, (__bridge CFNumberRef)number);
+    encoder << (__bridge CFNumberRef)number;
 }
 
 static inline Optional<RetainPtr<id>> decodeNumberInternal(Decoder& decoder)
 {
     RetainPtr<CFNumberRef> number;
-    if (!decode(decoder, number))
+    if (!decoder.decode(number))
         return WTF::nullopt;
     return { adoptNS((NSNumber *)number.leakRef()) };
 }
@@ -438,7 +438,7 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
     [archiver finishEncoding];
     [archiver setDelegate:nil];
 
-    encode(encoder, (__bridge CFDataRef)[archiver encodedData]);
+    encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
 static Optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
@@ -448,7 +448,7 @@ static Optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSAr
         return WTF::nullopt;
 
     RetainPtr<CFDataRef> data;
-    if (!decode(decoder, data))
+    if (!decoder.decode(data))
         return WTF::nullopt;
 
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)data.get() error:nullptr]);
@@ -477,13 +477,13 @@ static Optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSAr
 
 static inline void encodeStringInternal(Encoder& encoder, NSString *string)
 {
-    encode(encoder, (__bridge CFStringRef)string);
+    encoder << (__bridge CFStringRef)string;
 }
 
 static inline Optional<RetainPtr<id>> decodeStringInternal(Decoder& decoder)
 {
     RetainPtr<CFStringRef> string;
-    if (!decode(decoder, string))
+    if (!decoder.decode(string))
         return WTF::nullopt;
     return { adoptNS((NSString *)string.leakRef()) };
 }
@@ -492,13 +492,13 @@ static inline Optional<RetainPtr<id>> decodeStringInternal(Decoder& decoder)
 
 static inline void encodeURLInternal(Encoder& encoder, NSURL *URL)
 {
-    encode(encoder, (__bridge CFURLRef)URL);
+    encoder << (__bridge CFURLRef)URL;
 }
 
 static inline Optional<RetainPtr<id>> decodeURLInternal(Decoder& decoder)
 {
     RetainPtr<CFURLRef> URL;
-    if (!decode(decoder, URL))
+    if (!decoder.decode(URL))
         return WTF::nullopt;
     return { adoptNS((NSURL *)URL.leakRef()) };
 }

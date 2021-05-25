@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "JSDOMCastedThisErrorBehavior.h"
+#include "JSDOMCastThisValue.h"
 #include "JSDOMExceptionHandling.h"
 
 namespace WebCore {
@@ -37,15 +37,13 @@ public:
     using Getter = JSC::JSValue(JSC::JSGlobalObject&, JSClass&);
     using GetterPassingPropertyName = JSC::JSValue(JSC::JSGlobalObject&, JSClass&, JSC::PropertyName);
     using StaticGetter = JSC::JSValue(JSC::JSGlobalObject&);
-    
-    static JSClass* cast(JSC::JSGlobalObject&, JSC::EncodedJSValue);
 
     template<Setter setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static bool set(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue thisValue, JSC::EncodedJSValue encodedValue, JSC::PropertyName attributeName)
     {
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
-        auto* thisObject = cast(lexicalGlobalObject, thisValue);
+        auto* thisObject = castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue));
         if (UNLIKELY(!thisObject)) {
             if constexpr (shouldThrow == CastedThisErrorBehavior::Throw)
                 return JSC::throwVMDOMAttributeSetterTypeError(&lexicalGlobalObject, throwScope, JSClass::info(), attributeName);
@@ -62,7 +60,7 @@ public:
     {
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
-        auto* thisObject = cast(lexicalGlobalObject, thisValue);
+        auto* thisObject = castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue));
         if (UNLIKELY(!thisObject)) {
             if constexpr (shouldThrow == CastedThisErrorBehavior::Throw)
                 return JSC::throwVMDOMAttributeSetterTypeError(&lexicalGlobalObject, throwScope, JSClass::info(), attributeName);
@@ -85,11 +83,11 @@ public:
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
         if constexpr (shouldThrow == CastedThisErrorBehavior::Assert) {
-            ASSERT(cast(lexicalGlobalObject, thisValue));
+            ASSERT(castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue)));
             auto* thisObject = JSC::jsCast<JSClass*>(JSC::JSValue::decode(thisValue));
             RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject))));
         } else {
-            auto* thisObject = cast(lexicalGlobalObject, thisValue);
+            auto* thisObject = castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue));
             if (UNLIKELY(!thisObject)) {
                 if constexpr (shouldThrow == CastedThisErrorBehavior::Throw)
                     return JSC::throwVMDOMAttributeGetterTypeError(&lexicalGlobalObject, throwScope, JSClass::info(), attributeName);
@@ -110,11 +108,11 @@ public:
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
 
         if constexpr (shouldThrow == CastedThisErrorBehavior::Assert) {
-            ASSERT(cast(lexicalGlobalObject, thisValue));
+            ASSERT(castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue)));
             auto* thisObject = JSC::jsCast<JSClass*>(JSC::JSValue::decode(thisValue));
             RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, attributeName))));
         } else {
-            auto* thisObject = cast(lexicalGlobalObject, thisValue);
+            auto* thisObject = castThisValue<JSClass>(lexicalGlobalObject, JSC::JSValue::decode(thisValue));
             if (UNLIKELY(!thisObject)) {
                 if constexpr (shouldThrow == CastedThisErrorBehavior::Throw)
                     return JSC::throwVMDOMAttributeGetterTypeError(&lexicalGlobalObject, throwScope, JSClass::info(), attributeName);

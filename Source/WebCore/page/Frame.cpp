@@ -821,7 +821,7 @@ String Frame::displayStringModifiedByEncoding(const String& str) const
 
 VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint) const
 {
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     HitTestResult result = eventHandler().hitTestResultAtPoint(framePoint, hitType);
     Node* node = result.innerNonSharedNode();
     if (!node)
@@ -844,7 +844,7 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     HitTestResult result = HitTestResult(pt);
 
     if (contentRenderer()) {
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         result = eventHandler().hitTestResultAtPoint(pt, hitType);
     }
     return result.innerNode() ? &result.innerNode()->document() : 0;
@@ -961,15 +961,14 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (is<SVGDocument>(*document) && !downcast<SVGDocument>(*document).zoomAndPanEnabled())
         return;
 
+    Optional<ScrollPosition> scrollPositionAfterZoomed;
     if (m_pageZoomFactor != pageZoomFactor) {
+        // Compute the scroll position with scale after zooming to stay the same position in the content.
         if (FrameView* view = this->view()) {
-            // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
-            LayoutPoint scrollPosition = view->scrollPosition();
-            float percentDifference = (pageZoomFactor / m_pageZoomFactor);
-            view->setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
+            scrollPositionAfterZoomed = view->scrollPosition();
+            scrollPositionAfterZoomed->scale(pageZoomFactor / m_pageZoomFactor);
         }
     }
-
     m_pageZoomFactor = pageZoomFactor;
     m_textZoomFactor = textZoomFactor;
 
@@ -981,6 +980,10 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (FrameView* view = this->view()) {
         if (document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
             view->layoutContext().layout();
+
+        // Scrolling to the calculated position must be done after the layout.
+        if (scrollPositionAfterZoomed)
+            view->setScrollPosition(scrollPositionAfterZoomed.value());
     }
 }
 

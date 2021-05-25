@@ -140,8 +140,8 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::enable()
     };
 
     {
-        LockHolder lock(CanvasRenderingContext::instancesMutex());
-        for (auto* context : CanvasRenderingContext::instances(lock)) {
+        Locker locker { CanvasRenderingContext::instancesLock() };
+        for (auto* context : CanvasRenderingContext::instances()) {
 #if ENABLE(WEBGPU)
             // The actual "context" for WebGPU is the `WebGPUDevice`, not the <canvas>.
             if (is<GPUCanvasContext>(context))
@@ -155,8 +155,8 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::enable()
 
 #if ENABLE(WEBGPU)
     {
-        LockHolder lock(WebGPUDevice::instancesMutex());
-        for (auto* device : WebGPUDevice::instances(lock)) {
+        Locker locker { WebGPUDevice::instancesLock() };
+        for (auto* device : WebGPUDevice::instances()) {
             if (existsInCurrentPage(device->scriptExecutionContext()))
                 bindCanvas(*device, false);
         }
@@ -165,8 +165,8 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::enable()
 
 #if ENABLE(WEBGL)
     {
-        LockHolder lock(WebGLProgram::instancesMutex());
-        for (auto& [program, contextWebGLBase] : WebGLProgram::instances(lock)) {
+        Locker locker { WebGLProgram::instancesLock() };
+        for (auto& [program, contextWebGLBase] : WebGLProgram::instances()) {
             if (contextWebGLBase && existsInCurrentPage(contextWebGLBase->canvasBase().scriptExecutionContext()))
                 didCreateWebGLProgram(*contextWebGLBase, *program);
         }
@@ -175,8 +175,8 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::enable()
 
 #if ENABLE(WEBGPU)
     {
-        LockHolder lock(WebGPUPipeline::instancesMutex());
-        for (auto& [pipeline, device] : WebGPUPipeline::instances(lock)) {
+        Locker locker { WebGPUPipeline::instancesLock() };
+        for (auto& [pipeline, device] : WebGPUPipeline::instances()) {
             if (device && existsInCurrentPage(device->scriptExecutionContext()) && pipeline->isValid())
                 didCreateWebGPUPipeline(*device, *pipeline);
         }

@@ -25,13 +25,12 @@
 
 #pragma once
 
-#include "AlphaPremultiplication.h"
 #include "ColorSpace.h"
 #include "FloatRect.h"
 #include "GraphicsTypesGL.h"
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
-#include "PixelFormat.h"
+#include "PixelBufferFormat.h"
 #include "PlatformLayer.h"
 #include "RenderingMode.h"
 #include <wtf/RefPtr.h>
@@ -43,8 +42,8 @@ class GraphicsContext;
 class GraphicsContextGL;
 class HostWindow;
 class Image;
-class ImageData;
 class NativeImage;
+class PixelBuffer;
 
 enum BackingStoreCopy {
     CopyBackingStore, // Guarantee subsequent draws don't affect the copy.
@@ -107,10 +106,9 @@ public:
 
     virtual String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const = 0;
-    virtual Vector<uint8_t> toBGRAData() const = 0;
 
-    virtual RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const = 0;
-    virtual void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
+    virtual Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const = 0;
+    virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
@@ -148,14 +146,8 @@ protected:
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
     IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };
 
-    WEBCORE_EXPORT virtual void copyImagePixels(
-        AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-        AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize&) const;
-
-    WEBCORE_EXPORT Vector<uint8_t> toBGRAData(void* data) const;
-
-    WEBCORE_EXPORT RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect, void* data) const;
-    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
+    WEBCORE_EXPORT Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, void* data) const;
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
 
     Parameters m_parameters;
 };
@@ -166,9 +158,9 @@ namespace WTF {
 
 template<> struct EnumTraits<WebCore::PreserveResolution> {
     using values = EnumValues<
-    WebCore::PreserveResolution,
-    WebCore::PreserveResolution::No,
-    WebCore::PreserveResolution::Yes
+        WebCore::PreserveResolution,
+        WebCore::PreserveResolution::No,
+        WebCore::PreserveResolution::Yes
     >;
 };
 

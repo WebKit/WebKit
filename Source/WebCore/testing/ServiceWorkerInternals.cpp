@@ -108,6 +108,23 @@ int ServiceWorkerInternals::processIdentifier() const
     return getCurrentProcessID();
 }
 
+void ServiceWorkerInternals::lastNavigationWasAppBound(Ref<DeferredPromise>&& promise)
+{
+    ASSERT(!m_lastNavigationWasAppBoundPromise);
+    m_lastNavigationWasAppBoundPromise = WTFMove(promise);
+    callOnMainThread([identifier = m_identifier, weakThis = makeWeakPtr(this)]() mutable {
+        if (auto* proxy = SWContextManager::singleton().workerByID(identifier)) {
+            proxy->thread().runLoop().postTaskForMode([weakThis = WTFMove(weakThis), appBound = proxy->lastNavigationWasAppBound()](auto&) {
+                if (!weakThis || !weakThis->m_lastNavigationWasAppBoundPromise)
+                    return;
+
+                weakThis->m_lastNavigationWasAppBoundPromise->resolve<IDLBoolean>(appBound);
+                weakThis->m_lastNavigationWasAppBoundPromise = nullptr;
+            }, WorkerRunLoop::defaultMode());
+        }
+    });
+}
+
 } // namespace WebCore
 
 #endif

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2020-2021, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +29,9 @@
 
 #include "AudioDestinationNode.h"
 
+#include "AudioBus.h"
 #include "AudioContext.h"
+#include "AudioIOCallback.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
@@ -55,7 +58,7 @@ AudioDestinationNode::~AudioDestinationNode()
     uninitialize();
 }
 
-void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
+void AudioDestinationNode::renderQuantum(AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
 {
     // We don't want denormals slowing down any of the audio processing
     // since they can very seriously hurt performance.
@@ -71,14 +74,12 @@ void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t nu
     
     if (!context().isInitialized()) {
         destinationBus->zero();
-        setIsSilent(true);
         return;
     }
 
     ASSERT(numberOfFrames);
     if (!numberOfFrames) {
         destinationBus->zero();
-        setIsSilent(true);
         return;
     }
 
@@ -113,37 +114,6 @@ void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t nu
 
     if (workletGlobalScope)
         workletGlobalScope->handlePostRenderTasks(m_currentSampleFrame);
-
-    setIsSilent(destinationBus->isSilent());
-
-    // The reason we are handling mute after the call to setIsSilent() is because the muted state does
-    // not affect the audio destination node's effective playing state.
-    if (m_muted)
-        destinationBus->zero();
-}
-
-void AudioDestinationNode::isPlayingDidChange()
-{
-    updateIsEffectivelyPlayingAudio();
-}
-
-void AudioDestinationNode::setIsSilent(bool isSilent)
-{
-    if (m_isSilent == isSilent)
-        return;
-
-    m_isSilent = isSilent;
-    updateIsEffectivelyPlayingAudio();
-}
-
-void AudioDestinationNode::updateIsEffectivelyPlayingAudio()
-{
-    bool isEffectivelyPlayingAudio = isPlaying() && !m_isSilent;
-    if (m_isEffectivelyPlayingAudio == isEffectivelyPlayingAudio)
-        return;
-
-    m_isEffectivelyPlayingAudio = isEffectivelyPlayingAudio;
-    context().isPlayingAudioDidChange();
 }
 
 void AudioDestinationNode::ref()

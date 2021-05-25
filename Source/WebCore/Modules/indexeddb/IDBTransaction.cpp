@@ -154,7 +154,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     if (isFinishedOrFinishing())
         return Exception { InvalidStateError, "Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished."_s };
 
-    Locker<Lock> locker(m_referencedObjectStoreLock);
+    Locker locker { m_referencedObjectStoreLock };
 
     if (auto* store = m_referencedObjectStores.get(objectStoreName))
         return makeRef(*store);
@@ -226,7 +226,7 @@ void IDBTransaction::internalAbort()
     m_database->willAbortTransaction(*this);
 
     if (isVersionChange()) {
-        Locker<Lock> locker(m_referencedObjectStoreLock);
+        Locker locker { m_referencedObjectStoreLock };
 
         auto& info = m_database->info();
         Vector<uint64_t> identifiersToRemove;
@@ -623,7 +623,7 @@ Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& 
     ASSERT(scriptExecutionContext());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    Locker<Lock> locker(m_referencedObjectStoreLock);
+    Locker locker { m_referencedObjectStoreLock };
 
     auto objectStore = makeUnique<IDBObjectStore>(*scriptExecutionContext(), info, *this);
     auto* rawObjectStore = objectStore.get();
@@ -659,7 +659,7 @@ void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String
 {
     LOG(IndexedDB, "IDBTransaction::renameObjectStore");
 
-    Locker<Lock> locker(m_referencedObjectStoreLock);
+    Locker locker { m_referencedObjectStoreLock };
 
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
@@ -746,7 +746,7 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
 void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameIndex");
-    Locker<Lock> locker(m_referencedObjectStoreLock);
+    Locker locker { m_referencedObjectStoreLock };
 
     ASSERT(isVersionChange());
     ASSERT(scriptExecutionContext());
@@ -1308,7 +1308,7 @@ void IDBTransaction::deleteObjectStore(const String& objectStoreName)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(isVersionChange());
 
-    Locker<Lock> locker(m_referencedObjectStoreLock);
+    Locker locker { m_referencedObjectStoreLock };
 
     if (auto objectStore = m_referencedObjectStores.take(objectStoreName)) {
         objectStore->markAsDeleted();
@@ -1456,7 +1456,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
 template<typename Visitor>
 void IDBTransaction::visitReferencedObjectStores(Visitor& visitor) const
 {
-    Locker<Lock> locker(m_referencedObjectStoreLock);
+    Locker locker { m_referencedObjectStoreLock };
     for (auto& objectStore : m_referencedObjectStores.values())
         visitor.addOpaqueRoot(objectStore.get());
     for (auto& objectStore : m_deletedObjectStores.values())

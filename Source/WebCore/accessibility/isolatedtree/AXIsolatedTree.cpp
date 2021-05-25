@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static Lock s_cacheLock;
+CheckedLock AXIsolatedTree::s_cacheLock;
 
 static unsigned newTreeID()
 {
@@ -75,7 +75,7 @@ void AXIsolatedTree::clear()
     ASSERT(isMainThread());
     m_axObjectCache = nullptr;
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(m_rootNode->objectID());
     m_rootNode = nullptr;
     m_nodeMap.clear();
@@ -84,6 +84,7 @@ void AXIsolatedTree::clear()
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
 {
     AXTRACE("AXIsolatedTree::treeForID");
+    Locker locker { s_cacheLock };
     return treeIDCache().get(treeID);
 }
 
@@ -107,7 +108,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
     // Now that the tree is ready to take client requests, add it to the tree
     // maps so that it can be found.
     auto pageID = axObjectCache->pageID();
-    LockHolder locker(s_cacheLock);
+    Locker locker { s_cacheLock };
     ASSERT(!treePageCache().contains(*pageID));
     treePageCache().set(*pageID, tree.copyRef());
     treeIDCache().set(tree->treeID(), tree.copyRef());
@@ -119,7 +120,7 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 {
     AXTRACE("AXIsolatedTree::removeTreeForPageID");
     ASSERT(isMainThread());
-    LockHolder locker(s_cacheLock);
+    Locker locker { s_cacheLock };
 
     if (auto tree = treePageCache().take(pageID)) {
         tree->clear();
@@ -129,7 +130,7 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
 {
-    LockHolder locker(s_cacheLock);
+    Locker locker { s_cacheLock };
 
     if (auto tree = treePageCache().get(pageID))
         return makeRefPtr(tree);
@@ -187,7 +188,7 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axPar
         return;
 
     auto object = createSubtree(axObject, axParent ? axParent->objectID() : InvalidAXID, attachWrapper);
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     if (!axParent)
         setRootNode(object.ptr());
     else if (axParent->objectID() != InvalidAXID) // Need to check for the objectID of axParent again because it may have been detached while traversing the tree.
@@ -223,7 +224,7 @@ Ref<AXIsolatedObject> AXIsolatedTree::createSubtree(AXCoreObject& axObject, AXID
     }
 
     {
-        LockHolder locker { m_changeLogLock };
+        Locker locker { m_changeLogLock };
         m_pendingAppends.append(WTFMove(nodeChange));
         updateChildrenIDs(object->objectID(), WTFMove(childrenIDs));
     }
@@ -244,7 +245,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     auto newObject = AXIsolatedObject::create(axObject, this, parentID);
     newObject->m_childrenIDs = axObject.childrenIDs();
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     // Remove the old object and set the new one to be updated on the AX thread.
     m_pendingNodeRemovals.append(axID);
     m_pendingAppends.append({ newObject, axObject.wrapper() });
@@ -270,7 +271,7 @@ void AXIsolatedTree::updateNodeProperty(const AXCoreObject& axObject, AXProperty
         return;
     }
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
 }
 
@@ -348,7 +349,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 
     if (updatedChild || removals.size()) {
         // Make the children IDs of the isolated object to be the same as the AXObject's.
-        LockHolder locker { m_changeLogLock };
+        Locker locker { m_changeLogLock };
         updateChildrenIDs(axAncestor->objectID(), WTFMove(axChildrenIDs));
     } else {
         // Nothing was updated. As a last resort, update the subtree.
@@ -361,7 +362,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
     AXTRACE("AXIsolatedTree::focusedNode");
     // Apply pending changes in case focus has changed and hasn't been updated.
     applyPendingChanges();
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     AXLOG(makeString("focusedNodeID ", m_focusedNodeID));
     AXLOG("focused node:");
     AXLOG(nodeForID(m_focusedNodeID));
@@ -371,7 +372,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
 RefPtr<AXIsolatedObject> AXIsolatedTree::rootNode()
 {
     AXTRACE("AXIsolatedTree::rootNode");
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     return m_rootNode;
 }
 
@@ -392,7 +393,7 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     AXLOG(makeString("axID ", axID));
     ASSERT(isMainThread());
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingFocusedNodeID = axID;
 
     AXPropertyMap propertyMap;
@@ -407,7 +408,7 @@ void AXIsolatedTree::removeNode(AXID axID)
     ASSERT(isMainThread());
 
     m_nodeMap.remove(axID);
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingNodeRemovals.append(axID);
 }
 
@@ -430,7 +431,7 @@ void AXIsolatedTree::removeSubtree(AXID axID)
         }
     }
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
     m_pendingSubtreeRemovals.append(axID);
 }
 
@@ -442,7 +443,7 @@ void AXIsolatedTree::applyPendingChanges()
     if (m_usedOnAXThread && isMainThread())
         return;
 
-    LockHolder locker { m_changeLogLock };
+    Locker locker { m_changeLogLock };
 
     if (m_pendingFocusedNodeID != m_focusedNodeID) {
         AXLOG(makeString("focusedNodeID ", m_focusedNodeID, " pendingFocusedNodeID ", m_pendingFocusedNodeID));

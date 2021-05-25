@@ -324,7 +324,7 @@ void SamplingProfiler::timerLoop()
     while (true) {
         Seconds stackTraceProcessingTime = 0_s;
         {
-            LockHolder locker(m_lock);
+            Locker locker { m_lock };
             if (UNLIKELY(m_isShutDown))
                 return;
 
@@ -350,13 +350,13 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
     if (m_vm.entryScope) {
         Seconds nowTime = m_stopwatch->elapsedTime();
 
-        auto machineThreadsLocker = holdLock(m_vm.heap.machineThreads().getLock());
-        auto codeBlockSetLocker = holdLock(m_vm.heap.codeBlockSet().getLock());
-        auto executableAllocatorLocker = holdLock(ExecutableAllocator::singleton().getLock());
+        Locker machineThreadsLocker { m_vm.heap.machineThreads().getLock() };
+        Locker codeBlockSetLocker { m_vm.heap.codeBlockSet().getLock() };
+        Locker executableAllocatorLocker { ExecutableAllocator::singleton().getLock() };
         Optional<LockHolder> wasmCalleesLocker;
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported())
-            wasmCalleesLocker = holdLock(Wasm::CalleeRegistry::singleton().getLock());
+            wasmCalleesLocker = Locker { Wasm::CalleeRegistry::singleton().getLock() };
 #endif
 
         auto didSuspend = m_jscExecutionThread->suspend();
@@ -671,13 +671,13 @@ template void SamplingProfiler::visit(SlotVisitor&);
 
 void SamplingProfiler::shutdown()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     m_isShutDown = true;
 }
 
 void SamplingProfiler::start()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     start(locker);
 }
 
@@ -703,19 +703,19 @@ void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread(const AbstractLoc
 
 void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     noticeCurrentThreadAsJSCExecutionThread(locker);
 }
 
 void SamplingProfiler::noticeJSLockAcquisition()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     noticeCurrentThreadAsJSCExecutionThread(locker);
 }
 
 void SamplingProfiler::noticeVMEntry()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_lock };
     ASSERT(m_vm.entryScope);
     noticeCurrentThreadAsJSCExecutionThread(locker);
     m_lastTime = m_stopwatch->elapsedTime();
@@ -951,7 +951,7 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const 
 String SamplingProfiler::stackTracesAsJSON()
 {
     DeferGC deferGC(m_vm.heap);
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
@@ -991,7 +991,7 @@ void SamplingProfiler::registerForReportAtExit()
     static Lock registrationLock;
     static HashSet<RefPtr<SamplingProfiler>>* profilesToReport;
 
-    LockHolder holder(registrationLock);
+    Locker locker { registrationLock };
 
     if (!profilesToReport) {
         profilesToReport = new HashSet<RefPtr<SamplingProfiler>>();
@@ -1027,7 +1027,7 @@ void SamplingProfiler::reportTopFunctions()
 
 void SamplingProfiler::reportTopFunctions(PrintStream& out)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     DeferGCForAWhile deferGC(m_vm.heap);
 
     {
@@ -1088,7 +1088,7 @@ void SamplingProfiler::reportTopBytecodes()
 
 void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     DeferGCForAWhile deferGC(m_vm.heap);
 
     {

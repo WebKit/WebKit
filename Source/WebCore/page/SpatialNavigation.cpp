@@ -325,7 +325,7 @@ bool hasOffscreenRect(Node* node, FocusDirection direction)
     if (!render)
         return true;
 
-    LayoutRect rect(render->absoluteClippedOverflowRect());
+    LayoutRect rect(render->absoluteClippedOverflowRectForSpatialNavigation());
     if (rect.isEmpty())
         return true;
 

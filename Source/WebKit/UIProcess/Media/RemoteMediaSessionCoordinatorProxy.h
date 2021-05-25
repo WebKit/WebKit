@@ -73,13 +73,14 @@ private:
     void positionStateChanged(const Optional<WebCore::MediaPositionState>&);
     void readyStateChanged(WebCore::MediaSessionReadyState);
     void playbackStateChanged(WebCore::MediaSessionPlaybackState);
-    void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);
+    void trackIdentifierChanged(const String&);
 
     // MediaSessionCoordinatorClient
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
     void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&&) final;
     void pauseSession(CompletionHandler<void(bool)>&&) final;
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
+    void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
 #if !RELEASE_LOG_DISABLED
     const WTF::Logger& logger() const { return m_logger; }

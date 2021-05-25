@@ -29,9 +29,6 @@
 import unittest
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults
-from webkitpy.layout_tests.models import test_results
-from webkitpy.layout_tests.models import test_failures
-from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
 class LayoutTestResultsTest(unittest.TestCase):

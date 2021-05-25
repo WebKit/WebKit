@@ -31,6 +31,7 @@
 #include "MediaSample.h"
 #include "MediaStreamPrivate.h"
 #include "SampleBufferDisplayLayer.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
@@ -264,8 +265,8 @@ private:
 
     RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
-    Lock m_currentVideoSampleLock;
-    RefPtr<MediaSample> m_currentVideoSample;
+    CheckedLock m_currentVideoSampleLock;
+    RefPtr<MediaSample> m_currentVideoSample WTF_GUARDED_BY_LOCK(m_currentVideoSampleLock);
 
     bool m_playing { false };
     bool m_muted { false };

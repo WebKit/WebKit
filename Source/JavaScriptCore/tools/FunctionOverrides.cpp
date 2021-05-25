@@ -110,14 +110,14 @@ FunctionOverrides& FunctionOverrides::overrides()
 FunctionOverrides::FunctionOverrides(const char* overridesFileName)
 {
     FunctionOverridesAssertScope assertScope;
-    parseOverridesInFile(holdLock(m_lock), overridesFileName);
+    parseOverridesInFile(Locker { m_lock }, overridesFileName);
 }
 
 void FunctionOverrides::reinstallOverrides()
 {
     FunctionOverridesAssertScope assertScope;
     FunctionOverrides& overrides = FunctionOverrides::overrides();
-    auto locker = holdLock(overrides.m_lock);
+    Locker locker { overrides.m_lock };
     const char* overridesFileName = Options::functionOverrides();
     overrides.clear(locker);
     overrides.parseOverridesInFile(locker, overridesFileName);
@@ -167,7 +167,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
 
     String newBody;
     {
-        auto locker = holdLock(overrides.m_lock);
+        Locker locker { overrides.m_lock };
         auto it = overrides.m_entries.find(sourceBodyString.isolatedCopy());
         if (it == overrides.m_entries.end())
             return false;

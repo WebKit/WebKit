@@ -159,9 +159,10 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
 void AudioSourceProviderGStreamer::provideInput(AudioBus* bus, size_t framesToProcess)
 {
     GST_TRACE("Fetching buffers from adapters");
-    auto locker = tryHoldLock(m_adapterMutex);
-    if (!locker)
+    if (!m_adapterLock.tryLock())
         return;
+
+    Locker locker { AdoptLock, m_adapterLock };
     for (auto& it : m_adapters)
         copyGStreamerBuffersToAudioChannel(it.value.get(), bus, it.key - 1, framesToProcess);
 }
@@ -182,7 +183,7 @@ GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink, bool 
 
     GST_TRACE("Storing audio sample %" GST_PTR_FORMAT, sample.get());
     {
-        auto locker = holdLock(m_adapterMutex);
+        Locker locker { m_adapterLock };
         GQuark quark = g_quark_from_static_string("channel-id");
         int channelId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink), quark));
         GST_DEBUG("Channel ID: %d", channelId);
@@ -384,7 +385,7 @@ void AudioSourceProviderGStreamer::deinterleavePadsConfigured()
 
 void AudioSourceProviderGStreamer::clearAdapters()
 {
-    auto locker = holdLock(m_adapterMutex);
+    Locker locker { m_adapterLock };
     for (auto& adapter : m_adapters.values())
         gst_adapter_clear(adapter.get());
 }

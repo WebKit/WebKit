@@ -36,7 +36,9 @@ namespace WebCore {
 class OffscreenCanvasRenderingContext2D final : public CanvasRenderingContext2DBase {
     WTF_MAKE_ISO_ALLOCATED(OffscreenCanvasRenderingContext2D);
 public:
-    OffscreenCanvasRenderingContext2D(CanvasBase&);
+    static bool enabledForContext(ScriptExecutionContext&);
+
+    OffscreenCanvasRenderingContext2D(CanvasBase&, CanvasRenderingContext2DSettings&&);
     virtual ~OffscreenCanvasRenderingContext2D();
 
     OffscreenCanvas& canvas() const { return downcast<OffscreenCanvas>(canvasBase()); }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2020-2021, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +25,43 @@
 
 #pragma once
 
-#include "AudioBuffer.h"
 #include "AudioDestinationNode.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
 
+class AudioBuffer;
 class AudioBus;
-class AudioContext;
+class OfflineAudioContext;
     
 class OfflineAudioDestinationNode final : public AudioDestinationNode {
     WTF_MAKE_ISO_ALLOCATED(OfflineAudioDestinationNode);
 public:
-    OfflineAudioDestinationNode(BaseAudioContext&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    OfflineAudioDestinationNode(OfflineAudioContext&, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
+    ~OfflineAudioDestinationNode();
 
-    virtual ~OfflineAudioDestinationNode();
+    OfflineAudioContext& context();
+    const OfflineAudioContext& context() const;
+
+    AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
     
     // AudioNode   
-    void initialize() override;
-    void uninitialize() override;
+    void initialize() final;
+    void uninitialize() final;
 
     // AudioDestinationNode
-    void enableInput(const String&) override { }
+    void enableInput(const String&) final { }
     void startRendering(CompletionHandler<void(Optional<Exception>&&)>&&) final;
 
 private:
-    enum class OfflineRenderResult { Failure, Suspended, Complete };
-    OfflineRenderResult offlineRender();
+    enum class RenderResult { Failure, Suspended, Complete };
+    RenderResult renderOnAudioThread();
     void notifyOfflineRenderingSuspended();
 
     bool requiresTailProcessing() const final { return false; }
 
-    unsigned maxChannelCount() const final;
+    unsigned maxChannelCount() const final { return m_numberOfChannels; }
 
     unsigned m_numberOfChannels;
 

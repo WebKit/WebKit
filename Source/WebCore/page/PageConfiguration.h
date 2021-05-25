@@ -28,6 +28,7 @@
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
@@ -132,7 +133,7 @@ public:
 
     // FIXME: These should be all be Settings.
     bool loadsSubresources { true };
-    bool loadsFromNetwork { true };
+    Optional<HashSet<String>> allowedNetworkHosts;
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };

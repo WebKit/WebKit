@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #  FIXME: Store this as a .patch file in some new fixtures directory or similar.
-DIFF_TEST_DATA = '''diff --git a/WebCore/rendering/style/StyleFlexibleBoxData.h b/WebCore/rendering/style/StyleFlexibleBoxData.h
+DIFF_TEST_DATA = r'''diff --git a/WebCore/rendering/style/StyleFlexibleBoxData.h b/WebCore/rendering/style/StyleFlexibleBoxData.h
 index f5d5e74..3b6aa92 100644
 --- a/WebCore/rendering/style/StyleFlexibleBoxData.h
 +++ b/WebCore/rendering/style/StyleFlexibleBoxData.h

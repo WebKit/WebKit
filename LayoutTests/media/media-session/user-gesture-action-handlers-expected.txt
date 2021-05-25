@@ -1,0 +1,12 @@
+
+RUN(internals.setMediaElementRestrictions(video, "requireusergestureforvideoratechange"))
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplay)
+RUN(promise = video.play())
+Promise rejected correctly OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"}))
+ACTION: play
+RUN(promise = video.play())
+Promise resolved OK
+END OF TEST
+

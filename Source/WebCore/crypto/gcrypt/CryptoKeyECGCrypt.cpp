@@ -523,11 +523,11 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
         if (q && q->size() == curveUncompressedPointSize(m_curve)) {
             Vector<uint8_t> a;
             a.append(q->data() + 1, uncompressedFieldElementSize);
-            jwk.x = base64URLEncode(a);
+            jwk.x = base64URLEncodeToString(a);
 
             Vector<uint8_t> b;
             b.append(q->data() + 1 + uncompressedFieldElementSize, uncompressedFieldElementSize);
-            jwk.y = base64URLEncode(b);
+            jwk.y = base64URLEncodeToString(b);
         }
     }
 
@@ -543,7 +543,7 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
                     *d = WTFMove(paddedData);
                 }
 
-                jwk.d = base64URLEncode(*d);
+                jwk.d = base64URLEncodeToString(*d);
             }
         }
     }

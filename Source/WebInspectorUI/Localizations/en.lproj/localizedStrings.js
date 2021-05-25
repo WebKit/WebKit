@@ -77,6 +77,8 @@ localizedStrings["%s total"] = "%s total";
 localizedStrings["%s transferred"] = "%s transferred";
 /* A single value expressed as a percentage where the value has already been converted from a number to a string. */
 localizedStrings["%s%% @ Font Details Sidebar"] = "%s%%";
+/* Scope bar button that filter for dynamic resource loads, like from the 'fetch' method. */
+localizedStrings["%s/Fetch @ Network Tab Table Filter"] = "%s/Fetch";
 localizedStrings["%s:"] = "%s:";
 localizedStrings["(%s)"] = "(%s)";
 localizedStrings["(Action %s)"] = "(Action %s)";
@@ -313,6 +315,8 @@ localizedStrings["Clear watch expressions"] = "Clear watch expressions";
 localizedStrings["Click Listener"] = "Click Listener";
 localizedStrings["Click to create a Local Override from this content"] = "Click to create a Local Override from this content";
 localizedStrings["Click to import a file and create a Local Override\nShift-click to create a Local Override from this content"] = "Click to import a file and create a Local Override\nShift-click to create a Local Override from this content";
+/* Title of text button that resets the gesture controls in the image resource content view. */
+localizedStrings["Click to reset @ Image Resource Content View Gesture Controls"] = "Click to reset";
 localizedStrings["Click to select a color"] = "Click to select a color";
 localizedStrings["Click to select a color\nShift-click to switch color formats"] = "Click to select a color\nShift-click to switch color formats";
 localizedStrings["Click to show %d error in the Console"] = "Click to show %d error in the Console";
@@ -1703,6 +1707,10 @@ localizedStrings["XHR Breakpoint\u2026"] = "XHR Breakpoint\u2026";
 localizedStrings["XHRs"] = "XHRs";
 localizedStrings["XPath"] = "XPath";
 localizedStrings["Yes"] = "Yes";
+/* Title of image button that increases the zoom of the image resource content view. */
+localizedStrings["Zoom In @ Image Resource Content View Gesture Controls"] = "Zoom In";
+/* Title of image button that decreases the zoom of the image resource content view. */
+localizedStrings["Zoom Out @ Image Resource Content View Gesture Controls"] = "Zoom Out";
 localizedStrings["Zoom:"] = "Zoom:";
 localizedStrings["\u0022%s\u0022 has a non-array \u0022%s\u0022 value"] = "\u0022%s\u0022 has a non-array \u0022%s\u0022 value";
 localizedStrings["\u0022%s\u0022 has a non-number \u0022%s\u0022 value"] = "\u0022%s\u0022 has a non-number \u0022%s\u0022 value";
@@ -1718,6 +1726,8 @@ localizedStrings["\u0022%s\u0022 must be an %s"] = "\u0022%s\u0022 must be an %s
 localizedStrings["\u0022%s\u0022 threw an error"] = "\u0022%s\u0022 threw an error";
 localizedStrings["\u201C%s\u201D Event Fired"] = "\u201C%s\u201D Event Fired";
 localizedStrings["\u201C%s\u201D Profile Recorded"] = "\u201C%s\u201D Profile Recorded";
+/* Shown in the 'Type' column of the Network Table for resources loaded via the Beacon API. */
+localizedStrings["beacon @ Network Tab Resource Type Column Value"] = "beacon";
 /* Part of the 'Blackboxed - %d call frame' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
 localizedStrings["call frame @ Debugger Call Stack"] = "%d call frame";
 /* Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
@@ -1725,8 +1735,16 @@ localizedStrings["call frames @ Debugger Call Stack"] = "%d call frames";
 localizedStrings["computed"] = "computed";
 localizedStrings["default"] = "default";
 localizedStrings["default prevented"] = "default prevented";
+/* Shown in the 'Type' column of the Network Table for document resources. */
+localizedStrings["document @ Network Tab Resource Type Column Value"] = "document";
 localizedStrings["ensuring that common debugging functions are available on every page via the Console"] = "ensuring that common debugging functions are available on every page via the Console";
+/* Shown in the 'Type' column of the Network Table for resources loaded via the 'fetch' method. */
+localizedStrings["fetch @ Network Tab Resource Type Column Value"] = "fetch";
+/* Shown in the 'Type' column of the Network Table for font resources. */
+localizedStrings["font @ Network Tab Resource Type Column Value"] = "font";
 localizedStrings["for changes to take effect"] = "for changes to take effect";
+/* Shown in the 'Type' column of the Network Table for image resources. */
+localizedStrings["image @ Network Tab Resource Type Column Value"] = "image";
 localizedStrings["invalid HAR"] = "invalid HAR";
 localizedStrings["invalid JSON"] = "invalid JSON";
 localizedStrings["key"] = "key";
@@ -1737,12 +1755,18 @@ localizedStrings["non-number %s"] = "non-number %s";
 localizedStrings["non-object %s"] = "non-object %s";
 localizedStrings["non-string %s"] = "non-string %s";
 localizedStrings["originally %s"] = "originally %s";
+/* Shown in the 'Type' column of the Network Table for resources that don't fall into any of the other known types/categories. */
+localizedStrings["other @ Network Tab Resource Type Column Value"] = "other";
 localizedStrings["overriding built-in functions to log call traces or add %s statements"] = "overriding built-in functions to log call traces or add %s statements";
+/* Shown in the 'Type' column of the Network Table for resources loaded via '<a ping>' elements. */
+localizedStrings["ping @ Network Tab Resource Type Column Value"] = "ping";
 localizedStrings["popup"] = "popup";
 localizedStrings["popup, toggle"] = "popup, toggle";
 localizedStrings["requestAnimationFrame Fired"] = "requestAnimationFrame Fired";
 localizedStrings["setInterval Fired"] = "setInterval Fired";
 localizedStrings["setTimeout Fired"] = "setTimeout Fired";
+/* Shown in the 'Type' column of the Network Table for WebSocket resources. */
+localizedStrings["socket @ Network Tab Resource Type Column Value"] = "socket";
 localizedStrings["space"] = "space";
 localizedStrings["spaces"] = "spaces";
 localizedStrings["time before stopping"] = "time before stopping";

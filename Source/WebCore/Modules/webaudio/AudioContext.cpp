@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioContext.h"
+#include "AudioContextOptions.h"
 #include "AudioTimestamp.h"
 #include "DOMWindow.h"
 #include "JSDOMPromiseDeferred.h"
@@ -63,6 +64,10 @@ constexpr unsigned maxHardwareContexts = 4;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
 
+#if OS(WINDOWS)
+static unsigned hardwareContextCount;
+#endif
+
 static Optional<float>& defaultSampleRateForTesting()
 {
     static Optional<float> sampleRate;
@@ -85,7 +90,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
 {
     ASSERT(isMainThread());
 #if OS(WINDOWS)
-    if (s_hardwareContextCount >= maxHardwareContexts)
+    if (hardwareContextCount >= maxHardwareContexts)
         return Exception { QuotaExceededError, "Reached maximum number of hardware contexts on this platform"_s };
 #endif
     
@@ -100,16 +105,20 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
     if (contextOptions.sampleRate.hasValue() && !isSupportedSampleRate(contextOptions.sampleRate.value()))
         return Exception { SyntaxError, "sampleRate is not in range"_s };
     
-    auto audioContext = adoptRef(*new AudioContext(document, IsLegacyWebKitAudioContext::No, contextOptions));
+    auto audioContext = adoptRef(*new AudioContext(document, contextOptions));
     audioContext->suspendIfNeeded();
     return audioContext;
 }
 
-// Constructor for rendering to the audio hardware.
-AudioContext::AudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, const AudioContextOptions& contextOptions)
-    : BaseAudioContext(document, isLegacyWebKitAudioContext, contextOptions)
+AudioContext::AudioContext(Document& document, const AudioContextOptions& contextOptions)
+    : BaseAudioContext(document)
+    , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
 {
+    // According to spec AudioContext must die only after page navigate.
+    // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
+    setPendingActivity();
+
     constructCommon();
 
     // Initialize the destination node's muted state to match the page's current muted state.
@@ -117,14 +126,14 @@ AudioContext::AudioContext(Document& document, IsLegacyWebKitAudioContext isLega
 
     document.addAudioProducer(*this);
     document.registerForVisibilityStateChangedCallbacks(*this);
-}
 
-// Only needed for WebKitOfflineAudioContext.
-AudioContext::AudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
-    : BaseAudioContext(document, isLegacyWebKitAudioContext, numberOfChannels, sampleRate, WTFMove(renderTarget))
-    , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
-{
-    constructCommon();
+    // Unlike OfflineAudioContext, AudioContext does not require calling resume() to start rendering.
+    // Lazy initialization starts rendering so we schedule a task here to make sure lazy initialization
+    // ends up happening, even if no audio node gets constructed.
+    postTask([this] {
+        if (!isStopped())
+            lazyInitialize();
+    });
 }
 
 void AudioContext::constructCommon()
@@ -146,6 +155,21 @@ AudioContext::~AudioContext()
         document()->removeAudioProducer(*this);
         document()->unregisterForVisibilityStateChangedCallbacks(*this);
     }
+}
+
+void AudioContext::uninitialize()
+{
+    if (!isInitialized())
+        return;
+
+    BaseAudioContext::uninitialize();
+
+#if OS(WINDOWS)
+    ASSERT(hardwareContextCount);
+    --hardwareContextCount;
+#endif
+
+    setState(State::Closed);
 }
 
 double AudioContext::baseLatency()
@@ -192,16 +216,6 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
         uninitialize();
         m_mediaSession->setActive(false);
     });
-}
-
-DefaultAudioDestinationNode& AudioContext::destination()
-{
-    return static_cast<DefaultAudioDestinationNode&>(BaseAudioContext::destination());
-}
-
-const DefaultAudioDestinationNode& AudioContext::destination() const
-{
-    return static_cast<const DefaultAudioDestinationNode&>(BaseAudioContext::destination());
 }
 
 void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
@@ -317,7 +331,9 @@ void AudioContext::lazyInitialize()
             // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
             // We may want to consider requiring it for symmetry with OfflineAudioContext.
             startRendering();
-            ++s_hardwareContextCount;
+#if OS(WINDOWS)
+            ++hardwareContextCount;
+#endif
         }
     }
 }
@@ -443,6 +459,11 @@ void AudioContext::resume()
     document()->updateIsPlayingMedia();
 }
 
+const char* AudioContext::activeDOMObjectName() const
+{
+    return "AudioContext";
+}
+
 void AudioContext::suspendPlayback()
 {
     if (state() == State::Closed || !isInitialized())
@@ -481,6 +502,20 @@ void AudioContext::mediaCanStart(Document& document)
     ASSERT_UNUSED(document, &document == this->document());
     removeBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
     mayResumePlayback(true);
+}
+
+void AudioContext::isPlayingAudioDidChange()
+{
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
+    // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
+    // we could be on the audio I/O thread here and the call into WebCore could block.
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (auto* document = protectedThis->document())
+            document->updateIsPlayingMedia();
+    });
 }
 
 #if !RELEASE_LOG_DISABLED

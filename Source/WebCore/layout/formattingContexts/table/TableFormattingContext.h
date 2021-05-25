@@ -37,6 +37,8 @@ namespace WebCore {
 namespace Layout {
 
 class InvalidationState;
+class TableFormattingGeometry;
+
 // This class implements the layout logic for table formatting contexts.
 // https://www.w3.org/TR/CSS22/tables.html
 class TableFormattingContext final : public FormattingContext {
@@ -64,34 +66,6 @@ private:
         const TableGrid& m_grid;
     };
 
-    class Geometry : public FormattingContext::Geometry {
-    public:
-        LayoutUnit cellHeigh(const ContainerBox&) const;
-        Edges computedCellBorder(const TableGrid::Cell&) const;
-        Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox);
-        FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&);
-        InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox);
-
-    private:
-        friend class TableFormattingContext;
-        Geometry(const TableFormattingContext&, const TableGrid&);
-
-        const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Geometry::formattingContext()); }
-        const TableGrid& m_grid;
-    };
-    TableFormattingContext::Geometry geometry() const { return Geometry(*this, formattingState().tableGrid()); }
-
-    class Quirks : public FormattingContext::Quirks {
-    public:
-        Quirks(const TableFormattingContext&);
-
-        bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&) const;
-
-        const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingContext::Quirks::formattingContext()); }
-        TableFormattingContext::Geometry geometry() const { return formattingContext().geometry(); }
-    };
-    TableFormattingContext::Quirks quirks() const { return Quirks(*this); }
-
     TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
@@ -103,20 +77,10 @@ private:
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
 
+    TableFormattingGeometry geometry() const;
     const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 };
-
-inline TableFormattingContext::Geometry::Geometry(const TableFormattingContext& tableFormattingContext, const TableGrid& grid)
-    : FormattingContext::Geometry(tableFormattingContext)
-    , m_grid(grid)
-{
-}
-
-inline TableFormattingContext::Quirks::Quirks(const TableFormattingContext& tableFormattingContext)
-    : FormattingContext::Quirks(tableFormattingContext)
-{
-}
 
 }
 }

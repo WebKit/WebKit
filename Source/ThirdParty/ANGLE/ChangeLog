@@ -1,3 +1,143 @@
+2021-05-20  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Handle NAN constant folding correctly
+        https://bugs.webkit.org/show_bug.cgi?id=226052
+
+        NAN values (0.0f/0.0f) were being handled incorrectly. MSL was being emitted as lowercase 'nanf', instead of NAN
+        Check for an unlikely NAN case, and emit correct MSL
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitSingleConstant):
+
+2021-05-20  Kyle Piddington  <kpiddington@apple.com>
+
+        Red flashes zooming on Google Maps when using external monitor on multi-gpu systems
+        https://bugs.webkit.org/show_bug.cgi?id=225956
+        <rdar://77024179>        
+
+        Reviewed by Dean Jackson.
+        IOSurface presentation swaps require that a command buffer is queued for execution before
+        swapping. Otherwise, we're liable to drop frames, or present old IOSurface buffers. 
+        Ensure work flushed via glFlush completes before presenation by waiting for it to enqueue before 
+        swapping a surface.
+
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::flush):
+        * src/libANGLE/renderer/metal/mtl_command_buffer.h:
+        * src/libANGLE/renderer/metal/mtl_command_buffer.mm:
+        (rx::mtl::CommandBuffer::waitUntilScheduled):
+        (rx::mtl::CommandBuffer::commitImpl):
+
+2021-05-19  Kyle Piddington  <kpiddington@apple.com>
+
+        ASSERT(!toType.isArray()) failure in sh::CoerceSimple due to vector array dereference
+        https://bugs.webkit.org/show_bug.cgi?id=225864
+        <rdar://77968214> 
+
+        Reviewed by Dean Jackson.
+
+        Fixed program translation error, additional issues with transform feedback shaders
+
+        * src/compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.cpp:
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        (rx::ProgramMtl::reset):
+
+2021-05-19  Kyle Piddington  <kpiddington@apple.com>
+
+        [ANGLE Metal] Support Provoking Vertex Emulation, Pass Fragment Output test suite.
+        https://bugs.webkit.org/show_bug.cgi?id=225842
+
+        Reviewed by Dean Jackson.
+
+        Add support for provoking vertex emulation. Metal only supports using the first vertex
+        of a primitive as a provoking vertex. To adapt, rewrite the index buffer on the fly when provoking vertex support is required. This method does not rewrite any primitives that would be 
+        culled by primitive restart, such as simple triangles and lines. Triangle and line strips are re-written to line and triangle buffers. Tri fans and line loops are not supported for this
+        rewrite as of this patch.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::ContextMtl):
+        (rx::ContextMtl::initialize):
+        (rx::ContextMtl::onDestroy):
+        (rx::ContextMtl::drawElementsImpl):
+        (rx::ContextMtl::flushCommandBufer):
+        (rx::ContextMtl::present):
+        (rx::ContextMtl::ensureCommandBufferReady):
+        (rx::ContextMtl::requiresIndexRewrite):
+        * src/libANGLE/renderer/metal/ProgramMtl.h:
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        (rx::ProgramMtl::ProgramMtl):
+        (rx::ProgramMtl::programHasFlatAttributes const):
+        (rx::ProgramMtl::linkImpl):
+        * src/libANGLE/renderer/metal/ProvokingVertexHelper.h: Added.
+        * src/libANGLE/renderer/metal/ProvokingVertexHelper.mm: Added.
+        (rx::primCountForIndexCount):
+        (rx::ProvokingVertexHelper::ProvokingVertexHelper):
+        (rx::ProvokingVertexHelper::onDestroy):
+        (rx::ProvokingVertexHelper::commitPreconditionCommandBuffer):
+        (rx::ProvokingVertexHelper::getComputeCommandEncoder):
+        (rx::ProvokingVertexHelper::ensureCommandBufferReady):
+        (rx::buildIndexBufferKey):
+        (rx::ProvokingVertexHelper::getSpecializedShader):
+        (rx::ProvokingVertexHelper::hasSpecializedShader):
+        (rx::ProvokingVertexHelper::prepareCommandEncoderForDescriptor):
+        (rx::ProvokingVertexHelper::preconditionIndexBuffer):
+        * src/libANGLE/renderer/metal/mtl_state_cache.h:
+        (std::hash<rx::mtl::ProvokingVertexComputePipelineDesc>::operator() const):
+        * src/libANGLE/renderer/metal/mtl_state_cache.mm:
+        (rx::mtl::ProvokingVertexComputePipelineDesc::ProvokingVertexComputePipelineDesc):
+        (rx::mtl::ProvokingVertexComputePipelineDesc::operator=):
+        (rx::mtl::ProvokingVertexComputePipelineDesc::operator== const):
+        (rx::mtl::ProvokingVertexComputePipelineDesc::operator!= const):
+        (rx::mtl::ProvokingVertexComputePipelineDesc::hash const):
+        (rx::mtl::ProvokingVertexComputePipelineCache::ProvokingVertexComputePipelineCache):
+        (rx::mtl::ProvokingVertexComputePipelineCache::setComputeShader):
+        (rx::mtl::ProvokingVertexComputePipelineCache::clearPipelineStates):
+        (rx::mtl::ProvokingVertexComputePipelineCache::clear):
+        (rx::mtl::ProvokingVertexComputePipelineCache::getComputePipelineState):
+        (rx::mtl::ProvokingVertexComputePipelineCache::insertComputePipelineState):
+        (rx::mtl::ProvokingVertexComputePipelineCache::recreatePipelineStates):
+        (rx::mtl::ProvokingVertexComputePipelineCache::createComputePipelineState):
+        (rx::mtl::ProvokingVertexComputePipelineCache::~ProvokingVertexComputePipelineCache):
+        * src/libANGLE/renderer/metal/mtl_utils.h:
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::CreateMslShader):
+        * src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc:
+        * src/libANGLE/renderer/metal/shaders/rewrite_indices.metal: Added.
+        * src/libANGLE/renderer/metal/shaders/rewrite_indices_shared.h: Added.
+
+2021-05-18  Alex Christensen  <achristensen@webkit.org>
+
+        Stop compiling ANGLE metal files twice
+        https://bugs.webkit.org/show_bug.cgi?id=225919
+        <rdar://78013511>
+
+        Reviewed by Dean Jackson.
+
+        ANGLE currently generates an unused default.metallib that conflicts with other default.metallibs being built.
+        Since it is unused, remove it.
+        What we currently do is put all the source bytes into gDefaultMetallibSrc and compile it at runtime.
+        This could be optimized to do it at compile time and use newLibraryWithData instead of newLibraryWithSource,
+        but that should be done separately.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
+2021-05-12  Kyle Piddington  <kpiddington@apple.com>
+
+        [Angle METAL] Remove thread qualifiers and pass-by-reference qualifiers for cast functions
+        https://bugs.webkit.org/show_bug.cgi?id=225702
+        <rdar://76799461>
+
+        Cast functions fail to compile when casting from user uniforms. Update cast functions to remove pass-by-reference
+        qualifiers. 
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+
 2021-05-08  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WinCairo] Remove linker warning on ANGLE

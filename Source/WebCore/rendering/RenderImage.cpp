@@ -850,6 +850,7 @@ bool RenderImage::canMapWidthHeightToAspectRatio() const
 
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
+    ASSERT(!shouldApplySizeContainment(*this));
     RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
 
     // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.

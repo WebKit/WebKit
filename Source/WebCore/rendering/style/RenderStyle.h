@@ -527,6 +527,7 @@ public:
     bool hasAspectRatio() const { return aspectRatioType() == AspectRatioType::Ratio || aspectRatioType() == AspectRatioType::AutoAndRatio; }
     OptionSet<Containment> contain() const { return m_rareNonInheritedData->contain; }
     bool containsLayout() const { return m_rareNonInheritedData->contain.contains(Containment::Layout); }
+    bool containsSize() const { return m_rareNonInheritedData->contain.contains(Containment::Size); }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }
     BoxDirection boxDirection() const { return static_cast<BoxDirection>(m_inheritedFlags.boxDirection); }
     float boxFlex() const { return m_rareNonInheritedData->deprecatedFlexibleBox->flex; }
@@ -820,8 +821,9 @@ public:
 
 #if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return static_cast<BlendMode>(m_rareNonInheritedData->effectiveBlendMode); }
-    void setBlendMode(BlendMode mode) { SET_VAR(m_rareNonInheritedData, effectiveBlendMode, static_cast<unsigned>(mode)); }
+    void setBlendMode(BlendMode);
     bool hasBlendMode() const { return static_cast<BlendMode>(m_rareNonInheritedData->effectiveBlendMode) != BlendMode::Normal; }
+    bool isInSubtreeWithBlendMode() const { return m_rareInheritedData->isInSubtreeWithBlendMode; }
 
     Isolation isolation() const { return static_cast<Isolation>(m_rareNonInheritedData->isolation); }
     void setIsolation(Isolation isolation) { SET_VAR(m_rareNonInheritedData, isolation, static_cast<unsigned>(isolation)); }
@@ -1498,6 +1500,7 @@ public:
     bool isOriginalDisplayInlineType() const { return isDisplayInlineType(originalDisplay()); }
     bool isDisplayFlexibleOrGridBox() const { return isDisplayFlexibleOrGridBox(display()); }
     bool isDisplayRegionType() const;
+    bool isOriginalDisplayListItemType() const { return isDisplayListItemType(originalDisplay()); }
 
     bool setWritingMode(WritingMode);
 
@@ -1963,6 +1966,7 @@ private:
     static bool isDisplayFlexibleBox(DisplayType);
     static bool isDisplayGridBox(DisplayType);
     static bool isDisplayFlexibleOrGridBox(DisplayType);
+    static bool isDisplayListItemType(DisplayType);
 
     static LayoutBoxExtent shadowExtent(const ShadowData*);
     static LayoutBoxExtent shadowInsetExtent(const ShadowData*);
@@ -2202,6 +2206,14 @@ inline ImageOrientation RenderStyle::imageOrientation() const
     return static_cast<ImageOrientation::Orientation>(m_rareInheritedData->imageOrientation);
 }
 
+#if ENABLE(CSS_COMPOSITING)
+inline void RenderStyle::setBlendMode(BlendMode mode)
+{
+    SET_VAR(m_rareNonInheritedData, effectiveBlendMode, static_cast<unsigned>(mode));
+    SET_VAR(m_rareInheritedData, isInSubtreeWithBlendMode, mode != BlendMode::Normal);
+}
+#endif
+
 inline void RenderStyle::setLogicalWidth(Length&& logicalWidth)
 {
     if (isHorizontalWritingMode())
@@ -2358,6 +2370,11 @@ inline bool RenderStyle::isDisplayGridBox(DisplayType display)
 inline bool RenderStyle::isDisplayFlexibleOrGridBox(DisplayType display)
 {
     return isDisplayFlexibleBox(display) || isDisplayGridBox(display);
+}
+
+inline bool RenderStyle::isDisplayListItemType(DisplayType display)
+{
+    return display == DisplayType::ListItem;
 }
 
 inline bool RenderStyle::hasAnyPublicPseudoStyles() const

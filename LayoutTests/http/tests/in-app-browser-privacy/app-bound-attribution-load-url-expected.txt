@@ -1,0 +1,3 @@
+Test loadURL requests are succesfully attributed as app-bound.
+PASS successfully loaded only app-bound requests
+

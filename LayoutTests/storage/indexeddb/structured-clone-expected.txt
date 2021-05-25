@@ -583,10 +583,11 @@ PASS result.toString() is test_data.toString()
 
 
 Testing ImageData
+Testing ImageData: { colorSpace: "srgb" }
 canvas = document.createElement('canvas')
 canvas.width = 8
 canvas.height = 8
-test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8)
+test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8, { colorSpace: "srgb" })
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')
@@ -596,6 +597,23 @@ PASS Object.prototype.toString.call(result) is "[object ImageData]"
 PASS result.width is test_data.width
 PASS result.height is test_data.height
 PASS result.data.length is test_data.data.length
+PASS result.colorSpace is test_data.colorSpace
+PASS result data matches
+Testing ImageData: { colorSpace: undefined }
+canvas = document.createElement('canvas')
+canvas.width = 8
+canvas.height = 8
+test_data = canvas.getContext('2d').getImageData(0, 0, 8, 8, { colorSpace: undefined })
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object ImageData]"
+PASS result.width is test_data.width
+PASS result.height is test_data.height
+PASS result.data.length is test_data.data.length
+PASS result.colorSpace is test_data.colorSpace
 PASS result data matches
 
 Testing Blob

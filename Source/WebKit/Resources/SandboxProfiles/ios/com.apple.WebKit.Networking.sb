@@ -1,4 +1,4 @@
-; Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+; Copyright (C) 2014-2021 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -126,7 +126,10 @@
     (with-filter (entitlement-is-present "com.apple.private.networkextension.configuration")
            (allow file-read* (literal "/private/var/preferences/com.apple.networkextension.plist")))
 
-    (allow file-read* (literal "/private/var/preferences/com.apple.networkextension.uuidcache.plist"))
+    (allow file-read*
+        (literal "/private/var/preferences/com.apple.networkextension.uuidcache.plist")
+        (prefix "/private/var/db/com.apple.networkextension.")
+    )
 
     (allow mach-lookup
            (global-name "com.apple.AppSSO.service-xpc"))
@@ -428,6 +431,7 @@
     (sysctl-name "hw.cpufrequency_compat")
     (sysctl-name "hw.cpufrequency_max")
     (sysctl-name "hw.cpusubtype")
+    (sysctl-name "hw.cputhreadtype")
     (sysctl-name "hw.cputype")
     (sysctl-name "hw.l1dcachesize")
     (sysctl-name "hw.l1dcachesize_compat")
@@ -528,14 +532,32 @@
     (sysctl-name
         "hw.activecpu" ;; Needed by JSC engine.
         "hw.availcpu"
+        "hw.cacheconfig" ;; <rdar://problem/78213563>
+        "hw.cachelinesize" ;; <rdar://problem/15721872>
+        "hw.cachesize" ;; <rdar://problem/78213563>
         "hw.cpu64bit_capable"
+        "hw.cpufamily" ;; <rdar://problem/15721872>
+        "hw.cpusubfamily"
+        "hw.l1dcachesize" ;; <rdar://problem/15721872>
+        "hw.l1icachesize" ;; <rdar://problem/15721872>
+        "hw.l2cachesize" ;; <rdar://problem/15721872>
+        "hw.l3cachesize" ;; <rdar://problem/15721872>
+        "hw.logicalcpu" ;; <rdar://problem/15721872>
+        "hw.logicalcpu_max" ;; <rdar://problem/15721872>
         "hw.ncpu"
         "hw.machine" ;; Needed by CFNetwork (CFURLProtocols)
         "hw.memsize"
         "hw.model" ;; Needed for bundle loading
+        "hw.ncpu" ;; <rdar://problem/76782530>
+        "hw.nperflevels" ;; <rdar://problem/76782530>
+        "hw.pagesize" ;; <rdar://problem/76782530>
         "hw.pagesize_compat" ;; Needed by bmalloc
+        "hw.physicalcpu" ;; <rdar://problem/76782530>
+        "hw.physicalcpu_max" ;; <rdar://problem/76782530>
+        "hw.physmem" ;; <rdar://problem/76782530>
         "kern.bootargs"  ;; Needed for bundle loading
         "kern.hostname"
+        "kern.hv_vmm_present"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.osproductversion" ;; Needed by CFNetwork (HSTS store and others)
@@ -549,6 +571,8 @@
         "sysctl.name2oid"
         "vm.footprint_suspend")
     (sysctl-name-prefix "kern.proc.pid.")
+    (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/70973527>
+    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
 )
 
 ;; Access to client's cache folder & re-vending to CFNetwork.

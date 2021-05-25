@@ -802,7 +802,7 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
 {
     Frame *frame = [self coreFrame];
     IntPoint adjustedPoint = frame->view()->windowToContents(roundedIntPoint(point));
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult result = frame->eventHandler().hitTestResultAtPoint(adjustedPoint, hitType);
     Node* hitNode = result.innerNode();
     if (!hitNode || !hitNode->renderer())

@@ -132,7 +132,6 @@ private:
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
 
-    Lock m_presetMutex;
     RefPtr<AVVideoPreset> m_currentPreset;
     IntSize m_currentSize;
     double m_currentFrameRate;

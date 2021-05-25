@@ -189,7 +189,7 @@ unsigned ImageDecoderGStreamer::frameBytesAtIndex(size_t index, SubsamplingLevel
 
 PlatformImagePtr ImageDecoderGStreamer::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
-    LockHolder holder { m_sampleGeneratorLock };
+    Locker locker { m_sampleGeneratorLock };
 
     auto* sampleData = sampleAtIndex(index);
     if (!sampleData)
@@ -276,26 +276,26 @@ void ImageDecoderGStreamer::setHasEOS()
 {
     GST_DEBUG("EOS on decoder %p", this);
     {
-        LockHolder lock(m_sampleMutex);
+        Locker locker { m_sampleLock };
         m_eos = true;
         m_sampleCondition.notifyOne();
     }
     {
-        LockHolder lock(m_handlerMutex);
-        m_handlerCondition.wait(m_handlerMutex);
+        Locker locker { m_handlerLock };
+        m_handlerCondition.wait(m_handlerLock);
     }
 }
 
 void ImageDecoderGStreamer::notifySample(GRefPtr<GstSample>&& sample)
 {
     {
-        LockHolder lock(m_sampleMutex);
+        Locker locker { m_sampleLock };
         m_sample = WTFMove(sample);
         m_sampleCondition.notifyOne();
     }
     {
-        LockHolder lock(m_handlerMutex);
-        m_handlerCondition.wait(m_handlerMutex);
+        Locker locker { m_handlerLock };
+        m_handlerCondition.wait(m_handlerLock);
     }
 }
 
@@ -306,7 +306,7 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
     auto scopeExit = makeScopeExit([protectedThis = makeWeakPtr(this)] {
         if (!protectedThis)
             return;
-        LockHolder lock(protectedThis->m_messageLock);
+        Locker locker { protectedThis->m_messageLock };
         protectedThis->m_messageDispatched = true;
         protectedThis->m_messageCondition.notifyOne();
     });
@@ -365,7 +365,7 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
         auto& decoder = *static_cast<ImageDecoderGStreamer::InnerDecoder*>(userData);
 
         {
-            LockHolder lock(decoder.m_messageLock);
+            Locker locker { decoder.m_messageLock };
             decoder.m_messageDispatched = false;
             decoder.m_messageCondition.notifyOne();
         }
@@ -380,7 +380,7 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
             });
         }
         if (!decoder.m_messageDispatched) {
-            LockHolder lock(decoder.m_messageLock);
+            Locker locker { decoder.m_messageLock };
             decoder.m_messageCondition.wait(decoder.m_messageLock);
         }
         gst_message_unref(message);
@@ -426,13 +426,13 @@ void ImageDecoderGStreamer::pushEncodedData(const SharedBuffer& buffer)
     thread->detach();
     bool isEOS = false;
     {
-        LockHolder lock(m_sampleMutex);
+        Locker locker { m_sampleLock };
         isEOS = m_eos;
     }
     while (!isEOS) {
         {
-            LockHolder lock(m_sampleMutex);
-            m_sampleCondition.wait(m_sampleMutex);
+            Locker locker { m_sampleLock };
+            m_sampleCondition.wait(m_sampleLock);
             isEOS = m_eos;
             if (m_sample) {
                 auto* caps = gst_sample_get_caps(m_sample.get());
@@ -444,7 +444,7 @@ void ImageDecoderGStreamer::pushEncodedData(const SharedBuffer& buffer)
             }
         }
         {
-            LockHolder lock(m_handlerMutex);
+            Locker locker { m_handlerLock };
             m_handlerCondition.notifyAll();
         }
     }

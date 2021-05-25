@@ -39,7 +39,7 @@ namespace WebCore {
 // of protection is not required by the spec as of 11 December 2014:
 // https://www.w3.org/TR/WebCryptoAPI/#security-developers
 
-WEBCORE_EXPORT bool getDefaultWebCryptoMasterKey(Vector<uint8_t>&);
+WEBCORE_EXPORT Optional<Vector<uint8_t>> defaultWebCryptoMasterKey();
 WEBCORE_EXPORT bool deleteDefaultWebCryptoMasterKey();
 
 WEBCORE_EXPORT bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result);

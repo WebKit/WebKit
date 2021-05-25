@@ -489,15 +489,7 @@ const char* WebBackForwardList::loggingString()
 {
     StringBuilder builder;
 
-    builder.appendLiteral("WebBackForwardList 0x");
-    builder.append(hex(reinterpret_cast<uintptr_t>(this)));
-    builder.appendLiteral(" - ");
-    builder.appendNumber(m_entries.size());
-    builder.appendLiteral(" entries, has current index ");
-    builder.append(m_currentIndex ? "YES" : "NO");
-    builder.appendLiteral(" (");
-    builder.appendNumber(m_currentIndex ? *m_currentIndex : 0);
-    builder.append(')');
+    builder.append("WebBackForwardList 0x", hex(reinterpret_cast<uintptr_t>(this)), " - ", m_entries.size(), " entries, has current index ", m_currentIndex ? "YES" : "NO", " (", m_currentIndex ? *m_currentIndex : 0, ')');
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
         builder.append('\n');

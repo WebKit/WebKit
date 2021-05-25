@@ -57,7 +57,6 @@ public:
     ExceptionOr<RefPtr<WebXRPose>> getPose(const Document&, const WebXRSpace&, const WebXRSpace&);
 
     void setTime(DOMHighResTimeStamp time) { m_time = time; }
-    void setFrameData(PlatformXR::Device::FrameData&& data) { m_data = WTFMove(data); }
 
     void setActive(bool active) { m_active = active; }
     bool isActive() const { return m_active; }
@@ -78,7 +77,6 @@ private:
     bool m_active { false };
     bool m_isAnimationFrame { false };
     DOMHighResTimeStamp m_time { 0 };
-    PlatformXR::Device::FrameData m_data;
     Ref<WebXRSession> m_session;
 };
 

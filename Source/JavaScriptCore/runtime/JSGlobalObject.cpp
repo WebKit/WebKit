@@ -228,6 +228,7 @@
 #include "WebAssemblyTableConstructor.h"
 #include "WebAssemblyTablePrototype.h"
 #include <wtf/RandomNumber.h>
+#include <wtf/SystemTracing.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
@@ -261,6 +262,11 @@ static JSC_DECLARE_HOST_FUNCTION(assertCall);
 static JSC_DECLARE_HOST_FUNCTION(enableSamplingProfiler);
 static JSC_DECLARE_HOST_FUNCTION(disableSamplingProfiler);
 #endif
+
+static JSC_DECLARE_HOST_FUNCTION(tracePointStart);
+static JSC_DECLARE_HOST_FUNCTION(tracePointStop);
+static JSC_DECLARE_HOST_FUNCTION(signpostStart);
+static JSC_DECLARE_HOST_FUNCTION(signpostStop);
 
 static JSValue createProxyProperty(VM& vm, JSObject* object)
 {
@@ -377,13 +383,100 @@ JSC_DEFINE_HOST_FUNCTION(disableSamplingProfiler, (JSGlobalObject* globalObject,
         profiler = &globalObject->vm().ensureSamplingProfiler(Stopwatch::create());
 
     {
-        auto locker = holdLock(profiler->getLock());
+        Locker locker { profiler->getLock() };
         profiler->pause(locker);
     }
 
     return JSValue::encode(jsUndefined());
 }
 #endif
+
+static uint64_t asTracePointInt(JSGlobalObject* globalObject, JSValue v)
+{
+    if (v.isUndefined())
+        return 0;
+    return v.toNumber(globalObject);
+}
+
+JSC_DEFINE_HOST_FUNCTION(tracePointStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto getValue = [&] (unsigned arg) {
+        JSValue v = callFrame->argument(arg);
+        return asTracePointInt(globalObject, v);
+    };
+
+    uint64_t one = getValue(0);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+    uint64_t two = getValue(1);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+    uint64_t three = getValue(2);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+    uint64_t four = getValue(3);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+
+    tracePoint(TracePointCode::FromJSStart, one, two, three, four);
+
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(tracePointStop, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto getValue = [&] (unsigned arg) {
+        JSValue v = callFrame->argument(arg);
+        return asTracePointInt(globalObject, v);
+    };
+
+    uint64_t one = getValue(0);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+    uint64_t two = getValue(1);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+    uint64_t three = getValue(2);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+    uint64_t four = getValue(3);
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+
+    tracePoint(TracePointCode::FromJSStop, one, two, three, four);
+    return JSValue::encode(jsUndefined());
+}
+
+static String asSignpostString(JSGlobalObject* globalObject, JSValue v)
+{
+    if (v.isUndefined())
+        return emptyString();
+    return v.toWTFString(globalObject);
+}
+
+JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto message = asSignpostString(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+
+    WTFBeginSignpost(globalObject, "JSGlobalObject signpost", "%{public}s", message.ascii().data());
+
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(signpostStop, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto message = asSignpostString(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, EncodedJSValue());
+
+    WTFEndSignpost(globalObject, "JSGlobalObject signpost", "%{public}s", message.ascii().data());
+
+    return JSValue::encode(jsUndefined());
+}
 
 JSC_DEFINE_HOST_FUNCTION(enableSuperSampler, (JSGlobalObject*, CallFrame*))
 {
@@ -1376,6 +1469,11 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 #endif
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSuperSampler"), JSFunction::create(vm, this, 1, String(), enableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSuperSampler"), JSFunction::create(vm, this, 1, String(), disableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__tracePointStart"), JSFunction::create(vm, this, 4, String(), tracePointStart), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__tracePointStop"), JSFunction::create(vm, this, 4, String(), tracePointStop), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__signpostStart"), JSFunction::create(vm, this, 1, String(), signpostStart), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__signpostStop"), JSFunction::create(vm, this, 1, String(), signpostStop), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     }
 
     initStaticGlobals(vm);
@@ -1478,15 +1576,8 @@ bool JSGlobalObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyNam
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject))) {
-        SymbolTableEntry::Fast entry = thisObject->symbolTable()->get(propertyName.uid());
-        if (!entry.isNull()) {
-            if (entry.isReadOnly())
-                return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
-            RELEASE_AND_RETURN(scope, JSObject::definePropertyOnReceiver(globalObject, propertyName, value, slot));
-        }
-        RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
-    }
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
 
     bool shouldThrowReadOnlyError = slot.isStrictMode();
     bool ignoreReadOnlyErrors = false;

@@ -33,7 +33,7 @@ class JSGlobalLexicalEnvironment final : public JSSegmentedVariableObject {
 public:
     using Base = JSSegmentedVariableObject;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)

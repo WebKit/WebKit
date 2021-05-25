@@ -1124,6 +1124,26 @@ String audioTrackNoLabelText()
 
 #if USE(CF)
 
+String captionsTextTrackWithoutLabelMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_CFSTRING("%@ Captions", "Captions text track display name format that includes the language and/or locale (e.g. 'English Captions')."), title.createCFString().get());
+}
+
+String descriptionsTextTrackWithoutLabelMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_CFSTRING("%@ Descriptions", "Descriptions text track display name format that includes the language and/or locale (e.g. 'English Descriptions')."), title.createCFString().get());
+}
+
+String chaptersTextTrackWithoutLabelMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_CFSTRING("%@ Chapters", "Chapters text track display name format that includes the language and/or locale (e.g. 'English Chapters')."), title.createCFString().get());
+}
+
+String metadataTextTrackWithoutLabelMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_CFSTRING("%@ Metadata", "Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadats')."), title.createCFString().get());
+}
+
 String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language)
 {
     return formatLocalizedString(WEB_UI_CFSTRING("%@ (%@-%@)", "Text track display name format that includes the country and language of the subtitle, in the form of 'Title (Language-Country)'"), title.createCFString().get(), language.createCFString().get(), country.createCFString().get());

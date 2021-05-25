@@ -95,16 +95,16 @@ class CMakeChecker(object):
         self._check_list_order(lines)
 
     def _process_line(self, line_number, line_content):
-        if match('(^|\ +)#', line_content):
+        if match(r'(^|\ +)#', line_content):
             # ignore comment line
             return
         l = line_content.expandtabs(4)
         # check command like message( "testing")
-        if search('\(\ +', l):
+        if search(r'\(\ +', l):
             self._handle_style_error(line_number, 'whitespace/parentheses', 5,
                                      'No space after "("')
         # check command like message("testing" )
-        if search('\ +\)', l) and not search('^\ +\)$', l):
+        if search(r'\ +\)', l) and not search(r'^\ +\)$', l):
             self._handle_style_error(line_number, 'whitespace/parentheses', 5,
                                      'No space before ")"')
         self._check_trailing_whitespace(line_number, l)
@@ -125,7 +125,7 @@ class CMakeChecker(object):
         # check command like "SET    (" or "Set("
         for t in self.NO_SPACE_CMDS:
             self._check_non_lowercase_cmd(line_number, line_content, t)
-            if search('(^|\ +)' + t.lower() + '\ +\(', line_content):
+            if search(r'(^|\ +)' + t.lower() + r'\ +\(', line_content):
                 msg = 'No space between command "' + t.lower() + '" and its parentheses, should be "' + t + '("'
                 self._handle_style_error(line_number, 'whitespace/parentheses', 5, msg)
 
@@ -133,13 +133,13 @@ class CMakeChecker(object):
         # check command like "IF (" or "if(" or "if   (" or "If ()"
         for t in self.ONE_SPACE_CMDS:
             self._check_non_lowercase_cmd(line_number, line_content, t)
-            if search('(^|\ +)' + t.lower() + '(\(|\ \ +\()', line_content):
+            if search(r'(^|\ +)' + t.lower() + r'(\(|\ \ +\()', line_content):
                 msg = 'One space between command "' + t.lower() + '" and its parentheses, should be "' + t + ' ("'
                 self._handle_style_error(line_number, 'whitespace/parentheses', 5, msg)
 
     def _check_non_lowercase_cmd(self, line_number, line_content, cmd):
-        if searchIgnorecase('(^|\ +)' + cmd + '\ *\(', line_content) and \
-           (not search('(^|\ +)' + cmd.lower() + '\ *\(', line_content)):
+        if searchIgnorecase(r'(^|\ +)' + cmd + r'\ *\(', line_content) and \
+           (not search(r'(^|\ +)' + cmd.lower() + r'\ *\(', line_content)):
             msg = 'Use lowercase command "' + cmd.lower() + '"'
             self._handle_style_error(line_number, 'command/lowercase', 5, msg)
 
@@ -151,13 +151,13 @@ class CMakeChecker(object):
         last_line = None
 
         for line_number, line in enumerate(lines, start=1):
-            matched = search('\$\{.*\}', line)
+            matched = search(r'\$\{.*\}', line)
             if matched:
                 continue
             line = line.strip()
 
             if last_line == None:
-                matched = match('(set\(|list\((APPEND|REMOVE_ITEM) )(?P<name>\w+)(?P<item>\s+\w+)?$', line)
+                matched = match(r'(set\(|list\((APPEND|REMOVE_ITEM) )(?P<name>\w+)(?P<item>\s+\w+)?$', line)
                 if matched:
                     # FIXME: Add handling for include directories.
                     if 'INCLUDE_DIRECTORIES' in matched.group('name'):
@@ -168,7 +168,7 @@ class CMakeChecker(object):
                         msg = 'First listitem "%s" should be in a new line.' % matched.group('item').strip()
                         self._handle_style_error(line_number, 'list/parentheses', 5, msg)
             else:
-                matched = match('(?P<item>.+)?\)$', line)
+                matched = match(r'(?P<item>.+)?\)$', line)
                 if matched:
                     last_line = None
                     if matched.group('item'):

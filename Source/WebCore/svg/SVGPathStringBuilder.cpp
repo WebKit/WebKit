@@ -36,7 +36,7 @@ String SVGPathStringBuilder::result()
         return String();
 
     // Remove trailing space.
-    m_stringBuilder.resize(size - 1);
+    m_stringBuilder.shrink(size - 1);
     return m_stringBuilder.toString();
 }
 

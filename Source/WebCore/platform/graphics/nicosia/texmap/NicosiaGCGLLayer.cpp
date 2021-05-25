@@ -81,11 +81,11 @@ void GCGLLayer::swapBuffersIfNeeded()
     IntSize textureSize(m_context.m_currentWidth, m_context.m_currentHeight);
     TextureMapperGL::Flags flags = m_context.contextAttributes().alpha ? TextureMapperGL::ShouldBlend : 0;
 #if USE(ANGLE)
-    auto imageBuffer = ImageBuffer::create(textureSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
+    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(textureSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
     if (!imageBuffer)
         return;
 
-    m_context.paintRenderingResultsToCanvas(imageBuffer.get());
+    m_context.paintRenderingResultsToCanvas(*imageBuffer.get());
     RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
     if (!image)
         return;
@@ -105,10 +105,10 @@ void GCGLLayer::swapBuffersIfNeeded()
         } else
             layerBuffer->textureGL().setPendingContents(WTFMove(image));
 
-        LockHolder holder(proxy.lock());
+        Locker locker { proxy.lock() };
         proxy.pushNextBuffer(WTFMove(layerBuffer));
 #else
-        LockHolder holder(proxy.lock());
+        Locker locker { proxy.lock() };
         proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
 #endif
     }

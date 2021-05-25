@@ -28,6 +28,9 @@
 #if USE(CG)
 
 #include "ImageBufferBackend.h"
+#include <wtf/Forward.h>
+
+typedef struct CGImage* CGImageRef;
 
 namespace WebCore {
 
@@ -53,13 +56,8 @@ protected:
 
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     void setupContext() const;
-    virtual RetainPtr<CFDataRef> toCFData(const String& mimeType, Optional<double> quality, PreserveResolution) const;
 
-#if USE(ACCELERATE)
-    void copyImagePixels(
-        AlphaPremultiplication srcAlphaFormat, PixelFormat srcPixelFormat, unsigned srcBytesPerRow, uint8_t* srcRows,
-        AlphaPremultiplication destAlphaFormat, PixelFormat destPixelFormat, unsigned destBytesPerRow, uint8_t* destRows, const IntSize&) const override;
-#endif
+    virtual RetainPtr<CGImageRef> copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution) const;
 };
 
 } // namespace WebCore

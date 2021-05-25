@@ -57,6 +57,7 @@ JITStubRoutineSet::~JITStubRoutineSet()
 
 void JITStubRoutineSet::add(GCAwareJITStubRoutine* routine)
 {
+    RELEASE_ASSERT(!isCompilationThread());
     ASSERT(!routine->m_isJettisoned);
     
     m_routines.append(Routine {

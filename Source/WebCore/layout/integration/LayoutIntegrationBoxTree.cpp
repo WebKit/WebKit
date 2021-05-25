@@ -46,7 +46,7 @@ static constexpr size_t smallTreeThreshold = 8;
 static RenderStyle rootBoxStyle(const RenderStyle& style)
 {
     auto clonedStyle = RenderStyle::clone(style);
-    clonedStyle.setDisplay(DisplayType::Block);
+    clonedStyle.setEffectiveDisplay(DisplayType::Block);
     return clonedStyle;
 }
 

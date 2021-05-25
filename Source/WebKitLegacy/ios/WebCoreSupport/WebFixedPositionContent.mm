@@ -102,7 +102,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (void)scrollOrZoomChanged:(CGRect)positionedObjectsRect
 {
-    auto locker = holdLock(webFixedPositionContentDataLock);
+    Locker locker { webFixedPositionContentDataLock };
 
     LayerInfoMap::const_iterator end = _private->m_viewportConstrainedLayers.end();
     for (LayerInfoMap::const_iterator it = _private->m_viewportConstrainedLayers.begin(); it != end; ++it) {
@@ -141,7 +141,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (void)overflowScrollPositionForLayer:(CALayer *)scrollLayer changedTo:(CGPoint)scrollPosition
 {
-    auto locker = holdLock(webFixedPositionContentDataLock);
+    Locker locker { webFixedPositionContentDataLock };
 
     LayerInfoMap::const_iterator end = _private->m_viewportConstrainedLayers.end();
     for (LayerInfoMap::const_iterator it = _private->m_viewportConstrainedLayers.begin(); it != end; ++it) {
@@ -174,7 +174,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(const WTF::HashMap<CALayer*, CALayer*>&)stickyContainers
 {
-    auto locker = holdLock(webFixedPositionContentDataLock);
+    Locker locker { webFixedPositionContentDataLock };
 
     _private->m_viewportConstrainedLayers.clear();
 
@@ -191,7 +191,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (BOOL)hasFixedOrStickyPositionLayers
 {
-    auto locker = holdLock(webFixedPositionContentDataLock);
+    Locker locker { webFixedPositionContentDataLock };
     return !_private->m_viewportConstrainedLayers.isEmpty();
 }
 

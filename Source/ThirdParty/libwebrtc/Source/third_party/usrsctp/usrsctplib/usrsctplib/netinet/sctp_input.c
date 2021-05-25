@@ -2005,11 +2005,7 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 		/* temp code */
 		if (how_indx < sizeof(asoc->cookie_how))
 			asoc->cookie_how[how_indx] = 12;
-		sctp_timer_stop(SCTP_TIMER_TYPE_INIT, inp, stcb, net,
-		                SCTP_FROM_SCTP_INPUT + SCTP_LOC_16);
-		sctp_timer_stop(SCTP_TIMER_TYPE_HEARTBEAT, inp, stcb, net,
-		                SCTP_FROM_SCTP_INPUT + SCTP_LOC_17);
-
+		sctp_stop_association_timers(stcb, false);
 		/* notify upper layer */
 		*notification = SCTP_NOTIFY_ASSOC_RESTART;
 		atomic_add_int(&stcb->asoc.refcnt, 1);
@@ -2042,6 +2038,10 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 		asoc->str_reset_seq_in = asoc->init_seq_number;
 		asoc->advanced_peer_ack_point = asoc->last_acked_seq;
 		asoc->send_sack = 1;
+		asoc->data_pkts_seen = 0;
+		asoc->last_data_chunk_from = NULL;
+		asoc->last_control_chunk_from = NULL;
+		asoc->last_net_cmt_send_started = NULL;
 		if (asoc->mapping_array) {
 			memset(asoc->mapping_array, 0,
 			       asoc->mapping_array_size);
@@ -2106,6 +2106,9 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 			SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_chunk), chk);
 			SCTP_DECR_CHK_COUNT();
 		}
+		asoc->ctrl_queue_cnt = 0;
+		asoc->str_reset = NULL;
+		asoc->stream_reset_outstanding = 0;
 		TAILQ_FOREACH_SAFE(chk, &asoc->asconf_send_queue, sctp_next, nchk) {
 			TAILQ_REMOVE(&asoc->asconf_send_queue, chk, sctp_next);
 			if (chk->data) {
@@ -2176,12 +2179,13 @@ sctp_process_cookie_existing(struct mbuf *m, int iphlen, int offset,
 			return (NULL);
 		}
 		/* respond with a COOKIE-ACK */
-		sctp_stop_all_cookie_timers(stcb);
-		sctp_toss_old_cookies(stcb, asoc);
 		sctp_send_cookie_ack(stcb);
 		if (how_indx < sizeof(asoc->cookie_how))
 			asoc->cookie_how[how_indx] = 15;
-
+		if (sctp_is_feature_on(inp, SCTP_PCB_FLAGS_AUTOCLOSE) &&
+		    (asoc->sctp_autoclose_ticks > 0)) {
+			sctp_timer_start(SCTP_TIMER_TYPE_AUTOCLOSE, inp, stcb, NULL);
+		}
 		return (stcb);
 	}
 	if (how_indx < sizeof(asoc->cookie_how))

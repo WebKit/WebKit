@@ -2631,3 +2631,9 @@ HRESULT WebPreferences::stopBatchingUpdates()
     }
     return S_OK;
 }
+
+bool WebPreferences::canvasColorSpaceEnabled()
+{
+    return boolValueForKey("WebKitCanvasColorSpaceEnabled");
+}
+

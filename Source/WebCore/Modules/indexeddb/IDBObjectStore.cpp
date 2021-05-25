@@ -484,7 +484,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(JSGlobalObject&, const St
 
     Ref<IDBIndex> referencedIndex { *index };
 
-    Locker<Lock> locker(m_referencedIndexLock);
+    Locker locker { m_referencedIndexLock };
     m_referencedIndexes.set(name, WTFMove(index));
 
     return referencedIndex;
@@ -504,7 +504,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
     if (m_transaction.isFinishedOrFinishing())
         return Exception { InvalidStateError, "Failed to execute 'index' on 'IDBObjectStore': The transaction is finished."_s };
 
-    Locker<Lock> locker(m_referencedIndexLock);
+    Locker locker { m_referencedIndexLock };
     auto iterator = m_referencedIndexes.find(indexName);
     if (iterator != m_referencedIndexes.end())
         return Ref<IDBIndex> { *iterator->value };
@@ -546,7 +546,7 @@ ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)
     m_info.deleteIndex(name);
 
     {
-        Locker<Lock> locker(m_referencedIndexLock);
+        Locker locker { m_referencedIndexLock };
         if (auto index = m_referencedIndexes.take(name)) {
             index->markAsDeleted();
             auto identifier = index->info().identifier();
@@ -701,7 +701,7 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
             m_info.deleteIndex(indexIdentifier);
     }
 
-    Locker<Lock> locker(m_referencedIndexLock);
+    Locker locker { m_referencedIndexLock };
 
     Vector<uint64_t> identifiersToRemove;
     Vector<std::unique_ptr<IDBIndex>> indexesToDelete;
@@ -732,7 +732,7 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
 template<typename Visitor>
 void IDBObjectStore::visitReferencedIndexes(Visitor& visitor) const
 {
-    Locker<Lock> locker(m_referencedIndexLock);
+    Locker locker { m_referencedIndexLock };
     for (auto& index : m_referencedIndexes.values())
         visitor.addOpaqueRoot(index.get());
     for (auto& index : m_deletedIndexes.values())
@@ -744,6 +744,7 @@ template void IDBObjectStore::visitReferencedIndexes(SlotVisitor&) const;
 
 void IDBObjectStore::renameReferencedIndex(IDBIndex& index, const String& newName)
 {
+    Locker locker { m_referencedIndexLock };
     LOG(IndexedDB, "IDBObjectStore::renameReferencedIndex");
 
     auto* indexInfo = m_info.infoForExistingIndex(index.info().identifier());

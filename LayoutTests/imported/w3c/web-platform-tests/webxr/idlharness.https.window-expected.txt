@@ -133,6 +133,8 @@ PASS XRView interface: existence and properties of interface prototype object's 
 PASS XRView interface: attribute eye
 PASS XRView interface: attribute projectionMatrix
 PASS XRView interface: attribute transform
+PASS XRView interface: attribute recommendedViewportScale
+PASS XRView interface: operation requestViewportScale(double?)
 PASS XRViewport interface: existence and properties of interface object
 PASS XRViewport interface object length
 PASS XRViewport interface object name

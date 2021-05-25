@@ -43,8 +43,8 @@ std::unique_ptr<KeyedDecoder> createForFile(const String& path)
     if (handle == FileSystem::invalidPlatformFileHandle)
         return nullptr;
 
-    long long fileSize = 0;
-    if (!FileSystem::getFileSize(handle, fileSize) || !fileSize) {
+    auto fileSize = FileSystem::fileSize(handle).valueOr(0);
+    if (!fileSize) {
         FileSystem::unlockAndCloseFile(handle);
         return nullptr;
     }

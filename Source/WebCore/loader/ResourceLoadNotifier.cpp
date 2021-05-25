@@ -147,7 +147,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
         if (!page->loadsSubresources()) {
             if (!m_frame.isMainFrame() || (m_initialRequestIdentifier && *m_initialRequestIdentifier != identifier))
                 request = { };
-        } else if (!page->loadsFromNetwork() && request.url().protocolIsInHTTPFamily())
+        } else if (!page->allowsLoadFromURL(request.url()))
             request = { };
     }
     

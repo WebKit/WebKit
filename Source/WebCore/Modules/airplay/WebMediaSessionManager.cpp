@@ -73,6 +73,7 @@ static bool flagsAreSet(MediaProducer::MediaStateFlags value, MediaProducer::Med
 String mediaProducerStateString(MediaProducer::MediaStateFlags flags)
 {
     StringBuilder string;
+    string.append(" { ");
     if (flags & MediaProducer::MediaState::IsPlayingAudio)
         string.append("IsPlayingAudio+");
     if (flags & MediaProducer::MediaState::IsPlayingVideo)
@@ -92,9 +93,9 @@ String mediaProducerStateString(MediaProducer::MediaStateFlags flags)
     if (string.isEmpty())
         string.append("IsNotPlaying");
     else
-        string.resize(string.length() - 1);
-
-    return makeString(" { ", string.toString(), " }");
+        string.shrink(string.length() - 1);
+    string.append(" }");
+    return string.toString();
 }
 
 class WebMediaSessionLogger {

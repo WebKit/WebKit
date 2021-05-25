@@ -29,7 +29,7 @@
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 
@@ -60,7 +60,7 @@ public:
     void willStartRenderingUpdate();
     void didCompleteRenderingUpdate();
 
-    Lock& treeMutex() { return m_treeMutex; }
+    CheckedLock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
     bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
 
@@ -84,14 +84,14 @@ protected:
 
 private:
     bool isThreadedScrollingTree() const override { return true; }
-    void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) override;
+    void propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>&) WTF_REQUIRES_LOCK(m_treeLock) override;
 
     void displayDidRefreshOnScrollingThread();
-    void waitForRenderingUpdateCompletionOrTimeout();
+    void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_treeLock);
 
-    bool canUpdateLayersOnScrollingThread() const;
+    bool canUpdateLayersOnScrollingThread() const WTF_REQUIRES_LOCK(m_treeLock);
 
-    void scheduleDelayedRenderingUpdateDetectionTimer(Seconds);
+    void scheduleDelayedRenderingUpdateDetectionTimer(Seconds) WTF_REQUIRES_LOCK(m_treeLock);
     void delayedRenderingUpdateDetectionTimerFired();
 
     Seconds maxAllowableRenderingUpdateDurationForSynchronization();
@@ -103,17 +103,17 @@ private:
         Desynchronized,
     };
 
-    SynchronizationState m_state { SynchronizationState::Idle };
-    Condition m_stateCondition;
+    SynchronizationState m_state WTF_GUARDED_BY_LOCK(m_treeLock) { SynchronizationState::Idle };
+    CheckedCondition m_stateCondition;
 
-    bool m_receivedBeganEventFromMainThread { false };
-    Condition m_waitingForBeganEventCondition;
+    bool m_receivedBeganEventFromMainThread WTF_GUARDED_BY_LOCK(m_treeLock) { false };
+    CheckedCondition m_waitingForBeganEventCondition;
 
     // Dynamically allocated because it has to use the ScrollingThread's runloop.
-    std::unique_ptr<RunLoop::Timer<ThreadedScrollingTree>> m_delayedRenderingUpdateDetectionTimer;
+    std::unique_ptr<RunLoop::Timer<ThreadedScrollingTree>> m_delayedRenderingUpdateDetectionTimer WTF_GUARDED_BY_LOCK(m_treeLock);
 
-    bool m_scrollAnimatorEnabled { false };
-    bool m_hasNodesWithSynchronousScrollingReasons { false };
+    const bool m_scrollAnimatorEnabled { false };
+    bool m_hasNodesWithSynchronousScrollingReasons WTF_GUARDED_BY_LOCK(m_treeLock) { false };
 };
 
 } // namespace WebCore

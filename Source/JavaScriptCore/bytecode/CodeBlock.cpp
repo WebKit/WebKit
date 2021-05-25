@@ -1034,15 +1034,12 @@ size_t CodeBlock::JITData::size(const ConcurrentJSLocker&) const
 {
     size_t size = sizeof(JITData);
     size += m_stubInfos.estimatedAllocationSizeInBytes();
-    for (StructureStubInfo* stub : m_stubInfos)
-        size += stub->extraMemoryInBytes();
     size += m_addICs.estimatedAllocationSizeInBytes();
     size += m_mulICs.estimatedAllocationSizeInBytes();
     size += m_negICs.estimatedAllocationSizeInBytes();
     size += m_subICs.estimatedAllocationSizeInBytes();
     size += m_byValInfos.estimatedAllocationSizeInBytes();
     size += m_callLinkInfos.estimatedAllocationSizeInBytes();
-    size += m_rareCaseProfiles.size() * sizeof(decltype(*m_rareCaseProfiles.data()));
     size += m_switchJumpTables.size() * sizeof(decltype(*m_switchJumpTables.data()));
     size += m_stringSwitchJumpTables.size() * sizeof(decltype(*m_stringSwitchJumpTables.data()));
     // FIXME: account for m_calleeSaveRegisters but it's not a big deal since it's a fixed size and small.
@@ -1766,40 +1763,24 @@ CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(BytecodeIndex index)
     return nullptr;
 }
 
-void CodeBlock::setRareCaseProfiles(FixedVector<RareCaseProfile>&& rareCaseProfiles)
+void CodeBlock::setCalleeSaveRegisters(RegisterSet registerSet)
+{
+    auto calleeSaveRegisters = RegisterAtOffsetList(registerSet);
+
+    ConcurrentJSLocker locker(m_lock);
+    auto& jitData = ensureJITData(locker);
+    jitData.m_calleeSaveRegisters = WTFMove(calleeSaveRegisters);
+    WTF::storeStoreFence();
+    jitData.m_hasCalleeSaveRegisters = true;
+}
+
+void CodeBlock::setCalleeSaveRegisters(RegisterAtOffsetList&& registerAtOffsetList)
 {
     ConcurrentJSLocker locker(m_lock);
-    ensureJITData(locker).m_rareCaseProfiles = WTFMove(rareCaseProfiles);
-}
-
-RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex)
-{
-    if (auto* jitData = m_jitData.get()) {
-        return tryBinarySearch<RareCaseProfile, BytecodeIndex>(
-            jitData->m_rareCaseProfiles, jitData->m_rareCaseProfiles.size(), bytecodeIndex,
-            getRareCaseProfileBytecodeIndex);
-    }
-    return nullptr;
-}
-
-unsigned CodeBlock::rareCaseProfileCountForBytecodeIndex(const ConcurrentJSLocker& locker, BytecodeIndex bytecodeIndex)
-{
-    RareCaseProfile* profile = rareCaseProfileForBytecodeIndex(locker, bytecodeIndex);
-    if (profile)
-        return profile->m_counter;
-    return 0;
-}
-
-void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
-{
-    ConcurrentJSLocker locker(m_lock);
-    ensureJITData(locker).m_calleeSaveRegisters = makeUnique<RegisterAtOffsetList>(calleeSaveRegisters);
-}
-
-void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> registerAtOffsetList)
-{
-    ConcurrentJSLocker locker(m_lock);
-    ensureJITData(locker).m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
+    auto& jitData = ensureJITData(locker);
+    jitData.m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
+    WTF::storeStoreFence();
+    jitData.m_hasCalleeSaveRegisters = true;
 }
 
 void CodeBlock::resetJITData()
@@ -2492,8 +2473,8 @@ const RegisterAtOffsetList* CodeBlock::calleeSaveRegisters() const
 {
 #if ENABLE(JIT)
     if (auto* jitData = m_jitData.get()) {
-        if (const RegisterAtOffsetList* registers = jitData->m_calleeSaveRegisters.get())
-            return registers;
+        if (jitData->m_hasCalleeSaveRegisters)
+            return &jitData->m_calleeSaveRegisters;
     }
 #endif
     return &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
@@ -2892,13 +2873,70 @@ size_t CodeBlock::numberOfDFGIdentifiers() const
 
 const Identifier& CodeBlock::identifier(int index) const
 {
-    size_t unlinkedIdentifiers = m_unlinkedCode->numberOfIdentifiers();
+    UnlinkedCodeBlock* unlinkedCode = m_unlinkedCode.get();
+    size_t unlinkedIdentifiers = unlinkedCode->numberOfIdentifiers();
     if (static_cast<unsigned>(index) < unlinkedIdentifiers)
-        return m_unlinkedCode->identifier(index);
+        return unlinkedCode->identifier(index);
     ASSERT(JITCode::isOptimizingJIT(jitType()));
     return m_jitCode->dfgCommon()->m_dfgIdentifiers[index - unlinkedIdentifiers];
 }
 #endif // ENABLE(DFG_JIT)
+
+#if ASSERT_ENABLED
+bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
+{
+    UnlinkedCodeBlock* unlinkedCode = m_unlinkedCode.get();
+    size_t unlinkedIdentifiers = unlinkedCode->numberOfIdentifiers();
+#if ENABLE(DFG_JIT)
+    size_t numberOfDFGIdentifiers = this->numberOfDFGIdentifiers();
+    size_t numberOfIdentifiers = unlinkedIdentifiers + numberOfDFGIdentifiers;
+#else
+    size_t numberOfIdentifiers = unlinkedIdentifiers;
+#endif
+
+    if (numberOfIdentifiers > 100) {
+        if (m_cachedIdentifierUids.size() != numberOfIdentifiers) {
+            Locker locker(m_cachedIdentifierUidsLock);
+            createRareDataIfNecessary();
+            HashSet<UniquedStringImpl*> cachedIdentifierUids;
+            cachedIdentifierUids.reserveInitialCapacity(numberOfIdentifiers);
+            for (unsigned index = 0; index < unlinkedIdentifiers; ++index) {
+                const Identifier& identifier = unlinkedCode->identifier(index);
+                cachedIdentifierUids.add(identifier.impl());
+            }
+#if ENABLE(DFG_JIT)
+            if (numberOfDFGIdentifiers) {
+                ASSERT(JITCode::isOptimizingJIT(jitType()));
+                auto& dfgIdentifiers = m_jitCode->dfgCommon()->m_dfgIdentifiers;
+                for (unsigned index = 0; index < numberOfDFGIdentifiers; ++index) {
+                    const Identifier& identifier = dfgIdentifiers[index];
+                    cachedIdentifierUids.add(identifier.impl());
+                }
+            }
+#endif
+            WTF::storeStoreFence();
+            m_cachedIdentifierUids = WTFMove(cachedIdentifierUids);
+        }
+        return m_cachedIdentifierUids.contains(uid);
+    }
+
+    for (unsigned index = 0; index < unlinkedIdentifiers; ++index) {
+        const Identifier& identifier = unlinkedCode->identifier(index);
+        if (identifier.impl() == uid)
+            return true;
+    }
+#if ENABLE(DFG_JIT)
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
+    auto& dfgIdentifiers = m_jitCode->dfgCommon()->m_dfgIdentifiers;
+    for (unsigned index = 0; index < numberOfDFGIdentifiers; ++index) {
+        const Identifier& identifier = dfgIdentifiers[index];
+        if (identifier.impl() == uid)
+            return true;
+    }
+#endif
+    return false;
+}
+#endif
 
 void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
@@ -3082,11 +3120,6 @@ void CodeBlock::dumpValueProfiles()
         profile.dump(WTF::dataFile());
         dataLogF("\n");
     });
-    dataLog("RareCaseProfile for ", *this, ":\n");
-    if (auto* jitData = m_jitData.get()) {
-        for (RareCaseProfile* profile : jitData->m_rareCaseProfiles)
-            dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
-    }
 }
 #endif // ENABLE(VERBOSE_VALUE_PROFILE)
 

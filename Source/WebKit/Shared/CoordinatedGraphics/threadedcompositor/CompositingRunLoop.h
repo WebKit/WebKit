@@ -28,7 +28,8 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include <wtf/Atomics.h>
-#include <wtf/Condition.h>
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
@@ -70,8 +71,8 @@ private:
     RunLoop* m_runLoop { nullptr };
     RunLoop::Timer<CompositingRunLoop> m_updateTimer;
     Function<void ()> m_updateFunction;
-    Lock m_dispatchSyncConditionMutex;
-    Condition m_dispatchSyncCondition;
+    CheckedLock m_dispatchSyncConditionLock;
+    CheckedCondition m_dispatchSyncCondition;
 
     struct {
         Lock lock;

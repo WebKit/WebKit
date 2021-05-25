@@ -1,3 +1,19 @@
+2021-05-22  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] Gardening more failures
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
+2021-05-21  Lauro Moura  <lmoura@igalia.com>
+
+        [WebDriver] Gardening some GTK and WPE failures
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2021-04-22  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WebDriver] Garden keypress failures

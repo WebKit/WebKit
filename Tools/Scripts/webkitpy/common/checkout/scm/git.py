@@ -149,7 +149,7 @@ class Git(SCM, SVNRepository):
 
     @staticmethod
     def commit_success_regexp():
-        return "^Committed r(?P<svn_revision>\d+)$"
+        return r"^Committed r(?P<svn_revision>\d+)$"
 
     def discard_local_commits(self):
         self._run_git(['reset', '--hard', self.remote_branch_ref()])
@@ -325,7 +325,7 @@ class Git(SCM, SVNRepository):
 
     def timestamp_of_revision(self, path, revision):
         git_log = self._most_recent_log_matching('git-svn-id:.*@%s' % revision, path)
-        match = re.search("^Date:\s*(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$", git_log, re.MULTILINE)
+        match = re.search(r"^Date:\s*(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$", git_log, re.MULTILINE)
         if not match:
             return ""
 
@@ -391,7 +391,7 @@ class Git(SCM, SVNRepository):
 
     @memoized
     def git_commit_from_svn_revision(self, svn_revision):
-        git_log = self._run_git(['log', '--no-abbrev-commit', '-1', '--grep=^\s*git-svn-id:.*@%s ' % svn_revision])
+        git_log = self._run_git(['log', '--no-abbrev-commit', '-1', r'--grep=^\s*git-svn-id:.*@%s ' % svn_revision])
         git_commit = re.search("^commit (?P<commit>[a-f0-9]{40})", git_log)
         if not git_commit:
             # FIXME: Alternatively we could offer to update the checkout? Or return None?

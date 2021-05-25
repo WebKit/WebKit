@@ -41,6 +41,8 @@
 #include "Logging.h"
 #include "MediaOverridesForTesting.h"
 #include "RemoteAudioHardwareListenerProxy.h"
+#include "RemoteAudioMediaStreamTrackRendererInternalUnitManager.h"
+#include "RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessages.h"
 #include "RemoteAudioMediaStreamTrackRendererManager.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
@@ -63,6 +65,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcessMessages.h"
+#include <WebCore/Logging.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NowPlayingManager.h>
 #include <wtf/Language.h>
@@ -278,6 +281,27 @@ void GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage(WebPa
 }
 #endif
 
+void GPUConnectionToWebProcess::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+{
+#if !RELEASE_LOG_DISABLED
+    if  (auto* channel = WebCore::getLogChannel(channelName)) {
+        channel->state = state;
+        channel->level = level;
+    }
+
+    auto* channel = getLogChannel(channelName);
+    if  (!channel)
+        return;
+
+    channel->state = state;
+    channel->level = level;
+#else
+    UNUSED_PARAM(channelName);
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(level);
+#endif
+}
+
 bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 {
     for (auto& remoteRenderingBackend : m_remoteRenderingBackendMap.values()) {
@@ -380,6 +404,14 @@ UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManager
         m_userMediaCaptureManagerProxy = makeUnique<UserMediaCaptureManagerProxy>(makeUniqueRef<GPUProxyForCapture>(*this));
 
     return *m_userMediaCaptureManagerProxy;
+}
+
+RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProcess::audioMediaStreamTrackRendererInternalUnitManager()
+{
+    if (!m_audioMediaStreamTrackRendererInternalUnitManager)
+        m_audioMediaStreamTrackRendererInternalUnitManager = makeUnique<RemoteAudioMediaStreamTrackRendererInternalUnitManager>(*this);
+
+    return *m_audioMediaStreamTrackRendererInternalUnitManager;
 }
 #endif
 
@@ -600,6 +632,10 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
         userMediaCaptureManagerProxy().didReceiveMessageFromGPUProcess(connection, decoder);
+        return true;
+    }
+    if (decoder.messageReceiverName() == Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::messageReceiverName()) {
+        audioMediaStreamTrackRendererInternalUnitManager().didReceiveMessage(connection, decoder);
         return true;
     }
 #endif

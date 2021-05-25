@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class DeferredPromise;
 class Document;
 class NotificationPermissionCallback;
 
@@ -82,7 +83,7 @@ public:
     WEBCORE_EXPORT void finalize();
 
     static Permission permission(Document&);
-    static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&);
+    static void requestPermission(Document&, RefPtr<NotificationPermissionCallback>&&, Ref<DeferredPromise>&&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 

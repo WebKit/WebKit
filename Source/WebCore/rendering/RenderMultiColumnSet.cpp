@@ -50,6 +50,7 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow,
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
     , m_minimumColumnHeight(0)
+    , m_spaceShortageForSizeContainment(0)
 {
 }
 
@@ -235,15 +236,16 @@ LayoutUnit RenderMultiColumnSet::calculateBalancedHeight(bool initial) const
         return std::max<LayoutUnit>(m_contentRuns[index].columnLogicalHeight(startOffset), m_minimumColumnHeight);
     }
 
+    LayoutUnit sizeContainmentShortage = std::max<LayoutUnit>(LayoutUnit(), m_spaceShortageForSizeContainment);
     if (columnCount() <= computedColumnCount()) {
         // With the current column height, the content fits without creating overflowing columns. We're done.
-        return m_computedColumnHeight;
+        return m_computedColumnHeight + sizeContainmentShortage;
     }
 
     if (forcedBreaksCount() >= computedColumnCount()) {
         // Too many forced breaks to allow any implicit breaks. Initial balancing should already
         // have set a good height. There's nothing more we should do.
-        return m_computedColumnHeight;
+        return m_computedColumnHeight + sizeContainmentShortage;
     }
 
     // If the initial guessed column height wasn't enough, stretch it now. Stretch by the lowest
@@ -252,9 +254,10 @@ LayoutUnit RenderMultiColumnSet::calculateBalancedHeight(bool initial) const
     ASSERT(m_minSpaceShortage > 0); // We should never _shrink_ the height!
     // ASSERT(m_minSpaceShortage != RenderFragmentedFlow::maxLogicalHeight()); // If this happens, we probably have a bug.
     if (m_minSpaceShortage == RenderFragmentedFlow::maxLogicalHeight())
-        return m_computedColumnHeight; // So bail out rather than looping infinitely.
+        return m_computedColumnHeight + sizeContainmentShortage; // So bail out rather than looping infinitely.
 
-    return m_computedColumnHeight + m_minSpaceShortage;
+    auto toAdd = std::max<LayoutUnit>(sizeContainmentShortage, m_minSpaceShortage);
+    return m_computedColumnHeight + toAdd;
 }
 
 void RenderMultiColumnSet::clearForcedBreaks()
@@ -364,6 +367,8 @@ void RenderMultiColumnSet::prepareForLayout(bool initial)
 
     // Nuke previously stored minimum column height. Contents may have changed for all we know.
     m_minimumColumnHeight = 0;
+
+    m_spaceShortageForSizeContainment = 0;
 
     // Start with "infinite" flow thread portion height until height is known.
     setLogicalBottomInFragmentedFlow(RenderFragmentedFlow::maxLogicalHeight());

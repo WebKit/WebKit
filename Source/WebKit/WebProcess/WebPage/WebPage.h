@@ -177,6 +177,7 @@ class FormDataReference;
 
 namespace WebCore {
 
+class CachedPage;
 class CaptureDevice;
 class DocumentLoader;
 class DragData;
@@ -606,6 +607,8 @@ public:
     void setPaginationLineGridEnabled(bool);
     
     void postInjectedBundleMessage(const String& messageName, const UserData&);
+
+    void setUnderPageBackgroundColorOverride(WebCore::Color&&);
 
     void setUnderlayColor(const WebCore::Color& color) { m_underlayColor = color; }
     WebCore::Color underlayColor() const { return m_underlayColor; }
@@ -1437,6 +1440,7 @@ public:
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     void createMediaSessionCoordinator(const String&, CompletionHandler<void(bool)>&&);
+    void invalidateMediaSessionCoordinator();
 #endif
 
     void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
@@ -1669,6 +1673,9 @@ private:
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
 
+    void suspend(CompletionHandler<void(bool)>&&);
+    void resume(CompletionHandler<void(bool)>&&);
+
 #if PLATFORM(COCOA)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
     void performDictionaryLookupOfCurrentSelection();
@@ -1731,8 +1738,6 @@ private:
 #endif
 
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
-
-    void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 
 #if ENABLE(MEDIA_STREAM)
     void userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDeviceUID, WebCore::CaptureDevice&& videoDeviceUID, String&& mediaDeviceIdentifierHashSalt, SandboxExtension::Handle&&, CompletionHandler<void()>&&);
@@ -2317,6 +2322,8 @@ private:
     bool m_didUpdateRenderingAfterCommittingLoad { false };
 
     Vector<String> m_corsDisablingPatterns;
+
+    std::unique_ptr<WebCore::CachedPage> m_cachedPage;
 
 #if ENABLE(IPC_TESTING_API)
     bool m_ipcTestingAPIEnabled { false };

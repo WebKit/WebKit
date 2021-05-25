@@ -36,7 +36,6 @@
 #include "NetworkingContext.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
-#include "SameSiteInfo.h"
 #include "StorageSessionProvider.h"
 #include <wtf/SystemTracing.h>
 
@@ -59,10 +58,10 @@ IncludeSecureCookies CookieJar::shouldIncludeSecureCookies(const Document& docum
     return (url.protocolIs("https") && !document.foundMixedContent().contains(SecurityContext::MixedContentType::Active)) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
 }
 
-SameSiteInfo CookieJar::sameSiteInfo(const Document& document)
+SameSiteInfo CookieJar::sameSiteInfo(const Document& document, IsForDOMCookieAccess isAccessForDOM)
 {
     if (auto* loader = document.loader())
-        return SameSiteInfo::create(loader->request());
+        return SameSiteInfo::create(loader->request(), isAccessForDOM);
     return { };
 }
 
@@ -88,7 +87,7 @@ String CookieJar::cookies(Document& document, const URL& url) const
 
     std::pair<String, bool> result;
     if (auto* session = m_storageSessionProvider->storageSession())
-        result = session->cookiesForDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, includeSecureCookies, ShouldAskITP::Yes, shouldRelaxThirdPartyCookieBlocking(document));
+        result = session->cookiesForDOM(document.firstPartyForCookies(), sameSiteInfo(document, IsForDOMCookieAccess::Yes), url, frameID, pageID, includeSecureCookies, ShouldAskITP::Yes, shouldRelaxThirdPartyCookieBlocking(document));
     else
         ASSERT_NOT_REACHED();
 
@@ -122,7 +121,7 @@ void CookieJar::setCookies(Document& document, const URL& url, const String& coo
     }
 
     if (auto* session = m_storageSessionProvider->storageSession())
-        session->setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, ShouldAskITP::Yes, cookieString, shouldRelaxThirdPartyCookieBlocking(document));
+        session->setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document, IsForDOMCookieAccess::Yes), url, frameID, pageID, ShouldAskITP::Yes, cookieString, shouldRelaxThirdPartyCookieBlocking(document));
     else
         ASSERT_NOT_REACHED();
 }

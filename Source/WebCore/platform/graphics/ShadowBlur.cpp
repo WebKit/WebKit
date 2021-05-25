@@ -34,7 +34,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include "Timer.h"
 #include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
@@ -135,8 +135,10 @@ private:
     void purgeTimerFired()
     {
         ASSERT(isMainThread());
-        if (auto locker = tryHoldLock(lock()))
+        if (lock().tryLock()) {
             clearScratchBuffer();
+            lock().unlock();
+        }
     }
 
     void clearScratchBuffer()
@@ -694,7 +696,7 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
 {
     RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto locker = tryHoldLock(ScratchBuffer::lock());
+    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
     if (locker) {
         layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
         if (!layerImageBuffer)
@@ -754,7 +756,7 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
 {
     RefPtr<ImageBuffer> layerImageBuffer;
 #if USE(CG)
-    auto locker = tryHoldLock(ScratchBuffer::lock());
+    auto locker = Locker<Lock>::tryLock(ScratchBuffer::lock());
     if (locker) {
         layerImageBuffer = ScratchBuffer::singleton().getScratchBuffer(templateSize);
         if (!layerImageBuffer)
@@ -903,13 +905,14 @@ void ShadowBlur::blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templa
     if (m_type != BlurShadow)
         return;
 
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB };
     IntRect blurRect(IntPoint(), templateSize);
-    auto layerData = layerImage.getImageData(AlphaPremultiplication::Unpremultiplied, blurRect);
+    auto layerData = layerImage.getPixelBuffer(format, blurRect);
     if (!layerData)
         return;
 
     blurLayerImage(layerData->data().data(), blurRect.size(), blurRect.width() * 4);
-    layerImage.putImageData(AlphaPremultiplication::Unpremultiplied, *layerData, blurRect);
+    layerImage.putPixelBuffer(*layerData, blurRect);
 }
 
 void ShadowBlur::blurAndColorShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize)

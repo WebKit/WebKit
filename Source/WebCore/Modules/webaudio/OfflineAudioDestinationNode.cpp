@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2020-2021, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +29,14 @@
 
 #include "OfflineAudioDestinationNode.h"
 
+#include "AudioBuffer.h"
 #include "AudioBus.h"
 #include "AudioContext.h"
 #include "AudioUtilities.h"
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "HRTFDatabaseLoader.h"
+#include "OfflineAudioContext.h"
 #include "WorkerRunLoop.h"
 #include <algorithm>
 #include <wtf/IsoMallocInlines.h>
@@ -44,13 +47,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
 
-OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
+OfflineAudioDestinationNode::OfflineAudioDestinationNode(OfflineAudioContext& context, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget)
     : AudioDestinationNode(context, sampleRate)
     , m_numberOfChannels(numberOfChannels)
     , m_renderTarget(WTFMove(renderTarget))
+    , m_renderBus(AudioBus::create(numberOfChannels, AudioUtilities::renderQuantumSize))
     , m_framesToProcess(m_renderTarget ? m_renderTarget->length() : 0)
 {
-    m_renderBus = AudioBus::create(numberOfChannels, AudioUtilities::renderQuantumSize);
     initializeDefaultNodeOptions(numberOfChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
 }
 
@@ -59,9 +62,14 @@ OfflineAudioDestinationNode::~OfflineAudioDestinationNode()
     uninitialize();
 }
 
-unsigned OfflineAudioDestinationNode::maxChannelCount() const
+OfflineAudioContext& OfflineAudioDestinationNode::context()
 {
-    return m_numberOfChannels;
+    return downcast<OfflineAudioContext>(AudioDestinationNode::context());
+}
+
+const OfflineAudioContext& OfflineAudioDestinationNode::context() const
+{
+    return downcast<OfflineAudioContext>(AudioDestinationNode::context());
 }
 
 void OfflineAudioDestinationNode::initialize()
@@ -110,18 +118,18 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(Optional
     auto protectedThis = makeRef(*this);
 
     auto offThreadRendering = [this, protectedThis = WTFMove(protectedThis)]() mutable {
-        auto result = offlineRender();
-        callOnMainThread([this, result, currentSampleFrame = m_currentSampleFrame.load(), protectedThis = WTFMove(protectedThis)]() mutable {
+        auto result = renderOnAudioThread();
+        callOnMainThread([this, result, currentSampleFrame = this->currentSampleFrame(), protectedThis = WTFMove(protectedThis)]() mutable {
             context().postTask([this, protectedThis = WTFMove(protectedThis), result, currentSampleFrame]() mutable {
                 m_startedRendering = false;
                 switch (result) {
-                case OfflineRenderResult::Failure:
+                case RenderResult::Failure:
                     context().finishedRendering(false);
                     break;
-                case OfflineRenderResult::Complete:
+                case RenderResult::Complete:
                     context().finishedRendering(true);
                     break;
-                case OfflineRenderResult::Suspended:
+                case RenderResult::Suspended:
                     context().didSuspendRendering(currentSampleFrame);
                     break;
                 }
@@ -141,25 +149,25 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(Optional
     completionHandler(WTF::nullopt);
 }
 
-auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
+auto OfflineAudioDestinationNode::renderOnAudioThread() -> RenderResult
 {
     ASSERT(!isMainThread());
     ASSERT(m_renderBus.get());
 
     if (!m_renderBus.get())
-        return OfflineRenderResult::Failure;
+        return RenderResult::Failure;
 
     RELEASE_ASSERT(context().isInitialized());
 
     bool channelsMatch = m_renderBus->numberOfChannels() == m_renderTarget->numberOfChannels();
     ASSERT(channelsMatch);
     if (!channelsMatch)
-        return OfflineRenderResult::Failure;
+        return RenderResult::Failure;
 
     bool isRenderBusAllocated = m_renderBus->length() >= AudioUtilities::renderQuantumSize;
     ASSERT(isRenderBusAllocated);
     if (!isRenderBusAllocated)
-        return OfflineRenderResult::Failure;
+        return RenderResult::Failure;
 
     // Break up the render target into smaller "render quantize" sized pieces.
     // Render until we're finished.
@@ -167,10 +175,10 @@ auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
 
     while (m_framesToProcess > 0) {
         if (context().shouldSuspend())
-            return OfflineRenderResult::Suspended;
+            return RenderResult::Suspended;
 
         // Render one render quantum.
-        render(0, m_renderBus.get(), AudioUtilities::renderQuantumSize, { });
+        renderQuantum(m_renderBus.get(), AudioUtilities::renderQuantumSize, { });
         
         size_t framesAvailableToCopy = std::min(m_framesToProcess, AudioUtilities::renderQuantumSize);
         
@@ -184,7 +192,7 @@ auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
         m_framesToProcess -= framesAvailableToCopy;
     }
 
-    return OfflineRenderResult::Complete;
+    return RenderResult::Complete;
 }
 
 } // namespace WebCore

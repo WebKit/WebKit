@@ -41,7 +41,7 @@ public:
     
     InnerType run() final
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         do {
             if (m_innerSource) {
                 if (InnerType result = m_innerSource->run())

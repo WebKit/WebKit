@@ -283,7 +283,7 @@ class WinPort(ApplePort):
                     _log.debug("Key doesn't exist -- must create it.")
                     registry_key = _winreg.CreateKeyEx(root, reg_path, 0, _winreg.KEY_WRITE)
                 except WindowsError as ex:
-                    _log.error("Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(ex)))
+                    _log.error(r"Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(ex)))
                     _log.error("You many need to adjust permissions on the %s\\%s key." % (reg_path, key))
                     return False
 
@@ -302,7 +302,7 @@ class WinPort(ApplePort):
                 if rc == 0:
                     rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
             if rc:
-                _log.warn("Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(rc)))
+                _log.warn(r"Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(rc)))
                 _log.warn("You many need to adjust permissions on the %s key." % registry_key)
                 return False
 

@@ -44,37 +44,37 @@ public:
     }
 };
 
-TEST_F(SerializedCryptoKeyWrapTest, GetDefaultWebCryptoMasterKey)
+TEST_F(SerializedCryptoKeyWrapTest, DefaultWebCryptoMasterKey)
 {
-    Vector<uint8_t> masterKey1;
-    EXPECT_TRUE(WebCore::getDefaultWebCryptoMasterKey(masterKey1));
+    auto masterKey1 = WebCore::defaultWebCryptoMasterKey();
+    EXPECT_TRUE(masterKey1);
 
-    Vector<uint8_t> masterKey2;
-    EXPECT_TRUE(WebCore::getDefaultWebCryptoMasterKey(masterKey2));
+    auto masterKey2 = WebCore::defaultWebCryptoMasterKey();
+    EXPECT_TRUE(masterKey2);
 
     EXPECT_TRUE(masterKey1 == masterKey2);
 }
 
 TEST_F(SerializedCryptoKeyWrapTest, DeleteDefaultWebCryptoMasterKey)
 {
-    Vector<uint8_t> masterKey1;
-    EXPECT_TRUE(WebCore::getDefaultWebCryptoMasterKey(masterKey1));
+    auto masterKey1 = WebCore::defaultWebCryptoMasterKey();
+    EXPECT_TRUE(masterKey1);
     EXPECT_TRUE(WebCore::deleteDefaultWebCryptoMasterKey());
 
-    Vector<uint8_t> masterKey2;
-    EXPECT_TRUE(WebCore::getDefaultWebCryptoMasterKey(masterKey2));
+    auto masterKey2 = WebCore::defaultWebCryptoMasterKey();
+    EXPECT_TRUE(masterKey2);
 
     EXPECT_TRUE(masterKey1 != masterKey2);
 }
 
 TEST_F(SerializedCryptoKeyWrapTest, SerializedCryptoKeyWrapUnwrap)
 {
-    Vector<uint8_t> masterKey;
-    EXPECT_TRUE(WebCore::getDefaultWebCryptoMasterKey(masterKey));
+    auto masterKey = WebCore::defaultWebCryptoMasterKey();
+    EXPECT_TRUE(masterKey);
 
     Vector<uint8_t> cryptoKey(16, 1);
     Vector<uint8_t> wrappedKey;
-    EXPECT_TRUE(WebCore::wrapSerializedCryptoKey(masterKey, cryptoKey, wrappedKey));
+    EXPECT_TRUE(WebCore::wrapSerializedCryptoKey(*masterKey, cryptoKey, wrappedKey));
     EXPECT_TRUE(cryptoKey != wrappedKey);
     // ensure wrappedKey doesn't contain cryptoKey
     bool notContained = true;
@@ -90,7 +90,7 @@ TEST_F(SerializedCryptoKeyWrapTest, SerializedCryptoKeyWrapUnwrap)
     EXPECT_TRUE(notContained);
 
     Vector<uint8_t> unwrappedKey;
-    EXPECT_TRUE(WebCore::unwrapSerializedCryptoKey(masterKey, wrappedKey, unwrappedKey));
+    EXPECT_TRUE(WebCore::unwrapSerializedCryptoKey(*masterKey, wrappedKey, unwrappedKey));
     EXPECT_TRUE(unwrappedKey == cryptoKey);
 }
 

@@ -50,6 +50,10 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
+#if ENABLE(IPC_TESTING_API)
+    if (connection.ignoreInvalidMessageForTesting())
+        return;
+#endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
 }
 

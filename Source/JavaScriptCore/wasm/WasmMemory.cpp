@@ -105,7 +105,7 @@ public:
     MemoryResult tryAllocateFastMemory()
     {
         MemoryResult result = [&] {
-            auto holder = holdLock(m_lock);
+            Locker locker { m_lock };
             if (m_fastMemories.size() >= m_maxFastMemoryCount)
                 return MemoryResult(nullptr, MemoryResult::SyncTryToReclaimMemory);
             
@@ -128,7 +128,7 @@ public:
     void freeFastMemory(void* basePtr)
     {
         {
-            auto holder = holdLock(m_lock);
+            Locker locker { m_lock };
             Gigacage::freeVirtualPages(Gigacage::Primitive, basePtr, Memory::fastMappedBytes());
             m_fastMemories.removeFirst(basePtr);
         }
@@ -139,7 +139,7 @@ public:
     MemoryResult tryAllocateGrowableBoundsCheckingMemory(size_t mappedCapacity)
     {
         MemoryResult result = [&] {
-            auto holder = holdLock(m_lock);
+            Locker locker { m_lock };
             void* result = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, mappedCapacity);
             if (!result)
                 return MemoryResult(nullptr, MemoryResult::SyncTryToReclaimMemory);
@@ -157,7 +157,7 @@ public:
     void freeGrowableBoundsCheckingMemory(void* basePtr, size_t mappedCapacity)
     {
         {
-            auto holder = holdLock(m_lock);
+            Locker locker { m_lock };
             Gigacage::freeVirtualPages(Gigacage::Primitive, basePtr, mappedCapacity);
             m_growableBoundsCheckingMemories.erase(std::make_pair(bitwise_cast<uintptr_t>(basePtr), mappedCapacity));
         }
@@ -168,7 +168,7 @@ public:
     bool isInGrowableOrFastMemory(void* address)
     {
         // NOTE: This can be called from a signal handler, but only after we proved that we're in JIT code or WasmLLInt code.
-        auto holder = holdLock(m_lock);
+        Locker locker { m_lock };
         for (void* memory : m_fastMemories) {
             char* start = static_cast<char*>(memory);
             if (start <= address && address <= start + Memory::fastMappedBytes())
@@ -197,7 +197,7 @@ public:
     MemoryResult::Kind tryAllocatePhysicalBytes(size_t bytes)
     {
         MemoryResult::Kind result = [&] {
-            auto holder = holdLock(m_lock);
+            Locker locker { m_lock };
             if (m_physicalBytes + bytes > memoryLimit())
                 return MemoryResult::SyncTryToReclaimMemory;
             
@@ -217,7 +217,7 @@ public:
     void freePhysicalBytes(size_t bytes)
     {
         {
-            auto holder = holdLock(m_lock);
+            Locker locker { m_lock };
             m_physicalBytes -= bytes;
         }
         
@@ -476,7 +476,7 @@ Expected<PageCount, Memory::GrowFailReason> Memory::growShared(PageCount delta)
     Wasm::PageCount oldPageCount;
     Wasm::PageCount newPageCount;
     auto result = ([&]() -> Expected<PageCount, Memory::GrowFailReason> {
-        auto locker = holdLock(m_handle->lock());
+        Locker locker { m_handle->lock() };
 
         oldPageCount = sizeInPages();
         newPageCount = oldPageCount + delta;

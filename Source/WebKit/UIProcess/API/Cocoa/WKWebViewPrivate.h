@@ -125,7 +125,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class _WKTextManipulationConfiguration;
 @class _WKTextManipulationItem;
 @class _WKThumbnailView;
-@class _WKWebsitePolicies;
 @class _WKWebViewPrintFormatter;
 
 @protocol WKHistoryDelegatePrivate;
@@ -213,7 +212,6 @@ for this property.
 - (BOOL)_tryClose WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (BOOL)_isClosed WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
-- (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies WK_API_DEPRECATED_WITH_REPLACEMENT("-_updateWebpagePreferences:", macos(10.13, 10.15.4), ios(11.3, 13.4));
 - (void)_updateWebpagePreferences:(WKWebpagePreferences *)webpagePreferences WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (void)_notifyUserScripts WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, readonly) BOOL _deferrableUserScriptsNeedNotification WK_API_AVAILABLE(macos(11.0), ios(14.0));
@@ -380,10 +378,11 @@ for this property.
 @property (nonatomic, readonly) NSColor *_themeColor WK_API_DEPRECATED_WITH_REPLACEMENT("themeColor", macos(WK_MAC_TBA, WK_MAC_TBA));
 #endif
 
+// FIXME: Remove old `-[WKWebView _pageExtendedBackgroundColor]` SPI <rdar://77789732>
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly) UIColor *_pageExtendedBackgroundColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly) UIColor *_pageExtendedBackgroundColor WK_API_DEPRECATED_WITH_REPLACEMENT("underPageBackgroundColor", ios(WK_IOS_TBA, WK_IOS_TBA));
 #else
-@property (nonatomic, readonly) NSColor *_pageExtendedBackgroundColor;
+@property (nonatomic, readonly) NSColor *_pageExtendedBackgroundColor WK_API_DEPRECATED_WITH_REPLACEMENT("underPageBackgroundColor", macos(10.10, WK_MAC_TBA));
 #endif
 
 // Only set if `-[WKWebViewConfiguration _sampledPageTopColorMaxDifference]` is a positive number.
@@ -407,6 +406,11 @@ for this property.
 - (void)_switchFromStaticFontRegistryToUserFontRegistry WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 - (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler;
+- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler;
+
+- (void)_suspendPage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resumePage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

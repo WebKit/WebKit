@@ -31,7 +31,7 @@
 #if HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEBlend.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <arm_neon.h>
 
 namespace WebCore {
@@ -112,33 +112,34 @@ void FEBlend::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
     FilterEffect* in2 = inputEffect(1);
 
-    auto* imageResult = createPremultipliedImageResult();
-    auto* dstPixelArray = imageResult ? imageResult->data() : nullptr;
-    if (!dstPixelArray)
+    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    if (!destinationPixelBuffer)
         return;
 
-    IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    auto srcPixelArrayA = in->premultipliedResult(effectADrawingRect);
+    auto& destinationPixelArray = destinationPixelBuffer->data();
 
-    IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    auto srcPixelArrayB = in2->premultipliedResult(effectBDrawingRect);
+    IntRect effectADrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    auto sourcePixelArrayA = in->premultipliedResult(effectADrawingRect);
 
-    unsigned pixelArrayLength = srcPixelArrayA->length();
-    ASSERT(pixelArrayLength == srcPixelArrayB->length());
+    IntRect effectBDrawingRect = requestedRegionOfInputPixelBuffer(in2->absolutePaintRect());
+    auto sourcePixelArrayB = in2->premultipliedResult(effectBDrawingRect);
 
-    if (pixelArrayLength >= 8) {
-        platformApplyNEON(srcPixelArrayA->data(), srcPixelArrayB->data(), dstPixelArray->data(), pixelArrayLength);
+    unsigned sourcePixelArrayLength = sourcePixelArrayA->length();
+    ASSERT(pixelArrayLength == sourcePixelArrayB->length());
+
+    if (sourcePixelArrayLength >= 8) {
+        platformApplyNEON(sourcePixelArrayA->data(), sourcePixelArrayB->data(), destinationPixelArray.data(), sourcePixelArrayLength);
         return;
     }
     // If there is just one pixel we expand it to two.
-    ASSERT(pixelArrayLength > 0);
+    ASSERT(sourcePixelArrayLength > 0);
     uint32_t sourceA[2] = {0, 0};
     uint32_t sourceBAndDest[2] = {0, 0};
 
-    sourceA[0] = reinterpret_cast<uint32_t*>(srcPixelArrayA->data())[0];
-    sourceBAndDest[0] = reinterpret_cast<uint32_t*>(srcPixelArrayB->data())[0];
+    sourceA[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayA->data())[0];
+    sourceBAndDest[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayB->data())[0];
     platformApplyNEON(reinterpret_cast<uint8_t*>(sourceA), reinterpret_cast<uint8_t*>(sourceBAndDest), reinterpret_cast<uint8_t*>(sourceBAndDest), 8);
-    reinterpret_cast<uint32_t*>(dstPixelArray->data())[0] = sourceBAndDest[0];
+    reinterpret_cast<uint32_t*>(destinationPixelArray.data())[0] = sourceBAndDest[0];
 }
 
 void FEBlend::platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,

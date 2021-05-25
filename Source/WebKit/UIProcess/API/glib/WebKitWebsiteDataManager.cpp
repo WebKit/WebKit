@@ -633,7 +633,7 @@ const gchar* webkit_website_data_manager_get_disk_cache_directory(WebKitWebsiteD
 
     if (!priv->diskCacheDirectory) {
         // The default directory already has the subdirectory.
-        priv->diskCacheDirectory.reset(g_strdup(FileSystem::directoryName(WebKit::WebsiteDataStore::defaultNetworkCacheDirectory()).utf8().data()));
+        priv->diskCacheDirectory.reset(g_strdup(FileSystem::parentPath(WebKit::WebsiteDataStore::defaultNetworkCacheDirectory()).utf8().data()));
     }
     return priv->diskCacheDirectory.get();
 }

@@ -1751,6 +1751,16 @@
          "krit"
       ]
    },
+   "Dmitry Bezhetskov" : {
+      "emails" : [
+         "dbezhetskov@igalia.com",
+         "dima00782@gmail.com"
+      ],
+      "nicks" : [
+         "dbezhetskov"
+      ],
+      "status" : "committer"
+   },
    "Dmitry Gorbik" : {
       "emails" : [
          "dgorbik@apple.com"
@@ -3349,7 +3359,7 @@
       ],
       "status" : "committer"
    },
-   "Katherine Cheney" : {
+   "Kate Cheney" : {
       "emails" : [
          "katherine_cheney@apple.com"
       ],
@@ -5558,7 +5568,7 @@
       "nicks" : [
          "ntim"
       ],
-      "status": "committer"
+      "status" : "committer"
    },
    "Tim Omernick" : {
       "emails" : [

@@ -1838,4 +1838,188 @@ TEST(InAppBrowserPrivacy, NonAppBoundRequestWithServiceWorkerSoftUpdate)
 {
     softUpdateTest(IsAppBound::No);
 }
+
+static void runWebProcessPlugInTest(IsAppBound isAppBound)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"InAppBrowserPrivacyPlugIn"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+
+    NSString *url = @"https://webkit.org";
+
+    __block bool isDone = false;
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    if (isAppBound == IsAppBound::No) {
+        NSMutableURLRequest *nonAppBoundRequest = request;
+        APP_BOUND_REQUEST_ADDITIONS
+        request = nonAppBoundRequest;
+    }
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    isDone = false;
+    bool expectingAppBoundRequests = isAppBound == IsAppBound::Yes ? true : false;
+    [webView _appBoundNavigationData:^(struct WKAppBoundNavigationTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppBoundRequestTesting, expectingAppBoundRequests);
+        EXPECT_EQ(data.hasLoadedNonAppBoundRequestTesting, !expectingAppBoundRequests);
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(InAppBrowserPrivacy, WebProcessPluginTestAppBound)
+{
+    runWebProcessPlugInTest(IsAppBound::Yes);
+}
+
+TEST(InAppBrowserPrivacy, WebProcessPluginTestNonAppBound)
+{
+    runWebProcessPlugInTest(IsAppBound::No);
+}
+
+#if WK_HAVE_C_SPI
+
+static const char* mainSWBytesDefaultValue = R"SWRESOURCE(
+<script>
+
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    log(event.data);
+});
+
+try {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+        if (reg.active) {
+            worker = reg.active;
+            worker.postMessage("SECOND");
+            return;
+        }
+        worker = reg.installing;
+        worker.addEventListener('statechange', function() {
+            if (worker.state == 'activated')
+                worker.postMessage("FIRST");
+        });
+    }).catch(function(error) {
+        log('Registration failed with: ' + error);
+    });
+} catch(e) {
+    log('Exception: ' + e);
+}
+</script>
+)SWRESOURCE";
+
+static const char* scriptBytesDefaultValue = R"SWRESOURCE(
+self.addEventListener('message', async (event) => {
+    if (!self.internals) {
+        event.source.postMessage('No internals');
+        return;
+    }
+
+    queryAppBoundValue(event, false);
+});
+
+async function queryAppBoundValue(event, haveSentInitialMessage)
+{
+    var result = await internals.lastNavigationWasAppBound();
+    if (result) {
+        if (event.data == "FIRST") {
+            event.source.postMessage('app-bound');
+            return;
+        }
+
+        if (!haveSentInitialMessage)
+            event.source.postMessage('starts app-bound');
+
+        queryAppBoundValue(event, true);
+        return;
+    }
+
+    event.source.postMessage('non app-bound');
+}
+
+)SWRESOURCE";
+
+
+static String expectedMessage;
+static bool receivedMessage = false;
+
+@interface SWAppBoundRequestMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation SWAppBoundRequestMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_WK_STREQ(message.body, expectedMessage);
+    receivedMessage = true;
+}
+@end
+
+TEST(InAppBrowserPrivacy, RegisterServiceWorkerClientUpdatesAppBoundValue)
+{
+    static bool isDone = false;
+
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.processPool = (WKProcessPool *)context.get();
+
+    RetainPtr<SWAppBoundRequestMessageHandler> messageHandler = adoptNS([[SWAppBoundRequestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+
+    webView1.get().navigationDelegate = delegate.get();
+    webView2.get().navigationDelegate = delegate.get();
+
+    ServiceWorkerTCPServer server({
+        { "text/html", mainSWBytesDefaultValue },
+        { "application/javascript", scriptBytesDefaultValue },
+    }, {
+        { "text/html", mainSWBytesDefaultValue },
+        { "application/javascript", scriptBytesDefaultValue },
+    });
+
+    // Load WebView with an app-bound request. We expect the ServiceWorkerThreadProxy to be app-bound.
+    expectedMessage = "app-bound";
+    [webView1 loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&receivedMessage);
+
+    // Load WebView with a non app-bound request. We expect the ServiceWorkerThreadProxy to be app-bound
+    // at first, but then become non app-bound once the second webView is closed and its client is unregistered.
+    expectedMessage = "starts app-bound";
+    receivedMessage = false;
+    NSMutableURLRequest *nonAppBoundRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/main.html", server.port()]]];
+    APP_BOUND_REQUEST_ADDITIONS
+
+    [webView2 loadRequest:nonAppBoundRequest];
+    TestWebKitAPI::Util::run(&receivedMessage);
+
+    // Close the app-bound view. We expect that the existing worker will become non app-bound
+    // now that all app-bound clients have been removed.
+    expectedMessage = "non app-bound";
+    receivedMessage = false;
+    [webView1 _close];
+    webView1 = nullptr;
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+}
+
+#endif
+
 #endif

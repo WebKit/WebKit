@@ -30,7 +30,7 @@
 
 #include "ColorConversion.h"
 #include "FELightingNEON.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>
 
 namespace WebCore {
@@ -475,23 +475,23 @@ void FELighting::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    auto* resultImage = createPremultipliedImageResult();
-    if (!resultImage)
+    auto& destinationPixelBuffer = createPremultipliedImageResult();
+    if (!destinationPixelBuffer)
         return;
 
-    auto& resultPixelArray = resultImage->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     setIsAlphaImage(false);
 
-    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyPremultipliedResult(resultPixelArray, effectDrawingRect, operatingColorSpace());
+    IntRect effectDrawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    in->copyPremultipliedResult(destinationPixelArray, effectDrawingRect, operatingColorSpace());
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange
     // output for various kernelUnitLengths, and I am not sure they are reliable.
     // Anyway, feConvolveMatrix should also use the implementation
 
     IntSize absolutePaintSize = absolutePaintRect().size();
-    drawLighting(resultPixelArray, absolutePaintSize.width(), absolutePaintSize.height());
+    drawLighting(destinationPixelArray, absolutePaintSize.width(), absolutePaintSize.height());
 }
 
 } // namespace WebCore

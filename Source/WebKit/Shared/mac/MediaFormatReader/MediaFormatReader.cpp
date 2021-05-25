@@ -100,6 +100,7 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
     static NeverDestroyed<ContentType> contentType("video/webm"_s);
     auto parser = SourceBufferParserWebM::create(contentType);
     if (!parser) {
+        Locker locker { m_parseTracksLock };
         m_parseTracksStatus = kMTPluginFormatReaderError_AllocationFailure;
         return;
     }
@@ -131,7 +132,7 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
         didProvideMediaData(WTFMove(mediaSample), trackID, mediaType);
     });
 
-    auto locker = holdLock(m_parseTracksLock);
+    Locker locker { m_parseTracksLock };
     m_byteSource = WTFMove(byteSource);
     m_parseTracksStatus = WTF::nullopt;
     m_duration = MediaTime::invalidTime();
@@ -149,7 +150,7 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
 {
     ASSERT(!isMainRunLoop());
 
-    auto locker = holdLock(m_parseTracksLock);
+    Locker locker { m_parseTracksLock };
     ASSERT(!m_parseTracksStatus);
     ASSERT(m_duration.isInvalid());
     ASSERT(m_trackReaders.isEmpty());
@@ -192,7 +193,7 @@ void MediaFormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint
 {
     ASSERT(!isMainRunLoop());
 
-    auto locker = holdLock(m_parseTracksLock);
+    Locker locker { m_parseTracksLock };
     auto trackIndex = m_trackReaders.findMatching([&](auto& track) {
         return track->trackID() == trackID;
     });
@@ -206,7 +207,7 @@ void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
     ASSERT(!isMainRunLoop());
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto locker = holdLock(m_parseTracksLock);
+    Locker locker { m_parseTracksLock };
     ASSERT(m_parseTracksStatus.hasValue());
 
     for (auto& trackReader : m_trackReaders)
@@ -230,8 +231,9 @@ void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
 
 OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, void* valueCopy)
 {
-    auto locker = holdLock(m_parseTracksLock);
+    Locker locker { m_parseTracksLock };
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
+        assertIsHeld(m_parseTracksLock);
         return m_parseTracksStatus.hasValue();
     });
 
@@ -251,8 +253,9 @@ OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocat
 
 OSStatus MediaFormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
 {
-    auto locker = holdLock(m_parseTracksLock);
+    Locker locker { m_parseTracksLock };
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
+        assertIsHeld(m_parseTracksLock);
         return m_parseTracksStatus.hasValue();
     });
 

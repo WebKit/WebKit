@@ -27,7 +27,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaRecorderPrivate.h"
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -50,10 +50,10 @@ private:
     void resumeRecording(CompletionHandler<void()>&&) final;
     const String& mimeType() const final;
 
-    void generateMockCounterString();
+    void generateMockCounterString() WTF_REQUIRES_LOCK(m_bufferLock);
 
-    mutable Lock m_bufferLock;
-    StringBuilder m_buffer;
+    mutable CheckedLock m_bufferLock;
+    StringBuilder m_buffer WTF_GUARDED_BY_LOCK(m_bufferLock);
     unsigned m_counter { 0 };
     String m_audioTrackID;
     String m_videoTrackID;

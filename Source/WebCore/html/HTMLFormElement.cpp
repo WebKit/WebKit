@@ -46,7 +46,6 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "InputTypeNames.h"
-#include "MIMETypeRegistry.h"
 #include "MixedContentChecker.h"
 #include "NodeRareData.h"
 #include "Page.h"
@@ -399,28 +398,11 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (m_plannedFormSubmission)
         m_plannedFormSubmission->cancel();
 
-    unsigned imageOrMediaFiles = 0;
-    for (auto& dataElement : formSubmission->data().elements()) {
-        auto* encodedFileData = WTF::get_if<FormDataElement::EncodedFileData>(dataElement.data);
-        if (!encodedFileData)
-            continue;
-
-        auto mimeType = MIMETypeRegistry::mimeTypeForPath(encodedFileData->filename);
-        if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
-            ++imageOrMediaFiles;
-    }
-
     m_plannedFormSubmission = makeWeakPtr(formSubmission.get());
     frame->loader().submitForm(WTFMove(formSubmission));
 
     if (firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);
-
-    if (imageOrMediaFiles) {
-        auto& diagnosticLoggingClient = document().page()->diagnosticLoggingClient();
-        auto message = makeString(imageOrMediaFiles, imageOrMediaFiles == 1 ? " media file has been submitted" : " media files have been submitted");
-        diagnosticLoggingClient.logDiagnosticMessageWithDomain(message, DiagnosticLoggingDomain::Media);
-    }
 
     m_shouldSubmit = false;
     m_isSubmittingOrPreparingForSubmission = false;

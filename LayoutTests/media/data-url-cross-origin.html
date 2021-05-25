@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+
+        <script>
+            function canplaythrough()
+            {
+                testExpected("mediaElement.duration", 0, '>');
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent("error");
+                waitForEvent("loadstart");
+                waitForEvent("waiting");
+                waitForEvent("ratechange");
+                waitForEvent("durationchange");
+                waitForEvent("loadedmetadata");
+                waitForEvent("loadeddata");
+                waitForEvent("canplay");
+                waitForEvent("canplaythrough", canplaythrough);
+
+                video.src = findDataURL('video');
+                video.load();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that a video element with "crossorigin='anonymous'" can use a data: url</p>
+        <video crossorigin='anonymous' controls>
+    </body>
+</html>

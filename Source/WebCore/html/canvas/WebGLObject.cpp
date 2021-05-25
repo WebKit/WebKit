@@ -53,7 +53,7 @@ void WebGLObject::runDestructor()
         auto locker = AbstractLocker(NoLockingNecessary);
         deleteObject(locker, nullptr);
     } else {
-        auto locker = holdLock(lock);
+        Locker locker { lock };
         deleteObject(locker, nullptr);
     }
 }

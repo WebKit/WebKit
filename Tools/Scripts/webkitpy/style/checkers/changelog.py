@@ -26,6 +26,7 @@
 from sys import maxsize
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 from webkitpy.style.checkers.common import TabChecker, match, search, searchIgnorecase
+from webkitpy.style.checkers.inclusive_language import InclusiveLanguageChecker
 
 
 class ChangeLogChecker(object):
@@ -38,6 +39,7 @@ class ChangeLogChecker(object):
         self.handle_style_error = handle_style_error
         self.should_line_be_checked = should_line_be_checked
         self._tab_checker = TabChecker(file_path, handle_style_error)
+        self._inclusive_language_checker = InclusiveLanguageChecker(handle_style_error)
 
     def check_entry(self, first_line_checked, entry_lines):
         if not entry_lines:
@@ -58,9 +60,9 @@ class ChangeLogChecker(object):
         for line in entry_lines:
             line_no = line_no + 1
             # filter file change descriptions
-            if not match('\s*\*\s', line):
+            if not match(r'\s*\*\s', line):
                 continue
-            if search(':\s*$', line) or search(':\s', line):
+            if search(r':\s*$', line) or search(r':\s', line):
                 continue
             self.handle_style_error(line_no,
                                     "changelog/filechangedescriptionwhitespace", 5,
@@ -70,7 +72,7 @@ class ChangeLogChecker(object):
         line_no = first_line_checked - 1
         for line in entry_lines:
             line_no = line_no + 1
-            if match('\s*No new tests \(OOPS!\)\.$', line):
+            if match(r'\s*No new tests \(OOPS!\)\.$', line):
                 self.handle_style_error(line_no,
                                         "changelog/nonewtests", 5,
                                         "You should remove the 'No new tests' and either add and list tests, or explain why no new tests were possible.")
@@ -79,6 +81,7 @@ class ChangeLogChecker(object):
 
     def check(self, lines):
         self._tab_checker.check(lines)
+        self._inclusive_language_checker.check(lines)
         first_line_checked = 0
         entry_lines = []
 

@@ -80,8 +80,8 @@ String signedPublicKeyAndChallengeString(unsigned index, const String& challenge
         if (!CryptSignAndEncodeCertificate(hContext, AT_KEYEXCHANGE, X509_ASN_ENCODING, X509_KEYGEN_REQUEST_TO_BE_SIGNED, &requestInfo, &signAlgo, 0, reinterpret_cast<LPBYTE>(binary.data()), &dwEncodedLength))
             break;
 
-        keyString = base64Encode(binary);
-    } while(0);
+        keyString = base64EncodeToString(binary);
+    } while (0);
 
     if (pPubInfo)
         fastFree(pPubInfo);

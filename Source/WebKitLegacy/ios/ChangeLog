@@ -1,3 +1,28 @@
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Stop using holdLock() in WebKit/WebKitLegacy/Tools as it is not compatible with Clang thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=226127
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (-[WebFixedPositionContent scrollOrZoomChanged:]):
+        (-[WebFixedPositionContent overflowScrollPositionForLayer:changedTo:]):
+        (-[WebFixedPositionContent setViewportConstrainedLayers:stickyContainerMap:]):
+        (-[WebFixedPositionContent hasFixedOrStickyPositionLayers]):
+
+2021-05-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make WebCore::HitTestRequest::RequestType an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=225597
+
+        Reviewed by Sam Weinig.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame elementRectAtPoint:]):
+
 2021-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename WebCore::SelectionRect to WebCore::SelectionGeometry

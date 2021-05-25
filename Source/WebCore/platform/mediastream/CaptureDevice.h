@@ -33,11 +33,14 @@ class CaptureDevice {
 public:
     enum class DeviceType { Unknown, Microphone, Speaker, Camera, Screen, Window };
 
-    CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())
+    CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString(), bool isEnabled = false, bool isDefault = false, bool isMock = false)
         : m_persistentId(persistentId)
         , m_type(type)
         , m_label(label)
         , m_groupId(groupId)
+        , m_enabled(isEnabled)
+        , m_default(isDefault)
+        , m_isMockDevice(isMock)
     {
     }
 
@@ -70,6 +73,8 @@ public:
     void setIsMockDevice(bool isMockDevice) { m_isMockDevice = isMockDevice; }
 
     explicit operator bool() const { return m_type != DeviceType::Unknown; }
+
+    CaptureDevice isolatedCopy() &&;
 
 #if ENABLE(MEDIA_STREAM)
     template<class Encoder>
@@ -158,6 +163,19 @@ inline bool haveDevicesChanged(const Vector<CaptureDevice>& oldDevices, const Ve
     }
 
     return false;
+}
+
+inline CaptureDevice CaptureDevice::isolatedCopy() &&
+{
+    return {
+        WTFMove(m_persistentId).isolatedCopy(),
+        m_type,
+        WTFMove(m_label).isolatedCopy(),
+        WTFMove(m_groupId).isolatedCopy(),
+        m_enabled,
+        m_default,
+        m_isMockDevice
+    };
 }
 
 } // namespace WebCore

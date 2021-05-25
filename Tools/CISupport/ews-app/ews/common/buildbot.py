@@ -81,7 +81,7 @@ class Buildbot():
 
     @classmethod
     def _get_display_name_from_builder_name(cls, builder_name):
-        words = re.split('[, \-_:()]+', builder_name)
+        words = re.split(r'[, \-_:()]+', builder_name)
         if not words:
             return builder_name
         return words[0].lower()

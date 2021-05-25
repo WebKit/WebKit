@@ -175,7 +175,7 @@ inline size_t HTMLCollection::memoryCost() const
 {
     // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
     // Hence, we need to guard m_namedElementCache from being replaced while accessing it.
-    auto locker = holdLock(m_namedElementCacheAssignmentLock);
+    Locker locker { m_namedElementCacheAssignmentLock };
     return m_namedElementCache ? m_namedElementCache->memoryCost() : 0;
 }
 
@@ -223,7 +223,7 @@ inline void HTMLCollection::setNamedItemCache(std::unique_ptr<CollectionNamedEle
     ASSERT(!m_namedElementCache);
     cache->didPopulate();
     {
-        auto locker = holdLock(m_namedElementCacheAssignmentLock);
+        Locker locker { m_namedElementCacheAssignmentLock };
         m_namedElementCache = WTFMove(cache);
     }
     document().collectionCachedIdNameMap(*this);

@@ -44,7 +44,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << boundInterfaceIdentifier;
     encoder << allowsCellularAccess;
 #if PLATFORM(COCOA)
-    IPC::encode(encoder, proxyConfiguration.get());
+    encoder << proxyConfiguration;
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
     encoder << attributedBundleIdentifier;
@@ -108,7 +108,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> proxyConfiguration;
-    if (!IPC::decode(decoder, proxyConfiguration))
+    if (!decoder.decode(proxyConfiguration))
         return WTF::nullopt;
     
     Optional<String> sourceApplicationBundleIdentifier;

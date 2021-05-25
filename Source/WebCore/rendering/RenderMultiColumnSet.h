@@ -83,6 +83,15 @@ public:
     void updateMinimumColumnHeight(LayoutUnit height) { m_minimumColumnHeight = std::max(height, m_minimumColumnHeight); }
     LayoutUnit minimumColumnHeight() const { return m_minimumColumnHeight; }
 
+    void updateSpaceShortageForSizeContainment(LayoutUnit shortage)
+    {
+        if (m_spaceShortageForSizeContainment <= 0) {
+            m_spaceShortageForSizeContainment = shortage;
+            return;
+        }
+        m_spaceShortageForSizeContainment = std::min(shortage, m_spaceShortageForSizeContainment);
+    }
+
     unsigned forcedBreaksCount() const { return m_contentRuns.size(); }
     void clearForcedBreaks();
     void addForcedBreak(LayoutUnit offsetFromFirstPage);
@@ -198,6 +207,7 @@ private:
     LayoutUnit m_maxColumnHeight; // Maximum column height allowed.
     LayoutUnit m_minSpaceShortage; // The smallest amout of space shortage that caused a column break.
     LayoutUnit m_minimumColumnHeight;
+    LayoutUnit m_spaceShortageForSizeContainment; // The shortage space that keeps size containment monolithic.
 
     // A run of content without explicit (forced) breaks; i.e. a flow thread portion between two
     // explicit breaks, between flow thread start and an explicit break, between an explicit break

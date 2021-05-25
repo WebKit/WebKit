@@ -68,7 +68,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
             return Exception { IndexSizeError, "Length of specified outputChannelCount does not match the given number of outputs"_s };
 
         for (auto& channelCount : *options.outputChannelCount) {
-            if (channelCount < 1 || channelCount > AudioContext::maxNumberOfChannels())
+            if (channelCount < 1 || channelCount > AudioContext::maxNumberOfChannels)
                 return Exception { NotSupportedError, "Provided number of channels for output is outside supported range"_s };
         }
     }
@@ -113,7 +113,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
 
     {
         // The node should be manually added to the automatic pull node list, even without a connect() call.
-        BaseAudioContext::AutoLocker contextLocker(context);
+        Locker contextLocker { context.graphLock() };
         node->updatePullStatus();
     }
 
@@ -144,7 +144,7 @@ AudioWorkletNode::~AudioWorkletNode()
 {
     ASSERT(isMainThread());
     {
-        auto locker = holdLock(m_processLock);
+        Locker locker { m_processLock };
         if (m_processor) {
             if (auto* workletProxy = context().audioWorklet().proxy())
                 workletProxy->postTaskForModeToWorkletGlobalScope([m_processor = WTFMove(m_processor)](ScriptExecutionContext&) { }, WorkerRunLoop::defaultMode());
@@ -158,7 +158,7 @@ void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescript
     ASSERT(isMainThread());
     ASSERT(m_parameters->map().isEmpty());
 
-    auto locker = holdLock(m_processLock);
+    Locker locker { m_processLock };
 
     for (auto& descriptor : descriptors) {
         auto parameter = AudioParam::create(context(), descriptor.name, descriptor.defaultValue, descriptor.minValue, descriptor.maxValue, descriptor.automationRate);
@@ -180,7 +180,7 @@ void AudioWorkletNode::setProcessor(RefPtr<AudioWorkletProcessor>&& processor)
 {
     ASSERT(!isMainThread());
     if (processor) {
-        auto locker = holdLock(m_processLock);
+        Locker locker { m_processLock };
         m_processor = WTFMove(processor);
         m_workletThread = &Thread::current();
     } else
@@ -191,11 +191,19 @@ void AudioWorkletNode::process(size_t framesToProcess)
 {
     ASSERT(!isMainThread());
 
-    auto locker = tryHoldLock(m_processLock);
-    if (!locker || !m_processor || &Thread::current() != m_workletThread) {
-        // We're not ready yet or we are getting destroyed. In this case, we output silence.
+    auto zeroOutput = [&] {
         for (unsigned i = 0; i < numberOfOutputs(); ++i)
             output(i)->bus()->zero();
+    };
+
+    if (!m_processLock.tryLock()) {
+        zeroOutput();
+        return;
+    }
+    Locker locker { AdoptLock, m_processLock };
+    if (!m_processor || &Thread::current() != m_workletThread) {
+        // We're not ready yet or we are getting destroyed. In this case, we output silence.
+        zeroOutput();
         return;
     }
 

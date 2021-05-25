@@ -790,7 +790,10 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         networkLoadMetrics.domainLookupStart = Seconds(domainLookupStartInterval);
         networkLoadMetrics.domainLookupEnd = Seconds(domainLookupEndInterval);
         networkLoadMetrics.connectStart = Seconds(connectStartInterval);
-        networkLoadMetrics.secureConnectionStart = Seconds(secureConnectionStartInterval);
+        if (m.reusedConnection && [m.response.URL.scheme isEqualToString:@"https"])
+            networkLoadMetrics.secureConnectionStart = WebCore::reusedTLSConnectionSentinel;
+        else
+            networkLoadMetrics.secureConnectionStart = Seconds(secureConnectionStartInterval);
         networkLoadMetrics.connectEnd = Seconds(connectEndInterval);
         networkLoadMetrics.requestStart = Seconds(requestStartInterval);
         networkLoadMetrics.responseStart = Seconds(responseStartInterval);
@@ -878,8 +881,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         ASSERT(RunLoop::isMain());
 
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
-#if HAVE(TLS_PROTOCOL_VERSION_T)
         NSURLSessionTaskTransactionMetrics *metrics = dataTask._incompleteTaskMetrics.transactionMetrics.lastObject;
+#if HAVE(TLS_PROTOCOL_VERSION_T)
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
@@ -906,9 +909,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
 
-        // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's
-        // NetworkLoadMetrics. For example, PerformanceTiming.
-        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData([dataTask _timingData]));
+        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(metrics));
 
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier](WebCore::PolicyAction policyAction) {
 #if !LOG_DISABLED

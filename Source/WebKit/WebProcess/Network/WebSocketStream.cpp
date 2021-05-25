@@ -34,13 +34,14 @@
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static Lock globalWebSocketStreamMapLock;
-static HashMap<WebSocketIdentifier, WebSocketStream*>& globalWebSocketStreamMap()
+static CheckedLock globalWebSocketStreamMapLock;
+static HashMap<WebSocketIdentifier, WebSocketStream*>& globalWebSocketStreamMap() WTF_REQUIRES_LOCK(globalWebSocketStreamMapLock)
 {
     static NeverDestroyed<HashMap<WebSocketIdentifier, WebSocketStream*>> globalMap;
     return globalMap;
@@ -48,7 +49,7 @@ static HashMap<WebSocketIdentifier, WebSocketStream*>& globalWebSocketStreamMap(
 
 WebSocketStream* WebSocketStream::streamWithIdentifier(WebSocketIdentifier identifier)
 {
-    LockHolder locker(globalWebSocketStreamMapLock);
+    Locker stateLocker { globalWebSocketStreamMapLock };
     return globalWebSocketStreamMap().get(identifier);
 }
 
@@ -56,7 +57,7 @@ void WebSocketStream::networkProcessCrashed()
 {
     Vector<RefPtr<WebSocketStream>> sockets;
     {
-        LockHolder locker(globalWebSocketStreamMapLock);
+        Locker stateLocker { globalWebSocketStreamMapLock };
         sockets.reserveInitialCapacity(globalWebSocketStreamMap().size());
         for (auto& stream : globalWebSocketStreamMap().values())
             sockets.uncheckedAppend(stream);
@@ -71,7 +72,7 @@ void WebSocketStream::networkProcessCrashed()
         stream = nullptr;
     }
 
-    LockHolder locker(globalWebSocketStreamMapLock);
+    Locker stateLocker { globalWebSocketStreamMapLock };
     globalWebSocketStreamMap().clear();
 }
 
@@ -87,14 +88,14 @@ WebSocketStream::WebSocketStream(const URL& url, WebCore::SocketStreamHandleClie
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::CreateSocketStream(url, cachePartition, m_identifier), 0);
 
-    LockHolder locker(globalWebSocketStreamMapLock);
+    Locker stateLocker { globalWebSocketStreamMapLock };
     ASSERT(!globalWebSocketStreamMap().contains(m_identifier));
     globalWebSocketStreamMap().set(m_identifier, this);
 }
 
 WebSocketStream::~WebSocketStream()
 {
-    LockHolder locker(globalWebSocketStreamMapLock);
+    Locker stateLocker { globalWebSocketStreamMapLock };
     ASSERT(globalWebSocketStreamMap().contains(m_identifier));
     globalWebSocketStreamMap().remove(m_identifier);
 }

@@ -1495,7 +1495,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename HashTableType>
     void invalidateIterators(const HashTableType* table)
     {
-        auto locker = holdLock(*table->m_mutex);
+        Locker locker { *table->m_mutex };
         typename HashTableType::const_iterator* next;
         for (typename HashTableType::const_iterator* p = table->m_iterators; p; p = next) {
             next = p->m_next;
@@ -1516,7 +1516,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         if (!table) {
             it->m_next = nullptr;
         } else {
-            auto locker = holdLock(*table->m_mutex);
+            Locker locker { *table->m_mutex };
             ASSERT(table->m_iterators != it);
             it->m_next = table->m_iterators;
             table->m_iterators = it;
@@ -1535,7 +1535,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             ASSERT(!it->m_next);
             ASSERT(!it->m_previous);
         } else {
-            auto locker = holdLock(*it->m_table->m_mutex);
+            Locker locker { *it->m_table->m_mutex };
             if (it->m_next) {
                 ASSERT(it->m_next->m_previous == it);
                 it->m_next->m_previous = it->m_previous;

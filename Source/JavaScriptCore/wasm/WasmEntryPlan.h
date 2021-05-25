@@ -106,7 +106,7 @@ protected:
     bool tryReserveCapacity(Vector<T>& vector, size_t size, const char* what)
     {
         if (UNLIKELY(!vector.tryReserveCapacity(size))) {
-            fail(holdLock(m_lock), WTF::makeString("Failed allocating enough space for ", size, what));
+            fail(Locker { m_lock }, WTF::makeString("Failed allocating enough space for ", size, what));
             return false;
         }
         return true;

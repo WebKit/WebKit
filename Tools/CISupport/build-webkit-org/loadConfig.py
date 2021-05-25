@@ -244,5 +244,5 @@ def getValidTags(tags):
 
 
 def getTagsForBuilder(builder):
-    keywords = re.split('[, \-_:()]+', str(builder['name']))
+    keywords = re.split(r'[, \-_:()]+', str(builder['name']))
     return getValidTags(keywords)

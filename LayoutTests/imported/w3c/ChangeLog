@@ -1,3 +1,535 @@
+2021-05-21  Rob Buis  <rbuis@igalia.com>
+
+        grid track size should reject unitless length
+        https://bugs.webkit.org/show_bug.cgi?id=189137
+
+        Reviewed by Sergio Villar Senin.
+
+        Update improved test result.
+
+        * web-platform-tests/quirks/unitless-length/excluded-properties-001-expected.txt:
+
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [ImplicitThis] and [CustomProxyToJSObject] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223758
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.js: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.worker-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.worker.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/dummy-processor-globalthis.js: Added.
+
+2021-05-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align internal methods of WindowProperties object with the spec
+        https://bugs.webkit.org/show_bug.cgi?id=222918
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/class-string-named-properties-object.window-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/class-string-named-properties-object.window.js:
+        * web-platform-tests/WebIDL/ecmascript-binding/window-named-properties-object-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/window-named-properties-object.html: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/window-named-properties-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/window-named-properties.html:
+
+2021-05-20  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Wrong height of an empty table inside an orthogonal flex parent
+        https://bugs.webkit.org/show_bug.cgi?id=225339
+
+        Reviewed by Sergio Villar Senin.
+        
+        Add a test for an empty table inside a flexbox container, where the logical heights of both elements
+        are orthogonal to each other (the table has vertical writing mode and the flexbox uses row direction).
+        
+        This is a flipped version of table-as-item-specified-height.html.
+
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-width-vertical-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/table-as-item-specified-width-vertical.html: Added.
+
+2021-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add support for Navigation Timing Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=184363
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/navigation-timing/META.yml: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_image_document-expected.txt: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_image_document.html: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_media_document-expected.txt: Added.
+        * web-platform-tests/navigation-timing/dom_interactive_media_document.html: Added.
+        * web-platform-tests/navigation-timing/idlharness.window.js:
+        * web-platform-tests/navigation-timing/nav2_test_attributes_exist-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_attributes_exist.html: Added.
+        This test fails because we have not implemented transferSize, encodedBodySize, and decodedBodySize as noted in PerformanceResourceTiming.idl
+        * web-platform-tests/navigation-timing/nav2_test_attributes_values-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_attributes_values.html: Added.
+        This test fails because we have not implemented transferSize, encodedBodySize, and decodedBodySize as noted in PerformanceResourceTiming.idl
+        * web-platform-tests/navigation-timing/nav2_test_document_open-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_document_open.html:
+        * web-platform-tests/navigation-timing/nav2_test_document_replaced-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_document_replaced.html:
+        * web-platform-tests/navigation-timing/nav2_test_frame_removed-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessible_from_the_start-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessible_from_the_start.html:
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessors-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_instance_accessors.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_iframe-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_iframe.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigate_within_document-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigate_within_document.html:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_backforward-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_backforward.html:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_navigate-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_navigate.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_reload-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_navigation_type_reload.html:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_final_original_origin-expected.txt: Added.
+        This test fails because our test infrastructure doesn't support loading from www.localhost.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_final_original_origin.html: Copied from LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in.html.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in-expected.txt:
+        This test fails because our test infrastructure doesn't support loading from www.localhost.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in.html:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_none-expected.txt: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_none.html: Added.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server-expected.txt:
+        This test failure needs further investigation.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server.html:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_xserver-expected.txt:
+        This test fails because our test infrastructure doesn't support loading from www.localhost.
+        * web-platform-tests/navigation-timing/nav2_test_redirect_xserver.html:
+        * web-platform-tests/navigation-timing/nav2_test_unique_nav_instances-expected.txt: Added.
+        This test failure needs further investigation.
+        * web-platform-tests/navigation-timing/nav2_test_unique_nav_instances.html: Added.
+        * web-platform-tests/navigation-timing/po-navigation-expected.txt: Added.
+        * web-platform-tests/navigation-timing/po-navigation.html: Added.
+        * web-platform-tests/navigation-timing/resources/webperftestharness.js:
+        (test_namespace):
+        (test_attribute_exists):
+        (test_enum):
+        * web-platform-tests/navigation-timing/secure-connection-start-reuse.https-expected.txt: Added.
+        * web-platform-tests/navigation-timing/secure-connection-start-reuse.https.html: Added.
+        * web-platform-tests/navigation-timing/secure_connection_start_non_zero.https-expected.txt:
+        This test has been marked as flaky.  It needs to be fixed to not rely on no initial connection reuse.
+        * web-platform-tests/navigation-timing/supported_navigation_type.any-expected.txt:
+        * web-platform-tests/navigation-timing/supported_navigation_type.any.worker-expected.txt:
+        * web-platform-tests/navigation-timing/test_document_onload-expected.txt: Added.
+        * web-platform-tests/navigation-timing/test_document_onload.html: Added.
+        This test failure needs further investigation.
+        * web-platform-tests/navigation-timing/unload-event-same-origin-check-expected.txt:
+        * web-platform-tests/navigation-timing/unload-event-same-origin-check.html:
+        * web-platform-tests/performance-timeline/META.yml: Added.
+        * web-platform-tests/performance-timeline/buffered-flag-after-timeout.any.js: Added.
+        (async_test.t.t.step_timeout):
+        * web-platform-tests/performance-timeline/buffered-flag-observer.any.js: Added.
+        * web-platform-tests/performance-timeline/get-invalid-entries-expected.txt: Added.
+        * web-platform-tests/performance-timeline/get-invalid-entries.html: Added.
+        * web-platform-tests/performance-timeline/idlharness.any.js: Added.
+        (async idl_array):
+        * web-platform-tests/performance-timeline/multiple-buffered-flag-observers.any.js: Added.
+        (promise_test):
+        * web-platform-tests/performance-timeline/not-clonable-expected.txt: Added.
+        * web-platform-tests/performance-timeline/not-clonable.html: Added.
+        * web-platform-tests/performance-timeline/observer-buffered-false.any.js: Added.
+        (async_test.t.t.step_timeout):
+        * web-platform-tests/performance-timeline/performanceentry-tojson.any.js: Added.
+        (test):
+        * web-platform-tests/performance-timeline/po-callback-mutate.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-disconnect-removes-observed-types.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-disconnect.any.js: Added.
+        (async_test):
+        (test):
+        * web-platform-tests/performance-timeline/po-entries-sort.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-getentries.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-mark-measure.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-observe-expected.txt: Added.
+        * web-platform-tests/performance-timeline/po-observe-repeated-type.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/po-observe.html: Added.
+        * web-platform-tests/performance-timeline/po-resource-expected.txt: Added.
+        * web-platform-tests/performance-timeline/po-resource.html: Added.
+        * web-platform-tests/performance-timeline/po-takeRecords.any.js: Added.
+        (async_test):
+        * web-platform-tests/performance-timeline/resources/postmessage-entry.html: Added.
+        * web-platform-tests/performance-timeline/resources/worker-invalid-entries.js: Added.
+        * web-platform-tests/performance-timeline/resources/worker-with-performance-observer.js: Added.
+        (catch):
+        * web-platform-tests/performance-timeline/supportedEntryTypes.any-expected.txt:
+        This test failure needs further investigation.  It's a bindings generation problem I've unsuccessfully looked into before.
+        * web-platform-tests/performance-timeline/supportedEntryTypes.any.js:
+        (test):
+        * web-platform-tests/performance-timeline/supportedEntryTypes.any.worker-expected.txt:
+        * web-platform-tests/performance-timeline/webtiming-resolution.any.js: Added.
+        (testTimeResolution):
+        (timeByUserTiming):
+        * web-platform-tests/performance-timeline/worker-with-performance-observer-expected.txt: Added.
+        * web-platform-tests/performance-timeline/worker-with-performance-observer.html: Added.
+        * web-platform-tests/service-workers/service-worker/navigation-timing.https-expected.txt:
+        This existing test failure needs more investigation.  We are probably close to a fix after this patch.
+
+2021-05-19  Rob Buis  <rbuis@igalia.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=225964
+        Fix flex-aspect-ratio-002+004.html
+
+        Reviewed by Sergio Villar Senin.
+
+        Import tests.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-002.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-004.html:
+
+2021-05-18  Keith Miller  <keith_miller@apple.com>
+
+        Temporarily revert r276592 as it breaks some native apps
+        https://bugs.webkit.org/show_bug.cgi?id=225917
+
+        Unreviewed, revert.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver-expected.txt: Removed.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver.html: Removed.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver.html:
+
+2021-05-16  Cameron McCormack  <heycam@apple.com>
+
+        Make MathML WPTs wait for all font loads
+        https://bugs.webkit.org/show_bug.cgi?id=225728
+
+        Reviewed by Darin Adler.
+
+        With current interop issues around font loading, there's no guarantee
+        that waiting on the document.fonts.ready promise in the load event will
+        catch font loads initiated by content. Since these tests are not
+        explicitly testing font loading behavior, change to wait explicitly for
+        all fonts to load.
+
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-bar-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-3.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-001-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-001.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-002-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-002.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-003-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-003.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-004-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-004.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-005-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-005.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006-expected.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-gap-006.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/no-spacing-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/mrow/no-spacing.html:
+        * web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/spacing-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/mrow/spacing.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-font-relative-lengths-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-largeop-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-movablelimits-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-spacing-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-002.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-003.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-004.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005.html:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Renamed from LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006.html:
+        * web-platform-tests/mathml/presentation-markup/radicals/dynamic-radical-paint-invalidation-001.html:
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/cramped-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/cramped-001.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/empty-underover-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/empty-underover.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.tentative.html:
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height.html:
+        * web-platform-tests/mathml/relations/css-styling/color-005.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-013.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-014.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-2.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-3.html:
+        * web-platform-tests/mathml/relations/css-styling/lengths-2.html:
+        * web-platform-tests/mathml/relations/css-styling/visibility-005.html:
+        * web-platform-tests/mathml/support/fonts.js: Added.
+        (loadAllFonts):
+
+2021-05-16  Sam Weinig  <weinig@apple.com>
+
+        Add support for creating/accessing/setting non-sRGB ImageData via canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225841
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3-expected.txt:
+        Update result to passing.
+
+2021-05-15  Said Abou-Hallawa  <said@apple.com>
+
+        Implement CanvasRenderingContext2D.createConicGradient
+        https://bugs.webkit.org/show_bug.cgi?id=225539
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.conic-expected.txt:
+
+2021-05-14  Darin Adler  <darin@apple.com>
+
+        output element doesn't react properly to node tree mutations
+        https://bugs.webkit.org/show_bug.cgi?id=196532
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        Updated since HTMLOptionElement now has a constructor. Still not passing, but closer to correct.
+
+        * web-platform-tests/custom-elements/form-associated/form-reset-callback-expected.txt:
+        Updated due to changes in HTMLOptionElement, but still not passing.
+
+        * web-platform-tests/html/semantics/forms/the-output-element/mutations.window-expected.txt:
+        Updated to reflect passing test.
+
+        * web-platform-tests/html/semantics/forms/the-output-element/mutations.window.js:
+        Updated to a newer version of the upstream version of this. Decided to just update this one file
+        rather than importing the latest version across more tests at this time.
+
+2021-05-14  Ziran Sun  <zsun@igalia.com>
+
+        Wrong static position for out-of-flow positioned element with different writing-mode than its containing block
+        https://bugs.webkit.org/show_bug.cgi?id=189513
+
+        Reviewed by Sergio Villar Senin.
+
+        Updated the following WPT tests that are now passing.
+
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-002-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-003-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-004-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-005-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-007-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-010-expected.txt:
+
+2021-05-14  Alex Christensen  <achristensen@webkit.org>
+
+        Resource Timing: secureConnectionStart == 0 when a connection is re-used
+        https://bugs.webkit.org/show_bug.cgi?id=225733
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/resource-timing/resource_connection_reuse_mixed_content-expected.txt:
+
+2021-05-13  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Allow WebXR to be tested on PLATFORM(COCOA)
+        https://bugs.webkit.org/show_bug.cgi?id=225578
+
+        Reviewed by Sam Weinig.
+
+        New expected results.
+
+        * web-platform-tests/webxr/exclusive_requestFrame_nolayer.https-expected.txt: Added.
+        * web-platform-tests/webxr/render_state_vertical_fov_inline.https-expected.txt: Added.
+        * web-platform-tests/webxr/webxr-supported-by-feature-policy-expected.txt: Added.
+        * web-platform-tests/webxr/webxr_availability.http.sub-expected.txt: Added.
+        * web-platform-tests/webxr/webxr_feature_policy.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrFrame_lifetime.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_input_events_end.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_visibilityState.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https-expected.txt: Added.
+
+2021-05-13  Martin Robinson  <mrobinson@webkit.org>
+
+        Import new and updated css-scroll-snap WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=225653
+
+        Reviewed by Sergio Villar Senin.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-scroll-snap/input/keyboard-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/input/keyboard.html:
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps.html:
+        * web-platform-tests/css/css-scroll-snap/scroll-margin-visibility-check-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-margin-visibility-check.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-padding-and-margin-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-padding-and-margin.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-001-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-001.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-002-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-003-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-root-003.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000-expected.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/w3c-import.log:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-horizontal-tb.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-rl.html:
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-to-focused-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/resnap-to-focused.html: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-after-relayout/w3c-import.log:
+        * web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end-expected.txt: Added.
+        * web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end.html: Added.
+        * web-platform-tests/css/css-scroll-snap/support/common.js:
+        (async keyPress):
+        * web-platform-tests/css/css-scroll-snap/w3c-import.log:
+
+2021-05-12  Chris Dumez  <cdumez@apple.com>
+
+        Notification.requestPermission() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=225712
+
+        Reviewed by Darin Adler.
+
+        Drop manual test that should not have been imported from WPT. The test happened to be using Notification.requestPermission()
+        internally.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/fetch-event-within-sw-manual.https.html: Removed.
+
+2021-05-12  Ziran Sun  <zsun@igalia.com>
+
+        Wrong position for orthogonal positioned element with writing-mode: vertical-rl
+        https://bugs.webkit.org/show_bug.cgi?id=180633
+
+        Reviewed by Javier Fernandez.
+
+        Re-sync the following 3 tests with WPT. grid-self-alignment-non-static-positioned-items-009.html and
+        grid-self-alignment-non-static-positioned-items-010.html are now passing.
+        grid-self-alignment-non-static-positioned-items-011.html is now producing the same test results as those
+        in Chromium.
+
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-009.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-010.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-011.html:
+
+2021-05-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Do not use margins when computing aspect ratio cross sizes
+        https://bugs.webkit.org/show_bug.cgi?id=221210
+        <rdar://problem/74097534>
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013-expected.txt:
+         Replaced FAIL by PASS expectations + new expectations.
+        * web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-013.html: Imported
+        latest changes from upstream WPT.
+
+2021-05-11  Cathie Chen  <cathiechen@igalia.com>
+
+        [CSS contain] Support contain:size
+        https://bugs.webkit.org/show_bug.cgi?id=223570
+
+        Reviewed by Alan Bujtas.
+
+        <canvas> and <video> don't support computing aspect ratio from width and height attributes yet,
+        so the heights are zero when they are with "contain: size".
+
+        * web-platform-tests/css/css-contain/contain-size-grid-003-expected.txt:
+        * web-platform-tests/css/css-contain/contain-size-grid-004-expected.txt:
+        * web-platform-tests/css/css-contain/contain-size-multicol-as-flex-item-expected.txt:
+        * web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+
 2021-05-10  Rob Buis  <rbuis@igalia.com>
 
         Implement <form>.requestSubmit()

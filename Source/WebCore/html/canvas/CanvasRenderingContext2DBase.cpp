@@ -82,11 +82,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext2DBase);
 
-#if USE(CG)
 static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
-#else
-static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Medium;
-#endif
 
 const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
 const char* const CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif";
@@ -224,10 +220,11 @@ static TextBaseline fromCanvasTextBaseline(CanvasTextBaseline canvasTextBaseline
     return TopTextBaseline;
 }
 
-CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, bool usesCSSCompatibilityParseMode)
+CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings, bool usesCSSCompatibilityParseMode)
     : CanvasRenderingContext(canvas)
     , m_stateStack(1)
     , m_usesCSSCompatibilityParseMode(usesCSSCompatibilityParseMode)
+    , m_settings(WTFMove(settings))
 {
 }
 
@@ -1950,6 +1947,14 @@ ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createRadialGradi
     return CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1, canvasBase());
 }
 
+ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2DBase::createConicGradient(float angleInRadians, float x, float y)
+{
+    if (!std::isfinite(angleInRadians) || !std::isfinite(x) || !std::isfinite(y))
+        return Exception { NotSupportedError };
+
+    return CanvasGradient::create(FloatPoint(x, y), angleInRadians, canvasBase());
+}
+
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CanvasImageSource&& image, const String& repetition)
 {
     bool repeatX, repeatY;
@@ -2151,38 +2156,40 @@ bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
     return false;
 }
 
-static RefPtr<ImageData> createEmptyImageData(const IntSize& size)
+static void initializeEmptyImageData(const ImageData& imageData)
 {
-    auto data = ImageData::create(size);
-    if (data)
-        data->data().zeroFill();
-    return data;
+    imageData.data().zeroFill();
 }
 
-RefPtr<ImageData> CanvasRenderingContext2DBase::createImageData(ImageData& imageData) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageData& existingImageData) const
 {
-    return createEmptyImageData(imageData.size());
+    auto newImageData = ImageData::createUninitialized(existingImageData.width(), existingImageData.height(), existingImageData.colorSpace());
+    if (!newImageData.hasException())
+        initializeEmptyImageData(newImageData.returnValue());
+    return newImageData;
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh, Optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
 
-    IntSize size { std::abs(sw), std::abs(sh) };
-    return createEmptyImageData(size);
+    auto imageData = ImageData::createUninitialized(std::abs(sw), std::abs(sh), m_settings.colorSpace, settings);
+    if (!imageData.hasException())
+        initializeEmptyImageData(imageData.returnValue());
+    return imageData;
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, Optional<ImageDataSettings> settings) const
 {
+    if (!sw || !sh)
+        return Exception { IndexSizeError };
+
     if (!canvasBase().originClean()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
         return Exception { SecurityError };
     }
-
-    if (!sw || !sh)
-        return Exception { IndexSizeError };
 
     if (sw < 0) {
         sx += sw;
@@ -2196,17 +2203,26 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx
     IntRect imageDataRect { sx, sy, sw, sh };
 
     ImageBuffer* buffer = canvasBase().buffer();
-    if (!buffer)
-        return createEmptyImageData(imageDataRect.size());
+    if (!buffer) {
+        auto imageData = ImageData::createUninitialized(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
+        if (!imageData.hasException())
+            initializeEmptyImageData(imageData.returnValue());
+        return imageData;
+    }
 
-    auto imageData = buffer->getImageData(AlphaPremultiplication::Unpremultiplied, imageDataRect);
-    if (!imageData) {
+    auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
+
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
+    auto pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
+    if (!pixelBuffer) {
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was ", imageDataRect.width(), " x ", imageDataRect.height()));
         return Exception { InvalidStateError };
     }
 
-    return imageData;
+    ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
+
+    return { { ImageData::create(WTFMove(*pixelBuffer)) } };
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
@@ -2246,7 +2262,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     sourceRect.intersect(IntRect { 0, 0, data.width(), data.height() });
 
     if (!sourceRect.isEmpty())
-        buffer->putImageData(AlphaPremultiplication::Unpremultiplied, data, sourceRect, IntPoint { destOffset });
+        buffer->putPixelBuffer(data.pixelBuffer(), sourceRect, IntPoint { destOffset });
 
     didDraw(FloatRect { destRect }, { }); // ignore transform, shadow and clip
 }
@@ -2490,6 +2506,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, flo
             }
         };
 
+        // FIXME: Handling gradients and patterns by painting the text into a mask is probably the wrong thing to do in the presence of color glyphs.
         if (c->clipToDrawingCommands(maskRect, colorSpace(), WTFMove(paintMaskImage)) == GraphicsContext::ClipToDrawingCommandsResult::FailedToCreateImageBuffer)
             return;
 
@@ -2608,6 +2625,17 @@ FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection d
         break;
     }
     return offset;
+}
+
+PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
+{
+    // FIXME: Take m_settings.alpha into account here and add PixelFormat::BGRX8.
+    return PixelFormat::BGRA8;
+}
+
+DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
+{
+    return toDestinationColorSpace(m_settings.colorSpace);
 }
 
 } // namespace WebCore

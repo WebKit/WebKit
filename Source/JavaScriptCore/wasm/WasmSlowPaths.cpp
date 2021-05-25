@@ -112,7 +112,7 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Function
 
     bool compile = false;
     {
-        auto locker = holdLock(tierUpCounter.m_lock);
+        Locker locker { tierUpCounter.m_lock };
         switch (tierUpCounter.m_compilationStatus) {
         case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
             compile = true;
@@ -211,7 +211,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
 
     bool compile = false;
     {
-        auto locker = holdLock(tierUpCounter.m_lock);
+        Locker locker { tierUpCounter.m_lock };
         switch (tierUpCounter.m_loopCompilationStatus) {
         case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
             compile = true;

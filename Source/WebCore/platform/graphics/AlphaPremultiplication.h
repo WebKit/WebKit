@@ -40,6 +40,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, AlphaPremultiplicat
 }
 
 namespace WTF {
+
 template<> struct EnumTraits<WebCore::AlphaPremultiplication> {
     using values = EnumValues<
         WebCore::AlphaPremultiplication,
@@ -47,4 +48,5 @@ template<> struct EnumTraits<WebCore::AlphaPremultiplication> {
         WebCore::AlphaPremultiplication::Unpremultiplied
     >;
 };
+
 }

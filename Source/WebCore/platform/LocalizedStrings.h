@@ -305,6 +305,10 @@ namespace WebCore {
     String textTrackNoLabelText();
     String audioTrackNoLabelText();
 #if PLATFORM(COCOA) || PLATFORM(WIN)
+    String captionsTextTrackWithoutLabelMenuItemText(const String&);
+    String descriptionsTextTrackWithoutLabelMenuItemText(const String&);
+    String chaptersTextTrackWithoutLabelMenuItemText(const String&);
+    String metadataTextTrackWithoutLabelMenuItemText(const String&);
     String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language);
     String textTrackLanguageMenuItemText(const String& title, const String& language);
     String closedCaptionTrackMenuItemText(const String&);

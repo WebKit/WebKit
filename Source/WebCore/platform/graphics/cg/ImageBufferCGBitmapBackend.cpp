@@ -31,8 +31,8 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
 #include "ImageBufferUtilitiesCG.h"
-#include "ImageData.h"
 #include "IntRect.h"
+#include "PixelBuffer.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -154,19 +154,14 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
     return nullptr;
 }
 
-Vector<uint8_t> ImageBufferCGBitmapBackend::toBGRAData() const
+Optional<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
-    return ImageBufferBackend::toBGRAData(m_data);
+    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data);
 }
 
-RefPtr<ImageData> ImageBufferCGBitmapBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+void ImageBufferCGBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    return ImageBufferBackend::getImageData(outputFormat, srcRect, m_data);
-}
-
-void ImageBufferCGBitmapBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-{
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, m_data);
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_data);
 }
 
 } // namespace WebCore

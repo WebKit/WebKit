@@ -265,7 +265,7 @@ void Length::deref() const
     calculationValues().deref(m_calculationValueHandle);
 }
 
-float Length::nonNanCalculatedValue(int maxValue) const
+float Length::nonNanCalculatedValue(float maxValue) const
 {
     ASSERT(isCalculated());
     float result = calculationValue().evaluate(maxValue);

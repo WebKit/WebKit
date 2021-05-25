@@ -61,28 +61,28 @@ Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(TrackPrivateBas
 bool MediaSourceTrackGStreamer::isReadyForMoreSamples()
 {
     ASSERT(isMainThread());
-    WTF::DataMutex<TrackQueue>::LockedWrapper queue(m_queueDataMutex);
+    auto queue = holdLock(m_queueDataMutex);
     return !queue->isFull();
 }
 
 void MediaSourceTrackGStreamer::notifyWhenReadyForMoreSamples(TrackQueue::LowLevelHandler&& handler)
 {
     ASSERT(isMainThread());
-    WTF::DataMutex<TrackQueue>::LockedWrapper queue(m_queueDataMutex);
+    auto queue = holdLock(m_queueDataMutex);
     queue->notifyWhenLowLevel(WTFMove(handler));
 }
 
 void MediaSourceTrackGStreamer::enqueueObject(GRefPtr<GstMiniObject>&& object)
 {
     ASSERT(isMainThread());
-    WTF::DataMutex<TrackQueue>::LockedWrapper queue(m_queueDataMutex);
+    auto queue = holdLock(m_queueDataMutex);
     queue->enqueueObject(WTFMove(object));
 }
 
 void MediaSourceTrackGStreamer::clearQueue()
 {
     ASSERT(isMainThread());
-    WTF::DataMutex<TrackQueue>::LockedWrapper queue(m_queueDataMutex);
+    auto queue = holdLock(m_queueDataMutex);
     queue->clear();
 }
 

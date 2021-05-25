@@ -3965,7 +3965,7 @@ public:
         if (m_disassembler)
             m_disassembler->setEndOfCode(label());
 
-        LinkBuffer linkBuffer(*this, REGEXP_CODE_ID, JITCompilationCanFail);
+        LinkBuffer linkBuffer(*this, REGEXP_CODE_ID, LinkBuffer::Profile::YarrJIT, JITCompilationCanFail);
         if (linkBuffer.didFailToAllocate()) {
             codeBlock.setFallBackWithFailureReason(JITFailureReason::ExecutableMemoryAllocationFailure);
             return;

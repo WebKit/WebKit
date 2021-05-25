@@ -63,7 +63,7 @@ public:
     virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
     virtual const Vector<CaptureDevice>& speakerDevices() const = 0;
-    virtual void getSpeakerDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion) const { completion(copyToVector(speakerDevices())); }
+    virtual void computeSpeakerDevices(CompletionHandler<void()>&& callback) const { callback(); }
 
     class ExtensiveObserver : public CanMakeWeakPtr<ExtensiveObserver> { };
     virtual void addExtensiveObserver(ExtensiveObserver&) { };

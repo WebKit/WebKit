@@ -48,7 +48,7 @@ class DisplayList;
 class Item;
 }
 class FloatSize;
-class ImageData;
+class PixelBuffer;
 enum class AlphaPremultiplication : uint8_t;
 enum class DestinationColorSpace : uint8_t;
 enum class RenderingMode : bool;
@@ -78,10 +78,12 @@ public:
     void willAppendItem(WebCore::RenderingResourceIdentifier);
     void sendDeferredWakeupMessageIfNeeded();
 
-    SharedMemory* sharedMemoryForGetImageData(size_t dataSize, IPC::Timeout);
-    bool waitForGetImageDataToComplete(IPC::Timeout);
-    void destroyGetImageDataSharedMemory();
+    SharedMemory* sharedMemoryForGetPixelBuffer(size_t dataSize, IPC::Timeout);
+    bool waitForGetPixelBufferToComplete(IPC::Timeout);
+    void destroyGetPixelBufferSharedMemory();
 
+    void createRemoteImageBuffer(WebCore::ImageBuffer&);
+        
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
@@ -93,7 +95,6 @@ public:
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::DestinationColorSpace, WebCore::PixelFormat);
     String getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution, WebCore::RenderingResourceIdentifier);
     Vector<uint8_t> getDataForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier);
-    Vector<uint8_t> getBGRADataForImageBuffer(WebCore::RenderingResourceIdentifier);
     WebCore::DisplayList::FlushIdentifier flushDisplayListAndCommit(const WebCore::DisplayList::DisplayList&, WebCore::RenderingResourceIdentifier);
     RefPtr<ShareableBitmap> getShareableBitmap(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution);
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
@@ -130,17 +131,19 @@ private:
     void sendWakeupMessage(const GPUProcessWakeupMessageArguments&);
 
     RemoteRenderingBackendCreationParameters m_parameters;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
+
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;
     Deque<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfReusableHandles;
     Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
     Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
-    Optional<IPC::Semaphore> m_getImageDataSemaphore;
-    RefPtr<SharedMemory> m_getImageDataSharedMemory;
-    uint64_t m_getImageDataSharedMemoryLength { 0 };
-    WebCore::Timer m_destroyGetImageDataSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory };
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+
+    Optional<IPC::Semaphore> m_getPixelBufferSemaphore;
+    RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
+    uint64_t m_getPixelBufferSharedMemoryLength { 0 };
+    WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
 };
 
 } // namespace WebKit

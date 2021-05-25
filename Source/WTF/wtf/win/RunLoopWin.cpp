@@ -149,7 +149,7 @@ RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 void RunLoop::TimerBase::timerFired()
 {
     {
-        LockHolder locker(m_runLoop->m_loopLock);
+        Locker locker { m_runLoop->m_loopLock };
 
         if (!m_isActive)
             return;
@@ -176,7 +176,7 @@ RunLoop::TimerBase::~TimerBase()
 
 void RunLoop::TimerBase::start(Seconds interval, bool repeat)
 {
-    LockHolder locker(m_runLoop->m_loopLock);
+    Locker locker { m_runLoop->m_loopLock };
     m_isRepeating = repeat;
     m_isActive = true;
     m_interval = interval;
@@ -186,29 +186,29 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
 
 void RunLoop::TimerBase::stop()
 {
-    LockHolder locker(m_runLoop->m_loopLock);
-    if (!isActive(locker))
+    Locker locker { m_runLoop->m_loopLock };
+    if (!isActiveWithLock())
         return;
 
     m_isActive = false;
     ::KillTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this));
 }
 
-bool RunLoop::TimerBase::isActive(const AbstractLocker&) const
+bool RunLoop::TimerBase::isActiveWithLock() const
 {
     return m_isActive;
 }
 
 bool RunLoop::TimerBase::isActive() const
 {
-    LockHolder locker(m_runLoop->m_loopLock);
-    return isActive(locker);
+    Locker locker { m_runLoop->m_loopLock };
+    return isActiveWithLock();
 }
 
 Seconds RunLoop::TimerBase::secondsUntilFire() const
 {
-    LockHolder locker(m_runLoop->m_loopLock);
-    if (isActive(locker))
+    Locker locker { m_runLoop->m_loopLock };
+    if (isActiveWithLock())
         return std::max<Seconds>(m_nextFireDate - MonotonicTime::now(), 0_s);
     return 0_s;
 }

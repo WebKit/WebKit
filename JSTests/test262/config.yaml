@@ -5,6 +5,7 @@ flags:
   FinalizationRegistry: useWeakRefs
   class-fields-private: usePrivateClassFields
   class-methods-private: usePrivateMethods
+  class-fields-private-in: usePrivateIn
   class-static-fields-public: usePublicStaticClassFields
   class-static-fields-private: usePrivateStaticClassFields
   class-static-methods-private: usePrivateMethods
@@ -23,8 +24,6 @@ skip:
     - regexp-lookbehind
     - legacy-regexp
     - cleanupSome
-    # https://bugs.webkit.org/show_bug.cgi?id=221093
-    - class-fields-private-in
   paths:
   files:
     # Slightly different formatting. We should update test262 side.

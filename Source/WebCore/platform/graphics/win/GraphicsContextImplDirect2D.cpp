@@ -60,7 +60,7 @@ GraphicsContext::GraphicsContextImplFactory GraphicsContextImplDirect2D::createF
 }
 
 GraphicsContextImplDirect2D::GraphicsContextImplDirect2D(GraphicsContext& context, PlatformContextDirect2D& platformContext)
-    : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
+    : GraphicsContextImpl(context)
     , m_platformContext(platformContext)
     , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory))
 {
@@ -69,7 +69,7 @@ GraphicsContextImplDirect2D::GraphicsContextImplDirect2D(GraphicsContext& contex
 }
 
 GraphicsContextImplDirect2D::GraphicsContextImplDirect2D(GraphicsContext& context, ID2D1RenderTarget* renderTarget)
-    : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
+    : GraphicsContextImpl(context)
     , m_ownedPlatformContext(makeUnique<PlatformContextDirect2D>(renderTarget))
     , m_platformContext(*m_ownedPlatformContext)
     , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory))

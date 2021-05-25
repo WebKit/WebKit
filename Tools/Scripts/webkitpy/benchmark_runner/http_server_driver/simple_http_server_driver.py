@@ -4,7 +4,6 @@ import logging
 import os
 import re
 import subprocess
-import sys
 import time
 
 from webkitpy.benchmark_runner.http_server_driver.http_server_driver import HTTPServerDriver

@@ -423,7 +423,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitStorageTrackerEnabledPreferenceKey,
-        @(AudioSession::None), WebKitAudioSessionCategoryOverride,
+        @(static_cast<unsigned>(AudioSession::CategoryType::None)), WebKitAudioSessionCategoryOverride,
 
         // Per-Origin Quota on iOS is 25MB. When the quota is reached for a particular origin
         // the quota for that origin can be increased. See also webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded in WebUI/WebUIDelegate.m.
@@ -2066,30 +2066,30 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 - (void)setAudioSessionCategoryOverride:(unsigned)override
 {
-    if (override > AudioSession::AudioProcessing) {
+    if (override > static_cast<unsigned>(AudioSession::CategoryType::AudioProcessing)) {
         // Clients are passing us OSTypes values from AudioToolbox/AudioSession.h,
         // which need to be translated into AudioSession::CategoryType:
         switch (override) {
         case WebKitAudioSessionCategoryAmbientSound:
-            override = AudioSession::AmbientSound;
+            override = static_cast<unsigned>(AudioSession::CategoryType::AmbientSound);
             break;
         case WebKitAudioSessionCategorySoloAmbientSound:
-            override = AudioSession::SoloAmbientSound;
+            override = static_cast<unsigned>(AudioSession::CategoryType::SoloAmbientSound);
             break;
         case WebKitAudioSessionCategoryMediaPlayback:
-            override = AudioSession::MediaPlayback;
+            override = static_cast<unsigned>(AudioSession::CategoryType::MediaPlayback);
             break;
         case WebKitAudioSessionCategoryRecordAudio:
-            override = AudioSession::RecordAudio;
+            override = static_cast<unsigned>(AudioSession::CategoryType::RecordAudio);
             break;
         case WebKitAudioSessionCategoryPlayAndRecord:
-            override = AudioSession::PlayAndRecord;
+            override = static_cast<unsigned>(AudioSession::CategoryType::PlayAndRecord);
             break;
         case WebKitAudioSessionCategoryAudioProcessing:
-            override = AudioSession::AudioProcessing;
+            override = static_cast<unsigned>(AudioSession::CategoryType::AudioProcessing);
             break;
         default:
-            override = AudioSession::None;
+            override = static_cast<unsigned>(AudioSession::CategoryType::None);
             break;
         }
     }

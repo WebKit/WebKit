@@ -337,7 +337,7 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
     // What follows is more expensive if there is a selection, so clear it since it's going to change anyway.
     m_document.selection().clear();
 
-    element.replaceAllChildrenWithNewText(text);
+    element.stringReplaceAll(text);
 
     VisiblePosition afterContents = makeContainerOffsetPosition(&element, element.countChildNodes());
     if (afterContents.isNull())

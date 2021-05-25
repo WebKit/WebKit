@@ -550,6 +550,7 @@ void ArgumentCoder<FloatScrollSnapOffsetsInfo>::encode(Encoder& encoder, const F
 {
     encoder << info.horizontalSnapOffsets;
     encoder << info.verticalSnapOffsets;
+    encoder << info.strictness;
     encoder << info.snapAreas;
 }
 
@@ -558,6 +559,8 @@ bool ArgumentCoder<FloatScrollSnapOffsetsInfo>::decode(Decoder& decoder, FloatSc
     if (!decoder.decode(info.horizontalSnapOffsets))
         return false;
     if (!decoder.decode(info.verticalSnapOffsets))
+        return false;
+    if (!decoder.decode(info.strictness))
         return false;
     if (!decoder.decode(info.snapAreas))
         return false;

@@ -5953,7 +5953,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 - (void)quickLookWithEvent:(NSEvent *)event
 {
-    [[self _webView] _clearTextIndicatorWithAnimation:WebCore::TextIndicatorWindowDismissalAnimation::FadeOut];
+    [[self _webView] _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
     [super quickLookWithEvent:event];
 }
 
@@ -7069,9 +7069,9 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
     auto* coreFrame = core([self _frame]);
     if (!coreFrame)
         return nil;
-    OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent };
+    OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     if (!allowShadowContent)
-        hitType.add(HitTestRequest::DisallowUserAgentShadowContent);
+        hitType.add(HitTestRequest::Type::DisallowUserAgentShadowContent);
     return adoptNS([[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(IntPoint { point }, hitType)]).autorelease();
 }
 

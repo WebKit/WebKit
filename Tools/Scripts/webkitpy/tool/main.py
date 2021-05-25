@@ -30,7 +30,6 @@
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
 from optparse import make_option
-import os
 import threading
 
 from webkitpy.common.config.ports import DeprecatedPort

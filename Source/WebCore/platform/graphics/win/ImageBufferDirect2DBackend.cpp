@@ -32,11 +32,11 @@
 #include "COMPtr.h"
 #include "Direct2DUtilities.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
 #include "ImageDecoderDirect2D.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
+#include "PixelBuffer.h"
 #include "PlatformContextDirect2D.h"
 #include <d2d1_1.h>
 #include <math.h>
@@ -306,22 +306,16 @@ Vector<uint8_t> ImageBufferDirect2DBackend::toData(const String& mimeType, Optio
     return { };
 }
 
-Vector<uint8_t> ImageBufferDirect2DBackend::toBGRAData() const
+Optional<PixelBuffer> ImageBufferDirect2DBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     notImplemented();
-    return { };
+    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, nullptr);
 }
 
-RefPtr<ImageData> ImageBufferDirect2DBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+void ImageBufferDirect2DBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     notImplemented();
-    return ImageBufferBackend::getImageData(outputFormat, srcRect, nullptr);
-}
-
-void ImageBufferDirect2DBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
-{
-    notImplemented();
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, nullptr);
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, nullptr);
 }
 
 } // namespace WebCore

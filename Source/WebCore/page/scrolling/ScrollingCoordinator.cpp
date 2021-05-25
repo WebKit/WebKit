@@ -404,7 +404,7 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<Synchro
         stringBuilder.appendLiteral("Has slow repaint descendant scrollers, ");
 
     if (stringBuilder.length())
-        stringBuilder.resize(stringBuilder.length() - 2);
+        stringBuilder.shrink(stringBuilder.length() - 2);
     return stringBuilder.toString();
 }
 

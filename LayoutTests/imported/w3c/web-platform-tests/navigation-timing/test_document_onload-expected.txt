@@ -1,0 +1,8 @@
+Description
+
+This test checks that the transferSize, encodedBodySize and decodedBodySize attributes have correct values when checked in the onload handler
+
+
+FAIL Test that the attributes have a proper value during DOMContentLoaded assert_greater_than: descr expected a number but got a "undefined"
+FAIL Test that the attributes have a proper value during onload assert_greater_than: descr expected a number but got a "undefined"
+

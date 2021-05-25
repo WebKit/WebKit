@@ -50,7 +50,7 @@ class RTCRtpScriptTransformer;
 class RequestAnimationFrameCallback;
 class SerializedScriptValue;
 
-#if ENABLE(OFFSCREEN_CANVAS)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 class WorkerAnimationController;
 
 using CallbackId = int;
@@ -70,7 +70,7 @@ public:
 
     DedicatedWorkerThread& thread();
 
-#if ENABLE(OFFSCREEN_CANVAS)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     CallbackId requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(CallbackId);
 #endif
@@ -94,7 +94,7 @@ private:
 
     String m_name;
 
-#if ENABLE(OFFSCREEN_CANVAS)
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     RefPtr<WorkerAnimationController> m_workerAnimationController;
 #endif
 };

@@ -35,19 +35,14 @@ class Info(Command):
 
     @classmethod
     def parser(cls, parser, loggers=None):
-        output_args = arguments.LoggingGroup(
-            parser,
-            loggers=loggers,
-            help='{} amount of logging and commit information displayed'
-        )
-        output_args.add_argument(
+        parser.add_argument(
             '--json', '-j',
             help='Convert the commit to a machine-readable JSON object',
             action='store_true',
             dest='json',
             default=False,
         )
-        output_args.add_argument(
+        parser.add_argument(
             '--log', '--no-log',
             help='Include the commit message for the requested commit',
             action=arguments.NoAction,

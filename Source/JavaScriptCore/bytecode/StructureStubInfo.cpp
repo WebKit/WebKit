@@ -302,7 +302,7 @@ template<typename Visitor>
 void StructureStubInfo::visitAggregateImpl(Visitor& visitor)
 {
     {
-        auto locker = holdLock(m_bufferedStructuresLock);
+        Locker locker { m_bufferedStructuresLock };
         for (auto& bufferedStructure : m_bufferedStructures)
             bufferedStructure.byValId().visitAggregate(visitor);
     }
@@ -331,7 +331,7 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
 {
     VM& vm = codeBlock->vm();
     {
-        auto locker = holdLock(m_bufferedStructuresLock);
+        Locker locker { m_bufferedStructuresLock };
         m_bufferedStructures.removeIf(
             [&] (auto& entry) -> bool {
                 return !vm.heap.isMarked(entry.structure());
@@ -355,19 +355,6 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
 
     reset(locker, codeBlock);
     resetByGC = true;
-}
-
-size_t StructureStubInfo::extraMemoryInBytes()
-{
-    size_t extraMemory = 0;
-    // Cacheable Identifier never owns extra memory because UIDs are owned by the unique string table.
-    {
-        auto locker = holdLock(m_bufferedStructuresLock);
-        extraMemory += m_bufferedStructures.capacity() * sizeof(BufferedStructure);
-    }
-    if (cacheType() == CacheType::Stub)
-        extraMemory += u.stub->extraMemoryInBytes();
-    return extraMemory;
 }
 
 template<typename Visitor>

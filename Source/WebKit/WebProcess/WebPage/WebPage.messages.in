@@ -39,6 +39,7 @@ messages -> WebPage LegacyReceiver {
     SetTopContentInset(float contentInset)
 
     SetUnderlayColor(WebCore::Color color)
+    SetUnderPageBackgroundColorOverride(WebCore::Color underPageBackgroundColorOverride)
 
     ViewWillStartLiveResize()
     ViewWillEndLiveResize()
@@ -250,6 +251,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SuspendActiveDOMObjectsAndAnimations()
     ResumeActiveDOMObjectsAndAnimations()
 
+    Suspend() -> (bool success) Async
+    Resume() -> (bool success) Async
+
     Close()
     TryClose() -> (bool shouldClose) Async
 
@@ -389,9 +393,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PauseAllMediaPlayback() -> () Async
     SuspendAllMediaPlayback() -> () Async
     ResumeAllMediaPlayback() -> () Async
-
-    # Notification
-    DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 
     FreezeLayerTreeDueToSwipeAnimation()
     UnfreezeLayerTreeDueToSwipeAnimation()
@@ -638,6 +639,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     CreateMediaSessionCoordinator(String identifier) -> (bool success) Async
+    InvalidateMediaSessionCoordinator()
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)

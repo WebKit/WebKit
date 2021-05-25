@@ -188,6 +188,11 @@ void SharedBuffer::append(const char* data, size_t length)
     ASSERT(internallyConsistent());
 }
 
+void SharedBuffer::append(const uint8_t* data, size_t length)
+{
+    append(reinterpret_cast<const char*>(data), length);
+}
+
 void SharedBuffer::append(Vector<char>&& data)
 {
     ASSERT(!m_hasBeenCombinedIntoOneSegment);

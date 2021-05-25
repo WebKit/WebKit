@@ -151,16 +151,16 @@ void LayerController::setupRootLayerHierarchy()
 {
     // FIXME: This layer hierarchy is just enough to get topContentInset working.
     m_rootLayer = GraphicsLayer::create(graphicsLayerFactory(), m_rootLayerClient);
-    m_rootLayer->setName("display root");
+    m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("display root"));
     m_rootLayer->setPosition({ });
     m_rootLayer->setAnchorPoint({ });
 
     m_contentHostLayer = GraphicsLayer::create(graphicsLayerFactory(), m_rootLayerClient);
-    m_contentHostLayer->setName("content host");
+    m_contentHostLayer->setName(MAKE_STATIC_STRING_IMPL("content host"));
     m_contentHostLayer->setAnchorPoint({ });
 
     m_contentLayer = GraphicsLayer::create(graphicsLayerFactory(), m_rootLayerClient);
-    m_contentLayer->setName("content");
+    m_contentLayer->setName(MAKE_STATIC_STRING_IMPL("content"));
     m_contentLayer->setPosition({ });
     m_contentLayer->setAnchorPoint({ });
     m_contentLayer->setDrawsContent(true);

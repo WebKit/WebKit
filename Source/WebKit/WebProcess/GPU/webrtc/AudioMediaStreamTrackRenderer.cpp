@@ -64,10 +64,11 @@ void AudioMediaStreamTrackRenderer::initialize()
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRendererManager::CreateRenderer { m_identifier }, 0);
 }
 
-void AudioMediaStreamTrackRenderer::start()
+void AudioMediaStreamTrackRenderer::start(CompletionHandler<void()>&& callback)
 {
     m_isPlaying = true;
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::Start { }, m_identifier);
+    callback();
 }
 
 void AudioMediaStreamTrackRenderer::stop()

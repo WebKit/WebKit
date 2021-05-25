@@ -28,6 +28,15 @@
 /* Text track contains closed captions */
 "%@ CC" = "%@ CC";
 
+/* Captions text track display name format that includes the language and/or locale (e.g. 'English Captions'). */
+"%@ Captions" = "%@ Captions";
+
+/* Chapters text track display name format that includes the language and/or locale (e.g. 'English Chapters'). */
+"%@ Chapters" = "%@ Chapters";
+
+/* Descriptions text track display name format that includes the language and/or locale (e.g. 'English Descriptions'). */
+"%@ Descriptions" = "%@ Descriptions";
+
 /* Text track contains simplified (3rd grade level) subtitles */
 "%@ Easy Reader" = "%@ Easy Reader";
 
@@ -36,6 +45,9 @@
 
 /* visible name of the GPU process. The argument is the application name. */
 "%@ Graphics and Media" = "%@ Graphics and Media";
+
+/* Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadats'). */
+"%@ Metadata" = "%@ Metadata";
 
 /* visible name of the network process. The argument is the application name. */
 "%@ Networking" = "%@ Networking";

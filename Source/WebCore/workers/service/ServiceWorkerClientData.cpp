@@ -30,6 +30,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "SWClientConnection.h"
 
@@ -57,7 +58,7 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const
 {
-    return { identifier, type, frameType, url.isolatedCopy() };
+    return { identifier, type, frameType, url.isolatedCopy(), lastNavigationWasAppBound };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context, SWClientConnection& connection)
@@ -65,11 +66,14 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
     bool isDocument = is<Document>(context);
     RELEASE_ASSERT(isDocument); // We do not support dedicated workers as clients yet.
 
+    auto& document = downcast<Document>(context);
+    auto lastNavigationWasAppBound = document.loader() && document.loader()->lastNavigationWasAppBound() ? LastNavigationWasAppBound::Yes : LastNavigationWasAppBound::No;
+
     return {
-        { connection.serverConnectionIdentifier(), downcast<Document>(context).identifier() },
+        { connection.serverConnectionIdentifier(), document.identifier() },
         isDocument ? ServiceWorkerClientType::Window : ServiceWorkerClientType::Worker,
         toServiceWorkerClientFrameType(context),
-        context.url()
+        context.url(), lastNavigationWasAppBound
     };
 }
 

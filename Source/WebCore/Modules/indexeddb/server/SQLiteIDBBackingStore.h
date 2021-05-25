@@ -204,7 +204,7 @@ private:
         Invalid,
     };
 
-    SQLiteStatementAutoResetScope cachedStatement(SQL, const char*);
+    SQLiteStatementAutoResetScope cachedStatement(SQL, ASCIILiteral);
     SQLiteStatementAutoResetScope cachedStatementForGetAllObjectStoreRecords(const IDBGetAllRecordsData&);
 
     std::unique_ptr<SQLiteStatement> m_cachedStatements[static_cast<int>(SQL::Invalid)];

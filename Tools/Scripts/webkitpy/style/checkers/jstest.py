@@ -60,8 +60,8 @@ def map_functions_to_dict(content):
     Args:
       content: A multi-line string containing JavaScript source to be split into individual function definitions.
     """
-    functions = re.split('^function\s+', content, flags=re.MULTILINE)
-    function_name_regex = re.compile('^(?P<name>\w+)\s*\(', flags=re.MULTILINE)
+    functions = re.split(r'^function\s+', content, flags=re.MULTILINE)
+    function_name_regex = re.compile(r'^(?P<name>\w+)\s*\(', flags=re.MULTILINE)
     result = {}
     for f in functions:
         match = function_name_regex.match(f)
@@ -77,8 +77,8 @@ def strip_trailing_blank_lines_and_comments(function):
         function: A multi-line string representing the source for one JavaScript function, less the "function" keyword.
     """
     lines = function.splitlines(True)
-    blank_line_regex = re.compile('^\s*$')
-    comment_line_regex = re.compile('^\s*//.*$')
+    blank_line_regex = re.compile(r'^\s*$')
+    comment_line_regex = re.compile(r'^\s*//.*$')
     while blank_line_regex.search(lines[-1]) or comment_line_regex.search(lines[-1]):
         del lines[-1]
     return ''.join(lines)

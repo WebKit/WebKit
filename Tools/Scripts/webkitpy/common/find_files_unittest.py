@@ -46,7 +46,7 @@ class TestWinNormalize(unittest.TestCase):
     def assert_filesystem_normalizes(self, filesystem):
         self.assertEqual(find_files._normalize(filesystem, "c:\\foo",
             ['fast/html', 'fast/canvas/*', 'compositing/foo.html']),
-            ['c:\\foo\\fast\html', 'c:\\foo\\fast\canvas\*', 'c:\\foo\compositing\\foo.html'])
+            ['c:\\foo\\fast\\html', 'c:\\foo\\fast\\canvas\\*', 'c:\\foo\\compositing\\foo.html'])
 
     def test_mocked_win(self):
         # This tests test_files.normalize, using portable behavior emulating

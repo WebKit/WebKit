@@ -41,6 +41,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentAuthorizedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentContact.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethod.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodModeDetails.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodModeUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodType.idl
@@ -1036,6 +1037,7 @@ $(PROJECT_DIR)/html/HTMLVideoElement.idl
 $(PROJECT_DIR)/html/ImageBitmap.idl
 $(PROJECT_DIR)/html/ImageBitmapOptions.idl
 $(PROJECT_DIR)/html/ImageData.idl
+$(PROJECT_DIR)/html/ImageDataSettings.idl
 $(PROJECT_DIR)/html/MediaController.idl
 $(PROJECT_DIR)/html/MediaEncryptedEvent.idl
 $(PROJECT_DIR)/html/MediaError.idl
@@ -1201,6 +1203,7 @@ $(PROJECT_DIR)/page/PerformanceMarkOptions.idl
 $(PROJECT_DIR)/page/PerformanceMeasure.idl
 $(PROJECT_DIR)/page/PerformanceMeasureOptions.idl
 $(PROJECT_DIR)/page/PerformanceNavigation.idl
+$(PROJECT_DIR)/page/PerformanceNavigationTiming.idl
 $(PROJECT_DIR)/page/PerformanceObserver.idl
 $(PROJECT_DIR)/page/PerformanceObserverCallback.idl
 $(PROJECT_DIR)/page/PerformanceObserverEntryList.idl

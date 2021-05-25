@@ -646,6 +646,7 @@ WI.NativePrototypeFunctionParameters = {
         clearRect: "x, y, width, height",
         clip: "path, [winding]",
         createImageData: "imagedata",
+        createConicGradient: "angle, x, y",
         createLinearGradient: "x0, y0, x1, y1",
         createPattern: "canvas, repetitionType",
         createRadialGradient: "x0, y0, r0, x1, y1, r1",

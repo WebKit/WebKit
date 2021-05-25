@@ -21,7 +21,7 @@
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
-
+#include "libANGLE/renderer/metal/ProvokingVertexHelper.h"
 namespace rx
 {
 class DisplayMtl;
@@ -334,7 +334,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Ends any active command encoder
     void endEncoding(bool forceSaveRenderPassContent);
 
-    void flushCommandBufer();
+    void flushCommandBuffer(mtl::CommandBufferFinishOperation operation);
     void present(const gl::Context *context, id<CAMetalDrawable> presentationDrawable);
     angle::Result finishCommandBuffer();
 
@@ -456,7 +456,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void updateDrawFrameBufferBinding(const gl::Context *context);
     void updateProgramExecutable(const gl::Context *context);
     void updateVertexArray(const gl::Context *context);
-
+    bool requiresIndexRewrite(const gl::State &state);
     angle::Result updateDefaultAttribute(size_t attribIndex);
     void filterOutXFBOnlyDirtyBits(const gl::Context *context);
     angle::Result handleDirtyActiveTextures(const gl::Context *context);
@@ -549,6 +549,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     mtl::OcclusionQueryPool mOcclusionQueryPool;
 
     mtl::CommandBuffer mCmdBuffer;
+
     mtl::RenderCommandEncoder mRenderEncoder;
     mtl::BlitCommandEncoder mBlitEncoder;
     mtl::ComputeCommandEncoder mComputeEncoder;
@@ -591,8 +592,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     mtl::BufferPool mTriFanIndexBuffer;
     // one buffer can be reused for any starting vertex in DrawArrays()
     mtl::BufferRef mTriFanArraysIndexBuffer;
-    //
-    mtl::BufferPool mPrimitiveRestartBuffer;
 
     // Dummy texture to be used for transform feedback only pass.
     mtl::TextureRef mDummyXFBRenderTexture;
@@ -606,6 +605,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     IncompleteTextureSet mIncompleteTextures;
     bool mIncompleteTexturesInitialized = false;
+    ProvokingVertexHelper mProvokingVertexHelper;
 };
 
 }  // namespace rx

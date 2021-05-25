@@ -193,7 +193,7 @@ void PointerCaptureController::touchWithIdentifierWasRemoved(PointerID pointerId
 bool PointerCaptureController::hasCancelledPointerEventForIdentifier(PointerID pointerId) const
 {
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
-    return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.cancelled;
+    return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.state == CapturingData::State::Cancelled;
 }
 
 bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(PointerID pointerId) const
@@ -316,8 +316,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         dispatchOverOrOutEvent(eventNames().pointeroutEvent, currentTarget.get());
         dispatchEnterOrLeaveEvent(eventNames().pointerleaveEvent);
         capturingData.previousTarget = nullptr;
-
-        touchWithIdentifierWasRemoved(pointerEvent->pointerId());
+        capturingData.state = CapturingData::State::Finished;
     }
 }
 #endif
@@ -327,7 +326,7 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     // If we already have known touches then we cannot dispatch a mouse event,
     // for instance in the case of a long press to initiate a system drag.
     for (auto& capturingData : m_activePointerIdsToCapturingData.values()) {
-        if (capturingData.pointerType == touchPointerEventType() && capturingData.pointerIsPressed && !capturingData.cancelled)
+        if (capturingData.pointerType == touchPointerEventType() && capturingData.state == CapturingData::State::Ready)
             return nullptr;
     }
 
@@ -484,11 +483,11 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
         return;
 
     auto& capturingData = iterator->value;
-    if (capturingData.cancelled)
+    if (capturingData.state == CapturingData::State::Cancelled)
         return;
 
     capturingData.pendingTargetOverride = nullptr;
-    capturingData.cancelled = true;
+    capturingData.state = CapturingData::State::Cancelled;
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     capturingData.previousTarget = nullptr;
@@ -497,7 +496,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     auto target = [&]() -> RefPtr<Element> {
         if (capturingData.targetOverride)
             return capturingData.targetOverride;
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
         return m_page.mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
     }();
 

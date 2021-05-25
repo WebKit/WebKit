@@ -52,36 +52,30 @@ namespace WebCore {
 
 static const uint64_t schemaVersion = 6;
 
-static const String recordsTableSchema(const String& tableName)
+#define RECORDS_TABLE_SCHEMA_PREFIX "CREATE TABLE "
+#define RECORDS_TABLE_SCHEMA_SUFFIX "(" \
+    "key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE" \
+    ", origin TEXT NOT NULL ON CONFLICT FAIL" \
+    ", scopeURL TEXT NOT NULL ON CONFLICT FAIL" \
+    ", topOrigin TEXT NOT NULL ON CONFLICT FAIL" \
+    ", lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL" \
+    ", updateViaCache TEXT NOT NULL ON CONFLICT FAIL" \
+    ", scriptURL TEXT NOT NULL ON CONFLICT FAIL" \
+    ", workerType TEXT NOT NULL ON CONFLICT FAIL" \
+    ", contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL" \
+    ", referrerPolicy TEXT NOT NULL ON CONFLICT FAIL" \
+    ", scriptResourceMap BLOB NOT NULL ON CONFLICT FAIL" \
+    ", certificateInfo BLOB NOT NULL ON CONFLICT FAIL" \
+    ")"_s;
+
+static ASCIILiteral recordsTableSchema()
 {
-    return makeString("CREATE TABLE ", tableName, " ("
-        "key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE"
-        ", origin TEXT NOT NULL ON CONFLICT FAIL"
-        ", scopeURL TEXT NOT NULL ON CONFLICT FAIL"
-        ", topOrigin TEXT NOT NULL ON CONFLICT FAIL"
-        ", lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL"
-        ", updateViaCache TEXT NOT NULL ON CONFLICT FAIL"
-        ", scriptURL TEXT NOT NULL ON CONFLICT FAIL"
-        ", workerType TEXT NOT NULL ON CONFLICT FAIL"
-        ", contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL"
-        ", referrerPolicy TEXT NOT NULL ON CONFLICT FAIL"
-        ", scriptResourceMap BLOB NOT NULL ON CONFLICT FAIL"
-        ", certificateInfo BLOB NOT NULL ON CONFLICT FAIL"
-        ")");
+    return RECORDS_TABLE_SCHEMA_PREFIX "Records" RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String recordsTableSchema()
+static ASCIILiteral recordsTableSchemaAlternate()
 {
-    ASSERT(!isMainThread());
-    static NeverDestroyed<String> schema(recordsTableSchema("Records"));
-    return schema;
-}
-
-static const String recordsTableSchemaAlternate()
-{
-    ASSERT(!isMainThread());
-    static NeverDestroyed<String> schema(recordsTableSchema("\"Records\""));
-    return schema;
+    return RECORDS_TABLE_SCHEMA_PREFIX "\"Records\"" RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
 static inline String databaseFilenameFromVersion(uint64_t version)
@@ -285,11 +279,11 @@ String RegistrationDatabase::ensureValidRecordsTable()
     String currentSchema;
     {
         // Fetch the schema for an existing records table.
-        SQLiteStatement statement(*m_database, "SELECT type, sql FROM sqlite_master WHERE tbl_name='Records'");
-        if (statement.prepare() != SQLITE_OK)
-            return "Unable to prepare statement to fetch schema for the Records table.";
+        auto statement = m_database->prepareStatement("SELECT type, sql FROM sqlite_master WHERE tbl_name='Records'"_s);
+        if (!statement)
+            return "Unable to prepare statement to fetch schema for the Records table."_s;
 
-        int sqliteResult = statement.step();
+        int sqliteResult = statement->step();
 
         // If there is no Records table at all, create it and then bail.
         if (sqliteResult == SQLITE_DONE) {
@@ -301,7 +295,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
         if (sqliteResult != SQLITE_ROW)
             return "Error executing statement to fetch schema for the Records table.";
 
-        currentSchema = statement.getColumnText(1);
+        currentSchema = statement->columnText(1);
     }
 
     ASSERT(!currentSchema.isEmpty());
@@ -427,18 +421,18 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
     SQLiteTransaction transaction(*m_database);
     transaction.begin();
 
-    SQLiteStatement sql(*m_database, "INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s);
-    if (sql.prepare() != SQLITE_OK) {
+    auto insertStatement = m_database->prepareStatement("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s);
+    if (!insertStatement) {
         RELEASE_LOG_ERROR(ServiceWorker, "Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return false;
     }
 
     auto& scriptStorage = this->scriptStorage();
     for (auto& registration : removedRegistrations) {
-        SQLiteStatement sql(*m_database, "DELETE FROM Records WHERE key = ?");
-        if (sql.prepare() != SQLITE_OK
-            || sql.bindText(1, registration.toDatabaseKey()) != SQLITE_OK
-            || sql.step() != SQLITE_DONE) {
+        auto deleteStatement = m_database->prepareStatement("DELETE FROM Records WHERE key = ?"_s);
+        if (!deleteStatement
+            || deleteStatement->bindText(1, registration.toDatabaseKey()) != SQLITE_OK
+            || deleteStatement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to remove registration data from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return false;
         }
@@ -457,19 +451,19 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
         WTF::Persistence::Encoder certificateInfoEncoder;
         certificateInfoEncoder << data.certificateInfo;
 
-        if (sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
-            || sql.bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
-            || sql.bindText(3, data.registration.scopeURL.path().toString()) != SQLITE_OK
-            || sql.bindText(4, data.registration.key.topOrigin().databaseIdentifier()) != SQLITE_OK
-            || sql.bindDouble(5, data.registration.lastUpdateTime.secondsSinceEpoch().value()) != SQLITE_OK
-            || sql.bindText(6, updateViaCacheToString(data.registration.updateViaCache)) != SQLITE_OK
-            || sql.bindText(7, data.scriptURL.string()) != SQLITE_OK
-            || sql.bindText(8, workerTypeToString(data.workerType)) != SQLITE_OK
-            || sql.bindBlob(9, cspEncoder.buffer(), cspEncoder.bufferSize()) != SQLITE_OK
-            || sql.bindText(10, data.referrerPolicy) != SQLITE_OK
-            || sql.bindBlob(11, scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize()) != SQLITE_OK
-            || sql.bindBlob(12, certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize()) != SQLITE_OK
-            || sql.step() != SQLITE_DONE) {
+        if (insertStatement->bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
+            || insertStatement->bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
+            || insertStatement->bindText(3, data.registration.scopeURL.path().toString()) != SQLITE_OK
+            || insertStatement->bindText(4, data.registration.key.topOrigin().databaseIdentifier()) != SQLITE_OK
+            || insertStatement->bindDouble(5, data.registration.lastUpdateTime.secondsSinceEpoch().value()) != SQLITE_OK
+            || insertStatement->bindText(6, updateViaCacheToString(data.registration.updateViaCache)) != SQLITE_OK
+            || insertStatement->bindText(7, data.scriptURL.string()) != SQLITE_OK
+            || insertStatement->bindText(8, workerTypeToString(data.workerType)) != SQLITE_OK
+            || insertStatement->bindBlob(9, cspEncoder.buffer(), cspEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->bindText(10, data.referrerPolicy) != SQLITE_OK
+            || insertStatement->bindBlob(11, scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->bindBlob(12, certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize()) != SQLITE_OK
+            || insertStatement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return false;
         }
@@ -502,29 +496,28 @@ String RegistrationDatabase::importRecords()
     ASSERT(!isMainThread());
 
     RELEASE_LOG(ServiceWorker, "RegistrationDatabase::importRecords:");
-    SQLiteStatement sql(*m_database, "SELECT * FROM Records;"_s);
-    if (sql.prepare() != SQLITE_OK)
+    auto sql = m_database->prepareStatement("SELECT * FROM Records;"_s);
+    if (!sql)
         return makeString("Failed to prepare statement to retrieve registrations from records table (", m_database->lastError(), ") - ", m_database->lastErrorMsg());
 
-    int result = sql.step();
+    int result = sql->step();
 
-    for (; result == SQLITE_ROW; result = sql.step()) {
+    for (; result == SQLITE_ROW; result = sql->step()) {
         RELEASE_LOG(ServiceWorker, "RegistrationDatabase::importRecords: Importing a registration from the database");
-        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql.getColumnText(0));
-        auto originURL = URL { URL(), sql.getColumnText(1) };
-        auto scopePath = sql.getColumnText(2);
+        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql->columnText(0));
+        auto originURL = URL { URL(), sql->columnText(1) };
+        auto scopePath = sql->columnText(2);
         auto scopeURL = URL { originURL, scopePath };
-        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql.getColumnText(3));
-        auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql.getColumnDouble(4));
-        auto updateViaCache = stringToUpdateViaCache(sql.getColumnText(5));
-        auto scriptURL = URL { URL(), sql.getColumnText(6) };
-        auto workerType = stringToWorkerType(sql.getColumnText(7));
+        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql->columnText(3));
+        auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql->columnDouble(4));
+        auto updateViaCache = stringToUpdateViaCache(sql->columnText(5));
+        auto scriptURL = URL { URL(), sql->columnText(6) };
+        auto workerType = stringToWorkerType(sql->columnText(7));
 
-        Vector<uint8_t> contentSecurityPolicyData;
-        sql.getColumnBlobAsVector(8, contentSecurityPolicyData);
-        WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
         Optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
-        if (contentSecurityPolicyData.size()) {
+        auto contentSecurityPolicyDataView = sql->columnBlobView(8);
+        if (contentSecurityPolicyDataView.size()) {
+            WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataView.data(), contentSecurityPolicyDataView.size());
             cspDecoder >> contentSecurityPolicy;
             if (!contentSecurityPolicy) {
                 RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode contentSecurityPolicy");
@@ -532,14 +525,12 @@ String RegistrationDatabase::importRecords()
             }
         }
 
-        auto referrerPolicy = sql.getColumnText(9);
+        auto referrerPolicy = sql->columnText(9);
 
-        Vector<uint8_t> scriptResourceMapData;
-        sql.getColumnBlobAsVector(10, scriptResourceMapData);
         HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
-
-        WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapData.data(), scriptResourceMapData.size());
-        if (scriptResourceMapData.size()) {
+        auto scriptResourceMapDataView = sql->columnBlobView(10);
+        if (scriptResourceMapDataView.size()) {
+            WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataView.data(), scriptResourceMapDataView.size());
             Optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
             scriptResourceMapDecoder >> scriptResourceMapWithoutScripts;
             if (!scriptResourceMapWithoutScripts) {
@@ -549,11 +540,10 @@ String RegistrationDatabase::importRecords()
             scriptResourceMap = populateScriptSourcesFromDisk(scriptStorage(), *key, WTFMove(*scriptResourceMapWithoutScripts));
         }
 
-        Vector<uint8_t> certificateInfoData;
-        sql.getColumnBlobAsVector(11, certificateInfoData);
+        auto certificateInfoDataView = sql->columnBlobView(11);
         Optional<CertificateInfo> certificateInfo;
 
-        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoData.data(), certificateInfoData.size());
+        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataView.data(), certificateInfoDataView.size());
         certificateInfoDecoder >> certificateInfo;
         if (!certificateInfo) {
             RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode certificateInfo");
@@ -579,7 +569,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(scriptResourceMap) };
+        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppBound::No, WTFMove(scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));
@@ -609,6 +599,9 @@ void RegistrationDatabase::databaseOpenedAndRecordsImported()
     if (m_store)
         m_store->databaseOpenedAndRecordsImported();
 }
+
+#undef RECORDS_TABLE_SCHEMA_PREFIX
+#undef RECORDS_TABLE_SCHEMA_SUFFIX
 
 } // namespace WebCore
 

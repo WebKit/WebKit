@@ -203,9 +203,9 @@
     return [_contentView formInputLabel];
 }
 
-- (CGRect)_inputViewBounds
+- (CGRect)_inputViewBoundsInWindow
 {
-    return _inputViewBounds;
+    return _inputViewBoundsInWindow;
 }
 
 - (NSArray<NSValue *> *)_uiTextSelectionRects

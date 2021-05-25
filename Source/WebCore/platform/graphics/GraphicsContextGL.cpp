@@ -35,8 +35,8 @@
 #include "FormatConverter.h"
 #include "HostWindow.h"
 #include "Image.h"
-#include "ImageData.h"
 #include "ImageObserver.h"
+#include "PixelBuffer.h"
 
 namespace WebCore {
 
@@ -764,12 +764,10 @@ bool GraphicsContextGL::packImageData(Image* image, const void* pixels, GCGLenum
     return true;
 }
 
-bool GraphicsContextGL::extractImageData(ImageData* imageData, DataFormat sourceDataFormat, const IntRect& sourceImageSubRectangle, int depth, int unpackImageHeight, GCGLenum format, GCGLenum type, bool flipY, bool premultiplyAlpha, Vector<uint8_t>& data)
+bool GraphicsContextGL::extractPixelBuffer(const PixelBuffer& pixelBuffer, DataFormat sourceDataFormat, const IntRect& sourceImageSubRectangle, int depth, int unpackImageHeight, GCGLenum format, GCGLenum type, bool flipY, bool premultiplyAlpha, Vector<uint8_t>& data)
 {
-    if (!imageData)
-        return false;
-    int width = imageData->width();
-    int height = imageData->height();
+    int width = pixelBuffer.size().width();
+    int height = pixelBuffer.size().height();
 
     unsigned packedSize;
     // Output data is tightly packed (alignment == 1).
@@ -779,7 +777,7 @@ bool GraphicsContextGL::extractImageData(ImageData* imageData, DataFormat source
         return false;
     data.resize(packedSize);
 
-    if (!packPixels(imageData->data().data(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
+    if (!packPixels(pixelBuffer.data().data(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
         return false;
 
     return true;

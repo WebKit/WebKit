@@ -952,12 +952,33 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setLoadsFromNetwork:(BOOL)loads
 {
-    _pageConfiguration->setLoadsFromNetwork(loads);
+    _pageConfiguration->setAllowedNetworkHosts(loads ? WTF::nullopt : Optional<HashSet<String>> { HashSet<String> { } });
 }
 
 - (BOOL)_loadsFromNetwork
 {
-    return _pageConfiguration->loadsFromNetwork();
+    return _pageConfiguration->allowedNetworkHosts() == WTF::nullopt;
+}
+
+- (void)_setAllowedNetworkHosts:(NSSet<NSString *> *)hosts
+{
+    if (!hosts)
+        return _pageConfiguration->setAllowedNetworkHosts(WTF::nullopt);
+    HashSet<String> set;
+    for (NSString *host in hosts)
+        set.add(host);
+    _pageConfiguration->setAllowedNetworkHosts(WTFMove(set));
+}
+
+- (NSSet<NSString *> *)_allowedNetworkHosts
+{
+    const auto& hosts = _pageConfiguration->allowedNetworkHosts();
+    if (!hosts)
+        return nil;
+    NSMutableSet<NSString *> *set = [NSMutableSet setWithCapacity:hosts->size()];
+    for (const auto& host : *hosts)
+        [set addObject:host];
+    return set;
 }
 
 - (void)_setLoadsSubresources:(BOOL)loads

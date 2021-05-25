@@ -400,6 +400,38 @@ void TestController::appBoundRequestContextDataForDomain(WKStringRef domain)
     }];
 }
 
+bool TestController::didLoadAppBoundRequest()
+{
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return false;
+
+    __block bool isDone = false;
+    __block bool didLoadResult = false;
+    [m_mainWebView->platformView() _didLoadAppBoundRequest:^(BOOL result) {
+        didLoadResult = result;
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
+    return didLoadResult;
+}
+
+bool TestController::didLoadNonAppBoundRequest()
+{
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return false;
+
+    __block bool isDone = false;
+    __block bool didLoadResult = false;
+    [m_mainWebView->platformView() _didLoadNonAppBoundRequest:^(BOOL result) {
+        didLoadResult = result;
+        isDone = true;
+    }];
+    platformRunUntil(isDone, noTimeout);
+    return didLoadResult;
+}
+
 void TestController::clearAppBoundNavigationData()
 {
     auto* parentView = mainWebView();

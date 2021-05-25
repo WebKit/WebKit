@@ -349,6 +349,8 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     if (self.window)
         [self setUpInteraction];
+    else
+        [self cleanUpInteractionPreviewContainers];
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -555,8 +557,12 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
 - (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
 {
-    if (context.nextFocusedView == self)
-        [self _becomeFirstResponderWithSelectionMovingForward:context.focusHeading == UIFocusHeadingNext completionHandler:nil];
+    if (context.nextFocusedView == self) {
+        if (context.focusHeading & UIFocusHeadingNext)
+            [self _becomeFirstResponderWithSelectionMovingForward:YES completionHandler:nil];
+        else if (context.focusHeading & UIFocusHeadingPrevious)
+            [self _becomeFirstResponderWithSelectionMovingForward:NO completionHandler:nil];
+    }
 }
 
 #pragma mark Internal

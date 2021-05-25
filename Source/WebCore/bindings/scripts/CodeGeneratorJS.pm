@@ -1173,8 +1173,6 @@ sub GeneratePut
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
-    push(@$outputArray, "    if (UNLIKELY(thisObject != putPropertySlot.thisValue()))\n");
-    push(@$outputArray, "        return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
 
     push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());\n\n");
 
@@ -1697,7 +1695,7 @@ sub ShouldGenerateToJSDeclaration
 
     return 0 if ($interface->extendedAttributes->{SuppressToJSObject});
     return 0 if not NeedsImplementationClass($interface);
-    return 0 if $interface->extendedAttributes->{CustomProxyToJSObject};
+    return 0 if IsDOMGlobalObject($interface);
     return 1 if (!$hasParent or $interface->extendedAttributes->{JSGenerateToJSObject} or $interface->extendedAttributes->{CustomToJSObject});
     return 1 if $interface->parentType && $interface->parentType->name eq "EventTarget";
     return 1 if @{$interface->constructors} > 0 && !HasCustomConstructor($interface);
@@ -2029,8 +2027,7 @@ sub IsAcceleratedDOMAttribute
     return 0 if $attribute->extendedAttributes->{PrivateIdentifier} and AttributeShouldBeOnInstance($interface, $attribute);
 
     # If the interface has special logic for casting we cannot hoist type check to JSC.
-    return 0 if $interface->extendedAttributes->{ImplicitThis};
-    return 0 if $interface->extendedAttributes->{CustomProxyToJSObject};
+    return 0 if IsDOMGlobalObject($interface);
 
     return 0 if $attribute->isStatic;
     return 0 if $attribute->extendedAttributes->{ForwardToMapLike};
@@ -2952,6 +2949,11 @@ sub GenerateHeader
         $structureFlags{"JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero"} = 1;
     }
 
+    if ($interface->extendedAttributes->{CheckSecurity}) {
+        push(@headerContent, "    static void doPutPropertySecurityCheck(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PutPropertySlot&);\n");
+        $structureFlags{"JSC::HasPutPropertySecurityCheck"} = 1;
+    }
+
     if ($interface->extendedAttributes->{Plugin} || GetNamedSetterOperation($interface)) {
         $structureFlags{"JSC::ProhibitsPropertyCaching"} = 1;
     }
@@ -2964,7 +2966,6 @@ sub GenerateHeader
     if (InstanceOverridesPut($interface)) {
         push(@headerContent, "    static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static bool putByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n");
-        $structureFlags{"JSC::OverridesPut"} = 1;
     }
     
     if (InstanceOverridesDefineOwnProperty($interface)) {
@@ -4813,41 +4814,8 @@ sub GenerateImplementation
         GenerateGetCallData(\@implContent, $interface, $className);
     }
     
-    if ($numAttributes > 0) {
-        AddToImplIncludes("JSDOMAttribute.h");
-
-        my $castingFunction = $interface->extendedAttributes->{CustomProxyToJSObject} ? "to${className}" : GetCastingHelperForThisObject($interface);
-        # FIXME: Remove ImplicitThis keyword as it is no longer defined by WebIDL spec and is only used in DOMWindow.
-        # https://bugs.webkit.org/show_bug.cgi?id=223758
-        if ($interface->extendedAttributes->{ImplicitThis}) {
-            push(@implContent, "template<> inline ${className}* IDLAttribute<${className}>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    VM& vm = JSC::getVM(&lexicalGlobalObject);\n");
-            push(@implContent, "    auto decodedThisValue = JSValue::decode(thisValue);\n");
-            push(@implContent, "    if (decodedThisValue.isUndefinedOrNull())\n");
-            push(@implContent, "        decodedThisValue = JSValue(&lexicalGlobalObject).toThis(&lexicalGlobalObject, ECMAMode::sloppy());\n");
-            push(@implContent, "    return $castingFunction(vm, decodedThisValue);\n");
-            push(@implContent, "}\n\n");
-        } else {
-            push(@implContent, "template<> inline ${className}* IDLAttribute<${className}>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    return $castingFunction(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));\n");
-            push(@implContent, "}\n\n");
-        }
-    }
-
-    if ($numOperations > 0 && $interfaceName ne "EventTarget") {
-        AddToImplIncludes("JSDOMOperation.h");
-
-        # FIXME: Make consistent IDLAttribute<>::cast and IDLOperation<>::cast in case of CustomProxyToJSObject.
-        # https://bugs.webkit.org/show_bug.cgi?id=223758
-        my $castingFunction = $interface->extendedAttributes->{CustomProxyToJSObject} ? "to${className}" : GetCastingHelperForThisObject($interface);
-        my $thisValue = $interface->extendedAttributes->{CustomProxyToJSObject} ? "callFrame.thisValue().toThis(&lexicalGlobalObject, ECMAMode::sloppy())" : "callFrame.thisValue()";
-        push(@implContent, "template<> inline ${className}* IDLOperation<${className}>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return $castingFunction(JSC::getVM(&lexicalGlobalObject), $thisValue);\n");
-        push(@implContent, "}\n\n");
-    }
+    AddToImplIncludes("JSDOMAttribute.h") if $numAttributes > 0;
+    AddToImplIncludes("JSDOMOperation.h") if $numOperations > 0 && $interfaceName ne "EventTarget";
 
     if (NeedsConstructorProperty($interface)) {
         my $constructorGetter = "js" . $interfaceName . "Constructor";

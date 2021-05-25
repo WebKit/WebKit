@@ -57,6 +57,7 @@ public:
 
     ExceptionOr<void> observe(Init&&);
     void disconnect();
+    Vector<RefPtr<PerformanceEntry>> takeRecords();
 
     OptionSet<PerformanceEntry::Type> typeFilter() const { return m_typeFilter; }
 

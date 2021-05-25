@@ -1068,8 +1068,6 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
 
     auto unwrapParamsOrException = normalizeCryptoAlgorithmParameters(state, unwrapAlgorithmIdentifier, Operations::UnwrapKey);
     if (unwrapParamsOrException.hasException()) {
-        ASSERT(unwrapParamsOrException.exception().code() != ExistingExceptionError);
-
         unwrapParamsOrException = normalizeCryptoAlgorithmParameters(state, unwrapAlgorithmIdentifier, Operations::Decrypt);
         if (unwrapParamsOrException.hasException()) {
             promise->reject(unwrapParamsOrException.releaseException());

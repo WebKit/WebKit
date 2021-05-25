@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/EnumTraits.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -156,17 +155,16 @@ bool unlockFile(PlatformFileHandle handle)
 }
 #endif
 
-bool getFileSize(PlatformFileHandle handle, long long& result)
+Optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
     struct stat fileInfo;
     if (fstat(handle, &fileInfo))
-        return false;
+        return WTF::nullopt;
 
-    result = fileInfo.st_size;
-    return true;
+    return fileInfo.st_size;
 }
 
-Optional<WallTime> getFileCreationTime(const String& path)
+Optional<WallTime> fileCreationTime(const String& path)
 {
 #if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     CString fsRep = fileSystemRepresentation(path);
@@ -184,36 +182,6 @@ Optional<WallTime> getFileCreationTime(const String& path)
     UNUSED_PARAM(path);
     return WTF::nullopt;
 #endif
-}
-
-Vector<String> listDirectory(const String& path, const String& filter)
-{
-    Vector<String> entries;
-    CString cpath = fileSystemRepresentation(path);
-    CString cfilter = fileSystemRepresentation(filter);
-    DIR* dir = opendir(cpath.data());
-    if (dir) {
-        struct dirent* dp;
-        while ((dp = readdir(dir))) {
-            const char* name = dp->d_name;
-            if (!strcmp(name, ".") || !strcmp(name, ".."))
-                continue;
-            if (fnmatch(cfilter.data(), name, 0))
-                continue;
-            char filePath[PATH_MAX];
-            if (static_cast<int>(sizeof(filePath) - 1) < snprintf(filePath, sizeof(filePath), "%s/%s", cpath.data(), name))
-                continue; // buffer overflow
-
-            auto string = stringFromFileSystemRepresentation(filePath);
-
-            // Some file system representations cannot be represented as a UTF-16 string,
-            // so this string might be null.
-            if (!string.isNull())
-                entries.append(WTFMove(string));
-        }
-        closedir(dir);
-    }
-    return entries;
 }
 
 #if !USE(CF)
@@ -265,14 +233,6 @@ Optional<int32_t> getFileDeviceId(const CString& fsFile)
         return WTF::nullopt;
 
     return fileStat.st_dev;
-}
-
-String realPath(const String& filePath)
-{
-    CString fsRep = fileSystemRepresentation(filePath);
-    char resolvedName[PATH_MAX];
-    const char* result = realpath(fsRep.data(), resolvedName);
-    return result ? String::fromUTF8(result) : filePath;
 }
 
 } // namespace FileSystemImpl

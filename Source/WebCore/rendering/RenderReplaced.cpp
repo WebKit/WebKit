@@ -391,7 +391,9 @@ bool RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange()
 void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* contentRenderer, FloatSize& constrainedSize, double& intrinsicRatio) const
 {
     FloatSize intrinsicSize;
-    if (contentRenderer) {
+    if (shouldApplySizeContainment(*this))
+        RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
+    else if (contentRenderer) {
         contentRenderer->computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
 
         if (style().aspectRatioType() == AspectRatioType::Ratio || (style().aspectRatioType() == AspectRatioType::AutoAndRatio && !intrinsicRatio))
@@ -496,7 +498,7 @@ Optional<double> RenderReplaced::intrinsicAspectRatioFromWidthHeight() const
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     // If there's an embeddedContentBox() of a remote, referenced document available, this code-path should never be used.
-    ASSERT(!embeddedContentBox());
+    ASSERT(!embeddedContentBox() || shouldApplySizeContainment(*this));
     intrinsicSize = FloatSize(intrinsicLogicalWidth(), intrinsicLogicalHeight());
 
     if (style().hasAspectRatio()) {
@@ -786,7 +788,7 @@ bool RenderReplaced::isHighlighted(HighlightState state, const HighlightData& ra
     return false;
 }
 
-LayoutRect RenderReplaced::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderReplaced::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
@@ -797,7 +799,7 @@ LayoutRect RenderReplaced::clippedOverflowRectForRepaint(const RenderLayerModelO
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().frameView().layoutContext().layoutDelta());
-    return computeRectForRepaint(r, repaintContainer);
+    return computeRect(r, repaintContainer, context);
 }
 
 bool RenderReplaced::isContentLikelyVisibleInViewport()

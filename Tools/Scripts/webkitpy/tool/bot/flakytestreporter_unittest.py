@@ -34,7 +34,6 @@ from webkitpy.common.config.committers import Committer
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.mocktool import MockTool
 

@@ -23,6 +23,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class SVGFontFaceElement;
 class SVGResourcesCache;
 class SVGSMILElement;
 class SVGSVGElement;
+class SVGUseElement;
 
 class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;

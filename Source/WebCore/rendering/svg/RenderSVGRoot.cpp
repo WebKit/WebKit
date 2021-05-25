@@ -70,6 +70,8 @@ SVGSVGElement& RenderSVGRoot::svgSVGElement() const
 
 void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
+    ASSERT(!shouldApplySizeContainment(*this));
+
     // Spec: http://www.w3.org/TR/SVG/coords.html#IntrinsicSizing
     // SVG needs to specify how to calculate some intrinsic sizing properties to enable inclusion within other languages.
 
@@ -351,7 +353,7 @@ const AffineTransform& RenderSVGRoot::localToParentTransform() const
     return m_localToParentTransform;
 }
 
-LayoutRect RenderSVGRoot::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
@@ -363,7 +365,7 @@ LayoutRect RenderSVGRoot::clippedOverflowRectForRepaint(const RenderLayerModelOb
     if (m_hasBoxDecorations || hasRenderOverflow())
         repaintRect.unite(unionRect(localSelectionRect(false), visualOverflowRect()));
 
-    return RenderReplaced::computeRectForRepaint(enclosingIntRect(repaintRect), repaintContainer);
+    return RenderReplaced::computeRect(enclosingIntRect(repaintRect), repaintContainer, context);
 }
 
 Optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const

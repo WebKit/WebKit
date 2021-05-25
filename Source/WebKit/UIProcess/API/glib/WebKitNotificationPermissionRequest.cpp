@@ -64,7 +64,7 @@ static void webkitNotificationPermissionRequestAllow(WebKitPermissionRequest* re
     if (priv->madeDecision)
         return;
 
-    priv->request->allow();
+    priv->request->didReceiveDecision(true);
     priv->madeDecision = true;
 }
 
@@ -78,7 +78,7 @@ static void webkitNotificationPermissionRequestDeny(WebKitPermissionRequest* req
     if (priv->madeDecision)
         return;
 
-    priv->request->deny();
+    priv->request->didReceiveDecision(false);
     priv->madeDecision = true;
 }
 

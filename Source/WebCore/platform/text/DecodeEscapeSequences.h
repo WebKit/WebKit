@@ -154,11 +154,11 @@ String decodeEscapeSequences(StringView string, const TextEncoding& encoding)
     return result.toString();
 }
 
-inline Vector<char> decodeURLEscapeSequencesAsData(StringView string, const TextEncoding& encoding)
+inline Vector<uint8_t> decodeURLEscapeSequencesAsData(StringView string, const TextEncoding& encoding)
 {
     ASSERT(encoding.isValid());
 
-    Vector<char> result;
+    Vector<uint8_t> result;
     size_t decodedPosition = 0;
     size_t searchPosition = 0;
     while (true) {

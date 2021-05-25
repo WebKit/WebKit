@@ -53,9 +53,7 @@ public:
     virtual void cancel(WebCore::Notification* object);
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
     virtual void notificationControllerDestroyed();
-    virtual void requestPermission(WebCore::SecurityOrigin*, RefPtr<WebCore::NotificationPermissionCallback>&&);
-    bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override;
-    virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*);
+    virtual void requestPermission(WebCore::SecurityOrigin&, PermissionHandler&&);
     virtual WebCore::NotificationClient::Permission checkPermission(const URL&);
 
 private:

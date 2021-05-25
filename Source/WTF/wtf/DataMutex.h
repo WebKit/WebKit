@@ -149,4 +149,10 @@ private:
     T m_data;
 };
 
+template<typename T>
+typename DataMutex<T>::LockedWrapper holdLock(DataMutex<T>& dataMutex)
+{
+    return typename DataMutex<T>::LockedWrapper(dataMutex);
+}
+
 } // namespace WTF

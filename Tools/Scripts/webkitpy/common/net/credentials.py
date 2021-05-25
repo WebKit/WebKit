@@ -84,7 +84,7 @@ class Credentials(object):
         return platform.mac_ver()[0]
 
     def _parse_security_tool_output(self, security_output):
-        username = self._keychain_value_with_label("^\s*\"acct\"<blob>=",
+        username = self._keychain_value_with_label("^\\s*\"acct\"<blob>=",
                                                    security_output)
         password = self._keychain_value_with_label("^password: ",
                                                    security_output)

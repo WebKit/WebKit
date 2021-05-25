@@ -114,19 +114,13 @@ Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toData(const String&, Opti
     return { };
 }
 
-Vector<uint8_t> ImageBufferShareableIOSurfaceBackend::toBGRAData() const
+Optional<PixelBuffer> ImageBufferShareableIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return { };
 }
 
-RefPtr<ImageData> ImageBufferShareableIOSurfaceBackend::getImageData(AlphaPremultiplication, const IntRect&) const
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
-void ImageBufferShareableIOSurfaceBackend::putImageData(AlphaPremultiplication, const ImageData&, const IntRect&, const IntPoint&, AlphaPremultiplication)
+void ImageBufferShareableIOSurfaceBackend::putPixelBuffer(const PixelBuffer&, const IntRect&, const IntPoint&, AlphaPremultiplication)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

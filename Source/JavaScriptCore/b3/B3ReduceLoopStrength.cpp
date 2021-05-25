@@ -36,7 +36,7 @@
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
-#include <wtf/SmallPtrSet.h>
+#include <wtf/SmallSet.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
@@ -159,7 +159,7 @@ public:
         BasicBlock* loopFoot = nullptr;
         BasicBlock* loopPreheader = nullptr;
         BasicBlock* loopPostfooter = nullptr;
-        SmallPtrSet<BasicBlock*> loopInnerBlocks;
+        SmallSet<BasicBlock*> loopInnerBlocks;
 
         {
             for (unsigned i = 0; i < loop->size(); ++i)
@@ -171,8 +171,8 @@ public:
             if (!loopInnerBlocks.contains(store->owner))
                 return;
 
-            SmallPtrSet<BasicBlock*> loopEntrances;
-            SmallPtrSet<BasicBlock*> loopExits;
+            SmallSet<BasicBlock*> loopEntrances;
+            SmallSet<BasicBlock*> loopExits;
             for (auto* block : loopInnerBlocks) {
                 for (auto successor : block->successors()) {
                     if (!loopInnerBlocks.contains(successor.block()))

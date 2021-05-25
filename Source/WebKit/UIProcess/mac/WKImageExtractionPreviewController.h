@@ -33,12 +33,8 @@ namespace WebKit {
 class WebPageProxy;
 }
 
-@interface WKImageExtractionPreviewItem : NSObject <QLPreviewItem>
-- (instancetype)initWithURL:(NSURL *)url title:(NSString *)title;
-@end
-
 @interface WKImageExtractionPreviewController : NSObject <QLPreviewPanelDelegate, QLPreviewPanelDataSource>
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page url:(NSURL *)url title:(NSString *)title;
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)data title:(NSString *)title imageURL:(NSURL *)imageURL;
 @end
 
 #endif // PLATFORM(MAC) && ENABLE(IMAGE_EXTRACTION)

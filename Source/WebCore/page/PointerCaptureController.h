@@ -83,7 +83,12 @@ private:
                 ;
         }
         String pointerType;
-        bool cancelled { false };
+        enum class State : uint8_t {
+            Ready,
+            Finished,
+            Cancelled,
+        };
+        State state { State::Ready };
         bool isPrimary { false };
         bool preventsCompatibilityMouseEvents { false };
         bool pointerIsPressed { false };

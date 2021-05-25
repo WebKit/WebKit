@@ -94,7 +94,7 @@ bool StreamingCompiler::didReceiveFunctionData(unsigned functionIndex, const Was
 
 void StreamingCompiler::didCompileFunction(StreamingPlan& plan)
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     ASSERT(m_threadedCompilationStarted);
     if (plan.failed())
         m_plan->didFailInStreaming(plan.errorMessage());
@@ -191,7 +191,7 @@ void StreamingCompiler::finalize(JSGlobalObject* globalObject)
         return;
     }
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         m_finalized = true;
         completeIfNecessary(locker);
     }
@@ -200,7 +200,7 @@ void StreamingCompiler::finalize(JSGlobalObject* globalObject)
 void StreamingCompiler::fail(JSGlobalObject* globalObject, JSValue error)
 {
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         ASSERT(!m_finalized);
         if (m_eagerFailed)
             return;
@@ -214,7 +214,7 @@ void StreamingCompiler::fail(JSGlobalObject* globalObject, JSValue error)
 void StreamingCompiler::cancel()
 {
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         ASSERT(!m_finalized);
         if (m_eagerFailed)
             return;

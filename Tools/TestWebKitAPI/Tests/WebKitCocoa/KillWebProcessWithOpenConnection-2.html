@@ -5,14 +5,13 @@ request.onsuccess = (event) => {
     db = event.target.result;
     var secondRequest = window.indexedDB.open("TestIndexedDB", db.version + 1);
     secondRequest.onsuccess = (event) => {
-        window.webkit.messageHandlers.testHandler.postMessage("Second Open Succeeded Unexpectedly");
+        window.webkit.messageHandlers.testHandler.postMessage("Second Open Succeeded");
     }
-    secondRequest.onerror = (event) => {
-        window.webkit.messageHandlers.testHandler.postMessage("Second Open Failed Unexpectedly");
+    secondRequest.onerror = () => {
+        window.webkit.messageHandlers.testHandler.postMessage("Second Open Failed: " + secondRequest.error);
     }
-    window.webkit.messageHandlers.testHandler.postMessage("First Open Succeeded");
 }
 request.onerror = () => {
-    window.webkit.messageHandlers.testHandler.postMessage("First Open Failed");
+    window.webkit.messageHandlers.testHandler.postMessage("First Open Failed: " + request.error);
 }
 </script>

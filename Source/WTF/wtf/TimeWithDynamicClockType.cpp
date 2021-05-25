@@ -125,7 +125,7 @@ void sleep(const TimeWithDynamicClockType& time)
 {
     Lock fakeLock;
     Condition fakeCondition;
-    LockHolder fakeLocker(fakeLock);
+    Locker fakeLocker { fakeLock };
     fakeCondition.waitUntil(fakeLock, time);
 }
 

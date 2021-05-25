@@ -128,7 +128,7 @@ public:
             // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
             bool needsBranchCompaction = false;
             RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(MacroAssembler::differenceBetweenCodePtr(m_inlineStart, m_inlineEnd)));
-            LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
+            LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
             RELEASE_ASSERT(linkBuffer.isValid());
             linkBuffer.link(jump, CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
             FINALIZE_CODE(linkBuffer, NoPtrTag, "JITMathIC: linking constant jump to out of line stub");
@@ -156,7 +156,7 @@ public:
             if (generatedInline) {
                 auto jumpToDone = jit.jump();
 
-                LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
+                LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
                 if (!linkBuffer.didFailToAllocate()) {
                     linkBuffer.link(generationState.slowPathJumps, slowPathStartLocation());
                     linkBuffer.link(jumpToDone, doneLocation());
@@ -196,7 +196,7 @@ public:
                 return;
             endJumpList.append(jit.jump());
 
-            LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
+            LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
             if (linkBuffer.didFailToAllocate())
                 return;
 

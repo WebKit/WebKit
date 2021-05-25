@@ -129,124 +129,8 @@ public:
 
     void didStart(CFTimeInterval beginTime) { m_properties.beginTime = beginTime; }
 
-    class KeyframeValue {
-    public:
-        enum KeyframeType {
-            NumberKeyType,
-            ColorKeyType,
-            PointKeyType,
-            TransformKeyType,
-            FilterKeyType,
-        };
 
-        ~KeyframeValue()
-        {
-        }
-
-        KeyframeValue(float value = 0)
-            : keyType(NumberKeyType)
-            , number(value)
-        {
-        }
-
-        KeyframeValue(WebCore::Color value)
-            : keyType(ColorKeyType)
-            , color(value)
-        {
-        }
-
-        KeyframeValue(const WebCore::FloatPoint3D& value)
-            : keyType(PointKeyType)
-            , point(value)
-        {
-        }
-
-        KeyframeValue(const WebCore::TransformationMatrix& value)
-            : keyType(TransformKeyType)
-            , transform(value)
-        {
-        }
-
-        KeyframeValue(RefPtr<WebCore::FilterOperation>&& value)
-            : keyType(FilterKeyType)
-            , filter(WTFMove(value))
-        {
-        }
-
-        KeyframeValue(const KeyframeValue& other)
-        {
-            *this = other;
-        }
-
-        KeyframeValue& operator=(const KeyframeValue& other)
-        {
-            keyType = other.keyType;
-            switch (keyType) {
-            case NumberKeyType:
-                number = other.number;
-                break;
-            case ColorKeyType:
-                color = other.color;
-                break;
-            case PointKeyType:
-                point = other.point;
-                break;
-            case TransformKeyType:
-                transform = other.transform;
-                break;
-            case FilterKeyType:
-                filter = other.filter;
-                break;
-            }
-
-            return *this;
-        }
-
-        KeyframeType keyframeType() const { return keyType; }
-
-        float numberValue() const
-        {
-            ASSERT(keyType == NumberKeyType);
-            return number;
-        }
-
-        WebCore::Color colorValue() const
-        {
-            ASSERT(keyType == ColorKeyType);
-            return color;
-        }
-
-        const WebCore::FloatPoint3D& pointValue() const
-        {
-            ASSERT(keyType == PointKeyType);
-            return point;
-        }
-
-        const WebCore::TransformationMatrix& transformValue() const
-        {
-            ASSERT(keyType == TransformKeyType);
-            return transform;
-        }
-
-        const WebCore::FilterOperation* filterValue() const
-        {
-            ASSERT(keyType == FilterKeyType);
-            return filter.get();
-        }
-
-        void encode(IPC::Encoder&) const;
-        static Optional<KeyframeValue> decode(IPC::Decoder&);
-
-    private:
-        KeyframeType keyType;
-        union {
-            float number;
-            WebCore::Color color;
-            WebCore::FloatPoint3D point;
-            WebCore::TransformationMatrix transform;
-        };
-        RefPtr<WebCore::FilterOperation> filter;
-    };
+    using KeyframeValue = Variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>;
 
     struct Properties {
         Properties()
@@ -308,24 +192,8 @@ private:
     Properties m_properties;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const PlatformCAAnimationRemote::KeyframeValue&);
 WTF::TextStream& operator<<(WTF::TextStream&, const PlatformCAAnimationRemote::Properties&);
 
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_CAANIMATION(WebKit::PlatformCAAnimationRemote, isPlatformCAAnimationRemote())
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType> {
-    using values = EnumValues<
-        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType,
-        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::NumberKeyType,
-        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::ColorKeyType,
-        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::PointKeyType,
-        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::TransformKeyType,
-        WebKit::PlatformCAAnimationRemote::KeyframeValue::KeyframeType::FilterKeyType
-    >;
-};
-
-} // namespace WTF

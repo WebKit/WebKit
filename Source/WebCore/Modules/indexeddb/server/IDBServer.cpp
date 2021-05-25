@@ -514,18 +514,18 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
     ASSERT(m_lock.isHeld());
 
     String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v0");
-    Vector<String> files = FileSystem::listDirectory(oldDirectory, "*"_s);
+    Vector<String> fileNames = FileSystem::listDirectory(oldDirectory);
     Vector<IDBDatabaseNameAndVersion> databases;
-    for (auto& file : files) {
-        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(file));
+    for (auto& fileName : fileNames) {
+        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(FileSystem::pathByAppendingComponent(oldDirectory, fileName)));
         if (databaseTuple)
             databases.append(WTFMove(*databaseTuple));
     }
 
     String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v1");
-    files = FileSystem::listDirectory(directory, "*"_s);
-    for (auto& file : files) {
-        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(file));
+    fileNames = FileSystem::listDirectory(directory);
+    for (auto& fileName : fileNames) {
+        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(FileSystem::pathByAppendingComponent(directory, fileName)));
         if (databaseTuple)
             databases.append(WTFMove(*databaseTuple));
     }
@@ -539,13 +539,11 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
 
 static void collectOriginsForVersion(const String& versionPath, HashSet<WebCore::SecurityOriginData>& securityOrigins)
 {
-    for (auto& topOriginPath : FileSystem::listDirectory(versionPath, "*")) {
-        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
+    for (auto& databaseIdentifier : FileSystem::listDirectory(versionPath)) {
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier)) {
             securityOrigins.add(WTFMove(*securityOrigin));
         
-            for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
-                databaseIdentifier = FileSystem::pathGetFileName(originPath);
+            for (auto& databaseIdentifier : FileSystem::listDirectory(FileSystem::pathByAppendingComponent(versionPath, databaseIdentifier))) {
                 if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
                     securityOrigins.add(WTFMove(*securityOrigin));
             }
@@ -628,12 +626,13 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
 static void removeAllDatabasesForFullOriginPath(const String& originPath, WallTime modifiedSince)
 {
     LOG(IndexedDB, "removeAllDatabasesForOriginPath with originPath %s", originPath.utf8().data());
-    Vector<String> databasePaths = FileSystem::listDirectory(originPath, "*");
+    Vector<String> databaseNames = FileSystem::listDirectory(originPath);
 
-    for (auto& databasePath : databasePaths) {
+    for (auto& databaseName : databaseNames) {
+        auto databasePath = FileSystem::pathByAppendingComponent(originPath, databaseName);
         String databaseFile = FileSystem::pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
         if (modifiedSince > -WallTime::infinity() && FileSystem::fileExists(databaseFile)) {
-            auto modificationTime = FileSystem::getFileModificationTime(databaseFile);
+            auto modificationTime = FileSystem::fileModificationTime(databaseFile);
             if (!modificationTime)
                 continue;
 
@@ -649,34 +648,25 @@ static void removeAllDatabasesForFullOriginPath(const String& originPath, WallTi
         //
         // To be conservative, we should *not* try to delete files that are unexpected;
         // We should only delete files we think we put there.
-        //
-        // IndexedDB blob files are named "N.blob" where N is a decimal integer,
-        // so those are the only blob files we should be trying to delete.
-        for (auto& blobPath : FileSystem::listDirectory(databasePath, "[0-9]*.blob")) {
-            // Globbing can't give us only filenames starting with 1-or-more digits.
-            // The above globbing gives us files that start with a digit and ends with ".blob", but there might be non-digits in between.
-            // We need to validate that each filename contains only digits before deleting it, as any other files are not ones we put there.
-            String filename = FileSystem::pathGetFileName(blobPath);
-            auto filenameLength = filename.length();
-
-            ASSERT(filenameLength >= 6);
-            ASSERT(filename.endsWith(".blob"));
-
-            if (filename.length() < 6)
+        for (auto& fileName : FileSystem::listDirectory(databasePath)) {
+            // IndexedDB blob files are named "N.blob" where N is a decimal integer,
+            // so those are the only blob files we should be trying to delete.
+            auto fileNameLength = fileName.length();
+            if (fileNameLength < 6)
                 continue;
-            if (!filename.endsWith(".blob"))
+            if (!fileName.endsWith(".blob"))
                 continue;
 
-            bool validFilename = true;
-            for (unsigned i = 0; i < filenameLength - 5; ++i) {
-                if (!isASCIIDigit(filename[i])) {
-                    validFilename = false;
+            bool validFileName = true;
+            for (unsigned i = 0; i < fileNameLength - 5; ++i) {
+                if (!isASCIIDigit(fileName[i])) {
+                    validFileName = false;
                     break;
                 }
             }
 
-            if (validFilename)
-                FileSystem::deleteFile(blobPath);
+            if (validFileName)
+                FileSystem::deleteFile(FileSystem::pathByAppendingComponent(databasePath, fileName));
         }
 
         // Now delete IndexedDB.sqlite3 and related SQLite files.
@@ -696,11 +686,10 @@ static void removeAllDatabasesForOriginPath(const String& originPath, WallTime m
     if (!SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
         return;
     
-    auto directories = FileSystem::listDirectory(originPath, "*"_s);
-    for (auto& directory : directories) {
-        String databaseIdentifier = FileSystem::lastComponentOfPathIgnoringTrailingSlash(directory);
+    auto directoryNames = FileSystem::listDirectory(originPath);
+    for (auto& databaseIdentifier : directoryNames) {
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-            removeAllDatabasesForFullOriginPath(directory, modifiedSince);
+            removeAllDatabasesForFullOriginPath(FileSystem::pathByAppendingComponent(originPath, databaseIdentifier), modifiedSince);
     }
     
     removeAllDatabasesForFullOriginPath(originPath, modifiedSince);
@@ -709,10 +698,9 @@ static void removeAllDatabasesForOriginPath(const String& originPath, WallTime m
 void IDBServer::removeDatabasesModifiedSinceForVersion(WallTime modifiedSince, const String& version)
 {
     String versionPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, version);
-    for (auto& originPath : FileSystem::listDirectory(versionPath, "*")) {
-        String databaseIdentifier = FileSystem::lastComponentOfPathIgnoringTrailingSlash(originPath);
+    for (auto& databaseIdentifier : FileSystem::listDirectory(versionPath)) {
         if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-            removeAllDatabasesForOriginPath(originPath, modifiedSince);
+            removeAllDatabasesForOriginPath(FileSystem::pathByAppendingComponent(versionPath, databaseIdentifier), modifiedSince);
     }
 }
 
@@ -723,7 +711,8 @@ void IDBServer::removeDatabasesWithOriginsForVersion(const Vector<SecurityOrigin
         String originPath = FileSystem::pathByAppendingComponent(versionPath, origin.databaseIdentifier());
         removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
         
-        for (auto& topOriginPath : FileSystem::listDirectory(versionPath, "*")) {
+        for (auto& topOrigin : FileSystem::listDirectory(versionPath)) {
+            auto topOriginPath = FileSystem::pathByAppendingComponent(versionPath, topOrigin);
             originPath = FileSystem::pathByAppendingComponent(topOriginPath, origin.databaseIdentifier());
             removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
         }

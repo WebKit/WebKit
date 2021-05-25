@@ -1360,7 +1360,7 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
         if (counterBehavior == Reset)
             directives.resetValue = value;
         else
-            directives.incrementValue = saturatedAddition(directives.incrementValue.valueOr(0), value);
+            directives.incrementValue = saturatedSum<int>(directives.incrementValue.valueOr(0), value);
     }
 }
 
@@ -2003,8 +2003,11 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
             willChange->addFeature(WillChangeData::Feature::Contents);
             break;
         default:
-            if (primitiveValue.isPropertyID())
+            if (primitiveValue.isPropertyID()) {
+                if (primitiveValue.propertyID() == CSSPropertyContain && !builderState.document().settings().cssContainmentEnabled())
+                    break;
                 willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
+            }
             break;
         }
     }

@@ -118,8 +118,7 @@ GPUProcessProxy* GPUProcessProxy::singletonIfCreated()
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
 static String gpuProcessCachesDirectory()
 {
-    String path = pathForProcessContainer() + "/Library/Caches/com.apple.WebKit.GPU/";
-    path = stringByResolvingSymlinksInPath(path);
+    String path = WebProcessPool::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.GPU/"_s);
 
     FileSystem::makeAllDirectories(path);
     

@@ -135,7 +135,8 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
 };
 
 template<typename T> struct ArgumentCoder<Optional<T>> {
-    static void encode(Encoder& encoder, const Optional<T>& optional)
+    
+    template<typename Encoder> static void encode(Encoder& encoder, const Optional<T>& optional)
     {
         if (!optional) {
             encoder << false;
@@ -146,7 +147,7 @@ template<typename T> struct ArgumentCoder<Optional<T>> {
         encoder << optional.value();
     }
 
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Optional<T>& optional)
+    template<typename Decoder> static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Optional<T>& optional)
     {
         bool isEngaged;
         if (!decoder.decode(isEngaged))
@@ -165,7 +166,7 @@ template<typename T> struct ArgumentCoder<Optional<T>> {
         return true;
     }
     
-    static Optional<Optional<T>> decode(Decoder& decoder)
+    template<typename Decoder> static Optional<Optional<T>> decode(Decoder& decoder)
     {
         Optional<bool> isEngaged;
         decoder >> isEngaged;

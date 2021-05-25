@@ -91,8 +91,8 @@ class ExtensionsGLOpenGL;
 #endif
 class HostWindow;
 class ImageBuffer;
-class ImageData;
 class MediaPlayer;
+class PixelBuffer;
 #if USE(TEXTURE_MAPPER)
 class TextureMapperGCGLPlatformLayer;
 #endif
@@ -467,11 +467,11 @@ public:
     void dispatchContextChangedNotification();
 
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
-    RefPtr<ImageData> paintRenderingResultsToImageData() final;
+    Optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;
 
-    RefPtr<ImageData> readRenderingResultsForPainting();
-    RefPtr<ImageData> readCompositedResultsForPainting();
+    Optional<PixelBuffer> readRenderingResultsForPainting();
+    Optional<PixelBuffer> readCompositedResultsForPainting();
 
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
@@ -530,7 +530,7 @@ public:
     static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
 #endif // !USE(ANGLE)
 
-    static void paintToCanvas(const GraphicsContextGLAttributes&, Ref<ImageData>&&, const IntSize& canvasSize, GraphicsContext&);
+    static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
 
 private:
 #if PLATFORM(COCOA)
@@ -557,9 +557,9 @@ private:
     void checkGPUStatus();
 
 
-    RefPtr<ImageData> readRenderingResults();
-    RefPtr<ImageData> readCompositedResults();
-    RefPtr<ImageData> readPixelsForPaintResults();
+    Optional<PixelBuffer> readRenderingResults();
+    Optional<PixelBuffer> readCompositedResults();
+    Optional<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
     void prepareTextureImpl();

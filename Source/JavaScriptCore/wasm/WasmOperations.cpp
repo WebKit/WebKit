@@ -78,7 +78,7 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
 
     bool compile = false;
     {
-        auto locker = holdLock(tierUp.getLock());
+        Locker locker { tierUp.getLock() };
         switch (tierUp.m_compilationStatusForOMG) {
         case TierUpCount::CompilationStatus::StartCompilation:
             tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
@@ -278,7 +278,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
 
     TierUpCount::CompilationStatus compilationStatus = TierUpCount::CompilationStatus::NotCompiled;
     {
-        auto locker = holdLock(tierUp.getLock());
+        Locker locker { tierUp.getLock() };
         compilationStatus = tierUp.m_compilationStatusForOMGForOSREntry;
     }
 
@@ -296,7 +296,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
         // We were asked to enter as soon as possible and start compiling an
         // entry for the current loopIndex. Unset this trigger so we
         // don't continually enter.
-        auto locker = holdLock(tierUp.getLock());
+        Locker locker { tierUp.getLock() };
         TierUpCount::TriggerReason reason = tierUp.osrEntryTriggers()[loopIndex];
         if (reason == TierUpCount::TriggerReason::StartCompilation) {
             tierUp.osrEntryTriggers()[loopIndex] = TierUpCount::TriggerReason::DontTrigger;
@@ -350,7 +350,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
             // we'll eventually trigger some loop that is executing to compile. We start with trying to compile outer
             // loops since we believe outer loop compilations reveal the best opportunities for optimizing code.
             uint32_t currentLoopIndex = tierUp.outerLoops()[loopIndex];
-            auto locker = holdLock(tierUp.getLock());
+            Locker locker { tierUp.getLock() };
 
             // We already started OMGForOSREntryPlan.
             if (callee.didStartCompilingOSREntryCallee())
@@ -382,7 +382,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
 
     bool startOSREntryCompilation = false;
     {
-        auto locker = holdLock(tierUp.getLock());
+        Locker locker { tierUp.getLock() };
         if (tierUp.m_compilationStatusForOMGForOSREntry == TierUpCount::CompilationStatus::NotCompiled) {
             tierUp.m_compilationStatusForOMGForOSREntry = TierUpCount::CompilationStatus::StartCompilation;
             startOSREntryCompilation = true;

@@ -550,7 +550,7 @@ bool AccessibilityRenderObject::isOffScreen() const
     if (!m_renderer)
         return true;
 
-    IntRect contentRect = snappedIntRect(m_renderer->absoluteClippedOverflowRect());
+    IntRect contentRect = snappedIntRect(m_renderer->absoluteClippedOverflowRectForSpatialNavigation());
     // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
     IntRect viewRect = m_renderer->view().frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
     viewRect.intersect(contentRect);
@@ -2313,7 +2313,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
     Node* innerNode = nullptr;
     
     // Locate the node containing the point
-    // FIXME: Remove this loop and instead add HitTestRequest::AllowVisibleChildFrameContentOnly to the hit test request type.
+    // FIXME: Remove this loop and instead add HitTestRequest::Type::AllowVisibleChildFrameContentOnly to the hit test request type.
     LayoutPoint pointResult;
     while (1) {
         LayoutPoint pointToUse;
@@ -2322,7 +2322,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 #else
         pointToUse = point;
 #endif
-        constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active };
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active };
         HitTestResult result { pointToUse };
         renderView->document().hitTest(hitType, result);
         innerNode = result.innerNode();
@@ -2536,7 +2536,7 @@ AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& po
 
     RenderLayer* layer = downcast<RenderBox>(*m_renderer).layer();
      
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AccessibilityHitTest };
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
     HitTestResult hitTestResult { point };
     layer->hitTest(hitType, hitTestResult);
     Node* node = hitTestResult.innerNode();

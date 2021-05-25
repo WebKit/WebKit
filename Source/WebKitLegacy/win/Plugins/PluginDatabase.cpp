@@ -122,7 +122,7 @@ bool PluginDatabase::refresh()
 
     auto pathsEnd = paths.end();
     for (auto it = paths.begin(); it != pathsEnd; ++it) {
-        auto lastModifiedTime = FileSystem::getFileModificationTime(*it);
+        auto lastModifiedTime = FileSystem::fileModificationTime(*it);
         if (!lastModifiedTime)
             continue;
         time_t lastModified = lastModifiedTime->secondsSinceEpoch().secondsAs<time_t>();
@@ -309,7 +309,7 @@ void PluginDatabase::setPreferredPluginForMIMEType(const String& mimeType, Plugi
 bool PluginDatabase::fileExistsAndIsNotDisabled(const String& filePath) const
 {
     // Skip plugin files that are disabled by filename.
-    if (m_disabledPluginFiles.contains(FileSystem::pathGetFileName(filePath)))
+    if (m_disabledPluginFiles.contains(FileSystem::pathFileName(filePath)))
         return false;
 
     return FileSystem::fileExists(filePath);
@@ -379,18 +379,15 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
 {
     Vector<String> paths;
 
-    String userPluginPath = FileSystem::homeDirectoryPath();
-    userPluginPath.append(String("\\Application Data\\Mozilla\\plugins"));
-    paths.append(userPluginPath);
+    // Default plugin directory is: %AppData%\Mozilla\plugins.
+    paths.append(FileSystem::pathByAppendingComponents(FileSystem::roamingUserSpecificStorageDirectory(), { "Mozilla", "plugins" }));
 
     return paths;
 }
 
 bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 {
-    String preferredPath = FileSystem::homeDirectoryPath();
-
-    preferredPath.append(String("\\Application Data\\Mozilla\\plugins"));
+    String preferredPath = FileSystem::pathByAppendingComponents(FileSystem::roamingUserSpecificStorageDirectory(), { "Mozilla", "plugins" });
 
     // TODO: We should normalize the path before doing a comparison.
     return path == preferredPath;
@@ -399,19 +396,13 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
 {
     // FIXME: This should be a case insensitive set.
-    HashSet<String> uniqueFilenames;
-
-    String fileNameFilter("");
-
-    auto dirsEnd = m_pluginDirectories.end();
-    for (auto dIt = m_pluginDirectories.begin(); dIt != dirsEnd; ++dIt) {
-        Vector<String> pluginPaths = FileSystem::listDirectory(*dIt, fileNameFilter);
-        auto pluginsEnd = pluginPaths.end();
-        for (auto pIt = pluginPaths.begin(); pIt != pluginsEnd; ++pIt) {
-            if (!fileExistsAndIsNotDisabled(*pIt))
+    for (auto& pluginDirectory : m_pluginDirectories) {
+        for (auto& pluginName : FileSystem::listDirectory(pluginDirectory)) {
+            auto pluginPath = FileSystem::pathByAppendingComponent(pluginDirectory, pluginName);
+            if (!fileExistsAndIsNotDisabled(pluginPath))
                 continue;
 
-            paths.add(*pIt);
+            paths.add(pluginPath);
         }
     }
 }
@@ -521,7 +512,7 @@ void PluginDatabase::loadPersistentMetadataCache()
 
         // Skip metadata that points to plugins from directories that
         // are not part of plugin directory list anymore.
-        String pluginDirectoryName = FileSystem::directoryName(path);
+        String pluginDirectoryName = FileSystem::parentPath(path);
         if (m_pluginDirectories.find(pluginDirectoryName) == WTF::notFound)
             continue;
 

@@ -105,52 +105,58 @@ void StringBuilder::appendQuotedJSONString(const String& string)
 {
     if (hasOverflowed())
         return;
-    // Make sure we have enough buffer space to append this string without having
-    // to worry about reallocating in the middle.
+
+    // Make sure we have enough buffer space to append this string for worst case without reallocating.
     // The 2 is for the '"' quotes on each end.
-    // The 6 is for characters that need to be \uNNNN encoded.
+    // The 6 is the worst case for a single code unit that could be encoded as \uNNNN.
     Checked<unsigned, RecordOverflow> stringLength = string.length();
-    Checked<unsigned, RecordOverflow> maximumCapacityRequired = length();
-    maximumCapacityRequired += 2 + stringLength * 6;
-    unsigned allocationSize;
-    if (CheckedState::DidOverflow == maximumCapacityRequired.safeGet(allocationSize))
-        return didOverflow();
-    // This max() is here to allow us to allocate sizes between the range [2^31, 2^32 - 2] because roundUpToPowerOfTwo(1<<31 + some int smaller than 1<<31) == 0.
-    // FIXME: roundUpToPowerOfTwo should take Checked<unsigned> and abort if it fails to round up.
+    auto maximumCapacityRequired = m_length + 2 + stringLength * 6;
+    if (maximumCapacityRequired.hasOverflowed()) {
+        didOverflow();
+        return;
+    }
+
+    // We need to check maximum length before calling roundUpPowerOfTwo because that function returns 0 for values in the range [2^31, 2^32-2].
+    // FIXME: Instead, roundUpToPowerOfTwo should be fixed to do something more useful in those cases, perhaps using checked or saturated arithmetic.
     // https://bugs.webkit.org/show_bug.cgi?id=176086
-    allocationSize = std::max(allocationSize, roundUpToPowerOfTwo(allocationSize));
+    auto allocationSize = maximumCapacityRequired.unsafeGet();
+    if (allocationSize > String::MaxLength) {
+        didOverflow();
+        return;
+    }
+    allocationSize = roundUpToPowerOfTwo(allocationSize);
+    if (allocationSize > String::MaxLength) {
+        didOverflow();
+        return;
+    }
 
-    // Allocating this much will definitely fail.
-    if (allocationSize > String::MaxLength)
-        return didOverflow();
-
+    // FIXME: Consider switching to extendBufferForAppending/shrink instead to share more code with the rest of StringBuilder.
     if (is8Bit() && !string.is8Bit())
-        allocateBufferUpConvert(m_bufferCharacters8, allocationSize);
+        allocateBuffer<UChar>(characters<LChar>(), allocationSize);
     else
         reserveCapacity(allocationSize);
     if (UNLIKELY(hasOverflowed()))
         return;
-    ASSERT(m_buffer->length() >= allocationSize);
 
-    if (is8Bit()) {
-        ASSERT(string.is8Bit());
-        LChar* output = m_bufferCharacters8 + m_length.unsafeGet<unsigned>();
+    if (m_buffer->is8Bit()) {
+        auto characters = const_cast<LChar*>(m_buffer->characters<LChar>());
+        auto output = characters + m_length;
         *output++ = '"';
         appendQuotedJSONStringInternal(output, string.characters8(), string.length());
         *output++ = '"';
-        m_length = output - m_bufferCharacters8;
+        m_length = output - characters;
     } else {
-        UChar* output = m_bufferCharacters16 + m_length.unsafeGet<unsigned>();
+        auto characters = const_cast<UChar*>(m_buffer->characters<UChar>());
+        auto output = characters + m_length;
         *output++ = '"';
         if (string.is8Bit())
             appendQuotedJSONStringInternal(output, string.characters8(), string.length());
         else
             appendQuotedJSONStringInternal(output, string.characters16(), string.length());
         *output++ = '"';
-        m_length = output - m_bufferCharacters16;
+        m_length = output - characters;
     }
-    ASSERT(!hasOverflowed());
-    ASSERT(m_buffer->length() >= m_length.unsafeGet<unsigned>());
+    ASSERT(m_buffer->length() >= m_length);
 }
 
 } // namespace WTF

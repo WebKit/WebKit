@@ -264,6 +264,8 @@ public:
     void reinitializeAppBoundDomains();
     void appBoundRequestContextDataForDomain(WKStringRef);
     void clearAppBoundNavigationData();
+    bool didLoadAppBoundRequest();
+    bool didLoadNonAppBoundRequest();
 
     void updateBundleIdentifierInNetworkProcess(const std::string& bundleIdentifier);
     void clearBundleIdentifierInNetworkProcess();
@@ -467,8 +469,8 @@ private:
     bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLRequestRef);
     static void downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef, const void *clientInfo);
     
-    static void processDidCrash(WKPageRef, const void* clientInfo);
-    void processDidCrash();
+    static void webProcessDidTerminate(WKPageRef,  WKProcessTerminationReason, const void* clientInfo);
+    void webProcessDidTerminate(WKProcessTerminationReason);
 
     static void didBeginNavigationGesture(WKPageRef, const void*);
     static void willEndNavigationGesture(WKPageRef, WKBackForwardListItemRef, const void*);

@@ -42,7 +42,6 @@ struct AudioNodeOptions;
 class AudioNodeOutput;
 class AudioParam;
 class BaseAudioContext;
-class WebKitAudioContext;
 
 // An AudioNode is the basic building block for handling audio within an AudioContext.
 // It may be an audio source, an intermediate processing module, or an audio destination.
@@ -89,8 +88,6 @@ public:
 
     BaseAudioContext& context();
     const BaseAudioContext& context() const;
-
-    Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> contextForBindings();
 
     NodeType nodeType() const { return m_nodeType; }
 

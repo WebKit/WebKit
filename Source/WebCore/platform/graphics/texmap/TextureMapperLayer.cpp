@@ -263,10 +263,10 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
     bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
     if (shouldClip) {
         TransformationMatrix clipTransform;
-        clipTransform.translate(options.offset.width() + m_state.boundsOrigin.x(),
-            options.offset.height() + m_state.boundsOrigin.y());
+        clipTransform.translate(options.offset.width(), options.offset.height());
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_layerTransforms.combined);
+        clipTransform.translate(m_state.boundsOrigin.x(), m_state.boundsOrigin.y());
         options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
 
         // If as a result of beginClip(), the clipping area is empty, it means that the intersection of the previous

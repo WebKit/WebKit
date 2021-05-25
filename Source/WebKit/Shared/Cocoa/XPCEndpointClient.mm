@@ -33,7 +33,7 @@ namespace WebKit {
 void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
 {
     {
-        LockHolder locker(m_lock);
+        Locker locker { m_connectionLock };
 
         if (m_connection)
             return;
@@ -45,7 +45,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
             xpc_type_t type = xpc_get_type(message);
             if (type == XPC_TYPE_ERROR) {
                 if (message == XPC_ERROR_CONNECTION_INVALID || message == XPC_ERROR_TERMINATION_IMMINENT) {
-                    LockHolder locker(m_lock);
+                    Locker locker { m_connectionLock };
                     m_connection = nullptr;
                 }
                 return;
@@ -74,7 +74,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
 
 OSObjectPtr<xpc_connection_t> XPCEndpointClient::connection()
 {
-    LockHolder locker(m_lock);
+    Locker locker { m_connectionLock };
     return m_connection;
 }
 

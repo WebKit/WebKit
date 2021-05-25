@@ -30,7 +30,6 @@
 #include "FileChooser.h"
 #include "FileList.h"
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
 
 namespace WebCore {
@@ -54,18 +53,19 @@ struct FileInformation {
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)
 {
     ASSERT(!isMainThread());
-    for (auto& childPath : FileSystem::listDirectory(directory, "*")) {
-        auto metadata = FileSystem::fileMetadata(childPath);
-        if (!metadata)
+    for (auto& childName : FileSystem::listDirectory(directory)) {
+        auto childPath = FileSystem::pathByAppendingComponent(directory, childName);
+        if (FileSystem::isHiddenFile(childPath))
             continue;
 
-        if (metadata.value().isHidden)
+        auto fileType = FileSystem::fileType(childPath);
+        if (!fileType)
             continue;
 
-        String childRelativePath = relativePath + "/" + FileSystem::pathGetFileName(childPath);
-        if (metadata.value().type == FileMetadata::Type::Directory)
+        String childRelativePath = relativePath + "/" + childName;
+        if (*fileType == FileSystem::FileType::Directory)
             appendDirectoryFiles(childPath, childRelativePath, files);
-        else if (metadata.value().type == FileMetadata::Type::File)
+        else if (*fileType == FileSystem::FileType::Regular)
             files.append(FileInformation { childPath, childRelativePath, { } });
     }
 }
@@ -75,8 +75,8 @@ static Vector<FileInformation> gatherFileInformation(const Vector<FileChooserFil
     ASSERT(!isMainThread());
     Vector<FileInformation> files;
     for (auto& info : paths) {
-        if (FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
-            appendDirectoryFiles(info.path, FileSystem::pathGetFileName(info.path), files);
+        if (FileSystem::fileType(info.path) == FileSystem::FileType::Directory)
+            appendDirectoryFiles(info.path, FileSystem::pathFileName(info.path), files);
         else
             files.append(FileInformation { info.path, { }, info.displayName });
     }

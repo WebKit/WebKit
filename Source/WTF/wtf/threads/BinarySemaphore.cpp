@@ -30,15 +30,18 @@ namespace WTF {
 
 void BinarySemaphore::signal()
 {
-    auto locker = holdLock(m_lock);
+    Locker locker { m_lock };
     m_isSet = true;
     m_condition.notifyOne();
 }
 
 bool BinarySemaphore::waitUntil(const TimeWithDynamicClockType& absoluteTime)
 {
-    auto locker = holdLock(m_lock);
-    bool satisfied = m_condition.waitUntil(m_lock, absoluteTime, [&] { return m_isSet; });
+    Locker locker { m_lock };
+    bool satisfied = m_condition.waitUntil(m_lock, absoluteTime, [&] {
+        assertIsHeld(m_lock);
+        return m_isSet;
+    });
     if (satisfied)
         m_isSet = false;
     return satisfied;

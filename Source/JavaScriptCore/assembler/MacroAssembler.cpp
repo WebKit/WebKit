@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,6 @@ void MacroAssembler::jitAssert(const ScopedLambda<Jump(void)>& functor)
     }
 }
 
-#if ENABLE(MASM_PROBE)
 static void stdFunctionCallback(Probe::Context& context)
 {
     auto func = context.arg<const Function<void(Probe::Context&)>*>();
@@ -58,8 +57,6 @@ void MacroAssembler::probeDebug(Function<void(Probe::Context&)> func)
 {
     probe(tagCFunction<JITProbePtrTag>(stdFunctionCallback), new Function<void(Probe::Context&)>(WTFMove(func)));
 }
-
-#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

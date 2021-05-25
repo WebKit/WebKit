@@ -96,7 +96,7 @@ void MarkingConstraint::doParallelWork(SlotVisitor& visitor, SharedTask<void(Slo
     if (verboseMarkingConstraint && visitCounter.visitCount())
         dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in doParallelWork)");
     {
-        auto locker = holdLock(m_lock);
+        Locker locker { m_lock };
         m_lastVisitCount += visitCounter.visitCount();
     }
 }

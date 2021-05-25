@@ -35,14 +35,14 @@ class PeriodicWave;
 
 // OscillatorNode is an audio generator of periodic waveforms.
 
-class OscillatorNode : public AudioScheduledSourceNode {
+class OscillatorNode final : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(OscillatorNode);
 public:
     static ExceptionOr<Ref<OscillatorNode>> create(BaseAudioContext&, const OscillatorOptions& = { });
 
     virtual ~OscillatorNode();
 
-    const char* activeDOMObjectName() const override { return "OscillatorNode"; }
+    const char* activeDOMObjectName() const final { return "OscillatorNode"; }
 
     OscillatorType type() const { return m_type; }
     ExceptionOr<void> setType(OscillatorType);

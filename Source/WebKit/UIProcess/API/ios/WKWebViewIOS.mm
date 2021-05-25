@@ -493,7 +493,7 @@ static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
     if (!webView->_page)
         return { };
 
-    return webView->_page->scrollAreaBackgroundColor();
+    return webView->_page->underPageBackgroundColor();
 }
 
 static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
@@ -807,7 +807,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView _setZoomEnabledInternal:layerTreeTransaction.allowsUserScaling()];
 
-    bool hasDockedInputView = !CGRectIsEmpty(_inputViewBounds);
+    bool hasDockedInputView = !CGRectIsEmpty(_inputViewBoundsInWindow);
     bool isZoomed = layerTreeTransaction.pageScaleFactor() > layerTreeTransaction.initialScaleFactor();
 
     bool scrollingNeededToRevealUI = false;
@@ -1242,7 +1242,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     CGRect unobscuredScrollViewRectInWebViewCoordinates = UIEdgeInsetsInsetRect([self bounds], _obscuredInsets);
     CGRect visibleScrollViewBoundsInWebViewCoordinates = CGRectIntersection(unobscuredScrollViewRectInWebViewCoordinates, [fullScreenView convertRect:[fullScreenView bounds] toView:self]);
-    CGRect formAssistantFrameInWebViewCoordinates = [window convertRect:_inputViewBounds toView:self];
+    CGRect formAssistantFrameInWebViewCoordinates = [window convertRect:_inputViewBoundsInWindow toView:self];
     CGRect intersectionBetweenScrollViewAndFormAssistant = CGRectIntersection(visibleScrollViewBoundsInWebViewCoordinates, formAssistantFrameInWebViewCoordinates);
     CGSize visibleSize = visibleScrollViewBoundsInWebViewCoordinates.size;
 
@@ -1881,7 +1881,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     // FIXME: handle split keyboard.
     UIEdgeInsets obscuredInsets = _obscuredInsets;
-    obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _inputViewBounds.size.height);
+    obscuredInsets.bottom = std::max(_obscuredInsets.bottom, _inputViewBoundsInWindow.size.height);
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, obscuredInsets);
     return [self convertRect:unobscuredRect toView:self._currentContentView];
 }
@@ -2141,7 +2141,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         unobscuredRectInScrollViewCoordinates:unobscuredRect
         obscuredInsets:_obscuredInsets
         unobscuredSafeAreaInsets:[self _computedUnobscuredSafeAreaInset]
-        inputViewBounds:_inputViewBounds
+        inputViewBounds:_inputViewBoundsInWindow
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
         viewStability:viewStability
         enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])
@@ -2298,19 +2298,22 @@ static int32_t activeOrientation(WKWebView *webView)
     if (!endFrameValue)
         return;
 
-    auto previousInputViewBounds = _inputViewBounds;
+    auto previousInputViewBounds = _inputViewBoundsInWindow;
     BOOL selectionWasVisible = self._selectionRectIsFullyVisibleAndNonEmpty;
 
-    // The keyboard rect is always in screen coordinates. In the view services case the window does not
-    // have the interface orientation rotation transformation; its host does. So, it makes no sense to
-    // clip the keyboard rect against its screen.
-    if ([[self window] _isHostedInAnotherProcess])
-        _inputViewBounds = [self.window convertRect:[endFrameValue CGRectValue] fromWindow:nil];
-    else
-        _inputViewBounds = [self.window convertRect:CGRectIntersection([endFrameValue CGRectValue], self.window.screen.bounds) fromWindow:nil];
+    _inputViewBoundsInWindow = ([&] {
+        if (UIPeripheralHost.sharedInstance.isUndocked)
+            return CGRectZero;
 
-    if ([[UIPeripheralHost sharedInstance] isUndocked])
-        _inputViewBounds = CGRectZero;
+        auto keyboardFrameInScreen = endFrameValue.CGRectValue;
+        // The keyboard rect is always in screen coordinates. In the view services case the window does not
+        // have the interface orientation rotation transformation; its host does. So, it makes no sense to
+        // clip the keyboard rect against its screen.
+        if (!self.window._isHostedInAnotherProcess)
+            keyboardFrameInScreen = CGRectIntersection(keyboardFrameInScreen, self.window.screen.bounds);
+
+        return [self.window convertRect:keyboardFrameInScreen fromCoordinateSpace:self.window.screen.coordinateSpace];
+    })();
 
     if (adjustScrollView) {
         CGFloat bottomInsetBeforeAdjustment = [_scrollView contentInset].bottom;
@@ -2324,7 +2327,7 @@ static int32_t activeOrientation(WKWebView *webView)
             _totalScrollViewBottomInsetAdjustmentForKeyboard += bottomInsetAfterAdjustment - bottomInsetBeforeAdjustment;
     }
 
-    if (selectionWasVisible && [_contentView _hasFocusedElement] && !CGRectIsEmpty(previousInputViewBounds) && !CGRectIsEmpty(_inputViewBounds) && !CGRectEqualToRect(previousInputViewBounds, _inputViewBounds))
+    if (selectionWasVisible && [_contentView _hasFocusedElement] && !CGRectIsEmpty(previousInputViewBounds) && !CGRectIsEmpty(_inputViewBoundsInWindow) && !CGRectEqualToRect(previousInputViewBounds, _inputViewBoundsInWindow))
         [self _scrollToAndRevealSelectionIfNeeded];
 
     [self _scheduleVisibleContentRectUpdate];

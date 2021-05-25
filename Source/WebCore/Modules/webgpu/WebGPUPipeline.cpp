@@ -39,16 +39,17 @@
 
 namespace WebCore {
 
-HashMap<WebGPUPipeline*, WebGPUDevice*>& WebGPUPipeline::instances(const LockHolder&)
+CheckedLock WebGPUPipeline::s_instancesLock;
+
+HashMap<WebGPUPipeline*, WebGPUDevice*>& WebGPUPipeline::instances()
 {
     static NeverDestroyed<HashMap<WebGPUPipeline*, WebGPUDevice*>> instances;
     return instances;
 }
 
-Lock& WebGPUPipeline::instancesMutex()
+CheckedLock& WebGPUPipeline::instancesLock()
 {
-    static Lock mutex;
-    return mutex;
+    return s_instancesLock;
 }
 
 WebGPUPipeline::WebGPUPipeline(WebGPUDevice& device, GPUErrorScopes& errorScopes)
@@ -58,8 +59,8 @@ WebGPUPipeline::WebGPUPipeline(WebGPUDevice& device, GPUErrorScopes& errorScopes
     ASSERT(scriptExecutionContext());
 
     {
-        LockHolder lock(instancesMutex());
-        instances(lock).add(this, &device);
+        Locker locker { instancesLock() };
+        instances().add(this, &device);
     }
 }
 
@@ -68,9 +69,9 @@ WebGPUPipeline::~WebGPUPipeline()
     InspectorInstrumentation::willDestroyWebGPUPipeline(*this);
 
     {
-        LockHolder lock(instancesMutex());
-        ASSERT(instances(lock).contains(this));
-        instances(lock).remove(this);
+        Locker locker { instancesLock() };
+        ASSERT(instances().contains(this));
+        instances().remove(this);
     }
 }
 

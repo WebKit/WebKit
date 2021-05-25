@@ -43,12 +43,14 @@
 #include "PerformanceMarkOptions.h"
 #include "PerformanceMeasureOptions.h"
 #include "PerformanceNavigation.h"
+#include "PerformanceNavigationTiming.h"
 #include "PerformanceObserver.h"
 #include "PerformancePaintTiming.h"
 #include "PerformanceResourceTiming.h"
 #include "PerformanceTiming.h"
 #include "PerformanceUserTiming.h"
 #include "ResourceResponse.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -122,6 +124,9 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntries() const
 {
     Vector<RefPtr<PerformanceEntry>> entries;
 
+    if (m_navigationTiming)
+        entries.append(m_navigationTiming);
+
     entries.appendVector(m_resourceTimingBuffer);
 
     if (m_userTiming) {
@@ -140,6 +145,9 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& ent
 {
     Vector<RefPtr<PerformanceEntry>> entries;
 
+    if (m_navigationTiming && entryType == "navigation")
+        entries.append(m_navigationTiming);
+    
     if (entryType == "resource")
         entries.appendVector(m_resourceTimingBuffer);
 
@@ -160,6 +168,9 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& ent
 Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& name, const String& entryType) const
 {
     Vector<RefPtr<PerformanceEntry>> entries;
+
+    if (m_navigationTiming && (entryType.isNull() || entryType == "navigation") && name == m_navigationTiming->name())
+        entries.append(m_navigationTiming);
 
     if (entryType.isNull() || entryType == "resource") {
         for (auto& resource : m_resourceTimingBuffer) {
@@ -184,6 +195,9 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
 
 void Performance::appendBufferedEntriesByType(const String& entryType, Vector<RefPtr<PerformanceEntry>>& entries) const
 {
+    if (m_navigationTiming && entryType == "navigation")
+        entries.append(m_navigationTiming);
+
     if (entryType == "resource")
         entries.appendVector(m_resourceTimingBuffer);
 
@@ -212,6 +226,13 @@ void Performance::reportFirstContentfulPaint()
     ASSERT(!m_firstContentfulPaint);
     m_firstContentfulPaint = PerformancePaintTiming::createFirstContentfulPaint(now());
     queueEntry(*m_firstContentfulPaint);
+}
+
+void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& document, CachedResource& resource, const LoadTiming& timing, const NetworkLoadMetrics& metrics)
+{
+    ASSERT(document.settings().performanceNavigationTimingAPIEnabled());
+    m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.timing(), document.securityOrigin(), documentLoader.triggeringAction().type());
+    queueEntry(*m_navigationTiming);
 }
 
 void Performance::addResourceTiming(ResourceTiming&& resourceTiming)
@@ -346,6 +367,11 @@ void Performance::removeAllObservers()
 void Performance::registerPerformanceObserver(PerformanceObserver& observer)
 {
     m_observers.add(&observer);
+
+    if (m_navigationTiming && observer.typeFilter().contains(PerformanceEntry::Type::Navigation)) {
+        observer.queueEntry(*m_navigationTiming);
+        scheduleTaskIfNeeded();
+    }
 }
 
 void Performance::unregisterPerformanceObserver(PerformanceObserver& observer)
@@ -357,7 +383,7 @@ void Performance::queueEntry(PerformanceEntry& entry)
 {
     bool shouldScheduleTask = false;
     for (auto& observer : m_observers) {
-        if (observer->typeFilter().contains(entry.type())) {
+        if (observer->typeFilter().contains(entry.performanceEntryType())) {
             observer->queueEntry(entry);
             shouldScheduleTask = true;
         }
@@ -366,6 +392,11 @@ void Performance::queueEntry(PerformanceEntry& entry)
     if (!shouldScheduleTask)
         return;
 
+    scheduleTaskIfNeeded();
+}
+
+void Performance::scheduleTaskIfNeeded()
+{
     if (m_hasScheduledTimingBufferDeliveryTask)
         return;
 

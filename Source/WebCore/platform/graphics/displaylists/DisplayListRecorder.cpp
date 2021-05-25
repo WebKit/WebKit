@@ -40,29 +40,41 @@ namespace WebCore {
 namespace DisplayList {
 
 Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DrawGlyphsDeconstruction drawGlyphsDeconstruction)
-    : GraphicsContextImpl(context, initialClip, AffineTransform())
+    : GraphicsContextImpl(context)
     , m_displayList(displayList)
     , m_delegate(delegate)
+    , m_isNested(false)
     , m_drawGlyphsRecorder(*this, drawGlyphsDeconstruction)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
     m_stateStack.append({ state, initialCTM, initialClip });
 }
 
+Recorder::Recorder(Recorder& parent, GraphicsContext& context, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
+    : GraphicsContextImpl(context)
+    , m_displayList(parent.m_displayList)
+    , m_delegate(parent.m_delegate)
+    , m_isNested(true)
+    , m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.drawGlyphsDeconstruction())
+{
+    m_stateStack.append({ state, initialCTM, initialClip });
+}
+
 Recorder::~Recorder()
 {
     ASSERT(m_stateStack.size() == 1); // If this fires, it indicates mismatched save/restore.
-    LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
+    if (!m_isNested)
+        LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
 }
 
-void Recorder::getImageData(AlphaPremultiplication outputFormat, const IntRect& sourceRect)
+void Recorder::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect)
 {
-    append<GetImageData>(outputFormat, sourceRect);
+    append<GetPixelBuffer>(outputFormat, sourceRect);
 }
 
-void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
+void Recorder::putPixelBuffer(const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
 {
-    append<PutImageData>(inputFormat, imageData, srcRect, destPoint, destFormat);
+    append<PutPixelBuffer>(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
 static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& changes, GraphicsContextState::StateChangeFlags changeFlags)
@@ -442,8 +454,22 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
 
 void Recorder::clipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
 {
+    GraphicsContext nestedContext([&](GraphicsContext& context) {
+        auto initialClip = FloatRect(FloatPoint(), destination.size());
+
+        // The initial CTM matches ImageBuffer's initial CTM.
+        AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+        FloatSize scaleFactor(transform.xScale(), transform.yScale());
+        auto scaledSize = expandedIntSize(destination.size() * scaleFactor);
+        AffineTransform initialCTM;
+        initialCTM.scale(1, -1);
+        initialCTM.translate(0, -scaledSize.height());
+        initialCTM.scale(scaledSize / destination.size());
+
+        return std::unique_ptr<Recorder>(new Recorder(*this, context, GraphicsContextState(), initialClip, initialCTM));
+    });
     append<BeginClipToDrawingCommands>(destination, colorSpace);
-    drawingFunction(graphicsContext());
+    drawingFunction(nestedContext);
     append<EndClipToDrawingCommands>(destination);
 }
 

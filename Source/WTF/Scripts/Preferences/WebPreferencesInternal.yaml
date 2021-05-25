@@ -559,6 +559,19 @@ OffscreenCanvasEnabled:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
+OffscreenCanvasInWorkersEnabled:
+  type: bool
+  humanReadableName: "OffscreenCanvas in Workers"
+  humanReadableDescription: "Support for the OffscreenCanvas APIs in Workers"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      default: false
+
 PreferFasterClickOverDoubleTap:
   type: bool
   humanReadableName: "Fast clicks beat DTTZ"
@@ -582,19 +595,6 @@ PreferPageRenderingUpdatesNear60FPSEnabled:
       default: true
     WebCore:
       default: true
-
-PrefixedWebAudioEnabled:
-  type: bool
-  humanReadableName: "Prefixed WebAudio API"
-  humanReadableDescription: "Prefixed WebAudio API"
-  condition: ENABLE(WEB_AUDIO)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
 
 ResourceLoadSchedulingEnabled:
   type: bool
@@ -760,30 +760,6 @@ UseGPUProcessForDOMRenderingEnabled:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
 
-UseSampledPageTopColorForScrollAreaBackgroundColor:
-  type: bool
-  humanReadableName: "Use sampled page top color for scroll area background color"
-  humanReadableDescription: "Use sampled page top color for scroll area background color"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
-UseThemeColorForScrollAreaBackgroundColor:
-  type: bool
-  humanReadableName: "Use theme-color for scroll area background color"
-  humanReadableDescription: "Use theme-color for scroll area background color"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 # FIXME: Remove once <rdar://73830961> has been fixed
 UseiTunesAVOutputContext:
   type: bool
@@ -856,6 +832,17 @@ WebRTCMDNSICECandidatesEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      default: true
+
+WebSQLEnabled:
+  type: bool
+  humanReadableName: "Enable WebSQL"
+  humanReadableDescription: "Enable WebSQL"
+  webcoreBinding: custom
+  exposed: [ WebKitLegacy ]
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultWebSQLEnabled()
       default: true
 
 ZoomOnDoubleTapWhenRoot:

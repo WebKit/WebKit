@@ -58,8 +58,8 @@ public:
     void setCollapsedBorder(const Edges& collapsedBorder) { m_collapsedBorder = collapsedBorder; }
     Optional<Edges> collapsedBorder() const { return m_collapsedBorder; }
 
-    void setWidthConstraints(FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
-    Optional<FormattingContext::IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
+    void setWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
+    Optional<IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
     bool isEmpty() const { return m_slotMap.isEmpty(); }
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
@@ -187,8 +187,8 @@ public:
         const Cell& cell() const { return *m_cell; }
         Cell& cell() { return *m_cell; }
 
-        const FormattingContext::IntrinsicWidthConstraints& widthConstraints() const { return m_widthConstraints; }
-        void setWidthConstraints(const FormattingContext::IntrinsicWidthConstraints& widthConstraints) { m_widthConstraints = widthConstraints; }
+        const IntrinsicWidthConstraints& widthConstraints() const { return m_widthConstraints; }
+        void setWidthConstraints(const IntrinsicWidthConstraints& widthConstraints) { m_widthConstraints = widthConstraints; }
 
         // Initial slot position for a spanning cell.
         // <td></td><td colspan=2></td> [1, 0] slot has column span of 2.
@@ -205,7 +205,7 @@ public:
         WeakPtr<Cell> m_cell;
         bool m_isColumnSpanned { false };
         bool m_isRowSpanned { false };
-        FormattingContext::IntrinsicWidthConstraints m_widthConstraints;
+        IntrinsicWidthConstraints m_widthConstraints;
     };
 
     const Columns& columns() const { return m_columns; }
@@ -231,7 +231,7 @@ private:
 
     LayoutUnit m_horizontalSpacing;
     LayoutUnit m_verticalSpacing;
-    Optional<FormattingContext::IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
+    Optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
     Optional<Edges> m_collapsedBorder;
 };
 

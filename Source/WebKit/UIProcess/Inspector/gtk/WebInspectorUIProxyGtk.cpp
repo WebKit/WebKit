@@ -538,16 +538,18 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
     if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
         return;
 
-    Vector<char> dataVector;
+    Vector<uint8_t> dataVector;
     CString dataString;
     if (base64Encoded) {
-        if (!base64Decode(content, dataVector, Base64ValidatePadding))
+        auto decodedData = base64Decode(content, Base64DecodeOptions::ValidatePadding);
+        if (!decodedData)
             return;
-        dataVector.shrinkToFit();
+        decodedData->shrinkToFit();
+        dataVector = WTFMove(*decodedData);
     } else
         dataString = content.utf8();
 
-    const char* data = !dataString.isNull() ? dataString.data() : dataVector.data();
+    const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<char*>(dataVector.data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
     GUniquePtr<char> path(g_file_get_path(file.get()));

@@ -1,6 +1,6 @@
 
 
-PASS Canvas width and height attributes are used as the surface size with contain:size
+FAIL Canvas width and height attributes are used as the surface size with contain:size assert_approx_equals: expected 2.5 +/- 0.001 but got Infinity
 PASS Canvas width and height attributes are used as the surface size
 FAIL Computed style test: canvas with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
 PASS Computed style test: canvas with {"width":"0","height":"1"}

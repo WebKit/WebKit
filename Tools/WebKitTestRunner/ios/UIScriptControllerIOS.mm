@@ -849,7 +849,7 @@ JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
 
 JSObjectRef UIScriptControllerIOS::inputViewBounds() const
 {
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._inputViewBounds) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._inputViewBoundsInWindow) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollingTreeAsText() const

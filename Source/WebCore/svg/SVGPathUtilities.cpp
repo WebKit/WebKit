@@ -59,40 +59,16 @@ String buildStringFromPath(const Path& path)
         path.apply([&builder] (const PathElement& element) {
             switch (element.type) {
             case PathElement::Type::MoveToPoint:
-                builder.append('M');
-                builder.appendNumber(element.points[0].x());
-                builder.append(' ');
-                builder.appendNumber(element.points[0].y());
+                builder.append('M', element.points[0].x(), ' ', element.points[0].y());
                 break;
             case PathElement::Type::AddLineToPoint:
-                builder.append('L');
-                builder.appendNumber(element.points[0].x());
-                builder.append(' ');
-                builder.appendNumber(element.points[0].y());
+                builder.append('L', element.points[0].x(), ' ', element.points[0].y());
                 break;
             case PathElement::Type::AddQuadCurveToPoint:
-                builder.append('Q');
-                builder.appendNumber(element.points[0].x());
-                builder.append(' ');
-                builder.appendNumber(element.points[0].y());
-                builder.append(',');
-                builder.appendNumber(element.points[1].x());
-                builder.append(' ');
-                builder.appendNumber(element.points[1].y());
+                builder.append('Q', element.points[0].x(), ' ', element.points[0].y(), ',', element.points[1].x(), ' ', element.points[1].y());
                 break;
             case PathElement::Type::AddCurveToPoint:
-                builder.append('C');
-                builder.appendNumber(element.points[0].x());
-                builder.append(' ');
-                builder.appendNumber(element.points[0].y());
-                builder.append(',');
-                builder.appendNumber(element.points[1].x());
-                builder.append(' ');
-                builder.appendNumber(element.points[1].y());
-                builder.append(',');
-                builder.appendNumber(element.points[2].x());
-                builder.append(' ');
-                builder.appendNumber(element.points[2].y());
+                builder.append('C', element.points[0].x(), ' ', element.points[0].y(), ',', element.points[1].x(), ' ', element.points[1].y(), ',', element.points[2].x(), ' ', element.points[2].y());
                 break;
             case PathElement::Type::CloseSubpath:
                 builder.append('Z');

@@ -333,26 +333,12 @@ void FileReaderLoader::convertToText()
 
 void FileReaderLoader::convertToDataURL()
 {
-    StringBuilder builder;
-    builder.appendLiteral("data:");
-
     if (!m_bytesLoaded) {
-        m_stringResult = builder.toString();
+        m_stringResult = "data:"_s;
         return;
     }
 
-    if (m_dataType.isEmpty())
-        builder.append("application/octet-stream");
-    else
-        builder.append(m_dataType);
-    builder.appendLiteral(";base64,");
-
-    Vector<char> out;
-    base64Encode(m_rawData->data(), m_bytesLoaded, out);
-    out.append('\0');
-    builder.append(out.data());
-
-    m_stringResult = builder.toString();
+    m_stringResult = makeString("data:", m_dataType.isEmpty() ? "application/octet-stream" : m_dataType, ";base64,", base64Encoded(m_rawData->data(), m_bytesLoaded));
 }
 
 bool FileReaderLoader::isCompleted() const

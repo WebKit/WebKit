@@ -1303,5 +1303,52 @@ angle::Result GetTriangleFanIndicesCount(ContextMtl *context,
     return angle::Result::Continue;
 }
 
+angle::Result CreateMslShader(mtl::Context *context,
+                              id<MTLLibrary> shaderLib,
+                              NSString * shaderName,
+                              MTLFunctionConstantValues *funcConstants,
+                              id<MTLFunction> *shaderOut)
+{
+    NSError *nsErr = nil;
+
+    id<MTLFunction> mtlShader;
+    if (funcConstants)
+    {
+        mtlShader = [shaderLib newFunctionWithName:shaderName
+                                    constantValues:funcConstants
+                                             error:&nsErr];
+    }
+    else
+    {
+        mtlShader = [shaderLib newFunctionWithName:shaderName];
+    }
+
+    [mtlShader ANGLE_MTL_AUTORELEASE];
+    if (nsErr && !mtlShader)
+    {
+        std::ostringstream ss;
+        ss << "Internal error compiling Metal shader:\n"
+           << nsErr.localizedDescription.UTF8String << "\n";
+
+        ERR() << ss.str();
+
+        ANGLE_MTL_CHECK(context, false, GL_INVALID_OPERATION);
+    }
+    *shaderOut = mtlShader;
+    return angle::Result::Continue;
+}
+
+angle::Result CreateMslShader(Context *context,
+                              id<MTLLibrary> shaderLib,
+                              NSString * shaderName,
+                              MTLFunctionConstantValues *funcConstants,
+                              AutoObjCPtr<id<MTLFunction>> *shaderOut)
+{
+    id<MTLFunction> outFunction;
+    ANGLE_TRY(CreateMslShader(context, shaderLib, shaderName, funcConstants, &outFunction));
+    shaderOut->retainAssign(outFunction);
+    return angle::Result::Continue;
+    
+}
 }  // namespace mtl
 }  // namespace rx

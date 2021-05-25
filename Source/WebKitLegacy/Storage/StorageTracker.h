@@ -54,7 +54,7 @@ public:
     void deleteOrigin(const WebCore::SecurityOriginData&);
     void deleteOriginWithIdentifier(const String& originIdentifier);
     Vector<WebCore::SecurityOriginData> origins();
-    long long diskUsageForOrigin(WebCore::SecurityOrigin*);
+    uint64_t diskUsageForOrigin(WebCore::SecurityOrigin*);
     
     void cancelDeletingOrigin(const String& originIdentifier);
     

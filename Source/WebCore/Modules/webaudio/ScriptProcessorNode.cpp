@@ -62,7 +62,7 @@ ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t buffe
     if (m_bufferSize < AudioUtilities::renderQuantumSize)
         m_bufferSize = AudioUtilities::renderQuantumSize;
 
-    ASSERT(numberOfInputChannels <= AudioContext::maxNumberOfChannels());
+    ASSERT(numberOfInputChannels <= AudioContext::maxNumberOfChannels);
 
     initializeDefaultNodeOptions(numberOfInputChannels, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
     addInput();
@@ -126,7 +126,7 @@ void ScriptProcessorNode::uninitialize()
         return;
 
     for (unsigned i = 0; i < bufferCount; ++i) {
-        auto locker = holdLock(m_bufferLocks[i]);
+        Locker locker { m_bufferLocks[i] };
         m_inputBuffers[i] = nullptr;
         m_outputBuffers[i] = nullptr;
     }
@@ -158,13 +158,13 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     unsigned bufferIndex = this->bufferIndex();
     ASSERT(bufferIndex < bufferCount);
 
-    auto locker = tryHoldLock(m_bufferLocks[bufferIndex]);
-    if (!locker) {
+    if (!m_bufferLocks[bufferIndex].tryLock()) {
         // We're late in handling the previous request. The main thread must be
         // very busy. The best we can do is clear out the buffer ourself here.
         outputBus->zero();
         return;
     }
+    Locker locker { AdoptLock, m_bufferLocks[bufferIndex] };
     
     AudioBuffer* inputBuffer = m_inputBuffers[bufferIndex].get();
     AudioBuffer* outputBuffer = m_outputBuffers[bufferIndex].get();
@@ -222,7 +222,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
             });
         } else {
             callOnMainThread([this, bufferIndex, protector = makeRef(*this)] {
-                auto locker = holdLock(m_bufferLocks[bufferIndex]);
+                Locker locker { m_bufferLocks[bufferIndex] };
                 fireProcessEvent(bufferIndex);
             });
         }

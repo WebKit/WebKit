@@ -81,7 +81,7 @@ static String createUniqueFontName()
     GUID fontUuid;
     CoCreateGuid(&fontUuid);
 
-    String fontName = base64Encode(reinterpret_cast<char*>(&fontUuid), sizeof(fontUuid));
+    auto fontName = base64EncodeToString(reinterpret_cast<char*>(&fontUuid), sizeof(fontUuid));
     ASSERT(fontName.length() < LF_FACESIZE);
     return fontName;
 }

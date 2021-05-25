@@ -370,7 +370,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
                 auto sourceSize = imageData->size();
                 if (auto imageBuffer = ImageBuffer::create(sourceSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB, PixelFormat::BGRA8)) {
                     IntRect sourceRect(IntPoint(), sourceSize);
-                    imageBuffer->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, sourceRect);
+                    imageBuffer->putPixelBuffer(imageData->pixelBuffer(), sourceRect);
                     dataURL = imageBuffer->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
                 }
             }

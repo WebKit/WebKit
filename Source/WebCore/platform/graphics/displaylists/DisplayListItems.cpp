@@ -29,7 +29,6 @@
 #include "DisplayListReplayer.h"
 #include "FontCascade.h"
 #include "ImageBuffer.h"
-#include "ImageData.h"
 #include "MediaPlayer.h"
 #include "SharedBuffer.h"
 #include <wtf/text/TextStream.h>
@@ -139,6 +138,23 @@ SetInlineFillGradient::SetInlineFillGradient(float offsets[maxColorStopCount], S
         m_offsets[i] = offsets[i];
         m_colors[i] = colors[i];
     }
+}
+
+SetInlineFillGradient::SetInlineFillGradient(const SetInlineFillGradient& other)
+{
+    if (WTF::holds_alternative<Gradient::RadialData>(other.m_data) || WTF::holds_alternative<Gradient::LinearData>(other.m_data) || WTF::holds_alternative<Gradient::ConicData>(other.m_data)) {
+        m_data = other.m_data;
+        m_gradientSpaceTransform = other.m_gradientSpaceTransform;
+        m_spreadMethod = other.m_spreadMethod;
+        m_colorStopCount = other.m_colorStopCount;
+        if (m_colorStopCount > maxColorStopCount)
+            m_colorStopCount = 0;
+        for (uint8_t i = 0; i < m_colorStopCount; ++i) {
+            m_offsets[i] = other.m_offsets[i];
+            m_colors[i] = other.m_colors[i];
+        }
+    } else
+        m_isValid = false;
 }
 
 Ref<Gradient> SetInlineFillGradient::gradient() const
@@ -559,7 +575,10 @@ static TextStream& operator<<(TextStream& ts, const DrawLinesForText& item)
 
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
-    context.drawDotsForDocumentMarker(m_rect, m_style);
+    context.drawDotsForDocumentMarker(m_rect, {
+        static_cast<DocumentMarkerLineStyle::Mode>(m_styleMode),
+        m_styleShouldUseDarkAppearance,
+    });
 }
 
 Optional<FloatRect> DrawDotsForDocumentMarker::localBounds(const GraphicsContext&) const
@@ -769,35 +788,55 @@ static TextStream& operator<<(TextStream& ts, const FillEllipse& item)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const GetImageData& item)
+static TextStream& operator<<(TextStream& ts, const GetPixelBuffer& item)
 {
     ts.dumpProperty("outputFormat", item.outputFormat());
     ts.dumpProperty("srcRect", item.srcRect());
     return ts;
 }
 
-PutImageData::PutImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+PutPixelBuffer::PutPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
     : m_srcRect(srcRect)
     , m_destPoint(destPoint)
-    , m_imageData(imageData.deepClone()) // This copy is actually required to preserve the semantics of putImageData().
-    , m_inputFormat(inputFormat)
+    , m_pixelBuffer(pixelBuffer.deepClone()) // This copy is actually required to preserve the semantics of putPixelBuffer().
     , m_destFormat(destFormat)
 {
 }
 
-PutImageData::PutImageData(AlphaPremultiplication inputFormat, Ref<ImageData>&& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+PutPixelBuffer::PutPixelBuffer(PixelBuffer&& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
     : m_srcRect(srcRect)
     , m_destPoint(destPoint)
-    , m_imageData(WTFMove(imageData))
-    , m_inputFormat(inputFormat)
+    , m_pixelBuffer(WTFMove(pixelBuffer))
     , m_destFormat(destFormat)
 {
 }
 
-static TextStream& operator<<(TextStream& ts, const PutImageData& item)
+PutPixelBuffer::PutPixelBuffer(const PutPixelBuffer& other)
+    : m_srcRect(other.m_srcRect)
+    , m_destPoint(other.m_destPoint)
+    , m_pixelBuffer(other.m_pixelBuffer.deepClone())
+    , m_destFormat(other.m_destFormat)
 {
-    ts.dumpProperty("inputFormat", item.inputFormat());
-    ts.dumpProperty("imageDataSize", item.imageData().size());
+}
+
+PutPixelBuffer& PutPixelBuffer::operator=(const PutPixelBuffer& other)
+{
+    PutPixelBuffer copy { other };
+    swap(copy);
+    return *this;
+}
+
+void PutPixelBuffer::swap(PutPixelBuffer& other)
+{
+    std::swap(m_srcRect, other.m_srcRect);
+    std::swap(m_destPoint, other.m_destPoint);
+    std::swap(m_pixelBuffer, other.m_pixelBuffer);
+    std::swap(m_destFormat, other.m_destFormat);
+}
+
+static TextStream& operator<<(TextStream& ts, const PutPixelBuffer& item)
+{
+    ts.dumpProperty("pixelBufferSize", item.pixelBuffer().size());
     ts.dumpProperty("srcRect", item.srcRect());
     ts.dumpProperty("destPoint", item.destPoint());
     ts.dumpProperty("destFormat", item.destFormat());
@@ -1064,8 +1103,8 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FlushContext: ts << "flush-context"; break;
     case ItemType::MetaCommandChangeDestinationImageBuffer: ts << "meta-command-change-destination-image-buffer"; break;
     case ItemType::MetaCommandChangeItemBuffer: ts << "meta-command-change-item-buffer"; break;
-    case ItemType::GetImageData: ts << "get-image-data"; break;
-    case ItemType::PutImageData: ts << "put-image-data"; break;
+    case ItemType::GetPixelBuffer: ts << "get-pixel-buffer"; break;
+    case ItemType::PutPixelBuffer: ts << "put-pixel-buffer"; break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
 #endif
@@ -1231,11 +1270,11 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
     case ItemType::MetaCommandChangeItemBuffer:
         ts << item.get<MetaCommandChangeItemBuffer>();
         break;
-    case ItemType::GetImageData:
-        ts << item.get<GetImageData>();
+    case ItemType::GetPixelBuffer:
+        ts << item.get<GetPixelBuffer>();
         break;
-    case ItemType::PutImageData:
-        ts << item.get<PutImageData>();
+    case ItemType::PutPixelBuffer:
+        ts << item.get<PutPixelBuffer>();
         break;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:

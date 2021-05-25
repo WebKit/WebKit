@@ -469,7 +469,6 @@ UIProcess/Media/AudioSessionRoutingArbitratorProxy.cpp
 UIProcess/Media/MediaUsageManager.cpp
 UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp
 
-UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp
 UIProcess/Notifications/WebNotification.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/Notifications/WebNotificationProvider.cpp
@@ -725,5 +724,6 @@ WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 
 RTCDataChannelRemoteManagerMessageReceiver.cpp
 RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
+RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessageReceiver.cpp
 RemoteGraphicsContextGLMessageReceiver.cpp
 RemoteGraphicsContextGLProxyMessageReceiver.cpp

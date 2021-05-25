@@ -49,8 +49,8 @@
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/JSValueInternal.h>
+#import <wtf/CheckedLock.h>
 #import <wtf/HashMap.h>
-#import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Threading.h>
 #import <wtf/text/WTFString.h>
@@ -70,11 +70,11 @@ using JSC::makeSource;
 
 namespace WebCore {
 
-static Lock spinLock;
+static CheckedLock wrapperCacheLock;
 static CreateWrapperFunction createDOMWrapperFunction;
 static DisconnectWindowWrapperFunction disconnectWindowWrapperFunction;
 
-static HashMap<JSObject*, NSObject *>& wrapperCache()
+static HashMap<JSObject*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
 {
     static NeverDestroyed<HashMap<JSObject*, NSObject *>> map;
     return map;
@@ -83,7 +83,7 @@ static HashMap<JSObject*, NSObject *>& wrapperCache()
 NSObject *getJSWrapper(JSObject* impl)
 {
     ASSERT(isMainThread());
-    LockHolder holder(&spinLock);
+    Locker locker { wrapperCacheLock };
 
     NSObject* wrapper = wrapperCache().get(impl);
     return wrapper ? retainPtr(wrapper).autorelease() : nil;
@@ -92,21 +92,21 @@ NSObject *getJSWrapper(JSObject* impl)
 void addJSWrapper(NSObject *wrapper, JSObject* impl)
 {
     ASSERT(isMainThread());
-    LockHolder holder(&spinLock);
+    Locker locker { wrapperCacheLock };
 
     wrapperCache().set(impl, wrapper);
 }
 
 void removeJSWrapper(JSObject* impl)
 {
-    LockHolder holder(&spinLock);
+    Locker locker { wrapperCacheLock };
 
     wrapperCache().remove(impl);
 }
 
 static void removeJSWrapperIfRetainCountOne(NSObject* wrapper, JSObject* impl)
 {
-    LockHolder holder(&spinLock);
+    Locker locker { wrapperCacheLock };
 
     if ([wrapper retainCount] == 1)
         wrapperCache().remove(impl);

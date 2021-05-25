@@ -121,18 +121,18 @@ public:
     bool hasHorizontalScrollbar() const;
     bool hasVerticalScrollbar() const;
 
-    static constexpr OptionSet<WebCore::HitTestRequest::RequestType> defaultHitTestRequestTypes()
+    static constexpr OptionSet<WebCore::HitTestRequest::Type> defaultHitTestRequestTypes()
     {
         return {{
-            WebCore::HitTestRequest::ReadOnly,
-            WebCore::HitTestRequest::Active,
-            WebCore::HitTestRequest::IgnoreClipping,
-            WebCore::HitTestRequest::AllowChildFrameContent,
-            WebCore::HitTestRequest::DisallowUserAgentShadowContent,
+            WebCore::HitTestRequest::Type::ReadOnly,
+            WebCore::HitTestRequest::Type::Active,
+            WebCore::HitTestRequest::Type::IgnoreClipping,
+            WebCore::HitTestRequest::Type::AllowChildFrameContent,
+            WebCore::HitTestRequest::Type::DisallowUserAgentShadowContent,
         }};
     }
 
-    RefPtr<InjectedBundleHitTestResult> hitTest(const WebCore::IntPoint, OptionSet<WebCore::HitTestRequest::RequestType> = defaultHitTestRequestTypes()) const;
+    RefPtr<InjectedBundleHitTestResult> hitTest(const WebCore::IntPoint, OptionSet<WebCore::HitTestRequest::Type> = defaultHitTestRequestTypes()) const;
 
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
     bool containsAnyFormElements() const;

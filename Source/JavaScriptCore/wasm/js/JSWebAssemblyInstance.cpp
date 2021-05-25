@@ -98,7 +98,7 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     for (size_t i : thisObject->instance().globalsToMark())
         visitor.appendUnbarriered(JSValue::decode(thisObject->instance().loadI64Global(i)));
 
-    auto locker = holdLock(cell->cellLock());
+    Locker locker { cell->cellLock() };
     for (auto& wrapper : thisObject->instance().functionWrappers())
         visitor.appendUnbarriered(wrapper.get());
 }

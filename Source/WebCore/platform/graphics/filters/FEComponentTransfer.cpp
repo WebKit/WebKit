@@ -26,7 +26,7 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
@@ -108,11 +108,11 @@ void FEComponentTransfer::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    auto* imageResult = createUnmultipliedImageResult();
-    if (!imageResult)
+    auto& destinationPixelBuffer = createUnmultipliedImageResult();
+    if (!destinationPixelBuffer)
         return;
 
-    auto& pixelArray = imageResult->data();
+    auto& destinationPixelArray = destinationPixelBuffer->data();
 
     LookupTable redTable;
     LookupTable greenTable;
@@ -120,11 +120,11 @@ void FEComponentTransfer::platformApplySoftware()
     LookupTable alphaTable;
     computeLookupTables(redTable, greenTable, blueTable, alphaTable);
 
-    IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyUnmultipliedResult(pixelArray, drawingRect, operatingColorSpace());
-    unsigned pixelArrayLength = pixelArray.length();
-    uint8_t* data = pixelArray.data();
-    for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
+    IntRect drawingRect = requestedRegionOfInputPixelBuffer(in->absolutePaintRect());
+    in->copyUnmultipliedResult(destinationPixelArray, drawingRect, operatingColorSpace());
+    unsigned destinationPixelArrayLength = destinationPixelArray.length();
+    uint8_t* data = destinationPixelArray.data();
+    for (unsigned pixelOffset = 0; pixelOffset < destinationPixelArrayLength; pixelOffset += 4) {
         data[pixelOffset] = redTable[data[pixelOffset]];
         data[pixelOffset + 1] = greenTable[data[pixelOffset + 1]];
         data[pixelOffset + 2] = blueTable[data[pixelOffset + 2]];

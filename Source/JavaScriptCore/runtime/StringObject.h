@@ -28,7 +28,7 @@ namespace JSC {
 class StringObject : public JSWrapperObject {
 public:
     using Base = JSWrapperObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesPut | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     template<typename, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)

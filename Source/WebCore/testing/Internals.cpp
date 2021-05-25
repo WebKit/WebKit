@@ -295,8 +295,7 @@
 #endif
 
 #if ENABLE(WEB_AUDIO)
-#include "BaseAudioContext.h"
-#include "WebKitAudioContext.h"
+#include "AudioContext.h"
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -2298,13 +2297,13 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     float zoomFactor = frame->pageZoomFactor();
     LayoutPoint point(centerX * zoomFactor + frameView->scrollX(), centerY * zoomFactor + frameView->scrollY());
 
-    OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::CollectMultipleElements };
+    OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::CollectMultipleElements };
     if (ignoreClipping)
-        hitType.add(HitTestRequest::IgnoreClipping);
+        hitType.add(HitTestRequest::Type::IgnoreClipping);
     if (!allowUserAgentShadowContent)
-        hitType.add(HitTestRequest::DisallowUserAgentShadowContent);
+        hitType.add(HitTestRequest::Type::DisallowUserAgentShadowContent);
     if (allowChildFrameContent)
-        hitType.add(HitTestRequest::AllowChildFrameContent);
+        hitType.add(HitTestRequest::Type::AllowChildFrameContent);
 
     HitTestRequest request(hitType);
 
@@ -2345,55 +2344,40 @@ private:
 
 String Internals::parserMetaData(JSC::JSValue code)
 {
-    JSC::VM& vm = contextDocument()->vm();
-    JSC::CallFrame* callFrame = vm.topCallFrame;
-    JSC::JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
-    ScriptExecutable* executable;
+    auto& vm = contextDocument()->vm();
+    auto callFrame = vm.topCallFrame;
+    auto* globalObject = callFrame->lexicalGlobalObject(vm);
 
+    ScriptExecutable* executable;
     if (!code || code.isNull() || code.isUndefined()) {
         GetCallerCodeBlockFunctor iter;
         callFrame->iterate(vm, iter);
-        CodeBlock* codeBlock = iter.codeBlock();
-        executable = codeBlock->ownerExecutable();
-    } else if (code.isCallable(vm)) {
-        JSFunction* funcObj = JSC::jsCast<JSFunction*>(code.toObject(globalObject));
-        executable = funcObj->jsExecutable();
-    } else
+        executable = iter.codeBlock()->ownerExecutable();
+    } else if (code.isCallable(vm))
+        executable = JSC::jsCast<JSFunction*>(code.toObject(globalObject))->jsExecutable();
+    else
         return String();
 
-    unsigned startLine = executable->firstLine();
-    unsigned startColumn = executable->startColumn();
-    unsigned endLine = executable->lastLine();
-    unsigned endColumn = executable->endColumn();
-
-    StringBuilder result;
+    const char* prefix = "";
+    String functionName;
+    const char* suffix = "";
 
     if (executable->isFunctionExecutable()) {
-        FunctionExecutable* funcExecutable = reinterpret_cast<FunctionExecutable*>(executable);
-        String inferredName = funcExecutable->ecmaName().string();
-        result.appendLiteral("function \"");
-        result.append(inferredName);
-        result.append('"');
+        prefix = "function \"";
+        functionName = static_cast<FunctionExecutable*>(executable)->ecmaName().string();
+        suffix = "\"";
     } else if (executable->isEvalExecutable())
-        result.appendLiteral("eval");
+        prefix = "eval";
     else if (executable->isModuleProgramExecutable())
-        result.appendLiteral("module");
+        prefix = "module";
     else if (executable->isProgramExecutable())
-        result.appendLiteral("program");
+        prefix = "program";
     else
         ASSERT_NOT_REACHED();
 
-    result.appendLiteral(" { ");
-    result.appendNumber(startLine);
-    result.append(':');
-    result.appendNumber(startColumn);
-    result.appendLiteral(" - ");
-    result.appendNumber(endLine);
-    result.append(':');
-    result.appendNumber(endColumn);
-    result.appendLiteral(" }");
-
-    return result.toString();
+    return makeString(prefix, functionName, suffix, " { ",
+        executable->firstLine(), ':', executable->startColumn(), " - ",
+        executable->lastLine(), ':', executable->endColumn(), " }");
 }
 
 void Internals::updateEditorUINowIfScheduled()
@@ -4399,17 +4383,10 @@ bool Internals::elementIsBlockingDisplaySleep(HTMLMediaElement& element) const
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)
-void Internals::setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, RefPtr<WebKitAudioContext>>& contextVariant, StringView restrictionsString)
+void Internals::setAudioContextRestrictions(AudioContext& context, StringView restrictionsString)
 {
-    RefPtr<AudioContext> context;
-    switchOn(contextVariant, [&](RefPtr<AudioContext> entry) {
-        context = entry;
-    }, [&](RefPtr<WebKitAudioContext> entry) {
-        context = entry;
-    });
-
-    auto restrictions = context->behaviorRestrictions();
-    context->removeBehaviorRestriction(restrictions);
+    auto restrictions = context.behaviorRestrictions();
+    context.removeBehaviorRestriction(restrictions);
 
     restrictions = AudioContext::NoRestrictions;
 
@@ -4421,7 +4398,7 @@ void Internals::setAudioContextRestrictions(const Variant<RefPtr<AudioContext>, 
         if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsentforaudiostart"))
             restrictions |= AudioContext::RequirePageConsentForAudioStartRestriction;
     }
-    context->addBehaviorRestriction(restrictions);
+    context.addBehaviorRestriction(restrictions);
 }
 
 void Internals::useMockAudioDestinationCocoa()
@@ -4661,7 +4638,7 @@ String Internals::pageMediaState()
     if (string.isEmpty())
         string.append("IsNotPlaying");
     else
-        string.resize(string.length() - 1);
+        string.shrink(string.length() - 1);
 
     return string.toString();
 }
@@ -4730,8 +4707,7 @@ static void appendOffsets(StringBuilder& builder, const Vector<SnapOffset<Layout
             builder.appendLiteral(", ");
         else
             justStarting = false;
-
-        builder.appendNumber(coordinate.offset.toUnsigned());
+        builder.append(coordinate.offset.toUnsigned());
         if (coordinate.stop == ScrollSnapStop::Always)
             builder.appendLiteral(" (always)");
 
@@ -4989,6 +4965,13 @@ bool Internals::privatePlayerMuted(const HTMLMediaElement&)
 }
 #endif
 
+#endif
+
+#if ENABLE(VIDEO)
+bool Internals::isMediaElementHidden(const HTMLMediaElement& media)
+{
+    return media.elementIsHidden();
+}
 #endif
 
 ExceptionOr<void> Internals::setIsPlayingToBluetoothOverride(Optional<bool> isPlaying)
@@ -5355,7 +5338,7 @@ void Internals::videoSampleAvailable(MediaSample& sample)
     if (!rgba)
         return;
     
-    auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height());
+    auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
     if (!imageData.hasException())
         m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
     else
@@ -5429,19 +5412,19 @@ String Internals::audioSessionCategory() const
 {
 #if USE(AUDIO_SESSION)
     switch (AudioSession::sharedSession().category()) {
-    case AudioSession::AmbientSound:
+    case AudioSession::CategoryType::AmbientSound:
         return "AmbientSound"_s;
-    case AudioSession::SoloAmbientSound:
+    case AudioSession::CategoryType::SoloAmbientSound:
         return "SoloAmbientSound"_s;
-    case AudioSession::MediaPlayback:
+    case AudioSession::CategoryType::MediaPlayback:
         return "MediaPlayback"_s;
-    case AudioSession::RecordAudio:
+    case AudioSession::CategoryType::RecordAudio:
         return "RecordAudio"_s;
-    case AudioSession::PlayAndRecord:
+    case AudioSession::CategoryType::PlayAndRecord:
         return "PlayAndRecord"_s;
-    case AudioSession::AudioProcessing:
+    case AudioSession::CategoryType::AudioProcessing:
         return "AudioProcessing"_s;
-    case AudioSession::None:
+    case AudioSession::CategoryType::None:
         return "None"_s;
     }
 #endif
@@ -5455,6 +5438,15 @@ double Internals::preferredAudioBufferSize() const
 #endif
     return 0;
 }
+
+double Internals::currentAudioBufferSize() const
+{
+#if USE(AUDIO_SESSION)
+    return AudioSession::sharedSession().bufferSize();
+#endif
+    return 0;
+}
+
 
 bool Internals::audioSessionActive() const
 {
@@ -6227,13 +6219,13 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
     m_artworkImagePromise = makeUnique<ArtworkImagePromise>(WTFMove(promise));
     m_artworkLoader = makeUnique<ArtworkImageLoader>(*contextDocument(), url, [this](Image* image) {
         if (image) {
-            auto imageData = ImageData::create(unsigned(image->width()), unsigned(image->height()));
+            auto imageData = ImageData::create(image->width(), image->height(), { { PredefinedColorSpace::SRGB } });
             if (!imageData.hasException())
                 m_artworkImagePromise->resolve(imageData.releaseReturnValue());
             else
                 m_artworkImagePromise->reject(imageData.exception().code());
         } else
-            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieve."  });
+            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieved."  });
         m_artworkImagePromise = nullptr;
     });
     m_artworkLoader->requestImageResource();
@@ -6243,7 +6235,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecutionContext& context, RefPtr<StringCallback>&& listener)
 {
-    if (m_mediaSessionCoordinator)
+    if (m_mockMediaSessionCoordinator)
         return { };
 
     auto* document = contextDocument();
@@ -6256,8 +6248,7 @@ ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecution
     auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
     auto mock = MockMediaSessionCoordinator::create(context, WTFMove(listener));
     m_mockMediaSessionCoordinator = mock.ptr();
-    m_mediaSessionCoordinator = MediaSessionCoordinator::create(mock.get());
-    session.setCoordinator(m_mediaSessionCoordinator.get());
+    session.createCoordinator(WTFMove(mock));
 
     return { };
 }

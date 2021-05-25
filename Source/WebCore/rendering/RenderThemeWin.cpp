@@ -1052,17 +1052,17 @@ String RenderThemeWin::stringWithContentsOfFile(const String& name, const String
     if (!FileSystem::isHandleValid(requestedFileHandle))
         return String();
 
-    long long filesize = -1;
-    if (!FileSystem::getFileSize(requestedFileHandle, filesize)) {
+    auto filesize = FileSystem::fileSize(requestedFileHandle);
+    if (!filesize) {
         FileSystem::closeFile(requestedFileHandle);
         return String();
     }
 
     Vector<char> fileContents;
-    fillBufferWithContentsOfFile(requestedFileHandle, filesize, fileContents);
+    fillBufferWithContentsOfFile(requestedFileHandle, *filesize, fileContents);
     FileSystem::closeFile(requestedFileHandle);
 
-    return String(fileContents.data(), static_cast<size_t>(filesize));
+    return String(fileContents.data(), *filesize);
 #else
     return emptyString();
 #endif

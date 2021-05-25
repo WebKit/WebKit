@@ -28,9 +28,10 @@
 
 import atexit
 import logging
-import math
 import threading
 import time
+
+from webkitcorepy.string_utils import pluralize
 
 from webkitpy.common import message_pool
 from webkitpy.common.iteration_compatibility import iteritems
@@ -39,7 +40,6 @@ from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
-from webkitpy.tool import grammar
 
 
 _log = logging.getLogger(__name__)
@@ -63,12 +63,11 @@ class TestRunInterruptedException(Exception):
 
 
 class LayoutTestRunner(object):
-    def __init__(self, options, port, printer, results_directory, test_is_slow_fn, needs_http=False, needs_websockets=False, needs_web_platform_test_server=False):
+    def __init__(self, options, port, printer, results_directory, needs_http=False, needs_websockets=False, needs_web_platform_test_server=False):
         self._options = options
         self._port = port
         self._printer = printer
         self._results_directory = results_directory
-        self._test_is_slow = test_is_slow_fn
         self._needs_http = needs_http
         self._needs_websockets = needs_websockets
         self._needs_web_platform_test_server = needs_web_platform_test_server
@@ -115,7 +114,7 @@ class LayoutTestRunner(object):
         if self._options.dry_run:
             return run_results
 
-        self._printer.write_update('Starting %s ...' % grammar.pluralize(num_workers, "worker"))
+        self._printer.write_update('Starting %s ...' % pluralize(num_workers, "worker"))
 
         try:
             with message_pool.get(self, self._worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
@@ -146,11 +145,11 @@ class LayoutTestRunner(object):
     def _mark_interrupted_tests_as_skipped(self, run_results):
         for test_input in self._test_inputs:
             if test_input.test_name not in run_results.results_by_name:
-                result = test_results.TestResult(test_input.test_name, [test_failures.FailureEarlyExit()])
+                result = test_results.TestResult(test_input, [test_failures.FailureEarlyExit()])
                 # FIXME: We probably need to loop here if there are multiple iterations.
                 # FIXME: Also, these results are really neither expected nor unexpected. We probably
                 # need a third type of result.
-                run_results.add(result, expected=False, test_is_slow=self._test_is_slow(test_input.test_name))
+                run_results.add(result, expected=False)
 
     def _interrupt_if_at_failure_limits(self, run_results):
         # Note: The messages in this method are constructed to match old-run-webkit-tests
@@ -183,7 +182,7 @@ class LayoutTestRunner(object):
             exp_str = self._expectations.model().expectations_to_string(expectations)
             got_str = self._expectations.model().expectation_to_string(result.type)
 
-        run_results.add(result, expected, self._test_is_slow(result.test_name))
+        run_results.add(result, expected)
 
         self._printer.print_finished_test(result, expected, exp_str, got_str)
 
@@ -436,7 +435,7 @@ class Worker(object):
         driver.stop()
 
         if not result:
-            result = test_results.TestResult(test_input.test_name, failures=failures, test_run_time=0)
+            result = test_results.TestResult(test_input, failures=failures, test_run_time=0)
         return result
 
     def _run_test_in_this_thread(self, test_input, stop_when_done):

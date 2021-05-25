@@ -132,10 +132,10 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(MetaCommandChangeDestinationImageBuffer);
     case ItemType::MetaCommandChangeItemBuffer:
         return sizeof(MetaCommandChangeItemBuffer);
-    case ItemType::GetImageData:
-        return sizeof(GetImageData);
-    case ItemType::PutImageData:
-        return sizeof(PutImageData);
+    case ItemType::GetPixelBuffer:
+        return sizeof(GetPixelBuffer);
+    case ItemType::PutPixelBuffer:
+        return sizeof(PutPixelBuffer);
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return sizeof(PaintFrameForMedia);
@@ -209,7 +209,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::SetState:
     case ItemType::SetStrokeThickness:
     case ItemType::Translate:
-    case ItemType::GetImageData:
+    case ItemType::GetPixelBuffer:
         return false;
     case ItemType::BeginTransparencyLayer:
     case ItemType::ClearRect:
@@ -240,7 +240,7 @@ bool isDrawingItem(ItemType type)
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
 #endif
-    case ItemType::PutImageData:
+    case ItemType::PutPixelBuffer:
     case ItemType::StrokeEllipse:
 #if ENABLE(INLINE_PATH_DATA)
     case ItemType::StrokeInlinePath:
@@ -294,7 +294,7 @@ bool isInlineItem(ItemType type)
     case ItemType::FillRectWithGradient:
     case ItemType::FillRectWithRoundedHole:
     case ItemType::FillRoundedRect:
-    case ItemType::PutImageData:
+    case ItemType::PutPixelBuffer:
     case ItemType::SetLineDash:
     case ItemType::SetState:
     case ItemType::StrokePath:
@@ -351,7 +351,7 @@ bool isInlineItem(ItemType type)
     case ItemType::StrokeRect:
     case ItemType::StrokeLine:
     case ItemType::Translate:
-    case ItemType::GetImageData:
+    case ItemType::GetPixelBuffer:
         return true;
     }
     ASSERT_NOT_REACHED();

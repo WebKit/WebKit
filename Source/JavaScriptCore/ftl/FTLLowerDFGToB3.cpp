@@ -962,6 +962,12 @@ private:
         case InByVal:
             compileInByVal();
             break;
+        case HasPrivateName:
+            compileHasPrivateName();
+            break;
+        case HasPrivateBrand:
+            compileHasPrivateBrand();
+            break;
         case CheckPrivateBrand:
             compileCheckPrivateBrand();
             break;
@@ -9717,24 +9723,20 @@ private:
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+                callLinkInfo->setUpCall(
+                    node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, GPRInfo::regT0);
 
-                CCallHelpers::DataLabelPtr targetToCheck;
-                CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
-                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
-                    CCallHelpers::TrustedImmPtr(nullptr));
-
-                CCallHelpers::Call fastCall = jit.nearCall();
+                auto slowPath = callLinkInfo->emitFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
                 CCallHelpers::Jump done = jit.jump();
 
                 slowPath.link(&jit);
-
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                auto slowPathStart = jit.label();
                 jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
-                CCallHelpers::Call slowCall = jit.nearCall();
+                callLinkInfo->emitSlowPath(*vm, jit);
+
                 done.link(&jit);
 
-                callLinkInfo->setUpCall(
-                    node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, GPRInfo::regT0);
+                auto doneLocation = jit.label();
 
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-params.proc().frameSize()),
@@ -9742,13 +9744,9 @@ private:
 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
-
-                        callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
+                        callLinkInfo->setCodeLocations(
+                            linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
+                            linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
                     });
             });
 
@@ -9857,63 +9855,50 @@ private:
                     shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
                     
                     CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
+                    callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall, InvalidGPRReg);
                     
-                    CCallHelpers::PatchableJump patchableJump = jit.patchableJump();
                     CCallHelpers::Label mainPath = jit.label();
-                    
                     jit.store32(
                         CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
-                
-                    callLinkInfo->setFrameShuffleData(shuffleData);
-                    CallFrameShuffler(jit, shuffleData).prepareForTailCall();
-                    
-                    CCallHelpers::Call call = jit.nearTailCall();
+                    callLinkInfo->emitDirectTailCallFastPath(jit, [&] {
+                        callLinkInfo->setFrameShuffleData(shuffleData);
+                        CallFrameShuffler(jit, shuffleData).prepareForTailCall();
+                    });
                     
                     jit.abortWithReason(JITDidReturnFromTailCall);
                     
                     CCallHelpers::Label slowPath = jit.label();
-                    patchableJump.m_jump.linkTo(slowPath, &jit);
                     callOperation(
                         *state, toSave, jit,
                         node->origin.semantic, exceptions.get(), operationLinkDirectCall,
                         InvalidGPRReg, CCallHelpers::TrustedImmPtr(callLinkInfo), calleeGPR).call();
                     jit.jump().linkTo(mainPath, &jit);
-                    
-                    callLinkInfo->setUpCall(CallLinkInfo::DirectTailCall, InvalidGPRReg);
                     callLinkInfo->setExecutableDuringCompilation(executable);
                     if (numAllocatedArgs > numPassedArgs)
                         callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
                     
-                    jit.addLinkTask(
-                        [=] (LinkBuffer& linkBuffer) {
-                            CodeLocationLabel<JSInternalPtrTag> patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(patchableJump);
-                            CodeLocationNearCall<JSInternalPtrTag> callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
-                            CodeLocationLabel<JSInternalPtrTag> slowPathLocation = linkBuffer.locationOf<JSInternalPtrTag>(slowPath);
-
-                            callLinkInfo->setCallLocations(
-                                patchableJumpLocation,
-                                slowPathLocation,
-                                callLocation);
-                        });
+                    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                        callLinkInfo->setCodeLocations(
+                            linkBuffer.locationOf<JSInternalPtrTag>(slowPath),
+                            CodeLocationLabel<JSInternalPtrTag>());
+                    });
                     return;
                 }
                 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(node->origin.semantic);
-                
-                CCallHelpers::Label mainPath = jit.label();
+                callLinkInfo->setUpCall(
+                    isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall, InvalidGPRReg);
 
+                CCallHelpers::Label mainPath = jit.label();
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
-                
-                CCallHelpers::Call call = jit.nearCall();
+                callLinkInfo->emitDirectFastPath(jit);
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-params.proc().frameSize()),
                     GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
                 
-                callLinkInfo->setUpCall(
-                    isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall, InvalidGPRReg);
                 callLinkInfo->setExecutableDuringCompilation(executable);
                 if (numAllocatedArgs > numPassedArgs)
                     callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
@@ -9935,15 +9920,9 @@ private:
                         
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
-                                CodeLocationNearCall<JSInternalPtrTag> callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
-                                CodeLocationLabel<JSInternalPtrTag> slowPathLocation = linkBuffer.locationOf<JSInternalPtrTag>(slowPath);
-
-                                linkBuffer.link(call, slowPathLocation);
-
-                                callLinkInfo->setCallLocations(
-                                    CodeLocationLabel<JSInternalPtrTag>(),
-                                    slowPathLocation,
-                                    callLocation);
+                                callLinkInfo->setCodeLocations(
+                                    linkBuffer.locationOf<JSInternalPtrTag>(slowPath), 
+                                    CodeLocationLabel<JSInternalPtrTag>());
                             });
                     });
             });
@@ -10034,40 +10013,30 @@ private:
                 shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(codeOrigin);
+                callLinkInfo->setUpCall(CallLinkInfo::TailCall, GPRInfo::regT0);
 
-                CCallHelpers::DataLabelPtr targetToCheck;
-                CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
-                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
-                    CCallHelpers::TrustedImmPtr(nullptr));
-
-                callLinkInfo->setFrameShuffleData(shuffleData);
-                CallFrameShuffler(jit, shuffleData).prepareForTailCall();
-
-                CCallHelpers::Call fastCall = jit.nearTailCall();
+                auto slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
+                    callLinkInfo->setFrameShuffleData(shuffleData);
+                    CallFrameShuffler(jit, shuffleData).prepareForTailCall();
+                });
 
                 slowPath.link(&jit);
-
+                auto slowPathStart = jit.label();
                 CallFrameShuffler slowPathShuffler(jit, shuffleData);
                 slowPathShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
                 slowPathShuffler.prepareForSlowPath();
 
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
                 jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
-                CCallHelpers::Call slowCall = jit.nearCall();
+                callLinkInfo->emitSlowPath(*vm, jit);
 
+                auto doneLocation = jit.label();
                 jit.abortWithReason(JITDidReturnFromTailCall);
-
-                callLinkInfo->setUpCall(CallLinkInfo::TailCall, GPRInfo::regT0);
 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
-
-                        callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
+                        callLinkInfo->setCodeLocations(
+                            linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
+                            linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
                     });
             });
     }
@@ -10320,40 +10289,38 @@ private:
                 else
                     callType = CallLinkInfo::CallVarargs;
                 
+                callLinkInfo->setUpCall(callType, GPRInfo::regT0);
+
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
-                
-                CCallHelpers::DataLabelPtr targetToCheck;
-                CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
-                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
-                    CCallHelpers::TrustedImmPtr(nullptr));
-                
-                CCallHelpers::Call fastCall;
+
+                ASSERT(!usedRegisters.get(GPRInfo::regT2)); // Used on the slow path.
+
+                CCallHelpers::JumpList slowPath;
                 CCallHelpers::Jump done;
-                
                 if (isTailCall) {
-                    jit.emitRestoreCalleeSaves();
-                    jit.prepareForTailCallSlow();
-                    fastCall = jit.nearTailCall();
+                    slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
+                        jit.emitRestoreCalleeSaves();
+                        jit.prepareForTailCallSlow();
+                    });
                 } else {
-                    fastCall = jit.nearCall();
+                    slowPath = callLinkInfo->emitFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
                     done = jit.jump();
                 }
                 
                 slowPath.link(&jit);
+                auto slowPathStart = jit.label();
 
                 if (isTailCall)
                     jit.emitRestoreCalleeSaves();
-                ASSERT(!usedRegisters.get(GPRInfo::regT2));
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
                 jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
-                CCallHelpers::Call slowCall = jit.nearCall();
+                callLinkInfo->emitSlowPath(*vm, jit);
                 
                 if (isTailCall)
                     jit.abortWithReason(JITDidReturnFromTailCall);
                 else
                     done.link(&jit);
-                
-                callLinkInfo->setUpCall(callType, GPRInfo::regT0);
+
+                auto doneLocation = jit.label();
 
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-originalStackHeight),
@@ -10361,13 +10328,9 @@ private:
                 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
-                        
-                        callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
+                        callLinkInfo->setCodeLocations(
+                            linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
+                            linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
                     });
             });
 
@@ -10607,39 +10570,36 @@ private:
                 else
                     callType = CallLinkInfo::CallVarargs;
                 
+                callLinkInfo->setUpCall(callType, GPRInfo::regT0);
+                
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
                 
-                CCallHelpers::DataLabelPtr targetToCheck;
-                CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
-                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
-                    CCallHelpers::TrustedImmPtr(nullptr));
-                
-                CCallHelpers::Call fastCall;
+                CCallHelpers::JumpList slowPath;
                 CCallHelpers::Jump done;
-                
                 if (isTailCall) {
-                    jit.emitRestoreCalleeSaves();
-                    jit.prepareForTailCallSlow();
-                    fastCall = jit.nearTailCall();
+                    slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
+                        jit.emitRestoreCalleeSaves();
+                        jit.prepareForTailCallSlow();
+                    });
                 } else {
-                    fastCall = jit.nearCall();
+                    slowPath = callLinkInfo->emitFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
                     done = jit.jump();
                 }
                 
                 slowPath.link(&jit);
+                auto slowPathStart = jit.label();
 
                 if (isTailCall)
                     jit.emitRestoreCalleeSaves();
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
                 jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(node->origin.semantic)), GPRInfo::regT3);
-                CCallHelpers::Call slowCall = jit.nearCall();
+                callLinkInfo->emitSlowPath(*vm, jit);
                 
                 if (isTailCall)
                     jit.abortWithReason(JITDidReturnFromTailCall);
                 else
                     done.link(&jit);
-                
-                callLinkInfo->setUpCall(callType, GPRInfo::regT0);
+
+                auto doneLocation = jit.label();
                 
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-originalStackHeight),
@@ -10647,13 +10607,9 @@ private:
                 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
-                        
-                        callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
-                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
+                        callLinkInfo->setCodeLocations(
+                            linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
+                            linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
                     });
             });
 
@@ -12262,6 +12218,18 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         setJSValue(vmCall(Int64, operationInByVal, weakPointer(globalObject), lowCell(m_node->child1()), lowJSValue(m_node->child2())));
+    }
+    
+    void compileHasPrivateName()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        setJSValue(vmCall(Int64, operationHasPrivateName, weakPointer(globalObject), lowCell(m_node->child1()), lowSymbol(m_node->child2())));
+    }
+
+    void compileHasPrivateBrand()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        setJSValue(vmCall(Int64, operationHasPrivateBrand, weakPointer(globalObject), lowCell(m_node->child1()), lowSymbol(m_node->child2())));
     }
 
     void compileInById()

@@ -30,7 +30,6 @@
 import threading
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.net.buildbot.buildbot_mock import MockBuildBot
 from webkitpy.common.net.ewsserver_mock import MockEWSServer
 
 # FIXME: Old-style "Ports" need to die and be replaced by modern layout_tests.port which needs to move to common.

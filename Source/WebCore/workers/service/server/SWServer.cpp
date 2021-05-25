@@ -648,7 +648,24 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
 
 void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
 {
-    tryInstallContextData(ServiceWorkerContextData { jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, certificateInfo, contentSecurityPolicy, referrerPolicy, url, type, false, WTFMove(scriptResourceMap) });
+    tryInstallContextData(ServiceWorkerContextData { jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, certificateInfo, contentSecurityPolicy, referrerPolicy, url, type, false, clientIsAppBoundForRegistrableDomain(RegistrableDomain(url)), WTFMove(scriptResourceMap) });
+}
+
+LastNavigationWasAppBound SWServer::clientIsAppBoundForRegistrableDomain(const RegistrableDomain& domain)
+{
+    auto clientsByRegistrableDomainIterator = m_clientsByRegistrableDomain.find(domain);
+    if (clientsByRegistrableDomainIterator == m_clientsByRegistrableDomain.end())
+        return LastNavigationWasAppBound::No;
+
+    auto& clientsForRegistrableDomain = clientsByRegistrableDomainIterator->value;
+    for (auto& client : clientsForRegistrableDomain) {
+        auto data = m_clientsById.find(client);
+        ASSERT(data != m_clientsById.end());
+        if (data->value.lastNavigationWasAppBound == LastNavigationWasAppBound::Yes)
+            return LastNavigationWasAppBound::Yes;
+    }
+
+    return LastNavigationWasAppBound::No;
 }
 
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
@@ -869,9 +886,23 @@ SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceW
     return iterator->value->registration();
 }
 
+void SWServer::updateAppBoundValueForWorkers(const ClientOrigin& clientOrigin, LastNavigationWasAppBound lastNavigationWasAppBound)
+{
+    for (auto& worker : m_runningOrTerminatingWorkers.values()) {
+        if (worker->origin().clientRegistrableDomain() == clientOrigin.clientRegistrableDomain())
+            worker->updateAppBoundValue(lastNavigationWasAppBound);
+    }
+}
+
 void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const Optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
 {
     auto clientIdentifier = data.identifier;
+
+    // Update the app-bound value if the new client is app-bound and the current clients for the origin are not marked app-bound.
+    if (data.lastNavigationWasAppBound == LastNavigationWasAppBound::Yes) {
+        if (clientIsAppBoundForRegistrableDomain(clientOrigin.clientRegistrableDomain()) == LastNavigationWasAppBound::No)
+            updateAppBoundValueForWorkers(clientOrigin, data.lastNavigationWasAppBound);
+    }
 
     ASSERT(!m_clientsById.contains(clientIdentifier));
     m_clientsById.add(clientIdentifier, WTFMove(data));
@@ -908,6 +939,7 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
 void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier clientIdentifier)
 {
     auto clientRegistrableDomain = clientOrigin.clientRegistrableDomain();
+    auto appBoundValueBefore = clientIsAppBoundForRegistrableDomain(clientOrigin.clientRegistrableDomain());
 
     bool wasRemoved = m_clientsById.remove(clientIdentifier);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
@@ -949,6 +981,12 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     clientsForRegistrableDomain.remove(clientIdentifier);
     if (clientsForRegistrableDomain.isEmpty())
         m_clientsByRegistrableDomain.remove(clientsByRegistrableDomainIterator);
+
+    // If the app-bound value changed after this client was removed, we know it was the only app-bound
+    // client for its origin, and we should update all workers to reflect this.
+    auto appBoundValueAfter = clientIsAppBoundForRegistrableDomain(clientOrigin.clientRegistrableDomain());
+    if (appBoundValueBefore != appBoundValueAfter)
+        updateAppBoundValueForWorkers(clientOrigin, appBoundValueAfter);
 
     auto registrationIterator = m_clientToControllingRegistration.find(clientIdentifier);
     if (registrationIterator == m_clientToControllingRegistration.end())

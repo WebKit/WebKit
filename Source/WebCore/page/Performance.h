@@ -48,12 +48,17 @@ class JSGlobalObject;
 
 namespace WebCore {
 
+class CachedResource;
+class Document;
+class DocumentLoader;
 class LoadTiming;
+class NetworkLoadMetrics;
 class PerformanceUserTiming;
 class PerformanceEntry;
 class PerformanceMark;
 class PerformanceMeasure;
 class PerformanceNavigation;
+class PerformanceNavigationTiming;
 class PerformanceObserver;
 class PerformancePaintTiming;
 class PerformanceTiming;
@@ -90,6 +95,7 @@ public:
     ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, Optional<StartOrMeasureOptions>&&, const String& endMark);
     void clearMeasures(const String& measureName);
 
+    void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const LoadTiming&, const NetworkLoadMetrics&);
     void addResourceTiming(ResourceTiming&&);
 
     void reportFirstContentfulPaint();
@@ -121,6 +127,7 @@ private:
     void resourceTimingBufferFullTimerFired();
 
     void queueEntry(PerformanceEntry&);
+    void scheduleTaskIfNeeded();
 
     mutable RefPtr<PerformanceNavigation> m_navigation;
     mutable RefPtr<PerformanceTiming> m_timing;
@@ -139,6 +146,7 @@ private:
 
     MonotonicTime m_timeOrigin;
 
+    RefPtr<PerformanceNavigationTiming> m_navigationTiming;
     RefPtr<PerformancePaintTiming> m_firstContentfulPaint;
     std::unique_ptr<PerformanceUserTiming> m_userTiming;
 

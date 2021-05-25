@@ -45,8 +45,7 @@ public:
     HeapCell** roots() const;
 
 private:
-    static constexpr size_t inlineCapacity = 128;
-    static constexpr size_t nonInlineCapacity = 8192 / sizeof(HeapCell*);
+    static constexpr size_t inlineCapacity = 2048;
     
     template<typename MarkHook>
     void genericAddPointer(void*, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter, MarkHook&);

@@ -73,7 +73,7 @@ EventDispatcher::~EventDispatcher()
 #if ENABLE(SCROLLING_THREAD)
 void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 {
-    LockHolder locker(m_scrollingTreesMutex);
+    Locker locker { m_scrollingTreesLock };
 
     ASSERT(webPage->corePage()->scrollingCoordinator());
     ASSERT(!m_scrollingTrees.contains(webPage->identifier()));
@@ -84,7 +84,7 @@ void EventDispatcher::addScrollingTreeForPage(WebPage* webPage)
 
 void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
 {
-    LockHolder locker(m_scrollingTreesMutex);
+    Locker locker { m_scrollingTreesLock };
     ASSERT(m_scrollingTrees.contains(webPage->identifier()));
 
     m_scrollingTrees.remove(webPage->identifier());
@@ -124,7 +124,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
     auto processingSteps = OptionSet<WebCore::WheelEventProcessingSteps> { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
 #if ENABLE(SCROLLING_THREAD)
     do {
-        LockHolder locker(m_scrollingTreesMutex);
+        Locker locker { m_scrollingTreesLock };
 
         auto scrollingTree = m_scrollingTrees.get(pageID);
         if (!scrollingTree) {
@@ -186,7 +186,7 @@ void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestu
 #if ENABLE(IOS_TOUCH_EVENTS)
 void EventDispatcher::takeQueuedTouchEventsForPage(const WebPage& webPage, TouchEventQueue& destinationQueue)
 {
-    LockHolder locker(&m_touchEventsLock);
+    Locker locker { m_touchEventsLock };
     destinationQueue = m_touchEvents.take(webPage.identifier());
 }
 
@@ -199,7 +199,7 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, const WebTouchEvent& tou
 {
     bool updateListWasEmpty;
     {
-        LockHolder locker(&m_touchEventsLock);
+        Locker locker { m_touchEventsLock };
         updateListWasEmpty = m_touchEvents.isEmpty();
         auto addResult = m_touchEvents.add(pageID, TouchEventQueue());
         if (addResult.isNewEntry)
@@ -229,7 +229,7 @@ void EventDispatcher::dispatchTouchEvents()
 
     HashMap<PageIdentifier, TouchEventQueue> localCopy;
     {
-        LockHolder locker(&m_touchEventsLock);
+        Locker locker { m_touchEventsLock };
         localCopy.swap(m_touchEvents);
     }
 
@@ -282,7 +282,7 @@ void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEvent::Type 
 void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID displayID)
 {
 #if ENABLE(SCROLLING_THREAD)
-    LockHolder locker(m_scrollingTreesMutex);
+    Locker locker { m_scrollingTreesLock };
     for (auto keyValuePair : m_scrollingTrees)
         keyValuePair.value->displayDidRefresh(displayID);
 #endif

@@ -37,6 +37,7 @@ if (USE_CF)
         cf/CFURLExtras.h
         cf/TypeCastsCF.h
 
+        text/cf/StringConcatenateCF.h
         text/cf/TextBreakIteratorCF.h
     )
     list(APPEND WTF_SOURCES

@@ -30,6 +30,7 @@
 #include "AppHighlight.h"
 #include "AppHighlightRangeData.h"
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
@@ -40,6 +41,7 @@
 #include "RenderedDocumentMarker.h"
 #include "SimpleRange.h"
 #include "StaticRange.h"
+#include "TextIndicator.h"
 #include "TextIterator.h"
 
 namespace WebCore {
@@ -260,8 +262,13 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     
     strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
     
-    if (scroll == ScrollToHighlight::Yes)
+    if (scroll == ScrollToHighlight::Yes) {
+        auto textIndicator = TextIndicator::createWithRange(range.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
+        if (textIndicator)
+            m_document->page()->chrome().client().setTextIndicator(textIndicator->data());
+        
         TemporarySelectionChange selectionChange(*strongDocument, { range.value() }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::SmoothScroll, TemporarySelectionOption::OverrideSmoothScrollFeatureEnablment });
+    }
 
     return true;
 }

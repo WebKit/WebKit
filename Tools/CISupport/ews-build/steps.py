@@ -111,13 +111,13 @@ class CheckOutSource(git.Git):
 
     def __init__(self, repourl='https://github.com/WebKit/WebKit.git', **kwargs):
         super(CheckOutSource, self).__init__(repourl=repourl,
-                                                retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
-                                                timeout=2 * 60 * 60,
-                                                alwaysUseLatest=True,
-                                                logEnviron=False,
-                                                method='clean',
-                                                progress=True,
-                                                **kwargs)
+                                             retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
+                                             timeout=2 * 60 * 60,
+                                             alwaysUseLatest=True,
+                                             logEnviron=False,
+                                             method='clean',
+                                             progress=True,
+                                             **kwargs)
 
     def getResultSummary(self):
         if self.results == FAILURE:
@@ -140,7 +140,7 @@ class CleanUpGitIndexLock(shell.ShellCommand):
     def start(self):
         platform = self.getProperty('platform', '*')
         if platform == 'wincairo':
-            self.command = ['del', '.git\index.lock']
+            self.command = ['del', r'.git\index.lock']
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
@@ -253,6 +253,7 @@ class ShowIdentifier(shell.ShellCommand):
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
+
 
 class CleanWorkingDirectory(shell.ShellCommand):
     name = 'clean-working-directory'
@@ -368,7 +369,7 @@ class AnalyzePatch(buildstep.BuildStep):
         log.addStdout(message)
 
     def getResultSummary(self):
-        if self.results == FAILURE:
+        if self.results in [FAILURE, SKIPPED]:
             return {'step': 'Patch doesn\'t have relevant changes'}
         if self.results == SUCCESS:
             return {'step': 'Patch contains relevant changes'}
@@ -478,9 +479,13 @@ class CheckPatchRelevance(AnalyzePatch):
 
 class FindModifiedLayoutTests(AnalyzePatch):
     name = 'find-modified-layout-tests'
-    RE_LAYOUT_TEST = b'^(\+\+\+).*(LayoutTests.*\.html)'
+    RE_LAYOUT_TEST = br'^(\+\+\+).*(LayoutTests.*\.html)'
     DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
     SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
+
+    def __init__(self, skipBuildIfNoResult=True):
+        self.skipBuildIfNoResult = skipBuildIfNoResult
+        buildstep.BuildStep.__init__(self)
 
     def find_test_names_from_patch(self, patch):
         tests = []
@@ -510,9 +515,10 @@ class FindModifiedLayoutTests(AnalyzePatch):
             return None
 
         self._addToLog('stdio', 'This patch does not modify any layout tests')
-        self.finished(FAILURE)
-        self.build.results = SKIPPED
-        self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+        self.finished(SKIPPED)
+        if self.skipBuildIfNoResult:
+            self.build.results = SKIPPED
+            self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
         return None
 
 
@@ -715,7 +721,7 @@ class BugzillaMixin(object):
         try:
             passwords = json.load(open('passwords.json'))
             return passwords.get('BUGZILLA_API_KEY', '')
-        except:
+        except Exception as e:
             print('Error in reading Bugzilla api key')
             return ''
 
@@ -1491,7 +1497,7 @@ class BuildLogLineObserver(logobserver.LogLineObserver, object):
         self.searchString = searchString
         self.includeRelatedLines = includeRelatedLines
         self.error_context_buffer = []
-        self.whitespace_re = re.compile('^[\s]*$')
+        self.whitespace_re = re.compile(r'^[\s]*$')
         super(BuildLogLineObserver, self).__init__()
 
     def outLineReceived(self, line):
@@ -1836,15 +1842,15 @@ class RunJavaScriptCoreTests(shell.Test):
             self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
             return
 
-        if jsc_results.get('allMasmTestsPassed') == False:
+        if jsc_results.get('allMasmTestsPassed') is False:
             self.binaryFailures.append('testmasm')
-        if jsc_results.get('allAirTestsPassed') == False:
+        if jsc_results.get('allAirTestsPassed') is False:
             self.binaryFailures.append('testair')
-        if jsc_results.get('allB3TestsPassed') == False:
+        if jsc_results.get('allB3TestsPassed') is False:
             self.binaryFailures.append('testb3')
-        if jsc_results.get('allDFGTestsPassed') == False:
+        if jsc_results.get('allDFGTestsPassed') is False:
             self.binaryFailures.append('testdfg')
-        if jsc_results.get('allApiTestsPassed') == False:
+        if jsc_results.get('allApiTestsPassed') is False:
             self.binaryFailures.append('testapi')
 
         self.stressTestFailures = jsc_results.get('stressTestFailures')
@@ -2025,12 +2031,11 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 
-
 class CleanBuild(shell.Compile):
     name = 'delete-WebKitBuild-directory'
     description = ['deleting WebKitBuild directory']
     descriptionDone = ['Deleted WebKitBuild directory']
-    command = ['python', 'Tools/CISupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]
+    command = ['python3', 'Tools/CISupport/clean-build', WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s')]
 
 
 class KillOldProcesses(shell.Compile):
@@ -2058,7 +2063,7 @@ class TriggerCrashLogSubmission(shell.Compile):
     name = 'trigger-crash-log-submission'
     description = ['triggering crash log submission']
     descriptionDone = ['Triggered crash log submission']
-    command = ['python', 'Tools/CISupport/trigger-crash-log-submission']
+    command = ['python3', 'Tools/CISupport/trigger-crash-log-submission']
 
     def __init__(self, **kwargs):
         super(TriggerCrashLogSubmission, self).__init__(timeout=60, logEnviron=False, **kwargs)
@@ -2073,7 +2078,7 @@ class WaitForCrashCollection(shell.Compile):
     name = 'wait-for-crash-collection'
     description = ['waiting-for-crash-collection-to-quiesce']
     descriptionDone = ['Crash collection has quiesced']
-    command = ['python', 'Tools/CISupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
+    command = ['python3', 'Tools/CISupport/wait-for-crash-collection', '--timeout', str(5 * 60)]
 
     def __init__(self, **kwargs):
         super(WaitForCrashCollection, self).__init__(timeout=6 * 60, logEnviron=False, **kwargs)
@@ -2288,12 +2293,15 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     name = 'run-layout-tests-in-stress-mode'
     suffix = 'stress-mode'
     EXIT_AFTER_FAILURES = '10'
-    NUM_ITERATIONS = 100
+
+    def __init__(self, num_iterations=100):
+        self.num_iterations = num_iterations
+        super(RunWebKitTestsInStressMode, self).__init__()
 
     def setLayoutTestCommand(self):
         RunWebKitTests.setLayoutTestCommand(self)
 
-        self.setCommand(self.command + ['--iterations', self.NUM_ITERATIONS])
+        self.setCommand(self.command + ['--iterations', self.num_iterations])
         modified_tests = self.getProperty('modified_tests')
         if modified_tests:
             self.setCommand(self.command + modified_tests)
@@ -2313,6 +2321,9 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
                 ExtractTestResults(identifier=self.suffix),
             ])
         return rc
+
+    def doStepIf(self, step):
+        return self.getProperty('modified_tests', False)
 
 
 class RunWebKitTestsInStressGuardmallocMode(RunWebKitTestsInStressMode):
@@ -2543,7 +2554,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
             print('Error in sending email for new layout test failures: {}'.format(e))
 
     def _report_flaky_tests(self, flaky_tests):
-        #TODO: implement this
+        # TODO: implement this
         pass
 
     def start(self):
@@ -2627,7 +2638,7 @@ class RunWebKit1Tests(RunWebKitTests):
 
 
 class ArchiveBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/CISupport/built-product-archive',
+    command = ['python3', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'archive']
     name = 'archive-built-product'
     description = ['archiving built product']
@@ -2700,8 +2711,8 @@ class TransferToS3(master.MasterShellCommand):
 
 class DownloadBuiltProduct(shell.ShellCommand):
     command = ['python', 'Tools/CISupport/download-built-product',
-        WithProperties('--%(configuration)s'),
-        WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
+               WithProperties('--%(configuration)s'),
+               WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['Downloaded built product']
@@ -2747,7 +2758,7 @@ class DownloadBuiltProductFromMaster(transfer.FileDownload):
 
 
 class ExtractBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/CISupport/built-product-archive',
+    command = ['python3', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'extract']
     name = 'extract-built-product'
     description = ['extracting built product']
@@ -2874,8 +2885,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
                 return set([])
             # TODO: Analyze Time-out, Crash and Failure independently
             return set([failure.get('name') for failure in result.get('Timedout', [])] +
-                [failure.get('name') for failure in result.get('Crashed', [])] +
-                [failure.get('name') for failure in result.get('Failed', [])])
+                       [failure.get('name') for failure in result.get('Crashed', [])] +
+                       [failure.get('name') for failure in result.get('Failed', [])])
 
         first_run_failures = getAPITestFailures(first_run_results)
         second_run_failures = getAPITestFailures(second_run_results)
@@ -2987,6 +2998,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
+
 
 class ArchiveTestResults(shell.ShellCommand):
     command = ['python', 'Tools/CISupport/test-result-archive',
@@ -3300,7 +3312,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
     name = 'push-commit-to-webkit-repo'
     descriptionDone = ['Pushed commit to WebKit repository']
     command = ['git', 'svn', 'dcommit', '--rmdir']
-    commit_success_regexp = '^Committed r(?P<svn_revision>\d+)$'
+    commit_success_regexp = r'^Committed r(?P<svn_revision>\d+)$'
     haltOnFailure = False
     MAX_RETRY = 2
 

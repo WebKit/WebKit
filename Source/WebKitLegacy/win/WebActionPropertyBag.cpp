@@ -113,7 +113,7 @@ HRESULT WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorL
     if (isEqual(pszPropName, WebActionElementKey)) {
         if (auto mouseEvent = m_action.mouseEventData()) {
             V_VT(pVar) = VT_UNKNOWN;
-            constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::AllowChildFrameContent };
+            constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
             V_UNKNOWN(pVar) = WebElementPropertyBag::createInstance(m_frame->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation, hitType));
             return S_OK;
         }

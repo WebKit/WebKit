@@ -45,7 +45,7 @@ IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, s
     m_isIsoSubspace = true;
     initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
 
-    auto locker = holdLock(m_space.directoryLock());
+    Locker locker { m_space.directoryLock() };
     m_directory.setSubspace(this);
     m_space.addBlockDirectory(locker, &m_directory);
     m_alignedMemoryAllocator->registerDirectory(heap, &m_directory);

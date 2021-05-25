@@ -1,3 +1,137 @@
+2021-05-15  Said Abou-Hallawa  <said@apple.com>
+
+        Implement CanvasRenderingContext2D.createConicGradient
+        https://bugs.webkit.org/show_bug.cgi?id=225539
+
+        Reviewed by Sam Weinig.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.prototype.async swizzle):
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._classNameForAction):
+
+2021-05-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: rename "XHR" to "XHR/Fetch"
+        https://bugs.webkit.org/show_bug.cgi?id=224900
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.addScopeBarItem): Added.
+        (WI.NetworkTableContentView.displayNameForResource):
+        (WI.NetworkTableContentView.shortDisplayNameForResourceType): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2021-05-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Layout panel "Grid Overlays" main checkbox has dead space (no interaction) between checkbox and label text
+        https://bugs.webkit.org/show_bug.cgi?id=225433
+        <rdar://problem/77590883>
+
+        Reviewed by Devin Rousso.
+
+        Make the empty space between the checkbox and the label text clickable in:
+        - Everywhere in Settings tab
+        - Layout panel, Page Overlay Options
+        - Grid Overlay header
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/CSSGridSection.css:
+        (.css-grid-section .node-display-name):
+        (.css-grid-section .toggle-all):
+        (.css-grid-section :is(.setting-editor, .node-overlay-list-item-container, .heading) input[type="checkbox"]):
+        (.css-grid-section .setting-editor > input[type="checkbox"]):
+        (.css-grid-section .node-display-name,): Deleted.
+        Make all checkbox labels in the Grid section align vertically.
+
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.initialLayout):
+        * UserInterface/Views/SettingEditor.css: Copied from Source/WebInspectorUI/UserInterface/Views/CSSGridSection.css.
+        (.setting-editor input):
+        (.setting-editor > input[type="checkbox"]):
+        (.setting-editor > label):
+
+        * UserInterface/Views/SettingEditor.js:
+        (WI.SettingEditor):
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor:first-child > *):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="checkbox"]):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor select):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="number"]):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="text"]):
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor:first-child > *): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor select): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="number"]): Deleted.
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .editor input[type="text"]): Deleted.
+        Rename ".editor" to ".setting-editor" so it matches SettingEditor.css.
+
+2021-05-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add support for panning/zooming on images
+        https://bugs.webkit.org/show_bug.cgi?id=224655
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/GestureController.js: Added.
+        (WI.GestureController):
+        (WI.GestureController.prototype.get scale):
+        (WI.GestureController.prototype.set scale):
+        (WI.GestureController.prototype.get translate):
+        (WI.GestureController.prototype.set translate):
+        (WI.GestureController.prototype.reset):
+        (WI.GestureController.prototype._startScaleInteraction):
+        (WI.GestureController.prototype._updateScaleInteraction):
+        (WI.GestureController.prototype._endScaleInteraction):
+        (WI.GestureController.prototype._handleWheel):
+        (WI.GestureController.prototype._handleGestureStart):
+        (WI.GestureController.prototype._handleGestureChange):
+        (WI.GestureController.prototype._handleGestureEnd):
+        (WI.GestureController.prototype._handleMouseDown):
+        (WI.GestureController.prototype._handleMouseMove):
+        (WI.GestureController.prototype._handleMouseUp):
+        Add a general controller class that takes a `target` (and optionally a `container`) and adds
+        event listeners to handle various gestures:
+         - scale (both via trackpad and mouse wheel)
+         - transform (mouse click and drag)
+
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView):
+        (WI.ImageResourceContentView.prototype.get navigationItems):
+        (WI.ImageResourceContentView.prototype.contentAvailable):
+        (WI.ImageResourceContentView.prototype.gestureControllerDidScale): Added.
+        (WI.ImageResourceContentView.prototype.gestureControllerDidTranslate): Added.
+        (WI.ImageResourceContentView.prototype._updateResetGestureButtonNavigationItemLabel): Added.
+        (WI.ImageResourceContentView.prototype._handleResetGestureButtonNavitationItemClicked): Added.
+        (WI.ImageResourceContentView.prototype._handleZoomOutGestureButtonNavitationItemClicked): Added.
+        (WI.ImageResourceContentView.prototype._handleZoomInGestureButtonNavitationItemClicked): Added.
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image > .img-container):
+        (.navigation-bar > .item.image-gesture-reset): Added.
+        Add a `WI.GestureController` and manipulate the `scale` and `transform` of the `<img>`.
+        Add navigation items that show the current scale (clicking it will reset the gesture), zoom
+        in, and zoom out.
+
+        * UserInterface/Views/LocalResourceOverrideLabelView.css:
+        (.local-resource-override-label-view):
+        Add a `z-index` so that zoomed images don't appear on top.
+
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView.prototype.get contentViewConstructorOptions):
+        Don't create the `WI.GestureController` in collection views.
+
+        * UserInterface/Main.html:
+        * UserInterface/Images/ZoomIn.svg: Added.
+        * UserInterface/Images/ZoomOut.svg: Added.
+        * Localizations/en.lproj/localizedStrings.js:
+
 2021-05-07  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Breakpoint action add/remove buttons are not vertically aligned with action dropdown

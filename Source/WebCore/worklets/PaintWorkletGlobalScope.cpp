@@ -85,7 +85,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
         return Exception { TypeError, "The first argument must not be the empty string" };
 
     {
-        auto locker = holdLock(paintDefinitionLock());
+        Locker locker { paintDefinitionLock() };
 
         if (paintDefinitionMap().contains(name))
             return Exception { InvalidModificationError, "This name has already been registered" };

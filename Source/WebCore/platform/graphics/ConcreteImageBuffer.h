@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ImageBuffer.h"
-#include "ImageData.h"
+#include "PixelBuffer.h"
 
 namespace WebCore {
 
@@ -200,6 +200,7 @@ protected:
         if (auto* backend = ensureBackendCreated()) {
             flushDrawingContext();
             backend->transformColorSpace(srcColorSpace, destColorSpace);
+            m_parameters.colorSpace = destColorSpace;
         }
     }
 
@@ -221,29 +222,20 @@ protected:
         return { };
     }
 
-    Vector<uint8_t> toBGRAData() const override
+    Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const override
     {
         if (auto* backend = ensureBackendCreated()) {
             const_cast<ConcreteImageBuffer&>(*this).flushContext();
-            return backend->toBGRAData();
+            return backend->getPixelBuffer(outputFormat, srcRect);
         }
-        return { };
+        return WTF::nullopt;
     }
 
-    RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const override
-    {
-        if (auto* backend = ensureBackendCreated()) {
-            const_cast<ConcreteImageBuffer&>(*this).flushContext();
-            return backend->getImageData(outputFormat, srcRect);
-        }
-        return nullptr;
-    }
-
-    void putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override
+    void putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override
     {
         if (auto* backend = ensureBackendCreated()) {
             flushContext();
-            backend->putImageData(inputFormat, imageData, srcRect, destPoint, destFormat);
+            backend->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,11 @@
 
 #include <functional>
 #include <sqlite3.h>
-#include <wtf/Lock.h>
+#include <wtf/CheckedLock.h>
+#include <wtf/Expected.h>
 #include <wtf/Threading.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,7 +48,7 @@ class DatabaseAuthorizer;
 class SQLiteStatement;
 class SQLiteTransaction;
 
-class SQLiteDatabase {
+class SQLiteDatabase : public CanMakeWeakPtr<SQLiteDatabase> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);
     friend class SQLiteTransaction;
@@ -58,10 +61,8 @@ public:
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 
-    WEBCORE_EXPORT void updateLastChangesCount();
-
-    WEBCORE_EXPORT bool executeCommand(const String&);
-    bool returnsAtLeastOneResult(const String&);
+    WEBCORE_EXPORT bool executeCommandSlow(const String&);
+    WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     
     WEBCORE_EXPORT bool tableExists(const String&);
     WEBCORE_EXPORT void clearAllTables();
@@ -70,10 +71,17 @@ public:
     
     bool transactionInProgress() const { return m_transactionInProgress; }
 
+    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatementSlow(const String& query);
+    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatement(ASCIILiteral query);
+    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatementSlow(const String& query);
+    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatement(ASCIILiteral query);
+
     // Aborts the current database operation. This is thread safe.
     WEBCORE_EXPORT void interrupt();
 
     int64_t lastInsertRowID();
+
+    // This function returns the number of rows modified, inserted or deleted by the most recently completed INSERT, UPDATE or DELETE statement.
     WEBCORE_EXPORT int lastChanges();
 
     void setBusyTimeout(int ms);
@@ -148,10 +156,13 @@ public:
 
     WEBCORE_EXPORT void releaseMemory();
 
+    void incrementStatementCount();
+    void decrementStatementCount();
+
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 
-    void enableAuthorizer(bool enable);
+    void enableAuthorizer(bool enable) WTF_REQUIRES_LOCK(m_authorizerLock);
     void useWALJournalMode();
 
     int pageSize();
@@ -164,12 +175,13 @@ private:
     bool m_transactionInProgress { false };
 #if ASSERT_ENABLED
     bool m_sharable { false };
+    std::atomic<unsigned> m_statementCount { 0 };
 #endif
 
     bool m_useWAL { false };
 
-    Lock m_authorizerLock;
-    RefPtr<DatabaseAuthorizer> m_authorizer;
+    CheckedLock m_authorizerLock;
+    RefPtr<DatabaseAuthorizer> m_authorizer WTF_GUARDED_BY_LOCK(m_authorizerLock);
 
     Lock m_lockingMutex;
     RefPtr<Thread> m_openingThread { nullptr };
@@ -178,8 +190,21 @@ private:
 
     int m_openError { SQLITE_ERROR };
     CString m_openErrorMessage;
-
-    int m_lastChangesCount { 0 };
 };
+
+inline void SQLiteDatabase::incrementStatementCount()
+{
+#if ASSERT_ENABLED
+    ++m_statementCount;
+#endif
+}
+
+inline void SQLiteDatabase::decrementStatementCount()
+{
+#if ASSERT_ENABLED
+    ASSERT(m_statementCount);
+    --m_statementCount;
+#endif
+}
 
 } // namespace WebCore

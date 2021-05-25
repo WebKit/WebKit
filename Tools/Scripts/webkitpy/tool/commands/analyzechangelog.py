@@ -54,7 +54,7 @@ class AnalyzeChangeLog(Command):
 
     @staticmethod
     def _enumerate_changelogs(filesystem, dirname, changelog_count):
-        changelogs = [filesystem.join(dirname, filename) for filename in filesystem.listdir(dirname) if re.match('^ChangeLog(-(\d{4}-\d{2}-\d{2}))?$', filename)]
+        changelogs = [filesystem.join(dirname, filename) for filename in filesystem.listdir(dirname) if re.match(r'^ChangeLog(-(\d{4}-\d{2}-\d{2}))?$', filename)]
         # Make sure ChangeLog shows up before ChangeLog-2011-01-01
         changelogs = sorted(changelogs, key=lambda filename: filename + 'X', reverse=True)
         return changelogs[:changelog_count]

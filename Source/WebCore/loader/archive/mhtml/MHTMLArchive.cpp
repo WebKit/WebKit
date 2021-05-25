@@ -167,9 +167,7 @@ Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 
     for (auto& resource : resources) {
         stringBuilder.clear();
-        stringBuilder.append(endOfResourceBoundary);
-        stringBuilder.append("Content-Type: ");
-        stringBuilder.append(resource.mimeType);
+        stringBuilder.append(endOfResourceBoundary, "Content-Type: ", resource.mimeType);
 
         const char* contentEncoding = nullptr;
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(resource.mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(resource.mimeType))
@@ -177,27 +175,22 @@ Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         else
             contentEncoding = base64;
 
-        stringBuilder.append("\r\nContent-Transfer-Encoding: ");
-        stringBuilder.append(contentEncoding);
-        stringBuilder.append("\r\nContent-Location: ");
-        stringBuilder.append(resource.url.string());
-        stringBuilder.append("\r\n\r\n");
+        stringBuilder.append("\r\nContent-Transfer-Encoding: ", contentEncoding, "\r\nContent-Location: ", resource.url.string(), "\r\n\r\n");
 
         asciiString = stringBuilder.toString().utf8();
         mhtmlData->append(asciiString.data(), asciiString.length());
 
         // FIXME: ideally we would encode the content as a stream without having to fetch it all.
-        const char* data = resource.data->data();
+        auto* data = resource.data->dataAsUInt8Ptr();
         size_t dataLength = resource.data->size();
-        Vector<char> encodedData;
         if (!strcmp(contentEncoding, quotedPrintable)) {
-            quotedPrintableEncode(data, dataLength, encodedData);
+            auto encodedData = quotedPrintableEncode(data, dataLength);
             mhtmlData->append(encodedData.data(), encodedData.size());
             mhtmlData->append("\r\n", 2);
         } else {
             ASSERT(!strcmp(contentEncoding, base64));
             // We are not specifying insertLFs = true below as it would cut the lines with LFs and MHTML requires CRLFs.
-            base64Encode(data, dataLength, encodedData);
+            auto encodedData = base64EncodeToVector(data, dataLength);
             const size_t maximumLineLength = 76;
             size_t index = 0;
             size_t encodedDataLength = encodedData.size();

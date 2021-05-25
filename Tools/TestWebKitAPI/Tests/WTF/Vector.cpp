@@ -1444,5 +1444,19 @@ TEST(WTF_Vector, HashKeyString)
 
     EXPECT_TRUE(hash.isEmpty());
 }
+
+TEST(WTF_Vector, ConstructorFromRawPointerAndSize)
+{
+    constexpr size_t inputSize = 5;
+    uint8_t input[inputSize] = { 1, 2, 3, 4, 5 };
+
+    Vector<uint8_t> vector { input, inputSize };
+    ASSERT_EQ(vector.size(), inputSize);
+    EXPECT_EQ(vector[0], 1);
+    EXPECT_EQ(vector[1], 2);
+    EXPECT_EQ(vector[2], 3);
+    EXPECT_EQ(vector[3], 4);
+    EXPECT_EQ(vector[4], 5);
+}
     
 } // namespace TestWebKitAPI

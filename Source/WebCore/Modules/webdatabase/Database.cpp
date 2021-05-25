@@ -53,6 +53,7 @@
 #include "SecurityOrigin.h"
 #include "VoidCallback.h"
 #include "WindowEventLoop.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -113,18 +114,15 @@ static String formatErrorMessage(const char* message, int sqliteErrorCode, const
 
 static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, const String& value)
 {
-    SQLiteStatement statement(db, query);
-    int result = statement.prepare();
-
-    if (result != SQLITE_OK) {
+    auto statement = db.prepareStatementSlow(query);
+    if (!statement) {
         LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.ascii().data());
         return false;
     }
 
-    statement.bindText(1, value);
+    statement->bindText(1, value);
 
-    result = statement.step();
-    if (result != SQLITE_DONE) {
+    if (statement->step() != SQLITE_DONE) {
         LOG_ERROR("Failed to step statement to set value in database (%s)", query.ascii().data());
         return false;
     }
@@ -134,17 +132,15 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, cons
 
 static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& query, String& resultString)
 {
-    SQLiteStatement statement(db, query);
-    int result = statement.prepare();
-
-    if (result != SQLITE_OK) {
-        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", result, query.ascii().data());
+    auto statement = db.prepareStatementSlow(query);
+    if (!statement) {
+        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", statement.error(), query.ascii().data());
         return false;
     }
 
-    result = statement.step();
+    int result = statement->step();
     if (result == SQLITE_ROW) {
-        resultString = statement.getColumnText(0);
+        resultString = statement->columnText(0);
         return true;
     }
     if (result == SQLITE_DONE) {
@@ -157,16 +153,15 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& que
 }
 
 // FIXME: move all guid-related functions to a DatabaseVersionTracker class.
-static Lock guidMutex;
+static CheckedLock guidLock;
 
-static HashMap<DatabaseGUID, String>& guidToVersionMap()
+static HashMap<DatabaseGUID, String>& guidToVersionMap() WTF_REQUIRES_LOCK(guidLock)
 {
     static NeverDestroyed<HashMap<DatabaseGUID, String>> map;
     return map;
 }
 
-// NOTE: Caller must lock guidMutex().
-static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVersion)
+static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVersion) WTF_REQUIRES_LOCK(guidLock)
 {
     // Note: It is not safe to put an empty string into the guidToVersionMap() map.
     // That's because the map is cross-thread, but empty strings are per-thread.
@@ -178,13 +173,13 @@ static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVers
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-static HashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap()
+static HashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap() WTF_REQUIRES_LOCK(guidLock)
 {
     static NeverDestroyed<HashMap<DatabaseGUID, HashSet<Database*>>> map;
     return map;
 }
 
-static inline DatabaseGUID guidForOriginAndName(const String& origin, const String& name)
+static inline DatabaseGUID guidForOriginAndName(const String& origin, const String& name) WTF_REQUIRES_LOCK(guidLock)
 {
     static NeverDestroyed<HashMap<String, DatabaseGUID>> map;
     return map.get().ensure(makeString(origin, '/', name), [] {
@@ -206,7 +201,7 @@ Database::Database(DatabaseContext& context, const String& name, const String& e
     , m_databaseAuthorizer(DatabaseAuthorizer::create(unqualifiedInfoTableName))
 {
     {
-        auto locker = holdLock(guidMutex);
+        Locker locker { guidLock };
 
         m_guid = guidForOriginAndName(securityOrigin().securityOrigin()->toString(), name);
         guidToDatabaseMap().ensure(m_guid, [] {
@@ -287,7 +282,7 @@ void Database::performClose()
     ASSERT(databaseThread().getThread() == &Thread::current());
 
     {
-        LockHolder locker(m_transactionInProgressMutex);
+        Locker locker { m_transactionInProgressLock };
 
         // Clean up transactions that have not been scheduled yet:
         // Transaction phase 1 cleanup. See comment on "What happens if a
@@ -338,7 +333,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 #if PLATFORM(IOS_FAMILY)
     {
         // Make sure we wait till the background removal of the empty database files finished before trying to open any database.
-        auto locker = holdLock(DatabaseTracker::openDatabaseMutex());
+        Locker locker { DatabaseTracker::openDatabaseMutex() };
     }
 #endif
 
@@ -353,7 +348,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 
     String currentVersion;
     {
-        auto locker = holdLock(guidMutex);
+        Locker locker { guidLock };
 
         auto entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
@@ -375,7 +370,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
             if (!m_sqliteDatabase.tableExists(tableName)) {
                 m_new = true;
 
-                if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+                if (!m_sqliteDatabase.executeCommandSlow("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
                     String message = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
@@ -442,7 +437,7 @@ void Database::closeDatabase()
     DatabaseTracker::singleton().removeOpenDatabase(*this);
 
     {
-        auto locker = holdLock(guidMutex);
+        Locker locker { guidLock };
 
         auto it = guidToDatabaseMap().find(m_guid);
         ASSERT(it != guidToDatabaseMap().end());
@@ -500,14 +495,14 @@ void Database::setExpectedVersion(const String& version)
 
 String Database::getCachedVersion() const
 {
-    auto locker = holdLock(guidMutex);
+    Locker locker { guidLock };
 
     return guidToVersionMap().get(m_guid).isolatedCopy();
 }
 
 void Database::setCachedVersion(const String& actualVersion)
 {
-    auto locker = holdLock(guidMutex);
+    Locker locker { guidLock };
 
     updateGUIDVersionMap(m_guid, actualVersion);
 }
@@ -523,7 +518,7 @@ bool Database::getActualVersionForTransaction(String &actualVersion)
 
 void Database::scheduleTransaction()
 {
-    ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
+    ASSERT(m_transactionInProgressLock.isHeld());
 
     if (!m_isTransactionQueueEnabled || m_transactionQueue.isEmpty()) {
         m_transactionInProgress = false;
@@ -549,14 +544,14 @@ void Database::scheduleTransactionStep(SQLTransaction& transaction)
 
 void Database::inProgressTransactionCompleted()
 {
-    LockHolder locker(m_transactionInProgressMutex);
+    Locker locker { m_transactionInProgressLock };
     m_transactionInProgress = false;
     scheduleTransaction();
 }
 
 bool Database::hasPendingTransaction()
 {
-    LockHolder locker(m_transactionInProgressMutex);
+    Locker locker { m_transactionInProgressLock };
     return m_transactionInProgress || !m_transactionQueue.isEmpty();
 }
 
@@ -686,7 +681,7 @@ void Database::resetAuthorizer()
 void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
 {
     ASSERT(isMainThread());
-    LockHolder locker(m_transactionInProgressMutex);
+    Locker locker { m_transactionInProgressLock };
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
             m_document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = makeRef(*errorCallback)]() {
@@ -714,8 +709,8 @@ Vector<String> Database::performGetTableNames()
 {
     disableAuthorizer();
 
-    SQLiteStatement statement(sqliteDatabase(), "SELECT name FROM sqlite_master WHERE type='table';");
-    if (statement.prepare() != SQLITE_OK) {
+    auto statement = sqliteDatabase().prepareStatement("SELECT name FROM sqlite_master WHERE type='table';"_s);
+    if (!statement) {
         LOG_ERROR("Unable to retrieve list of tables for database %s", databaseDebugName().ascii().data());
         enableAuthorizer();
         return Vector<String>();
@@ -723,8 +718,8 @@ Vector<String> Database::performGetTableNames()
 
     Vector<String> tableNames;
     int result;
-    while ((result = statement.step()) == SQLITE_ROW) {
-        String name = statement.getColumnText(0);
+    while ((result = statement->step()) == SQLITE_ROW) {
+        String name = statement->columnText(0);
         if (name != unqualifiedInfoTableName)
             tableNames.append(name);
     }

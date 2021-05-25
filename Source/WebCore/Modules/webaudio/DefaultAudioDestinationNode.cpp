@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2020-2021, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 
-DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& context, Optional<float> sampleRate)
+DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, Optional<float> sampleRate)
     : AudioDestinationNode(context, sampleRate.valueOr(AudioDestination::hardwareSampleRate()))
 {
     ASSERT(BaseAudioContext::isSupportedSampleRate(AudioDestination::hardwareSampleRate()));
@@ -56,6 +57,16 @@ DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& conte
 DefaultAudioDestinationNode::~DefaultAudioDestinationNode()
 {
     uninitialize();
+}
+
+AudioContext& DefaultAudioDestinationNode::context()
+{
+    return downcast<AudioContext>(AudioDestinationNode::context());
+}
+
+const AudioContext& DefaultAudioDestinationNode::context() const
+{
+    return downcast<AudioContext>(AudioDestinationNode::context());
 }
 
 void DefaultAudioDestinationNode::initialize()
@@ -95,9 +106,9 @@ void DefaultAudioDestinationNode::clearDestination()
 
 void DefaultAudioDestinationNode::createDestination()
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", m_sampleRate, ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
+    ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", sampleRate(), ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
     ASSERT(!m_destination);
-    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), m_sampleRate);
+    m_destination = platformStrategies()->mediaStrategy().createAudioDestination(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), sampleRate());
 }
 
 void DefaultAudioDestinationNode::recreateDestination()
@@ -226,14 +237,45 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
     return { };
 }
 
-bool DefaultAudioDestinationNode::isPlaying()
-{
-    return m_destination && m_destination->isPlaying();
-}
-
 unsigned DefaultAudioDestinationNode::framesPerBuffer() const
 {
-    return m_destination ? m_destination->framesPerBuffer() : 0.;
+    return m_destination ? m_destination->framesPerBuffer() : 0;
+}
+
+void DefaultAudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
+{
+    renderQuantum(destinationBus, numberOfFrames, outputPosition);
+
+    setIsSilent(destinationBus->isSilent());
+
+    // The reason we are handling mute after the call to setIsSilent() is because the muted state does
+    // not affect the audio destination node's effective playing state.
+    if (m_muted)
+        destinationBus->zero();
+}
+
+void DefaultAudioDestinationNode::setIsSilent(bool isSilent)
+{
+    if (m_isSilent == isSilent)
+        return;
+
+    m_isSilent = isSilent;
+    updateIsEffectivelyPlayingAudio();
+}
+
+void DefaultAudioDestinationNode::isPlayingDidChange()
+{
+    updateIsEffectivelyPlayingAudio();
+}
+
+void DefaultAudioDestinationNode::updateIsEffectivelyPlayingAudio()
+{
+    bool isEffectivelyPlayingAudio = m_destination && m_destination->isPlaying() && !m_isSilent;
+    if (m_isEffectivelyPlayingAudio == isEffectivelyPlayingAudio)
+        return;
+
+    m_isEffectivelyPlayingAudio = isEffectivelyPlayingAudio;
+    context().isPlayingAudioDidChange();
 }
 
 } // namespace WebCore

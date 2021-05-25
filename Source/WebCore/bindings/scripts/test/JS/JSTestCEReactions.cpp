@@ -184,16 +184,6 @@ void JSTestCEReactions::destroy(JSC::JSCell* cell)
     thisObject->JSTestCEReactions::~JSTestCEReactions();
 }
 
-template<> inline JSTestCEReactions* IDLAttribute<JSTestCEReactions>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)
-{
-    return jsDynamicCast<JSTestCEReactions*>(JSC::getVM(&lexicalGlobalObject), JSValue::decode(thisValue));
-}
-
-template<> inline JSTestCEReactions* IDLOperation<JSTestCEReactions>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
-{
-    return jsDynamicCast<JSTestCEReactions*>(JSC::getVM(&lexicalGlobalObject), callFrame.thisValue());
-}
-
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);

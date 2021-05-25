@@ -116,6 +116,9 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     m_remoteDebuggable->setRemoteDebuggingAllowed(true);
     m_remoteDebuggable->init();
 #endif
+
+    if (data.lastNavigationWasAppBound)
+        setLastNavigationWasAppBound(data.lastNavigationWasAppBound == LastNavigationWasAppBound::Yes);
 }
 
 ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
@@ -128,6 +131,11 @@ void ServiceWorkerThreadProxy::setLastNavigationWasAppBound(bool wasAppBound)
 {
     if (m_document->loader())
         m_document->loader()->setLastNavigationWasAppBound(wasAppBound);
+}
+
+bool ServiceWorkerThreadProxy::lastNavigationWasAppBound()
+{
+    return m_document->loader() ? m_document->loader()->lastNavigationWasAppBound() : false;
 }
 
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)

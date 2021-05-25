@@ -50,7 +50,7 @@ FileStream::~FileStream()
 long long FileStream::getSize(const String& path, Optional<WallTime> expectedModificationTime)
 {
     // Check the modification time for the possible file change.
-    auto modificationTime = FileSystem::getFileModificationTime(path);
+    auto modificationTime = FileSystem::fileModificationTime(path);
     if (!modificationTime)
         return -1;
     if (expectedModificationTime) {
@@ -59,11 +59,11 @@ long long FileStream::getSize(const String& path, Optional<WallTime> expectedMod
     }
 
     // Now get the file size.
-    long long length;
-    if (!FileSystem::getFileSize(path, length))
+    auto length = FileSystem::fileSize(path);
+    if (!length)
         return -1;
 
-    return length;
+    return *length;
 }
 
 bool FileStream::openForRead(const String& path, long long offset, long long length)

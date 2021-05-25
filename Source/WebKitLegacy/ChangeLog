@@ -1,3 +1,261 @@
+2021-05-22  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::InProcessIDBServer):
+        (InProcessIDBServer::deleteDatabase):
+        (InProcessIDBServer::openDatabase):
+        (InProcessIDBServer::abortTransaction):
+        (InProcessIDBServer::commitTransaction):
+        (InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        (InProcessIDBServer::createObjectStore):
+        (InProcessIDBServer::deleteObjectStore):
+        (InProcessIDBServer::renameObjectStore):
+        (InProcessIDBServer::clearObjectStore):
+        (InProcessIDBServer::createIndex):
+        (InProcessIDBServer::deleteIndex):
+        (InProcessIDBServer::renameIndex):
+        (InProcessIDBServer::putOrAdd):
+        (InProcessIDBServer::getRecord):
+        (InProcessIDBServer::getAllRecords):
+        (InProcessIDBServer::getCount):
+        (InProcessIDBServer::deleteRecord):
+        (InProcessIDBServer::openCursor):
+        (InProcessIDBServer::iterateCursor):
+        (InProcessIDBServer::establishTransaction):
+        (InProcessIDBServer::databaseConnectionPendingClose):
+        (InProcessIDBServer::databaseConnectionClosed):
+        (InProcessIDBServer::abortOpenAndUpgradeNeeded):
+        (InProcessIDBServer::didFireVersionChangeEvent):
+        (InProcessIDBServer::openDBRequestCancelled):
+        (InProcessIDBServer::getAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::closeAndDeleteDatabasesModifiedSince):
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::syncTimerFired):
+        (WebKit::StorageAreaSync::performSync):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::finishedImportingOriginIdentifiers):
+        (WebKit::StorageTracker::syncImportOriginIdentifiers):
+        (WebKit::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebKit::StorageTracker::setOriginDetails):
+        (WebKit::StorageTracker::syncSetOriginDetails):
+        (WebKit::StorageTracker::origins):
+        (WebKit::StorageTracker::deleteAllOrigins):
+        (WebKit::StorageTracker::syncDeleteAllOrigins):
+        (WebKit::StorageTracker::deleteOrigin):
+        (WebKit::StorageTracker::syncDeleteOrigin):
+        (WebKit::StorageTracker::canDeleteOrigin):
+        (WebKit::StorageTracker::cancelDeletingOrigin):
+        (WebKit::StorageTracker::diskUsageForOrigin):
+
+2021-05-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r277913.
+        https://bugs.webkit.org/show_bug.cgi?id=226140
+
+        Caused multiple layout-test crash on mac debug queues
+
+        Reverted changeset:
+
+        "Replace LockHolder with Locker in local variables"
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+        https://trac.webkit.org/changeset/277913
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Replace LockHolder with Locker in local variables
+        https://bugs.webkit.org/show_bug.cgi?id=226133
+
+        Reviewed by Darin Adler.
+
+        Replace LockHolder with Locker in local variables. It is shorter and it allows switching the lock
+        type more easily since the compiler with deduce the lock type T for Locker<T>.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::InProcessIDBServer):
+        (InProcessIDBServer::deleteDatabase):
+        (InProcessIDBServer::openDatabase):
+        (InProcessIDBServer::abortTransaction):
+        (InProcessIDBServer::commitTransaction):
+        (InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        (InProcessIDBServer::createObjectStore):
+        (InProcessIDBServer::deleteObjectStore):
+        (InProcessIDBServer::renameObjectStore):
+        (InProcessIDBServer::clearObjectStore):
+        (InProcessIDBServer::createIndex):
+        (InProcessIDBServer::deleteIndex):
+        (InProcessIDBServer::renameIndex):
+        (InProcessIDBServer::putOrAdd):
+        (InProcessIDBServer::getRecord):
+        (InProcessIDBServer::getAllRecords):
+        (InProcessIDBServer::getCount):
+        (InProcessIDBServer::deleteRecord):
+        (InProcessIDBServer::openCursor):
+        (InProcessIDBServer::iterateCursor):
+        (InProcessIDBServer::establishTransaction):
+        (InProcessIDBServer::databaseConnectionPendingClose):
+        (InProcessIDBServer::databaseConnectionClosed):
+        (InProcessIDBServer::abortOpenAndUpgradeNeeded):
+        (InProcessIDBServer::didFireVersionChangeEvent):
+        (InProcessIDBServer::openDBRequestCancelled):
+        (InProcessIDBServer::getAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::closeAndDeleteDatabasesModifiedSince):
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::syncTimerFired):
+        (WebKit::StorageAreaSync::performSync):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::finishedImportingOriginIdentifiers):
+        (WebKit::StorageTracker::syncImportOriginIdentifiers):
+        (WebKit::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebKit::StorageTracker::setOriginDetails):
+        (WebKit::StorageTracker::syncSetOriginDetails):
+        (WebKit::StorageTracker::origins):
+        (WebKit::StorageTracker::deleteAllOrigins):
+        (WebKit::StorageTracker::syncDeleteAllOrigins):
+        (WebKit::StorageTracker::deleteOrigin):
+        (WebKit::StorageTracker::syncDeleteOrigin):
+        (WebKit::StorageTracker::canDeleteOrigin):
+        (WebKit::StorageTracker::cancelDeletingOrigin):
+        (WebKit::StorageTracker::diskUsageForOrigin):
+
+2021-05-21  Chris Dumez  <cdumez@apple.com>
+
+        Adopt CheckedLock in StorageAreaSync
+        https://bugs.webkit.org/show_bug.cgi?id=226099
+
+        Reviewed by Sam Weinig.
+
+        Adopt CheckedLock in StorageAreaSync to benefit from Clang Thread Safety Analysis.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::markImported):
+        (WebKit::StorageAreaSync::blockUntilImportComplete):
+        * Storage/StorageAreaSync.h:
+
+2021-05-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add support for Navigation Timing Level 2
+        https://bugs.webkit.org/show_bug.cgi?id=184363
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/PingHandle.h:
+
+2021-05-19  Chris Dumez  <cdumez@apple.com>
+
+        Drop "get" prefix from SQLiteStatement member functions as well as out-parameters
+        https://bugs.webkit.org/show_bug.cgi?id=225971
+
+        Reviewed by Darin Adler.
+
+        Update code base due to SQLiteStatement API changes.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::performImport):
+        (WebKit::StorageAreaSync::deleteEmptyDatabase):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::syncImportOriginIdentifiers):
+        (WebKit::StorageTracker::syncDeleteAllOrigins):
+        (WebKit::StorageTracker::databasePathForOrigin):
+
+2021-05-19  Sam Weinig  <weinig@apple.com>
+
+        Update Base64 encoding/decoding to match more modern WebKit conventions
+        https://bugs.webkit.org/show_bug.cgi?id=225920
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::loadResourceSynchronously):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+        Update to match new signature. char -> uint8_t.
+
+2021-05-17  Chris Dumez  <cdumez@apple.com>
+
+        Avoid more String creations when preparing SQLite statements
+        https://bugs.webkit.org/show_bug.cgi?id=225855
+
+        Reviewed by Alex Christensen.
+
+        Avoid more String creations when preparing SQLite statements by using ASCIILiteral. Also rename the
+        SQLiteDatabase::prepareStatement() / SQLiteDatabase::executeCommand() overloads that take in a 
+        String to make sure they are not called by mistake.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::openDatabase):
+        (WebKit::StorageAreaSync::migrateItemTableIfNeeded):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::openTrackerDatabase):
+
+2021-05-16  Chris Dumez  <cdumez@apple.com>
+
+        Modernize / Optimize SQLiteStatement creation and preparation
+        https://bugs.webkit.org/show_bug.cgi?id=225791
+
+        Reviewed by Sam Weinig.
+
+        Update code base now that the SQLiteDatabase & SQLiteStatement API has changed.
+        Also use more ASCIILiterals.
+
+        * Storage/StorageAreaSync.cpp:
+        (WebKit::StorageAreaSync::migrateItemTableIfNeeded):
+        (WebKit::StorageAreaSync::performImport):
+        (WebKit::StorageAreaSync::sync):
+        (WebKit::StorageAreaSync::deleteEmptyDatabase):
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::syncImportOriginIdentifiers):
+        (WebKit::StorageTracker::syncSetOriginDetails):
+        (WebKit::StorageTracker::syncDeleteAllOrigins):
+        (WebKit::StorageTracker::syncDeleteOrigin):
+        (WebKit::StorageTracker::databasePathForOrigin):
+
+2021-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::getFileSize() to FileSystem::fileSize()
+        https://bugs.webkit.org/show_bug.cgi?id=225798
+
+        Reviewed by Alex Christensen.
+
+        Update code path to due to the API change.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::diskUsageForOrigin):
+        * Storage/StorageTracker.h:
+
+2021-05-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath()
+        https://bugs.webkit.org/show_bug.cgi?id=225768
+
+        Reviewed by Darin Adler.
+
+        Rename FileSystem::directoryName() to FileSystem::parentPath() for clarity and
+        consistency with std::filesystem::parent_path() which is used internally.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::ensureDatabaseFileExists):
+
+2021-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Port WTF::FileSystem::listDirectory to std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=225633
+
+        Reviewed by Darin Adler.
+
+        Update FileSystem::listDirectory() call sites to deal with the fact that:
+        - The function now returns file names instead of full file paths
+        - The callers now have to do filtering by themselves if they need it
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::syncFileSystemAndTrackerDatabase):
+
 2021-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused references to PageGroup from WebKitLegacy

@@ -27,7 +27,6 @@
 #include "BlobDataFileReference.h"
 
 #include "File.h"
-#include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
 
 namespace WebCore {
@@ -88,25 +87,23 @@ void BlobDataFileReference::startTrackingModifications()
 #endif
 
     // FIXME: Some platforms provide better ways to listen for file system object changes, consider using these.
-    auto metadata = FileSystem::fileMetadataFollowingSymlinks(m_path);
-    if (!metadata)
+    auto modificationTime = FileSystem::fileModificationTime(m_path);
+    if (!modificationTime)
         return;
 
-    m_expectedModificationTime = metadata.value().modificationTime;
+    m_expectedModificationTime = *modificationTime;
 
 #if ENABLE(FILE_REPLACEMENT)
     if (m_replacementShouldBeGenerated)
         return;
 #endif
 
-    // This is a registered blob with a replacement file. Get the Metadata of the replacement file.
-    if (!m_replacementPath.isNull()) {
-        metadata = FileSystem::fileMetadataFollowingSymlinks(m_replacementPath);
-        if (!metadata)
-            return;
-    }
+    // This is a registered blob with a replacement file. Get the size of the replacement file.
+    auto fileSize = FileSystem::fileSize(m_replacementPath.isNull() ? m_path : m_replacementPath);
+    if (!fileSize)
+        return;
 
-    m_size = metadata.value().length;
+    m_size = *fileSize;
 }
 
 void BlobDataFileReference::prepareForFileAccess()
