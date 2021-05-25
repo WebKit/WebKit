@@ -556,6 +556,8 @@ void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForH
     if (!hasRunningProcess())
         return;
 
+    setUpHighlightsObserver();
+
     send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup, requestOriginatedInApp));
 }
 
