@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DestinationColorSpace.h"
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CG)
@@ -35,33 +36,52 @@
 
 namespace WebCore {
 
-DestinationColorSpace DestinationColorSpace::SRGB()
+#if USE(CG)
+using KnownColorSpaceAccessor = CGColorSpaceRef();
+template<KnownColorSpaceAccessor accessor> static const DestinationColorSpace& knownColorSpace()
+{
+    static LazyNeverDestroyed<DestinationColorSpace> colorSpace;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        colorSpace.construct(accessor());
+    });
+    return colorSpace.get();
+}
+#else
+template<PlatformColorSpace::Name name> static const DestinationColorSpace& knownColorSpace()
+{
+    static NeverDestroyed<DestinationColorSpace> colorSpace { name };
+    return colorSpace.get();
+}
+#endif
+
+const DestinationColorSpace& DestinationColorSpace::SRGB()
 {
 #if USE(CG)
-    return DestinationColorSpace(sRGBColorSpaceRef());
+    return knownColorSpace<sRGBColorSpaceRef>();
 #else
-    return DestinationColorSpace(PlatformColorSpace::Name::SRGB);
+    return knownColorSpace<PlatformColorSpace::Name::SRGB>();
 #endif
 }
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-DestinationColorSpace DestinationColorSpace::LinearSRGB()
+const DestinationColorSpace& DestinationColorSpace::LinearSRGB()
 {
 #if USE(CG)
-    return DestinationColorSpace(linearSRGBColorSpaceRef());
+    return knownColorSpace<linearSRGBColorSpaceRef>();
 #else
-    return DestinationColorSpace(PlatformColorSpace::Name::LinearSRGB);
+    return knownColorSpace<PlatformColorSpace::Name::LinearSRGB>();
 #endif
 }
 #endif
 
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-DestinationColorSpace DestinationColorSpace::DisplayP3()
+const DestinationColorSpace& DestinationColorSpace::DisplayP3()
 {
 #if USE(CG)
-    return DestinationColorSpace(displayP3ColorSpaceRef());
+    return knownColorSpace<displayP3ColorSpaceRef>();
 #else
-    return DestinationColorSpace(PlatformColorSpace::Name::DisplayP3);
+    return knownColorSpace<PlatformColorSpace::Name::DisplayP3>();
 #endif
 }
 #endif

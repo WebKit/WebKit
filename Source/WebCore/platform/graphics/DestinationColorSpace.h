@@ -33,12 +33,12 @@ namespace WebCore {
 
 class DestinationColorSpace {
 public:
-    WEBCORE_EXPORT static DestinationColorSpace SRGB();
+    WEBCORE_EXPORT static const DestinationColorSpace& SRGB();
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    WEBCORE_EXPORT static DestinationColorSpace LinearSRGB();
+    WEBCORE_EXPORT static const DestinationColorSpace& LinearSRGB();
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    WEBCORE_EXPORT static DestinationColorSpace DisplayP3();
+    WEBCORE_EXPORT static const DestinationColorSpace& DisplayP3();
 #endif
 
     WEBCORE_EXPORT explicit DestinationColorSpace(PlatformColorSpace);

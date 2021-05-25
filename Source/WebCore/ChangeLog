@@ -1,3 +1,21 @@
+2021-05-24  Sam Weinig  <weinig@apple.com>
+
+        DestinationColorSpace's well known color space accessors cause unnecessary retain count churn
+        https://bugs.webkit.org/show_bug.cgi?id=226160
+
+        Reviewed by Darin Adler.
+
+        While unlikely to be hot, we can avoid unnecessary retain count churn of
+        the well known color spaces on DestinationColorSpace by switching their
+        signature to return a const-reference and storing/returning a static instance.
+
+        * platform/graphics/DestinationColorSpace.cpp:
+        (WebCore::knownColorSpace):
+        (WebCore::DestinationColorSpace::SRGB):
+        (WebCore::DestinationColorSpace::LinearSRGB):
+        (WebCore::DestinationColorSpace::DisplayP3):
+        * platform/graphics/DestinationColorSpace.h:
+
 2021-05-24  Chris Dumez  <cdumez@apple.com>
 
         [GStreamer] Stop using UncheckedLock in VideoRenderRequestScheduler
