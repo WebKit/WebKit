@@ -30,7 +30,6 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
-#include <wtf/StdFilesystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -45,9 +44,15 @@
 #include <gio/gio.h>
 #endif
 
+#if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
+#include <wtf/StdFilesystem.h>
+#endif
+
 namespace WTF {
 
 namespace FileSystemImpl {
+
+#if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 static std::filesystem::path toStdFileSystemPath(StringView path)
 {
@@ -58,6 +63,8 @@ static String fromStdFileSystemPath(const std::filesystem::path& path)
 {
     return String::fromUTF8(path.u8string().c_str());
 }
+
+#endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 // The following lower-ASCII characters need escaping to be used in a filename
 // across all systems, including Windows:
@@ -115,6 +122,8 @@ static inline bool shouldEscapeUChar(UChar character, UChar previousCharacter, U
     return false;
 }
 
+#if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
+
 template<typename ClockType, typename = void> struct has_to_time_t : std::false_type { };
 template<typename ClockType> struct has_to_time_t<ClockType, std::void_t<
     std::enable_if_t<std::is_same_v<std::time_t, decltype(ClockType::to_time_t(std::filesystem::file_time_type()))>>
@@ -137,6 +146,8 @@ static WallTime toWallTime(std::filesystem::file_time_type fileTime)
     // FIXME: Use std::chrono::file_clock::to_sys() once we can use C++20.
     return WallTime::fromRawSeconds(toTimeT(fileTime));
 }
+
+#endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 String encodeForFileName(const String& inputString)
 {
@@ -509,6 +520,8 @@ Optional<Salt> readOrMakeSalt(const String& path)
     return salt;
 }
 
+#if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
+
 bool fileExists(const String& path)
 {
     std::error_code ec;
@@ -740,6 +753,8 @@ Vector<String> listDirectory(const String& path)
     }
     return fileNames;
 }
+
+#endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 } // namespace FileSystemImpl
 } // namespace WTF

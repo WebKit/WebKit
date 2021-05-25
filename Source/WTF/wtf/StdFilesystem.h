@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __has_include(<filesystem>)
+#pragma once
+
+#if HAVE(STD_FILESYSTEM)
 #include <filesystem>
 #elif HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 #include <experimental/filesystem>

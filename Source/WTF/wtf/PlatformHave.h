@@ -93,6 +93,22 @@
 #define HAVE_ACCESSIBILITY 1
 #endif
 
+#if !defined(HAVE_STD_FILESYSTEM)
+#if __has_include(<filesystem>)
+#define HAVE_STD_FILESYSTEM 1
+#else
+#define HAVE_STD_FILESYSTEM 0
+#endif
+#endif
+
+#if !defined(HAVE_STD_EXPERIMENTAL_FILESYSTEM)
+#if __has_include(<experimental/filesystem>)
+#define STD_EXPERIMENTAL_FILESYSTEM 1
+#else
+#define STD_EXPERIMENTAL_FILESYSTEM 0
+#endif
+#endif
+
 /* FIXME: Remove after CMake build enabled on Darwin */
 #if OS(DARWIN)
 #define HAVE_ERRNO_H 1

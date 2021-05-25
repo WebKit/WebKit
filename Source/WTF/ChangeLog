@@ -1,3 +1,53 @@
+2021-05-25  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Implement FileSystem without std::filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=226197
+
+        Reviewed by Chris Dumez.
+
+        The PlayStation 4 doesn't have support in its SDK for std::filesystem so backport the
+        functions jettisoned from FileSystemPOSIX and add them to a FileSystemPlayStation.cpp.
+        The ordering matches the contents of FileSystem.cpp.
+
+        Most of the functions ported to std::filesystem were just moved over as is from the commit
+        prior to r276879. Minor changes to the function signatures made when required.
+
+        The fileTypePotentiallyFollowingSymLinks function was created from the previous behavior
+        of fileMetadataUsingFunction and toFileMetataType.
+
+        The hardLinkCount was created from looking at the behavior hardLinkCount replaced in
+        r277446.
+
+        * wtf/FileSystem.cpp:
+        * wtf/PlatformHave.h:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/StdFilesystem.h:
+        * wtf/playstation/FileSystemPlayStation.cpp: Added.
+        (WTF::FileSystemImpl::fileTypePotentiallyFollowingSymLinks):
+        (WTF::FileSystemImpl::fileExists):
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+        (WTF::FileSystemImpl::moveFile):
+        (WTF::FileSystemImpl::fileSize):
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::volumeFreeSpace):
+        (WTF::FileSystemImpl::createSymbolicLink):
+        (WTF::FileSystemImpl::hardLink):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        (WTF::FileSystemImpl::hardLinkCount):
+        (WTF::FileSystemImpl::deleteNonEmptyDirectory):
+        (WTF::FileSystemImpl::fileModificationTime):
+        (WTF::FileSystemImpl::updateFileModificationTime):
+        (WTF::FileSystemImpl::isHiddenFile):
+        (WTF::FileSystemImpl::fileType):
+        (WTF::FileSystemImpl::fileTypeFollowingSymlinks):
+        (WTF::FileSystemImpl::pathFileName):
+        (WTF::FileSystemImpl::parentPath):
+        (WTF::FileSystemImpl::realPath):
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+        (WTF::FileSystemImpl::pathByAppendingComponents):
+        (WTF::FileSystemImpl::listDirectory):
+
 2021-05-24  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in WTF::RecursiveLock
