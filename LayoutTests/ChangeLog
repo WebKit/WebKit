@@ -1,3 +1,15 @@
+2021-05-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update some SVG test baselines.
+        https://bugs.webkit.org/show_bug.cgi?id=226111
+
+        * platform/glib/svg/transforms/svg-css-transforms-clip-path-expected.txt: Renamed from LayoutTests/platform/wpe/svg/transforms/svg-css-transforms-clip-path-expected.txt.
+        * platform/glib/svg/transforms/svg-css-transforms-expected.txt: Renamed from LayoutTests/platform/wpe/svg/transforms/svg-css-transforms-expected.txt.
+        * platform/glib/transforms/svg-vs-css-expected.txt:
+        * platform/gtk/svg/transforms/svg-css-transforms-clip-path-expected.txt: Removed.
+        * platform/gtk/svg/transforms/svg-css-transforms-expected.txt: Removed.
+        * platform/wpe/transforms/svg-vs-css-expected.txt: Removed.
+
 2021-05-25  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Layout test media/track/track-cue-missing.html is failing
