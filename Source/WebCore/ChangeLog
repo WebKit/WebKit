@@ -1,5 +1,35 @@
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
+        Stop using UncheckedLock in html/canvas
+        https://bugs.webkit.org/show_bug.cgi?id=226186
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in html/canvas. This is a step towards phasing out
+        UncheckedLock, in favor of the checked Lock. Technically, the code still
+        doesn't do much thread-safety analysis after this change. It is very difficult
+        to adopt thread-safety analysis here because the call sites don't always lock
+        (there are cases where no locking is needed). It is also hard to get a reference
+        to the various locks to make WTF_REQUIRES_LOCK() work.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::deleteVertexArray):
+        * html/canvas/WebGLContextGroup.cpp:
+        (WebCore::WebGLContextGroup::objectGraphLockForAContext):
+        * html/canvas/WebGLContextGroup.h:
+        * html/canvas/WebGLContextObject.cpp:
+        (WebCore::WebGLContextObject::objectGraphLockForContext):
+        * html/canvas/WebGLContextObject.h:
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::objectGraphLock):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLSharedObject.cpp:
+        (WebCore::WebGLSharedObject::objectGraphLockForContext):
+        * html/canvas/WebGLSharedObject.h:
+
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
         [iOS] ASSERTION FAILED: !isMainThread() in WebCore::SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable
         https://bugs.webkit.org/show_bug.cgi?id=226247
         <rdar://problem/78481513>

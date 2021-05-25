@@ -2633,9 +2633,8 @@ void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObje
 
     if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject) {
         // bindVertexArray grabs the lock internally.
-        locker.unlockEarly();
+        DropLockForScope noLockScope(locker);
         bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
-        locker = Locker { objectGraphLock() };
     }
 
     arrayObject->deleteObject(locker, graphicsContextGL());

@@ -180,7 +180,7 @@ inline void assertIsHeld(const Lock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { ASS
 // Non-movable simple scoped lock holder.
 // Example: Locker locker { m_lock };
 template <>
-class WTF_CAPABILITY_SCOPED_LOCK Locker<Lock> {
+class WTF_CAPABILITY_SCOPED_LOCK Locker<Lock> : public AbstractLocker {
 public:
     explicit Locker(Lock& lock) WTF_ACQUIRES_LOCK(lock)
         : m_lock(lock)
@@ -197,7 +197,24 @@ public:
     }
     Locker(const Locker<Lock>&) = delete;
     Locker& operator=(const Locker<Lock>&) = delete;
+
 private:
+    // Support DropLockForScope even though it doesn't support thread safety analysis.
+    template<typename>
+    friend class DropLockForScope;
+
+    void lock() WTF_ACQUIRES_LOCK(m_lock)
+    {
+        m_lock.lock();
+        compilerFence();
+    }
+
+    void unlock() WTF_RELEASES_LOCK(m_lock)
+    {
+        compilerFence();
+        m_lock.unlock();
+    }
+
     Lock& m_lock;
 };
 

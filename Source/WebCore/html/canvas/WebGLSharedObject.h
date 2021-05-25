@@ -59,7 +59,7 @@ public:
 
     void detachContextGroupWithoutDeletingObject();
 
-    UncheckedLock& objectGraphLockForContext() override;
+    Lock& objectGraphLockForContext() override;
 
 protected:
     WebGLSharedObject(WebGLRenderingContextBase&);

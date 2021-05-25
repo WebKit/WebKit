@@ -1,3 +1,19 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in html/canvas
+        https://bugs.webkit.org/show_bug.cgi?id=226186
+
+        Reviewed by Darin Adler.
+
+        Allow converting a Locker<Lock> to an AbstractLocker type. This allows porting
+        code from UncheckedLock to Lock even if said code is passing the Locker<Lock>
+        as parameter around as an AbstractLocker. This is very common in JSC and in
+        html/canvas.
+
+        Also make DropLockForScope work with Locker<Lock> to help port code over.
+
+        * wtf/Lock.h:
+
 2021-05-24  Darin Adler  <darin@apple.com>
 
         Switch from WTF::Optional to std::optional

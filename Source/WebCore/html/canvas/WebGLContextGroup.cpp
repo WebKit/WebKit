@@ -55,7 +55,7 @@ GraphicsContextGL& WebGLContextGroup::getAGraphicsContextGL()
     return *(*m_contexts.begin())->graphicsContextGL();
 }
 
-UncheckedLock& WebGLContextGroup::objectGraphLockForAContext()
+Lock& WebGLContextGroup::objectGraphLockForAContext()
 {
     ASSERT(!m_contexts.isEmpty());
     // Since the WEBGL_shared_objects extension never shipped, and is
