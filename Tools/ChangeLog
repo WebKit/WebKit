@@ -1,3 +1,19 @@
+2021-05-24  Mark Lam  <mark.lam@apple.com>
+
+        Raise jitMemoryReservationSize for ftl-no-cjit-small-pool* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=226205
+
+        Reviewed by Saam Barati.
+
+        Raise jitMemoryReservationSize for ftl-no-cjit-small-pool* tests from 50000 to
+        75000.  The 50000 number was picked years ago to be a size that is small, but is
+        still large enough for JSC tests to pass.  50000 appears to not be sufficient
+        anymore.  This has caused some JSC tests to fail intermittently on the EWS bots.
+
+        Raising the size to 75000 to give the tests a little more room to work in.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-05-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Fix build failure for WK API WTF::String usage
