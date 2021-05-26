@@ -1,3 +1,14 @@
+2021-05-26  Chris Lord  <clord@igalia.com>
+
+        Scrollbars/indicators are sometimes incorrectly drawn when async overflow scrolling is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=226259
+
+        Reviewed by Simon Fraser.
+
+        Some tests involving overflow scrolling now pass.
+
+        * platform/wpe/TestExpectations:
+
 2021-05-26  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-crash.html is a flaky failure

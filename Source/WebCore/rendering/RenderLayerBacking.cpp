@@ -3471,15 +3471,19 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             paintDebugOverlays(graphicsLayer, context);
 
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
-        auto* scrollableArea = m_owningLayer.scrollableArea();
-        ASSERT(scrollableArea);
+        if (m_owningLayer.hasVisibleContent()) {
+            auto* scrollableArea = m_owningLayer.scrollableArea();
+            ASSERT(scrollableArea);
 
-        paintScrollbar(scrollableArea->horizontalScrollbar(), context, dirtyRect);
+            paintScrollbar(scrollableArea->horizontalScrollbar(), context, dirtyRect);
+        }
     } else if (graphicsLayer == layerForVerticalScrollbar()) {
-        auto* scrollableArea = m_owningLayer.scrollableArea();
-        ASSERT(scrollableArea);
+        if (m_owningLayer.hasVisibleContent()) {
+            auto* scrollableArea = m_owningLayer.scrollableArea();
+            ASSERT(scrollableArea);
 
-        paintScrollbar(scrollableArea->verticalScrollbar(), context, dirtyRect);
+            paintScrollbar(scrollableArea->verticalScrollbar(), context, dirtyRect);
+        }
     } else if (graphicsLayer == layerForScrollCorner()) {
         auto* scrollableArea = m_owningLayer.scrollableArea();
         ASSERT(scrollableArea);
