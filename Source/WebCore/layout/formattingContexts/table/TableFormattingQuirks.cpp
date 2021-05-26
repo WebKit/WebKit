@@ -30,6 +30,7 @@
 
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutState.h"
 #include "TableFormattingContext.h"
 
@@ -65,13 +66,15 @@ LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
         return height.isFixed() ? makeOptional(LayoutUnit { height.value() }) : WTF::nullopt;
     };
 
-    auto& formattingContext = this->formattingContext();
-    auto& tableBox = formattingContext.root();
-    for (auto* ancestor = &layoutBox.containingBlock(); ancestor && ancestor != &tableBox; ancestor = &ancestor->containingBlock()) {
-        if (auto fixedHeight = fixedLogicalHeight(*ancestor))
+    auto& tableBox = formattingContext().root();
+    for (auto& ancestor : containingBlockChain(layoutBox)) {
+        if (auto fixedHeight = fixedLogicalHeight(ancestor))
             return *fixedHeight;
+        if (&ancestor == &tableBox)
+            return { };
     }
-    return fixedLogicalHeight(tableBox).valueOr(LayoutUnit { });
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 }

@@ -1,5 +1,29 @@
 2021-05-26  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Introduce containingBlockChain iterator
+        https://bugs.webkit.org/show_bug.cgi?id=226269
+
+        Reviewed by Antti Koivisto.
+
+        Let's use the range loop syntax to climb the containing block chain.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/table/TableFormattingQuirks.cpp:
+        (WebCore::Layout::TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight const):
+        * layout/layouttree/LayoutContainingBlockChainIterator.h: Added.
+        (WebCore::Layout::LayoutContainingBlockChainIterator::operator* const):
+        (WebCore::Layout::LayoutContainingBlockChainIterator::operator-> const):
+        (WebCore::Layout::LayoutContainingBlockChainIterator::operator== const):
+        (WebCore::Layout::LayoutContainingBlockChainIterator::operator!= const):
+        (WebCore::Layout::LayoutContainingBlockChainIterator::LayoutContainingBlockChainIterator):
+        (WebCore::Layout::LayoutContainingBlockChainIterator::operator++):
+        (WebCore::Layout::LayoutContainingBlockChainIteratorAdapter::LayoutContainingBlockChainIteratorAdapter):
+        (WebCore::Layout::LayoutContainingBlockChainIteratorAdapter::begin):
+        (WebCore::Layout::LayoutContainingBlockChainIteratorAdapter::end):
+        (WebCore::Layout::containingBlockChainOf):
+
+2021-05-26  Alan Bujtas  <zalan@apple.com>
+
         REGRESSION: Safari v14.1 computes element height to be 33,554,432 pixels
         https://bugs.webkit.org/show_bug.cgi?id=226006
         <rdar://problem/78471122>
