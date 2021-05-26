@@ -409,6 +409,11 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
     if (shouldIncludeCertificateInfo())
         response.includeCertificateInfo();
 
+    if (!m_resource) {
+        ASSERT_NOT_REACHED();
+        RELEASE_LOG_FAULT(Loading, "Resource was unexpectedly null in SubresourceLoader::didReceiveResponse");
+    }
+
     if (m_resource && m_resource->resourceToRevalidate()) {
         if (response.httpStatusCode() == 304) {
             // 304 Not modified / Use local copy
