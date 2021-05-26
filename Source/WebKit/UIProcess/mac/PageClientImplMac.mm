@@ -569,12 +569,12 @@ void PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
     m_impl->clearSafeBrowsingWarningIfForMainFrameNavigation();
 }
 
-void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorWindowLifetime lifetime)
+void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorLifetime lifetime)
 {
     m_impl->setTextIndicator(textIndicator.get(), lifetime);
 }
 
-void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation dismissalAnimation)
+void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation dismissalAnimation)
 {
     m_impl->clearTextIndicatorWithAnimation(dismissalAnimation);
 }
@@ -672,9 +672,9 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
     m_impl->prepareForDictionaryLookup();
 
     DictionaryLookup::showPopup(dictionaryPopupInfo, m_view, [this](TextIndicator& textIndicator) {
-        m_impl->setTextIndicator(textIndicator, TextIndicatorWindowLifetime::Permanent);
+        m_impl->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
     }, nullptr, [this]() {
-        m_impl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation::None);
+        m_impl->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
     });
 }
 
