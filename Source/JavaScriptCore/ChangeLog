@@ -1,3 +1,15 @@
+2021-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Clang can't compile Optional<GPRTemporary> since r278035 because GPRTemporary has non-const copy constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226251
+
+        Reviewed by Chris Dumez.
+
+        WinCairo clang-cl builds reported a compilation error since r278035.
+        > include\optional(95,5): error: the parameter for this explicitly-defaulted copy constructor is const, but a member or base requires it to be non-const
+
+        * dfg/DFGSpeculativeJIT.h: Deleted the const copy ctor instead of the non-const copy ctor.
+
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
         Use UncheckedLock less in JavaScriptCore

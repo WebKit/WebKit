@@ -2025,7 +2025,7 @@ public:
     }
     GPRTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&, WhichValueWord);
 
-    GPRTemporary(GPRTemporary& other) = delete;
+    GPRTemporary(const GPRTemporary&) = delete;
 
     GPRTemporary(GPRTemporary&& other)
     {
