@@ -3879,23 +3879,14 @@ void RenderLayerCompositor::updateLayerForOverhangAreasBackgroundColor()
         return;
 
     Color backgroundColor;
+    if (page().settings().useThemeColorForScrollAreaBackgroundColor())
+        backgroundColor = page().themeColor();
+    if (page().settings().useSampledPageTopColorForScrollAreaBackgroundColor() && !backgroundColor.isValid())
+        backgroundColor = page().sampledPageTopColor();
+    if (!backgroundColor.isValid())
+        backgroundColor = m_rootExtendedBackgroundColor;
 
-    if (m_renderView.settings().backgroundShouldExtendBeyondPage()) {
-        backgroundColor = ([&] {
-            if (page().settings().useThemeColorForScrollAreaBackgroundColor()) {
-                if (auto themeColor = page().themeColor(); themeColor.isValid())
-                    return themeColor;
-            }
-
-            if (page().settings().useSampledPageTopColorForScrollAreaBackgroundColor()) {
-                if (auto sampledPageTopColor = page().sampledPageTopColor(); sampledPageTopColor.isValid())
-                    return sampledPageTopColor;
-            }
-
-            return m_rootExtendedBackgroundColor;
-        })();
-        m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
-    }
+    m_layerForOverhangAreas->setBackgroundColor(backgroundColor);
 
     if (!backgroundColor.isValid())
         m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
@@ -3999,7 +3990,11 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setSize(overhangAreaSize);
             m_layerForOverhangAreas->setPosition(FloatPoint(0, topContentInset));
             m_layerForOverhangAreas->setAnchorPoint(FloatPoint3D());
-            updateLayerForOverhangAreasBackgroundColor();
+
+            if (m_renderView.settings().backgroundShouldExtendBeyondPage())
+                m_layerForOverhangAreas->setBackgroundColor(m_renderView.frameView().documentBackgroundColor());
+            else
+                m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::CustomAppearance::ScrollingOverhang);
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.
