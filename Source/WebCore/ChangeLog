@@ -1,3 +1,50 @@
+2021-05-25  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] REGRESSION(r254389) media controls needs the full list of language preferences for ordering tracks
+        https://bugs.webkit.org/show_bug.cgi?id=226038
+
+        Reviewed by Myles C. Maxfield and Eric Carlson.
+
+        Media controls need access to the full list of language preferences in order to properly
+        sort/order the list of tracks in the controls UI. For example, if a `<video>` has subtitles
+        for English, Spanish, and French, and the user has English (default) and French (alternate)
+        configured in the Language & Region view of System Preferences on macOS, WebKit should order
+        the subtitles list English, French, and then Spanish.
+
+        Test: media/modern-media-controls/tracks-support/sorted-by-user-preferred-languages.html
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::preferredLanguages const):
+        (WebCore::CaptionUserPreferences::textTrackSelectionScore const):
+        (WebCore::CaptionUserPreferences::primaryAudioTrackLanguageOverride const):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::preferredLanguages const):
+        (WebCore::buildDisplayStringForTrackBase):
+        (WebCore::trackDisplayName):
+        (WebCore::textTrackCompare):
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        (WebCore::MediaSelectionGroupAVFObjC::updateOptions):
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * bindings/js/JSWorkletGlobalScopeBase.cpp:
+        Wrap `defaultLanguage` in a lambda since it now has a parameter.
+
+        * platform/LocalizedStrings.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::captionsTextTrackKindDisplayName): Added.
+        (WebCore::descriptionsTextTrackKindDisplayName): Added.
+        (WebCore::chaptersTextTrackKindDisplayName): Added.
+        (WebCore::metadataTextTrackKindDisplayName): Added.
+        (WebCore::closedCaptionKindTrackDisplayName): Added.
+        (WebCore::sdhTrackKindDisplayName): Added.
+        (WebCore::easyReaderKindDisplayName): Added.
+        (WebCore::forcedTrackKindDisplayName): Added.
+        Move the logic added in r277797 from `buildDisplayStringForTrackBase` to `trackDisplayName`
+        and only perform it if the text track display name doesn't already contain the display name
+        for the text track kind (e.g. if the `label` is "English Captions" don't add "Captions", but
+        do if the `label` is only "English").
+
 2021-05-25  Tim Horton  <timothy_horton@apple.com>
 
         Virtualize GraphicsContext

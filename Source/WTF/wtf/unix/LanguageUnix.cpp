@@ -42,7 +42,7 @@ static String platformLanguage()
     return normalizedDefault;
 }
 
-Vector<String> platformUserPreferredLanguages()
+Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 {
     return { platformLanguage() };
 }

@@ -134,7 +134,7 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
         return;
 
     NSArray* filteredOptions = [PAL::getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]
-        filteredAndSortedAccordingToPreferredLanguages:createNSArray(userPreferredLanguages()).get()];
+        filteredAndSortedAccordingToPreferredLanguages:createNSArray(userPreferredLanguages(ShouldMinimizeLanguages::No)).get()];
 
     if (![filteredOptions count] && characteristics.isEmpty())
         return;

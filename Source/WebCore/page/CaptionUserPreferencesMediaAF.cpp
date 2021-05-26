@@ -471,36 +471,21 @@ void CaptionUserPreferencesMediaAF::setPreferredLanguage(const String& language)
 
 Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
 {
+    auto preferredLanguages = CaptionUserPreferences::preferredLanguages();
     if (testingMode() || !MediaAccessibilityLibrary())
-        return CaptionUserPreferences::preferredLanguages();
+        return preferredLanguages;
 
-    Vector<String> platformLanguages = platformUserPreferredLanguages();
-    Vector<String> override = userPreferredLanguagesOverride();
-    if (!override.isEmpty()) {
-        if (platformLanguages.size() != override.size())
-            return override;
-        for (size_t i = 0; i < override.size(); i++) {
-            if (override[i] != platformLanguages[i])
-                return override;
-        }
-    }
+    auto captionLanguages = adoptCF(MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
+    CFIndex captionLanguagesCount = captionLanguages ? CFArrayGetCount(captionLanguages.get()) : 0;
+    if (!captionLanguagesCount)
+        return preferredLanguages;
 
-    CFIndex languageCount = 0;
-    RetainPtr<CFArrayRef> languages = adoptCF(MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
-    if (languages)
-        languageCount = CFArrayGetCount(languages.get());
-
-    if (!languageCount)
-        return CaptionUserPreferences::preferredLanguages();
-
-    Vector<String> userPreferredLanguages;
-    userPreferredLanguages.reserveCapacity(languageCount + platformLanguages.size());
-    for (CFIndex i = 0; i < languageCount; i++)
-        userPreferredLanguages.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i)));
-
-    userPreferredLanguages.appendVector(platformLanguages);
-
-    return userPreferredLanguages;
+    Vector<String> captionAndPreferredLanguages;
+    captionAndPreferredLanguages.reserveInitialCapacity(captionLanguagesCount + preferredLanguages.size());
+    for (CFIndex i = 0; i < captionLanguagesCount; i++)
+        captionAndPreferredLanguages.uncheckedAppend(static_cast<CFStringRef>(CFArrayGetValueAtIndex(captionLanguages.get(), i)));
+    captionAndPreferredLanguages.appendVector(WTFMove(preferredLanguages));
+    return captionAndPreferredLanguages;
 }
 
 void CaptionUserPreferencesMediaAF::setPreferredAudioCharacteristic(const String& characteristic)
@@ -579,13 +564,18 @@ static void buildDisplayStringForTrackBase(StringBuilder& displayName, const Tra
     String label = track.label();
     String trackLanguageIdentifier = track.validBCP47Language();
 
-    RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
+    auto preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No);
+    auto defaultLanguage = !preferredLanguages.isEmpty() ? preferredLanguages[0] : emptyString(); // This matches `WTF::defaultLanguage`.
+    RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage.createCFString().get()));
     RetainPtr<CFStringRef> localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
     RetainPtr<CFStringRef> languageCF = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get()));
     String language = languageCF.get();
 
     if (!label.isEmpty()) {
-        if (language.isEmpty() || label.contains(language))
+        // Add the language name and/or country name if the the track isn't in the default language or the existing label doesn't already contain the language name.
+        bool exactMatch;
+        bool matchesDefaultLanguage = !indexOfBestMatchingLanguageInList(trackLanguageIdentifier, { defaultLanguage }, exactMatch);
+        if (matchesDefaultLanguage || language.isEmpty() || label.contains(language))
             displayName.append(label);
         else {
             RetainPtr<CFDictionaryRef> localeDict = adoptCF(CFLocaleCreateComponentsFromLocaleIdentifier(kCFAllocatorDefault, localeIdentifier.get()));
@@ -608,43 +598,11 @@ static void buildDisplayStringForTrackBase(StringBuilder& displayName, const Tra
     } else {
         String languageAndLocale = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, trackLanguageIdentifier.createCFString().get())).get();
         if (!languageAndLocale.isEmpty())
-            label = languageAndLocale;
+            displayName.append(languageAndLocale);
         else if (!language.isEmpty())
-            label = language;
+            displayName.append(language);
         else
-            label = localeIdentifier.get();
-
-        if (track.type() == TrackBase::TextTrack) {
-            auto& textTrack = downcast<TextTrack>(track);
-            switch (textTrack.kind()) {
-            case TextTrack::Kind::Subtitles:
-                // Subtitle text tracks are only shown in a dedicated "Subtitle" grouping, meaning
-                // it would look odd to add the same title as a suffix (e.g. "English Subtitles").
-                break;
-
-            case TextTrack::Kind::Captions:
-                label = captionsTextTrackWithoutLabelMenuItemText(label);
-                break;
-
-            case TextTrack::Kind::Descriptions:
-                label = descriptionsTextTrackWithoutLabelMenuItemText(label);
-                break;
-
-            case TextTrack::Kind::Chapters:
-                label = chaptersTextTrackWithoutLabelMenuItemText(label);
-                break;
-
-            case TextTrack::Kind::Metadata:
-                label = metadataTextTrackWithoutLabelMenuItemText(label);
-                break;
-
-            case TextTrack::Kind::Forced:
-                label = forcedTrackMenuItemText(label);
-                break;
-            }
-        }
-
-        displayName.append(label);
+            displayName.append(localeIdentifier.get());
     }
 }
 
@@ -683,21 +641,53 @@ static String trackDisplayName(TextTrack* track)
     String displayName = displayNameBuilder.toString();
 
     if (track->isClosedCaptions()) {
-        displayName = closedCaptionTrackMenuItemText(displayName);
-        if (track->isEasyToRead())
+        if (!displayName.contains(closedCaptionKindTrackDisplayName()))
+            displayName = closedCaptionTrackMenuItemText(displayName);
+        if (track->isEasyToRead() && !displayName.contains(easyReaderKindDisplayName()))
             displayName = easyReaderTrackMenuItemText(displayName);
 
         return displayName;
     }
 
-    if (track->isSDH())
+    switch (track->kind()) {
+    case TextTrack::Kind::Subtitles:
+        // Subtitle text tracks are only shown in a dedicated "Subtitle" grouping, meaning
+        // it would look odd to add the same title as a suffix (e.g. "English Subtitles").
+        break;
+
+    case TextTrack::Kind::Captions:
+        if (!displayName.contains(captionsTextTrackKindDisplayName()))
+            displayName = captionsTextTrackWithoutLabelMenuItemText(displayName);
+        break;
+
+    case TextTrack::Kind::Descriptions:
+        if (!displayName.contains(descriptionsTextTrackKindDisplayName()))
+            displayName = descriptionsTextTrackWithoutLabelMenuItemText(displayName);
+        break;
+
+    case TextTrack::Kind::Chapters:
+        if (!displayName.contains(chaptersTextTrackKindDisplayName()))
+            displayName = chaptersTextTrackWithoutLabelMenuItemText(displayName);
+        break;
+
+    case TextTrack::Kind::Metadata:
+        if (!displayName.contains(metadataTextTrackKindDisplayName()))
+            displayName = metadataTextTrackWithoutLabelMenuItemText(displayName);
+        break;
+
+    case TextTrack::Kind::Forced:
+        // Handled below.
+        break;
+    }
+
+    if (track->isSDH() && !displayName.contains(sdhTrackKindDisplayName()))
         displayName = sdhTrackMenuItemText(displayName);
 
-    if (track->containsOnlyForcedSubtitles())
-        displayName = forcedTrackMenuItemText(displayName);
-
-    if (track->isEasyToRead())
+    if (track->isEasyToRead() && !displayName.contains(easyReaderKindDisplayName()))
         displayName = easyReaderTrackMenuItemText(displayName);
+
+    if ((track->containsOnlyForcedSubtitles() || track->kind() == TextTrack::Kind::Forced) && !displayName.contains(forcedTrackKindDisplayName()))
+        displayName = forcedTrackMenuItemText(displayName);
 
     return displayName;
 }
@@ -709,15 +699,21 @@ String CaptionUserPreferencesMediaAF::displayNameForTrack(TextTrack* track) cons
 
 static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
 {
-    String preferredLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(defaultLanguage()));
+    auto preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No);
+
+    bool aExactMatch;
+    auto aUserLanguageIndex = indexOfBestMatchingLanguageInList(a->validBCP47Language(), preferredLanguages, aExactMatch);
+
+    bool bExactMatch;
+    auto bUserLanguageIndex = indexOfBestMatchingLanguageInList(b->validBCP47Language(), preferredLanguages, bExactMatch);
+
+    if (aUserLanguageIndex != bUserLanguageIndex)
+        return aUserLanguageIndex < bUserLanguageIndex;
+    if (aExactMatch != bExactMatch)
+        return aExactMatch;
+
     String aLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(a->validBCP47Language()));
     String bLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(b->validBCP47Language()));
-
-    // Tracks in the user's preferred language are always at the top of the menu.
-    bool aIsPreferredLanguage = aLanguageDisplayName == preferredLanguageDisplayName;
-    bool bIsPreferredLanguage = bLanguageDisplayName == preferredLanguageDisplayName;
-    if (aIsPreferredLanguage != bIsPreferredLanguage)
-        return aIsPreferredLanguage;
 
     Collator collator;
 

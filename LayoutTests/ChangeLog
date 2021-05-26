@@ -1,3 +1,15 @@
+2021-05-25  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] REGRESSION(r254389) media controls needs the full list of language preferences for ordering tracks
+        https://bugs.webkit.org/show_bug.cgi?id=226038
+
+        Reviewed by Myles C. Maxfield and Eric Carlson.
+
+        * media/modern-media-controls/tracks-support/sorted-by-user-preferred-languages.html: Added.
+        * media/modern-media-controls/tracks-support/sorted-by-user-preferred-languages-expected.txt: Added.
+
+        * media/content/lorem-ipsum.vtt: Added.
+
 2021-05-25  Amir Mark Jr  <amir_mark@apple.com>
 
         [ Catalina E Wk1 ] imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html is flaky failure

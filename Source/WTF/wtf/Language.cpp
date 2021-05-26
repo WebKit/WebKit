@@ -37,6 +37,18 @@
 
 namespace WTF {
 
+static Lock cachedPlatformPreferredLanguagesLock;
+static Vector<String>& cachedFullPlatformPreferredLanguages() WTF_REQUIRES_LOCK(cachedPlatformPreferredLanguagesLock)
+{
+    static NeverDestroyed<Vector<String>> languages;
+    return languages;
+}
+static Vector<String>& cachedMinimizedPlatformPreferredLanguages() WTF_REQUIRES_LOCK(cachedPlatformPreferredLanguagesLock)
+{
+    static NeverDestroyed<Vector<String>> languages;
+    return languages;
+}
+
 static Lock preferredLanguagesOverrideLock;
 static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(preferredLanguagesOverrideLock)
 {
@@ -68,16 +80,21 @@ void removeLanguageChangeObserver(void* context)
 
 void languageDidChange()
 {
-    platformLanguageDidChange();
+    {
+        Locker locker { cachedPlatformPreferredLanguagesLock };
+        cachedFullPlatformPreferredLanguages().clear();
+        cachedMinimizedPlatformPreferredLanguages().clear();
+    }
+
     for (auto& observer : copyToVector(observerMap())) {
         if (observerMap().contains(observer.key))
             observer.value(observer.key);
     }
 }
 
-String defaultLanguage()
+String defaultLanguage(ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
-    Vector<String> languages = userPreferredLanguages();
+    auto languages = userPreferredLanguages(shouldMinimizeLanguages);
     if (languages.size())
         return languages[0];
 
@@ -108,7 +125,7 @@ static Vector<String> isolatedCopy(const Vector<String>& strings)
     return copy;
 }
 
-Vector<String> userPreferredLanguages()
+Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
     {
         Locker locker { preferredLanguagesOverrideLock };
@@ -117,7 +134,11 @@ Vector<String> userPreferredLanguages()
             return isolatedCopy(override);
     }
 
-    return platformUserPreferredLanguages();
+    Locker locker { cachedPlatformPreferredLanguagesLock };
+    auto& languages = shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes ? cachedMinimizedPlatformPreferredLanguages() : cachedFullPlatformPreferredLanguages();
+    if (languages.isEmpty())
+        languages = platformUserPreferredLanguages(shouldMinimizeLanguages);
+    return isolatedCopy(languages);
 }
 
 static String canonicalLanguageIdentifier(const String& languageCode)
@@ -183,11 +204,5 @@ String displayNameForLanguageLocale(const String& localeName)
 #endif
     return localeName;
 }
-
-#if !PLATFORM(COCOA)
-void platformLanguageDidChange()
-{
-}
-#endif
 
 }

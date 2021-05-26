@@ -208,6 +208,9 @@
 /* Label for the buy with Apple Pay button. */
 "Buy with Apple Pay" = "Buy with Apple Pay";
 
+/* Display name for closed captions text tracks that is used to see if the HTML 'label' already contains 'CC'. */
+"CC" = "CC";
+
 /* Cancel */
 "Cancel" = "Cancel";
 
@@ -220,11 +223,17 @@
 /* Capitalize context menu item */
 "Capitalize" = "Capitalize";
 
+/* Display name for text track kind 'captions' that is used to see if the HTML 'label' already contains 'Captions'. */
+"Captions" = "Captions";
+
 /* Undo action name */
 "Center (Undo action name)" = "Center";
 
 /* Undo action name */
 "Change Attributes (Undo action name)" = "Change Attributes";
+
+/* Display name for text track kind 'chapters' that is used to see if the HTML 'label' already contains 'Chapters'. */
+"Chapters" = "Chapters";
 
 /* Check spelling context menu item */
 "Check Document Now" = "Check Document Now";
@@ -325,6 +334,9 @@
 /* Undo action name */
 "Delete (Undo action name)" = "Delete";
 
+/* Display name for text track kind 'descriptions' that is used to see if the HTML 'label' already contains 'Descriptions'. */
+"Descriptions" = "Descriptions";
+
 /* text to display in <details> tag when it has no <summary> child */
 "Details" = "Details";
 
@@ -370,6 +382,9 @@
 /* Undo action name */
 "Drag (Undo action name)" = "Drag";
 
+/* Display name for easy reader text tracks that is used to see if the HTML 'label' already contains 'Easy Reader'. */
+"Easy Reader" = "Easy Reader";
+
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
 
@@ -414,6 +429,9 @@
 
 /* Font context sub-menu item */
 "Font" = "Font";
+
+/* Display name for text track kind 'forced' that is used to see if the HTML 'label' already contains 'Forced'. */
+"Forced" = "Forced";
 
 /* Undo action name */
 "Format Block (Undo action name)" = "Formatting";
@@ -574,6 +592,9 @@
 /* Malware confirmation dialog */
 "Merely visiting a site is sufficient for malware to install itself and harm your computer." = "Merely visiting a site is sufficient for malware to install itself and harm your computer.";
 
+/* Display name for text track kind 'metadata' that is used to see if the HTML 'label' already contains 'Metadata'. */
+"Metadata" = "Metadata";
+
 /* Label text to be used when a plugin is missing */
 "Missing Plug-in" = "Missing Plug-in";
 
@@ -723,6 +744,9 @@
 
 /* Right to Left context menu item */
 "Right to Left" = "Right to Left";
+
+/* Display name for deaf and hard of hearing subtitle text tracks that is used to see if the HTML 'label' already contains 'SDH'. */
+"SDH" = "SDH";
 
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";

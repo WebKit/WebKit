@@ -74,7 +74,7 @@ static String platformLanguage()
     return computedDefaultLanguage;
 }
 
-Vector<String> platformUserPreferredLanguages()
+Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 {
     return { platformLanguage() };
 }

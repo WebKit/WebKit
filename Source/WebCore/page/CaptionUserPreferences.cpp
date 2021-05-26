@@ -170,7 +170,7 @@ void CaptionUserPreferences::captionPreferencesChanged()
 
 Vector<String> CaptionUserPreferences::preferredLanguages() const
 {
-    Vector<String> languages = userPreferredLanguages();
+    Vector<String> languages = userPreferredLanguages(ShouldMinimizeLanguages::No);
     if (m_testingMode && !m_userPreferredLanguage.isEmpty())
         languages.insert(0, m_userPreferredLanguage);
 
@@ -341,7 +341,7 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
             if (offset)
                 return 0;
         } else {
-            languageList.append(defaultLanguage());
+            languageList.append(defaultLanguage(ShouldMinimizeLanguages::No));
 
             // Only enable a text track if the current audio track is NOT in the user's preferred language ...
             size_t offset = indexOfBestMatchingLanguageInList(audioTrackLanguage, languageList, exactMatch);
@@ -418,7 +418,7 @@ String CaptionUserPreferences::primaryAudioTrackLanguageOverride() const
 {
     if (!m_primaryAudioTrackLanguageOverride.isEmpty())
         return m_primaryAudioTrackLanguageOverride;
-    return defaultLanguage();
+    return defaultLanguage(ShouldMinimizeLanguages::No);
 }
     
 }
