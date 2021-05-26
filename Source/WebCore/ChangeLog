@@ -1,3 +1,18 @@
+2021-05-26  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r278028.
+
+        Caused fast/selectors/slow-style-sharing-with-long-cousin-
+        list.html to timeout on iOS and Windows.
+
+        Reverted changeset:
+
+        "CrashOnOverflow in
+        WebCore::RenderTable::cellBefore(WebCore::RenderTableCell
+        const*)"
+        https://bugs.webkit.org/show_bug.cgi?id=225949
+        https://commits.webkit.org/r278028
+
 2021-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Support painting data detector highlights inside image overlays

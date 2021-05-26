@@ -1,3 +1,18 @@
+2021-05-26  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r278028.
+
+        Caused fast/selectors/slow-style-sharing-with-long-cousin-
+        list.html to timeout on iOS and Windows.
+
+        Reverted changeset:
+
+        "CrashOnOverflow in
+        WebCore::RenderTable::cellBefore(WebCore::RenderTableCell
+        const*)"
+        https://bugs.webkit.org/show_bug.cgi?id=225949
+        https://commits.webkit.org/r278028
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, skip new WebAudio tests added in r278068 on Windows.
