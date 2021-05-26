@@ -160,7 +160,7 @@ inline SandboxExtension::Handle* SandboxExtension::HandleArray::end() { return &
 inline const SandboxExtension::Handle* SandboxExtension::HandleArray::begin() const { return &m_emptyHandle; }
 inline const SandboxExtension::Handle* SandboxExtension::HandleArray::end() const { return &m_emptyHandle; }
 inline void SandboxExtension::HandleArray::encode(IPC::Encoder&) const { }
-inline auto SandboxExtension::HandleArray::decode(IPC::Decoder&) -> Optional<HandleArray> { return {{ }}; }
+inline auto SandboxExtension::HandleArray::decode(IPC::Decoder&) -> Optional<HandleArray> { return { HandleArray() }; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline bool SandboxExtension::createHandle(const String&, Type, Handle&) { return true; }
 inline SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<String>&) { return { }; }

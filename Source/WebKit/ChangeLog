@@ -1,3 +1,14 @@
+2021-05-25  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, fix GCC8 build after r278035
+        https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Avoid "...from initializer list would use explicit constructor ..." errors
+        in GCC8 when initializing std::optional.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::HandleArray::decode):
+
 2021-05-25  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         _WKRemoteObjectRegistry should not call completion handlers if block signatures don't match or can't be found
