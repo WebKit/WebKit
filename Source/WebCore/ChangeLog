@@ -1,39 +1,5 @@
 2021-05-17  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r277603. rdar://problem/78130222
-
-    Null check m_resource in SubresourceLoader::didReceiveResponse
-    https://bugs.webkit.org/show_bug.cgi?id=225879
-    
-    Reviewed by Chris Dumez.
-    
-    Add ASSERT_NOT_REACHED and RELEASE_LOG_FAULT if m_resource is null.
-    This will help us notice this invalid state in debug builds and diagnose strange loading failures in simulated crash logs.
-    On further investigation, the crash fixed in r277594 was likely already fixed by something else, but that made it more robust.
-    
-    * loader/SubresourceLoader.cpp:
-    (WebCore::SubresourceLoader::didReceiveResponse):
-    
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277603 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2021-05-17  Alex Christensen  <achristensen@webkit.org>
-
-            Null check m_resource in SubresourceLoader::didReceiveResponse
-            https://bugs.webkit.org/show_bug.cgi?id=225879
-
-            Reviewed by Chris Dumez.
-
-            Add ASSERT_NOT_REACHED and RELEASE_LOG_FAULT if m_resource is null.
-            This will help us notice this invalid state in debug builds and diagnose strange loading failures in simulated crash logs.
-            On further investigation, the crash fixed in r277594 was likely already fixed by something else, but that made it more robust.
-
-            * loader/SubresourceLoader.cpp:
-            (WebCore::SubresourceLoader::didReceiveResponse):
-
-2021-05-17  Alan Coon  <alancoon@apple.com>
-
         Cherry-pick r277600. rdar://problem/78130132
 
     REGRESSION(r277425): Crash in FrameSelection::selectFrameElementInParentIfFullySelected
