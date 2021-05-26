@@ -3021,7 +3021,8 @@ Optional<SerializedPlatformDataCueValue> ArgumentCoder<WebCore::SerializedPlatfo
     if (hasPlatformData)
         return decodePlatformData(decoder, type);
 
-    return {{ }};
+    return { SerializedPlatformDataCueValue() };
+
 }
 #endif
 

@@ -1,7 +1,16 @@
 2021-05-25  Lauro Moura  <lmoura@igalia.com>
 
-        Unreviewed, fix GCC8 build after r278035
+        Unreviewed, another GCC8 build fix after r278035
         https://bugs.webkit.org/show_bug.cgi?id=211674
+
+        Missed from previous patch.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::decode):
+
+2021-05-25  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, fix GCC8 build after r278035
 
         Avoid "...from initializer list would use explicit constructor ..." errors
         in GCC8 when initializing std::optional.
