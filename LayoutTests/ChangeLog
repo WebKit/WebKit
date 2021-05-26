@@ -1,3 +1,11 @@
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip new WebAudio tests added in r278068 on Windows.
+
+        WebAudio is disabled on Windows.
+
+        * platform/win/TestExpectations:
+
 2021-05-26  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Strip php support from webserver (Apache)
