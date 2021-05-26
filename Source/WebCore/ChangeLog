@@ -1,5 +1,18 @@
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
+        Stop using UncheckedLock in MediaElementAudioSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=226250
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in MediaElementAudioSourceNode as it is being phased out in favor of
+        Lock, which supports clang thread safety analysis.
+
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * html/HTMLMediaElement.cpp:
+
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
         [GStreamer] Stop using UncheckedLock in WebKitCommonEncryptionDecryptorGStreamer
         https://bugs.webkit.org/show_bug.cgi?id=226249
 

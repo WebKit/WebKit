@@ -5096,7 +5096,9 @@ void HTMLMediaElement::mediaPlayerEngineUpdated()
     scheduleMediaEngineWasUpdated();
 }
 
-void HTMLMediaElement::mediaPlayerWillInitializeMediaEngine()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS since this function does conditional locking, which is not
+// supported by analysis.
+void HTMLMediaElement::mediaPlayerWillInitializeMediaEngine() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(isMainThread());
 #if ENABLE(WEB_AUDIO)
@@ -5106,7 +5108,9 @@ void HTMLMediaElement::mediaPlayerWillInitializeMediaEngine()
 #endif
 }
 
-void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS since this function does conditional unlocking, which is not
+// supported by analysis.
+void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(isMainThread());
 #if ENABLE(WEB_AUDIO)
@@ -6618,7 +6622,9 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
         scheduleConfigureTextTracks();
 }
 
-void HTMLMediaElement::createMediaPlayer()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function does conditional locking of m_audioSourceNode->processLock()
+// which analysis doesn't support.
+void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     INFO_LOG(LOGIDENTIFIER);
 
@@ -6626,7 +6632,9 @@ void HTMLMediaElement::createMediaPlayer()
 
 #if ENABLE(WEB_AUDIO)
     auto protectedAudioSourceNode = makeRefPtr(m_audioSourceNode);
-    Locker audioSourceNodeLocker(m_audioSourceNode ? &m_audioSourceNode->processLock() : nullptr);
+    std::optional<Locker<Lock>> audioSourceNodeLocker;
+    if (m_audioSourceNode)
+        audioSourceNodeLocker.emplace(m_audioSourceNode->processLock());
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
