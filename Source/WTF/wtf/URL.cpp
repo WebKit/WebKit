@@ -667,10 +667,10 @@ void URL::setQuery(StringView newQuery)
 
 static String escapePathWithoutCopying(StringView path)
 {
-    auto questionMarkOrNumberSign = [] (UChar character) {
-        return character == '?' || character == '#';
+    auto questionMarkOrNumberSignOrNonASCII = [] (UChar character) {
+        return character == '?' || character == '#' || !isASCII(character);
     };
-    return percentEncodeCharacters(path.toStringWithoutCopying(), questionMarkOrNumberSign);
+    return percentEncodeCharacters(path.toStringWithoutCopying(), questionMarkOrNumberSignOrNonASCII);
 }
 
 void URL::setPath(StringView path)

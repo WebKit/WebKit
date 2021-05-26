@@ -513,12 +513,12 @@ PASS <area>: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\
 PASS URL: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs
 PASS <a>: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs
 PASS <area>: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs
-FAIL URL: Setting <a:/>.pathname = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed. assert_equals: expected "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C3%82%C2%80%C3%82%C2%81%C3%83%C2%89%C3%83%C2%A9"
-FAIL <a>: Setting <a:/>.pathname = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed. assert_equals: expected "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C3%82%C2%80%C3%82%C2%81%C3%83%C2%89%C3%83%C2%A9"
-FAIL <area>: Setting <a:/>.pathname = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed. assert_equals: expected "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C3%82%C2%80%C3%82%C2%81%C3%83%C2%89%C3%83%C2%A9"
+PASS URL: Setting <a:/>.pathname = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed.
+PASS <a>: Setting <a:/>.pathname = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed.
+PASS <area>: Setting <a:/>.pathname = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed.
 PASS URL: Setting <http://example.net>.pathname = '%2e%2E%c3%89té' Bytes already percent-encoded are left as-is, including %2E outside dotted segments.
 PASS <a>: Setting <http://example.net>.pathname = '%2e%2E%c3%89té' Bytes already percent-encoded are left as-is, including %2E outside dotted segments.
 PASS <area>: Setting <http://example.net>.pathname = '%2e%2E%c3%89té' Bytes already percent-encoded are left as-is, including %2E outside dotted segments.

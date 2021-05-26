@@ -1,3 +1,19 @@
+2021-05-26  Alex Christensen  <achristensen@webkit.org>
+
+        URL path setter messes up UTF-8 encoding after ?
+        https://bugs.webkit.org/show_bug.cgi?id=226136
+
+        Reviewed by Chris Dumez.
+
+        escapePathWithoutCopying needs to tell percentEncodeCharacters to percent encode all non-ASCII characters in the output of UTF-8 encoding
+        in addition to ? and #.  Otherwise, we take the output of UTF-8 encoding and append each code unit to the input of URL parsing as if it were Latin-1.
+        This matches Chrome, Firefox, and reason.
+        Covered by a newly passing WPT test.
+        Other callers of percentEncodeCharacters use functions that already encode all non-ASCII characters.
+
+        * wtf/URL.cpp:
+        (WTF::escapePathWithoutCopying):
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in WTF::AutomaticThread
