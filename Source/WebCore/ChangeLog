@@ -1,3 +1,33 @@
+2021-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a PAL softlinking header for the Reveal framework
+        https://bugs.webkit.org/show_bug.cgi?id=226292
+
+        Reviewed by Tim Horton.
+
+        Pull soft-linking bits out of `DictionaryLookup.mm` and into a separate PAL header, so that we can easily soft-
+        link both Reveal and RevealCore in WebKit, in future patches. See below for more details.
+
+        No change in behavior.
+
+        * editing/cocoa/DictionaryLookup.mm:
+
+        Also do some minor cleanup around this code:
+
+        -   Use `auto` in more places.
+        -   Make `WebRevealHighlight` conform to `RVPresenterHighlightDelegate` and `UIRVPresenterHighlightDelegate`, as
+            was (probably) intended. Currently, the names of these delegate methods are treated as unused type template
+            arguments on the class. This means we no longer need to `static_cast` to the protocol when passing these
+            objects around.
+        -   Move several ivars on `WebRevealHighlight` out of the @interface, and into the @implementation.
+
+        (-[WebRevealHighlight revealContext:drawRectsForItem:]):
+        (WebCore::canCreateRevealItems):
+        (WebCore::DictionaryLookup::rangeForSelection):
+        (WebCore::DictionaryLookup::rangeAtHitTestResult):
+        (WebCore::showPopupOrCreateAnimationController):
+        (SOFT_LINK_CLASS_OPTIONAL): Deleted.
+
 2021-05-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Support USE_ANGLE_EGL on additional platforms

@@ -16,6 +16,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/MediaToolboxSoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
     cocoa/PassKitSoftLink.h
+    cocoa/RevealSoftLink.h
     cocoa/SpeechSoftLink.h
     cocoa/UsageTrackingSoftLink.h
 
@@ -156,6 +157,7 @@ list(APPEND PAL_SOURCES
     cocoa/MediaToolboxSoftLink.cpp
     cocoa/OpenGLSoftLinkCocoa.mm
     cocoa/PassKitSoftLink.mm
+    cocoa/RevealSoftLink.mm
     cocoa/SpeechSoftLink.mm
     cocoa/UsageTrackingSoftLink.mm
 

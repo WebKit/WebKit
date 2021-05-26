@@ -1,3 +1,17 @@
+2021-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a PAL softlinking header for the Reveal framework
+        https://bugs.webkit.org/show_bug.cgi?id=226292
+
+        Reviewed by Tim Horton.
+
+        Add the new header and source file.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/RevealSoftLink.h: Added.
+        * pal/cocoa/RevealSoftLink.mm: Added.
+
 2021-05-24  Sam Weinig  <weinig@apple.com>
 
         Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)
