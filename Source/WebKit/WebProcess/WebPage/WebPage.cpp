@@ -3717,6 +3717,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&& completionHandler)
 {
+    RELEASE_LOG_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: frameID=%" PRIu64, frameID.valueOr(WebCore::FrameIdentifier { }).toUInt64());
     auto webFrame = makeRefPtr(frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame());
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
@@ -3725,7 +3726,13 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
             frame->loader().client().dispatchGlobalObjectAvailable(coreWorld);
     }
 
-    runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, WTFMove(completionHandler));
+    runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](const IPC::DataReference& result, const Optional<WebCore::ExceptionDetails>& exception) mutable {
+        if (exception)
+            RELEASE_LOG_ERROR_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript failed with error %{private}s", exception->message.utf8().data());
+        else
+            RELEASE_LOG_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript succeeded");
+        completionHandler(result, exception);
+    });
 }
 
 void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CompletionHandler<void(const String&)>&& callback)
