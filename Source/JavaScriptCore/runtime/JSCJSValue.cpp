@@ -259,7 +259,7 @@ bool JSValue::putToPrimitive(JSGlobalObject* globalObject, PropertyName property
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter())
-                RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(gs)->callSetter(globalObject, *this, value, slot.isStrictMode()));
+                RELEASE_AND_RETURN(scope, callSetter(globalObject, *this, gs, value, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy()));
 
             if (gs.isCustomGetterSetter()) {
                 auto setter = jsCast<CustomGetterSetter*>(gs.asCell())->setter();
