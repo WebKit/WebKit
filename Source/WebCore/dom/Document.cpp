@@ -3901,6 +3901,13 @@ void Document::themeColorChanged()
 
     if (auto* page = this->page())
         page->chrome().client().themeColorChanged();
+
+#if ENABLE(RUBBER_BANDING)
+    if (auto* view = renderView()) {
+        if (view->usesCompositing())
+            view->compositor().updateLayerForOverhangAreasBackgroundColor();
+    }
+#endif // ENABLE(RUBBER_BANDING)
 }
 
 static bool isValidPageSampleLocation(Document& document, const IntPoint& location)

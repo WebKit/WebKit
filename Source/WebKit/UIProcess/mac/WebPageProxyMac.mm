@@ -710,15 +710,6 @@ void WebPageProxy::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRe
 }
 #endif
 
-Color WebPageProxy::platformUnderPageBackgroundColor() const
-{
-#if ENABLE(DARK_MODE_CSS)
-    return NSColor.controlBackgroundColor.CGColor;
-#else
-    return NSColor.whiteColor.CGColor;
-#endif
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

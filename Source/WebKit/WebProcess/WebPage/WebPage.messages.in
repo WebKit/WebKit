@@ -39,7 +39,6 @@ messages -> WebPage LegacyReceiver {
     SetTopContentInset(float contentInset)
 
     SetUnderlayColor(WebCore::Color color)
-    SetUnderPageBackgroundColorOverride(WebCore::Color underPageBackgroundColorOverride)
 
     ViewWillStartLiveResize()
     ViewWillEndLiveResize()

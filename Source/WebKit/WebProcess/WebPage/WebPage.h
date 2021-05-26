@@ -608,8 +608,6 @@ public:
     
     void postInjectedBundleMessage(const String& messageName, const UserData&);
 
-    void setUnderPageBackgroundColorOverride(WebCore::Color&&);
-
     void setUnderlayColor(const WebCore::Color& color) { m_underlayColor = color; }
     WebCore::Color underlayColor() const { return m_underlayColor; }
 
