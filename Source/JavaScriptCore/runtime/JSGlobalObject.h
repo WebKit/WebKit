@@ -596,7 +596,7 @@ public:
         
 public:
     using Base = JSSegmentedVariableObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesPut | IsImmutablePrototypeExoticObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | IsImmutablePrototypeExoticObject;
 
     static constexpr bool needsDestruction = true;
     template<typename CellType, SubspaceAccess mode>

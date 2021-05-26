@@ -64,7 +64,7 @@ public:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::OverridesPut | JSC::ProhibitsPropertyCaching;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpure | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::ProhibitsPropertyCaching;
 protected:
     JSTestNamedSetterWithLegacyOverrideBuiltIns(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&&);
 

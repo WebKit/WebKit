@@ -248,6 +248,23 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* le
     return Base::getOwnPropertySlotByIndex(thisObject, lexicalGlobalObject, index, slot);
 }
 
+void JSDOMWindow::doPutPropertySecurityCheck(JSObject* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PutPropertySlot&)
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* thisObject = jsCast<JSDOMWindow*>(cell);
+
+    String errorMessage;
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
+        // We only allow setting "location" attribute cross-origin.
+        if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName())
+            return;
+        throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
+        return;
+    }
+}
+
 bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = lexicalGlobalObject->vm();
@@ -255,10 +272,17 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
 
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
 
-    if (propertyName != static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName()) {
+    String errorMessage;
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
         // We only allow setting "location" attribute cross-origin.
-        if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), ThrowSecurityError))
+        if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName()) {
+            bool putResult = false;
+            if (lookupPut(lexicalGlobalObject, propertyName, thisObject, value, *s_info.staticPropHashTable, slot, putResult))
+                return putResult;
             return false;
+        }
+        throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
+        return false;
     }
 
     RELEASE_AND_RETURN(scope, Base::put(thisObject, lexicalGlobalObject, propertyName, value, slot));

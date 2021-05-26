@@ -30,7 +30,7 @@ namespace JSC {
 class ErrorInstance : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames;
     static constexpr bool needsDestruction = true;
 
     static void destroy(JSCell* cell)

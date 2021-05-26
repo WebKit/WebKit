@@ -83,8 +83,6 @@ public:
 #if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalMethod3(JSC::JSGlobalObject&, JSC::CallFrame&);
 #endif
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::OverridesPut;
 protected:
     JSTestInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterface>&&);
 
