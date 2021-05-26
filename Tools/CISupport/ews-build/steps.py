@@ -1028,7 +1028,9 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
         patch_id = self.getProperty('patch_id', '')
         build_finish_summary = self.getProperty('build_finish_summary', None)
 
-        rc = self.set_cq_minus_flag_on_patch(patch_id)
+        rc = SKIPPED
+        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+            rc = self.set_cq_minus_flag_on_patch(patch_id)
         self.finished(rc)
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
@@ -1040,9 +1042,6 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
         elif self.results == SKIPPED:
             return buildstep.BuildStep.getResultSummary(self)
         return {'step': 'Failed to set cq- flag on patch'}
-
-    def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
 
 class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
