@@ -1,3 +1,21 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        [GStreamer] Stop using UncheckedLock in WebKitCommonEncryptionDecryptorGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=226249
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in WebKitCommonEncryptionDecryptorGStreamer as it is being phased out
+        in favor of WTF::Lock, which supports Clang thread safety analysis.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (transformInPlace):
+        (isCDMProxyAvailable):
+        (attachCDMProxy):
+        (sinkEventHandler):
+        (webKitMediaCommonEncryptionDecryptIsFlushing):
+        (setContext):
+
 2021-05-25  Sam Weinig  <weinig@apple.com>
 
         Support byte components for all bounded RGB color types, not just SRGBA

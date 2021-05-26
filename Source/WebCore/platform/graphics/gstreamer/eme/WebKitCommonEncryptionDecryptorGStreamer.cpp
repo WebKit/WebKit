@@ -56,8 +56,8 @@ struct _WebKitMediaCommonEncryptionDecryptPrivate {
     RefPtr<CDMProxy> cdmProxy;
 
     // Protect the access to the structure members.
-    UncheckedLock mutex;
-    UncheckedCondition condition;
+    Lock lock;
+    Condition condition;
 
     bool isFlushing { false };
     std::unique_ptr<CDMProxyDecryptionClientImplementation> cdmProxyDecryptionClientImplementation;
@@ -191,7 +191,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
         return GST_FLOW_OK;
     }
 
-    Locker locker { priv->mutex };
+    Locker locker { priv->lock };
 
     if (priv->isFlushing) {
         GST_DEBUG_OBJECT(self, "Decryption aborted because of flush");
@@ -201,10 +201,10 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     // The CDM instance needs to be negotiated before we can begin decryption.
     if (!priv->cdmProxy) {
         GST_DEBUG_OBJECT(self, "CDM not available, going to wait for it");
-        priv->condition.waitFor(priv->mutex, MaxSecondsToWaitForCDMProxy, [priv] {
+        priv->condition.waitFor(priv->lock, MaxSecondsToWaitForCDMProxy, [priv] {
             return priv->isFlushing || priv->cdmProxy;
         });
-        // Note that waitFor() releases the mutex lock internally while it waits, so isFlushing may have been changed.
+        // Note that waitFor() releases the lock internally while it waits, so isFlushing may have been changed.
         if (priv->isFlushing) {
             GST_DEBUG_OBJECT(self, "Decryption aborted because of flush");
             return GST_FLOW_FLUSHING;
@@ -288,15 +288,16 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
 
     GST_TRACE_OBJECT(self, "decrypting");
 
+    bool didDecryptionSucceed;
+
     // Temporarily release the lock while we don't need to access priv. The lower level API is used
     // in order to avoid creating several scopes with different Locker instances in each one.
-    priv->mutex.unlock();
-
-    bool didDecryptionSucceed = klass->decrypt(self, ivBuffer, keyIDBuffer, buffer, subSampleCount, subSamplesBuffer);
+    {
+        DropLockForScope noLockScope { locker };
+        didDecryptionSucceed = klass->decrypt(self, ivBuffer, keyIDBuffer, buffer, subSampleCount, subSamplesBuffer);
+    }
 
     // Accessing priv members again.
-    priv->mutex.lock();
-
     if (!didDecryptionSucceed) {
         if (priv->isFlushing) {
             GST_DEBUG_OBJECT(self, "Decryption aborted because of flush");
@@ -312,7 +313,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
 static bool isCDMProxyAvailable(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    Locker locker { priv->mutex };
+    Locker locker { priv->lock };
     return priv->cdmProxy;
 }
 
@@ -345,7 +346,7 @@ static void attachCDMProxy(WebKitMediaCommonEncryptionDecrypt* self, CDMProxy* p
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
     WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
 
-    Locker locker { priv->mutex };
+    Locker locker { priv->lock };
     GST_ERROR_OBJECT(self, "Attaching CDMProxy %p", proxy);
     priv->cdmProxy = proxy;
     klass->cdmProxyAttached(self, priv->cdmProxy);
@@ -393,7 +394,7 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
     case GST_EVENT_FLUSH_START:
         GST_DEBUG_OBJECT(self, "Flush-start");
         {
-            Locker locker { priv->mutex };
+            Locker locker { priv->lock };
             bool isCdmProxyAttached = priv->cdmProxy;
             priv->isFlushing = true;
             if (isCdmProxyAttached) {
@@ -406,7 +407,7 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
     case GST_EVENT_FLUSH_STOP:
         GST_DEBUG_OBJECT(self, "Flush-stop");
         {
-            Locker locker { priv->mutex };
+            Locker locker { priv->lock };
             priv->isFlushing = false;
         }
         break;
@@ -420,7 +421,7 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
 bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt* self)
 {
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
-    Locker locker { priv->mutex };
+    Locker locker { priv->lock };
     return priv->isFlushing;
 }
 
@@ -459,7 +460,7 @@ static void setContext(GstElement* element, GstContext* context)
 
     if (gst_context_has_context_type(context, "drm-cdm-proxy")) {
         const GValue* value = gst_structure_get_value(gst_context_get_structure(context), "cdm-proxy");
-        Locker locker { priv->mutex };
+        Locker locker { priv->lock };
         priv->cdmProxy = value ? reinterpret_cast<CDMProxy*>(g_value_get_pointer(value)) : nullptr;
         GST_DEBUG_OBJECT(self, "received new CDMInstance %p", priv->cdmProxy.get());
         klass->cdmProxyAttached(self, priv->cdmProxy);
