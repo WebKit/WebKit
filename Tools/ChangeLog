@@ -1,3 +1,21 @@
+2021-05-26  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix remaining test-webkitpy{,-python2} --all --integration-tests failures
+        https://bugs.webkit.org/show_bug.cgi?id=226242
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitTest.test_remote_branch_ref): Allow main
+        (GitTest.test_native_branch):  Allow main
+        (SVNTest.clean_bogus_dir): Deleted.
+        (SVNTest.test_diff_for_file_with_existing_bogus_dir): Deleted.
+        (SVNTest.test_diff_for_file_with_missing_bogus_dir): Deleted.
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN._setup_bogus_dir): Use tempfile
+        (SVN._teardown_bogus_dir): Make no-op when no bogus dir exists
+        (SVN._bogus_dir_name): Deleted.
+
 2021-05-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Improve string conversion in AccessibilityController::injectAccessibilityPreference

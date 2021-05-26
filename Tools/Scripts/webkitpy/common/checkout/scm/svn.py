@@ -334,29 +334,21 @@ class SVN(SCM, SVNRepository):
         # FIXME: This should probably use cwd=self.checkout_root
         return self._run_svn(['diff', '-c', revision], decode_output=False)
 
-    def _bogus_dir_name(self):
-        rnd = ''.join(random.sample(string.ascii_letters, 5))
-        if sys.platform.startswith("win"):
-            parent_dir = tempfile.gettempdir()
-        else:
-            parent_dir = sys.path[0]  # tempdir is not secure.
-        return os.path.join(parent_dir, "temp_svn_config_" + rnd)
-
     def _setup_bogus_dir(self, log):
-        self._bogus_dir = self._bogus_dir_name()
-        if not os.path.exists(self._bogus_dir):
-            os.mkdir(self._bogus_dir)
-            self._delete_bogus_dir = True
-        else:
-            self._delete_bogus_dir = False
+        if self._bogus_dir:
+            self._teardown_bogus_dir(log)
+
+        self._bogus_dir = tempfile.mkdtemp()
         if log:
             log.debug('  Html: temp config dir: "%s".', self._bogus_dir)
 
     def _teardown_bogus_dir(self, log):
-        if self._delete_bogus_dir:
-            shutil.rmtree(self._bogus_dir, True)
-            if log:
-                log.debug('  Html: removed temp config dir: "%s".', self._bogus_dir)
+        if not self._bogus_dir:
+            return
+
+        shutil.rmtree(self._bogus_dir, True)
+        if log:
+            log.debug('  Html: removed temp config dir: "%s".', self._bogus_dir)
         self._bogus_dir = None
 
     def diff_for_file(self, path, log=None):
