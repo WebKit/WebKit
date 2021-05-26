@@ -115,11 +115,11 @@ class TestSummaryProviders(unittest.TestCase):
 
     def serial_test_WTFStringImpl_SummaryProvider_8bit_string(self):
         summary = lldb_webkit.WTFStringImpl_SummaryProvider(self._sbFrame.FindVariable('an8BitStringImpl'), {})
-        self.assertEqual(summary, "{ length = 8, is8bit = 1, contents = 'r\\xe9sum\\xe9' }")
+        self.assertEqual(summary, u"{ length = 8, is8bit = 1, contents = 'r\xe9sum\xe9' }")
 
     def serial_test_WTFStringImpl_SummaryProvider_16bit_string(self):
         summary = lldb_webkit.WTFStringImpl_SummaryProvider(self._sbFrame.FindVariable('a16BitStringImpl'), {})
-        self.assertEqual(summary, u"{ length = 13, is8bit = 0, contents = '\\u1680Cappuccino\\u1680\\x00' }")
+        self.assertEqual(summary, u"{ length = 13, is8bit = 0, contents = '\u1680Cappuccino\u1680\x00' }")
 
     # MARK: WTFString_SummaryProvider test cases
 
@@ -133,11 +133,11 @@ class TestSummaryProviders(unittest.TestCase):
 
     def serial_test_WTFString_SummaryProvider_8bit_string(self):
         summary = lldb_webkit.WTFString_SummaryProvider(self._sbFrame.FindVariable('an8BitString'), {})
-        self.assertEqual(summary, "{ length = 8, contents = 'r\\xe9sum\\xe9' }")
+        self.assertEqual(summary, u"{ length = 8, contents = 'r\xe9sum\xe9' }")
 
     def serial_test_WTFString_SummaryProvider_16bit_string(self):
         summary = lldb_webkit.WTFString_SummaryProvider(self._sbFrame.FindVariable('a16BitString'), {})
-        self.assertEqual(summary, u"{ length = 13, contents = '\\u1680Cappuccino\\u1680\\x00' }")
+        self.assertEqual(summary, u"{ length = 13, contents = '\u1680Cappuccino\u1680\x00' }")
 
     # MARK: WTFVector_SummaryProvider test cases
 

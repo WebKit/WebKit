@@ -1,3 +1,17 @@
+2021-05-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [test-lldb-webkit] Update for Xcode 12.5
+        https://bugs.webkit.org/show_bug.cgi?id=226115
+        <rdar://problem/78331664>
+
+        Reviewed by Darin Adler.
+
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_8bit_string): Use unicode directly.
+        (TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_16bit_string): Ditto.
+        (TestSummaryProviders.serial_test_WTFString_SummaryProvider_8bit_string): Ditto.
+        (TestSummaryProviders.serial_test_WTFString_SummaryProvider_16bit_string): Ditto.
+
 2021-05-26  Sam Sneddon  <gsnedders@apple.com>
 
         Fix remaining test-webkitpy{,-python2} --all --integration-tests failures
