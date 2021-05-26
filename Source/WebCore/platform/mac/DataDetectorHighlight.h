@@ -56,6 +56,7 @@ class DataDetectorHighlight : public RefCounted<DataDetectorHighlight>, private 
 public:
     static Ref<DataDetectorHighlight> createForSelection(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
     static Ref<DataDetectorHighlight> createForTelephoneNumber(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
+    static Ref<DataDetectorHighlight> createForImageOverlay(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
 
     ~DataDetectorHighlight() = default;
 
@@ -69,6 +70,7 @@ public:
         None = 0,
         TelephoneNumber = 1 << 0,
         Selection = 1 << 1,
+        ImageOverlay = 1 << 2,
     };
 
     Type type() const { return m_type; }

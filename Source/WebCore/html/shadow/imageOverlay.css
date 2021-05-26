@@ -43,3 +43,9 @@ div.image-overlay-line, .image-overlay-text {
     color: transparent;
     background-color: highlight;
 }
+
+div.image-overlay-data-detector-result {
+    position: absolute;
+    -webkit-user-select: none;
+    pointer-events: none;
+}

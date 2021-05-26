@@ -1234,6 +1234,12 @@ static const AtomString& imageOverlayElementIdentifier()
     return identifier;
 }
 
+static const AtomString& imageOverlayDataDetectorClassName()
+{
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-data-detector-result", AtomString::ConstructFromLiteral);
+    return className;
+}
+
 bool HTMLElement::shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
 {
     if (!is<HTMLDivElement>(targetNode))
@@ -1275,6 +1281,11 @@ static RefPtr<HTMLElement> imageOverlayHost(const Node& node)
 
     auto element = makeRefPtr(downcast<HTMLElement>(*host));
     return element->hasImageOverlay() ? element : nullptr;
+}
+
+bool HTMLElement::isImageOverlayDataDetectorResult() const
+{
+    return imageOverlayHost(*this) && hasClass() && classNames().contains(imageOverlayDataDetectorClassName());
 }
 
 bool HTMLElement::isInsideImageOverlay(const SimpleRange& range)
@@ -1466,6 +1477,31 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         if (document().isImageDocument())
             lineContainer->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
     }
+
+#if ENABLE(DATA_DETECTION)
+    for (auto& dataDetector : result.dataDetectors) {
+        if (dataDetector.normalizedQuads.isEmpty())
+            continue;
+
+        auto dataDetectorContainer = HTMLDivElement::create(document());
+        dataDetectorContainer->classList().add(imageOverlayDataDetectorClassName());
+        container->appendChild(dataDetectorContainer);
+
+        // FIXME: We should come up with a way to coalesce the bounding quads into one or more rotated rects with the same angle of rotation.
+        auto targetQuad = dataDetector.normalizedQuads.first();
+        targetQuad.scale(containerSize.width(), containerSize.height());
+
+        auto targetBounds = rotatedBoundingRectWithMinimumAngleOfRotation(targetQuad, 0.01);
+        dataDetectorContainer->setInlineStyleProperty(CSSPropertyWidth, targetBounds.size.width(), CSSUnitType::CSS_PX);
+        dataDetectorContainer->setInlineStyleProperty(CSSPropertyHeight, targetBounds.size.height(), CSSUnitType::CSS_PX);
+        dataDetectorContainer->setInlineStyleProperty(CSSPropertyTransform, makeString(
+            "translate("_s,
+            std::round(targetBounds.center.x() - (targetBounds.size.width() / 2)), "px, "_s,
+            std::round(targetBounds.center.y() - (targetBounds.size.height() / 2)), "px) "_s,
+            targetBounds.angleInRadians ? makeString("rotate("_s, targetBounds.angleInRadians, "rad) "_s) : emptyString()
+        ));
+    }
+#endif // ENABLE(DATA_DETECTION)
 
     if (auto frame = makeRefPtr(document().frame()))
         frame->eventHandler().scheduleCursorUpdate();

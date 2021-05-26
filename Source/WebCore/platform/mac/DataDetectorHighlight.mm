@@ -57,6 +57,11 @@ Ref<DataDetectorHighlight> DataDetectorHighlight::createForTelephoneNumber(Page&
     return adoptRef(*new DataDetectorHighlight(page, client, DataDetectorHighlight::Type::TelephoneNumber, WTFMove(ddHighlight), WTFMove(range)));
 }
 
+Ref<DataDetectorHighlight> DataDetectorHighlight::createForImageOverlay(Page& page, DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
+{
+    return adoptRef(*new DataDetectorHighlight(page, client, DataDetectorHighlight::Type::ImageOverlay, WTFMove(ddHighlight), WTFMove(range)));
+}
+
 DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightClient& client, Type type, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
     : m_client(makeWeakPtr(client))
     , m_page(makeWeakPtr(page))

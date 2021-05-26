@@ -1,3 +1,66 @@
+2021-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Support painting data detector highlights inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=226227
+
+        Reviewed by Tim Horton.
+
+        Add support for painting data detector highlights inside image overlays by leveraging `DataDetectorHighlight`.
+        See comments below for more details.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::scanForTelephoneNumbers):
+
+        Avoid painting service-controls-based telephone number highlights for selected text inside image overlays, in
+        order to avoid painting a redundant data detector highlight for telephone numbers in image overlays.
+
+        * html/HTMLElement.cpp:
+        (WebCore::imageOverlayDataDetectorClassName):
+        (WebCore::HTMLElement::isImageOverlayDataDetectorResult const):
+        (WebCore::HTMLElement::updateWithImageExtractionResult):
+        * html/HTMLElement.h:
+        * html/shadow/imageOverlay.css:
+        (div.image-overlay-data-detector-result):
+
+        Add support for injecting elements in the DOM that represent data detection results; these are transformed and
+        overlaid on the image in the same way as existing text containers. Note that we lay out these elements on top
+        of text, but make them invisible to hit-testing unless the `IgnoreCSSPointerEventsProperty` option is specified.
+        We'll take advantage of this behavior in a future patch.
+
+        * page/ImageOverlayController.cpp:
+        (WebCore::ImageOverlayController::selectionQuadsDidChange):
+        (WebCore::ImageOverlayController::uninstallPageOverlayIfNeeded):
+        (WebCore::ImageOverlayController::drawRect):
+        (WebCore::ImageOverlayController::platformHandleMouseEvent):
+        * page/ImageOverlayController.h:
+
+        Refactor the image overlay controller, such that we install the page overlay if there is any selection inside
+        the image overlay (as opposed to only when we need to use this overlay to paint the text selection for
+        transparent images). If data detectors are present, we'll additionally set up out `DataDetectorHighlight`s (one
+        for each data detection result container).
+
+        * page/mac/ImageOverlayControllerMac.mm: Added.
+        (WebCore::ImageOverlayController::updateDataDetectorHighlights):
+
+        Traverse the image overlay's subtree in search of container elements that correspond to data detection results;
+        for each of these elements, we create a new `DataDetectorHighlight` using the element's bounds, and save the
+        pair in `m_dataDetectorContainersAndHighlights`. Note that we hold a weak pointer to the container element, such
+        that there's no risk of leaking any of these data detection result containers (or their documents).
+
+        (WebCore::ImageOverlayController::platformHandleMouseEvent):
+        (WebCore::ImageOverlayController::handleDataDetectorAction):
+
+        Add a FIXME referencing the next patch in the sequence.
+
+        (WebCore::ImageOverlayController::clearDataDetectorHighlights):
+        * platform/mac/DataDetectorHighlight.h:
+        * platform/mac/DataDetectorHighlight.mm:
+        (WebCore::DataDetectorHighlight::createForImageOverlay):
+
+        Add a helper method to create a `DataDetectorHighlight` for image overlays.
+
 2021-05-26  Antti Koivisto  <antti@apple.com>
 
         Don't hang onto expired resources without validation headers in memory cache

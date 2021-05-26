@@ -3679,6 +3679,10 @@ static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
     // Don't scan for phone numbers inside editable regions.
     if (auto startNode = makeRef(range.startContainer()); startNode->hasEditableStyle())
         return { };
+
+    if (HTMLElement::isInsideImageOverlay(range))
+        return { };
+
     auto text = plainText(range);
     Vector<SimpleRange> result;
     unsigned length = text.length();

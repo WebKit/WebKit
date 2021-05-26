@@ -192,6 +192,7 @@ page/ios/WebEventRegion.mm
 page/mac/ChromeMac.mm
 page/mac/DragControllerMac.mm
 page/mac/EventHandlerMac.mm
+page/mac/ImageOverlayControllerMac.mm
 page/mac/PageMac.mm
 page/mac/ServicesOverlayController.mm
 page/mac/TextIndicatorWindow.mm
