@@ -138,7 +138,7 @@ private:
     unsigned dropAllLocks(DropAllLocks*);
     void grabAllLocks(DropAllLocks*, unsigned lockCount);
 
-    UncheckedLock m_lock;
+    Lock m_lock;
     bool m_isWebThreadAware { false };
     // We cannot make m_ownerThread an optional (instead of pairing it with an explicit
     // m_hasOwnerThread) because currentThreadIsHoldingLock() may be called from a

@@ -768,8 +768,8 @@ private:
 #endif
 
     bool m_parallelMarkersShouldExit { false };
-    UncheckedLock m_collectContinuouslyLock;
-    UncheckedCondition m_collectContinuouslyCondition;
+    Lock m_collectContinuouslyLock;
+    Condition m_collectContinuouslyCondition;
 };
 
 } // namespace JSC

@@ -35,9 +35,10 @@ namespace JSC { namespace DFG {
 
 const char* const tierName = "DFG ";
 
-static UncheckedLock crashLock;
+static Lock crashLock;
 
-void startCrashing()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS since the function keeps holding the lock when returning.
+void startCrashing() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     crashLock.lock();
 }

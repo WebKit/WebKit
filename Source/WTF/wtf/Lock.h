@@ -184,15 +184,24 @@ class WTF_CAPABILITY_SCOPED_LOCK Locker<Lock> : public AbstractLocker {
 public:
     explicit Locker(Lock& lock) WTF_ACQUIRES_LOCK(lock)
         : m_lock(lock)
+        , m_isLocked(true)
     {
         m_lock.lock();
     }
     Locker(AdoptLockTag, Lock& lock) WTF_REQUIRES_LOCK(lock)
         : m_lock(lock)
+        , m_isLocked(true)
     {
     }
     ~Locker() WTF_RELEASES_LOCK()
     {
+        if (m_isLocked)
+            m_lock.unlock();
+    }
+    void unlockEarly() WTF_RELEASES_LOCK()
+    {
+        ASSERT(m_isLocked);
+        m_isLocked = false;
         m_lock.unlock();
     }
     Locker(const Locker<Lock>&) = delete;
@@ -216,6 +225,7 @@ private:
     }
 
     Lock& m_lock;
+    bool m_isLocked { false };
 };
 
 Locker(Lock&) -> Locker<Lock>;

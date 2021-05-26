@@ -1,3 +1,15 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        Use UncheckedLock less in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=226212
+
+        Reviewed by Saam Barati.
+
+        Add support for unlockEarly() to Locker<Lock> specialization, for consistency
+        with the generic Locker.
+
+        * wtf/Lock.h:
+
 2021-05-25  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] REGRESSION(r254389) media controls needs the full list of language preferences for ordering tracks

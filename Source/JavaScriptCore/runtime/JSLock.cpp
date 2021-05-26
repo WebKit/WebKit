@@ -93,7 +93,9 @@ void JSLock::lock()
     lock(1);
 }
 
-void JSLock::lock(intptr_t lockCount)
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function conditionally unlocks m_lock, which
+// is not supported by analysis.
+void JSLock::lock(intptr_t lockCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(lockCount > 0);
 #if USE(WEB_THREAD)
@@ -171,7 +173,9 @@ void JSLock::unlock()
     unlock(1);
 }
 
-void JSLock::unlock(intptr_t unlockCount)
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function conditionally unlocks m_lock, which
+// is not supported by analysis.
+void JSLock::unlock(intptr_t unlockCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     RELEASE_ASSERT(currentThreadIsHoldingLock());
     ASSERT(m_lockCount >= unlockCount);

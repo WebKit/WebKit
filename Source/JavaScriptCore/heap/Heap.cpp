@@ -2996,7 +2996,9 @@ void Heap::notifyIsSafeToCollect()
     dataLogIf(Options::logGC(), (MonotonicTime::now() - before).milliseconds(), "ms]\n");
 }
 
-void Heap::preventCollection()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function conditionally locks m_collectContinuouslyLock,
+// which is not supported by analysis.
+void Heap::preventCollection() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (!m_isSafeToCollect)
         return;
@@ -3015,7 +3017,9 @@ void Heap::preventCollection()
     RELEASE_ASSERT(!m_collectionScope);
 }
 
-void Heap::allowCollection()
+// Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function conditionally unlocks m_collectContinuouslyLock,
+// which is not supported by analysis.
+void Heap::allowCollection() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     if (!m_isSafeToCollect)
         return;

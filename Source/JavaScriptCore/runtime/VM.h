@@ -1004,9 +1004,9 @@ public:
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     static constexpr size_t patternContextBufferSize = 8192; // Space allocated to save nested parenthesis context
     UniqueArray<char> m_regExpPatternContexBuffer;
-    UncheckedLock m_regExpPatternContextLock;
-    char* acquireRegExpPatternContexBuffer();
-    void releaseRegExpPatternContexBuffer();
+    Lock m_regExpPatternContextLock;
+    char* acquireRegExpPatternContexBuffer() WTF_ACQUIRES_LOCK(m_regExpPatternContextLock);
+    void releaseRegExpPatternContexBuffer() WTF_RELEASES_LOCK(m_regExpPatternContextLock);
 #else
     static constexpr size_t patternContextBufferSize = 0; // Space allocated to save nested parenthesis context
 #endif

@@ -153,7 +153,7 @@ namespace {
 
 using CPUState = Probe::CPUState;
 
-UncheckedLock crashLock;
+Lock crashLock;
 
 typedef WTF::Function<void(CCallHelpers&)> Generator;
 
@@ -2568,7 +2568,8 @@ static void testBranchIfNotType()
                 }));                            \
     } while (false);
 
-void run(const char* filter)
+// Using WTF_IGNORES_THREAD_SAFETY_ANALYSIS because the function is still holding crashLock when exiting.
+void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     JSC::initialize();
     unsigned numberOfTests = 0;
