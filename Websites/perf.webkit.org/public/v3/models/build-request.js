@@ -18,7 +18,7 @@ class BuildRequest extends DataModelObject {
         this._platform = object.platform;
         console.assert(!object.test || object.test instanceof Test);
         this._test = object.test;
-        this._order = object.order;
+        this._order = +object.order;
         console.assert(object.commitSet instanceof CommitSet);
         this._commitSet = object.commitSet;
         this._status = object.status;
@@ -31,7 +31,7 @@ class BuildRequest extends DataModelObject {
 
     updateSingleton(object)
     {
-        console.assert(this._order == object.order);
+        console.assert(+this._order <= +object.order);
         console.assert(this._commitSet == object.commitSet);
 
         const testGroup = object.testGroup;
@@ -44,6 +44,7 @@ class BuildRequest extends DataModelObject {
         this._statusUrl = object.url;
         this._buildId = object.build;
         this._statusDescription = object.statusDescription;
+        this._order = +object.order;
     }
 
     triggerable() { return this._triggerable; }

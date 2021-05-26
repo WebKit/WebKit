@@ -1,3 +1,129 @@
+2021-05-03  Dewei Zhu  <dewei_zhu@apple.com>
+
+        [perf dashboard] Add sequential mode for perf dashboard A/B testing.
+        https://bugs.webkit.org/show_bug.cgi?id=223886
+
+        Reviewed by Ryosuke Niwa.
+
+        Add 'testgroup_repetition_type' to 'analysis_test_groups' table to store repetition type which defaults to 'alternating'.
+        Add support to schedule 'sequential' A/B testing which schedules all iterations for the first configuration (A)
+        before the iterations for the second configuration (B).
+        Before this patch, all A/B testing alternated between two different configurations for each iteration.
+        Add retry logic for 'sequential' A/B testing.
+
+        Update syncing script to not proceed with next configuration the current configuration successfully completed
+        more iterations than the initially requested or retries exceeded the list.
+
+        Fix a potential race in syncing script that 'Promise.all' may cause test group not scheduled in order.
+
+        * browser-tests/test-group-form-tests.js: Updated and added unit tests.
+        * init-database.sql: Added 'testgroup_repetition_type' field to 'analysis_test_groups' table.
+        * migrate-database.sql: Updated migration script to conditionally add 'testgroup_repetition_type' field.
+        * public/api/test-groups.php: Added 'repetitionType' field in api return value.
+        * public/include/build-requests-fetcher.php: Fetching build requests under a triggerable should include test
+        group with all test groups finished but still need retry. This will allow syncing script to resolve the build
+        request by ID and block other request to be scheduled on the builder.
+        * public/include/commit-sets-helpers.php: Added code to create build requests based on test mode.
+        * public/privileged-api/add-build-requests.php: Added support to only add build requests to one commit set.
+        * public/privileged-api/create-analysis-task.php: Added 'repetitionType' support.
+        * public/privileged-api/create-test-group.php: Added 'repetitionType' support.
+        * public/privileged-api/update-test-group.php:
+        * public/shared/common-component-base.js:
+        * public/v3/components/custom-configuration-test-group-form.js: Added 'repetitionType' support.
+        (CustomConfigurationTestGroupForm.prototype.startTesting):
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm.prototype.startTesting):
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm.prototype.startTesting):
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.async create):
+        (AnalysisTask):
+        * public/v3/models/build-request.js:
+        (BuildRequest):
+        (BuildRequest.prototype.updateSingleton): Allow build request order to be updated.
+        * public/v3/models/test-group.js:
+        (TestGroup):
+        (TestGroup.prototype.updateSingleton):
+        (TestGroup.prototype.repetitionType):
+        (TestGroup.prototype.repetitionCountForCommitSet): Refactored `repetitionCount` since repetition may be different
+        between configurations.
+        (TestGroup.prototype.hasRetries): A helper function to tell if a test group has retry runs.
+        (TestGroup.prototype.additionalRepetitionNeededToReachInitialRepetitionCount):
+        (TestGroup.prototype.successfulTestCount):
+        (TestGroup.prototype.isFirstTestRequest):
+        (TestGroup.prototype.precedingBuildRequest):
+        (TestGroup.prototype.retryCountForCommitSet):
+        (TestGroup.prototype.retryCountsAreSameForAllCommitSets):
+        (TestGroup.prototype.async _createAlternatingRetriesForTestGroup): Moved from 'retry-failed-build-requests' module.
+        (TestGroup.async _createSequentialRetriesForTestGroup): Moved from 'retry-failed-build-requests' module.
+        (TestGroup.prototype.async cancelPendingRequests):
+        (TestGroup.prototype.async didSendNotification):
+        (TestGroup.prototype.async addMoreBuildRequests):
+        (TestGroup.async createWithTask):
+        (TestGroup.async createWithCustomConfiguration):
+        (TestGroup.async createAndRefetchTestGroups):
+        (TestGroup.prototype.async scheduleMoreRequestsOrClearFlag): Moved from 'retry-failed-build-requests' module.
+        (TestGroup.async fetchById): Added support to fetch test group by ID.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane.prototype.didConstructShadowTree):
+        (AnalysisTaskResultsPane.prototype.didConstructShadowTree):
+        (AnalysisTaskConfiguratorPane.prototype.setTestGroups):
+        (AnalysisTaskConfiguratorPane):
+        (AnalysisTaskTestGroupPane.prototype.didConstructShadowTree):
+        (AnalysisTaskTestGroupPane.prototype._renderCurrentTestGroup):
+        (AnalysisTaskTestGroupPane.prototype._retrySummary):
+        (AnalysisTaskPage.prototype.didConstructShadowTree):
+        (AnalysisTaskPage.prototype.async _retryCurrentTestGroup):
+        (AnalysisTaskPage.prototype.async _bisectCurrentTestGroup):
+        (AnalysisTaskPage.set const):
+        (AnalysisTaskPage.prototype.async _createTestGroupAfterVerifyingCommitSetList):
+        (AnalysisTaskPage.prototype.async _createCustomTestGroup):
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.didConstructShadowTree):
+        (ChartPane.prototype.async _analyzeRange):
+        * public/v3/pages/create-analysis-task-page.js:
+        (CreateAnalysisTaskPage.prototype.async _createAnalysisTaskWithGroup):
+        * server-tests/api-build-requests-tests.js: Added a unit test.
+        * server-tests/api-upload-root-tests.js: Updated unit tests.
+        * server-tests/privileged-api-add-build-requests-tests.js: Updated and added unit tests.
+        * server-tests/privileged-api-create-analysis-task-tests.js: Added unit tests.
+        * server-tests/privileged-api-create-test-group-tests.js: Updated and added unit tests.
+        * server-tests/privileged-api-update-test-group-tests.js: Updated and added unit tests.
+        * server-tests/resources/common-operations.js:
+        (async assertThrows):
+        * server-tests/resources/mock-data.js:
+        (MockData.addMockData):
+        (MockData.set addMockBuildRequestsWithRoots):
+        (MockData.set addAnotherMockTestGroup):
+        (MockData.set mockTestSyncConfigWithSingleBuilder):
+        (MockData.sampleBuildData):
+        * server-tests/tools-buildbot-triggerable-tests.js: Updated and added unit tests.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Updated unit tests.
+        (async createTestGroupWithPatch):
+        (createTestGroupWihOwnedCommit):
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype.scheduleRequestInGroupIfAvailable):
+        (BuildbotSyncer.prototype.pullBuildbot):
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable):
+        (BuildbotTriggerable.prototype.async syncOnce):
+        (BuildbotTriggerable.prototype.async _scheduleRequest):
+        (BuildbotTriggerable.prototype._shouldDeferSequentialTestingRequestWithNewCommitSet):
+        * tools/js/measurement-set-analyzer.js:
+        (MeasurementSetAnalyzer.prototype.async _analyzeMeasurementSet):
+        (MeasurementSetAnalyzer):
+        * tools/js/retry-failed-build-requests.js: Removed.
+        * tools/run-analysis.js: Use updated API to retry.
+        (async analysisLoop):
+        (async processTestGroupMayNeedMoreRequests):
+        * tools/sync-buildbot.js: Added command line option '--max-retry-factor'.
+        * unit-tests/analysis-task-tests.js: Updated unit tests.
+        * unit-tests/buildbot-syncer-tests.js: Updated unit tests.
+        (createSampleBuildRequest):
+        * unit-tests/measurement-set-analyzer-tests.js:
+        * unit-tests/retry-failed-build-requests-tests.js: Moved unit tests to test-group-tests.js.
+        * unit-tests/test-groups-tests.js: Added unit tests from 'retry-failed-build-requests-tests.js'.
+
 2021-05-19  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix a bug that incorrect timestamp is reported for Git repositories.

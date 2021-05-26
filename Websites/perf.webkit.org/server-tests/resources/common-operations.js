@@ -53,7 +53,7 @@ async function assertThrows(expectedError, testFunction)
 {
     let thrownException = false;
     try {
-            await testFunction()
+        await testFunction();
     } catch(error) {
         thrownException = true;
         assert.strictEqual(error, expectedError);

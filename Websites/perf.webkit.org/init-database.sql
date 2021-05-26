@@ -29,6 +29,7 @@ DROP TABLE IF EXISTS triggerable_repositories CASCADE;
 DROP TABLE IF EXISTS uploaded_files CASCADE;
 DROP TABLE IF EXISTS bugs CASCADE;
 DROP TABLE IF EXISTS analysis_test_groups CASCADE;
+DROP TYPE IF EXISTS analysis_test_group_repetition_type CASCADE;
 DROP TABLE IF EXISTS commit_sets CASCADE;
 DROP TABLE IF EXISTS commit_set_items CASCADE;
 DROP TABLE IF EXISTS build_requests CASCADE;
@@ -282,6 +283,7 @@ CREATE TABLE uploaded_files (
 CREATE INDEX file_author_index ON uploaded_files(file_author);
 CREATE UNIQUE INDEX file_sha256_index ON uploaded_files(file_sha256) WHERE file_deleted_at is NULL;
 
+CREATE TYPE analysis_test_group_repetition_type as ENUM ('alternating', 'sequential');
 CREATE TABLE analysis_test_groups (
     testgroup_id serial PRIMARY KEY,
     testgroup_task integer REFERENCES analysis_tasks NOT NULL,
@@ -292,6 +294,7 @@ CREATE TABLE analysis_test_groups (
     testgroup_needs_notification boolean NOT NULL DEFAULT FALSE,
     testgroup_notification_sent_at timestamp DEFAULT NULL,
     testgroup_initial_repetition_count integer NOT NULL,
+    testgroup_repetition_type analysis_test_group_repetition_type NOT NULL DEFAULT 'alternating',
     testgroup_may_need_more_requests boolean DEFAULT FALSE,
     CONSTRAINT testgroup_name_must_be_unique_for_each_task UNIQUE(testgroup_task, testgroup_name));
 CREATE INDEX testgroup_task_index ON analysis_test_groups(testgroup_task);

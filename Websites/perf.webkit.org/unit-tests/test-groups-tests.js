@@ -7,7 +7,7 @@ const NodePrivilegedAPI = require('../tools/js/privileged-api.js').PrivilegedAPI
 const MockModels = require('./resources/mock-v3-models.js').MockModels;
 const MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 
-function sampleTestGroup(needsNotification=true, initialRepetitionCount=2, mayNeedMoreRequests=true) {
+function sampleTestGroup(needsNotification = true, initialRepetitionCount = 2, mayNeedMoreRequests = true) {
     return {
         "testGroups": [{
             "id": "2128",
@@ -70,6 +70,140 @@ function sampleTestGroup(needsNotification=true, initialRepetitionCount=2, mayNe
             "order": "3",
             "commitSet": "4256",
             "status": "pending",
+            "url": null,
+            "build": null,
+            "createdAt": 1458688514000
+        }],
+        "commitSets": [{
+            "id": "4255",
+            "revisionItems": [{"commit": "87832"}, {"commit": "93116"}],
+            "customRoots": [],
+        }, {
+            "id": "4256",
+            "revisionItems": [{"commit": "87832"}, {"commit": "96336"}],
+            "customRoots": [],
+        }],
+        "commits": [{
+            "id": "87832",
+            "repository": "9",
+            "revision": "10.11 15A284",
+            "time": 0
+        }, {
+            "id": "93116",
+            "repository": "11",
+            "revision": "191622",
+            "time": 1445945816878
+        }, {
+            "id": "87832",
+            "repository": "9",
+            "revision": "10.11 15A284",
+            "time": 0
+        }, {
+            "id": "96336",
+            "repository": "11",
+            "revision": "192736",
+            "time": 1448225325650
+        }],
+        "uploadedFiles": [],
+        "status": "OK"
+    };
+}
+
+function sampleTestGroupForRetry(config) {
+    const needsNotification = config.needsNotification;
+    const initialRepetitionCount = config.initialRepetitionCount;
+    const mayNeedMoreRequests = config.mayNeedMoreRequests;
+    const hidden = config.hidden;
+    const statusList = config.statusList;
+    const commitSetList = config.commitSetList || ['4255', '4256', '4255', '4256', '4255', '4256'];
+    const repetitionType = config.repetitionType || 'alternating';
+
+    return {
+        "testGroups": [{
+            "id": "2128",
+            "task": "1376",
+            "platform": "31",
+            "name": "Confirm",
+            "author": "rniwa",
+            "createdAt": 1458688514000,
+            hidden,
+            needsNotification,
+            "buildRequests": ["16985", "16986", "16987", "16988", "16989", "16990"],
+            "commitSets": ["4255", "4256"],
+            "notificationSentAt": null,
+            initialRepetitionCount,
+            mayNeedMoreRequests,
+            repetitionType
+        }],
+        "buildRequests": [{
+            "id": "16985",
+            "triggerable": "3",
+            "test": "844",
+            "platform": "31",
+            "testGroup": "2128",
+            "order": "0",
+            "commitSet": commitSetList[0],
+            "status": statusList[0],
+            "url": null,
+            "build": null,
+            "createdAt": 1458688514000
+        }, {
+            "id": "16986",
+            "triggerable": "3",
+            "test": "844",
+            "platform": "31",
+            "testGroup": "2128",
+            "order": "1",
+            "commitSet": commitSetList[1],
+            "status": statusList[1],
+            "url": null,
+            "build": null,
+            "createdAt": 1458688514000
+        }, {
+            "id": "16987",
+            "triggerable": "3",
+            "test": "844",
+            "platform": "31",
+            "testGroup": "2128",
+            "order": "2",
+            "commitSet": commitSetList[2],
+            "status": statusList[2],
+            "url": null,
+            "build": null,
+            "createdAt": 1458688514000
+        }, {
+            "id": "16988",
+            "triggerable": "3",
+            "test": "844",
+            "platform": "31",
+            "testGroup": "2128",
+            "order": "3",
+            "commitSet": commitSetList[3],
+            "status": statusList[3],
+            "url": null,
+            "build": null,
+            "createdAt": 1458688514000
+        }, {
+            "id": "16989",
+            "triggerable": "3",
+            "test": "844",
+            "platform": "31",
+            "testGroup": "2128",
+            "order": "4",
+            "commitSet": commitSetList[4],
+            "status": statusList[4],
+            "url": null,
+            "build": null,
+            "createdAt": 1458688514000
+        }, {
+            "id": "16990",
+            "triggerable": "3",
+            "test": "844",
+            "platform": "31",
+            "testGroup": "2128",
+            "order": "5",
+            "commitSet": commitSetList[5],
+            "status": statusList[5],
             "url": null,
             "build": null,
             "createdAt": 1458688514000
@@ -249,7 +383,7 @@ describe('TestGroup', function () {
             assert.equal(group.isHidden(), false);
             assert.equal(group.needsNotification(), true);
             assert.equal(+group.createdAt(), 1458688514000);
-            assert.equal(group.repetitionCount(), sampleTestGroup()['buildRequests'].length / 2);
+            assert.equal(group.initialRepetitionCount(), sampleTestGroup()['buildRequests'].length / 2);
             assert.ok(group.hasPending());
             assert.ok(!group.hasFinished());
             assert.ok(!group.hasStarted());
@@ -462,7 +596,7 @@ describe('TestGroup', function () {
             set2.setRevisionForRepository(MockModels.webkit, '191623');
             set2.setRevisionForRepository(MockModels.sharedRepository, '80229');
 
-            const promise = TestGroup.createWithTask('some-task', MockModels.somePlatform, MockModels.someTest, 'some-group', 4, [set1, set2], true);
+            const promise = TestGroup.createWithTask('some-task', MockModels.somePlatform, MockModels.someTest, 'some-group', 4, 'alternating', [set1, set2], true, 'alternating');
             assert.equal(requests.length, 2);
             assert.equal(requests[1].url, '/privileged-api/generate-csrf-token');
             requests[1].resolve({
@@ -475,7 +609,7 @@ describe('TestGroup', function () {
             assert.deepEqual(requests[2].data, {taskName: 'some-task', name: 'some-group', platform: 65, test: 1,
                 repetitionCount: 4, revisionSets: [{'11': {ownerRevision: null, patch: null, revision: "191622"},
                     '16': {ownerRevision: null, patch: null, revision: "80229"}}, {'11': {ownerRevision: null, patch: null, revision: "191623"},
-                    '16': {ownerRevision: null, patch: null, revision: "80229"}}], needsNotification: true, token: 'abc'});
+                    '16': {ownerRevision: null, patch: null, revision: "80229"}}], needsNotification: true, repetitionType: 'alternating', token: 'abc'});
             assert.equal(requests[2].url, '/privileged-api/create-test-group');
             requests[2].resolve({
                 taskId: 123,
@@ -486,6 +620,190 @@ describe('TestGroup', function () {
             assert.equal(requests[3].method, 'GET');
             assert.equal(requests[3].url, '/api/analysis-tasks?id=123');
         });
-    })
+    });
 
+    describe('scheduleMoreRequestsOrClearFlag', () => {
+        const requests = MockRemoteAPI.inject(null, NodePrivilegedAPI);
+        MockModels.inject();
+        beforeEach(() => {
+            PrivilegedAPI.configure('worker_name', 'password');
+        });
+
+        it('should add one more build request when one of the existing requests failed', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true, hidden: false,
+                statusList: ["completed", "completed", "completed", "completed", "completed", "failed"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            assert.equal(requests.length, 1);
+
+            assert.equal(requests[0].url, '/privileged-api/add-build-requests');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', addCount: 1, commitSet: null});
+            requests[0].resolve();
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/api/test-groups/2128');
+        });
+
+        it('should add two more build requests when two failed build request found for a commit set', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true, hidden: false,
+                statusList: ["completed", "failed", "completed", "completed", "completed", "failed"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            assert.equal(requests.length, 1);
+
+            assert.equal(requests[0].url, '/privileged-api/add-build-requests');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', addCount: 2, commitSet: null});
+            requests[0].resolve();
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/api/test-groups/2128');
+        });
+
+        it('should not schedule more build requests when "may_need_more_requests" is not set', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: false, hidden: false,
+                statusList: ["completed", "failed", "completed", "completed", "completed", "failed"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            assert.equal(requests.length, 0);
+        });
+
+        it('should not schedule more build requests when a test group is hidden', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true, hidden: true,
+                statusList: ["completed", "failed", "completed", "completed", "completed", "failed"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            assert.equal(requests.length, 1);
+
+            assert.equal(requests[0].url, '/privileged-api/update-test-group');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
+            requests[0].resolve();
+        });
+
+        it('should not schedule more build requests when all requests for a commit set had failed', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true, hidden: false,
+                statusList: ["completed", "failed", "completed", "failed", "completed", "failed"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/update-test-group');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
+            requests[0].resolve();
+        });
+
+        it('should schedule more build requests to reach the retry limit even though completed iterations will not meet expectation', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true, hidden: false,
+                statusList: ["completed", "completed", "failed", "completed", "failed", "failed"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(1.5);
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/add-build-requests');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', addCount: 1, commitSet: null});
+            requests[0].resolve();
+        });
+
+        it('should not schedule more build requests when additional build requests are still pending', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 2, mayNeedMoreRequests: true, hidden: false,
+                statusList: ["completed", "completed", "failed", "failed", "pending", "pending"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/update-test-group');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
+            requests[0].resolve();
+        });
+
+        it('should not clear "may need more requests" flag when one commit set has not got a successful run but have pending builds', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true, hidden: false,
+                statusList: ["completed", "failed", "completed", "failed", "pending", "pending"]};
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            assert.equal(requests.length, 0);
+        });
+
+        it('should schedule retry build requests and keep "may need more requests" flag when not all requests for a configuration had failed for a sequential test group', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true,
+                hidden: false, repetitionType: 'sequential',
+                statusList: ["completed", "failed", "failed", "pending", "pending", "pending"],
+                commitSetList: ['4255', '4255', '4255', '4256', '4256', '4256']};
+
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/add-build-requests');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', addCount: 2, commitSet: '4255'});
+            requests[0].resolve();
+
+            await MockRemoteAPI.waitForRequest();
+            assert.equal(requests.length, 2);
+            assert.equal(requests[1].url, '/api/test-groups/2128');
+            requests[1].resolve(sampleTestGroupForRetry(testGroupConfig));
+        });
+
+        it('should retry the second configuration (B) if the first configuration (A) reached the retry limit but had at least one successful iteration for a sequential test group', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 2, mayNeedMoreRequests: true,
+                hidden: false, repetitionType: 'sequential',
+                statusList: ["completed", "failed", "failed", "failed", "completed", "failed"],
+                commitSetList: ['4255', '4255', '4255', '4255', '4256', '4256']};
+
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(2);
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/add-build-requests');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', addCount: 1, commitSet: '4256'});
+            requests[0].resolve();
+        });
+
+        it('should clear test group "may need more requests" flag in sequential mode if all initially scheduled A repetitions failed', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 3, mayNeedMoreRequests: true,
+                hidden: false, repetitionType: 'sequential',
+                statusList: ["failed", "failed", "failed", "pending", "pending", "pending"],
+                commitSetList: ['4255', '4255', '4255', '4256', '4256', '4256']};
+
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(2);
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/update-test-group');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
+            requests[0].resolve();
+        });
+
+        it('should clear a sequential test group "may need more requests" flag when initial requested repetition is satisfied', async () => {
+            const testGroupConfig = {needsNotification: false, initialRepetitionCount: 2, mayNeedMoreRequests: true,
+                hidden: false, repetitionType: 'sequential',
+                statusList: ["completed", "completed", "completed", "failed", "failed", "completed"],
+                commitSetList: ['4255', '4255', '4256', '4256', '4256', '4256']};
+
+            const data = sampleTestGroupForRetry(testGroupConfig);
+            const testGroups = TestGroup._createModelsFromFetchedTestGroups(data);
+            testGroups[0].scheduleMoreRequestsOrClearFlag(3);
+            await MockRemoteAPI.waitForRequest();
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].url, '/privileged-api/update-test-group');
+            assert.deepEqual(requests[0].data, {workerName: 'worker_name', workerPassword: 'password', group: '2128', mayNeedMoreRequests: false});
+            requests[0].resolve();
+        });
+    });
 });

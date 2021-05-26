@@ -27,7 +27,8 @@ class TestGroupForm extends ComponentBase {
 
     startTesting()
     {
-        this.dispatchAction('startTesting', this._repetitionCount, this._notifyOnCompletion);
+        const repetitionType = this.content('repetition-type').value;
+        this.dispatchAction('startTesting', this._repetitionCount, repetitionType, this._notifyOnCompletion);
     }
 
     static htmlTemplate()
@@ -65,7 +66,11 @@ class TestGroupForm extends ComponentBase {
                 <option>9</option>
                 <option>10</option>
             </select>
-            iterations per set
+            <label>iterations per set in</label>
+            <select id="repetition-type">
+                <option selected value="alternating">alternate (ABAB)</option>
+                <option value="sequential">sequence (AABB)</option>
+            </select>
             <input id="notify-on-completion-checkbox" type="checkbox" checked/>Notify on completion
         `;
     }

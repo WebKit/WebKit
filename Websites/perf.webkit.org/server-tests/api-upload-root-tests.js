@@ -65,7 +65,7 @@ function createTestGroupWihPatch()
         const set2 = new CustomCommitSet;
         set2.setRevisionForRepository(webkit, '191622');
         set2.setRevisionForRepository(shared, '80229');
-        return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]);
+        return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, 'alternating', [set1, set2]);
     }).then((task) => {
         return TestGroup.findAllByTask(task.id())[0];
     }).then((group) => {
@@ -107,7 +107,7 @@ function createTestGroupWithPatchAndOwnedCommits()
         set2.setRevisionForRepository(webkit, '192736');
         set2.setRevisionForRepository(ownedSJC, 'owned-jsc-9191', null, '192736');
 
-        return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]);
+        return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, 'alternating', [set1, set2]);
     }).then((task) => {
         return TestGroup.findAllByTask(task.id())[0];
     }).then((group) => {

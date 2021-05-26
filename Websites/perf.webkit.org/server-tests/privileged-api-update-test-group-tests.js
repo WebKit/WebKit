@@ -168,7 +168,7 @@ describe('/privileged-api/update-test-group', function(){
         assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
         assert.strictEqual(group.id(), insertedGroupId);
-        assert.strictEqual(group.repetitionCount(), 1);
+        assert.strictEqual(group.initialRepetitionCount(), 1);
         assert.strictEqual(group.needsNotification(), true);
         assert.ok(!group.notificationSentAt());
 
@@ -193,7 +193,7 @@ describe('/privileged-api/update-test-group', function(){
         assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
         assert.strictEqual(group.id(), insertedGroupId);
-        assert.strictEqual(group.repetitionCount(), 1);
+        assert.strictEqual(group.initialRepetitionCount(), 1);
         assert.strictEqual(group.needsNotification(), false);
         assert.ok(!group.notificationSentAt());
 
@@ -275,5 +275,87 @@ describe('/privileged-api/update-test-group', function(){
         assert.strictEqual(updatedGroups.length, 1);
         assert.strictEqual(updatedGroups[0].mayNeedMoreRequests(), false);
         assert.strictEqual(updatedGroups[0].isHidden(), true);
+    });
+
+    it('should be able to cancel an alternating test group and clear the "may need more requests" flag', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(),
+            test: MockData.someTestId(), needsNotification: false, repetitionType: 'alternating', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), false);
+        assert.strictEqual(group.repetitionType(), 'alternating');
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: true});
+
+        let updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].mayNeedMoreRequests(), true);
+        let testGroup = updatedGroups[0];
+        assert.strictEqual(testGroup.mayNeedMoreRequests(), true);
+        let buildRequests = testGroup._orderedBuildRequests();
+        assert.strictEqual(buildRequests.length, 2);
+        assert(buildRequests[0].isPending());
+        assert(buildRequests[1].isPending());
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, cancel: true});
+
+        updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(updatedGroups.length, 1);
+        testGroup = updatedGroups[0];
+        assert.strictEqual(testGroup.mayNeedMoreRequests(), false);
+        assert(testGroup.hasFinished());
+        buildRequests = testGroup._orderedBuildRequests();
+        assert.strictEqual(buildRequests.length, 2);
+        assert.strictEqual(buildRequests[0].status(), 'canceled');
+        assert.strictEqual(buildRequests[1].status(), 'canceled');
+    });
+
+    it('should be able to cancel a sequential test group and clear the "may need more requests" flag', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(),
+            test: MockData.someTestId(), needsNotification: false, repetitionType: 'sequential', revisionSets});
+        const insertedGroupId = result['testGroupId'];
+
+        const testGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.mayNeedMoreRequests(), false);
+        assert.strictEqual(group.repetitionType(), 'sequential');
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, mayNeedMoreRequests: true});
+
+        let updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(updatedGroups.length, 1);
+        assert.strictEqual(updatedGroups[0].mayNeedMoreRequests(), true);
+        let testGroup = updatedGroups[0];
+        assert.strictEqual(testGroup.mayNeedMoreRequests(), true);
+        let buildRequests = testGroup._orderedBuildRequests();
+        assert.strictEqual(buildRequests.length, 2);
+        assert(buildRequests[0].isPending());
+        assert(buildRequests[1].isPending());
+
+        await PrivilegedAPI.sendRequest('update-test-group', {group: insertedGroupId, cancel: true});
+
+        updatedGroups = await TestGroup.fetchForTask(result['taskId'], true);
+        assert.strictEqual(updatedGroups.length, 1);
+        testGroup = updatedGroups[0];
+        assert.strictEqual(testGroup.mayNeedMoreRequests(), false);
+        assert(testGroup.hasFinished());
+        buildRequests = testGroup._orderedBuildRequests();
+        assert.strictEqual(buildRequests.length, 2);
+        assert.strictEqual(buildRequests[0].status(), 'canceled');
+        assert.strictEqual(buildRequests[1].status(), 'canceled');
     });
 });

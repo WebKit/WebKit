@@ -566,6 +566,62 @@ describe('/api/build-requests', function () {
         });
     });
 
+    it('should still return build requests associated with a given triggerable when test group has all build requests finished with "mayNeedMoreRequest" flag to be trues', async () => {
+        await MockData.addMockData(TestServer.database(), ['completed', 'completed', 'completed', 'failed'], true, null, null, 'alternating', true);
+        const content = await TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit');
+        assert.deepStrictEqual(Object.keys(content).sort(), ['buildRequests', 'commitSets', 'commits', 'status', 'uploadedFiles']);
+
+        assert.strictEqual(content['commitSets'].length, 2);
+        assert.strictEqual(parseInt(content['commitSets'][0].id), 401);
+        assert.deepStrictEqual(content['commitSets'][0].revisionItems, [
+            {commit: '87832', commitOwner: null, patch: null, requiresBuild: false, rootFile: null},
+            {commit: '93116', commitOwner: null, patch: null, requiresBuild: false, rootFile: null}]);
+        assert.strictEqual(parseInt(content['commitSets'][1].id), 402);
+        assert.deepStrictEqual(content['commitSets'][1].revisionItems, [
+            {commit: '87832', commitOwner: null, patch: null, requiresBuild: false, rootFile: null},
+            {commit: '96336', commitOwner: null, patch: null, requiresBuild: false, rootFile: null}]);
+
+        assert.strictEqual(content['commits'].length, 3);
+        assert.strictEqual(parseInt(content['commits'][0].id), 87832);
+        assert.strictEqual(content['commits'][0].repository, '9');
+        assert.strictEqual(content['commits'][0].revision, '10.11 15A284');
+        assert.strictEqual(parseInt(content['commits'][1].id), 93116);
+        assert.strictEqual(content['commits'][1].repository, '11');
+        assert.strictEqual(content['commits'][1].revision, '191622');
+        assert.strictEqual(parseInt(content['commits'][2].id), 96336);
+        assert.strictEqual(content['commits'][2].repository, '11');
+        assert.strictEqual(content['commits'][2].revision, '192736');
+
+        assert.strictEqual(content['buildRequests'].length, 4);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][0].id), 700);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][0].order), 0);
+        assert.deepStrictEqual(content['buildRequests'][0].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][0].commitSet), 401);
+        assert.deepStrictEqual(content['buildRequests'][0].status, 'completed');
+        assert.deepStrictEqual(content['buildRequests'][0].test, '200');
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][1].id), 701);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][1].order), 1);
+        assert.deepStrictEqual(content['buildRequests'][1].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][1].commitSet), 402);
+        assert.deepStrictEqual(content['buildRequests'][1].status, 'completed');
+        assert.deepStrictEqual(content['buildRequests'][1].test, '200');
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][2].id), 702);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][2].order), 2);
+        assert.deepStrictEqual(content['buildRequests'][2].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][2].commitSet), 401);
+        assert.deepStrictEqual(content['buildRequests'][2].status, 'completed');
+        assert.deepStrictEqual(content['buildRequests'][2].test, '200');
+
+        assert.deepStrictEqual(parseInt(content['buildRequests'][3].id), 703);
+        assert.deepStrictEqual(parseInt(content['buildRequests'][3].order), 3);
+        assert.deepStrictEqual(content['buildRequests'][3].platform, '65');
+        assert.deepStrictEqual(parseInt(content['buildRequests'][3].commitSet), 402);
+        assert.deepStrictEqual(content['buildRequests'][3].status, 'failed');
+        assert.deepStrictEqual(content['buildRequests'][3].test, '200');
+    });
+
     it('should support useLegacyIdResolution option', () => {
         return MockData.addMockData(TestServer.database()).then(() => {
             return TestServer.remoteAPI().getJSONWithStatus('/api/build-requests/build-webkit?useLegacyIdResolution=true');

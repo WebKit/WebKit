@@ -7,6 +7,8 @@ const TestServer = require('./resources/test-server.js');
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
 const addWorkerForReport = require('./resources/common-operations.js').addWorkerForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
+const assertThrows = require('./resources/common-operations.js').assertThrows;
+
 
 function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
 {
@@ -400,7 +402,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), groupId);
-            assert.strictEqual(group.repetitionCount(), 1);
+            assert.strictEqual(group.initialRepetitionCount(), 1);
             assert.ok(!group.needsNotification());
             const requests = group.buildRequests();
             assert.strictEqual(requests.length, 4);
@@ -447,7 +449,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), groupId);
-            assert.strictEqual(group.repetitionCount(), 1);
+            assert.strictEqual(group.initialRepetitionCount(), 1);
             assert.ok(!group.needsNotification());
             const requests = group.buildRequests();
             assert.strictEqual(requests.length, 4);
@@ -485,7 +487,7 @@ describe('/privileged-api/create-test-group', function () {
                 assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
                 assert.strictEqual(group.id(), insertedGroupId);
-                assert.strictEqual(group.repetitionCount(), 1);
+                assert.strictEqual(group.initialRepetitionCount(), 1);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.strictEqual(requests.length, 2);
@@ -524,7 +526,7 @@ describe('/privileged-api/create-test-group', function () {
                 assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
                 assert.strictEqual(group.id(), insertedGroupId);
-                assert.strictEqual(group.repetitionCount(), 1);
+                assert.strictEqual(group.initialRepetitionCount(), 1);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.strictEqual(requests.length, 2);
@@ -556,7 +558,7 @@ describe('/privileged-api/create-test-group', function () {
                 assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
                 assert.strictEqual(group.id(), insertedGroupId);
-                assert.strictEqual(group.repetitionCount(), 2);
+                assert.strictEqual(group.initialRepetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.strictEqual(requests.length, 4);
@@ -603,7 +605,7 @@ describe('/privileged-api/create-test-group', function () {
                 assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
                 assert.strictEqual(group.id(), insertedGroupId);
-                assert.strictEqual(group.repetitionCount(), 2);
+                assert.strictEqual(group.initialRepetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.strictEqual(requests.length, 4);
@@ -645,7 +647,7 @@ describe('/privileged-api/create-test-group', function () {
                 assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
                 assert.strictEqual(group.id(), insertedGroupId);
-                assert.strictEqual(group.repetitionCount(), 2);
+                assert.strictEqual(group.initialRepetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.strictEqual(requests.length, 4);
@@ -694,7 +696,7 @@ describe('/privileged-api/create-test-group', function () {
                 assert.strictEqual(testGroups.length, 1);
                 const group = testGroups[0];
                 assert.strictEqual(group.id(), insertedGroupId);
-                assert.strictEqual(group.repetitionCount(), 2);
+                assert.strictEqual(group.initialRepetitionCount(), 2);
                 assert.ok(!group.needsNotification());
                 const requests = group.buildRequests();
                 assert.strictEqual(requests.length, 4);
@@ -743,7 +745,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), insertedGroupId);
-            assert.strictEqual(group.repetitionCount(), 2);
+            assert.strictEqual(group.initialRepetitionCount(), 2);
             assert.ok(!group.needsNotification());
             assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
             assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
@@ -808,7 +810,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), insertedGroupId);
-            assert.strictEqual(group.repetitionCount(), 2);
+            assert.strictEqual(group.initialRepetitionCount(), 2);
             assert.ok(!group.needsNotification());
             assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
             assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
@@ -883,7 +885,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), insertedGroupId);
-            assert.strictEqual(group.repetitionCount(), 2);
+            assert.strictEqual(group.initialRepetitionCount(), 2);
             assert.ok(!group.needsNotification());
             assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
             assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
@@ -966,7 +968,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), insertedGroupId);
-            assert.strictEqual(group.repetitionCount(), 2);
+            assert.strictEqual(group.initialRepetitionCount(), 2);
             assert.ok(!group.needsNotification());
             assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
             assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
@@ -1060,7 +1062,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), insertedGroupId);
-            assert.strictEqual(group.repetitionCount(), 2);
+            assert.strictEqual(group.initialRepetitionCount(), 2);
             assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
             assert.ok(!group.needsNotification());
             assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
@@ -1157,7 +1159,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(testGroups.length, 1);
             const group = testGroups[0];
             assert.strictEqual(group.id(), insertedGroupId);
-            assert.strictEqual(group.repetitionCount(), 2);
+            assert.strictEqual(group.initialRepetitionCount(), 2);
             assert.ok(!group.needsNotification());
             assert.strictEqual(group.test(), Test.findById(MockData.someTestId()));
             assert.strictEqual(group.platform(), Platform.findById(MockData.somePlatformId()));
@@ -1235,7 +1237,7 @@ describe('/privileged-api/create-test-group', function () {
         assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
         assert.strictEqual(group.id(), insertedGroupId);
-        assert.strictEqual(group.repetitionCount(), 1);
+        assert.strictEqual(group.initialRepetitionCount(), 1);
         assert.ok(group.needsNotification());
         const requests = group.buildRequests();
         assert.strictEqual(requests.length, 2);
@@ -1264,7 +1266,7 @@ describe('/privileged-api/create-test-group', function () {
         assert.strictEqual(testGroups.length, 1);
         const group = testGroups[0];
         assert.strictEqual(group.id(), insertedGroupId);
-        assert.strictEqual(group.repetitionCount(), 1);
+        assert.strictEqual(group.initialRepetitionCount(), 1);
         assert.ok(!group.needsNotification());
         const requests = group.buildRequests();
         assert.strictEqual(requests.length, 2);
@@ -1308,7 +1310,7 @@ describe('/privileged-api/create-test-group', function () {
             TestGroup.sortByName(testGroups);
 
             assert.strictEqual(testGroups[0].name(), 'test1');
-            assert.strictEqual(testGroups[0].repetitionCount(), 1);
+            assert.strictEqual(testGroups[0].initialRepetitionCount(), 1);
             let requests = testGroups[0].buildRequests();
             assert.strictEqual(requests.length, 2);
             let set0 = requests[0].commitSet();
@@ -1321,7 +1323,7 @@ describe('/privileged-api/create-test-group', function () {
             assert.strictEqual(set1.revisionForRepository(webkit), '191623');
 
             assert.strictEqual(testGroups[1].name(), 'test2');
-            assert.strictEqual(testGroups[1].repetitionCount(), 2);
+            assert.strictEqual(testGroups[1].initialRepetitionCount(), 2);
             requests = testGroups[1].buildRequests();
             assert.strictEqual(requests.length, 4);
             set0 = requests[0].commitSet();
@@ -1334,6 +1336,156 @@ describe('/privileged-api/create-test-group', function () {
             assert.deepStrictEqual(set1.customRoots(), []);
             assert.strictEqual(set0.revisionForRepository(webkit), '191622');
             assert.strictEqual(set1.revisionForRepository(webkit), '192736');
+        });
+    });
+
+    it('should create a sequential test group with an analysis task', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+            needsNotification: true, revisionSets, repetitionType: 'sequential', repetitionCount: 2});
+        const insertedGroupId = result['testGroupId'];
+
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.strictEqual(analysisTask.name(), 'other task');
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential')
+        assert.ok(group.needsNotification());
+        const requests = group.buildRequests();
+        assert.strictEqual(requests.length, 4);
+
+        assert.strictEqual(requests[0].order(), 0);
+        assert.strictEqual(requests[1].order(), 1);
+        assert.strictEqual(requests[2].order(), 2);
+        assert.strictEqual(requests[3].order(), 3);
+
+        assert.strictEqual(group.requestedCommitSets().length, 2)
+        assert(requests[0].commitSet().equals(requests[1].commitSet()));
+        assert(requests[2].commitSet().equals(requests[3].commitSet()));
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[2].commitSet();
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+    });
+
+    it('should create an alternating test group with an analysis task', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+             needsNotification: true, revisionSets, repetitionType: 'alternating', repetitionCount: 2});
+        const insertedGroupId = result['testGroupId'];
+
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.strictEqual(analysisTask.name(), 'other task');
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'alternating')
+        assert.ok(group.needsNotification());
+        const requests = group.buildRequests();
+        assert.strictEqual(requests.length, 4);
+
+        assert.strictEqual(requests[0].order(), 0);
+        assert.strictEqual(requests[1].order(), 1);
+        assert.strictEqual(requests[2].order(), 2);
+        assert.strictEqual(requests[3].order(), 3);
+
+        assert.strictEqual(group.requestedCommitSets().length, 2)
+        assert(requests[0].commitSet().equals(requests[2].commitSet()));
+        assert(requests[1].commitSet().equals(requests[3].commitSet()));
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[1].commitSet();
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+    });
+
+    it('should create a sequential test group in an existing analysis task', async () => {
+        const taskId = await addTriggerableAndCreateTask('some task');
+        const ignoreCache = true;
+
+        let [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(taskId), TestGroup.fetchForTask(taskId, ignoreCache)]);
+        assert.strictEqual(analysisTask.name(), 'some task');
+        assert.strictEqual(testGroups.length, 0);
+
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', task: taskId, platform: MockData.somePlatformId(), test: MockData.someTestId(),
+            needsNotification: true, revisionSets, repetitionType: 'sequential', repetitionCount: 2});
+        const insertedGroupId = result['testGroupId'];
+
+        [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], ignoreCache)]);
+        assert.strictEqual(analysisTask.name(), 'some task');
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'sequential')
+        assert.ok(group.needsNotification());
+        const requests = group.buildRequests();
+        assert.strictEqual(requests.length, 4);
+
+        assert.strictEqual(requests[0].order(), 0);
+        assert.strictEqual(requests[1].order(), 1);
+        assert.strictEqual(requests[2].order(), 2);
+        assert.strictEqual(requests[3].order(), 3);
+
+        assert.strictEqual(group.requestedCommitSets().length, 2)
+        assert(requests[0].commitSet().equals(requests[1].commitSet()));
+        assert(requests[2].commitSet().equals(requests[3].commitSet()));
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[2].commitSet();
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+    });
+
+    it('should reject with "InvalidRepetitionType" if repetition type is not "alternating" or "sequential"', async () => {
+        await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+
+        await assertThrows('InvalidRepetitionType', () => {
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', taskName: 'other task',
+                platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: true, repetitionType: 'invalid-mode', repetitionCount: 2, revisionSets})
+        });
+    });
+
+    it('should reject with "InvalidRepetitionType" when creating a test group with a bad repetition type for an existing analysis task', async () => {
+        const taskId = await addTriggerableAndCreateTask('some task');
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+
+        await assertThrows('InvalidRepetitionType', () => {
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId,
+                platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: true, repetitionType: 'invalid-mode', repetitionCount: 2, revisionSets})
         });
     });
 });

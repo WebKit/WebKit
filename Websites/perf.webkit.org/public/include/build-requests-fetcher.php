@@ -46,7 +46,7 @@ class BuildRequestsFetcher {
             (SELECT testgroup_id, testgroup_task, (case when testgroup_author is not null then 0 else 1 end) as author_order, testgroup_created_at
                 FROM analysis_test_groups WHERE EXISTS
                     (SELECT 1 FROM build_requests WHERE testgroup_id = request_group AND request_status
-                        IN (\'pending\', \'scheduled\', \'running\'))) AS test_groups
+                        IN (\'pending\', \'scheduled\', \'running\')) OR testgroup_may_need_more_requests = TRUE) AS test_groups
             WHERE request_triggerable = $1 AND request_group = test_groups.testgroup_id
             ORDER BY author_order, testgroup_created_at, request_order', array($triggerable_id));
     }

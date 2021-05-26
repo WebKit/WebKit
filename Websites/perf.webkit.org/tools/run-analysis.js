@@ -6,7 +6,6 @@ const RemoteAPI = require('./js/remote.js').RemoteAPI;
 const MeasurementSetAnalyzer = require('./js/measurement-set-analyzer.js').MeasurementSetAnalyzer;
 const AnalysisResultsNotifier = require('./js/analysis-results-notifier.js').AnalysisResultsNotifier;
 const Subprocess = require('./js/subprocess.js').Subprocess;
-const createAdditionalBuildRequestsForTestGroupsWithFailedRequests = require('./js/retry-failed-build-requests').createAdditionalBuildRequestsForTestGroupsWithFailedRequests;
 require('./js/v3-models.js');
 global.PrivilegedAPI = require('./js/privileged-api.js').PrivilegedAPI;
 
@@ -49,12 +48,26 @@ async function analysisLoop(options)
         console.error(`Failed to analyze measurement sets due to ${error}`);
     }
 
+    const maxRetryFactor = options['--max-retry-factor'];
+    const testGroupsMayNeedMoreRequests = await TestGroup.fetchAllThatMayNeedMoreRequests();
+    try {
+        for (const testGroup of testGroupsMayNeedMoreRequests) {
+            const retryCount = await testGroup.scheduleMoreRequestsOrClearFlag(maxRetryFactor);
+            if (!retryCount)
+                continue;
+            const analysisTask = await testGroup.fetchTask();
+            console.log(`Added ${retryCount} build request(s) to "${testGroup.name()}" of analysis task: ${analysisTask.id()} - "${analysisTask.name()}"`);
+        }
+    } catch (error) {
+        console.error(error);
+        if (typeof(error.stack) == 'string') {
+            for (let line of error.stack.split('\n'))
+                console.error(line);
+        }
+    }
+
     try {
         const notificationConfig = JSON.parse(fs.readFileSync(options['--notification-config-json'], 'utf-8'));
-        const maximumRetryFactor = options['--max-retry-factor'];
-        const testGroupsMayNeedMoreRequests = await TestGroup.fetchAllThatMayNeedMoreRequests();
-        await createAdditionalBuildRequestsForTestGroupsWithFailedRequests(testGroupsMayNeedMoreRequests, maximumRetryFactor);
-
         const testGroupsNeedNotification = await TestGroup.fetchAllWithNotificationReady();
         const notificationRemoteAPI = new RemoteAPI(notificationConfig.notificationServerConfig);
         const notificationMessageConfig = notificationConfig.notificationMessageConfig;
@@ -63,7 +76,7 @@ async function analysisLoop(options)
 
         await notifier.sendNotificationsForTestGroups(testGroupsNeedNotification);
     } catch (error) {
-        console.error(`Failed to retry test groups due to ${error}`);
+        console.error(`Failed to send notification for test groups due to ${error}`);
     }
 
     console.log(`Sleeping for ${secondsToSleep} seconds.`);

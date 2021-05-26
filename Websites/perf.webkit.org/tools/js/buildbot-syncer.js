@@ -143,6 +143,7 @@ class BuildbotSyncer {
 
         let hasPendingBuildsWithoutWorkerNameSpecified = false;
         let usedWorkers = new Set;
+        const latestEntryByWorkerName = new Map;
         for (let entry of this._entryList) {
             let entryPreventsNewRequest = entry.isPending();
             if (entry.isInProgress()) {
@@ -155,6 +156,28 @@ class BuildbotSyncer {
                     hasPendingBuildsWithoutWorkerNameSpecified = true;
                 usedWorkers.add(entry.workerName());
             }
+            if (!entry.isPending()) {
+                console.assert(entry.workerName(), 'Non-pending entry must have a worker name');
+                const lastFinishedEntry = latestEntryByWorkerName.get(entry.workerName());
+                if (!lastFinishedEntry || +lastFinishedEntry.buildTag() < +entry.buildTag())
+                    latestEntryByWorkerName.set(entry.workerName(), entry)
+            }
+        }
+
+        for (let [name, entry] of latestEntryByWorkerName.entries()) {
+            const latestActiveBuildRequest = BuildRequest.findById(entry.buildRequestId());
+            if (!latestActiveBuildRequest)
+                continue;
+            if (latestActiveBuildRequest.testGroupId() == newRequest.testGroupId())
+                continue;
+            const testGroup = latestActiveBuildRequest.testGroup();
+            if (!testGroup) {
+                // The request might be for a very old test group we didn't fetch.
+                continue;
+            }
+            if (testGroup.hasFinished() && !testGroup.mayNeedMoreRequests())
+                continue;
+            usedWorkers.add(name);
         }
 
         if (!this._workerList || hasPendingBuildsWithoutWorkerNameSpecified) {
@@ -192,7 +215,7 @@ class BuildbotSyncer {
                     if ((!this._lastCompletedBuild || this._lastCompletedBuild.buildTag() < entry.buildTag()) && entry.hasFinished())
                         this._lastCompletedBuild = entry;
                 }
-                    
+
                 let entryList = [];
                 for (let id in entryByRequest)
                     entryList.push(entryByRequest[id]);

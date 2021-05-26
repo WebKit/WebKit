@@ -18,6 +18,7 @@ function main()
     $task_id = array_get($arguments, 'task');
     $task_name = array_get($data, 'taskName');
     $repetition_count = $arguments['repetitionCount'];
+    $repetition_type = array_get($data, 'repetitionType', 'alternating');
     $needs_notification = array_get($data, 'needsNotification', False);
     $platform_id = array_get($data, 'platform');
     $test_id = array_get($data, 'test');
@@ -41,6 +42,9 @@ function main()
         $repetition_count = 1;
     else if ($repetition_count < 1)
         exit_with_error('InvalidRepetitionCount', array('repetitionCount' => $repetition_count));
+
+    if (!in_array($repetition_type, array('alternating', 'sequential')))
+        exit_with_error('InvalidRepetitionType', array('repetitionType' => $repetition_type));
 
     $triggerable_id = NULL;
     if ($task_id) {
@@ -86,7 +90,7 @@ function main()
     if ($task_name)
         $task_id = $db->insert_row('analysis_tasks', 'task', array('name' => $task_name, 'author' => $author));
 
-    $group_id = create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $needs_notification);
+    $group_id = create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $repetition_type, $needs_notification);
 
     $db->commit_transaction();
 

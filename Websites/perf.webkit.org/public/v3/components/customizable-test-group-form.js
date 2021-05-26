@@ -27,7 +27,9 @@ class CustomizableTestGroupForm extends TestGroupForm {
 
     startTesting()
     {
-        this.dispatchAction('startTesting', this._repetitionCount, this._name, this._computeCommitSetMap(), this._notifyOnCompletion);
+        const repetitionType = this.content('repetition-type').value;
+        this.dispatchAction('startTesting', this._name, this._repetitionCount, repetitionType,
+            this._computeCommitSetMap(), this._notifyOnCompletion);
     }
 
     didConstructShadowTree()
