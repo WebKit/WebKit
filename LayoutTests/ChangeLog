@@ -1,3 +1,22 @@
+2021-05-26  Cameron McCormack  <heycam@apple.com>
+
+        Followup test expectation updates.
+        https://bugs.webkit.org/show_bug.cgi?id=225586
+        <rdar://77527890>
+
+        Unreviewed.
+
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-001-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-005-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-symmetric-006-expected.txt: Added.
+        * platform/mac-bigsur-wk1/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
         CSP does not apply to AudioWorklets
