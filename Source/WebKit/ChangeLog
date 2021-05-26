@@ -1,3 +1,17 @@
+2021-05-25  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        _WKRemoteObjectRegistry should not call completion handlers if block signatures don't match or can't be found
+        https://bugs.webkit.org/show_bug.cgi?id=226189
+
+        Reviewed by Chris Dumez.
+
+        _WKRemoteObjectRegistry already enforces completion handlers to not be nil,
+        so complete that enforcement by dropping invocations where block signatures aren't available
+        or don't match. This has not reproduced but completes our hardening efforts.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+
 2021-05-25  Tim Horton  <timothy_horton@apple.com>
 
         Virtualize GraphicsContext
