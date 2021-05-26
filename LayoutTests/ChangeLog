@@ -1,5 +1,19 @@
 2021-05-26  Jonathan Bedard  <jbedard@apple.com>
 
+        [run-webkit-tests] Strip php support from webserver (Apache)
+        https://bugs.webkit.org/show_bug.cgi?id=226032
+        <rdar://problem/78269181>
+
+        Reviewed by Adrian Perez de Castro.
+
+        * http/conf/apache2.2-httpd.conf: Remove PHP.
+        * http/conf/apache2.4-darwin-httpd.conf: Copied from LayoutTests/http/conf/apache2.4-x-httpd.conf.
+        * http/conf/apache2.4-httpd.conf: Remove PHP.
+        * http/conf/apache2.4-php7-httpd.conf: Removed.
+        * http/conf/apache2.4-x-httpd.conf: Renamed apache2.4-darwin-httpd.conf.
+
+2021-05-26  Jonathan Bedard  <jbedard@apple.com>
+
         [LayoutTests] Delete php tests from imported/blink
         https://bugs.webkit.org/show_bug.cgi?id=226177
         <rdar://problem/78401190>

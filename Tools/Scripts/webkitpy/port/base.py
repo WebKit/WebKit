@@ -1131,11 +1131,6 @@ class Port(object):
         _log.error("Could not find apache. Not installed or unknown path.")
         return None
 
-    def _is_darwin_php_version_7(self):
-        if self._filesystem.exists("/usr/libexec/apache2/libphp7.so"):
-            return True
-        return False
-
     # FIXME: This belongs on some platform abstraction instead of Port.
     def _is_redhat_based(self):
         return self._filesystem.exists('/etc/redhat-release')
@@ -1153,16 +1148,6 @@ class Port(object):
         config = self._executive.run_command([self._path_to_apache(), '-v'])
         return re.sub(r'(?:.|\n)*Server version: Apache/(\d+\.\d+)(?:.|\n)*', r'\1', config)
 
-    def _darwin_php_version(self):
-        if self._is_darwin_php_version_7():
-            return '-php7'
-        if self._filesystem.isdir('/usr/libexec/apache2'):
-            for file in self._filesystem.listdir('/usr/libexec/apache2'):
-                if 'php' in file:
-                    return ''
-            return '-x'
-        return ''
-
     def _win_php_version(self):
         root = os.environ.get('XAMPP_ROOT', 'C:\\xampp')
         prefix = self._filesystem.join(root, 'php')
@@ -1178,7 +1163,7 @@ class Port(object):
         if sys_platform in ['cygwin', 'win32']:
             return 'win-httpd-' + self._apache_version() + self._win_php_version() + '.conf'
         if sys_platform == 'darwin':
-            return 'apache' + self._apache_version() + self._darwin_php_version() + '-httpd.conf'
+            return 'apache' + self._apache_version() + '-darwin-httpd.conf'
         if sys_platform.startswith('linux'):
             if self._is_redhat_based():
                 return 'fedora-httpd-' + self._apache_version() + '.conf'
