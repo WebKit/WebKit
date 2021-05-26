@@ -1,3 +1,13 @@
+2021-05-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Refactor SimulatorDevice (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=225158
+
+        Unreviewed follow-up fix.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.is_usable): When no UI Manager service is defined, we should early exit.
+
 2021-05-26  Aakash Jain  <aakash_jain@apple.com>
 
         Do not skip SetCommitQueueMinusFlagOnPatch step on EWS test instances

@@ -579,7 +579,7 @@ class SimulatedDevice(object):
             return False
 
         service = self.UI_MANAGER_SERVICE.get(self.device_type.software_variant)
-        if service:
+        if not service:
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
 
