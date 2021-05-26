@@ -318,6 +318,12 @@ if (USE_LIBEPOXY)
         ${LIBEPOXY_LIBRARIES}
     )
     add_definitions(${LIBEPOXY_DEFINITIONS})
+elseif (USE_ANGLE_EGL)
+    # Prepend to make sure the ANGLE headers are found before system headers
+    list(PREPEND WebKit_PRIVATE_LIBRARIES
+        ANGLE::GLES
+        ANGLE::EGL
+    )
 else ()
     if (USE_OPENGL)
         list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES

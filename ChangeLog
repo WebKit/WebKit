@@ -1,3 +1,22 @@
+2021-05-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Support USE_ANGLE_EGL on additional platforms
+        https://bugs.webkit.org/show_bug.cgi?id=224888
+        <rdar://problem/77280211>
+
+        Reviewed by Ken Russell.
+
+        USE_ANGLE_EGL is for platforms that want to use ANGLE as the sole OpenGL ES implementation
+        within WebKit. This setting is applicable to Mac and Windows platforms. USE_ANGLE_WEBGL is
+        just for platforms that want to use ANGLE for WebGL 2.0 support only. Any other uses of
+        OpenGL should go through the system OpenGL (desktop or embedded). This setting applies to
+        GTK.
+
+        The platform options were modified to match this. 
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+
 2021-05-25  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Implement FileSystem without std::filesystem

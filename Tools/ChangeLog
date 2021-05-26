@@ -1,3 +1,15 @@
+2021-05-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Support USE_ANGLE_EGL on additional platforms
+        https://bugs.webkit.org/show_bug.cgi?id=224888
+        <rdar://problem/77280211>
+
+        Reviewed by Ken Russell.
+
+        Generate source listings for Metal and OpenGL ANGLE backends.
+
+        * Scripts/update-angle:
+
 2021-05-26  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Refactor SimulatorDevice (Follow-up fix)

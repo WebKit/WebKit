@@ -1,3 +1,16 @@
+2021-05-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Support USE_ANGLE_EGL on additional platforms
+        https://bugs.webkit.org/show_bug.cgi?id=224888
+        <rdar://problem/77280211>
+
+        Reviewed by Ken Russell.
+
+        Use the ANGLE library targets when applicable.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+
 2021-05-26  Chris Lord  <clord@igalia.com>
 
         Scrollbars/indicators are sometimes incorrectly drawn when async overflow scrolling is enabled

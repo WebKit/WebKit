@@ -1469,7 +1469,12 @@ endif ()
 # For platforms that want to use system-provided OpenGL (ES) / EGL headers,
 # these include directories, libraries or definitions need to be
 # added before the ANGLE directories.
-if (USE_LIBEPOXY)
+if (USE_ANGLE_EGL)
+    list(APPEND WebCore_LIBRARIES
+        ANGLE::EGL
+        ANGLE::GLES
+    )
+elseif (USE_LIBEPOXY)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
         ${LIBEPOXY_INCLUDE_DIRS}
     )
@@ -1688,6 +1693,8 @@ if (ENABLE_WEBGL)
             platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.cpp
             platform/graphics/angle/TemporaryANGLESetting.cpp
         )
+
+        list(APPEND WebCore_LIBRARIES ANGLE::GLES)
     else ()
         list(APPEND WebCore_SOURCES
             platform/graphics/ANGLEWebKitBridge.cpp
@@ -1710,10 +1717,9 @@ if (ENABLE_WEBGL)
                 platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
             )
         endif ()
-    endif ()
 
-    list(APPEND WebCore_LIBRARIES ANGLEFramework)
-    list(APPEND WebCoreTestSupport_LIBRARIES ANGLEFramework)
+        list(APPEND WebCore_LIBRARIES ANGLE::ANGLE)
+    endif ()
 elseif (USE_ANGLE_EGL)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         ${WEBCORE_DIR}/platform/graphics/angle
@@ -1723,9 +1729,6 @@ elseif (USE_ANGLE_EGL)
     list(APPEND WebCore_SOURCES
         platform/graphics/opengl/TemporaryOpenGLSetting.cpp
     )
-
-    list(APPEND WebCore_LIBRARIES ANGLEFramework)
-    list(APPEND WebCoreTestSupport_LIBRARIES ANGLEFramework)
 endif ()
 
 list(APPEND WebCore_IDL_FILES

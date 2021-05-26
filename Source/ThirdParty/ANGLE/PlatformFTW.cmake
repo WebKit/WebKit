@@ -7,27 +7,25 @@ list(APPEND ANGLE_DEFINITIONS
     NOMINMAX
 )
 
-if (USE_ANGLE_EGL)
-    # We're targeting Windows 10 which will have DirectX 11
-    list(APPEND ANGLE_SOURCES
-        ${angle_system_utils_sources_win}
-        ${angle_translator_hlsl_sources}
+# We're targeting Windows 10 which will have DirectX 11
+list(APPEND ANGLE_SOURCES
+    ${_d3d11_backend_sources}
+    ${_d3d_shared_sources}
 
-        ${_d3d_shared_sources}
-        ${_d3d11_backend_sources}
-        ${libangle_d3d11_sources}
-        ${libangle_d3d11_win32_sources}
-    )
+    ${angle_translator_hlsl_sources}
 
-    list(APPEND ANGLE_DEFINITIONS
-        ANGLE_ENABLE_HLSL
-        ANGLE_ENABLE_D3D11
-    )
+    ${libangle_gpu_info_util_sources}
+    ${libangle_gpu_info_util_win_sources}
+)
 
-    list(APPEND ANGLEGLESv2_LIBRARIES dxguid dxgi)
+list(APPEND ANGLE_DEFINITIONS
+    ANGLE_ENABLE_D3D11
+    ANGLE_ENABLE_HLSL
+)
 
-    # DirectX 9 support should be optional but ANGLE will not compile without it
-    list(APPEND ANGLE_SOURCES ${_d3d9_backend_sources})
-    list(APPEND ANGLE_DEFINITIONS ANGLE_ENABLE_D3D9)
-    list(APPEND ANGLEGLESv2_LIBRARIES d3d9)
-endif ()
+list(APPEND ANGLEGLESv2_LIBRARIES dxguid dxgi)
+
+# DirectX 9 support should be optional but ANGLE will not compile without it
+list(APPEND ANGLE_SOURCES ${_d3d9_backend_sources})
+list(APPEND ANGLE_DEFINITIONS ANGLE_ENABLE_D3D9)
+list(APPEND ANGLEGLESv2_LIBRARIES d3d9)

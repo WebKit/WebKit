@@ -165,6 +165,8 @@ git checkout origin/master -- src/compiler.gni src/libGLESv2.gni src/libANGLE/re
 ./gni-to-cmake.py src/compiler.gni Compiler.cmake
 ./gni-to-cmake.py src/libGLESv2.gni GLESv2.cmake
 ./gni-to-cmake.py src/libANGLE/renderer/d3d/BUILD.gn D3D.cmake --prepend 'src/libANGLE/renderer/d3d/'
+./gni-to-cmake.py src/libANGLE/renderer/gl/BUILD.gn GL.cmake --prepend 'src/libANGLE/renderer/gl/'
+./gni-to-cmake.py src/libANGLE/renderer/metal/BUILD.gn Metal.cmake --prepend 'src/libANGLE/renderer/metal/'
 git checkout src/compiler.gni src/libGLESv2.gni
 
 echo "Moving angle_commit.h into place"
