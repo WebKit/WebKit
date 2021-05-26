@@ -128,7 +128,7 @@ private:
     }
 
 public:
-    UncheckedCondition synchronize;
+    Condition synchronize;
     Worklist& worklist;
     // We can only modify element when holding the lock. A synchronous compile might look at each thread's tasks in order to boost the priority.
     QueueElement element;
@@ -213,7 +213,7 @@ void Worklist::stopAllPlansForContext(Context& context)
 }
 
 Worklist::Worklist()
-    : m_lock(Box<UncheckedLock>::create())
+    : m_lock(Box<Lock>::create())
     , m_planEnqueued(AutomaticThreadCondition::create())
 {
     unsigned numberOfCompilationThreads = Options::useConcurrentJIT() ? kernTCSMAwareNumberOfProcessorCores() : 1;

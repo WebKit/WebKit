@@ -37,7 +37,7 @@
 namespace JSC {
 
 JITWorklist::JITWorklist()
-    : m_lock(Box<UncheckedLock>::create())
+    : m_lock(Box<Lock>::create())
     , m_planEnqueued(AutomaticThreadCondition::create())
 {
     m_maximumNumberOfConcurrentCompilationsPerTier = {

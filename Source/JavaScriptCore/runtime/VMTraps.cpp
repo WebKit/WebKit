@@ -437,7 +437,7 @@ void VMTraps::undoDeferTerminationSlow(DeferAction deferAction)
 }
 
 VMTraps::VMTraps()
-    : m_lock(Box<UncheckedLock>::create())
+    : m_lock(Box<Lock>::create())
     , m_condition(AutomaticThreadCondition::create())
 {
 }

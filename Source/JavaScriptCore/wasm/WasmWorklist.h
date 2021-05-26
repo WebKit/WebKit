@@ -84,7 +84,7 @@ private:
         return left.priority > right.priority;
     }
 
-    Box<UncheckedLock> m_lock;
+    Box<Lock> m_lock;
     Ref<AutomaticThreadCondition> m_planEnqueued;
     // Technically, this could overflow but that's unlikely. Even if it did, we will just compile things of the same
     // Priority it the wrong order, which isn't wrong, just suboptimal.

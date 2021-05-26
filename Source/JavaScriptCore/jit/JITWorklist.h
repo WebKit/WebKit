@@ -119,10 +119,10 @@ private:
     Vector<RefPtr<JITPlan>, 16> m_readyPlans;
 
     UncheckedLock m_suspensionLock;
-    Box<UncheckedLock> m_lock;
+    Box<Lock> m_lock;
 
     Ref<AutomaticThreadCondition> m_planEnqueued;
-    UncheckedCondition m_planCompiled;
+    Condition m_planCompiled;
 };
 
 } // namespace JSC

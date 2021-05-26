@@ -740,7 +740,7 @@ private:
 
     uint64_t m_mutatorExecutionVersion { 0 };
     uint64_t m_phaseVersion { 0 };
-    Box<UncheckedLock> m_threadLock;
+    Box<Lock> m_threadLock;
     Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
 
