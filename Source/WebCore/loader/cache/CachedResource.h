@@ -310,6 +310,8 @@ protected:
 private:
     class Callback;
 
+    void deleteThis();
+
     bool addClientToSet(CachedResourceClient&);
 
     void decodedDataDeletionTimerFired();

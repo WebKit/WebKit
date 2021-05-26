@@ -1,3 +1,55 @@
+2021-05-26  Antti Koivisto  <antti@apple.com>
+
+        Don't hang onto expired resources without validation headers in memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=226083
+        rdar://78035612
+
+        Reviewed by Chris Dumez.
+
+        They consume memory while only really being useful for history navigation.
+        Disk cache can handle the relatively rare cases where that is useful and not
+        covered by the page cache.
+
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+        (WebCore::ResourceTimingInformation::removeResourceTiming):
+
+        Add way to remove entries from the map.
+
+        * loader/ResourceTimingInformation.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::removeClient):
+
+        Removal from cache is now handled in deleteIfPossible() so any path that gets the resource to
+        canDelete() state will do cache removal check.
+        Since deleteIfPossible is invoked by removeClient the existing behavior is covered.
+
+        (WebCore::CachedResource::deleteIfPossible):
+
+        Remove expired resources without validation headers from the cache if the resource is otherwise deletable.
+        Also eagerly remove no-store http resources (previously only https was removed).
+
+        (WebCore::CachedResource::deleteThis):
+
+        Factor into a function.
+
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
+        Ensure existing resource is removed from cache adding a new one. This was causing confusion with inCache state.
+
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResources):
+
+        Don't remove entries with active loader. They are needed for resource timing.
+        Don't leave removed entries to ResourceTimingInformation. They are not guaranteed to stay alive after
+        being removed from m_documentResources.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::remove):
+
+        Call CachedResource::deleteThis() directly.
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         Drop SecurityPolicyViolationEvent's blockedURL & documentURL attributes

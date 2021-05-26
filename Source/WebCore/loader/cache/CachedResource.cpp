@@ -552,11 +552,6 @@ void CachedResource::removeClient(CachedResourceClient& client)
         didRemoveClient(client);
     }
 
-    if (deleteIfPossible()) {
-        // `this` object is dead here.
-        return;
-    }
-
     if (hasClients())
         return;
 
@@ -565,6 +560,12 @@ void CachedResource::removeClient(CachedResourceClient& client)
         memoryCache.removeFromLiveResourcesSize(*this);
         memoryCache.removeFromLiveDecodedResourcesList(*this);
     }
+
+    if (deleteIfPossible()) {
+        // `this` object is dead here.
+        return;
+    }
+
     if (!m_switchingClientsToRevalidatedResource)
         allClientsRemoved();
     destroyDecodedDataIfNeeded();
@@ -572,13 +573,6 @@ void CachedResource::removeClient(CachedResourceClient& client)
     if (!allowsCaching())
         return;
 
-    if (response().cacheControlContainsNoStore() && url().protocolIs("https")) {
-        // RFC2616 14.9.2:
-        // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
-        // "... History buffers MAY store such responses as part of their normal operation."
-        // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
-        memoryCache.remove(*this);
-    }
     memoryCache.pruneSoon();
 }
 
@@ -604,19 +598,47 @@ void CachedResource::decodedDataDeletionTimerFired()
 
 bool CachedResource::deleteIfPossible()
 {
-    if (canDelete()) {
-        LOG(ResourceLoading, "CachedResource %p deleteIfPossible - can delete, in cache %d", this, inCache());
-        if (!inCache()) {
-            InspectorInstrumentation::willDestroyCachedResource(*this);
-            delete this;
-            return true;
-        }
-        if (m_data)
-            m_data->hintMemoryNotNeededSoon();
+    if (!canDelete()) {
+        LOG(ResourceLoading, "CachedResource %p deleteIfPossible - can't delete (hasClients %d loader %p preloadCount %u handleCount %u resourceToRevalidate %p proxyResource %p)", this, hasClients(), m_loader.get(), m_preloadCount, m_handleCount, m_resourceToRevalidate, m_proxyResource);
+        return false;
     }
 
-    LOG(ResourceLoading, "CachedResource %p deleteIfPossible - can't delete (hasClients %d loader %p preloadCount %u handleCount %u resourceToRevalidate %p proxyResource %p)", this, hasClients(), m_loader.get(), m_preloadCount, m_handleCount, m_resourceToRevalidate, m_proxyResource);
+    LOG(ResourceLoading, "CachedResource %p deleteIfPossible - can delete, in cache %d", this, inCache());
+
+    if (!inCache()) {
+        deleteThis();
+        return true;
+    }
+
+    auto shouldRemoveFromCache = [&] {
+        // We may still keeps some of these cases in disk cache for history navigation.
+        if (response().cacheControlContainsNoStore())
+            return true;
+        if (isExpired() && !canUseCacheValidator())
+            return true;
+        return false;
+    }();
+
+    if (shouldRemoveFromCache) {
+        // Deletes this.
+        MemoryCache::singleton().remove(*this);
+        return true;
+    }
+
+    if (m_data)
+        m_data->hintMemoryNotNeededSoon();
+
     return false;
+}
+
+void CachedResource::deleteThis()
+{
+    RELEASE_ASSERT(canDelete());
+    RELEASE_ASSERT(!inCache());
+
+    InspectorInstrumentation::willDestroyCachedResource(*this);
+
+    delete this;
 }
 
 void CachedResource::setDecodedSize(unsigned size)

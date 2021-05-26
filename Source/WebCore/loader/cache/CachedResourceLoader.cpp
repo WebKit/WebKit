@@ -992,8 +992,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         memoryCache.remove(*resource);
         FALLTHROUGH;
     case Load:
-        if (resource)
+        if (resource) {
             logMemoryCacheResourceRequest(&frame, DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::unusedKey());
+            memoryCache.remove(*resource);
+        }
         resource = loadResource(type, page.sessionID(), WTFMove(request), cookieJar, page.settings());
         break;
     case Revalidate:
@@ -1443,11 +1445,14 @@ void CachedResourceLoader::garbageCollectDocumentResources()
     typedef Vector<String, 10> StringVector;
     StringVector resourcesToDelete;
 
-    for (auto& resource : m_documentResources) {
-        LOG(ResourceLoading, "  cached resource %p - hasOneHandle %d", resource.value.get(), resource.value->hasOneHandle());
+    for (auto& resourceEntry : m_documentResources) {
+        auto& resource = *resourceEntry.value;
+        LOG(ResourceLoading, "  cached resource %p - hasOneHandle %d", &resource, resource.hasOneHandle());
 
-        if (resource.value->hasOneHandle())
-            resourcesToDelete.append(resource.key);
+        if (resource.hasOneHandle() && !resource.loader() && !resource.isPreloaded()) {
+            resourcesToDelete.append(resourceEntry.key);
+            m_resourceTimingInfo.removeResourceTiming(resource);
+        }
     }
 
     for (auto& resource : resourcesToDelete)

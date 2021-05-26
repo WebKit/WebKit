@@ -86,6 +86,11 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     info.added = Added;
 }
 
+void ResourceTimingInformation::removeResourceTiming(CachedResource& resource)
+{
+    m_initiatorMap.remove(&resource);
+}
+
 void ResourceTimingInformation::storeResourceTimingInitiatorInformation(const CachedResourceHandle<CachedResource>& resource, const AtomString& initiatorName, Frame* frame)
 {
     ASSERT(resource.get());
