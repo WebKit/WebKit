@@ -490,6 +490,8 @@ public:
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
     virtual void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) = 0;
 #endif
+
+    virtual WebCore::Color contentViewBackgroundColor() = 0;
 #endif
 
     // Auxiliary Client Creation
@@ -514,6 +516,8 @@ public:
 
     virtual void themeColorWillChange() { }
     virtual void themeColorDidChange() { }
+    virtual void underPageBackgroundColorWillChange() { }
+    virtual void underPageBackgroundColorDidChange() { }
     virtual void pageExtendedBackgroundColorWillChange() { }
     virtual void pageExtendedBackgroundColorDidChange() { }
     virtual void sampledPageTopColorWillChange() { }

@@ -623,6 +623,9 @@ public:
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
     WEBCORE_EXPORT Color sampledPageTopColor() const;
 
+    Color underPageBackgroundColorOverride() const { return m_underPageBackgroundColorOverride; }
+    WEBCORE_EXPORT void setUnderPageBackgroundColorOverride(Color&&);
+
     bool isCountingRelevantRepaintedObjects() const;
     void setIsCountingRelevantRepaintedObjects(bool isCounting) { m_isCountingRelevantRepaintedObjects = isCounting; }
     void startCountingRelevantRepaintedObjects();
@@ -1151,6 +1154,8 @@ private:
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
+
+    Color m_underPageBackgroundColorOverride;
 
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
