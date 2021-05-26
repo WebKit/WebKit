@@ -1,3 +1,28 @@
+2021-05-26  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION: Safari v14.1 computes element height to be 33,554,432 pixels
+        https://bugs.webkit.org/show_bug.cgi?id=226006
+        <rdar://problem/78471122>
+
+        Reviewed by Antti Koivisto.
+
+        We fail to find the intrusive floats when they don't line up with the top of the line. 
+
+        The fix is twofold here. 
+        - when probing for the intrusive float boxes, we need to look at both the line geometry and the initial line constraints.
+          When the intrusive floats take up the entire horizontal space and the line ends up with no inline content,
+          the computed line geometry may come back with a 0px tall line.
+          Now if we probe the intrusive floats at [top: 0px, bottom: 0px] and they happen to have a vertical offset e.g 1px,
+          we won't find them (since we only scan at 0px vertically).
+        - if we still don't find the intrusive float(s), let's just offset the next line by the line height candidate (e.g. 18px)
+          instead of the "inifitePoint". The layout will likely be incorrect but it won't produce an infinitely tall content. 
+
+        Test: fast/inline/inline-root-with-negative-margin-and-sibling-float.html
+
+        * layout/floats/FloatingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+
 2021-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Rename ImageBuffer::transformColorSpace to transformToColorSpace, and it should take a single argument

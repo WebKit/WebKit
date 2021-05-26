@@ -233,13 +233,23 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         // Floats prevented us placing any content on the line.
         ASSERT(lineContent.runs.isEmpty());
         ASSERT(lineContent.hasIntrusiveFloat);
-        // Move the next line below the intrusive float.
-        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalRect.bottom()));
-        ASSERT(floatConstraints.left || floatConstraints.right);
-        static auto inifitePoint = PointInContextRoot::max();
-        // In case of left and right constraints, we need to pick the one that's closer to the current line.
-        lineLogicalTop = std::min(floatConstraints.left.valueOr(inifitePoint).y, floatConstraints.right.valueOr(inifitePoint).y);
-        ASSERT(lineLogicalTop < inifitePoint.y);
+        // Move the next line below the intrusive float(s).
+        auto logicalTopCandidateForNextLine = [&] {
+            auto lineBottomWithNoInlineContent = LayoutUnit { std::max(lineLogicalRect.bottom(), initialLineConstraints.bottom()) };
+            auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalTop), lineBottomWithNoInlineContent);
+            ASSERT(floatConstraints.left || floatConstraints.right);
+            if (floatConstraints.left && floatConstraints.right) {
+                // In case of left and right constraints, we need to pick the one that's closer to the current line.
+                return std::min(floatConstraints.left->y, floatConstraints.right->y);
+            }
+            if (floatConstraints.left)
+                return floatConstraints.left->y;
+            if (floatConstraints.right)
+                return floatConstraints.right->y;
+            ASSERT_NOT_REACHED();
+            return lineBottomWithNoInlineContent;
+        };
+        lineLogicalTop = logicalTopCandidateForNextLine();
     }
 }
 

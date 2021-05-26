@@ -68,7 +68,7 @@ public:
         Optional<PointInContextRoot> left;
         Optional<PointInContextRoot> right;
     };
-    Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateHeight) const;
+    Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom) const;
 
     FloatingState::FloatItem toFloatItem(const Box& floatBox) const;
 
