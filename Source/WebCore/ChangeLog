@@ -1,3 +1,20 @@
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop SecurityPolicyViolationEvent's blockedURL & documentURL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=226270
+
+        Reviewed by Alex Christensen.
+
+        Drop SecurityPolicyViolationEvent's blockedURL & documentURL attributes that I very recently added as part of
+        r278042. No other browser supports those and it looks like they may get dropped from the spec
+        (https://github.com/w3c/webappsec-csp/issues/498) since the blockedURI/documentURI cannot be renamed in the
+        SecurityPolicyViolationEventInit dictionary.
+
+        This is basically a partial revert of r278042, while we work on the spec to get updated to match browsers.
+
+        * dom/SecurityPolicyViolationEvent.h:
+        * dom/SecurityPolicyViolationEvent.idl:
+
 2021-05-26  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Introduce containingBlockChain iterator

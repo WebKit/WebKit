@@ -1,3 +1,14 @@
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop SecurityPolicyViolationEvent's blockedURL & documentURL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=226270
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test due to change.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window-expected.txt:
+
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
         CSP does not apply to AudioWorklets

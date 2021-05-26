@@ -35,11 +35,9 @@ enum SecurityPolicyViolationEventDisposition {
     constructor(DOMString type);
     constructor(DOMString type, SecurityPolicyViolationEventInit eventInitDict);
 
-    readonly attribute USVString documentURL;
-    [ImplementedAs=documentURL] readonly attribute USVString documentURI; // historical alias of documentURL
+    readonly attribute USVString documentURI;
     readonly attribute USVString referrer;
-    readonly attribute USVString blockedURL;
-    [ImplementedAs=blockedURL] readonly attribute USVString blockedURI; // historical alias of blockedURL
+    readonly attribute USVString blockedURI;
     readonly attribute DOMString effectiveDirective;
     readonly attribute DOMString violatedDirective;
     readonly attribute DOMString originalPolicy;

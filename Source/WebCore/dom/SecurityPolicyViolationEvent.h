@@ -59,9 +59,9 @@ public:
         return adoptRef(*new SecurityPolicyViolationEvent(type, initializer, isTrusted));
     }
 
-    const String& documentURL() const { return m_documentURL; }
+    const String& documentURI() const { return m_documentURI; }
     const String& referrer() const { return m_referrer; }
-    const String& blockedURL() const { return m_blockedURL; }
+    const String& blockedURI() const { return m_blockedURI; }
     const String& violatedDirective() const { return m_violatedDirective; }
     const String& effectiveDirective() const { return m_effectiveDirective; }
     const String& originalPolicy() const { return m_originalPolicy; }
@@ -81,9 +81,9 @@ private:
 
     SecurityPolicyViolationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
         : Event(type, initializer, isTrusted)
-        , m_documentURL(initializer.documentURI)
+        , m_documentURI(initializer.documentURI)
         , m_referrer(initializer.referrer)
-        , m_blockedURL(initializer.blockedURI)
+        , m_blockedURI(initializer.blockedURI)
         , m_violatedDirective(initializer.violatedDirective)
         , m_effectiveDirective(initializer.effectiveDirective)
         , m_originalPolicy(initializer.originalPolicy)
@@ -96,9 +96,9 @@ private:
     {
     }
 
-    String m_documentURL;
+    String m_documentURI;
     String m_referrer;
-    String m_blockedURL;
+    String m_blockedURI;
     String m_violatedDirective;
     String m_effectiveDirective;
     String m_originalPolicy;
