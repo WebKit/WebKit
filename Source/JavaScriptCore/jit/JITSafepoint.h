@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,59 @@
 
 #pragma once
 
-#include "DFGPlan.h"
+#if ENABLE(JIT)
 
-namespace JSC { namespace DFG {
+#include <wtf/Vector.h>
 
-#if ENABLE(DFG_JIT)
+namespace JSC {
 
-template<typename Func, typename Visitor>
-void Plan::iterateCodeBlocksForGC(Visitor& visitor, const Func& func)
-{
-    if (!isKnownToBeLiveDuringGC(visitor))
-        return;
+class JITPlan;
+class Scannable;
+class VM;
+
+class Safepoint {
+public:
+    class Result {
+    public:
+        Result()
+            : m_didGetCancelled(false)
+            , m_wasChecked(true)
+        {
+        }
+        
+        ~Result();
+        
+        bool didGetCancelled();
+        
+    private:
+        friend class Safepoint;
+        
+        bool m_didGetCancelled;
+        bool m_wasChecked;
+    };
     
-    // Compilation writes lots of values to a CodeBlock without performing
-    // an explicit barrier. So, we need to be pessimistic and assume that
-    // all our CodeBlocks must be visited during GC.
+    Safepoint(JITPlan&, Result&);
+    ~Safepoint();
+    
+    void add(Scannable*);
+    
+    void begin();
 
-    func(m_codeBlock);
-    func(m_codeBlock->alternative());
-    if (m_profiledDFGCodeBlock)
-        func(m_profiledDFGCodeBlock);
-}
+    template<typename Visitor> void checkLivenessAndVisitChildren(Visitor&);
+    template<typename Visitor> bool isKnownToBeLiveDuringGC(Visitor&);
+    bool isKnownToBeLiveAfterGC();
+    void cancel();
+    
+    VM* vm() const; // May return null if we've been cancelled.
 
-#endif // ENABLE(DFG_JIT)
+private:
+    VM* m_vm;
+    JITPlan& m_plan;
+    Vector<Scannable*> m_scannables;
+    bool m_didCallBegin;
+    Result& m_result;
+};
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
+#endif // ENABLE(JIT)

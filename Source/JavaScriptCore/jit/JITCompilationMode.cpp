@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +24,36 @@
  */
 
 #include "config.h"
-#include "DFGCompilationKey.h"
+#include "JITCompilationMode.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-#include "CodeBlock.h"
+namespace WTF {
 
-namespace JSC { namespace DFG {
+using namespace JSC;
 
-void CompilationKey::dump(PrintStream& out) const
+void printInternal(PrintStream& out, JITCompilationMode mode)
 {
-    if (!*this) {
-        out.print("<empty>");
+    switch (mode) {
+    case JITCompilationMode::InvalidCompilation:
+        out.print("InvalidCompilationMode");
+        return;
+    case JITCompilationMode::Baseline:
+        out.print("BaselineMode");
+        return;
+    case JITCompilationMode::DFG:
+        out.print("DFGMode");
+        return;
+    case JITCompilationMode::FTL:
+        out.print("FTLMode");
+        return;
+    case JITCompilationMode::FTLForOSREntry:
+        out.print("FTLForOSREntryMode");
         return;
     }
-    out.print("(Compile of ", *m_profiledBlock, " with ", m_mode, ")");
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-} } // namespace JSC::DFG
+} // namespace WTF
 
-
-#endif
+#endif // ENABLE(JIT)

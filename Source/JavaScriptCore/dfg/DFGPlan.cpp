@@ -88,15 +88,6 @@
 #include "FTLState.h"
 #endif
 
-namespace JSC {
-
-extern Seconds totalDFGCompileTime;
-extern Seconds totalFTLCompileTime;
-extern Seconds totalFTLDFGCompileTime;
-extern Seconds totalFTLB3CompileTime;
-
-}
-
 namespace JSC { namespace DFG {
 
 namespace {
@@ -113,17 +104,18 @@ void dumpAndVerifyGraph(Graph& graph, const char* text, bool forceDump = false)
         validate(graph, modeForFinalValidate);
 }
 
-Profiler::CompilationKind profilerCompilationKindForMode(CompilationMode mode)
+Profiler::CompilationKind profilerCompilationKindForMode(JITCompilationMode mode)
 {
     switch (mode) {
-    case InvalidCompilationMode:
+    case JITCompilationMode::InvalidCompilation:
+    case JITCompilationMode::Baseline:
         RELEASE_ASSERT_NOT_REACHED();
         return Profiler::DFG;
-    case DFGMode:
+    case JITCompilationMode::DFG:
         return Profiler::DFG;
-    case FTLMode:
+    case JITCompilationMode::FTL:
         return Profiler::FTL;
-    case FTLForOSREntryMode:
+    case JITCompilationMode::FTLForOSREntry:
         return Profiler::FTLForOSREntry;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -133,20 +125,17 @@ Profiler::CompilationKind profilerCompilationKindForMode(CompilationMode mode)
 } // anonymous namespace
 
 Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
-    CompilationMode mode, BytecodeIndex osrEntryBytecodeIndex,
+    JITCompilationMode mode, BytecodeIndex osrEntryBytecodeIndex,
     const Operands<Optional<JSValue>>& mustHandleValues)
-    : m_mode(mode)
-    , m_vm(&passedCodeBlock->vm())
-    , m_codeBlock(passedCodeBlock)
-    , m_profiledDFGCodeBlock(profiledDFGCodeBlock)
-    , m_mustHandleValues(mustHandleValues)
-    , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
-    , m_compilation(UNLIKELY(m_vm->m_perBytecodeProfiler) ? adoptRef(new Profiler::Compilation(m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_codeBlock), profilerCompilationKindForMode(mode))) : nullptr)
-    , m_inlineCallFrames(adoptRef(new InlineCallFrameSet()))
-    , m_identifiers(m_codeBlock)
-    , m_weakReferences(m_codeBlock)
-    , m_transitions(m_codeBlock)
-    , m_stage(Preparing)
+        : Base(mode, passedCodeBlock)
+        , m_profiledDFGCodeBlock(profiledDFGCodeBlock)
+        , m_mustHandleValues(mustHandleValues)
+        , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
+        , m_compilation(UNLIKELY(m_vm->m_perBytecodeProfiler) ? adoptRef(new Profiler::Compilation(m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_codeBlock), profilerCompilationKindForMode(mode))) : nullptr)
+        , m_inlineCallFrames(adoptRef(new InlineCallFrameSet()))
+        , m_identifiers(m_codeBlock)
+        , m_weakReferences(m_codeBlock)
+        , m_transitions(m_codeBlock)
 {
     RELEASE_ASSERT(m_codeBlock->alternative()->jitCode());
     m_inlineCallFrames->disableThreadingChecks();
@@ -156,84 +145,38 @@ Plan::~Plan()
 {
 }
 
-bool Plan::computeCompileTimes() const
+size_t Plan::codeSize() const
 {
-    return reportCompileTimes()
-        || Options::reportTotalCompileTimes()
-        || (m_vm && m_vm->m_perBytecodeProfiler);
+    if (!m_finalizer)
+        return 0;
+    return m_finalizer->codeSize();
 }
 
-bool Plan::reportCompileTimes() const
+void Plan::finalizeInGC()
 {
-    return Options::reportCompileTimes()
-        || Options::reportDFGCompileTimes()
-        || (Options::reportFTLCompileTimes() && isFTL());
+    ASSERT(m_vm);
+    m_recordedStatuses.finalizeWithoutDeleting(*m_vm);
 }
 
-void Plan::compileInThread(ThreadData* threadData)
+void Plan::notifyReady()
 {
-    m_threadData = threadData;
+    Base::notifyReady();
+    m_callback->compilationDidBecomeReadyAsynchronously(m_codeBlock, m_profiledDFGCodeBlock);
+}
 
-    MonotonicTime before { };
-    CString codeBlockName;
-    if (UNLIKELY(computeCompileTimes()))
-        before = MonotonicTime::now();
-    if (UNLIKELY(reportCompileTimes()))
-        codeBlockName = toCString(*m_codeBlock);
-
-    CompilationScope compilationScope;
-
-    if (logCompilationChanges(m_mode) || Options::logPhaseTimes())
-        dataLog("DFG(Plan) compiling ", *m_codeBlock, " with ", m_mode, ", instructions size = ", m_codeBlock->instructionsSize(), "\n");
-
-    CompilationPath path = compileInThreadImpl();
-
-    RELEASE_ASSERT(path == CancelPath || m_finalizer);
-    RELEASE_ASSERT((path == CancelPath) == (m_stage == Cancelled));
-
-    MonotonicTime after { };
-    if (UNLIKELY(computeCompileTimes())) {
-        after = MonotonicTime::now();
-    
-        if (Options::reportTotalCompileTimes()) {
-            if (isFTL()) {
-                totalFTLCompileTime += after - before;
-                totalFTLDFGCompileTime += m_timeBeforeFTL - before;
-                totalFTLB3CompileTime += after - m_timeBeforeFTL;
-            } else
-                totalDFGCompileTime += after - before;
-        }
-    }
-    const char* pathName = nullptr;
-    switch (path) {
-    case FailPath:
-        pathName = "N/A (fail)";
-        break;
-    case DFGPath:
-        pathName = "DFG";
-        break;
-    case FTLPath:
-        pathName = "FTL";
-        break;
-    case CancelPath:
-        pathName = "Cancelled";
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-    if (m_codeBlock) { // m_codeBlock will be null if the compilation was cancelled.
-        if (path == FTLPath)
-            CODEBLOCK_LOG_EVENT(m_codeBlock, "ftlCompile", ("took ", (after - before).milliseconds(), " ms (DFG: ", (m_timeBeforeFTL - before).milliseconds(), ", B3: ", (after - m_timeBeforeFTL).milliseconds(), ") with ", pathName));
-        else
-            CODEBLOCK_LOG_EVENT(m_codeBlock, "dfgCompile", ("took ", (after - before).milliseconds(), " ms with ", pathName));
-    }
-    if (UNLIKELY(reportCompileTimes())) {
-        dataLog("Optimized ", codeBlockName, " using ", m_mode, " with ", pathName, " into ", m_finalizer ? m_finalizer->codeSize() : 0, " bytes in ", (after - before).milliseconds(), " ms");
-        if (path == FTLPath)
-            dataLog(" (DFG: ", (m_timeBeforeFTL - before).milliseconds(), ", B3: ", (after - m_timeBeforeFTL).milliseconds(), ")");
-        dataLog(".\n");
-    }
+void Plan::cancel()
+{
+    Base::cancel();
+    m_profiledDFGCodeBlock = nullptr;
+    m_mustHandleValues.clear();
+    m_compilation = nullptr;
+    m_finalizer = nullptr;
+    m_inlineCallFrames = nullptr;
+    m_watchpoints = DesiredWatchpoints();
+    m_identifiers = DesiredIdentifiers();
+    m_weakReferences = DesiredWeakReferences();
+    m_transitions = DesiredTransitions();
+    m_callback = nullptr;
 }
 
 Plan::CompilationPath Plan::compileInThreadImpl()
@@ -300,7 +243,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     
     RUN_PHASE(performStaticExecutionCountEstimation);
 
-    if (m_mode == FTLForOSREntryMode) {
+    if (m_mode == JITCompilationMode::FTLForOSREntry) {
         bool result = performOSREntrypointCreation(dfg);
         if (!result) {
             m_finalizer = makeUnique<FailedFinalizer>(*this);
@@ -376,7 +319,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     }
 
     switch (m_mode) {
-    case DFGMode: {
+    case JITCompilationMode::DFG: {
         dfg.m_fixpointState = FixpointConverged;
 
         RUN_PHASE(performTierUpCheckInjection);
@@ -405,8 +348,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         return DFGPath;
     }
     
-    case FTLMode:
-    case FTLForOSREntryMode: {
+    case JITCompilationMode::FTL:
+    case JITCompilationMode::FTLForOSREntry: {
 #if ENABLE(FTL_JIT)
         if (FTL::canCompile(dfg) == FTL::CannotCompile) {
             m_finalizer = makeUnique<FailedFinalizer>(*this);
@@ -581,23 +524,12 @@ void Plan::reallyAdd(CommonData* commonData)
     }
 }
 
-void Plan::notifyCompiling()
-{
-    m_stage = Compiling;
-}
-
-void Plan::notifyReady()
-{
-    m_callback->compilationDidBecomeReadyAsynchronously(m_codeBlock, m_profiledDFGCodeBlock);
-    m_stage = Ready;
-}
-
 bool Plan::isStillValidOnMainThread()
 {
     return m_watchpoints.areStillValidOnMainThread(*m_vm, m_identifiers);
 }
 
-CompilationResult Plan::finalizeWithoutNotifyingCallback()
+CompilationResult Plan::finalize()
 {
     // We perform multiple stores before emitting a write-barrier. To ensure that no GC happens between store and write-barrier, we should ensure that
     // GC is deferred when this function is called.
@@ -654,24 +586,30 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
 
     // We will establish new references from the code block to things. So, we need a barrier.
     m_vm->heap.writeBarrier(m_codeBlock);
+
+    m_callback->compilationDidComplete(m_codeBlock, m_profiledDFGCodeBlock, result);
+
     return result;
 }
 
-void Plan::finalizeAndNotifyCallback()
+bool Plan::iterateCodeBlocksForGC(AbstractSlotVisitor& visitor, const Function<void(CodeBlock*)>& func)
 {
-    m_callback->compilationDidComplete(m_codeBlock, m_profiledDFGCodeBlock, finalizeWithoutNotifyingCallback());
+    if (!Base::iterateCodeBlocksForGC(visitor, func))
+        return false;
+
+    // Compilation writes lots of values to a CodeBlock without performing
+    // an explicit barrier. So, we need to be pessimistic and assume that
+    // all our CodeBlocks must be visited during GC.
+    func(m_codeBlock->alternative());
+    if (m_profiledDFGCodeBlock)
+        func(m_profiledDFGCodeBlock);
+    return true;
 }
 
-CompilationKey Plan::key()
+bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
 {
-    return CompilationKey(m_codeBlock->alternative(), m_mode);
-}
-
-template<typename Visitor>
-void Plan::checkLivenessAndVisitChildren(Visitor& visitor)
-{
-    if (!isKnownToBeLiveDuringGC(visitor))
-        return;
+    if (!Base::checkLivenessAndVisitChildren(visitor))
+        return false;
 
     cleanMustHandleValuesIfNecessary();
     for (unsigned i = m_mustHandleValues.size(); i--;) {
@@ -683,7 +621,6 @@ void Plan::checkLivenessAndVisitChildren(Visitor& visitor)
     m_recordedStatuses.visitAggregate(visitor);
     m_recordedStatuses.markIfCheap(visitor);
 
-    visitor.appendUnbarriered(m_codeBlock);
     visitor.appendUnbarriered(m_codeBlock->alternative());
     visitor.appendUnbarriered(m_profiledDFGCodeBlock);
 
@@ -696,23 +633,12 @@ void Plan::checkLivenessAndVisitChildren(Visitor& visitor)
 
     m_weakReferences.visitChildren(visitor);
     m_transitions.visitChildren(visitor);
+    return true;
 }
 
-template void Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor&);
-template void Plan::checkLivenessAndVisitChildren(SlotVisitor&);
-
-void Plan::finalizeInGC()
+bool Plan::isKnownToBeLiveDuringGC(AbstractSlotVisitor& visitor)
 {
-    ASSERT(m_vm);
-    m_recordedStatuses.finalizeWithoutDeleting(*m_vm);
-}
-
-template<typename Visitor>
-bool Plan::isKnownToBeLiveDuringGC(Visitor& visitor)
-{
-    if (m_stage == Cancelled)
-        return false;
-    if (!visitor.isMarked(m_codeBlock->ownerExecutable()))
+    if (!Base::isKnownToBeLiveDuringGC(visitor))
         return false;
     if (!visitor.isMarked(m_codeBlock->alternative()))
         return false;
@@ -721,40 +647,15 @@ bool Plan::isKnownToBeLiveDuringGC(Visitor& visitor)
     return true;
 }
 
-template bool Plan::isKnownToBeLiveDuringGC(AbstractSlotVisitor&);
-template bool Plan::isKnownToBeLiveDuringGC(SlotVisitor&);
-
 bool Plan::isKnownToBeLiveAfterGC()
 {
-    if (m_stage == Cancelled)
-        return false;
-    if (!m_vm->heap.isMarked(m_codeBlock->ownerExecutable()))
+    if (!Base::isKnownToBeLiveAfterGC())
         return false;
     if (!m_vm->heap.isMarked(m_codeBlock->alternative()))
         return false;
     if (!!m_profiledDFGCodeBlock && !m_vm->heap.isMarked(m_profiledDFGCodeBlock))
         return false;
     return true;
-}
-
-void Plan::cancel()
-{
-    RELEASE_ASSERT(m_stage != Cancelled);
-    ASSERT(m_vm);
-    m_vm = nullptr;
-
-    m_codeBlock = nullptr;
-    m_profiledDFGCodeBlock = nullptr;
-    m_mustHandleValues.clear();
-    m_compilation = nullptr;
-    m_finalizer = nullptr;
-    m_inlineCallFrames = nullptr;
-    m_watchpoints = DesiredWatchpoints();
-    m_identifiers = DesiredIdentifiers();
-    m_weakReferences = DesiredWeakReferences();
-    m_transitions = DesiredTransitions();
-    m_callback = nullptr;
-    m_stage = Cancelled;
 }
 
 void Plan::cleanMustHandleValuesIfNecessary()

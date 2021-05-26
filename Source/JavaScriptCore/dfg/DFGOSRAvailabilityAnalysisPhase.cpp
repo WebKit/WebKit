@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -166,7 +166,7 @@ public:
                         }
 
                         // FIXME: It seems like we should be able to do at least some validation when OSR entering. https://bugs.webkit.org/show_bug.cgi?id=215511
-                        if (m_graph.m_plan.mode() != FTLForOSREntryMode) {
+                        if (m_graph.m_plan.mode() != JITCompilationMode::FTLForOSREntry) {
                             for (size_t i = 0; i < availabilityMap.m_locals.size(); ++i) {
                                 Operand operand = availabilityMap.m_locals.operandForIndex(i);
                                 Availability availability = availabilityMap.m_locals[i];

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DFGCompilationMode.h"
+#include "JITCompilationMode.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {
@@ -33,23 +33,21 @@ namespace JSC {
 class CodeBlock;
 class CodeBlockSet;
 
-namespace DFG {
-
-class CompilationKey {
+class JITCompilationKey {
 public:
-    CompilationKey()
+    JITCompilationKey()
         : m_profiledBlock(nullptr)
-        , m_mode(InvalidCompilationMode)
+        , m_mode(JITCompilationMode::InvalidCompilation)
     {
     }
     
-    CompilationKey(WTF::HashTableDeletedValueType)
+    JITCompilationKey(WTF::HashTableDeletedValueType)
         : m_profiledBlock(nullptr)
-        , m_mode(DFGMode)
+        , m_mode(JITCompilationMode::DFG)
     {
     }
     
-    CompilationKey(CodeBlock* profiledBlock, CompilationMode mode)
+    JITCompilationKey(CodeBlock* profiledBlock, JITCompilationMode mode)
         : m_profiledBlock(profiledBlock)
         , m_mode(mode)
     {
@@ -57,18 +55,18 @@ public:
     
     bool operator!() const
     {
-        return !m_profiledBlock && m_mode == InvalidCompilationMode;
+        return !m_profiledBlock && m_mode == JITCompilationMode::InvalidCompilation;
     }
     
     bool isHashTableDeletedValue() const
     {
-        return !m_profiledBlock && m_mode != InvalidCompilationMode;
+        return !m_profiledBlock && m_mode != JITCompilationMode::InvalidCompilation;
     }
     
     CodeBlock* profiledBlock() const { return m_profiledBlock; }
-    CompilationMode mode() const { return m_mode; }
+    JITCompilationMode mode() const { return m_mode; }
     
-    bool operator==(const CompilationKey& other) const
+    bool operator==(const JITCompilationKey& other) const
     {
         return m_profiledBlock == other.m_profiledBlock
             && m_mode == other.m_mode;
@@ -76,30 +74,30 @@ public:
     
     unsigned hash() const
     {
-        return WTF::pairIntHash(WTF::PtrHash<CodeBlock*>::hash(m_profiledBlock), m_mode);
+        return WTF::pairIntHash(WTF::PtrHash<CodeBlock*>::hash(m_profiledBlock), static_cast<std::underlying_type<JITCompilationMode>::type>(m_mode));
     }
     
     void dump(PrintStream&) const;
 
 private:
     CodeBlock* m_profiledBlock;
-    CompilationMode m_mode;
+    JITCompilationMode m_mode;
 };
 
-struct CompilationKeyHash {
-    static unsigned hash(const CompilationKey& key) { return key.hash(); }
-    static bool equal(const CompilationKey& a, const CompilationKey& b) { return a == b; }
+struct JITCompilationKeyHash {
+    static unsigned hash(const JITCompilationKey& key) { return key.hash(); }
+    static bool equal(const JITCompilationKey& a, const JITCompilationKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::DFG::CompilationKey> : JSC::DFG::CompilationKeyHash { };
+template<> struct DefaultHash<JSC::JITCompilationKey> : JSC::JITCompilationKeyHash { };
 
 template<typename T> struct HashTraits;
-template<> struct HashTraits<JSC::DFG::CompilationKey> : SimpleClassHashTraits<JSC::DFG::CompilationKey> { };
+template<> struct HashTraits<JSC::JITCompilationKey> : SimpleClassHashTraits<JSC::JITCompilationKey> { };
 
 } // namespace WTF

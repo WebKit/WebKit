@@ -216,6 +216,7 @@ namespace JSC {
 
         void compileAndLinkWithoutFinalizing(JITCompilationEffort);
         CompilationResult finalizeOnMainThread();
+        size_t codeSize() const;
 
         void doMainThreadPreparationBeforeCompile();
         

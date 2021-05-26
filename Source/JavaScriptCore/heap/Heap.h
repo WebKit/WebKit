@@ -97,7 +97,6 @@ class JSCGLibWrapperObject;
 
 namespace DFG {
 class SpeculativeJIT;
-class Worklist;
 }
 
 #if ENABLE(DFG_JIT) && ASSERT_ENABLED
@@ -495,16 +494,12 @@ private:
     JS_EXPORT_PRIVATE void acquireAccessSlow();
     JS_EXPORT_PRIVATE void releaseAccessSlow();
     
-    bool handleGCDidJIT(unsigned);
-    void handleGCDidJIT();
-    
     bool handleNeedFinalize(unsigned);
     void handleNeedFinalize();
     
     bool relinquishConn(unsigned);
     void finishRelinquishingConn();
     
-    void setGCDidJIT();
     void setNeedFinalize();
     void waitWhileNeedFinalize();
     
@@ -579,8 +574,8 @@ private:
 
     bool overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType = MemoryThresholdCallType::Cached);
     
-    template<typename Func, typename Visitor>
-    void iterateExecutingAndCompilingCodeBlocks(Visitor&, const Func&);
+    template<typename Visitor>
+    void iterateExecutingAndCompilingCodeBlocks(Visitor&, const Function<void(CodeBlock*)>&);
     
     template<typename Func, typename Visitor>
     void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
@@ -716,9 +711,8 @@ private:
     static constexpr unsigned mutatorHasConnBit = 1u << 0u; // Must also be protected by threadLock.
     static constexpr unsigned stoppedBit = 1u << 1u; // Only set when !hasAccessBit
     static constexpr unsigned hasAccessBit = 1u << 2u;
-    static constexpr unsigned gcDidJITBit = 1u << 3u; // Set when the GC did some JITing, so on resume we need to cpuid.
-    static constexpr unsigned needFinalizeBit = 1u << 4u;
-    static constexpr unsigned mutatorWaitingBit = 1u << 5u; // Allows the mutator to use this as a condition variable.
+    static constexpr unsigned needFinalizeBit = 1u << 3u;
+    static constexpr unsigned mutatorWaitingBit = 1u << 4u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
     bool m_worldIsStopped { false };
     Lock m_visitRaceLock;

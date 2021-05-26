@@ -27,6 +27,7 @@
 #include "LLIntSlowPaths.h"
 
 #include "ArrayConstructor.h"
+#include "BaselineJITPlan.h"
 #include "BytecodeGenerator.h"
 #include "BytecodeOperandsForCheckpoint.h"
 #include "CallFrame.h"
@@ -375,23 +376,21 @@ inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeInd
         return false;
     }
     
-    JITWorklist::ensureGlobalWorklist().poll(vm);
-    
-    switch (codeBlock->jitType()) {
-    case JITType::BaselineJIT: {
+    JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(vm, JITCompilationKey(codeBlock, JITCompilationMode::Baseline));
+
+    if (codeBlock->jitType() == JITType::BaselineJIT || worklistState == JITWorklist::Compiled) {
         dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
         codeBlock->jitSoon();
         return true;
     }
-    case JITType::InterpreterThunk: {
-        JITWorklist::ensureGlobalWorklist().compileLater(codeBlock, loopOSREntryBytecodeIndex);
+
+    if (worklistState == JITWorklist::NotKnown) {
+        Ref<BaselineJITPlan> plan = adoptRef(*new BaselineJITPlan(codeBlock, loopOSREntryBytecodeIndex));
+        JITWorklist::ensureGlobalWorklist().enqueue(WTFMove(plan));
         return codeBlock->jitType() == JITType::BaselineJIT;
     }
-    default:
-        dataLog("Unexpected code block in LLInt: ", *codeBlock, "\n");
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-    }
+
+    return false;
 }
 
 static SlowPathReturnType entryOSR(CodeBlock* codeBlock, const char *name, EntryKind kind)

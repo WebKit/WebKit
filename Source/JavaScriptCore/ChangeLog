@@ -1,3 +1,188 @@
+2021-05-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Merge all the JIT worklists into a shared worklist
+        https://bugs.webkit.org/show_bug.cgi?id=226207
+
+        Reviewed by Saam Barati.
+
+        Delete the DFG and FTL worklists and refactor JITWorklist to handle the compilation
+        for all tiers. This reduces the total number of compiler threads while allowing each
+        tier to use more threads whenever necessary. The default configuration is for the
+        worklist to have 3 threads, baseline can use up to all 3 threads and DFG and FTL follow
+        the previous limits set through JSC::Options. Right now, the worklist will only do work
+        on upper tiers when all lower tiers have no pending tasks or have exceeded the maximum
+        number of concurrent compilations. i.e. by default we only DFG compile when there are
+        no baseline tasks in the queue and we only FTL compile when we either have no DFG tasks
+        in the queue OR there are already 2 DFG compilations in progress.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVirtualMachine setNumberOfDFGCompilerThreads:]):
+        (+[JSVirtualMachine setNumberOfFTLCompilerThreads:]):
+        * API/tests/testapi.mm:
+        (runJITThreadLimitTests):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::checkIfOptimizationThresholdReached):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::verboseCompilationEnabled):
+        (JSC::DFG::logCompilationChanges):
+        (JSC::DFG::shouldDumpGraphAtEachPhase):
+        (JSC::DFG::shouldDumpDisassembly):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::compile):
+        * dfg/DFGDriver.h:
+        * dfg/DFGGraph.h:
+        * dfg/DFGGraphSafepoint.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::triggerFTLReplacementCompile):
+        (JSC::DFG::tierUpCommon):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::codeSize const):
+        (JSC::DFG::Plan::finalizeInGC):
+        (JSC::DFG::Plan::notifyReady):
+        (JSC::DFG::Plan::cancel):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::finalize):
+        (JSC::DFG::Plan::iterateCodeBlocksForGC):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::isKnownToBeLiveDuringGC):
+        (JSC::DFG::Plan::isKnownToBeLiveAfterGC):
+        * dfg/DFGPlan.h:
+        * dfg/DFGPlanInlines.h: Removed.
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * dfg/DFGWorklist.cpp: Removed.
+        * dfg/DFGWorklist.h: Removed.
+        * dfg/DFGWorklistInlines.h: Removed.
+        * ftl/FTLCompile.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::buildExitArguments):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLState.h:
+        (JSC::FTL::verboseCompilationEnabled):
+        (JSC::FTL::shouldDumpDisassembly):
+        * heap/Heap.cpp:
+        (JSC::Heap::completeAllJITPlans):
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+        (JSC::Heap::removeDeadCompilerWorklistEntries):
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::suspendCompilerThreads):
+        (JSC::Heap::resumeCompilerThreads):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        * heap/RootMarkReason.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::codeSize const):
+        (JSC::JIT::compileTimeStats):
+        * jit/JIT.h:
+        * jit/JITBaselinePlan.cpp: Copied from Source/JavaScriptCore/ftl/FTLState.cpp.
+        (JSC::JITBaselinePlan::JITBaselinePlan):
+        (JSC::JITBaselinePlan::compileInThreadImpl):
+        (JSC::JITBaselinePlan::codeSize const):
+        (JSC::JITBaselinePlan::finalize):
+        * jit/JITBaselinePlan.h: Copied from Source/JavaScriptCore/dfg/DFGScannable.h.
+        * jit/JITCompilationKey.cpp: Renamed from Source/JavaScriptCore/dfg/DFGCompilationKey.cpp.
+        (JSC::JITCompilationKey::dump const):
+        * jit/JITCompilationKey.h: Renamed from Source/JavaScriptCore/dfg/DFGCompilationKey.h.
+        (JSC::JITCompilationKey::JITCompilationKey):
+        (JSC::JITCompilationKey::operator! const):
+        (JSC::JITCompilationKey::isHashTableDeletedValue const):
+        (JSC::JITCompilationKey::mode const):
+        (JSC::JITCompilationKey::operator== const):
+        (JSC::JITCompilationKey::hash const):
+        (JSC::JITCompilationKeyHash::hash):
+        (JSC::JITCompilationKeyHash::equal):
+        * jit/JITCompilationMode.cpp: Renamed from Source/JavaScriptCore/dfg/DFGCompilationMode.cpp.
+        (WTF::printInternal):
+        * jit/JITCompilationMode.h: Renamed from Source/JavaScriptCore/dfg/DFGCompilationMode.h.
+        (JSC::isFTL):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITPlan.cpp: Added.
+        (JSC::JITPlan::JITPlan):
+        (JSC::JITPlan::cancel):
+        (JSC::JITPlan::notifyCompiling):
+        (JSC::JITPlan::notifyReady):
+        (JSC::JITPlan::tier const):
+        (JSC::JITPlan::key):
+        (JSC::JITPlan::isKnownToBeLiveAfterGC):
+        (JSC::JITPlan::isKnownToBeLiveDuringGC):
+        (JSC::JITPlan::iterateCodeBlocksForGC):
+        (JSC::JITPlan::checkLivenessAndVisitChildren):
+        (JSC::JITPlan::computeCompileTimes const):
+        (JSC::JITPlan::reportCompileTimes const):
+        (JSC::JITPlan::compileInThread):
+        * jit/JITPlan.h: Added.
+        (JSC::JITPlan::~JITPlan):
+        (JSC::JITPlan::vm const):
+        (JSC::JITPlan::codeBlock const):
+        (JSC::JITPlan::thread const):
+        (JSC::JITPlan::mode const):
+        (JSC::JITPlan::stage const):
+        (JSC::JITPlan::isFTL const):
+        (JSC::JITPlan::finalizeInGC):
+        * jit/JITPlanStage.h: Renamed from Source/JavaScriptCore/dfg/DFGThreadData.cpp.
+        * jit/JITSafepoint.cpp: Renamed from Source/JavaScriptCore/dfg/DFGSafepoint.cpp.
+        (JSC::Safepoint::Safepoint):
+        (JSC::Safepoint::~Safepoint):
+        (JSC::Safepoint::begin):
+        (JSC::Safepoint::cancel):
+        * jit/JITSafepoint.h: Renamed from Source/JavaScriptCore/dfg/DFGSafepoint.h.
+        * jit/JITScannable.h: Copied from Source/JavaScriptCore/dfg/DFGScannable.h.
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::JITWorklist):
+        (JSC::JITWorklist::~JITWorklist):
+        (JSC::JITWorklist::existingGlobalWorklistOrNull):
+        (JSC::JITWorklist::ensureGlobalWorklist):
+        (JSC::JITWorklist::enqueue):
+        (JSC::JITWorklist::queueLength const):
+        (JSC::JITWorklist::suspendAllThreads):
+        (JSC::JITWorklist::resumeAllThreads):
+        (JSC::JITWorklist::compilationState):
+        (JSC::JITWorklist::completeAllReadyPlansForVM):
+        (JSC::JITWorklist::waitUntilAllPlansForVMAreReady):
+        (JSC::JITWorklist::completeAllPlansForVM):
+        (JSC::JITWorklist::cancelAllPlansForVM):
+        (JSC::JITWorklist::removeDeadPlans):
+        (JSC::JITWorklist::setMaximumNumberOfConcurrentDFGCompilations):
+        (JSC::JITWorklist::setMaximumNumberOfConcurrentFTLCompilations):
+        (JSC::JITWorklist::visitWeakReferences):
+        (JSC::JITWorklist::dump const):
+        (JSC::JITWorklist::removeAllReadyPlansForVM):
+        (JSC::JITWorklist::removeMatchingPlansForVM):
+        * jit/JITWorklist.h:
+        (JSC::JITWorklist::static_cast<size_t>):
+        * jit/JITWorklistInlines.h: Renamed from Source/JavaScriptCore/dfg/DFGScannable.h.
+        (JSC::JITWorklist::iterateCodeBlocksForGC):
+        * jit/JITWorklistThread.cpp: Added.
+        (JSC::JITWorklistThread::JITWorklistThread):
+        (JSC::JITWorklistThread::name const):
+        (JSC::JITWorklistThread::poll):
+        (JSC::JITWorklistThread::work):
+        (JSC::JITWorklistThread::threadDidStart):
+        (JSC::JITWorklistThread::threadIsStopping):
+        * jit/JITWorklistThread.h: Renamed from Source/JavaScriptCore/dfg/DFGThreadData.h.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+
 2021-05-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Clang can't compile Optional<GPRTemporary> since r278035 because GPRTemporary has non-const copy constructor

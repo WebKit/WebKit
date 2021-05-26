@@ -43,7 +43,6 @@
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
 #include "DFGJITCode.h"
-#include "DFGWorklist.h"
 #include "EvalCodeBlock.h"
 #include "FullCodeOrigin.h"
 #include "FunctionCodeBlock.h"
@@ -55,6 +54,7 @@
 #include "IsoCellSetInlines.h"
 #include "JIT.h"
 #include "JITMathIC.h"
+#include "JITWorklist.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSLexicalEnvironment.h"
@@ -2598,9 +2598,8 @@ int32_t CodeBlock::adjustedCounterValue(int32_t desiredThreshold)
 bool CodeBlock::checkIfOptimizationThresholdReached()
 {
 #if ENABLE(DFG_JIT)
-    if (DFG::Worklist* worklist = DFG::existingGlobalDFGWorklistOrNull()) {
-        if (worklist->compilationState(DFG::CompilationKey(this, DFG::DFGMode))
-            == DFG::Worklist::Compiled) {
+    if (JITWorklist* worklist = JITWorklist::existingGlobalWorklistOrNull()) {
+        if (worklist->compilationState(JITCompilationKey(this, JITCompilationMode::DFG)) == JITWorklist::Compiled) {
             optimizeNextInvocation();
             return true;
         }

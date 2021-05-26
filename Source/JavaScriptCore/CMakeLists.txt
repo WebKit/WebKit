@@ -604,7 +604,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     dfg/DFGCodeOriginPool.h
     dfg/DFGCommon.h
-    dfg/DFGCompilationMode.h
     dfg/DFGDoesGCCheck.h
     dfg/DFGMinifiedID.h
 
@@ -771,6 +770,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/JITCodeMap.h
     jit/JITCompilation.h
     jit/JITCompilationEffort.h
+    jit/JITCompilationMode.h
     jit/JITMathICForwards.h
     jit/JITOperations.h
     jit/JITStubRoutine.h

@@ -43,7 +43,6 @@
 #include "CommonIdentifiers.h"
 #include "ControlFlowProfiler.h"
 #include "CustomGetterSetter.h"
-#include "DFGWorklist.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DateInstance.h"
 #include "DebuggerScope.h"
@@ -613,20 +612,8 @@ VM::~VM()
     
 #if ENABLE(JIT)
     if (JITWorklist* worklist = JITWorklist::existingGlobalWorklistOrNull())
-        worklist->completeAllForVM(*this);
+        worklist->cancelAllPlansForVM(*this);
 #endif // ENABLE(JIT)
-
-#if ENABLE(DFG_JIT)
-    // Make sure concurrent compilations are done, but don't install them, since there is
-    // no point to doing so.
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::existingWorklistForIndexOrNull(i)) {
-            worklist->removeNonCompilingPlansForVM(*this);
-            worklist->waitUntilAllPlansForVMAreReady(*this);
-            worklist->removeAllReadyPlansForVM(*this);
-        }
-    }
-#endif // ENABLE(DFG_JIT)
     
     waitForAsynchronousDisassembly();
     

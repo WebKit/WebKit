@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,23 +24,24 @@
  */
 
 #include "config.h"
-#include "DFGThreadData.h"
+#include "JITCompilationKey.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-namespace JSC { namespace DFG {
+#include "CodeBlock.h"
 
-ThreadData::ThreadData(Worklist* worklist)
-    : m_worklist(worklist)
-    , m_safepoint(nullptr)
+namespace JSC {
+
+void JITCompilationKey::dump(PrintStream& out) const
 {
+    if (!*this) {
+        out.print("<empty>");
+        return;
+    }
+    out.print("(Compile of ", *m_profiledBlock, " with ", m_mode, ")");
 }
 
-ThreadData::~ThreadData()
-{
-}
+} // namespace JSC
 
-} } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT)
-
+#endif

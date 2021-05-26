@@ -35,7 +35,6 @@
 #include "DFGJITCode.h"
 #include "DFGToFTLDeferredCompilationCallback.h"
 #include "DFGToFTLForOSREntryDeferredCompilationCallback.h"
-#include "DFGWorklist.h"
 #include "DateInstance.h"
 #include "DefinePropertyAttributes.h"
 #include "DirectArguments.h"
@@ -44,6 +43,7 @@
 #include "FrameTracers.h"
 #include "HasOwnPropertyCache.h"
 #include "Interpreter.h"
+#include "JITWorklist.h"
 #include "JSArrayInlines.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
@@ -3701,14 +3701,10 @@ static void triggerFTLReplacementCompile(VM& vm, CodeBlock* codeBlock, JITCode* 
         return;
     }
     
-    Worklist::State worklistState;
-    if (Worklist* worklist = existingGlobalFTLWorklistOrNull()) {
-        worklistState = worklist->completeAllReadyPlansForVM(
-            vm, CompilationKey(codeBlock->baselineVersion(), FTLMode));
-    } else
-        worklistState = Worklist::NotKnown;
+    JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(
+        vm, JITCompilationKey(codeBlock->baselineVersion(), JITCompilationMode::FTL));
     
-    if (worklistState == Worklist::Compiling) {
+    if (worklistState == JITWorklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("still compiling"));
         jitCode->setOptimizationThresholdBasedOnCompilationResult(
             codeBlock, CompilationDeferred);
@@ -3723,7 +3719,7 @@ static void triggerFTLReplacementCompile(VM& vm, CodeBlock* codeBlock, JITCode* 
         return;
     }
     
-    if (worklistState == Worklist::Compiled) {
+    if (worklistState == JITWorklist::Compiled) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("compiled and failed"));
         // This means that we finished compiling, but failed somehow; in that case the
         // thresholds will be set appropriately.
@@ -3734,7 +3730,7 @@ static void triggerFTLReplacementCompile(VM& vm, CodeBlock* codeBlock, JITCode* 
     CODEBLOCK_LOG_EVENT(codeBlock, "triggerFTLReplacement", ());
     // We need to compile the code.
     compile(
-        vm, codeBlock->newReplacement(), codeBlock, FTLMode, BytecodeIndex(),
+        vm, codeBlock->newReplacement(), codeBlock, JITCompilationMode::FTL, BytecodeIndex(),
         Operands<Optional<JSValue>>(), ToFTLDeferredCompilationCallback::create());
 
     // If we reached here, the counter has not be reset. Do that now.
@@ -3790,12 +3786,8 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     // Resolve any pending plan for OSR Enter on this function.
-    Worklist::State worklistState;
-    if (Worklist* worklist = existingGlobalFTLWorklistOrNull()) {
-        worklistState = worklist->completeAllReadyPlansForVM(
-            vm, CompilationKey(codeBlock->baselineVersion(), FTLForOSREntryMode));
-    } else
-        worklistState = Worklist::NotKnown;
+    JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(
+        vm, JITCompilationKey(codeBlock->baselineVersion(), JITCompilationMode::FTLForOSREntry));
 
     JITCode* jitCode = codeBlock->jitCode()->dfg();
     
@@ -3823,7 +3815,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
         }
     }
 
-    if (worklistState == Worklist::Compiling) {
+    if (worklistState == JITWorklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("still compiling"));
         jitCode->setOptimizationThresholdBasedOnCompilationResult(codeBlock, CompilationDeferred);
         return nullptr;
@@ -3874,7 +3866,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
         }
     }
 
-    if (worklistState == Worklist::Compiled) {
+    if (worklistState == JITWorklist::Compiled) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayFTLCompile", ("compiled and failed"));
         // This means that compilation failed and we already set the thresholds.
         dataLogLnIf(Options::verboseOSR(), "Code block ", *codeBlock, " was compiled but it doesn't have an optimized replacement.");
@@ -3985,7 +3977,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
 
     CODEBLOCK_LOG_EVENT(codeBlock, "triggerFTLOSR", ());
     CompilationResult forEntryResult = compile(
-        vm, replacementCodeBlock, codeBlock, FTLForOSREntryMode, originBytecodeIndex,
+        vm, replacementCodeBlock, codeBlock, JITCompilationMode::FTLForOSREntry, originBytecodeIndex,
         mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create(triggerAddress));
 
     if (jitCode->neverExecutedEntry)

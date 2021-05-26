@@ -129,7 +129,7 @@ void link(State& state)
     }
 
     switch (graph.m_plan.mode()) {
-    case FTLMode: {
+    case JITCompilationMode::FTL: {
         bool requiresArityFixup = codeBlock->numParameters() != 1;
         if (codeBlock->codeType() == FunctionCode && requiresArityFixup) {
             CCallHelpers::JumpList mainPathJumps;
@@ -191,7 +191,7 @@ void link(State& state)
         break;
     }
         
-    case FTLForOSREntryMode: {
+    case JITCompilationMode::FTLForOSREntry: {
         // We jump to here straight from DFG code, after having boxed up all of the
         // values into the scratch buffer. Everything should be good to go - at this
         // point we've even done the stack check. Basically we just have to make the

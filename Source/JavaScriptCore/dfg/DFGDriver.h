@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DFGCompilationMode.h"
 #include "DFGPlan.h"
 
 namespace JSC {
@@ -41,7 +40,7 @@ JS_EXPORT_PRIVATE unsigned getNumCompilations();
 // If the worklist is non-null, we do a concurrent compile. Otherwise we do a synchronous
 // compile. Even if we do a synchronous compile, we call the callback with the result.
 CompilationResult compile(
-    VM&, CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationMode,
+    VM&, CodeBlock*, CodeBlock* profiledDFGCodeBlock, JITCompilationMode,
     BytecodeIndex osrEntryBytecodeIndex, const Operands<Optional<JSValue>>& mustHandleValues,
     Ref<DeferredCompilationCallback>&&);
 

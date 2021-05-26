@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,33 @@
 
 #pragma once
 
-#if ENABLE(DFG_JIT)
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-class AbstractSlotVisitor;
-class SlotVisitor;
-
-namespace DFG {
-
-class Scannable {
-public:
-    Scannable() { }
-    virtual ~Scannable() { }
-
-    virtual void visitChildren(AbstractSlotVisitor&) = 0;
-    virtual void visitChildren(SlotVisitor&) = 0;
+enum class JITCompilationMode {
+    InvalidCompilation,
+    Baseline,
+    DFG,
+    FTL,
+    FTLForOSREntry
 };
 
-} } // namespace JSC::DFG
+inline bool isFTL(JITCompilationMode mode)
+{
+    switch (mode) {
+    case JITCompilationMode::FTL:
+    case JITCompilationMode::FTLForOSREntry:
+        return true;
+    default:
+        return false;
+    }
+}
 
-#endif // ENABLE(DFG_JIT)
+} // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::JITCompilationMode);
+
+} // namespace WTF

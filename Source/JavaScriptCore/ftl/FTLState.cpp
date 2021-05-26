@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,11 +42,11 @@ State::State(Graph& graph)
     : graph(graph)
 {
     switch (graph.m_plan.mode()) {
-    case FTLMode: {
+    case JITCompilationMode::FTL: {
         jitCode = adoptRef(new JITCode());
         break;
     }
-    case FTLForOSREntryMode: {
+    case JITCompilationMode::FTLForOSREntry: {
         RefPtr<ForOSREntryJITCode> code = adoptRef(new ForOSREntryJITCode());
         code->initializeEntryBuffer(graph.m_vm, graph.m_profiledBlock->numCalleeLocals());
         code->setBytecodeIndex(graph.m_plan.osrEntryBytecodeIndex());

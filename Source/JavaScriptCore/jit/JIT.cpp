@@ -662,10 +662,6 @@ void JIT::privateCompileSlowCases()
 
 void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
-    MonotonicTime before { };
-    if (UNLIKELY(computeCompileTimes()))
-        before = MonotonicTime::now();
-    
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
     switch (level) {
     case DFG::CannotCompile:
@@ -821,20 +817,6 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
     m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_codeBlock, LinkBuffer::Profile::BaselineJIT, effort));
-
-    MonotonicTime after { };
-    if (UNLIKELY(computeCompileTimes())) {
-        after = MonotonicTime::now();
-
-        if (Options::reportTotalCompileTimes())
-            totalBaselineCompileTime += after - before;
-    }
-    if (UNLIKELY(reportCompileTimes())) {
-        CString codeBlockName = toCString(*m_codeBlock);
-        
-        dataLog("Optimized ", codeBlockName, " with Baseline JIT into ", m_linkBuffer->size(), " bytes in ", (after - before).milliseconds(), " ms.\n");
-    }
-
     link();
 }
 
@@ -1018,6 +1000,13 @@ CompilationResult JIT::finalizeOnMainThread()
     return CompilationSuccessful;
 }
 
+size_t JIT::codeSize() const
+{
+    if (!m_linkBuffer)
+        return 0;
+    return m_linkBuffer->size();
+}
+
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 {
     doMainThreadPreparationBeforeCompile();
@@ -1074,21 +1063,11 @@ int JIT::stackPointerOffsetFor(CodeBlock* codeBlock)
     return virtualRegisterForLocal(frameRegisterCountFor(codeBlock) - 1).offset();
 }
 
-bool JIT::reportCompileTimes()
-{
-    return Options::reportCompileTimes() || Options::reportBaselineCompileTimes();
-}
-
-bool JIT::computeCompileTimes()
-{
-    return reportCompileTimes() || Options::reportTotalCompileTimes();
-}
-
 HashMap<CString, Seconds> JIT::compileTimeStats()
 {
     HashMap<CString, Seconds> result;
     if (Options::reportTotalCompileTimes()) {
-        result.add("Total Compile Time", totalBaselineCompileTime + totalDFGCompileTime + totalFTLCompileTime);
+        result.add("Total Compile Time", totalCompileTime());
         result.add("Baseline Compile Time", totalBaselineCompileTime);
 #if ENABLE(DFG_JIT)
         result.add("DFG Compile Time", totalDFGCompileTime);

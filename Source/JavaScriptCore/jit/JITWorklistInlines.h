@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,23 @@
 
 #pragma once
 
-#if ENABLE(DFG_JIT)
+#include "JITWorklist.h"
 
-#include <wtf/AutomaticThread.h>
-#include <wtf/Lock.h>
+namespace JSC {
 
-namespace JSC { namespace DFG {
+#if ENABLE(JIT)
 
-class Safepoint;
-class Worklist;
+template<typename Visitor>
+void JITWorklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Function<void(CodeBlock*)>& func)
+{
+    Locker locker { *m_lock };
+    for (auto& entry : m_plans) {
+        if (entry.value->vm() != &vm)
+            continue;
+        entry.value->iterateCodeBlocksForGC(visitor, func);
+    }
+}
 
-class ThreadData {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ThreadData(Worklist*);
-    ~ThreadData();
-    
-private:
-    friend class Safepoint;
-    friend class Worklist;
-    
-    Worklist* m_worklist;
-    RefPtr<AutomaticThread> m_thread;
-    UncheckedLock m_rightToRun;
-    Safepoint* m_safepoint;
-};
+#endif // ENABLE(JIT)
 
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
+} // namespace JSC

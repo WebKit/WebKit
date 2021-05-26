@@ -6970,7 +6970,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 NEXT_OPCODE(op_catch);
             }
 
-            if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
+            if (m_graph.m_plan.mode() == JITCompilationMode::FTLForOSREntry) {
                 NEXT_OPCODE(op_catch);
             }
 

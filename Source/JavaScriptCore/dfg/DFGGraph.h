@@ -36,8 +36,8 @@
 #include "DFGNode.h"
 #include "DFGPlan.h"
 #include "DFGPropertyTypeKey.h"
-#include "DFGScannable.h"
 #include "FullBytecodeLiveness.h"
+#include "JITScannable.h"
 #include "MethodOfGettingAValueProfile.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashMap.h>

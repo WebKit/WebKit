@@ -24,15 +24,16 @@
  */
 
 #include "config.h"
-#include "DFGSafepoint.h"
+#include "JITSafepoint.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-#include "DFGPlan.h"
-#include "DFGScannable.h"
-#include "DFGThreadData.h"
+#include "JITPlan.h"
+#include "JITScannable.h"
+#include "JITWorklistThread.h"
+#include "SlotVisitor.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 Safepoint::Result::~Result()
 {
@@ -45,7 +46,7 @@ bool Safepoint::Result::didGetCancelled()
     return m_didGetCancelled;
 }
 
-Safepoint::Safepoint(Plan& plan, Result& result)
+Safepoint::Safepoint(JITPlan& plan, Result& result)
     : m_vm(plan.vm())
     , m_plan(plan)
     , m_didCallBegin(false)
@@ -59,10 +60,10 @@ Safepoint::Safepoint(Plan& plan, Result& result)
 Safepoint::~Safepoint()
 {
     RELEASE_ASSERT(m_didCallBegin);
-    if (ThreadData* data = m_plan.threadData()) {
-        RELEASE_ASSERT(data->m_safepoint == this);
-        data->m_rightToRun.lock();
-        data->m_safepoint = nullptr;
+    if (JITWorklistThread* thread = m_plan.thread()) {
+        RELEASE_ASSERT(thread->m_safepoint == this);
+        thread->m_rightToRun.lock();
+        thread->m_safepoint = nullptr;
     }
 }
 
@@ -76,7 +77,7 @@ void Safepoint::begin()
 {
     RELEASE_ASSERT(!m_didCallBegin);
     m_didCallBegin = true;
-    if (ThreadData* data = m_plan.threadData()) {
+    if (JITWorklistThread* data = m_plan.thread()) {
         RELEASE_ASSERT(!data->m_safepoint);
         data->m_safepoint = this;
         data->m_rightToRun.unlockFairly();
@@ -130,7 +131,7 @@ void Safepoint::cancel()
     RELEASE_ASSERT(m_didCallBegin);
     RELEASE_ASSERT(!m_result.m_didGetCancelled); // We cannot get cancelled twice because subsequent GCs will think that we're alive and they will not do anything to us.
     
-    RELEASE_ASSERT(m_plan.stage() == Plan::Cancelled);
+    RELEASE_ASSERT(m_plan.stage() == JITPlanStage::Canceled);
     m_result.m_didGetCancelled = true;
     m_vm = nullptr;
 }
@@ -140,7 +141,7 @@ VM* Safepoint::vm() const
     return m_vm;
 }
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
 

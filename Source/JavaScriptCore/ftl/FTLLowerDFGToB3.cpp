@@ -359,7 +359,7 @@ public:
                     Availability(FlushedAt(FlushedJSValue, virtualRegisterForArgumentIncludingThis(i)));
             }
 
-            if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
+            if (m_graph.m_plan.mode() == JITCompilationMode::FTLForOSREntry) {
                 auto* jitCode = m_ftlState.jitCode->ftlForOSREntry();
                 FixedVector<DFG::FlushFormat> argumentFlushFormats(codeBlock()->numParameters());
                 for (unsigned i = 0; i < codeBlock()->numParameters(); ++i)
@@ -19467,7 +19467,7 @@ private:
             
             // FIXME: It seems like we should be able to do at least some validation when OSR entering. https://bugs.webkit.org/show_bug.cgi?id=215511
             if (Options::validateFTLOSRExitLiveness()
-                && m_graph.m_plan.mode() != FTLForOSREntryMode) {
+                && m_graph.m_plan.mode() != JITCompilationMode::FTLForOSREntry) {
 
                 if (availability.isDead() && m_graph.isLiveInBytecode(operand, exitOrigin))
                     DFG_CRASH(m_graph, m_node, toCString("Live bytecode local not available: operand = ", operand, ", availability = ", availability, ", origin = ", exitOrigin).data());

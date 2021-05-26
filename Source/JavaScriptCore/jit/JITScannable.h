@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGCompilationMode.h"
+#pragma once
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-namespace WTF {
+namespace JSC {
 
-using namespace JSC::DFG;
+class AbstractSlotVisitor;
+class SlotVisitor;
 
-void printInternal(PrintStream& out, CompilationMode mode)
-{
-    switch (mode) {
-    case InvalidCompilationMode:
-        out.print("InvalidCompilationMode");
-        return;
-    case DFGMode:
-        out.print("DFGMode");
-        return;
-    case FTLMode:
-        out.print("FTLMode");
-        return;
-    case FTLForOSREntryMode:
-        out.print("FTLForOSREntryMode");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
+class Scannable {
+public:
+    Scannable() { }
+    virtual ~Scannable() { }
 
-} // namespace WTF
+    virtual void visitChildren(AbstractSlotVisitor&) = 0;
+    virtual void visitChildren(SlotVisitor&) = 0;
+};
 
-#endif
+} // namespace JSC
+
+#endif // ENABLE(DFG_JIT)

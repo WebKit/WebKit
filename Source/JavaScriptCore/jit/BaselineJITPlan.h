@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,47 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "DFGPlanInlines.h"
-#include "DFGWorklist.h"
+#include "JITPlan.h"
 
-namespace JSC { namespace DFG {
+#if ENABLE(JIT)
 
-#if ENABLE(DFG_JIT)
+#include "JIT.h"
 
-template<typename Func, typename Visitor>
-void iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Func& func)
-{
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::existingWorklistForIndexOrNull(i))
-            worklist->iterateCodeBlocksForGC(visitor, vm, func);
-    }
-}
+namespace JSC {
 
-template<typename Func, typename Visitor>
-void Worklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Func& func)
-{
-    Locker locker { *m_lock };
-    for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
-        Plan* plan = iter->value.get();
-        if (plan->vm() != &vm)
-            continue;
-        plan->iterateCodeBlocksForGC(visitor, func);
-    }
-}
+class BaselineJITPlan final : public JITPlan {
+    using Base = JITPlan;
 
-#else // ENABLE(DFG_JIT)
+public:
+    BaselineJITPlan(CodeBlock*, BytecodeIndex loopOSREntryBytecodeIndex);
 
-template<typename Func, typename Visitor>
-void iterateCodeBlocksForGC(Visitor&, VM&, const Func&)
-{
-}
+    CompilationPath compileInThreadImpl() final;
+    size_t codeSize() const final;
+    CompilationResult finalize() override;
 
-#endif // ENABLE(DFG_JIT)
+private:
+    JIT m_jit;
+};
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
+#endif // ENABLE(JIT)

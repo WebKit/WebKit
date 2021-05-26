@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,62 +25,14 @@
 
 #pragma once
 
-#if ENABLE(DFG_JIT)
-
-#include <wtf/Vector.h>
-
 namespace JSC {
 
-class VM;
-
-namespace DFG {
-
-class Plan;
-class Scannable;
-
-class Safepoint {
-public:
-    class Result {
-    public:
-        Result()
-            : m_didGetCancelled(false)
-            , m_wasChecked(true)
-        {
-        }
-        
-        ~Result();
-        
-        bool didGetCancelled();
-        
-    private:
-        friend class Safepoint;
-        
-        bool m_didGetCancelled;
-        bool m_wasChecked;
-    };
-    
-    Safepoint(Plan&, Result&);
-    ~Safepoint();
-    
-    void add(Scannable*);
-    
-    void begin();
-
-    template<typename Visitor> void checkLivenessAndVisitChildren(Visitor&);
-    template<typename Visitor> bool isKnownToBeLiveDuringGC(Visitor&);
-    bool isKnownToBeLiveAfterGC();
-    void cancel();
-    
-    VM* vm() const; // May return null if we've been cancelled.
-
-private:
-    VM* m_vm;
-    Plan& m_plan;
-    Vector<Scannable*> m_scannables;
-    bool m_didCallBegin;
-    Result& m_result;
+enum class JITPlanStage {
+    Preparing,
+    Compiling,
+    Ready,
+    Canceled,
 };
 
-} } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT)
+} // namespace JSC

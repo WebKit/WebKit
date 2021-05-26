@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,12 +50,12 @@ class PatchpointExceptionHandle;
 
 inline bool verboseCompilationEnabled()
 {
-    return DFG::verboseCompilationEnabled(DFG::FTLMode);
+    return DFG::verboseCompilationEnabled(JITCompilationMode::FTL);
 }
 
 inline bool shouldDumpDisassembly()
 {
-    return DFG::shouldDumpDisassembly(DFG::FTLMode);
+    return DFG::shouldDumpDisassembly(JITCompilationMode::FTL);
 }
 
 class State {

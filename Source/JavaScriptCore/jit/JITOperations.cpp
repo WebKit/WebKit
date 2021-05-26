@@ -32,11 +32,9 @@
 #include "ArrayConstructor.h"
 #include "CacheableIdentifierInlines.h"
 #include "CommonSlowPathsInlines.h"
-#include "DFGCompilationMode.h"
 #include "DFGDriver.h"
 #include "DFGOSREntry.h"
 #include "DFGThunks.h"
-#include "DFGWorklist.h"
 #include "Debugger.h"
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
@@ -46,6 +44,7 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JITToDFGDeferredCompilationCallback.h"
+#include "JITWorklist.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
@@ -1898,40 +1897,28 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         return encodeResult(nullptr, nullptr);
     }
 
-    // We cannot be in the process of asynchronous compilation and also have an optimized
-    // replacement.
-    DFG::Worklist* worklist = DFG::existingGlobalDFGWorklistOrNull();
-    ASSERT(
-        !worklist
-        || !(worklist->compilationState(DFG::CompilationKey(codeBlock, DFG::DFGMode)) != DFG::Worklist::NotKnown
-        && codeBlock->hasOptimizedReplacement()));
+    // The call to JITWorklist::completeAllReadyPlansForVM() will complete all ready
+    // (i.e. compiled) code blocks. But if it completes ours, we also need to know
+    // what the result was so that we don't plow ahead and attempt OSR or immediate
+    // reoptimization. This will have already also set the appropriate JIT execution
+    // count threshold depending on what happened, so if the compilation was anything
+    // but successful we just want to return early. See the case for worklistState ==
+    // JITWorklist::Compiled, below.
 
-    DFG::Worklist::State worklistState;
-    if (worklist) {
-        // The call to DFG::Worklist::completeAllReadyPlansForVM() will complete all ready
-        // (i.e. compiled) code blocks. But if it completes ours, we also need to know
-        // what the result was so that we don't plow ahead and attempt OSR or immediate
-        // reoptimization. This will have already also set the appropriate JIT execution
-        // count threshold depending on what happened, so if the compilation was anything
-        // but successful we just want to return early. See the case for worklistState ==
-        // DFG::Worklist::Compiled, below.
-        
-        // Note that we could have alternatively just called Worklist::compilationState()
-        // here, and if it returned Compiled, we could have then called
-        // completeAndScheduleOSR() below. But that would have meant that it could take
-        // longer for code blocks to be completed: they would only complete when *their*
-        // execution count trigger fired; but that could take a while since the firing is
-        // racy. It could also mean that code blocks that never run again after being
-        // compiled would sit on the worklist until next GC. That's fine, but it's
-        // probably a waste of memory. Our goal here is to complete code blocks as soon as
-        // possible in order to minimize the chances of us executing baseline code after
-        // optimized code is already available.
-        worklistState = worklist->completeAllReadyPlansForVM(
-            vm, DFG::CompilationKey(codeBlock, DFG::DFGMode));
-    } else
-        worklistState = DFG::Worklist::NotKnown;
+    // Note that we could have alternatively just called Worklist::compilationState()
+    // here, and if it returned Compiled, we could have then called
+    // completeAndScheduleOSR() below. But that would have meant that it could take
+    // longer for code blocks to be completed: they would only complete when *their*
+    // execution count trigger fired; but that could take a while since the firing is
+    // racy. It could also mean that code blocks that never run again after being
+    // compiled would sit on the worklist until next GC. That's fine, but it's
+    // probably a waste of memory. Our goal here is to complete code blocks as soon as
+    // possible in order to minimize the chances of us executing baseline code after
+    // optimized code is already available.
+    JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(
+        vm, JITCompilationKey(codeBlock, JITCompilationMode::DFG));
 
-    if (worklistState == DFG::Worklist::Compiling) {
+    if (worklistState == JITWorklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("compiling"));
         // We cannot be in the process of asynchronous compilation and also have an optimized
         // replacement.
@@ -1940,7 +1927,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         return encodeResult(nullptr, nullptr);
     }
 
-    if (worklistState == DFG::Worklist::Compiled) {
+    if (worklistState == JITWorklist::Compiled) {
         // If we don't have an optimized replacement but we did just get compiled, then
         // the compilation failed or was invalidated, in which case the execution count
         // thresholds have already been set appropriately by
@@ -2003,7 +1990,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
 
         CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
         CompilationResult result = DFG::compile(
-            vm, replacementCodeBlock, nullptr, DFG::DFGMode, bytecodeIndex,
+            vm, replacementCodeBlock, nullptr, JITCompilationMode::DFG, bytecodeIndex,
             mustHandleValues, JITToDFGDeferredCompilationCallback::create());
         
         if (result != CompilationSuccessful) {
