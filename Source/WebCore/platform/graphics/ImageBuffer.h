@@ -120,7 +120,7 @@ public:
     virtual void clipToMask(GraphicsContext&, const FloatRect& destRect) = 0;
 
     virtual void convertToLuminanceMask() = 0;
-    virtual void transformColorSpace(const DestinationColorSpace& srcColorSpace, const DestinationColorSpace& dstColorSpace) = 0;
+    virtual void transformToColorSpace(const DestinationColorSpace&) = 0;
 
     virtual String toDataURL(const String& mimeType, Optional<double> quality = WTF::nullopt, PreserveResolution = PreserveResolution::No) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const = 0;

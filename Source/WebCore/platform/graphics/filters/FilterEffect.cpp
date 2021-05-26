@@ -647,7 +647,7 @@ void FilterEffect::transformResultColorSpace(const DestinationColorSpace& destin
 
     // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
     // color space transform support for the {pre,un}multiplied arrays.
-    imageBufferResult()->transformColorSpace(m_resultColorSpace, destinationColorSpace);
+    imageBufferResult()->transformToColorSpace(destinationColorSpace);
 
     m_resultColorSpace = destinationColorSpace;
 

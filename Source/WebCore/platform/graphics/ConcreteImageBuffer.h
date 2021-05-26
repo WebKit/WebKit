@@ -195,12 +195,12 @@ protected:
         }
     }
 
-    void transformColorSpace(const DestinationColorSpace& srcColorSpace, const DestinationColorSpace& destColorSpace) override
+    void transformToColorSpace(const DestinationColorSpace& newColorSpace) override
     {
         if (auto* backend = ensureBackendCreated()) {
             flushDrawingContext();
-            backend->transformColorSpace(srcColorSpace, destColorSpace);
-            m_parameters.colorSpace = destColorSpace;
+            backend->transformToColorSpace(newColorSpace);
+            m_parameters.colorSpace = newColorSpace;
         }
     }
 

@@ -102,7 +102,7 @@ public:
     virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
 
     WEBCORE_EXPORT void convertToLuminanceMask();
-    virtual void transformColorSpace(const DestinationColorSpace&, const DestinationColorSpace&) { }
+    virtual void transformToColorSpace(const DestinationColorSpace&) { }
 
     virtual String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const = 0;
