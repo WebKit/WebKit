@@ -34,7 +34,7 @@
 #include <WebCore/DIBPixelData.h>
 #include <WebCore/Direct2DOperations.h>
 #include <WebCore/Direct2DUtilities.h>
-#include <WebCore/GraphicsContextImplDirect2D.h>
+#include <WebCore/GraphicsContextDirect2D.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextDirect2D.h>
 #include <d2d1_1.h>
@@ -104,7 +104,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     if (!surfaceContext)
         return nullptr;
 
-    return makeUnique<GraphicsContext>(GraphicsContextImplDirect2D::createFactory(surfaceContext.get()));
+    return makeUnique<GraphicsContextDirect2D>(surfaceContext.get());
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

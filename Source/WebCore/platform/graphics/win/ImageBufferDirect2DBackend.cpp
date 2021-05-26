@@ -78,7 +78,7 @@ std::unique_ptr<ImageBufferDirect2DBackend> ImageBufferDirect2DBackend::create(c
     if (!platformContext)
         return nullptr;
 
-    auto context = makeUnique<GraphicsContext>(platformContext.get(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
+    auto context = makeUnique<GraphicsContextDirect2D>(platformContext.get(), GraphicsContext::BitmapRenderingContextType::GPUMemory);
     if (!context)
         return nullptr;
 

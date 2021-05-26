@@ -71,7 +71,6 @@ class AffineTransform;
 class FloatPoint;
 class FloatSize;
 class GraphicsContext;
-class GraphicsContextImpl;
 class SharedBuffer;
 struct Length;
 
@@ -80,7 +79,6 @@ class ImageObserver;
 
 class Image : public RefCounted<Image> {
     friend class GraphicsContext;
-    friend class GraphicsContextImpl;
 public:
     virtual ~Image();
     

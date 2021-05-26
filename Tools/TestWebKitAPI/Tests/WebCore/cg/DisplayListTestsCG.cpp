@@ -32,6 +32,7 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListReplayer.h>
 #include <WebCore/Gradient.h>
+#include <WebCore/GraphicsContextCG.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -49,7 +50,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
     auto colorSpace = DestinationColorSpace::SRGB();
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
-    GraphicsContext context { cgContext.get() };
+    GraphicsContextCG context { cgContext.get() };
 
     auto imageBufferIdentifier = RenderingResourceIdentifier::generate();
 
@@ -113,7 +114,7 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    GraphicsContext context { cgContext.get() };
+    GraphicsContextCG context { cgContext.get() };
 
     DisplayList originalList;
     WritingClient writer;
@@ -144,7 +145,7 @@ TEST(DisplayListTests, InlineItemValidationFailure)
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-    GraphicsContext context { cgContext.get() };
+    GraphicsContextCG context { cgContext.get() };
 
     auto runTestWithInvalidIdentifier = [&](FlushIdentifier identifier) {
         EXPECT_FALSE(identifier.isValid());

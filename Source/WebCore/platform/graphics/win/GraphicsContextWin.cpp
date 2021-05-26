@@ -56,12 +56,12 @@ static void fillWithClearColor(HBITMAP bitmap)
 #if PLATFORM(WIN)
 void GraphicsContext::setShouldIncludeChildWindows(bool include)
 {
-    m_data->m_shouldIncludeChildWindows = include;
+    deprecatedPrivateContext()->m_shouldIncludeChildWindows = include;
 }
 
 bool GraphicsContext::shouldIncludeChildWindows() const
 {
-    return m_data->m_shouldIncludeChildWindows;
+    return deprecatedPrivateContext()->m_shouldIncludeChildWindows;
 }
 
 GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, const IntSize& size)
@@ -95,15 +95,13 @@ GraphicsContext::WindowsBitmap::~WindowsBitmap()
 
 std::unique_ptr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(const IntSize& size)
 {
-    return makeUnique<WindowsBitmap>(m_data->m_hdc, size);
+    return makeUnique<WindowsBitmap>(deprecatedPrivateContext()->m_hdc, size);
 }
 #endif
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend)
 {
-    HDC hdc = nullptr;
-    if (!m_impl)
-        hdc = m_data->m_hdc;
+    HDC hdc = deprecatedPrivateContext()->m_hdc;
     // FIXME: Should a bitmap be created also when a shadow is set?
     if (!hdc || isInTransparencyLayer()) {
         if (dstRect.isEmpty())
@@ -135,17 +133,17 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
         return bitmapDC.leak();
     }
 
-    m_data->flush();
-    m_data->save();
-    return m_data->m_hdc;
+    deprecatedPrivateContext()->flush();
+    deprecatedPrivateContext()->save();
+    return deprecatedPrivateContext()->m_hdc;
 }
 
 HDC GraphicsContext::hdc() const
 {
-    if (!m_data)
+    if (!deprecatedPrivateContext())
         return nullptr;
 
-    return m_data->m_hdc;
+    return deprecatedPrivateContext()->m_hdc;
 }
 
 #if PLATFORM(WIN) && !USE(DIRECT2D)

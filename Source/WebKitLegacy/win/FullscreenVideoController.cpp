@@ -36,6 +36,7 @@
 #include <WebCore/FontCascade.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextWin.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/Page.h>
 #include <WebCore/TextRun.h>
@@ -490,7 +491,7 @@ void FullscreenVideoController::draw()
     auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(HWndDC(m_hudWindow)));
     HGDIOBJ oldBitmap = SelectObject(bitmapDC.get(), m_bitmap.get());
 
-    GraphicsContext context(bitmapDC.get(), true);
+    GraphicsContextWin context(bitmapDC.get(), true);
 
     context.save();
 

@@ -690,10 +690,7 @@ static void applyBoxShadowForBackground(GraphicsContext& context, const RenderSt
         boxShadow = boxShadow->next();
 
     FloatSize shadowOffset(boxShadow->x(), boxShadow->y());
-    if (!boxShadow->isWebkitBoxShadow())
-        context.setShadow(shadowOffset, boxShadow->radius(), style.colorByApplyingColorFilter(boxShadow->color()));
-    else
-        context.setLegacyShadow(shadowOffset, boxShadow->radius(), style.colorByApplyingColorFilter(boxShadow->color()));
+    context.setShadow(shadowOffset, boxShadow->radius(), style.colorByApplyingColorFilter(boxShadow->color()), boxShadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
 }
 
 InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size)
@@ -2439,10 +2436,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             FloatPoint snappedShadowOrigin = FloatPoint(roundToDevicePixel(shadowRectOrigin.x(), deviceScaleFactor), roundToDevicePixel(shadowRectOrigin.y(), deviceScaleFactor));
             FloatSize snappedShadowOffset = snappedShadowOrigin - pixelSnappedFillRect.rect().location();
 
-            if (shadow->isWebkitBoxShadow())
-                context.setLegacyShadow(snappedShadowOffset, shadowRadius, shadowColor);
-            else
-                context.setShadow(snappedShadowOffset, shadowRadius, shadowColor);
+            context.setShadow(snappedShadowOffset, shadowRadius, shadowColor, shadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
 
             if (hasBorderRadius) {
                 // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
@@ -2543,11 +2537,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             context.translate(extraOffset);
             shadowOffset -= extraOffset;
 
-            if (shadow->isWebkitBoxShadow())
-                context.setLegacyShadow(shadowOffset, shadowRadius, shadowColor);
-            else
-                context.setShadow(shadowOffset, shadowRadius, shadowColor);
-
+            context.setShadow(shadowOffset, shadowRadius, shadowColor, shadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
             context.fillRectWithRoundedHole(pixelSnappedOuterRect, pixelSnappedHoleRect, fillColor);
         }
     }

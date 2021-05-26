@@ -1239,7 +1239,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GraphicsContext.h
     platform/graphics/GraphicsContextGL.h
     platform/graphics/GraphicsContextGLAttributes.h
-    platform/graphics/GraphicsContextImpl.h
     platform/graphics/GraphicsLayer.h
     platform/graphics/GraphicsLayerClient.h
     platform/graphics/GraphicsLayerFactory.h
@@ -1286,6 +1285,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaSourcePrivateClient.h
     platform/graphics/MediaUsageInfo.h
     platform/graphics/NativeImage.h
+    platform/graphics/NullGraphicsContext.h
     platform/graphics/OpenGLESShims.h
     platform/graphics/OpenGLShims.h
     platform/graphics/Path.h

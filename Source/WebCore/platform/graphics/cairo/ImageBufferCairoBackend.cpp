@@ -35,7 +35,7 @@
 #include "Color.h"
 #include "ColorTransferFunctions.h"
 #include "GraphicsContext.h"
-#include "GraphicsContextImplCairo.h"
+#include "GraphicsContextCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformContextCairo.h"

@@ -372,6 +372,11 @@
 #include "WebPreferencesDefaultValuesIOS.h"
 #endif
 
+#if USE(CG)
+// FIXME: Move the CG-specific PDF painting code out of WebPage.cpp.
+#include <WebCore/GraphicsContextCG.h>
+#endif
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -5375,7 +5380,7 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
                 RetainPtr<CFDictionaryRef> pageInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
                 CGPDFContextBeginPage(context.get(), pageInfo.get());
 
-                GraphicsContext ctx(context.get());
+                GraphicsContextCG ctx(context.get());
                 ctx.scale(FloatSize(1, -1));
                 ctx.translate(0, -m_printContext->pageRect(page).height());
                 m_printContext->spoolPage(ctx, page, m_printContext->pageRect(page).width());

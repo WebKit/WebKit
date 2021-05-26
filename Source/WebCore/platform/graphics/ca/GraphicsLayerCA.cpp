@@ -1740,9 +1740,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         
         FloatRect initialClip(boundsOrigin(), size());
 
-        GraphicsContext context([&](GraphicsContext& context) {
-            return makeUnique<DisplayList::Recorder>(context, *m_displayList, GraphicsContextState(), initialClip, AffineTransform());
-        });
+        DisplayList::Recorder context(*m_displayList, GraphicsContextState(), initialClip, AffineTransform());
         paintGraphicsLayerContents(context, FloatRect(FloatPoint(), size()));
     }
 }

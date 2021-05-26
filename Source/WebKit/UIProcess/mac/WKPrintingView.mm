@@ -30,14 +30,15 @@
 
 #import "APIData.h"
 #import "Logging.h"
-#import "PDFKitSoftLink.h"
 #import "PrintInfo.h"
 #import "ShareableBitmap.h"
 #import "WebPageProxy.h"
 #import <Quartz/Quartz.h>
-#import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LocalDefaultSystemAppearance.h>
 #import <wtf/RunLoop.h>
+
+#import "PDFKitSoftLink.h"
 
 NSString * const WebKitOriginalTopPrintingMarginKey = @"WebKitOriginalTopMargin";
 NSString * const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomMargin";
@@ -555,7 +556,7 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
 
     RefPtr<WebKit::ShareableBitmap> bitmap = pagePreviewIterator->value;
 
-    WebCore::GraphicsContext context([[NSGraphicsContext currentContext] CGContext]);
+    WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
     WebCore::GraphicsContextStateSaver stateSaver(context);
 
     bitmap->paint(context, _webFrame->page()->deviceScaleFactor(), WebCore::IntPoint(nsRect.origin), bitmap->bounds());

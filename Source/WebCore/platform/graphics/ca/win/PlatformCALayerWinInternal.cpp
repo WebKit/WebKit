@@ -30,7 +30,7 @@
 #if USE(CA)
 
 #include "FontCascade.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include "PlatformCALayer.h"
 #include "TileController.h"
 #include "TiledBacking.h"
@@ -94,7 +94,7 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
 
     PlatformCALayer::flipContext(context, layerBounds.size.height);
 
-    GraphicsContext graphicsContext(context);
+    GraphicsContextCG graphicsContext(context);
 
     // It's important to get the clip from the context, because it may be significantly
     // smaller than the layer bounds (e.g. tiled layers)
@@ -129,7 +129,7 @@ void PlatformCALayerWinInternal::drawRepaintCounters(CACFLayerRef caLayer, CGCon
     else
         backgroundColor = cachedCGColor(Color::red);
 
-    GraphicsContext graphicsContext(context);
+    GraphicsContextCG graphicsContext(context);
     PlatformCALayer::drawRepaintIndicator(graphicsContext, owner(), drawCount, backgroundColor);
 }
 

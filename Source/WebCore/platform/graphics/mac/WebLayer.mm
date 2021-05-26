@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebLayer.h"
 
-#import "GraphicsContext.h"
+#import "GraphicsContextCG.h"
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 #import <QuartzCore/QuartzCore.h>
@@ -51,7 +51,7 @@
 {
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer) {
-        WebCore::GraphicsContext graphicsContext(context);
+        WebCore::GraphicsContextCG graphicsContext(context);
         WebCore::PlatformCALayer::RepaintRectList rectsToPaint = WebCore::PlatformCALayer::collectRectsToPaint(graphicsContext, layer.get());
         WebCore::PlatformCALayer::drawLayerContents(graphicsContext, layer.get(), rectsToPaint, self.isRenderingInContext ? WebCore::GraphicsLayerPaintSnapshotting : WebCore::GraphicsLayerPaintNormal);
     }
@@ -128,7 +128,7 @@
     ASSERT(isMainThread());
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner()) {
-        WebCore::GraphicsContext graphicsContext(context);
+        WebCore::GraphicsContextCG graphicsContext(context);
         graphicsContext.setIsCALayerContext(true);
         graphicsContext.setIsAcceleratedContext(layer->acceleratesDrawing());
 

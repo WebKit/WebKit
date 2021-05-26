@@ -69,6 +69,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MemoryCache.h"
+#include "NullGraphicsContext.h"
 #include "OverflowEvent.h"
 #include "Page.h"
 #include "PageOverlayController.h"
@@ -4184,12 +4185,12 @@ void FrameView::updateControlTints()
         page->setIsCountingRelevantRepaintedObjects(isCurrentlyCountingRelevantRepaintedObject);
 }
 
-void FrameView::traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons paintInvalidationReasons)
+void FrameView::traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons paintInvalidationReasons)
 {
     if (needsLayout())
         layoutContext().layout();
 
-    GraphicsContext context(paintInvalidationReasons);
+    NullGraphicsContext context(paintInvalidationReasons);
     if (platformWidget()) {
         // FIXME: consult paintsEntireContents().
         paintContents(context, visibleContentRect(LegacyIOSDocumentVisibleRect));
@@ -4739,7 +4740,7 @@ void FrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float
 
     }
     // Use a context with painting disabled.
-    GraphicsContext context(GraphicsContext::PaintInvalidationReasons::None);
+    NullGraphicsContext context(NullGraphicsContext::PaintInvalidationReasons::None);
     renderView->setTruncatedAt(static_cast<int>(floorf(oldBottom)));
     IntRect dirtyRect(0, static_cast<int>(floorf(oldTop)), renderView->layoutOverflowRect().maxX(), static_cast<int>(ceilf(oldBottom - oldTop)));
     renderView->setPrintRect(dirtyRect);

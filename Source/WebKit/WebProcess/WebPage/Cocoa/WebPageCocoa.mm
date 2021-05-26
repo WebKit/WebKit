@@ -42,6 +42,7 @@
 #import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLOListElement.h>
 #import <WebCore/HTMLUListElement.h>
@@ -317,7 +318,7 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
 
         CGPDFContextBeginPage(pdfContext.get(), dictionary);
 
-        GraphicsContext graphicsContext { pdfContext.get() };
+        GraphicsContextCG graphicsContext { pdfContext.get() };
         graphicsContext.scale({ 1, -1 });
         graphicsContext.translate(0, -bitmapSize.height());
 

@@ -35,7 +35,6 @@
 #import "Logging.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFContextMenu.h"
-#import "PDFKitSoftLink.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
@@ -72,7 +71,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLFormElement.h>
@@ -105,6 +104,8 @@
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
+
+#import "PDFKitSoftLink.h"
 
 #if HAVE(INCREMENTAL_PDF_APIS)
 @interface PDFDocument ()
@@ -1944,7 +1945,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
 #endif
 
-    GraphicsContext graphicsContext(context);
+    GraphicsContextCG graphicsContext(context);
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     graphicsContext.setIsCALayerContext(true);

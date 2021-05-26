@@ -34,6 +34,7 @@
 #include "Font.h"
 #include "FontCascade.h"
 #include "GlyphBuffer.h"
+#include "GraphicsContextCG.h"
 
 #include <CoreText/CoreText.h>
 #include <wtf/Vector.h>
@@ -76,7 +77,7 @@ static CGError drawImage(CGContextDelegateRef delegate, CGRenderingStateRef rsta
     return kCGErrorSuccess;
 }
 
-GraphicsContext DrawGlyphsRecorder::createInternalContext()
+UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
 {
     auto contextDelegate = adoptCF(CGContextDelegateCreate(this));
     CGContextDelegateSetCallback(contextDelegate.get(), deBeginLayer, reinterpret_cast<CGContextDelegateCallback>(&beginLayer));
@@ -84,7 +85,7 @@ GraphicsContext DrawGlyphsRecorder::createInternalContext()
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawGlyphs, reinterpret_cast<CGContextDelegateCallback>(&WebCore::DisplayList::drawGlyphs));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawImage, reinterpret_cast<CGContextDelegateCallback>(&drawImage));
     auto context = adoptCF(CGContextCreateWithDelegate(contextDelegate.get(), kCGContextTypeUnknown, nullptr, nullptr));
-    return GraphicsContext(context.get());
+    return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
 DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner, DrawGlyphsDeconstruction drawGlyphsDeconstruction)
@@ -119,34 +120,31 @@ void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& conte
 void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& contextState)
 {
     if (m_originalState.fillStyle.color.isValid())
-        m_internalContext.setFillColor(m_originalState.fillStyle.color);
+        m_internalContext->setFillColor(m_originalState.fillStyle.color);
     else if (m_originalState.fillStyle.gradient)
-        m_internalContext.setFillGradient(*m_originalState.fillStyle.gradient, m_originalState.fillStyle.gradientSpaceTransform);
+        m_internalContext->setFillGradient(*m_originalState.fillStyle.gradient, m_originalState.fillStyle.gradientSpaceTransform);
     else {
         ASSERT(m_originalState.fillStyle.pattern);
         if (m_originalState.fillStyle.pattern)
-            m_internalContext.setFillPattern(*m_originalState.fillStyle.pattern);
+            m_internalContext->setFillPattern(*m_originalState.fillStyle.pattern);
     }
 
     if (m_originalState.strokeStyle.color.isValid())
-        m_internalContext.setStrokeColor(m_originalState.strokeStyle.color);
+        m_internalContext->setStrokeColor(m_originalState.strokeStyle.color);
     else if (m_originalState.strokeStyle.gradient)
-        m_internalContext.setStrokeGradient(*m_originalState.strokeStyle.gradient, m_originalState.strokeStyle.gradientSpaceTransform);
+        m_internalContext->setStrokeGradient(*m_originalState.strokeStyle.gradient, m_originalState.strokeStyle.gradientSpaceTransform);
     else {
         ASSERT(m_originalState.strokeStyle.pattern);
         if (m_originalState.strokeStyle.pattern)
-            m_internalContext.setStrokePattern(*m_originalState.strokeStyle.pattern);
+            m_internalContext->setStrokePattern(*m_originalState.strokeStyle.pattern);
     }
 
-    m_internalContext.setCTM(m_originalState.ctm);
+    m_internalContext->setCTM(m_originalState.ctm);
 
-    m_internalContext.setShadowsIgnoreTransforms(m_originalState.shadow.ignoreTransforms);
-    if (contextState.shadowsUseLegacyRadius)
-        m_internalContext.setLegacyShadow(m_originalState.shadow.offset, m_originalState.shadow.blur, m_originalState.shadow.color);
-    else
-        m_internalContext.setShadow(m_originalState.shadow.offset, m_originalState.shadow.blur, m_originalState.shadow.color);
+    m_internalContext->setShadowsIgnoreTransforms(m_originalState.shadow.ignoreTransforms);
+    m_internalContext->setShadow(m_originalState.shadow.offset, m_originalState.shadow.blur, m_originalState.shadow.color, contextState.shadowRadiusMode);
 
-    m_internalContext.setTextDrawingMode(contextState.textDrawingMode);
+    m_internalContext->setTextDrawingMode(contextState.textDrawingMode);
 }
 
 void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingMode smoothingMode)
@@ -302,7 +300,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
         return;
 
 #if ASSERT_ENABLED
-    auto textPosition = CGContextGetTextPosition(m_internalContext.platformContext());
+    auto textPosition = CGContextGetTextPosition(m_internalContext->platformContext());
     ASSERT(!textPosition.x);
     ASSERT(!textPosition.y);
 #endif
@@ -321,7 +319,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     // If you set these two equal to each other, and solve for X, you get
     // CTM * currentTextMatrix = CTM * X * m_originalTextMatrix
     // currentTextMatrix * inverse(m_originalTextMatrix) = X
-    AffineTransform currentTextMatrix = CGContextGetTextMatrix(m_internalContext.platformContext());
+    AffineTransform currentTextMatrix = CGContextGetTextMatrix(m_internalContext->platformContext());
     AffineTransform ctmFixup;
     if (auto invertedOriginalTextMatrix = m_originalTextMatrix.inverse())
         ctmFixup = currentTextMatrix * invertedOriginalTextMatrix.value();

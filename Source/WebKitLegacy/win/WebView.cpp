@@ -116,6 +116,7 @@
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationError.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextWin.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/HWndDC.h>
@@ -1250,7 +1251,7 @@ void WebView::paintWithDirect2D()
 
     RECT clientRect = {};
     PlatformContextDirect2D platformContext(m_renderTarget.get());
-    GraphicsContext gc(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
+    GraphicsContextWin gc(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 
     {
         m_renderTarget->SetTags(WEBKIT_DRAWING, __LINE__);
@@ -1407,7 +1408,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
     m_backingStoreRenderTarget = nullptr;
 #endif
 
-    GraphicsContext gc(bitmapDC, m_transparent);
+    GraphicsContextWin gc(bitmapDC, m_transparent);
     gc.setShouldIncludeChildWindows(windowsToPaint == PaintWebViewAndChildren);
     gc.save();
     if (m_transparent)

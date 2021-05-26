@@ -31,7 +31,7 @@
 #include "CairoUniquePtr.h"
 #include "CairoUtilities.h"
 #include "FloatRect.h"
-#include "GraphicsContextImplCairo.h"
+#include "GraphicsContextCairo.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
@@ -421,7 +421,7 @@ FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strok
         return FloatRect();
 
     if (strokeStyleApplier) {
-        GraphicsContext gc(GraphicsContextImplCairo::createFactory(m_path.get()));
+        GraphicsContextCairo gc(m_path.get());
         strokeStyleApplier(gc);
     }
 
@@ -450,7 +450,7 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
         return false;
 
     {
-        GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(m_path.get()));
+        GraphicsContextCairo graphicsContext(m_path.get());
         strokeStyleApplier(graphicsContext);
     }
 

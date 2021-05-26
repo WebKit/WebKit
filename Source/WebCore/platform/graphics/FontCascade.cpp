@@ -229,9 +229,7 @@ std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTex
         return nullptr;
     
     std::unique_ptr<DisplayList::InMemoryDisplayList> displayList = makeUnique<DisplayList::InMemoryDisplayList>();
-    GraphicsContext recordingContext([&](GraphicsContext& displayListContext) {
-        return makeUnique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform(), nullptr, DisplayList::DrawGlyphsRecorder::DrawGlyphsDeconstruction::DontDeconstruct);
-    });
+    DisplayList::Recorder recordingContext(*displayList, context.state(), FloatRect(), AffineTransform(), nullptr, DisplayList::DrawGlyphsRecorder::DrawGlyphsDeconstruction::DontDeconstruct);
     
     FloatPoint startPoint = toFloatPoint(WebCore::size(glyphBuffer.initialAdvance()));
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);

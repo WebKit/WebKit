@@ -32,7 +32,7 @@
 #if USE(CAIRO)
 
 #include "GraphicsContext.h"
-#include "GraphicsContextImplCairo.h"
+#include "GraphicsContextCairo.h"
 #include "NicosiaBuffer.h"
 #include "NicosiaCairoOperationRecorder.h"
 #include "NicosiaPaintingOperationReplayCairo.h"
@@ -71,7 +71,7 @@ PaintingContextCairo::ForPainting::ForPainting(Buffer& buffer)
 
     m_cairo.context = adoptRef(cairo_create(m_cairo.surface.get()));
     m_platformContext = makeUnique<WebCore::PlatformContextCairo>(m_cairo.context.get());
-    m_graphicsContext = makeUnique<WebCore::GraphicsContext>(WebCore::GraphicsContextImplCairo::createFactory(*m_platformContext));
+    m_graphicsContext = makeUnique<WebCore::GraphicsContextCairo>(*m_platformContext);
 }
 
 PaintingContextCairo::ForPainting::~ForPainting()
@@ -104,11 +104,7 @@ void PaintingContextCairo::ForPainting::replay(const PaintingOperations& paintin
 
 PaintingContextCairo::ForRecording::ForRecording(PaintingOperations& paintingOperations)
 {
-    m_graphicsContext = makeUnique<WebCore::GraphicsContext>(
-        [&paintingOperations](WebCore::GraphicsContext& context)
-        {
-            return makeUnique<CairoOperationRecorder>(context, paintingOperations);
-        });
+    m_graphicsContext = makeUnique<CairoOperationRecorder>(paintingOperations);
 }
 
 PaintingContextCairo::ForRecording::~ForRecording() = default;

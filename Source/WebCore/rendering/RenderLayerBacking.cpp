@@ -51,6 +51,7 @@
 #include "LayerAncestorClippingStack.h"
 #include "Logging.h"
 #include "Model.h"
+#include "NullGraphicsContext.h"
 #include "Page.h"
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
@@ -1789,7 +1790,7 @@ void RenderLayerBacking::updateEventRegion()
     };
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
-        GraphicsContext nullContext(nullptr);
+        NullGraphicsContext nullContext(NullGraphicsContext::PaintInvalidationReasons::None);
         EventRegion eventRegion;
 #if ENABLE(EDITABLE_REGION)
         if (renderer().page().shouldBuildEditableRegion())

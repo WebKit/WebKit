@@ -1,3 +1,715 @@
+2021-05-25  Tim Horton  <timothy_horton@apple.com>
+
+        Virtualize GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=226170
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a refactoring.
+
+        In preparation for future patches which introduce new kinds of GraphicsContexts,
+        virtualize GraphicsContext, moving platform implementations into subclasses
+        GraphicsContext{CG,Cairo,Direct2D}, NullGraphicsContext, DisplayList::Recorder,
+        and Nicosia::CairoOperationRecorder.
+
+        GraphicsContextImpl dissolves away; platform contexts that were
+        unnecessarily implemented both as `GraphicsContext` and as a subclass
+        of GraphicsContextImpl (GraphicsContextImplCairo and GraphicsContextImplDirect2D)
+        are folded into their GraphicsContext subclass.
+
+        `paintingDisabled()` is no longer relevant in GraphicsContext implementations,
+        so we no longer have to check it everywhere; NullGraphicsContext overrides
+        everything with an empty implementation. We keep `paintingDisabled()` for
+        use in code outside of GraphicsContext, where it just distinguishes between
+        NullGraphicsContext and the others.
+
+        Also, a few bits of cleanup to make this easier:
+
+        - Legacy shadow radius behavior becomes a parameter to setShadow instead of a separate method.
+        - canvasClip(), which hasn't done anything different than clip() since Skia, is removed.
+        - GraphicsContext gains renderingMode() in place of isAcceleratedContext().
+        - Subclasses override updateState() to respond to GraphicsContext state changes,
+          as was already done for GraphicsContextImpl, to keep subclassing simple.
+        - builderState(), which was unused, is removed.
+        - drawPath() is introduced on all platforms, with a default implementation that just fills and strokes.
+
+        * Headers.cmake:
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/css/DisplayBoxDecorationPainter.cpp:
+        (WebCore::Display::BoxDecorationPainter::paintBoxShadow const):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::isAccelerated const):
+        (WebCore::CanvasRenderingContext2DBase::clipInternal):
+        (WebCore::CanvasRenderingContext2DBase::clearRect):
+        (WebCore::CanvasRenderingContext2DBase::applyShadow):
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        (WebCore::CanvasRenderingContext2DBase::drawTextUnchecked):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::traverseForPaintInvalidation):
+        (WebCore::FrameView::adjustPageHeightDeprecated):
+        * page/FrameView.h:
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect):
+        * page/win/FrameGdiWin.cpp:
+        (WebCore::imageFromRect):
+        * platform/Cairo.cmake:
+        * platform/SourcesCairo.txt:
+        * platform/cocoa/DragImageCocoa.mm:
+        (WebCore::createDragImageForLink):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::displayListForTextRun const):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextStateChange::accumulate):
+        (WebCore::GraphicsContextStateChange::apply const):
+        (WebCore::GraphicsContextStateChange::dump const):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (WebCore::GraphicsContext::drawRaisedEllipse):
+        (WebCore::GraphicsContext::setStrokeColor):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::drawText):
+        (WebCore::GraphicsContext::drawGlyphs):
+        (WebCore::GraphicsContext::drawEmphasisMarks):
+        (WebCore::GraphicsContext::drawBidiText):
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::drawConsumingImageBuffer):
+        (WebCore::GraphicsContext::clipRoundedRect):
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        (WebCore::GraphicsContext::clipToDrawingCommands):
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::clipBounds const):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::paintFrameForMedia):
+        (WebCore::NullGraphicsContext::drawConsumingImageBuffer):
+        (WebCore::GraphicsContext::GraphicsContext): Deleted.
+        (WebCore::GraphicsContext::hasPlatformContext const): Deleted.
+        (WebCore::GraphicsContext::setStrokeThickness): Deleted.
+        (WebCore::GraphicsContext::setStrokeStyle): Deleted.
+        (WebCore::GraphicsContext::setLegacyShadow): Deleted.
+        (WebCore::GraphicsContext::setShadowsIgnoreTransforms): Deleted.
+        (WebCore::GraphicsContext::setShouldAntialias): Deleted.
+        (WebCore::GraphicsContext::setShouldSmoothFonts): Deleted.
+        (WebCore::GraphicsContext::setShouldSubpixelQuantizeFonts): Deleted.
+        (WebCore::GraphicsContext::setImageInterpolationQuality): Deleted.
+        (WebCore::GraphicsContext::setFillRule): Deleted.
+        (WebCore::GraphicsContext::drawNativeImage): Deleted.
+        (WebCore::GraphicsContext::drawPattern): Deleted.
+        (WebCore::GraphicsContext::setTextDrawingMode): Deleted.
+        (WebCore::GraphicsContext::setAlpha): Deleted.
+        (WebCore::GraphicsContext::setDrawLuminanceMask): Deleted.
+        (WebCore::GraphicsContext::setUseDarkAppearance): Deleted.
+        (WebCore::GraphicsContext::setPlatformTextDrawingMode): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeStyle): Deleted.
+        (WebCore::GraphicsContext::setPlatformShouldSmoothFonts): Deleted.
+        (WebCore::GraphicsContext::isAcceleratedContext const): Deleted.
+        (WebCore::GraphicsContext::platformApplyDeviceScaleFactor): Deleted.
+        (WebCore::GraphicsContext::applyDeviceScaleFactor): Deleted.
+        (WebCore::GraphicsContext::fillEllipse): Deleted.
+        (WebCore::GraphicsContext::strokeEllipse): Deleted.
+        (WebCore::GraphicsContext::platformFillEllipse): Deleted.
+        (WebCore::GraphicsContext::platformStrokeEllipse): Deleted.
+        (WebCore::GraphicsContext::builderState): Deleted.
+        (WebCore::GraphicsContext::supportsInternalLinks const): Deleted.
+        (WebCore::GraphicsContext::setDestinationForRect): Deleted.
+        (WebCore::GraphicsContext::addDestinationAtPoint): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::hasPlatformContext const):
+        (WebCore::GraphicsContext::platformContext const):
+        (WebCore::GraphicsContext::paintingDisabled const):
+        (WebCore::GraphicsContext::performingPaintInvalidation const):
+        (WebCore::GraphicsContext::invalidatingControlTints const):
+        (WebCore::GraphicsContext::invalidatingImagesWithAsyncDecodes const):
+        (WebCore::GraphicsContext::detectingContentfulPaint const):
+        (WebCore::GraphicsContext::setStrokeThickness):
+        (WebCore::GraphicsContext::setStrokeStyle):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillRule):
+        (WebCore::GraphicsContext::setShadowsIgnoreTransforms):
+        (WebCore::GraphicsContext::setShouldAntialias):
+        (WebCore::GraphicsContext::setShouldSmoothFonts):
+        (WebCore::GraphicsContext::setShouldSubpixelQuantizeFonts):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::imageInterpolationQuality const):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::alpha const):
+        (WebCore::GraphicsContext::compositeOperation const):
+        (WebCore::GraphicsContext::blendModeOperation const):
+        (WebCore::GraphicsContext::setDrawLuminanceMask):
+        (WebCore::GraphicsContext::drawLuminanceMask const):
+        (WebCore::GraphicsContext::setTextDrawingMode):
+        (WebCore::GraphicsContext::textDrawingMode const):
+        (WebCore::GraphicsContext::hasVisibleShadow const):
+        (WebCore::GraphicsContext::hasShadow const):
+        (WebCore::GraphicsContext::hasBlurredShadow const):
+        (WebCore::GraphicsContext::setUseDarkAppearance):
+        (WebCore::GraphicsContext::useDarkAppearance const):
+        (WebCore::GraphicsContext::state const):
+        (WebCore::GraphicsContext::renderingMode const):
+        (WebCore::GraphicsContext::fillEllipse):
+        (WebCore::GraphicsContext::strokeEllipse):
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawImageBuffer):
+        (WebCore::GraphicsContext::drawConsumingImageBuffer):
+        (WebCore::GraphicsContext::drawPattern):
+        (WebCore::GraphicsContext::isInTransparencyLayer const):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::applyDeviceScaleFactor):
+        (WebCore::GraphicsContext::setURLForRect):
+        (WebCore::GraphicsContext::setDestinationForRect):
+        (WebCore::GraphicsContext::addDestinationAtPoint):
+        (WebCore::GraphicsContext::supportsInternalLinks const):
+        (WebCore::GraphicsContext::setContentfulPaintDetected):
+        (WebCore::GraphicsContext::contenfulPaintDetected const):
+        (WebCore::GraphicsContext::deprecatedPrivateContext const):
+        (WebCore::GraphicsContext::supportsTransparencyLayers const):
+        (WebCore::GraphicsContext::impl): Deleted.
+        * platform/graphics/GraphicsContextImpl.cpp: Removed.
+        * platform/graphics/GraphicsContextImpl.h: Removed.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::ShadowBlur):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::drawTextAtPoint const):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback):
+        (PlatformCALayerWinInternal::drawRepaintCounters):
+        * platform/graphics/ca/win/WebTiledBackingLayerWin.cpp:
+        (WebTiledBackingLayerWin::displayCallback):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        (WebCore::GraphicsContextCairo::~GraphicsContextCairo):
+        (WebCore::GraphicsContextCairo::hasPlatformContext const):
+        (WebCore::GraphicsContextCairo::getCTM const):
+        (WebCore::GraphicsContextCairo::platformContext const):
+        (WebCore::GraphicsContextCairo::save):
+        (WebCore::GraphicsContextCairo::restore):
+        (WebCore::GraphicsContextCairo::drawRect):
+        (WebCore::GraphicsContextCairo::drawNativeImage):
+        (WebCore::GraphicsContextCairo::drawLine):
+        (WebCore::GraphicsContextCairo::drawEllipse):
+        (WebCore::GraphicsContextCairo::fillPath):
+        (WebCore::GraphicsContextCairo::strokePath):
+        (WebCore::GraphicsContextCairo::fillRect):
+        (WebCore::GraphicsContextCairo::clip):
+        (WebCore::GraphicsContextCairo::clipPath):
+        (WebCore::GraphicsContextCairo::clipBounds const):
+        (WebCore::GraphicsContextCairo::clipToImageBuffer):
+        (WebCore::GraphicsContextCairo::drawFocusRing):
+        (WebCore::GraphicsContextCairo::drawLinesForText):
+        (WebCore::GraphicsContextCairo::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContextCairo::roundToDevicePixels):
+        (WebCore::GraphicsContextCairo::translate):
+        (WebCore::GraphicsContextCairo::updateState):
+        (WebCore::GraphicsContextCairo::concatCTM):
+        (WebCore::GraphicsContextCairo::setCTM):
+        (WebCore::GraphicsContextCairo::beginTransparencyLayer):
+        (WebCore::GraphicsContextCairo::endTransparencyLayer):
+        (WebCore::GraphicsContextCairo::clearRect):
+        (WebCore::GraphicsContextCairo::strokeRect):
+        (WebCore::GraphicsContextCairo::setLineCap):
+        (WebCore::GraphicsContextCairo::setLineDash):
+        (WebCore::GraphicsContextCairo::setLineJoin):
+        (WebCore::GraphicsContextCairo::setMiterLimit):
+        (WebCore::GraphicsContextCairo::clipOut):
+        (WebCore::GraphicsContextCairo::rotate):
+        (WebCore::GraphicsContextCairo::scale):
+        (WebCore::GraphicsContextCairo::fillRoundedRectImpl):
+        (WebCore::GraphicsContextCairo::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextCairo::drawPattern):
+        (WebCore::GraphicsContextCairo::renderingMode const):
+        (WebCore::GraphicsContextCairo::drawGlyphs):
+        (WebCore::GraphicsContext::platformInit): Deleted.
+        (WebCore::GraphicsContext::platformDestroy): Deleted.
+        (WebCore::GraphicsContext::getCTM const): Deleted.
+        (WebCore::GraphicsContext::platformContext const): Deleted.
+        (WebCore::GraphicsContext::savePlatformState): Deleted.
+        (WebCore::GraphicsContext::restorePlatformState): Deleted.
+        (WebCore::GraphicsContext::drawRect): Deleted.
+        (WebCore::GraphicsContext::drawPlatformImage): Deleted.
+        (WebCore::GraphicsContext::drawLine): Deleted.
+        (WebCore::GraphicsContext::drawEllipse): Deleted.
+        (WebCore::GraphicsContext::fillPath): Deleted.
+        (WebCore::GraphicsContext::strokePath): Deleted.
+        (WebCore::GraphicsContext::fillRect): Deleted.
+        (WebCore::GraphicsContext::clip): Deleted.
+        (WebCore::GraphicsContext::clipPath): Deleted.
+        (WebCore::GraphicsContext::clipBounds const): Deleted.
+        (WebCore::GraphicsContext::drawFocusRing): Deleted.
+        (WebCore::GraphicsContext::drawLineForText): Deleted.
+        (WebCore::GraphicsContext::drawLinesForText): Deleted.
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker): Deleted.
+        (WebCore::GraphicsContext::roundToDevicePixels): Deleted.
+        (WebCore::GraphicsContext::translate): Deleted.
+        (WebCore::GraphicsContext::setPlatformFillColor): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeColor): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeThickness): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeStyle): Deleted.
+        (WebCore::GraphicsContext::setURLForRect): Deleted.
+        (WebCore::GraphicsContext::concatCTM): Deleted.
+        (WebCore::GraphicsContext::setCTM): Deleted.
+        (WebCore::GraphicsContext::setPlatformShadow): Deleted.
+        (WebCore::GraphicsContext::clearPlatformShadow): Deleted.
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer): Deleted.
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer): Deleted.
+        (WebCore::GraphicsContext::supportsTransparencyLayers): Deleted.
+        (WebCore::GraphicsContext::clearRect): Deleted.
+        (WebCore::GraphicsContext::strokeRect): Deleted.
+        (WebCore::GraphicsContext::setLineCap): Deleted.
+        (WebCore::GraphicsContext::setLineDash): Deleted.
+        (WebCore::GraphicsContext::setLineJoin): Deleted.
+        (WebCore::GraphicsContext::setMiterLimit): Deleted.
+        (WebCore::GraphicsContext::setPlatformAlpha): Deleted.
+        (WebCore::GraphicsContext::setPlatformCompositeOperation): Deleted.
+        (WebCore::GraphicsContext::canvasClip): Deleted.
+        (WebCore::GraphicsContext::clipOut): Deleted.
+        (WebCore::GraphicsContext::rotate): Deleted.
+        (WebCore::GraphicsContext::scale): Deleted.
+        (WebCore::GraphicsContext::platformFillRoundedRect): Deleted.
+        (WebCore::GraphicsContext::fillRectWithRoundedHole): Deleted.
+        (WebCore::GraphicsContext::drawPlatformPattern): Deleted.
+        (WebCore::GraphicsContext::setPlatformShouldAntialias): Deleted.
+        (WebCore::GraphicsContext::setPlatformImageInterpolationQuality): Deleted.
+        (WebCore::GraphicsContext::isAcceleratedContext const): Deleted.
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp: Removed.
+        * platform/graphics/cairo/GraphicsContextImplCairo.h: Removed.
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::strokeBoundingRect const):
+        (WebCore::Path::strokeContains const):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::coreInterpolationQuality):
+        (WebCore::cgInterpolationQuality):
+        (WebCore::cgTextDrawingMode):
+        (WebCore::GraphicsContextCG::GraphicsContextCG):
+        (WebCore::GraphicsContextCG::~GraphicsContextCG):
+        (WebCore::GraphicsContextCG::hasPlatformContext const):
+        (WebCore::GraphicsContextCG::platformContext const):
+        (WebCore::GraphicsContextCG::save):
+        (WebCore::GraphicsContextCG::restore):
+        (WebCore::GraphicsContextCG::drawNativeImage):
+        (WebCore::drawPatternCallback):
+        (WebCore::GraphicsContextCG::drawPattern):
+        (WebCore::GraphicsContextCG::drawRect):
+        (WebCore::GraphicsContextCG::drawLine):
+        (WebCore::GraphicsContextCG::drawEllipse):
+        (WebCore::GraphicsContextCG::applyStrokePattern):
+        (WebCore::GraphicsContextCG::applyFillPattern):
+        (WebCore::GraphicsContextCG::drawPath):
+        (WebCore::GraphicsContextCG::fillPath):
+        (WebCore::GraphicsContextCG::strokePath):
+        (WebCore::GraphicsContextCG::fillRect):
+        (WebCore::GraphicsContextCG::fillRoundedRectImpl):
+        (WebCore::GraphicsContextCG::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextCG::clip):
+        (WebCore::GraphicsContextCG::clipOut):
+        (WebCore::GraphicsContextCG::clipPath):
+        (WebCore::GraphicsContextCG::clipBounds const):
+        (WebCore::GraphicsContextCG::beginTransparencyLayer):
+        (WebCore::GraphicsContextCG::endTransparencyLayer):
+        (WebCore::applyShadowOffsetWorkaroundIfNeeded):
+        (WebCore::setCGShadow):
+        (WebCore::GraphicsContextCG::updateState):
+        (WebCore::GraphicsContextCG::setMiterLimit):
+        (WebCore::GraphicsContextCG::clearRect):
+        (WebCore::GraphicsContextCG::strokeRect):
+        (WebCore::GraphicsContextCG::setLineCap):
+        (WebCore::GraphicsContextCG::setLineDash):
+        (WebCore::GraphicsContextCG::setLineJoin):
+        (WebCore::GraphicsContextCG::scale):
+        (WebCore::GraphicsContextCG::rotate):
+        (WebCore::GraphicsContextCG::translate):
+        (WebCore::GraphicsContextCG::concatCTM):
+        (WebCore::GraphicsContextCG::setCTM):
+        (WebCore::GraphicsContextCG::getCTM const):
+        (WebCore::GraphicsContextCG::roundToDevicePixels):
+        (WebCore::GraphicsContextCG::drawLinesForText):
+        (WebCore::GraphicsContextCG::setURLForRect):
+        (WebCore::GraphicsContextCG::setIsCALayerContext):
+        (WebCore::GraphicsContextCG::isCALayerContext const):
+        (WebCore::GraphicsContextCG::setIsAcceleratedContext):
+        (WebCore::GraphicsContextCG::renderingMode const):
+        (WebCore::GraphicsContextCG::applyDeviceScaleFactor):
+        (WebCore::GraphicsContextCG::fillEllipse):
+        (WebCore::GraphicsContextCG::strokeEllipse):
+        (WebCore::GraphicsContextCG::supportsInternalLinks const):
+        (WebCore::GraphicsContextCG::setDestinationForRect):
+        (WebCore::GraphicsContextCG::addDestinationAtPoint):
+        (WebCore::setCGStrokeColor): Deleted.
+        (WebCore::convertInterpolationQuality): Deleted.
+        (WebCore::GraphicsContext::platformInit): Deleted.
+        (WebCore::GraphicsContext::platformDestroy): Deleted.
+        (WebCore::GraphicsContext::platformContext const): Deleted.
+        (WebCore::GraphicsContext::savePlatformState): Deleted.
+        (WebCore::GraphicsContext::restorePlatformState): Deleted.
+        (WebCore::GraphicsContext::drawPlatformImage): Deleted.
+        (WebCore::GraphicsContext::drawPlatformPattern): Deleted.
+        (WebCore::GraphicsContext::drawRect): Deleted.
+        (WebCore::GraphicsContext::drawLine): Deleted.
+        (WebCore::GraphicsContext::drawEllipse): Deleted.
+        (WebCore::GraphicsContext::applyStrokePattern): Deleted.
+        (WebCore::GraphicsContext::applyFillPattern): Deleted.
+        (WebCore::GraphicsContext::drawPath): Deleted.
+        (WebCore::GraphicsContext::fillPath): Deleted.
+        (WebCore::GraphicsContext::strokePath): Deleted.
+        (WebCore::GraphicsContext::fillRect): Deleted.
+        (WebCore::GraphicsContext::platformFillRoundedRect): Deleted.
+        (WebCore::GraphicsContext::fillRectWithRoundedHole): Deleted.
+        (WebCore::GraphicsContext::clip): Deleted.
+        (WebCore::GraphicsContext::clipOut): Deleted.
+        (WebCore::GraphicsContext::clipPath): Deleted.
+        (WebCore::GraphicsContext::clipBounds const): Deleted.
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer): Deleted.
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer): Deleted.
+        (WebCore::GraphicsContext::supportsTransparencyLayers): Deleted.
+        (WebCore::GraphicsContext::setPlatformShadow): Deleted.
+        (WebCore::GraphicsContext::clearPlatformShadow): Deleted.
+        (WebCore::GraphicsContext::setMiterLimit): Deleted.
+        (WebCore::GraphicsContext::clearRect): Deleted.
+        (WebCore::GraphicsContext::strokeRect): Deleted.
+        (WebCore::GraphicsContext::setLineCap): Deleted.
+        (WebCore::GraphicsContext::setLineDash): Deleted.
+        (WebCore::GraphicsContext::setLineJoin): Deleted.
+        (WebCore::GraphicsContext::canvasClip): Deleted.
+        (WebCore::GraphicsContext::scale): Deleted.
+        (WebCore::GraphicsContext::rotate): Deleted.
+        (WebCore::GraphicsContext::translate): Deleted.
+        (WebCore::GraphicsContext::concatCTM): Deleted.
+        (WebCore::GraphicsContext::setCTM): Deleted.
+        (WebCore::GraphicsContext::getCTM const): Deleted.
+        (WebCore::GraphicsContext::roundToDevicePixels): Deleted.
+        (WebCore::GraphicsContext::drawLineForText): Deleted.
+        (WebCore::GraphicsContext::drawLinesForText): Deleted.
+        (WebCore::GraphicsContext::setURLForRect): Deleted.
+        (WebCore::GraphicsContext::setPlatformImageInterpolationQuality): Deleted.
+        (WebCore::GraphicsContext::setIsCALayerContext): Deleted.
+        (WebCore::GraphicsContext::isCALayerContext const): Deleted.
+        (WebCore::GraphicsContext::setIsAcceleratedContext): Deleted.
+        (WebCore::GraphicsContext::isAcceleratedContext const): Deleted.
+        (WebCore::GraphicsContext::setPlatformTextDrawingMode): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeColor): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeThickness): Deleted.
+        (WebCore::GraphicsContext::setPlatformFillColor): Deleted.
+        (WebCore::GraphicsContext::setPlatformShouldAntialias): Deleted.
+        (WebCore::GraphicsContext::setPlatformShouldSmoothFonts): Deleted.
+        (WebCore::GraphicsContext::setPlatformAlpha): Deleted.
+        (WebCore::GraphicsContext::setPlatformCompositeOperation): Deleted.
+        (WebCore::GraphicsContext::platformApplyDeviceScaleFactor): Deleted.
+        (WebCore::GraphicsContext::platformFillEllipse): Deleted.
+        (WebCore::GraphicsContext::platformStrokeEllipse): Deleted.
+        (WebCore::GraphicsContext::supportsInternalLinks const): Deleted.
+        (WebCore::GraphicsContext::setDestinationForRect): Deleted.
+        (WebCore::GraphicsContext::addDestinationAtPoint): Deleted.
+        * platform/graphics/cg/GraphicsContextCG.h:
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::create):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::strokeContains const):
+        (WebCore::Path::strokeBoundingRect const):
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::patternCallback):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::GraphicsContextCG::drawFocusRing):
+        (WebCore::drawFocusRingToContextAtTime):
+        (WebCore::GraphicsContextCG::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContext::drawFocusRing): Deleted.
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker): Deleted.
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::ensureGraphicsContext):
+        * platform/graphics/displaylists/DisplayListDrawGlyphsRecorder.h:
+        * platform/graphics/displaylists/DisplayListDrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DisplayList::DrawGlyphsRecorder::createInternalContext):
+        (WebCore::DisplayList::DrawGlyphsRecorder::populateInternalContext):
+        (WebCore::DisplayList::DrawGlyphsRecorder::recordDrawGlyphs):
+        * platform/graphics/displaylists/DisplayListDrawingContext.cpp:
+        (WebCore::DisplayList::DrawingContext::DrawingContext):
+        (WebCore::DisplayList::DrawingContext::recorder): Deleted.
+        * platform/graphics/displaylists/DisplayListDrawingContext.h:
+        (WebCore::DisplayList::DrawingContext::recorder):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawPath::apply const):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::SetState::encode const):
+        (WebCore::DisplayList::SetState::decode):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+        (WebCore::DisplayList::Recorder::drawImageBuffer):
+        (WebCore::DisplayList::Recorder::getCTM const):
+        (WebCore::DisplayList::Recorder::drawLinesForText):
+        (WebCore::DisplayList::Recorder::drawFocusRing):
+        (WebCore::DisplayList::Recorder::clipBounds const):
+        (WebCore::DisplayList::Recorder::clipToDrawingCommands):
+        (WebCore::DisplayList::Recorder::paintFrameForMedia):
+        (WebCore::DisplayList::Recorder::extentFromLocalBounds const):
+        (WebCore::DisplayList::Recorder::clearShadow): Deleted.
+        (WebCore::DisplayList::Recorder::getCTM): Deleted.
+        (WebCore::DisplayList::Recorder::clipBounds): Deleted.
+        (WebCore::DisplayList::Recorder::canPaintFrameForMedia const): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        (WebCore::DisplayList::Recorder::append):
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeSimpleColorFromNSColor):
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer drawInContext:]):
+        (-[WebSimpleLayer drawInContext:]):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::CairoOperationRecorder):
+        (Nicosia::CairoOperationRecorder::fillRect):
+        (Nicosia::CairoOperationRecorder::fillRoundedRect):
+        (Nicosia::CairoOperationRecorder::fillRectWithRoundedHole):
+        (Nicosia::CairoOperationRecorder::fillPath):
+        (Nicosia::CairoOperationRecorder::fillEllipse):
+        (Nicosia::CairoOperationRecorder::strokeRect):
+        (Nicosia::CairoOperationRecorder::strokePath):
+        (Nicosia::CairoOperationRecorder::strokeEllipse):
+        (Nicosia::CairoOperationRecorder::drawGlyphs):
+        (Nicosia::CairoOperationRecorder::drawNativeImage):
+        (Nicosia::CairoOperationRecorder::drawRect):
+        (Nicosia::CairoOperationRecorder::drawLine):
+        (Nicosia::CairoOperationRecorder::drawLinesForText):
+        (Nicosia::CairoOperationRecorder::drawEllipse):
+        (Nicosia::CairoOperationRecorder::getCTM const):
+        (Nicosia::CairoOperationRecorder::clipBounds const):
+        (Nicosia::CairoOperationRecorder::clipToDrawingCommands):
+        (Nicosia::CairoOperationRecorder::paintFrameForMedia):
+        (Nicosia::CairoOperationRecorder::clearShadow): Deleted.
+        (Nicosia::CairoOperationRecorder::drawPath): Deleted.
+        (Nicosia::CairoOperationRecorder::getCTM): Deleted.
+        (Nicosia::CairoOperationRecorder::clipBounds): Deleted.
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp:
+        (Nicosia::PaintingContextCairo::ForPainting::ForPainting):
+        (Nicosia::PaintingContextCairo::ForRecording::ForRecording):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContextCG::GraphicsContextCG):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContext::drawWindowsBitmap):
+        (WebCore::GraphicsContextCG::drawFocusRing):
+        (WebCore::GraphicsContextCG::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContextCG::deprecatedPrivateContext const):
+        (WebCore::GraphicsContext::GraphicsContext): Deleted.
+        (WebCore::GraphicsContext::platformInit): Deleted.
+        (WebCore::GraphicsContext::drawFocusRing): Deleted.
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker): Deleted.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContextCairo::deprecatedPrivateContext const):
+        (WebCore::GraphicsContext::GraphicsContext): Deleted.
+        (WebCore::GraphicsContext::platformInit): Deleted.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContextDirect2D::GraphicsContextDirect2D):
+        (WebCore::GraphicsContextDirect2D::systemFactory):
+        (WebCore::GraphicsContextDirect2D::defaultRenderTarget):
+        (WebCore::GraphicsContextDirect2D::platformInit):
+        (WebCore::GraphicsContextDirect2D::~GraphicsContextDirect2D):
+        (WebCore::GraphicsContextDirect2D::platformContext const):
+        (WebCore::GraphicsContextDirect2D::save):
+        (WebCore::GraphicsContextDirect2D::restore):
+        (WebCore::GraphicsContextDirect2D::drawNativeImage):
+        (WebCore::GraphicsContextDirect2D::releaseWindowsContext):
+        (WebCore::GraphicsContextDirect2D::drawWindowsBitmap):
+        (WebCore::GraphicsContextDirect2D::drawFocusRing):
+        (WebCore::GraphicsContextDirect2D::drawDotsForDocumentMarker):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextDirect2D::brushWithColor):
+        (WebCore::GraphicsContextDirect2D::colorWithGlobalAlpha const):
+        (WebCore::GraphicsContextDirect2D::solidStrokeBrush const):
+        (WebCore::GraphicsContextDirect2D::solidFillBrush const):
+        (WebCore::GraphicsContextDirect2D::patternStrokeBrush const):
+        (WebCore::GraphicsContextDirect2D::patternFillBrush const):
+        (WebCore::GraphicsContextDirect2D::beginDraw):
+        (WebCore::GraphicsContextDirect2D::endDraw):
+        (WebCore::GraphicsContextDirect2D::flush):
+        (WebCore::GraphicsContextDirect2D::drawPattern):
+        (WebCore::GraphicsContextDirect2D::drawRect):
+        (WebCore::GraphicsContextDirect2D::strokeStyle const):
+        (WebCore::GraphicsContextDirect2D::drawLine):
+        (WebCore::GraphicsContextDirect2D::drawEllipse):
+        (WebCore::GraphicsContextDirect2D::applyStrokePattern):
+        (WebCore::GraphicsContextDirect2D::applyFillPattern):
+        (WebCore::GraphicsContextDirect2D::drawPath):
+        (WebCore::GraphicsContextDirect2D::fillPath):
+        (WebCore::GraphicsContextDirect2D::strokePath):
+        (WebCore::GraphicsContextDirect2D::fillRect):
+        (WebCore::GraphicsContextDirect2D::fillRoundedRectImpl):
+        (WebCore::GraphicsContextDirect2D::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextDirect2D::clip):
+        (WebCore::GraphicsContextDirect2D::clipOut):
+        (WebCore::GraphicsContextDirect2D::clipPath):
+        (WebCore::GraphicsContextDirect2D::clipBounds const):
+        (WebCore::GraphicsContextDirect2D::beginTransparencyLayer):
+        (WebCore::GraphicsContextDirect2D::endTransparencyLayer):
+        (WebCore::GraphicsContextDirect2D::supportsTransparencyLayers):
+        (WebCore::GraphicsContextDirect2D::updateState):
+        (WebCore::GraphicsContextDirect2D::setMiterLimit):
+        (WebCore::GraphicsContextDirect2D::clearRect):
+        (WebCore::GraphicsContextDirect2D::strokeRect):
+        (WebCore::GraphicsContextDirect2D::setLineCap):
+        (WebCore::GraphicsContextDirect2D::setLineDash):
+        (WebCore::GraphicsContextDirect2D::setLineJoin):
+        (WebCore::GraphicsContextDirect2D::scale):
+        (WebCore::GraphicsContextDirect2D::rotate):
+        (WebCore::GraphicsContextDirect2D::translate):
+        (WebCore::GraphicsContextDirect2D::concatCTM):
+        (WebCore::GraphicsContextDirect2D::setCTM):
+        (WebCore::GraphicsContextDirect2D::getCTM const):
+        (WebCore::GraphicsContextDirect2D::roundToDevicePixels):
+        (WebCore::GraphicsContextDirect2D::drawLinesForText):
+        (WebCore::GraphicsContextDirect2D::setURLForRect):
+        (WebCore::GraphicsContextDirect2D::setIsCALayerContext):
+        (WebCore::GraphicsContextDirect2D::isCALayerContext const):
+        (WebCore::GraphicsContextDirect2D::setIsAcceleratedContext):
+        (WebCore::GraphicsContextDirect2D::isAcceleratedContext const):
+        (WebCore::GraphicsContextDirect2D::applyDeviceScaleFactor):
+        (WebCore::GraphicsContextDirect2D::fillEllipse):
+        (WebCore::GraphicsContextDirect2D::strokeEllipse):
+        (WebCore::GraphicsContextDirect2D::drawGlyphs):
+        (WebCore::GraphicsContextDirect2D::clipToDrawingCommands):
+        (WebCore::GraphicsContextDirect2D::clipToImageBuffer):
+        (WebCore::GraphicsContextDirect2D::paintFrameForMedia):
+        (WebCore::GraphicsContext::GraphicsContext): Deleted.
+        (WebCore::GraphicsContext::systemFactory): Deleted.
+        (WebCore::GraphicsContext::defaultRenderTarget): Deleted.
+        (WebCore::GraphicsContext::platformInit): Deleted.
+        (WebCore::GraphicsContext::platformDestroy): Deleted.
+        (WebCore::GraphicsContext::platformContext const): Deleted.
+        (WebCore::GraphicsContext::savePlatformState): Deleted.
+        (WebCore::GraphicsContext::restorePlatformState): Deleted.
+        (WebCore::GraphicsContext::drawPlatformImage): Deleted.
+        (WebCore::GraphicsContext::releaseWindowsContext): Deleted.
+        (WebCore::GraphicsContext::drawWindowsBitmap): Deleted.
+        (WebCore::GraphicsContext::drawFocusRing): Deleted.
+        (WebCore::GraphicsContext::drawDotsForDocumentMarker): Deleted.
+        (WebCore::GraphicsContext::brushWithColor): Deleted.
+        (WebCore::GraphicsContext::colorWithGlobalAlpha const): Deleted.
+        (WebCore::GraphicsContext::solidStrokeBrush const): Deleted.
+        (WebCore::GraphicsContext::solidFillBrush const): Deleted.
+        (WebCore::GraphicsContext::patternStrokeBrush const): Deleted.
+        (WebCore::GraphicsContext::patternFillBrush const): Deleted.
+        (WebCore::GraphicsContext::beginDraw): Deleted.
+        (WebCore::GraphicsContext::endDraw): Deleted.
+        (WebCore::GraphicsContext::flush): Deleted.
+        (WebCore::GraphicsContext::drawPlatformPattern): Deleted.
+        (WebCore::GraphicsContext::drawRect): Deleted.
+        (WebCore::GraphicsContext::platformStrokeStyle const): Deleted.
+        (WebCore::GraphicsContext::drawLine): Deleted.
+        (WebCore::GraphicsContext::drawEllipse): Deleted.
+        (WebCore::GraphicsContext::applyStrokePattern): Deleted.
+        (WebCore::GraphicsContext::applyFillPattern): Deleted.
+        (WebCore::GraphicsContext::drawPath): Deleted.
+        (WebCore::GraphicsContext::fillPath): Deleted.
+        (WebCore::GraphicsContext::strokePath): Deleted.
+        (WebCore::GraphicsContext::fillRect): Deleted.
+        (WebCore::GraphicsContext::platformFillRoundedRect): Deleted.
+        (WebCore::GraphicsContext::fillRectWithRoundedHole): Deleted.
+        (WebCore::GraphicsContext::clip): Deleted.
+        (WebCore::GraphicsContext::clipOut): Deleted.
+        (WebCore::GraphicsContext::clipPath): Deleted.
+        (WebCore::GraphicsContext::clipBounds const): Deleted.
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer): Deleted.
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer): Deleted.
+        (WebCore::GraphicsContext::supportsTransparencyLayers): Deleted.
+        (WebCore::GraphicsContext::setPlatformShadow): Deleted.
+        (WebCore::GraphicsContext::clearPlatformShadow): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeStyle): Deleted.
+        (WebCore::GraphicsContext::setMiterLimit): Deleted.
+        (WebCore::GraphicsContext::clearRect): Deleted.
+        (WebCore::GraphicsContext::strokeRect): Deleted.
+        (WebCore::GraphicsContext::setLineCap): Deleted.
+        (WebCore::GraphicsContext::setLineDash): Deleted.
+        (WebCore::GraphicsContext::setLineJoin): Deleted.
+        (WebCore::GraphicsContext::canvasClip): Deleted.
+        (WebCore::GraphicsContext::scale): Deleted.
+        (WebCore::GraphicsContext::rotate): Deleted.
+        (WebCore::GraphicsContext::translate): Deleted.
+        (WebCore::GraphicsContext::concatCTM): Deleted.
+        (WebCore::GraphicsContext::setCTM): Deleted.
+        (WebCore::GraphicsContext::getCTM const): Deleted.
+        (WebCore::GraphicsContext::roundToDevicePixels): Deleted.
+        (WebCore::GraphicsContext::drawLineForText): Deleted.
+        (WebCore::GraphicsContext::drawLinesForText): Deleted.
+        (WebCore::GraphicsContext::setURLForRect): Deleted.
+        (WebCore::GraphicsContext::setPlatformImageInterpolationQuality): Deleted.
+        (WebCore::GraphicsContext::setIsCALayerContext): Deleted.
+        (WebCore::GraphicsContext::isCALayerContext const): Deleted.
+        (WebCore::GraphicsContext::setIsAcceleratedContext): Deleted.
+        (WebCore::GraphicsContext::isAcceleratedContext const): Deleted.
+        (WebCore::GraphicsContext::setPlatformTextDrawingMode): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeColor): Deleted.
+        (WebCore::GraphicsContext::setPlatformStrokeThickness): Deleted.
+        (WebCore::GraphicsContext::setPlatformFillColor): Deleted.
+        (WebCore::GraphicsContext::setPlatformShouldAntialias): Deleted.
+        (WebCore::GraphicsContext::setPlatformShouldSmoothFonts): Deleted.
+        (WebCore::GraphicsContext::setPlatformAlpha): Deleted.
+        (WebCore::GraphicsContext::setPlatformCompositeOperation): Deleted.
+        (WebCore::GraphicsContext::platformApplyDeviceScaleFactor): Deleted.
+        (WebCore::GraphicsContext::platformFillEllipse): Deleted.
+        (WebCore::GraphicsContext::platformStrokeEllipse): Deleted.
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp: Removed.
+        * platform/graphics/win/GraphicsContextImplDirect2D.h: Removed.
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::setShouldIncludeChildWindows):
+        (WebCore::GraphicsContext::shouldIncludeChildWindows const):
+        (WebCore::GraphicsContext::createWindowsBitmap):
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContext::hdc const):
+        * platform/graphics/win/ImageBufferDirect2DBackend.cpp:
+        (WebCore::ImageBufferDirect2DBackend::create):
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::strokeContains const):
+        (WebCore::Path::strokeBoundingRect const):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageForLink):
+        (WebCore::createDragImageForSelection):
+        (WebCore::createDragImageForRange):
+        (WebCore::createDragImageForColor):
+        * platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp:
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::paint):
+        * rendering/ContentfulPaintChecker.cpp:
+        (WebCore::ContentfulPaintChecker::qualifiesForContentfulPaint):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::applyBoxShadowForBackground):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in Node's s_eventTargetDataMapLock

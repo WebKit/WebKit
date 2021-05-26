@@ -252,7 +252,7 @@ bool CanvasRenderingContext2DBase::isAccelerated() const
 {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     auto* context = canvasBase().existingDrawingContext();
-    return context && context->isAcceleratedContext();
+    return context && context->renderingMode() == RenderingMode::Accelerated;
 #else
     return false;
 #endif
@@ -1120,7 +1120,7 @@ void CanvasRenderingContext2DBase::clipInternal(const Path& path, CanvasFillRule
         return;
 
     realizeSaves();
-    c->canvasClip(path, toWindRule(windingRule));
+    c->clipPath(path, toWindRule(windingRule));
 }
 
 void CanvasRenderingContext2DBase::beginCompositeLayer()
@@ -1212,7 +1212,7 @@ void CanvasRenderingContext2DBase::clearRect(float x, float y, float width, floa
     if (shouldDrawShadows()) {
         context->save();
         saved = true;
-        context->setLegacyShadow(FloatSize(), 0, Color::transparentBlack);
+        context->setShadow(FloatSize(), 0, Color::transparentBlack, ShadowRadiusMode::Legacy);
     }
     if (state().globalAlpha != 1) {
         if (!saved) {
@@ -1379,9 +1379,9 @@ void CanvasRenderingContext2DBase::applyShadow()
     if (shouldDrawShadows()) {
         float width = state().shadowOffset.width();
         float height = state().shadowOffset.height();
-        c->setLegacyShadow(FloatSize(width, -height), state().shadowBlur, state().shadowColor);
+        c->setShadow(FloatSize(width, -height), state().shadowBlur, state().shadowColor, ShadowRadiusMode::Legacy);
     } else
-        c->setLegacyShadow(FloatSize(), 0, Color::transparentBlack);
+        c->setShadow(FloatSize(), 0, Color::transparentBlack, ShadowRadiusMode::Legacy);
 }
 
 bool CanvasRenderingContext2DBase::shouldDrawShadows() const
@@ -2030,7 +2030,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
         return RefPtr<CanvasPattern> { CanvasPattern::create(nativeImage.releaseNonNull(), repeatX, repeatY, originClean) };
 #endif
 
-    auto renderingMode = !drawingContext() || drawingContext()->isAcceleratedContext() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto renderingMode = drawingContext() ? drawingContext()->renderingMode() : RenderingMode::Unaccelerated;
     auto imageBuffer = videoElement.createBufferForPainting(size(videoElement), renderingMode, colorSpace(), pixelFormat());
     if (!imageBuffer)
         return nullptr;
@@ -2473,7 +2473,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, flo
 
             shadowOffset += offset;
 
-            c->setLegacyShadow(shadowOffset, shadowRadius, shadowColor);
+            c->setShadow(shadowOffset, shadowRadius, shadowColor, ShadowRadiusMode::Legacy);
 
             if (fill)
                 c->setFillColor(Color::black);

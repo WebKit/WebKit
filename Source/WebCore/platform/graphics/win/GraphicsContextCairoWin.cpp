@@ -28,7 +28,7 @@
 
 #include "AffineTransform.h"
 #include "DIBPixelData.h"
-#include "GraphicsContextImpl.h"
+#include "GraphicsContextCairo.h"
 #include "Path.h"
 
 #include <cairo-win32.h>
@@ -66,28 +66,9 @@ static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
     return context;
 }
 
-GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
+GraphicsContextCairo::GraphicsContextCairo(HDC dc, bool hasAlpha)
+    : GraphicsContextCairo(createCairoContextWithHDC(dc, hasAlpha))
 {
-    platformInit(dc, hasAlpha);
-}
-
-void GraphicsContext::platformInit(HDC dc, bool hasAlpha)
-{
-    if (!dc)
-        return;
-
-    cairo_t* cr = createCairoContextWithHDC(dc, hasAlpha);
-
-    m_data = new GraphicsContextPlatformPrivate(makeUnique<PlatformContextCairo>(cr));
-    m_data->platformContext.setGraphicsContextPrivate(m_data);
-    m_data->m_hdc = dc;
-    if (platformContext()->cr()) {
-        // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor());
-        setPlatformStrokeColor(strokeColor());
-    }
-    if (cr)
-        cairo_destroy(cr);
 }
 #endif
 
@@ -127,9 +108,9 @@ static void drawBitmapToContext(PlatformContextCairo& platformContext, const DIB
 
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
 {
-    bool createdBitmap = m_impl || !m_data->m_hdc || isInTransparencyLayer();
+    bool createdBitmap = !deprecatedPrivateContext()->m_hdc || isInTransparencyLayer();
     if (!hdc || !createdBitmap) {
-        m_data->restore();
+        deprecatedPrivateContext()->restore();
         return;
     }
 
@@ -177,5 +158,10 @@ void GraphicsContextPlatformPrivate::flush()
     cairo_surface_destroy(surface);
 }
 #endif
+
+GraphicsContextPlatformPrivate* GraphicsContextCairo::deprecatedPrivateContext() const
+{
+    return m_private.get();
+}
 
 }

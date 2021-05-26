@@ -43,7 +43,6 @@ list(APPEND WebCore_SOURCES
     platform/generic/KeyedEncoderGeneric.cpp
 
     platform/graphics/GLContext.cpp
-    platform/graphics/GraphicsContextImpl.cpp
     platform/graphics/PlatformDisplay.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
@@ -71,7 +70,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/GradientDirect2D.cpp
     platform/graphics/win/GraphicsContextGLDirect2D.cpp
     platform/graphics/win/GraphicsContextDirect2D.cpp
-    platform/graphics/win/GraphicsContextImplDirect2D.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
     platform/graphics/win/ImageBufferDirect2DBackend.cpp
@@ -189,7 +187,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/win/DirectWriteUtilities.h
     platform/graphics/win/FullScreenController.h
     platform/graphics/win/FullScreenControllerClient.h
-    platform/graphics/win/GraphicsContextImplDirect2D.h
+    platform/graphics/win/GraphicsContextWin.h
     platform/graphics/win/ImageDecoderDirect2D.h
     platform/graphics/win/LocalWindowsContext.h
     platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h

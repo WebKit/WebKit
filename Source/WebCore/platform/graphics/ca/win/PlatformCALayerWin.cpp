@@ -33,7 +33,7 @@
 #include "ColorSerialization.h"
 #include "FontCascade.h"
 #include "GDIUtilities.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWinInternal.h"
 #include "TextRun.h"
@@ -890,7 +890,7 @@ void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloa
     FontCascade font = FontCascade(WTFMove(desc), 0, 0);
     font.update(nullptr);
 
-    GraphicsContext cg(context);
+    GraphicsContextCG cg(context);
     cg.setFillColor(Color::black);
     cg.drawText(font, TextRun(text), IntPoint(x, y));
 }

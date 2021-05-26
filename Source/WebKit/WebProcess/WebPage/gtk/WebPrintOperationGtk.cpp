@@ -34,7 +34,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/GraphicsContextImplCairo.h>
+#include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
@@ -676,7 +676,7 @@ void WebPrintOperationGtk::renderPage(int pageNumber)
     prepareContextToDraw();
 
     double pageWidth = gtk_page_setup_get_page_width(m_pageSetup.get(), GTK_UNIT_INCH) * m_xDPI;
-    WebCore::GraphicsContext graphicsContext(WebCore::GraphicsContextImplCairo::createFactory(m_cairoContext.get()));
+    WebCore::GraphicsContextCairo graphicsContext(m_cairoContext.get());
     m_printContext->spoolPage(graphicsContext, pageNumber, pageWidth / m_scale);
 
     cairo_restore(m_cairoContext.get());

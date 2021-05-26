@@ -81,7 +81,7 @@
 #import <WebCore/FrameLoaderStateMachine.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
-#import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
@@ -613,7 +613,7 @@ static NSURL *createUniqueWebDataURL();
 #else
     CGContextRef ctx = WKGetCurrentGraphicsContext();
 #endif
-    WebCore::GraphicsContext context(ctx);
+    WebCore::GraphicsContextCG context(ctx);
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::Frame *frame = core(self);

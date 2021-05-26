@@ -32,6 +32,7 @@
 #include "AudioSampleDataSource.h"
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioModule.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 

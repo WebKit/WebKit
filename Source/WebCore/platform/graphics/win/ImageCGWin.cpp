@@ -73,7 +73,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     auto cgContext = adoptCF(CGBitmapContextCreate(bmpInfo.bmBits, bmpInfo.bmWidth, bmpInfo.bmHeight,
         8, bmpInfo.bmWidthBytes, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
   
-    GraphicsContext gc(cgContext.get());
+    GraphicsContextCG gc(cgContext.get());
 
     FloatSize imageSize = BitmapImage::size();
     if (size)

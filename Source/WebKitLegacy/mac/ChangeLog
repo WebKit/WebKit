@@ -1,3 +1,19 @@
+2021-05-25  Tim Horton  <timothy_horton@apple.com>
+
+        Virtualize GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=226170
+
+        Reviewed by Simon Fraser.
+
+        * Misc/WebCoreStatistics.mm:
+        (-[WebFrame printToCGContext:pageWidth:pageHeight:]):
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]):
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView drawRect:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _drawRect:contentsOnly:]):
+
 2021-05-24  Sam Weinig  <weinig@apple.com>
 
         Convert DestinationColorSpace from an enum to class wrapping a platform color space (CGColorSpaceRef for CG ports, etc.)

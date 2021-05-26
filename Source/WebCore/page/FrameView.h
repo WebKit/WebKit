@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
+#include "NullGraphicsContext.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
 #include "RenderElement.h"
@@ -666,9 +667,9 @@ public:
 
     WEBCORE_EXPORT FrameFlattening effectiveFrameFlattening() const;
 
-    WEBCORE_EXPORT void traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons);
-    void invalidateControlTints() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingControlTints); }
-    void invalidateImagesWithAsyncDecodes() { traverseForPaintInvalidation(GraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes); }
+    WEBCORE_EXPORT void traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons);
+    void invalidateControlTints() { traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingControlTints); }
+    void invalidateImagesWithAsyncDecodes() { traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes); }
 
     void invalidateScrollbarsForAllScrollableAreas();
 

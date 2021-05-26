@@ -74,6 +74,7 @@
 #include <WebCore/FrameWin.h>
 #include <WebCore/GDIObjectCounter.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextWin.h>
 #include <WebCore/HTMLFormControlElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
@@ -321,7 +322,7 @@ HRESULT WebFrame::paintDocumentRectToContext(RECT rect, _In_ HDC deviceContext)
     // We can't paint with a layout still pending.
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    GraphicsContext gc(deviceContext);
+    GraphicsContextWin gc(deviceContext);
     gc.setShouldIncludeChildWindows(true);
     gc.save();
     LONG width = rect.right - rect.left;
@@ -352,7 +353,7 @@ HRESULT WebFrame::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, _In_ 
     // We can't paint with a layout still pending.
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    GraphicsContext gc(deviceContext);
+    GraphicsContextWin gc(deviceContext);
     gc.setShouldIncludeChildWindows(true);
     gc.save();
     IntRect dirtyRect(rect);
@@ -1808,7 +1809,7 @@ HRESULT WebFrame::spoolPages(HDC printDC, UINT startPage, UINT endPage, void* ct
     float headerHeight = 0, footerHeight = 0;
     headerAndFooterHeights(&headerHeight, &footerHeight);
 #if USE(CG) || USE(CAIRO)
-    GraphicsContext spoolCtx(pctx);
+    GraphicsContextWin spoolCtx(pctx);
     spoolCtx.setShouldIncludeChildWindows(true);
 
     for (UINT ii = startPage; ii < endPage; ii++)

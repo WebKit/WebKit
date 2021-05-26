@@ -279,10 +279,6 @@ public:
     RenderingResourceIdentifier strokePatternImageIdentifier() const { return m_strokePattern.tileImageIdentifier; }
     RenderingResourceIdentifier fillPatternImageIdentifier() const { return m_fillPattern.tileImageIdentifier; }
 
-    static void builderState(GraphicsContext&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
-
-    static void dumpStateChanges(WTF::TextStream&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<SetState> decode(Decoder&);
 
@@ -335,9 +331,7 @@ void SetState::encode(Encoder& encoder) const
         encoder << state.shadowOffset;
         encoder << state.shadowBlur;
         encoder << state.shadowColor;
-#if USE(CG)
-        encoder << state.shadowsUseLegacyRadius;
-#endif // USE(CG)
+        encoder << state.shadowRadiusMode;
     }
 
     if (changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
@@ -463,14 +457,12 @@ Optional<SetState> SetState::decode(Decoder& decoder)
 
         stateChange.m_state.shadowColor = *shadowColor;
 
-#if USE(CG)
-        Optional<bool> shadowsUseLegacyRadius;
-        decoder >> shadowsUseLegacyRadius;
-        if (!shadowsUseLegacyRadius)
+        Optional<ShadowRadiusMode> shadowRadiusMode;
+        decoder >> shadowRadiusMode;
+        if (!shadowRadiusMode)
             return WTF::nullopt;
 
-        stateChange.m_state.shadowsUseLegacyRadius = *shadowsUseLegacyRadius;
-#endif // USE(CG)
+        stateChange.m_state.shadowRadiusMode = WTFMove(*shadowRadiusMode);
     }
 
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeThicknessChange)) {

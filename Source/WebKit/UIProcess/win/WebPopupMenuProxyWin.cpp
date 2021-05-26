@@ -35,6 +35,7 @@
 #include "WebView.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/GDIUtilities.h>
+#include <WebCore/GraphicsContextWin.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -852,7 +853,7 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
         ::SelectObject(m_DC.get(), m_bmp.get());
     }
 
-    GraphicsContext context(m_DC.get());
+    GraphicsContextWin context(m_DC.get());
 #else
     COMPtr<ID3D11Texture2D> backBuffer; 
     HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)); 
@@ -867,7 +868,7 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
 
     PlatformContextDirect2D platformContext(renderTarget.get());
     platformContext.setD3DDevice(m_d3dDevice.get());
-    GraphicsContext context(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
+    GraphicsContextWin context(&platformContext, GraphicsContext::BitmapRenderingContextType::GPUMemory);
 #endif
 
     IntRect translatedDamageRect = damageRect;

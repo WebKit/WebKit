@@ -33,15 +33,15 @@
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
+#include "NotImplemented.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DrawGlyphsDeconstruction drawGlyphsDeconstruction)
-    : GraphicsContextImpl(context)
-    , m_displayList(displayList)
+Recorder::Recorder(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DrawGlyphsDeconstruction drawGlyphsDeconstruction)
+    : m_displayList(displayList)
     , m_delegate(delegate)
     , m_isNested(false)
     , m_drawGlyphsRecorder(*this, drawGlyphsDeconstruction)
@@ -50,9 +50,8 @@ Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const Gra
     m_stateStack.append({ state, initialCTM, initialClip });
 }
 
-Recorder::Recorder(Recorder& parent, GraphicsContext& context, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : GraphicsContextImpl(context)
-    , m_displayList(parent.m_displayList)
+Recorder::Recorder(Recorder& parent, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
+    : m_displayList(parent.m_displayList)
     , m_delegate(parent.m_delegate)
     , m_isNested(true)
     , m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.drawGlyphsDeconstruction())
@@ -166,11 +165,6 @@ RenderingMode Recorder::renderingMode() const
     return m_delegate ? m_delegate->renderingMode() : RenderingMode::Unaccelerated;
 }
 
-void Recorder::clearShadow()
-{
-    append<ClearShadow>();
-}
-
 void Recorder::setLineCap(LineCap lineCap)
 {
     append<SetLineCap>(lineCap);
@@ -206,6 +200,10 @@ void Recorder::appendDrawGlyphsItemWithCachedFont(const Font& font, const GlyphB
 
 void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
+    if (!canDrawImageBuffer(imageBuffer)) {
+        GraphicsContext::drawImageBuffer(imageBuffer, destRect, srcRect, options);
+        return;
+    }
     m_displayList.cacheImageBuffer(imageBuffer);
     append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }
@@ -270,7 +268,7 @@ void Recorder::setCTM(const AffineTransform& transform)
     append<SetCTM>(transform);
 }
 
-AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale)
+AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale) const
 {
     // FIXME: Respect the given value of IncludeDeviceScale.
     return currentState().ctm;
@@ -298,7 +296,7 @@ void Recorder::drawLine(const FloatPoint& point1, const FloatPoint& point2)
     append<DrawLine>(point1, point2);
 }
 
-void Recorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines)
+void Recorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle)
 {
     append<DrawLinesForText>(FloatPoint(), toFloatSize(point), thickness, widths, printing, doubleLines);
 }
@@ -327,6 +325,18 @@ void Recorder::drawFocusRing(const Vector<FloatRect>& rects, float width, float 
 {
     append<DrawFocusRingRects>(rects, width, offset, color);
 }
+
+#if PLATFORM(MAC)
+void Recorder::drawFocusRing(const Path&, double, bool&, const Color&)
+{
+    notImplemented();
+}
+
+void Recorder::drawFocusRing(const Vector<FloatRect>&, double, bool&, const Color&)
+{
+    notImplemented();
+}
+#endif
 
 void Recorder::fillRect(const FloatRect& rect)
 {
@@ -440,10 +450,9 @@ void Recorder::clipPath(const Path& path, WindRule windRule)
     append<ClipPath>(path, windRule);
 }
 
-IntRect Recorder::clipBounds()
+IntRect Recorder::clipBounds() const
 {
-    WTFLogAlways("Getting the clip bounds not yet supported with DisplayList::Recorder.");
-    return IntRect(-2048, -2048, 4096, 4096);
+    return enclosingIntRect(currentState().clipBounds);
 }
 
 void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
@@ -452,35 +461,34 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
     append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect);
 }
 
-void Recorder::clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
+GraphicsContext::ClipToDrawingCommandsResult Recorder::clipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace, Function<void(GraphicsContext&)>&& drawingFunction)
 {
-    GraphicsContext nestedContext([&](GraphicsContext& context) {
-        auto initialClip = FloatRect(FloatPoint(), destination.size());
+    auto initialClip = FloatRect(FloatPoint(), destination.size());
 
-        // The initial CTM matches ImageBuffer's initial CTM.
-        AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-        FloatSize scaleFactor(transform.xScale(), transform.yScale());
-        auto scaledSize = expandedIntSize(destination.size() * scaleFactor);
-        AffineTransform initialCTM;
-        initialCTM.scale(1, -1);
-        initialCTM.translate(0, -scaledSize.height());
-        initialCTM.scale(scaledSize / destination.size());
+    // The initial CTM matches ImageBuffer's initial CTM.
+    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    FloatSize scaleFactor(transform.xScale(), transform.yScale());
+    auto scaledSize = expandedIntSize(destination.size() * scaleFactor);
+    AffineTransform initialCTM;
+    initialCTM.scale(1, -1);
+    initialCTM.translate(0, -scaledSize.height());
+    initialCTM.scale(scaledSize / destination.size());
 
-        return std::unique_ptr<Recorder>(new Recorder(*this, context, GraphicsContextState(), initialClip, initialCTM));
-    });
+    Recorder nestedContext(*this, GraphicsContextState(), initialClip, initialCTM);
     append<BeginClipToDrawingCommands>(destination, colorSpace);
     drawingFunction(nestedContext);
     append<EndClipToDrawingCommands>(destination);
+
+    return ClipToDrawingCommandsResult::Success;
 }
 
 #if ENABLE(VIDEO)
-bool Recorder::canPaintFrameForMedia(const MediaPlayer& player) const
-{
-    return !!player.identifier();
-}
-
 void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
+    if (!player.identifier()) {
+        GraphicsContext::paintFrameForMedia(player, destination);
+        return;
+    }
     ASSERT(player.identifier());
     append<PaintFrameForMedia>(player, destination);
 }
@@ -517,7 +525,7 @@ FloatRect Recorder::extentFromLocalBounds(const FloatRect& rect) const
     FloatSize shadowOffset;
     float shadowRadius;
     Color shadowColor;
-    if (graphicsContext().getShadow(shadowOffset, shadowRadius, shadowColor)) {
+    if (getShadow(shadowOffset, shadowRadius, shadowColor)) {
         FloatRect shadowExtent = bounds;
         shadowExtent.move(shadowOffset);
         shadowExtent.inflate(shadowPaintingExtent(shadowRadius));
@@ -543,11 +551,6 @@ Recorder::ContextState& Recorder::currentState()
 const AffineTransform& Recorder::ctm() const
 {
     return currentState().ctm;
-}
-
-const FloatRect& Recorder::clipBounds() const
-{
-    return currentState().clipBounds;
 }
 
 void Recorder::ContextState::translate(float x, float y)

@@ -1,3 +1,33 @@
+2021-05-25  Tim Horton  <timothy_horton@apple.com>
+
+        Virtualize GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=226170
+
+        Reviewed by Simon Fraser.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * Shared/win/ShareableBitmapDirect2D.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _drawPreview:]):
+        * UIProcess/win/BackingStoreDirect2D.cpp:
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::paint):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::paintControlForLayerInContext):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::pdfSnapshotAtSize):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawPagesToPDFImpl):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::renderPage):
+
 2021-05-25  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Update usage of libWPE API

@@ -198,7 +198,9 @@ ShadowBlur::ShadowBlur(const GraphicsContextState& state)
     , m_shadowsIgnoreTransforms(state.shadowsIgnoreTransforms)
 {
 #if USE(CG)
-    if (state.shadowsUseLegacyRadius) {
+    // Core Graphics incorrectly renders shadows with radius > 8px (<rdar://problem/8103442>),
+    // but we need to preserve this buggy behavior for canvas and -webkit-box-shadow.
+    if (state.shadowRadiusMode == ShadowRadiusMode::Legacy) {
         float shadowBlur = radiusToLegacyRadius(state.shadowBlur);
         m_blurRadius = FloatSize(shadowBlur, shadowBlur);
     }

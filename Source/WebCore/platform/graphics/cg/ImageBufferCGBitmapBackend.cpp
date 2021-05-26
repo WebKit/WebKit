@@ -85,7 +85,7 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
     if (!cgContext)
         return nullptr;
 
-    auto context = makeUnique<GraphicsContext>(cgContext.get());
+    auto context = makeUnique<GraphicsContextCG>(cgContext.get());
 
     auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, numBytes, [] (void*, const void* data, size_t) {
         fastFree(const_cast<void*>(data));

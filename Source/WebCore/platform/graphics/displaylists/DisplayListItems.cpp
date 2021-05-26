@@ -605,11 +605,7 @@ static TextStream& operator<<(TextStream& ts, const DrawEllipse& item)
 
 void DrawPath::apply(GraphicsContext& context) const
 {
-#if USE(CG)
     context.drawPath(m_path);
-#else
-    UNUSED_PARAM(context);
-#endif
 }
 
 static TextStream& operator<<(TextStream& ts, const DrawPath&)
