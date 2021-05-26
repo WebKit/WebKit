@@ -96,17 +96,18 @@ protected:
     const char* stateString(State);
     void moveToState(State);
     bool isComplete() const override { return m_state == State::Completed; }
-    void complete(const AbstractLocker&) override;
+    void complete() WTF_REQUIRES_LOCK(m_lock) override;
 
     virtual bool prepareImpl() = 0;
     virtual void compileFunction(uint32_t functionIndex) = 0;
-    virtual void didCompleteCompilation(const AbstractLocker&) = 0;
+    virtual void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) = 0;
 
     template<typename T>
     bool tryReserveCapacity(Vector<T>& vector, size_t size, const char* what)
     {
         if (UNLIKELY(!vector.tryReserveCapacity(size))) {
-            fail(Locker { m_lock }, WTF::makeString("Failed allocating enough space for ", size, what));
+            Locker locker { m_lock };
+            fail(WTF::makeString("Failed allocating enough space for ", size, what));
             return false;
         }
         return true;

@@ -163,7 +163,7 @@ void VMTraps::invalidateCodeBlocksOnStack(CallFrame* topCallFrame)
     invalidateCodeBlocksOnStack(codeBlockSetLocker, topCallFrame);
 }
     
-void VMTraps::invalidateCodeBlocksOnStack(Locker<UncheckedLock>&, CallFrame* topCallFrame)
+void VMTraps::invalidateCodeBlocksOnStack(Locker<Lock>&, CallFrame* topCallFrame)
 {
     if (!m_needToInvalidatedCodeBlocks)
         return;

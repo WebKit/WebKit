@@ -90,7 +90,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
         Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
-            fail(locker, makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
+            fail(makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex))); // FIXME make this an Expected.
         }
         m_currentIndex = m_moduleInformation->functions.size();
         return;
@@ -99,7 +99,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
     m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
 }
 
-void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
+void LLIntPlan::didCompleteCompilation()
 {
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
@@ -129,7 +129,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
 
         LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
         if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-            Base::fail(locker, "Out of executable memory in Wasm LLInt entry thunks");
+            Base::fail("Out of executable memory in Wasm LLInt entry thunks");
             return;
         }
 
@@ -156,7 +156,7 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
             if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-                Base::fail(locker, makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
+                Base::fail(makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
                 return;
             }
 
@@ -191,7 +191,8 @@ void LLIntPlan::didCompleteCompilation(const AbstractLocker& locker)
 
 void LLIntPlan::completeInStreaming()
 {
-    complete(Locker { m_lock });
+    Locker locker { m_lock };
+    complete();
 }
 
 void LLIntPlan::didCompileFunctionInStreaming()
@@ -204,7 +205,7 @@ void LLIntPlan::didFailInStreaming(String&& message)
 {
     Locker locker { m_lock };
     if (!m_errorMessage)
-        fail(locker, WTFMove(message));
+        fail(WTFMove(message));
 }
 
 void LLIntPlan::work(CompilationEffort effort)

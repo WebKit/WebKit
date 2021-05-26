@@ -236,7 +236,7 @@ private:
 
     void invalidateCodeBlocksOnStack();
     void invalidateCodeBlocksOnStack(CallFrame* topCallFrame);
-    void invalidateCodeBlocksOnStack(Locker<UncheckedLock>& codeBlockSetLocker, CallFrame* topCallFrame);
+    void invalidateCodeBlocksOnStack(Locker<Lock>& codeBlockSetLocker, CallFrame* topCallFrame);
 
     void addSignalSender(SignalSender*);
     void removeSignalSender(SignalSender*);

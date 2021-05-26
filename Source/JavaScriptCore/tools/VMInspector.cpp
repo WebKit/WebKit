@@ -89,7 +89,8 @@ auto VMInspector::lock(Seconds timeout) -> Expected<Locker, Error>
 }
 
 #if ENABLE(JIT)
-static bool ensureIsSafeToLock(UncheckedLock& lock)
+template<typename LockType>
+static bool ensureIsSafeToLock(LockType& lock)
 {
     unsigned maxRetries = 2;
     unsigned tryCount = 0;
@@ -102,7 +103,7 @@ static bool ensureIsSafeToLock(UncheckedLock& lock)
         tryCount++;
     }
     return false;
-};
+}
 #endif // ENABLE(JIT)
 
 void VMInspector::forEachVM(Function<FunctorStatus(VM&)>&& func)
@@ -171,7 +172,7 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
             return FunctorStatus::Continue; // Skip this VM.
         }
 
-        Locker locker { codeBlockSetLock };
+        WTF::Locker locker { codeBlockSetLock };
         vm.heap.forEachCodeBlockIgnoringJITPlans(locker, [&] (CodeBlock* cb) {
             JITCode* jitCode = cb->jitCode().get();
             if (!jitCode) {

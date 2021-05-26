@@ -168,7 +168,7 @@ public:
     
     BlockDirectory* firstDirectory() const { return m_directories.first(); }
     
-    UncheckedLock& directoryLock() { return m_directoryLock; }
+    Lock& directoryLock() { return m_directoryLock; }
     void addBlockDirectory(const AbstractLocker&, BlockDirectory*);
     
     // When this is true it means that we have flipped but the mark bits haven't converged yet.
@@ -214,7 +214,7 @@ private:
     HeapVersion m_newlyAllocatedVersion { initialVersion };
     bool m_isIterating { false };
     bool m_isMarking { false };
-    UncheckedLock m_directoryLock;
+    Lock m_directoryLock;
     MarkedBlockSet m_blocks;
     
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_activeWeakSets;

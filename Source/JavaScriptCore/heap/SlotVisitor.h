@@ -161,7 +161,7 @@ public:
 
     bool mutatorIsStopped() const final { return m_mutatorIsStopped; }
     
-    UncheckedLock& rightToRun() { return m_rightToRun; }
+    Lock& rightToRun() WTF_RETURNS_LOCK(m_rightToRun) { return m_rightToRun; }
     
     void updateMutatorIsStopped(const AbstractLocker&);
     void updateMutatorIsStopped();
@@ -232,7 +232,7 @@ private:
     bool m_mutatorIsStopped { false };
     bool m_canOptimizeForStoppedMutator { false };
     bool m_isInParallelMode { false };
-    UncheckedLock m_rightToRun;
+    Lock m_rightToRun;
     
     // Put padding here to mitigate false sharing between multiple SlotVisitors.
     char padding[64];

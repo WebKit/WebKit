@@ -109,14 +109,14 @@ size_t JITWorklist::queueLength(const AbstractLocker&) const
     return queueLength;
 }
 
-void JITWorklist::suspendAllThreads()
+void JITWorklist::suspendAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     m_suspensionLock.lock();
     for (unsigned i = m_threads.size(); i--;)
         m_threads[i]->m_rightToRun.lock();
 }
 
-void JITWorklist::resumeAllThreads()
+void JITWorklist::resumeAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     for (unsigned i = m_threads.size(); i--;)
         m_threads[i]->m_rightToRun.unlock();

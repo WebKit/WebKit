@@ -95,7 +95,8 @@ bool EntryPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLengt
     }
 
     if (m_streamingParser.finalize() != StreamingParser::State::Finished) {
-        fail(Locker { m_lock }, m_streamingParser.errorMessage());
+        Locker locker { m_lock };
+        fail(m_streamingParser.errorMessage());
         return false;
     }
 
@@ -128,8 +129,10 @@ void EntryPlan::prepare()
         auto binding = wasmToWasm(importFunctionIndex);
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {
-            case BindingFailure::OutOfMemory:
-                return fail(Locker { m_lock }, makeString("Out of executable memory at import ", String::number(importIndex)));
+            case BindingFailure::OutOfMemory: {
+                Locker locker { m_lock };
+                return fail(makeString("Out of executable memory at import ", String::number(importIndex)));
+            }
             }
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -174,7 +177,7 @@ public:
         m_plan.m_numberOfActiveThreads--;
 
         if (!m_plan.m_numberOfActiveThreads && !m_plan.hasWork())
-            m_plan.complete(locker);
+            m_plan.complete();
     }
 
     EntryPlan& m_plan;
@@ -216,17 +219,17 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
     }
 }
 
-void EntryPlan::complete(const AbstractLocker& locker)
+void EntryPlan::complete()
 {
     ASSERT(m_state != State::Compiled || m_currentIndex >= m_moduleInformation->functions.size());
     dataLogLnIf(WasmEntryPlanInternal::verbose, "Starting Completion");
 
     if (!failed() && m_state == State::Compiled)
-        didCompleteCompilation(locker);
+        didCompleteCompilation();
 
     if (!isComplete()) {
         moveToState(State::Completed);
-        runCompletionTasks(locker);
+        runCompletionTasks();
     }
 }
 

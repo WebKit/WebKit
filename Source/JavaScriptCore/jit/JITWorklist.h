@@ -118,7 +118,7 @@ private:
     // be completed.
     Vector<RefPtr<JITPlan>, 16> m_readyPlans;
 
-    UncheckedLock m_suspensionLock;
+    Lock m_suspensionLock;
     Box<Lock> m_lock;
 
     Ref<AutomaticThreadCondition> m_planEnqueued;

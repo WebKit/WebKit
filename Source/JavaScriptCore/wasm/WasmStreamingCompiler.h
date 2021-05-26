@@ -62,15 +62,15 @@ private:
 
     bool didReceiveFunctionData(unsigned, const FunctionData&) final;
     void didFinishParsing() final;
-    void didComplete(const AbstractLocker&);
-    void completeIfNecessary(const AbstractLocker&);
+    void didComplete() WTF_REQUIRES_LOCK(m_lock);
+    void completeIfNecessary() WTF_REQUIRES_LOCK(m_lock);
 
     VM& m_vm;
     CompilerMode m_compilerMode;
-    bool m_eagerFailed { false };
-    bool m_finalized { false };
+    bool m_eagerFailed WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_finalized WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_threadedCompilationStarted { false };
-    UncheckedLock m_lock;
+    Lock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
     JSPromise* m_promise; // Raw pointer, but held by DeferredWorkTimer.
     Ref<Wasm::ModuleInformation> m_info;

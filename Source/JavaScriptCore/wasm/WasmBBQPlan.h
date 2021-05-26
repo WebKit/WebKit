@@ -78,7 +78,7 @@ public:
 private:
     bool prepareImpl() final;
     void compileFunction(uint32_t functionIndex) final;
-    void didCompleteCompilation(const AbstractLocker&) final;
+    void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) final;
 
     std::unique_ptr<InternalFunction> compileFunction(uint32_t functionIndex, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&, TierUpCount*);
 

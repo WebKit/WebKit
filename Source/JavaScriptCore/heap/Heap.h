@@ -716,8 +716,8 @@ private:
     Atomic<unsigned> m_worldState;
     bool m_worldIsStopped { false };
     Lock m_visitRaceLock;
-    UncheckedLock m_markingMutex;
-    UncheckedCondition m_markingConditionVariable;
+    Lock m_markingMutex;
+    Condition m_markingConditionVariable;
 
     MonotonicTime m_beforeGC;
     MonotonicTime m_afterGC;

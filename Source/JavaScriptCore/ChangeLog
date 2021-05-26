@@ -1,5 +1,83 @@
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
+        Use UncheckedLock even less in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=226278
+
+        Reviewed by Darin Adler.
+
+        Use UncheckedLock even less in JavaScriptCore as it is being phased out in
+        favor of Lock, which supports Clang thread safety analysis.
+
+        * heap/BlockDirectory.h:
+        (JSC::BlockDirectory::WTF_RETURNS_LOCK):
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::WTF_RETURNS_LOCK):
+        * heap/Heap.h:
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::directoryLock):
+        * heap/MarkingConstraintSolver.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::donateKnownParallel):
+        * heap/SlotVisitor.h:
+        * jit/JITWorklist.cpp:
+        * jit/JITWorklist.h:
+        * jsc.cpp:
+        * profiler/ProfilerDatabase.h:
+        * runtime/DeferredWorkTimer.h:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::invalidateCodeBlocksOnStack):
+        * runtime/VMTraps.h:
+        * tools/FunctionOverrides.cpp:
+        (JSC::FunctionOverrides::FunctionOverrides):
+        (JSC::FunctionOverrides::reinstallOverrides):
+        (JSC::FunctionOverrides::parseOverridesInFile):
+        * tools/FunctionOverrides.h:
+        (JSC::FunctionOverrides::WTF_REQUIRES_LOCK):
+        * tools/VMInspector.cpp:
+        (JSC::ensureIsSafeToLock):
+        (JSC::VMInspector::codeBlockForMachinePC):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::parseAndValidateModule):
+        (JSC::Wasm::EntryPlan::prepare):
+        (JSC::Wasm::EntryPlan::ThreadCountHolder::~ThreadCountHolder):
+        (JSC::Wasm::EntryPlan::complete):
+        * wasm/WasmEntryPlan.h:
+        (JSC::Wasm::EntryPlan::tryReserveCapacity):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        (JSC::Wasm::LLIntPlan::completeInStreaming):
+        (JSC::Wasm::LLIntPlan::didFailInStreaming):
+        * wasm/WasmLLIntPlan.h:
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::work):
+        * wasm/WasmOMGForOSREntryPlan.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOMGPlan.h:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::runCompletionTasks):
+        (JSC::Wasm::Plan::tryRemoveContextAndCancelIfLast):
+        (JSC::Wasm::Plan::fail):
+        * wasm/WasmPlan.h:
+        * wasm/WasmStreamingCompiler.cpp:
+        (JSC::Wasm::StreamingCompiler::didCompileFunction):
+        (JSC::Wasm::StreamingCompiler::completeIfNecessary):
+        (JSC::Wasm::StreamingCompiler::didComplete):
+        (JSC::Wasm::StreamingCompiler::finalize):
+        * wasm/WasmStreamingCompiler.h:
+        * wasm/WasmStreamingPlan.cpp:
+        (JSC::Wasm::StreamingPlan::work):
+        * wasm/WasmStreamingPlan.h:
+        * wasm/WasmThunks.h:
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
         Stop using UncheckedLock in WTF::AutomaticThread
         https://bugs.webkit.org/show_bug.cgi?id=226255
 
