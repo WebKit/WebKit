@@ -273,22 +273,6 @@ Lab<float> ColorConversion<Lab<float>, LCHA<float>>::convert(const LCHA<float>& 
     };
 }
 
-// MARK: SRGBA<uint8_t> conversions.
-
-SRGBA<float> ColorConversion<SRGBA<float>, SRGBA<uint8_t>>::convert(const SRGBA<uint8_t>& color)
-{
-    return makeFromComponents<SRGBA<float>>(asColorComponents(color).map([](uint8_t value) -> float {
-        return value / 255.0f;
-    }));
-}
-
-SRGBA<uint8_t> ColorConversion<SRGBA<uint8_t>, SRGBA<float>>::convert(const SRGBA<float>& color)
-{
-    return makeFromComponents<SRGBA<uint8_t>>(asColorComponents(color).map([](float value) -> uint8_t {
-        return std::clamp(std::lround(value * 255.0f), 0l, 255l);
-    }));
-}
-
 // MARK: Conversion functions for raw color components with associated color spaces.
 
 ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace)

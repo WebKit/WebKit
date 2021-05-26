@@ -1,3 +1,33 @@
+2021-05-25  Sam Weinig  <weinig@apple.com>
+
+        Support byte components for all bounded RGB color types, not just SRGBA
+        https://bugs.webkit.org/show_bug.cgi?id=226222
+
+        Reviewed by Darin Adler.
+
+        We currently arbitrarily restrict byte components (e.g. SRGBA<uint8_t>)
+        to just SRGBA by only supporting conversion for that one color type. Support
+        for any bounded (e.g. [0..1]) RGB type would have the same semantics and
+        be useful now that we can get pixel buffers that are not SRGBA only out
+        of ImageBuffer.
+
+        To do this, we replace the ColorConversion specializations for this type
+        of conversion, and inline it directly in the main conversion convert function,
+        allowing for a more complex conditional without SFINAE complexity.
+
+        To make things a bit simpler, this also simplifies the RGB color type descriptors
+        to no longer be templates, as the description of the types is always float
+        based, regardless of the component used. This allows for a simpler new helper,
+        SelfWithReplacementComponent, to convert to and from ColorType<float>/ColorType<uint8_t>.
+
+        * platform/graphics/ColorConversion.cpp:
+        (WebCore::SRGBA<uint8_t>>::convert): Deleted.
+        * platform/graphics/ColorConversion.h:
+        (WebCore::ColorConversion::convert):
+        (WebCore::ColorConversion::handleToFloatConversion):
+        (WebCore::ColorConversion::handleToByteConversion):
+        * platform/graphics/ColorTypes.h:
+
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
         CSP does not apply to AudioWorklets

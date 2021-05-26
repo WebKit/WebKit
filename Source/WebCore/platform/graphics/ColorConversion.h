@@ -114,16 +114,6 @@ template<> struct ColorConversion<Lab<float>, XYZA<float, WhitePoint::D50>> {
     WEBCORE_EXPORT static Lab<float> convert(const XYZA<float, WhitePoint::D50>&);
 };
 
-// MARK: SRGBA<uint8_t>
-// Only sRGB supports non-floating point component types.
-template<> struct ColorConversion<SRGBA<float>, SRGBA<uint8_t>> {
-    WEBCORE_EXPORT static SRGBA<float> convert(const SRGBA<uint8_t>&);
-};
-template<> struct ColorConversion<SRGBA<uint8_t>, SRGBA<float>> {
-    WEBCORE_EXPORT static SRGBA<uint8_t> convert(const SRGBA<float>&);
-};
-
-
 // Identity conversion.
 
 template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
@@ -154,19 +144,21 @@ template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
 // │    Lab    │    ││ Gamma  │ │ GammaExtended  ││   │   ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││ ││ Gamma  │ │ GammaExtended  ││
 // └─────▲─────┘    │└────────┘ └────────────────┘│   │   │└────▲───┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│ │└────────┘ └────────────────┘│
 //       │          └─────────────────────────────┘   │   └─────┼───────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘ └─────────────────────────────┘
-//       │                                            │      ┌──┴──────────┬─────────────┐
-//       │                                            │      │             │             │
-// ┌───────────┐                                      │┌───────────┐ ┌───────────┐┌─────────────┐
-// │    LCH    │                                      ││    HSL    │ │    HWB    ││SRGB<uint8_t>│
-// └───────────┘                                      │└───────────┘ └───────────┘└─────────────┘
+//       │                                            │      ┌──┴──────────┐
+//       │                                            │      │             │
+// ┌───────────┐                                      │┌───────────┐ ┌───────────┐
+// │    LCH    │                                      ││    HSL    │ │    HWB    │
+// └───────────┘                                      │└───────────┘ └───────────┘
 
 template<typename Output, typename Input, typename> struct ColorConversion {
 public:
     static constexpr Output convert(const Input& color)
     {
-        // 1. Handle the special case SRGBA<uint8_t> for Input and Output.
-        if constexpr (std::is_same_v<Input, SRGBA<uint8_t>> || std::is_same_v<Output, SRGBA<uint8_t>>)
-            return convertColor<Output>(convertColor<SRGBA<float>>(color));
+        // 1. Handle the special case of Input or Output with a uint8_t component type.
+        if constexpr (std::is_same_v<typename Input::ComponentType, uint8_t>)
+            return handleToFloatConversion(color);
+        else if constexpr (std::is_same_v<typename Output::ComponentType, uint8_t>)
+            return handleToByteConversion(color);
 
         // 2. Handle all color types that are not IsRGBType<T> or IsXYZA<T> for Input and Output. For all
         //    these other color types, we can uncondtionally convert them to their "reference" color, as
@@ -194,6 +186,28 @@ public:
     }
 
 private:
+    static inline constexpr Output handleToFloatConversion(const Input& color)
+    {
+        static_assert(IsRGBBoundedType<Input>, "Only bounded ([0..1]) RGB color types support conversion to/from bytes.");
+
+        using InputWithReplacement = ColorTypeWithReplacementComponent<Input, float>;
+        if constexpr (std::is_same_v<InputWithReplacement, Output>)
+            return makeFromComponents<InputWithReplacement>(asColorComponents(color).map([](uint8_t value) -> float { return value / 255.0f; }));
+        else
+            return convertColor<Output>(convertColor<InputWithReplacement>(color));
+    }
+
+    static inline constexpr Output handleToByteConversion(const Input& color)
+    {
+        static_assert(IsRGBBoundedType<Output>, "Only bounded ([0..1]) RGB color types support conversion to/from bytes.");
+
+        using OutputWithReplacement = ColorTypeWithReplacementComponent<Output, float>;
+        if constexpr (std::is_same_v<OutputWithReplacement, Input>)
+            return makeFromComponents<Output>(asColorComponents(color).map([](float value) -> uint8_t { return std::clamp(std::lround(value * 255.0f), 0l, 255l); }));
+        else
+            return convertColor<Output>(convertColor<OutputWithReplacement>(color));
+    }
+
     template<typename ColorType> static inline constexpr auto toLinearEncoded(const ColorType& color) -> typename ColorType::LinearCounterpart
     {
         auto [c1, c2, c3, alpha] = color;
