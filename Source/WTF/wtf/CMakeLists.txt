@@ -584,13 +584,13 @@ if (USE_VERSION_STAMPER)
         VERBATIM)
 endif ()
 
-set(WTF_UNIFIED_SOURCES_SCRIPTS
-    ../Scripts/generate-unified-source-bundles.rb
-)
+file(MAKE_DIRECTORY ${WTF_SCRIPTS_DIR})
+
+message(STATUS "Copying generate-unified-source-bundles.rb to: ${WTF_SCRIPTS_DIR}")
 
 file(COPY
-     ${WTF_UNIFIED_SOURCES_SCRIPTS}
-     DESTINATION ${WTF_SCRIPTS_DIR}
+    ../Scripts/generate-unified-source-bundles.rb
+    DESTINATION ${WTF_SCRIPTS_DIR}
 )
 
 set(WTF_PREFERENCES
