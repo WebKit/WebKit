@@ -1,3 +1,19 @@
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
+        CSP does not apply to AudioWorklets
+        https://bugs.webkit.org/show_bug.cgi?id=225862
+        <rdar://problem/78098440>
+
+        Reviewed by Eric Carlson.
+
+        Make sure Worklet::addModule() checks with CSP before attempting to load the script.
+
+        Tests: http/tests/security/contentSecurityPolicy/audioworklet-script-src-allowed.html
+               http/tests/security/contentSecurityPolicy/audioworklet-script-src-blocked.html
+
+        * worklets/Worklet.cpp:
+        (WebCore::Worklet::addModule):
+
 2021-05-25  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] REGRESSION(r254389) media controls needs the full list of language preferences for ordering tracks

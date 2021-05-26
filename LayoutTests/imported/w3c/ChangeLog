@@ -1,5 +1,17 @@
 2021-05-25  Chris Dumez  <cdumez@apple.com>
 
+        CSP does not apply to AudioWorklets
+        https://bugs.webkit.org/show_bug.cgi?id=225862
+        <rdar://problem/78098440>
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/worklets/audio-worklet-csp.https-expected.txt:
+
+2021-05-25  Chris Dumez  <cdumez@apple.com>
+
         SecurityPolicyViolationEvent.constructor do not throw any exception as expected when eventInitDict param do not include all the members required
         https://bugs.webkit.org/show_bug.cgi?id=226215
 

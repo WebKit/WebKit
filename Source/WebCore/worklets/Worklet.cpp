@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Worklet.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -66,6 +67,11 @@ void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options,
     URL moduleURL = document->completeURL(moduleURLString);
     if (!moduleURL.isValid()) {
         promise.reject(Exception { SyntaxError, "Module URL is invalid"_s });
+        return;
+    }
+
+    if (!document->contentSecurityPolicy()->allowScriptFromSource(moduleURL)) {
+        promise.reject(Exception { SecurityError, "Not allowed by CSP"_s });
         return;
     }
 
