@@ -1,3 +1,14 @@
+2021-05-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Abandon pending tasks on background thread when WebIDBServer is closed
+        https://bugs.webkit.org/show_bug.cgi?id=226295
+
+        Reviewed by Chris Dumez.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp: Disable threading check as we may
+        abort transactions on the main thread.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+
 2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor some data detector code in WebCore::Frame

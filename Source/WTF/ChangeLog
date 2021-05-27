@@ -1,3 +1,19 @@
+2021-05-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Abandon pending tasks on background thread when WebIDBServer is closed
+        https://bugs.webkit.org/show_bug.cgi?id=226295
+
+        Reviewed by Chris Dumez.
+
+        Make the wait end with either a new message or queue being killed.
+
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::waitForMessage):
+        * wtf/CrossThreadTask.h:
+        (WTF::CrossThreadTask::operator bool const):
+        * wtf/CrossThreadTaskHandler.cpp:
+        (WTF::CrossThreadTaskHandler::taskRunLoop):
+
 2021-05-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add check for timingsafe_bcmp

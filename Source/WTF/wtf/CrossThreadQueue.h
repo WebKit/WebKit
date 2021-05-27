@@ -73,7 +73,7 @@ DataType CrossThreadQueue<DataType>::waitForMessage()
     Locker locker { m_lock };
 
     auto found = m_queue.end();
-    while (found == m_queue.end()) {
+    while (!m_killed && found == m_queue.end()) {
         found = m_queue.begin();
         if (found != m_queue.end())
             break;

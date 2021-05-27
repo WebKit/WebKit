@@ -415,18 +415,23 @@ void WebIDBServer::close()
     for (auto* connection : m_connections)
         connection->removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
 
-    CrossThreadTaskHandler::setCompletionCallback([protectedThis = makeRef(*this)]() mutable {
+    CrossThreadTaskHandler::setCompletionCallback([this, protectedThis = makeRef(*this)]() mutable {
         ASSERT(!RunLoop::isMain());
-        callOnMainRunLoop([protectedThis = WTFMove(protectedThis)]() mutable { });
-    });
 
-    postTask([this]() mutable {
         m_connectionMap.clear();
-
         Locker locker { m_serverLock };
         m_server = nullptr;
-        CrossThreadTaskHandler::kill();
+
+        callOnMainRunLoop([protectedThis = WTFMove(protectedThis)] { });
     });
+
+    {
+        Locker locker { m_serverLock };
+        if (m_server)
+            m_server->stopDatabaseActivitiesOnMainThread();
+    }
+
+    CrossThreadTaskHandler::kill();
 
     m_closeCallback();
 }

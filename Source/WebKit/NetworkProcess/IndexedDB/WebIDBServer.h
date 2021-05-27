@@ -98,7 +98,7 @@ private:
     void tryClose();
 
     Lock m_serverLock;
-    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
+    std::unique_ptr<WebCore::IDBServer::IDBServer> m_server WTF_GUARDED_BY_LOCK(m_serverLock);
     bool m_isSuspended { false };
 
     HashMap<IPC::Connection::UniqueID, std::unique_ptr<WebIDBConnectionToClient>> m_connectionMap;

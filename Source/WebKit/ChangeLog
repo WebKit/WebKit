@@ -1,3 +1,18 @@
+2021-05-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Abandon pending tasks on background thread when WebIDBServer is closed
+        https://bugs.webkit.org/show_bug.cgi?id=226295
+
+        Reviewed by Chris Dumez.
+
+        When WebIDBServer is closed, it means there is no open connection to client, so we don't need to handle pending
+        tasks. We can ditch them by killing the CrossThreadQueue. For ongoing task, it can be blocked on quota check, so
+        let's just stop database activities on the main thread to make sure database lock is released.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::close):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+
 2021-05-27  Alex Christensen  <achristensen@webkit.org>
 
         Revert r277344

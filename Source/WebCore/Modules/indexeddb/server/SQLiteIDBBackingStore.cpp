@@ -1004,6 +1004,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     if (!m_sqliteDB)
         return IDBError { UnknownError, "Unable to open database file on disk"_s };
 
+    m_sqliteDB->disableThreadingChecks();
     m_sqliteDB->enableAutomaticWALTruncation();
 
     m_sqliteDB->setCollationFunction("IDBKEY", [](int aLength, const void* a, int bLength, const void* b) {
