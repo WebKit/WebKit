@@ -345,7 +345,7 @@ SharedBufferDataView::SharedBufferDataView(Ref<SharedBuffer::DataSegment>&& segm
     : m_positionWithinSegment(positionWithinSegment)
     , m_segment(WTFMove(segment))
 {
-    ASSERT(positionWithinSegment < m_segment->size());
+    RELEASE_ASSERT(positionWithinSegment < m_segment->size());
 }
 
 size_t SharedBufferDataView::size() const

@@ -1,3 +1,17 @@
+2021-05-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Hardening] Use a RELEASE_ASSERT for SharedBufferDataView constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226346
+        <rdar://problem/78115298>
+
+        Reviewed by Ryosuke Niwa.
+
+        We have a DEBUG assert in the constructor for SharedBufferDataView. Debug test show that we don't hit this during normal
+        operation, and it's not a hot code path. We should make it a RELEASE_ASSERT.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBufferDataView::SharedBufferDataView):
+
 2021-05-27  Sihui Liu  <sihui_liu@apple.com>
 
         Abandon pending tasks on background thread when WebIDBServer is closed
