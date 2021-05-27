@@ -1,3 +1,19 @@
+2021-05-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Silence reports about 'com.apple.runningboard'
+        https://bugs.webkit.org/show_bug.cgi?id=226357
+        <rdar://problem/76144219>
+
+        Reviewed by Per Arne Vollan.
+
+        We blocked access to 'com.apple.runningboard' from the WebContent process in Bug 209933 (about a year ago). Since
+        then, the only telemetry we have received has been for a benign Accessibility call that fails closed in way that
+        does not impact the features of the Accessibility Framework used inside the WebContent process.
+
+        We should silence this report to avoid spending time symbolicating and generating traces.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-05-27  Sihui Liu  <sihui_liu@apple.com>
 
         Abandon pending tasks on background thread when WebIDBServer is closed
