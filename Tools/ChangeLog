@@ -1,3 +1,46 @@
+2021-05-27  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Implement high-level retry loop for run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=225803
+
+        Reviewed by Adrian Perez de Castro.
+
+        Now that we have information on which tests produced a result and
+        which tests were never heard of, introduce retry logic for the
+        incomplete tests. This should only modify the behavior when using
+        --gnu-parallel-runner.
+
+        The issue here is that the MIPS boards currently in use for JSC
+        testing routinely crash and, often enough, end up with filesystem
+        corruption and need to have their R/W storage reinitialized.
+
+        Work around this by re-executing the tests that we weren't able to get
+        a result for. When some tests failed to complete, go through the
+        process of remote initilization (copying over and unpacking the
+        bundle) from scratch, so that remotes that had their remoteDirectory
+        wiped will get back into play.
+
+        To make this more efficient, introduce in-band signaling to let
+        run-jsc-stress-tests know that a remote lost its state. In response,
+        we kill the GNU parallel process and re-initialize all boards. This
+        helps for buildbot workers that only have a few remote boards assigned
+        and apparently also works around a bug in GNU parallel 20161222
+        (currently the most widely deployed version) which causes it to run
+        out of open files and get stuck in a busy loop.
+
+        While here, make run-jsc-stress-tests more robust against corrupted
+        status files, i.e. ignore empty ones (observed in practice) and use a
+        regex to verify the contents of non-empty state files.
+
+        For consistency, use the same logic for parsing status files when
+        doing local runs.
+
+        In testing with two remotes, run-jsc-stress-tests was able to recover
+        from either one or both of its remotes rebooting and wiping their
+        local storage in the middle of a test run.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-05-26  Jean-Yves Avenard  <jya@apple.com>
 
         Make MediaSession readystate enums all lowercase
