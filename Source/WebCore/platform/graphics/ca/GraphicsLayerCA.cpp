@@ -4034,6 +4034,58 @@ void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, Opt
     ts << indent << ")\n";
 }
 
+static TextStream& operator<<(TextStream& textStream, AnimatedPropertyID propertyID)
+{
+    switch (propertyID) {
+    case AnimatedPropertyInvalid: textStream << "invalid"; break;
+    case AnimatedPropertyTranslate: textStream << "translate"; break;
+    case AnimatedPropertyScale: textStream << "scale"; break;
+    case AnimatedPropertyRotate: textStream << "rotate"; break;
+    case AnimatedPropertyTransform: textStream << "transform"; break;
+    case AnimatedPropertyOpacity: textStream << "opacity"; break;
+    case AnimatedPropertyBackgroundColor: textStream << "background-color"; break;
+    case AnimatedPropertyFilter: textStream << "filter"; break;
+#if ENABLE(FILTERS_LEVEL_2)
+    case AnimatedPropertyWebkitBackdropFilter: textStream << "backdrop-filter"; break;
+#endif
+    }
+    return textStream;
+}
+
+void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, const char* category, const Vector<LayerPropertyAnimation>& animations)
+{
+    auto dumpAnimation = [&textStream](const LayerPropertyAnimation& animation) {
+        textStream << indent << "(" << animation.m_name;
+        {
+            TextStream::IndentScope indentScope(textStream);
+            textStream.dumpProperty("CA animation", animation.m_animation.get());
+            textStream.dumpProperty("property", animation.m_property);
+            textStream.dumpProperty("index", animation.m_index);
+            textStream.dumpProperty("subindex", animation.m_subIndex);
+            textStream.dumpProperty("time offset", animation.m_timeOffset);
+            textStream.dumpProperty("begin time", animation.m_beginTime);
+            textStream.dumpProperty("play state", (unsigned)animation.m_playState);
+            if (animation.m_pendingRemoval)
+                textStream.dumpProperty("pending removal", animation.m_pendingRemoval);
+            textStream << ")";
+        }
+    };
+    
+    if (animations.isEmpty())
+        return;
+    
+    textStream << indent << "(" << category << "\n";
+    {
+        TextStream::IndentScope indentScope(textStream);
+        for (const auto& animation : animations) {
+            TextStream::IndentScope indentScope(textStream);
+            dumpAnimation(animation);
+        }
+
+        textStream << ")\n";
+    }
+}
+
 void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTreeAsTextBehavior behavior) const
 {
     if (behavior & LayerTreeAsTextIncludeVisibleRects) {
@@ -4078,6 +4130,10 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTree
     if (behavior & LayerTreeAsTextDebug) {
         if (m_usesDisplayListDrawing)
             textStream << indent << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
+
+        dumpAnimations(textStream, "animations", m_animations);
+        dumpAnimations(textStream, "base value animations", m_baseValueTransformAnimations);
+        dumpAnimations(textStream, "animation groups", m_animationGroups);
     }
 }
 

@@ -1,3 +1,19 @@
+2021-05-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Add animations to GraphicsLayer logging output
+        https://bugs.webkit.org/show_bug.cgi?id=226303
+
+        Reviewed by Tim Horton.
+
+        Log animations in GraphicsLayer, so that it shows up in the "Layers" log channel,
+        and in showGraphicsLayerTree() output.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::operator<<):
+        (WebCore::GraphicsLayerCA::dumpAnimations):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties const):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2021-05-27  Brent Fulgham  <bfulgham@apple.com>
 
         Pass frame ref during navigationPolicyCompletionHandler

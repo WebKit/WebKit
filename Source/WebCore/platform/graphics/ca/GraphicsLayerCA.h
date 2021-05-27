@@ -498,6 +498,8 @@ private:
     bool removeCAAnimationFromLayer(LayerPropertyAnimation&);
     void pauseCAAnimationOnLayer(LayerPropertyAnimation&);
 
+    static void dumpAnimations(WTF::TextStream&, const char* category, const Vector<LayerPropertyAnimation>&);
+
     enum MoveOrCopy { Move, Copy };
     static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
     void moveOrCopyAnimations(MoveOrCopy, PlatformCALayer* fromLayer, PlatformCALayer* toLayer);
