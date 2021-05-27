@@ -1,3 +1,10 @@
+2021-05-26  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        Unreviewed test gardening, remove some outdated test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=226284
+
+        * TestExpectations:
+
 2021-05-26  Chris Lord  <clord@igalia.com>
 
         Scrollbars/indicators are sometimes incorrectly drawn when async overflow scrolling is enabled
