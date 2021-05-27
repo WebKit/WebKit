@@ -2241,7 +2241,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_closeAllMediaPresentations
 {
     THROW_IF_SUSPENDED;
-    [self closeAllMediaPresentationsWithCompletionHandler:nil];
+    [self closeAllMediaPresentationsWithCompletionHandler:^{ }];
 }
 
 - (void)_stopMediaCapture

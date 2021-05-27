@@ -1,3 +1,13 @@
+2021-05-27  Peng Liu  <peng.liu6@apple.com>
+
+        Calling -[WKWebView _closeAllMediaPresentations] crashes
+        https://bugs.webkit.org/show_bug.cgi?id=226305
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        (TEST):
+
 2021-05-27  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Implement high-level retry loop for run-jsc-stress-tests

@@ -1,3 +1,15 @@
+2021-05-27  Peng Liu  <peng.liu6@apple.com>
+
+        Calling -[WKWebView _closeAllMediaPresentations] crashes
+        https://bugs.webkit.org/show_bug.cgi?id=226305
+
+        Reviewed by Chris Dumez.
+
+        Provide an empty completion handler to fix a crash.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _closeAllMediaPresentations]):
+
 2021-05-27  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK4] Navigation swipe snapshot always times out

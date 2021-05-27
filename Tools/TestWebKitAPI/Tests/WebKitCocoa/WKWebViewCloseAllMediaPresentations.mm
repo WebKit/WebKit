@@ -70,7 +70,6 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
         @"WebKit2Logging": @"Fullscreen=debug",
     }];
 
-
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setAllowsPictureInPictureMediaPlayback:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
@@ -82,6 +81,34 @@ TEST(WKWebViewCloseAllMediaPresentations, PictureInPicture)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_TRUE([webView _allMediaPresentationsClosed]);
+}
+
+TEST(WKWebViewCloseAllMediaPresentationsInternal, PictureInPicture)
+{
+    if (!WebCore::supportsPictureInPicture())
+        return;
+
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+        @"WebCoreLogging": @"Fullscreen=debug",
+        @"WebKit2Logging": @"Fullscreen=debug",
+    }];
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setAllowsPictureInPictureMediaPlayback:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+
+    loadPictureInPicture(webView);
+
+    [webView _closeAllMediaPresentations];
+
+    do {
+        if (![webView stringByEvaluatingJavaScript:@"window.internals.isChangingPresentationMode(document.querySelector('video'))"].boolValue)
+            break;
+
+        TestWebKitAPI::Util::sleep(0.5);
+    } while (true);
 
     EXPECT_TRUE([webView _allMediaPresentationsClosed]);
 }
