@@ -140,7 +140,7 @@ void GraphicsContext::drawWindowsBitmap(WindowsBitmap* bitmap, const IntPoint& p
     drawBitmapToContext(*platformContext(), bitmap->windowsDIB(), IntSize(point.x(), bitmap->size().height() + point.y()));
 }
 
-void GraphicsContextPlatformPrivate::syncContext(cairo_t* cr)
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(cairo_t* cr)
 {
     if (!cr)
        return;

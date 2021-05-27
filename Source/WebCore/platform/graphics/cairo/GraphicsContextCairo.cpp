@@ -58,19 +58,17 @@ namespace WebCore {
 
 GraphicsContextCairo::GraphicsContextCairo(PlatformContextCairo& platformContext)
     : m_platformContext(platformContext)
-    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext))
+    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext.cr()))
 {
     m_platformContext.setGraphicsContextPrivate(m_private.get());
-    m_private->syncContext(m_platformContext.cr());
 }
 
 GraphicsContextCairo::GraphicsContextCairo(cairo_t* cairoContext)
     : m_ownedPlatformContext(makeUnique<PlatformContextCairo>(cairoContext))
     , m_platformContext(*m_ownedPlatformContext)
-    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext))
+    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext.cr()))
 {
     m_platformContext.setGraphicsContextPrivate(m_private.get());
-    m_private->syncContext(m_platformContext.cr());
 }
 
 GraphicsContextCairo::GraphicsContextCairo(PlatformContextCairo* platformContext)

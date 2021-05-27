@@ -27,39 +27,18 @@
 
 #pragma once
 
-#include "GraphicsContext.h"
-
 #if USE(CAIRO)
 
 #include "PlatformContextCairo.h"
-#include "RefPtrCairo.h"
-#include <cairo.h>
-#include <math.h>
-#include <memory>
-#include <stdio.h>
-
-#if PLATFORM(WIN)
-#include <cairo-win32.h>
-#endif
 
 namespace WebCore {
 
 class GraphicsContextPlatformPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphicsContextPlatformPrivate(PlatformContextCairo& platformContext)
-        : platformContext(platformContext)
-    {
-    }
-
-    GraphicsContextPlatformPrivate(std::unique_ptr<PlatformContextCairo>&& platformContext)
-        : ownedPlatformContext(WTFMove(platformContext))
-        , platformContext(*ownedPlatformContext)
-    {
-    }
-
 #if PLATFORM(WIN)
     // On Windows, we need to update the HDC for form controls to draw in the right place.
+    GraphicsContextPlatformPrivate(cairo_t*);
     void save();
     void restore();
     void flush();
@@ -70,9 +49,9 @@ public:
     void translate(float, float);
     void concatCTM(const AffineTransform&);
     void setCTM(const AffineTransform&);
-    void syncContext(cairo_t* cr);
 #else
     // On everything else, we do nothing.
+    GraphicsContextPlatformPrivate(cairo_t*) { }
     void save() { }
     void restore() { }
     void flush() { }
@@ -83,11 +62,7 @@ public:
     void translate(float, float) { }
     void concatCTM(const AffineTransform&) { }
     void setCTM(const AffineTransform&) { }
-    void syncContext(cairo_t*) { }
 #endif
-
-    std::unique_ptr<PlatformContextCairo> ownedPlatformContext;
-    PlatformContextCairo& platformContext;
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
     // NOTE: These may note be needed: review and remove once Cairo implementation is complete

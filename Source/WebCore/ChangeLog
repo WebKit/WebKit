@@ -1,3 +1,28 @@
+2021-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo] Remove unused members ownedPlatformContext and platformContext of GraphicsContextPlatformPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=226310
+
+        Reviewed by Don Olmstead.
+
+        GraphicsContextPlatformPrivate is a class tracking HDC
+        transforming. It doesn't need to know about PlatformContextCairo.
+        Remove unused members ownedPlatformContext and platformContext.
+
+        GraphicsContextPlatformPrivate::syncContext was a setter of
+        cairo_t*. Removed it and set cairo_t* as an argument of the
+        constructor.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::setCTM):
+        (WebCore::GraphicsContextPlatformPrivate::syncContext): Deleted.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::syncContext): Deleted.
+
 2021-05-26  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
 
         [MSE] MediaSample that need to be removed with SourceBufferPrivate::evictCodedFrames() may not be removed.
