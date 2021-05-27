@@ -619,9 +619,8 @@ MOCK output of child process
         self._assert_config_file_for_platform(port, 'linux2', 'apache2.2-httpd.conf')
         self._assert_config_file_for_platform(port, 'linux3', 'apache2.2-httpd.conf')
 
-        port._win_php_version = lambda: '-php7'
-        self._assert_config_file_for_platform(port, 'cygwin', 'win-httpd-2.2-php7.conf')
-        self._assert_config_file_for_platform(port, 'win32', 'win-httpd-2.2-php7.conf')
+        self._assert_config_file_for_platform(port, 'cygwin', 'win-httpd-2.2.conf')
+        self._assert_config_file_for_platform(port, 'win32', 'win-httpd-2.2.conf')
 
         port._is_redhat_based = lambda: True
         port._apache_version = lambda: '2.2'

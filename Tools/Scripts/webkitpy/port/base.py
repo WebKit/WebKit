@@ -1148,20 +1148,10 @@ class Port(object):
         config = self._executive.run_command([self._path_to_apache(), '-v'])
         return re.sub(r'(?:.|\n)*Server version: Apache/(\d+\.\d+)(?:.|\n)*', r'\1', config)
 
-    def _win_php_version(self):
-        root = os.environ.get('XAMPP_ROOT', 'C:\\xampp')
-        prefix = self._filesystem.join(root, 'php')
-        for version in ('5', '7'):
-            conf = self._filesystem.join(prefix, "php{}ts.dll".format(version))
-            if self._filesystem.exists(conf):
-                return "-php{}".format(version)
-        _log.error("No php?ts.dll found in {}".format(prefix))
-        return ""
-
     # We pass sys_platform into this method to make it easy to unit test.
     def _apache_config_file_name_for_platform(self, sys_platform):
         if sys_platform in ['cygwin', 'win32']:
-            return 'win-httpd-' + self._apache_version() + self._win_php_version() + '.conf'
+            return 'win-httpd-' + self._apache_version() + '.conf'
         if sys_platform == 'darwin':
             return 'apache' + self._apache_version() + '-darwin-httpd.conf'
         if sys_platform.startswith('linux'):
