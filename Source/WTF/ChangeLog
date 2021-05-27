@@ -1,3 +1,23 @@
+2021-05-27  Devin Rousso  <drousso@apple.com>
+
+        Use `NSLocale` SPI for comparing language identifiers instead of string comparison
+        https://bugs.webkit.org/show_bug.cgi?id=226252
+
+        Reviewed by Wenson Hsieh.
+
+        The existing `indexOfBestMatchingLanguageInList` logic uses (sub)string comparison of BCP47
+        language tags (e.g. looking for a `'-'` and comparing the substring before and after in the
+        input language and each item in the language list). While this does work for some languages,
+        it's really not the correct way to compare BCP47 language tags. Additionally, it basically
+        ignores the text after the first `'-'`, unless there's an exact match with the input
+        language. This leads to `"zh-CN"` and `"zh-HK"` being considered a (not exact) match, which
+        isn't ideal.
+
+        * wtf/Language.cpp:
+        * wtf/cocoa/LanguageCocoa.mm:
+        (WTF::indexOfBestMatchingLanguageInList): Added.
+        * wtf/spi/cocoa/NSLocaleSPI.h:
+
 2021-05-26  Cameron McCormack  <heycam@apple.com>
 
         Prevent sbix glyphs from being rendered in the GPU process

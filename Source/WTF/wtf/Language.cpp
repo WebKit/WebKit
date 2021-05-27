@@ -141,6 +141,8 @@ Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLang
     return isolatedCopy(languages);
 }
 
+#if !PLATFORM(COCOA)
+
 static String canonicalLanguageIdentifier(const String& languageCode)
 {
     String lowercaseLanguageCode = languageCode.convertToASCIILowercase();
@@ -195,6 +197,8 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
 
     return languageList.size();
 }
+
+#endif // !PLATFORM(COCOA)
 
 String displayNameForLanguageLocale(const String& localeName)
 {
