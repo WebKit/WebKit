@@ -30,6 +30,8 @@
 
 #include "AbstractSlotVisitor.h"
 #include "CodeBlock.h"
+#include "HeapInlines.h"
+#include "VMInlines.h"
 #include <wtf/CompilationThread.h>
 
 namespace JSC {

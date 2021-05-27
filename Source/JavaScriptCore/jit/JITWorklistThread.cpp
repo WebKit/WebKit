@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "HeapInlines.h"
 #include "JITWorklist.h"
 #include "VM.h"
 

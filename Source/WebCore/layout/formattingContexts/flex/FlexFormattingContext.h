@@ -29,7 +29,7 @@
 
 #include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
-#include "FormattingContext.h"
+#include "FormattingQuirks.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {

@@ -39,6 +39,7 @@
 #include "CairoOperations.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "Gradient.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"

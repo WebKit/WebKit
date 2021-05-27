@@ -31,6 +31,7 @@
 #include <wtf/Expected.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/URL.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 

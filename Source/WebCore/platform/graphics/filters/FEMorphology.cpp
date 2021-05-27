@@ -26,6 +26,7 @@
 #include "FEMorphology.h"
 
 #include "ColorComponents.h"
+#include "ColorTypes.h"
 #include "Filter.h"
 #include "PixelBuffer.h"
 #include <wtf/ParallelJobs.h>

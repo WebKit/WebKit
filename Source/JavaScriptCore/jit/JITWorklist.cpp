@@ -28,9 +28,10 @@
 
 #if ENABLE(JIT)
 
+#include "HeapInlines.h"
 #include "JITSafepoint.h"
 #include "JITWorklistThread.h"
-#include "SlotVisitor.h"
+#include "SlotVisitorInlines.h"
 #include "VMInlines.h"
 #include <wtf/CompilationThread.h>
 

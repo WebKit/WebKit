@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "CSSGridIntegerRepeatValue.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
