@@ -26,30 +26,30 @@ RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, posi
 EXPECTED (latestChange == '') OK
 
 * ReadyState
-EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
-RUN(navigator.mediaSession.readyState = 'haveMetadata')
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+RUN(navigator.mediaSession.readyState = 'havemetadata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
-RUN(navigator.mediaSession.readyState = 'haveCurrentData')
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+RUN(navigator.mediaSession.readyState = 'havecurrentdata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
-RUN(navigator.mediaSession.readyState = 'haveFutureData')
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+RUN(navigator.mediaSession.readyState = 'havefuturedata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
-RUN(navigator.mediaSession.readyState = 'haveEnoughData')
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+RUN(navigator.mediaSession.readyState = 'haveenoughdata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
-RUN(navigator.mediaSession.readyState = 'haveNothing')
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+RUN(navigator.mediaSession.readyState = 'havenothing')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
 
 * PlaybackState
 EXPECTED (navigator.mediaSession.playbackState == 'none') OK
@@ -107,30 +107,30 @@ RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, posi
 EXPECTED (latestChange == 'positionStateChanged') OK
 
 ** Test that mediaSession notifies coordinator when readyState changes.
-EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
-RUN(navigator.mediaSession.readyState = 'haveMetadata')
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+RUN(navigator.mediaSession.readyState = 'havemetadata')
 EXPECTED (latestChange == 'readyStateChanged') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
-RUN(navigator.mediaSession.readyState = 'haveCurrentData')
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+RUN(navigator.mediaSession.readyState = 'havecurrentdata')
 EXPECTED (latestChange == 'readyStateChanged') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
-RUN(navigator.mediaSession.readyState = 'haveFutureData')
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+RUN(navigator.mediaSession.readyState = 'havefuturedata')
 EXPECTED (latestChange == 'readyStateChanged') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
-RUN(navigator.mediaSession.readyState = 'haveEnoughData')
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+RUN(navigator.mediaSession.readyState = 'haveenoughdata')
 EXPECTED (latestChange == 'readyStateChanged') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
-RUN(navigator.mediaSession.readyState = 'haveNothing')
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+RUN(navigator.mediaSession.readyState = 'havenothing')
 EXPECTED (latestChange == 'readyStateChanged') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
 
 ** Test that mediaSession notifies coordinator when playbackState changes.
 EXPECTED (navigator.mediaSession.playbackState == 'none') OK
@@ -168,30 +168,30 @@ RUN(navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, posi
 EXPECTED (latestChange == '') OK
 
 * ReadyState
-EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
-RUN(navigator.mediaSession.readyState = 'haveMetadata')
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
+RUN(navigator.mediaSession.readyState = 'havemetadata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveMetadata') OK
-RUN(navigator.mediaSession.readyState = 'haveCurrentData')
+EXPECTED (navigator.mediaSession.readyState == 'havemetadata') OK
+RUN(navigator.mediaSession.readyState = 'havecurrentdata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveCurrentData') OK
-RUN(navigator.mediaSession.readyState = 'haveFutureData')
+EXPECTED (navigator.mediaSession.readyState == 'havecurrentdata') OK
+RUN(navigator.mediaSession.readyState = 'havefuturedata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveFutureData') OK
-RUN(navigator.mediaSession.readyState = 'haveEnoughData')
+EXPECTED (navigator.mediaSession.readyState == 'havefuturedata') OK
+RUN(navigator.mediaSession.readyState = 'haveenoughdata')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
 
-EXPECTED (navigator.mediaSession.readyState == 'haveEnoughData') OK
-RUN(navigator.mediaSession.readyState = 'haveNothing')
+EXPECTED (navigator.mediaSession.readyState == 'haveenoughdata') OK
+RUN(navigator.mediaSession.readyState = 'havenothing')
 EXPECTED (latestChange == '') OK
-EXPECTED (navigator.mediaSession.readyState == 'haveNothing') OK
+EXPECTED (navigator.mediaSession.readyState == 'havenothing') OK
 
 * PlaybackState
 EXPECTED (navigator.mediaSession.playbackState == 'none') OK

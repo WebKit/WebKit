@@ -539,11 +539,11 @@
 
         void readyStateChanged(WebCore::MediaSessionReadyState state) final
         {
-            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::HaveNothing) == static_cast<size_t>(WKMediaSessionReadyStateHaveNothing), "WKMediaSessionReadyStateHaveNothing does not match WebKit value");
-            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::HaveMetadata) == static_cast<size_t>(WKMediaSessionReadyStateHaveMetadata), "WKMediaSessionReadyStateHaveMetadata does not match WebKit value");
-            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::HaveCurrentData) == static_cast<size_t>(WKMediaSessionReadyStateHaveCurrentData), "WKMediaSessionReadyStateHaveCurrentData does not match WebKit value");
-            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::HaveFutureData) == static_cast<size_t>(WKMediaSessionReadyStateHaveFutureData), "WKMediaSessionReadyStateHaveFutureData does not match WebKit value");
-            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::HaveEnoughData) == static_cast<size_t>(WKMediaSessionReadyStateHaveEnoughData), "WKMediaSessionReadyStateHaveEnoughData does not match WebKit value");
+            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::Havenothing) == static_cast<size_t>(WKMediaSessionReadyStateHaveNothing), "WKMediaSessionReadyStateHaveNothing does not match WebKit value");
+            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::Havemetadata) == static_cast<size_t>(WKMediaSessionReadyStateHaveMetadata), "WKMediaSessionReadyStateHaveMetadata does not match WebKit value");
+            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::Havecurrentdata) == static_cast<size_t>(WKMediaSessionReadyStateHaveCurrentData), "WKMediaSessionReadyStateHaveCurrentData does not match WebKit value");
+            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::Havefuturedata) == static_cast<size_t>(WKMediaSessionReadyStateHaveFutureData), "WKMediaSessionReadyStateHaveFutureData does not match WebKit value");
+            static_assert(static_cast<size_t>(WebCore::MediaSessionReadyState::Haveenoughdata) == static_cast<size_t>(WKMediaSessionReadyStateHaveEnoughData), "WKMediaSessionReadyStateHaveEnoughData does not match WebKit value");
 
             [m_clientCoordinator readyStateChanged:static_cast<_WKMediaSessionReadyState>(state)];
         }

@@ -78,9 +78,9 @@
         };
 
         let testReadyStates = async (testCallback) => {
-            let previousState = 'haveNothing';
-            navigator.mediaSession.readyState = 'haveNothing';
-            for (let state of ['haveMetadata', 'haveCurrentData', 'haveFutureData', 'haveEnoughData', 'haveNothing']) {
+            let previousState = 'havenothing';
+            navigator.mediaSession.readyState = 'havenothing';
+            for (let state of ['havemetadata', 'havecurrentdata', 'havefuturedata', 'haveenoughdata', 'havenothing']) {
                 testExpected('navigator.mediaSession.readyState', previousState);
 
                 latestChange = '';

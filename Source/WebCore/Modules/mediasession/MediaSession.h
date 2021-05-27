@@ -151,7 +151,7 @@ private:
     UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    MediaSessionReadyState m_readyState { MediaSessionReadyState::HaveNothing };
+    MediaSessionReadyState m_readyState { MediaSessionReadyState::Havenothing };
     RefPtr<MediaSessionCoordinator> m_coordinator;
 #endif
 

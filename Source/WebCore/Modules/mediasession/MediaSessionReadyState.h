@@ -30,11 +30,11 @@
 namespace WebCore {
 
 enum class MediaSessionReadyState : uint8_t {
-    HaveNothing,
-    HaveMetadata,
-    HaveCurrentData,
-    HaveFutureData,
-    HaveEnoughData,
+    Havenothing,
+    Havemetadata,
+    Havecurrentdata,
+    Havefuturedata,
+    Haveenoughdata,
 };
 
 } // namespace WebCore
@@ -44,11 +44,11 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::MediaSessionReadyState> {
     using values = EnumValues<
         WebCore::MediaSessionReadyState,
-        WebCore::MediaSessionReadyState::HaveNothing,
-        WebCore::MediaSessionReadyState::HaveMetadata,
-        WebCore::MediaSessionReadyState::HaveCurrentData,
-        WebCore::MediaSessionReadyState::HaveFutureData,
-        WebCore::MediaSessionReadyState::HaveEnoughData
+        WebCore::MediaSessionReadyState::Havenothing,
+        WebCore::MediaSessionReadyState::Havemetadata,
+        WebCore::MediaSessionReadyState::Havecurrentdata,
+        WebCore::MediaSessionReadyState::Havefuturedata,
+        WebCore::MediaSessionReadyState::Haveenoughdata
     >;
 };
 

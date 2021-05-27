@@ -435,7 +435,7 @@ TEST_F(MediaSessionCoordinatorTest, StateChanges)
     });
     EXPECT_STREQ("positionStateChanged", lastStateChange.utf8().data());
 
-    for (NSString *state in @[ @"haveMetadata", @"haveCurrentData", @"haveFutureData", @"haveEnoughData", @"haveNothing" ]) {
+    for (NSString *state in @[ @"havemetadata", @"havecurrentdata", @"havefuturedata", @"haveenoughdata", @"havenothing" ]) {
         [webView() objectByEvaluatingJavaScript:[NSString stringWithFormat:@"navigator.mediaSession.readyState = '%@'", state]];
         executeUntil([&] {
             lastStateChange = coordinator().lastStateChange;
