@@ -1,3 +1,17 @@
+2021-05-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Pass frame ref during navigationPolicyCompletionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=226268
+        <rdar://problem/78512383>
+
+        Reviewed by Ryosuke Niwa.
+
+        Pass the active frame to the navigationPolicyCompletionHandler lambda as a Ref to
+        ensure it is kept alive during the policy check and subsequent steps.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+
 2021-05-27  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r244434) Dispatch intrinsicContentsSizeChanged on the main frame only
