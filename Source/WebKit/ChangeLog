@@ -1,3 +1,17 @@
+2021-05-27  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK4] Navigation swipe snapshot always times out
+        https://bugs.webkit.org/show_bug.cgi?id=226332
+
+        Reviewed by Michael Catanzaro.
+
+        Enable ViewGestureGeometryCollector for GTK4 as well.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Add validation when reading DisplayListSharedMemoryHeader::waitingStatus in DisplayListReaderHandle
