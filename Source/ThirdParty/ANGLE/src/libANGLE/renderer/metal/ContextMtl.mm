@@ -1820,7 +1820,10 @@ void ContextMtl::updateScissor(const gl::State &glState)
 
     // Clip the render area to the viewport.
     gl::Rectangle viewportClippedRenderArea;
-    gl::ClipRectangle(renderArea, glState.getViewport(), &viewportClippedRenderArea);
+    if (!gl::ClipRectangle(renderArea, glState.getViewport(), &viewportClippedRenderArea))
+    {
+        viewportClippedRenderArea = gl::Rectangle();
+    }
 
     gl::Rectangle scissoredArea = ClipRectToScissor(getState(), viewportClippedRenderArea, false);
     if (framebufferMtl->flipY())

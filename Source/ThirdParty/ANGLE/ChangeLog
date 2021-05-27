@@ -1,3 +1,38 @@
+2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cherry-pick ANGLE: D3D11: Skip blits if there is no intersection of dest areas
+        https://bugs.webkit.org/show_bug.cgi?id=225190
+        <rdar://77084155>
+
+        Reviewed by David Kilzer.
+
+        Cherry-pick ANGLE commit b574643ef28c92fcea5122dd7a72acb42a514eed
+        Fixes a security issue on D3D11.
+        Potential a correctness issue on some OpenGL drivers.
+        No effect on Metal, but the nodiscard part is still useful.
+
+        Upstream description:
+        D3D11: Skip blits if there is no intersection of dest areas
+
+        Blit11 would clip the destination rectangle with the destination size
+        but ignore the result. gl::ClipRectangle returns false when the
+        rectangles do not intersect at all, indicating the blit can be skipped.
+
+        This could lead to an out-of-bounds write to the GPU memory for the
+        destination texture.
+
+        Mark ClipRectangle as nodiscard to prevent future issues.
+        * src/libANGLE/angletypes.h:
+        * src/libANGLE/renderer/d3d/d3d11/Blit11.cpp:
+        * src/libANGLE/renderer/gl/FramebufferGL.cpp:
+        (rx::FramebufferGL::clipSrcRegion):
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::updateScissor):
+        * src/libANGLE/renderer/vulkan/ContextVk.cpp:
+        (rx::ContextVk::updateScissor):
+        * src/tests/gl_tests/BlitFramebufferANGLETest.cpp:
+        (TEST_P):
+
 2021-05-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Support USE_ANGLE_EGL on additional platforms

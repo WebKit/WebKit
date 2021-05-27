@@ -2437,6 +2437,30 @@ TEST_P(BlitFramebufferTest, BlitFramebufferSizeOverflow2)
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
+// Test an edge case in D3D11 stencil blitting on the CPU that does not properly clip the
+// destination regions
+TEST_P(BlitFramebufferTest, BlitFramebufferStencilClipNoIntersection)
+{
+    GLFramebuffer framebuffers[2];
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffers[0]);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffers[1]);
+
+    GLRenderbuffer renderbuffers[2];
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffers[0]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 4, 4);
+    glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              renderbuffers[0]);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffers[1]);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 4, 4);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              renderbuffers[1]);
+
+    glBlitFramebuffer(0, 0, 4, 4, 1 << 24, 1 << 24, 1 << 25, 1 << 25, GL_STENCIL_BUFFER_BIT,
+                      GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST(BlitFramebufferANGLETest,
