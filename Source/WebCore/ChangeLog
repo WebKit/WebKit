@@ -1,3 +1,23 @@
+2021-05-27  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r244434) Dispatch intrinsicContentsSizeChanged on the main frame only
+        https://bugs.webkit.org/show_bug.cgi?id=226311
+
+        Reviewed by Tim Horton.
+
+        While the Mail version of the content autosizing runs on both the main frame and the subframe(s),
+        the content size reporting should only happen on the main frame. The client is only interested
+        in the enclosing size of the content (also the API to retrieve the information is per-WKWebView,
+        it doesn't expose this information on a frame-by-frame basis).
+
+        Test: fast/dynamic/mail-autosize-with-iframe.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::autoSizeIfEnabled):
+        (WebCore::FrameView::enableFixedWidthAutoSizeMode):
+        (WebCore::FrameView::enableSizeToContentAutoSizeMode):
+        (WebCore::FrameView::enableAutoSizeMode):
+
 2021-05-27  Sam Weinig  <weinig@apple.com>
 
         Merge WorkerGlobalScope+Caches.idl and DOMWindow+Caches.idl into a single WindowOrWorkerGlobalScope+Caches.idl

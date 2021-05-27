@@ -1,3 +1,13 @@
+2021-05-27  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r244434) Dispatch intrinsicContentsSizeChanged on the main frame only
+        https://bugs.webkit.org/show_bug.cgi?id=226311
+
+        Reviewed by Tim Horton.
+
+        * fast/dynamic/mail-autosize-with-iframe-expected.txt: Added.
+        * fast/dynamic/mail-autosize-with-iframe.html: Added.
+
 2021-05-27  Youenn Fablet  <youenn@apple.com>
 
         Support H264 profiles in MediaRecorder

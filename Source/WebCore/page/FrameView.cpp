@@ -3472,7 +3472,7 @@ void FrameView::autoSizeIfEnabled()
         break;
     }
 
-    if (auto* page = frame().page())
+    if (auto* page = frame().page(); page && frame().isMainFrame())
         page->chrome().client().intrinsicContentsSizeChanged(m_autoSizeContentSize);
 
     m_didRunAutosize = true;
@@ -4631,17 +4631,18 @@ bool FrameView::isViewForDocumentInFrame() const
 
 void FrameView::enableFixedWidthAutoSizeMode(bool enable, const IntSize& viewSize)
 {
+    // FIXME: Figure out if this flavor of the autosizing should run only on the mainframe.
     enableAutoSizeMode(enable, viewSize, AutoSizeMode::FixedWidth);
 }
 
 void FrameView::enableSizeToContentAutoSizeMode(bool enable, const IntSize& viewSize)
 {
+    ASSERT(frame().isMainFrame());
     enableAutoSizeMode(enable, viewSize, AutoSizeMode::SizeToContent);
 }
 
 void FrameView::enableAutoSizeMode(bool enable, const IntSize& viewSize, AutoSizeMode mode)
 {
-    ASSERT(frame().isMainFrame());
     ASSERT(!enable || !viewSize.isEmpty());
     if (m_shouldAutoSize == enable && m_autoSizeConstraint == viewSize)
         return;
