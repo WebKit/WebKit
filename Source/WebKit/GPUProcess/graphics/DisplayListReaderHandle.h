@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SharedDisplayListHandle.h"
+#include <wtf/Expected.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 
@@ -46,16 +47,21 @@ public:
 
     void startWaiting()
     {
-        header().waitingStatus.store(SharedDisplayListHandle::WaitingStatus::Waiting);
+        header().waitingStatus.store(static_cast<SharedDisplayListHandle::WaitingStatusStorageType>(SharedDisplayListHandle::WaitingStatus::Waiting));
     }
 
-    Optional<SharedDisplayListHandle::ResumeReadingInformation> stopWaiting()
+    enum class StopWaitingFailureReason : uint8_t { InvalidWaitingStatus };
+    Expected<Optional<SharedDisplayListHandle::ResumeReadingInformation>, StopWaitingFailureReason> stopWaiting()
     {
         auto& header = this->header();
-        if (header.waitingStatus.exchange(SharedDisplayListHandle::WaitingStatus::NotWaiting) == SharedDisplayListHandle::WaitingStatus::Resuming)
+        auto previousStatus = header.waitingStatus.exchange(static_cast<SharedDisplayListHandle::WaitingStatusStorageType>(SharedDisplayListHandle::WaitingStatus::NotWaiting));
+        if (!isValidEnum<SharedDisplayListHandle::WaitingStatus>(previousStatus))
+            return makeUnexpected(StopWaitingFailureReason::InvalidWaitingStatus);
+
+        if (static_cast<SharedDisplayListHandle::WaitingStatus>(previousStatus) == SharedDisplayListHandle::WaitingStatus::Resuming)
             return { header.resumeReadingInfo };
 
-        return WTF::nullopt;
+        return { WTF::nullopt };
     }
 
 private:

@@ -260,7 +260,10 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             handle.startWaiting();
             m_resumeDisplayListSemaphore.waitFor(30_us);
 
-            auto resumeReadingInfo = handle.stopWaiting();
+            auto stopWaitingResult = handle.stopWaiting();
+            MESSAGE_CHECK_WITH_RETURN_VALUE(stopWaitingResult, nullptr, "Invalid waiting status detected when resuming display list processing");
+
+            auto resumeReadingInfo = stopWaitingResult.value();
             if (!resumeReadingInfo)
                 break;
 
