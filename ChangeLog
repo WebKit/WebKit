@@ -1,3 +1,9 @@
+2021-05-27  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. [WPE] Bump version numbers
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-05-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Support USE_ANGLE_EGL on additional platforms
