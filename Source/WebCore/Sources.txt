@@ -1939,6 +1939,7 @@ platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp
 platform/graphics/AlphaPremultiplication.cpp
 platform/graphics/AnimationFrameRate.cpp
+platform/graphics/BifurcatedGraphicsContext.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
 platform/graphics/ColorBlending.cpp

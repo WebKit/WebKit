@@ -167,6 +167,7 @@
 		2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */; };
 		2DC9451724D8AC0200430376 /* WebThreadLock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC9451624D8AC0200430376 /* WebThreadLock.mm */; };
 		2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */; };
+		2DD87145265F23B4005F997C /* BifurcatedGraphicsContextTestsCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DD87144265F23B4005F997C /* BifurcatedGraphicsContextTestsCG.cpp */; };
 		2DE71AFE1D49C0BD00904094 /* AnimatedResize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */; };
 		2DE71B001D49C3ED00904094 /* blinking-div.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DE71AFF1D49C2F000904094 /* blinking-div.html */; };
 		2DFF7B6D1DA487AF00814614 /* SnapshotStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */; };
@@ -1949,6 +1950,7 @@
 		2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutoLayoutIntegration.mm; sourceTree = "<group>"; };
 		2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResizeReversePaginatedWebView.cpp; sourceTree = "<group>"; };
 		2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "lots-of-text-vertical-lr.html"; sourceTree = "<group>"; };
+		2DD87144265F23B4005F997C /* BifurcatedGraphicsContextTestsCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BifurcatedGraphicsContextTestsCG.cpp; path = cg/BifurcatedGraphicsContextTestsCG.cpp; sourceTree = "<group>"; };
 		2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimatedResize.mm; sourceTree = "<group>"; };
 		2DE71AFF1D49C2F000904094 /* blinking-div.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "blinking-div.html"; sourceTree = "<group>"; };
 		2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SnapshotStore.mm; sourceTree = "<group>"; };
@@ -4913,6 +4915,7 @@
 		F457275B25578C9E007ACA34 /* cg */ = {
 			isa = PBXGroup;
 			children = (
+				2DD87144265F23B4005F997C /* BifurcatedGraphicsContextTestsCG.cpp */,
 				F457275D25578D06007ACA34 /* DisplayListTestsCG.cpp */,
 			);
 			name = cg;
@@ -5311,6 +5314,7 @@
 				1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */,
 				C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */,
 				C1692DCA23D10DAE006E88F7 /* Battery.mm in Sources */,
+				2DD87145265F23B4005F997C /* BifurcatedGraphicsContextTestsCG.cpp in Sources */,
 				374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */,
 				7A89BB67233164320042CB1E /* BundleFormDelegate.mm in Sources */,
 				A13EBBB11B87438000097110 /* BundleParameters.mm in Sources */,

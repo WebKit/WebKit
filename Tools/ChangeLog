@@ -1,3 +1,14 @@
+2021-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce BifurcatedGraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=226318
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2021-05-27  Peng Liu  <peng.liu6@apple.com>
 
         Calling -[WKWebView _closeAllMediaPresentations] crashes

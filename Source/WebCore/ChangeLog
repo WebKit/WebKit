@@ -1,3 +1,76 @@
+2021-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce BifurcatedGraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=226318
+
+        Reviewed by Sam Weinig.
+
+        New test: BifurcatedGraphicsContextTests.BasicBifurcatedContext
+
+        Introduce a GraphicsContext subclass that forwards painting 
+        to two arbitrary child GraphicsContexts. This can be used, for example,
+        to paint into a bitmap and display list simultaneously.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/BifurcatedGraphicsContext.cpp: Added.
+        (WebCore::BifurcatedGraphicsContext::BifurcatedGraphicsContext):
+        (WebCore::BifurcatedGraphicsContext::~BifurcatedGraphicsContext):
+        (WebCore::BifurcatedGraphicsContext::hasPlatformContext const):
+        (WebCore::BifurcatedGraphicsContext::platformContext const):
+        (WebCore::BifurcatedGraphicsContext::save):
+        (WebCore::BifurcatedGraphicsContext::restore):
+        (WebCore::BifurcatedGraphicsContext::drawRect):
+        (WebCore::BifurcatedGraphicsContext::drawLine):
+        (WebCore::BifurcatedGraphicsContext::drawEllipse):
+        (WebCore::BifurcatedGraphicsContext::applyStrokePattern):
+        (WebCore::BifurcatedGraphicsContext::applyFillPattern):
+        (WebCore::BifurcatedGraphicsContext::drawPath):
+        (WebCore::BifurcatedGraphicsContext::fillPath):
+        (WebCore::BifurcatedGraphicsContext::strokePath):
+        (WebCore::BifurcatedGraphicsContext::beginTransparencyLayer):
+        (WebCore::BifurcatedGraphicsContext::endTransparencyLayer):
+        (WebCore::BifurcatedGraphicsContext::applyDeviceScaleFactor):
+        (WebCore::BifurcatedGraphicsContext::fillRect):
+        (WebCore::BifurcatedGraphicsContext::fillRoundedRectImpl):
+        (WebCore::BifurcatedGraphicsContext::fillRectWithRoundedHole):
+        (WebCore::BifurcatedGraphicsContext::clearRect):
+        (WebCore::BifurcatedGraphicsContext::strokeRect):
+        (WebCore::BifurcatedGraphicsContext::fillEllipse):
+        (WebCore::BifurcatedGraphicsContext::strokeEllipse):
+        (WebCore::BifurcatedGraphicsContext::setIsCALayerContext):
+        (WebCore::BifurcatedGraphicsContext::isCALayerContext const):
+        (WebCore::BifurcatedGraphicsContext::setIsAcceleratedContext):
+        (WebCore::BifurcatedGraphicsContext::renderingMode const):
+        (WebCore::BifurcatedGraphicsContext::clip):
+        (WebCore::BifurcatedGraphicsContext::clipOut):
+        (WebCore::BifurcatedGraphicsContext::clipPath):
+        (WebCore::BifurcatedGraphicsContext::clipBounds const):
+        (WebCore::BifurcatedGraphicsContext::setLineCap):
+        (WebCore::BifurcatedGraphicsContext::setLineDash):
+        (WebCore::BifurcatedGraphicsContext::setLineJoin):
+        (WebCore::BifurcatedGraphicsContext::setMiterLimit):
+        (WebCore::BifurcatedGraphicsContext::drawNativeImage):
+        (WebCore::BifurcatedGraphicsContext::drawPattern):
+        (WebCore::BifurcatedGraphicsContext::scale):
+        (WebCore::BifurcatedGraphicsContext::rotate):
+        (WebCore::BifurcatedGraphicsContext::translate):
+        (WebCore::BifurcatedGraphicsContext::concatCTM):
+        (WebCore::BifurcatedGraphicsContext::setCTM):
+        (WebCore::BifurcatedGraphicsContext::getCTM const):
+        (WebCore::BifurcatedGraphicsContext::roundToDevicePixels):
+        (WebCore::BifurcatedGraphicsContext::drawFocusRing):
+        (WebCore::BifurcatedGraphicsContext::drawLinesForText):
+        (WebCore::BifurcatedGraphicsContext::drawDotsForDocumentMarker):
+        (WebCore::BifurcatedGraphicsContext::setURLForRect):
+        (WebCore::BifurcatedGraphicsContext::setDestinationForRect):
+        (WebCore::BifurcatedGraphicsContext::addDestinationAtPoint):
+        (WebCore::BifurcatedGraphicsContext::supportsInternalLinks const):
+        (WebCore::BifurcatedGraphicsContext::updateState):
+        (WebCore::BifurcatedGraphicsContext::deprecatedPrivateContext const):
+        * platform/graphics/BifurcatedGraphicsContext.h: Added.
+
 2021-05-27  Simon Fraser  <simon.fraser@apple.com>
 
         Add animations to GraphicsLayer logging output

@@ -1180,6 +1180,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ANGLEWebKitBridge.h
     platform/graphics/AnimationFrameRate.h
     platform/graphics/AudioTrackPrivate.h
+    platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
     platform/graphics/Color.h
     platform/graphics/ColorComponents.h

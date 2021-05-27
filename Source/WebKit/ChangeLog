@@ -1,3 +1,13 @@
+2021-05-27  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce BifurcatedGraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=226318
+
+        Reviewed by Sam Weinig.
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::create):
+
 2021-05-27  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.33.1 release
