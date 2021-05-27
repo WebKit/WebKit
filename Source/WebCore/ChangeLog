@@ -1,3 +1,70 @@
+2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor some data detector code in WebCore::Frame
+        https://bugs.webkit.org/show_bug.cgi?id=226267
+
+        Reviewed by Andy Estes and Devin Rousso.
+
+        In preparation for supporting data detection in image overlays, this patch refactors some existing data detector
+        logic inside (and adjacent to) Frame. See comments below for more details.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::canPresentDataDetectorsUIForElement):
+
+        Use DataDetectionResultsStorage instead of grabbing the array of scanner results directly from Frame.
+
+        (WebCore::DataDetection::createElementForImageOverlay):
+
+        Add a helper method to create a data detector element for image overlays; this grabs a scanner result from the
+        given ImageExtractionDataDetectorInfo, adds it to the element's document's frame, and then sets the newly
+        created element's "x-apple-data-detectors-result" attribute to the new identifier value. The main reason we do
+        this is to avoid having HTMLElement directly handle DDScannerResult (and instead delegate out to platform-
+        specific helpers in DataDetection).
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithImageExtractionResult):
+
+        Use the new helper function above.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
+        Use DataDetectionResultsStorage instead of setting the array of scanner results directly on Frame.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::dataDetectionResults):
+        * page/Frame.h:
+
+        We currently store a list of document-wide data detection results (Objective-C DDScannerResult objects)
+        directly on Frame. For image overlays, I need to store a map of identifiers to scanner results in a similar
+        fashion. Rather than add more Objective-C code on Frame, it's better to instead move this logic out into a
+        separate C++ class, DataDetectionResultsStorage, that wraps both the document-level array of DDScannerResults,
+        as well as the new map of ImageOverlayDataDetectionResultIdentifier => DDScannerResult specifically for data
+        detector results inside image overlays.
+
+        * page/cocoa/DataDetectionResultsStorage.h: Copied from Source/WebCore/editing/cocoa/DataDetection.h.
+        (WebCore::DataDetectionResultsStorage::setDocumentLevelResults):
+        (WebCore::DataDetectionResultsStorage::documentLevelResults const):
+
+        Move the existing `m_dataDetectionResults` NSArray on Frame out into the storage helper class, as
+        `m_documentLevelResults`. As its name suggests, this array stores data detection results gathered by running
+        data detection over the entire document.
+
+        (WebCore::DataDetectionResultsStorage::imageOverlayDataDetectionResult):
+        (WebCore::DataDetectionResultsStorage::addImageOverlayDataDetectionResult):
+
+        Add a new map of ImageOverlayDataDetectionResultIdentifier to DDScannerResult for storing scanner results
+        specific to image overlay content. Using a separate data structure here prevents image overlay data detector
+        results from getting blown away when document-level data detection finishes and sets document-wide results on
+        the frame.
+
+        * page/cocoa/ImageOverlayDataDetectionResultIdentifier.h: Added.
+
+        Add an identifier type that we can use to look up data detection results in image overlay elements in Frame's
+        data detection result storage.
+
 2021-05-27  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Add discrete animation support for grid-template-columns|rows

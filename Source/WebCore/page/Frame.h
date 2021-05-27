@@ -68,6 +68,7 @@ namespace WebCore {
 
 class Color;
 class DOMWindow;
+class DataDetectionResultsStorage;
 class Document;
 class Editor;
 class Element;
@@ -224,8 +225,8 @@ public:
     void deviceOrPageScaleFactorChanged();
     
 #if ENABLE(DATA_DETECTION)
-    void setDataDetectionResults(NSArray *results) { m_dataDetectionResults = results; }
-    NSArray *dataDetectionResults() const { return m_dataDetectionResults.get(); }
+    DataDetectionResultsStorage* dataDetectionResultsIfExists() const { return m_dataDetectionResults.get(); }
+    WEBCORE_EXPORT DataDetectionResultsStorage& dataDetectionResults();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -348,7 +349,7 @@ private:
     UniqueRef<ScriptController> m_script;
 
 #if ENABLE(DATA_DETECTION)
-    RetainPtr<NSArray> m_dataDetectionResults;
+    std::unique_ptr<DataDetectionResultsStorage> m_dataDetectionResults;
 #endif
 #if PLATFORM(IOS_FAMILY)
     void betterApproximateNode(const IntPoint& testPoint, const NodeQualifier&, Node*& best, Node* failedNode, IntPoint& bestPoint, IntRect& bestRect, const IntRect& testRect);

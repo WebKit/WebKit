@@ -142,6 +142,7 @@
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetection.h"
+#include "DataDetectionResultsStorage.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2575,9 +2576,10 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             auto document = m_frame.document();
             auto types = OptionSet<DataDetectorType> { m_frame.settings().dataDetectorTypes() };
             if (document && types) {
-                m_frame.setDataDetectionResults(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), types, m_client->dataDetectionContext()));
+                auto documentLevelResults = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), types, m_client->dataDetectionContext()));
+                m_frame.dataDetectionResults().setDocumentLevelResults(documentLevelResults.get());
                 if (m_frame.isMainFrame())
-                    m_client->dispatchDidFinishDataDetection(m_frame.dataDetectionResults());
+                    m_client->dispatchDidFinishDataDetection(documentLevelResults.get());
             }
 #endif
             m_client->dispatchDidFinishLoad();

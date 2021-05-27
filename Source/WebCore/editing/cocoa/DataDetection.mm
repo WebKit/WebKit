@@ -32,14 +32,17 @@
 #import "CSSStyleDeclaration.h"
 #import "ColorConversion.h"
 #import "ColorSerialization.h"
+#import "DataDetectionResultsStorage.h"
 #import "Editing.h"
 #import "ElementAncestorIterator.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
 #import "HTMLAnchorElement.h"
+#import "HTMLDivElement.h"
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
+#import "ImageExtractionResult.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "QualifiedName.h"
@@ -197,7 +200,12 @@ bool DataDetection::canPresentDataDetectorsUIForElement(Element& element)
     auto& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
     if (resultAttribute.isEmpty())
         return false;
-    NSArray *results = element.document().frame()->dataDetectionResults();
+
+    auto* dataDetectionResults = element.document().frame()->dataDetectionResultsIfExists();
+    if (!dataDetectionResults)
+        return false;
+
+    NSArray *results = dataDetectionResults->documentLevelResults();
     if (!results)
         return false;
 
@@ -678,6 +686,20 @@ bool DataDetection::isDataDetectorElement(const Element& element)
 {
     return is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
 }
+
+#if ENABLE(IMAGE_EXTRACTION)
+
+Ref<HTMLElement> DataDetection::createElementForImageOverlay(Document& document, const ImageExtractionDataDetectorInfo& info)
+{
+    auto container = HTMLDivElement::create(document);
+    if (auto frame = makeRefPtr(document.frame())) {
+        auto resultIdentifier = frame->dataDetectionResults().addImageOverlayDataDetectionResult(info.result.get());
+        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, String::number(resultIdentifier.toUInt64()));
+    }
+    return container;
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
 
 } // namespace WebCore
 

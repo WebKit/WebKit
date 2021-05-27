@@ -108,6 +108,10 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(DATA_DETECTION)
+#include "DataDetectionResultsStorage.h"
+#endif
+
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
@@ -1128,6 +1132,17 @@ bool Frame::arePluginsEnabled()
 {
     return settings().arePluginsEnabled();
 }
+
+#if ENABLE(DATA_DETECTION)
+
+DataDetectionResultsStorage& Frame::dataDetectionResults()
+{
+    if (!m_dataDetectionResults)
+        m_dataDetectionResults = makeUnique<DataDetectionResultsStorage>();
+    return *m_dataDetectionResults;
+}
+
+#endif
 
 } // namespace WebCore
 

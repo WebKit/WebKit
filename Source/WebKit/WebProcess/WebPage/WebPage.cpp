@@ -330,6 +330,7 @@
 
 #if ENABLE(DATA_DETECTION)
 #include <WebCore/DataDetection.h>
+#include <WebCore/DataDetectionResultsStorage.h>
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
@@ -4036,21 +4037,30 @@ void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetection
             continue;
 
         DataDetection::removeDataDetectedLinksInDocument(*document);
-        frame->setDataDetectionResults(nullptr);
+
+        if (auto* results = frame->dataDetectionResultsIfExists()) {
+            // FIXME: It seems odd that we're clearing out all data detection results here,
+            // instead of only data detectors that correspond to links.
+            results->setDocumentLevelResults({ });
+        }
     }
-    completionHandler({ m_page->mainFrame().dataDetectionResults() });
+    completionHandler({ });
 }
 
 void WebPage::detectDataInAllFrames(uint64_t types, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
+    DataDetectionResult mainFrameResult;
     auto dataDetectorTypes = OptionSet<DataDetectorType>::fromRaw(types);
     for (auto frame = makeRefPtr(&m_page->mainFrame()); frame; frame = frame->tree().traverseNext()) {
         auto document = makeRefPtr(frame->document());
         if (!document)
             continue;
-        frame->setDataDetectionResults(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionContext.get()));
+        auto results = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionContext.get()));
+        frame->dataDetectionResults().setDocumentLevelResults(results.get());
+        if (frame->isMainFrame())
+            mainFrameResult.results = WTFMove(results);
     }
-    completionHandler({ m_page->mainFrame().dataDetectionResults() });
+    completionHandler(WTFMove(mainFrameResult));
 }
 
 #endif // ENABLE(DATA_DETECTION)

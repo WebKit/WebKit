@@ -88,6 +88,10 @@
 #include "SelectionGeometry.h"
 #endif
 
+#if ENABLE(DATA_DETECTION)
+#include "DataDetection.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLElement);
@@ -1483,7 +1487,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         if (dataDetector.normalizedQuads.isEmpty())
             continue;
 
-        auto dataDetectorContainer = HTMLDivElement::create(document());
+        auto dataDetectorContainer = DataDetection::createElementForImageOverlay(document(), dataDetector);
         dataDetectorContainer->classList().add(imageOverlayDataDetectorClassName());
         container->appendChild(dataDetectorContainer);
 

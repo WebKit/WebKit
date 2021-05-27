@@ -39,8 +39,11 @@ OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
+class Document;
+class HTMLElement;
 class HitTestResult;
 class QualifiedName;
+struct ImageExtractionDataDetectorInfo;
 
 struct DetectedItem {
     RetainPtr<DDActionContext> actionContext;
@@ -61,6 +64,10 @@ public:
     WEBCORE_EXPORT static String dataDetectorIdentifier(Element&);
     WEBCORE_EXPORT static bool canPresentDataDetectorsUIForElement(Element&);
     WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
+#endif
+
+#if ENABLE(IMAGE_EXTRACTION)
+    static Ref<HTMLElement> createElementForImageOverlay(Document&, const ImageExtractionDataDetectorInfo&);
 #endif
 
     static const String& dataDetectorURLProtocol();

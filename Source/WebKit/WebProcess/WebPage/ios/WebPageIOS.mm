@@ -69,6 +69,7 @@
 #import <WebCore/ContentChangeObserver.h>
 #import <WebCore/DOMTimerHoldingTank.h>
 #import <WebCore/DataDetection.h>
+#import <WebCore/DataDetectionResultsStorage.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
 #import <WebCore/DocumentLoader.h>
@@ -2748,7 +2749,8 @@ static void dataDetectorLinkPositionInformation(Element& element, InteractionInf
     info.isDataDetectorLink = true;
     const int dataDetectionExtendedContextLength = 350;
     info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(element);
-    info.dataDetectorResults = element.document().frame()->dataDetectionResults();
+    if (auto* results = element.document().frame()->dataDetectionResultsIfExists())
+        info.dataDetectorResults = results->documentLevelResults();
 
     if (!DataDetection::requiresExtendedContext(element))
         return;

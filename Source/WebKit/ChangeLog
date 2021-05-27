@@ -1,3 +1,21 @@
+2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor some data detector code in WebCore::Frame
+        https://bugs.webkit.org/show_bug.cgi?id=226267
+
+        Reviewed by Andy Estes and Devin Rousso.
+
+        See WebCore/ChangeLog for more details.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::removeDataDetectedLinks):
+        (WebKit::WebPage::detectDataInAllFrames):
+
+        Use DataDetectionResultsStorage instead of setting the array of scanner results directly on Frame.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::dataDetectorLinkPositionInformation):
+
 2021-05-27  Tim Horton  <timothy_horton@apple.com>
 
         Introduce BifurcatedGraphicsContext
