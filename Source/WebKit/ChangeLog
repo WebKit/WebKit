@@ -1,3 +1,11 @@
+2021-05-26  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER) build
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::create):
+        Missed one GraphicsContext!
+
 2021-05-26  Jean-Yves Avenard  <jya@apple.com>
 
         Make MediaSession readystate enums all lowercase

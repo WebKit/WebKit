@@ -28,7 +28,7 @@
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 
-#include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextCG.h>
 #include <WebCore/PixelBuffer.h>
 #include <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
 #include <wtf/IsoMallocInlines.h>
@@ -55,7 +55,7 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
     if (!cgContext)
         return nullptr;
 
-    auto context = makeUnique<WebCore::GraphicsContext>(cgContext.get());
+    auto context = makeUnique<WebCore::GraphicsContextCG>(cgContext.get());
     return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context)));
 }
 
