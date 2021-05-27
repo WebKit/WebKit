@@ -1,4 +1,18 @@
 =================
+WPE WebKit 2.33.1
+=================
+
+What's new in WPE WebKit 2.33.1?
+
+  - Add support for CSS Scroll Snap.
+  - Add basic support for ICC color management.
+  - Build with libsoup3 by default.
+  - Add new API to handle web process unresponsiveness.
+  - Add support for link preconnect when building with libsoup3.
+  - Refectores Media Source Extensions (MSE) platform code to increase
+    stability and ease adding more features in the futures.
+
+=================
 WPE WebKit 2.31.1
 =================
 
