@@ -1,3 +1,14 @@
+2021-05-26  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] MediaSample that need to be removed with SourceBufferPrivate::evictCodedFrames() may not be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=225800
+        <rdar://problem/78296352>
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/media-source-evict-codedframe-after-seek-expected.txt: Added.
+        * media/media-source/media-source-evict-codedframe-after-seek.html: Added.
+
 2021-05-26  Jean-Yves Avenard  <jya@apple.com>
 
         Make MediaSession readystate enums all lowercase

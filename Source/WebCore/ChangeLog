@@ -1,3 +1,18 @@
+2021-05-26  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] MediaSample that need to be removed with SourceBufferPrivate::evictCodedFrames() may not be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=225800
+        <rdar://problem/78296352>
+
+        Reviewed by Jer Noble.
+
+        Fixed evictCodedFrames to remove MediaSample that can be removed after the minimumRangeStart.
+
+        Test: media/media-source/media-source-evict-codedframe-after-seek.html
+
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::evictCodedFrames):
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         Leverage the new Vector(const T*, size_t) constructor

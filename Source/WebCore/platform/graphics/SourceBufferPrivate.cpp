@@ -689,7 +689,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
         return;
     }
 
-    MediaTime minimumRangeStart = currentTime + thirtySeconds;
+    MediaTime minimumRangeStart = std::max(currentTime + thirtySeconds, buffered.end(currentTimeRange));
 
     rangeEnd = duration;
     if (!rangeEnd.isFinite()) {
@@ -700,17 +700,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
     }
 
     rangeStart = rangeEnd - thirtySeconds;
-    while (rangeStart > minimumRangeStart) {
-        // Do not evict data from the time range that contains currentTime.
-        uint64_t startTimeRange = buffered.find(rangeStart);
-        if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
-            uint64_t endTimeRange = buffered.find(rangeEnd);
-            if (currentTimeRange != notFound && endTimeRange == currentTimeRange)
-                break;
-
-            rangeEnd = buffered.start(endTimeRange);
-        }
-
+    while (rangeEnd > minimumRangeStart) {
         // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
         // end equal to the removal range start and end timestamp respectively.
         removeCodedFrames(std::max(minimumRangeStart, rangeStart), rangeEnd, currentTime, isEnded);
