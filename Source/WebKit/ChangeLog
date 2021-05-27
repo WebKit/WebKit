@@ -1,3 +1,14 @@
+2021-05-27  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r277344
+        https://bugs.webkit.org/show_bug.cgi?id=225602
+        <rdar://78411776>
+
+        It caused more sandbox issues.  We are going to see if we can just remove the connection killing, but first we revert the cause of problems.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::terminateWithReason):
+
 2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor some data detector code in WebCore::Frame

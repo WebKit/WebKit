@@ -1,3 +1,11 @@
+2021-05-27  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r277344
+        https://bugs.webkit.org/show_bug.cgi?id=225602
+        <rdar://78411776>
+
+        * wtf/PlatformHave.h:
+
 2021-05-27  Devin Rousso  <drousso@apple.com>
 
         Use `NSLocale` SPI for comparing language identifiers instead of string comparison
