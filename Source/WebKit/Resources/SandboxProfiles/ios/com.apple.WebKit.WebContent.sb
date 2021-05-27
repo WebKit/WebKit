@@ -265,7 +265,7 @@
                 )
                 (allow iokit-async-external-method
                     (iokit-method-number
-                        43
+                        44
                     )
                 )
                 (allow iokit-external-method
@@ -288,9 +288,9 @@
                         25
                         26
                         27
-                        36
-                        38
-                        44
+                        37
+                        39
+                        45
                     )
                 )
 
