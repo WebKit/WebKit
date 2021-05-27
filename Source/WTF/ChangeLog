@@ -1,5 +1,18 @@
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
+        Use timingsafe_bcmp() in WTF::constantTimeMemcmp() when available
+        https://bugs.webkit.org/show_bug.cgi?id=226294
+
+        Reviewed by Alex Christensen.
+
+        Use timingsafe_bcmp() in WTF::constantTimeMemcmp() when available (iOS, macOS, FreeBSD, OpenBSD),
+        instead of our own custom implementation.
+
+        * wtf/CryptographicUtilities.cpp:
+        (WTF::constantTimeMemcmp):
+
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
         [Hardening] Have the Ref<> destructor null out its pointer
         https://bugs.webkit.org/show_bug.cgi?id=226293
         <rdar://problem/78532149>
