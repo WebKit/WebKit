@@ -1,3 +1,17 @@
+2021-05-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add check for timingsafe_bcmp
+        https://bugs.webkit.org/show_bug.cgi?id=226347
+
+        Reviewed by Chris Dumez.
+
+        Use HAVE(TIMINGSAFE_BCMP) in CryptographicUtilities code. Set its value in PlatformHave for
+        platforms not using CMake.
+
+        * wtf/CryptographicUtilities.cpp:
+        * wtf/CryptographicUtilities.h:
+        * wtf/PlatformHave.h:
+
 2021-05-27  Mikhail R. Gadelha  <mikhail.ramalho@gmail.com>
 
         Increase NumberToStringBuffer to account for negative number

@@ -28,7 +28,7 @@
 
 namespace WTF {
 
-#if !PLATFORM(COCOA) && !OS(OPENBSD) && !OS(FREEBSD)
+#if !HAVE(TIMINGSAFE_BCMP)
 NEVER_INLINE int constantTimeMemcmp(const void* voidA, const void* voidB, size_t length)
 {
     const uint8_t* a = static_cast<const uint8_t*>(voidA);

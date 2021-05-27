@@ -30,7 +30,7 @@
 namespace WTF {
 
 // Returns zero if arrays are equal, and non-zero otherwise. Execution time does not depend on array contents.
-#if PLATFORM(COCOA) || OS(OPENBSD) || OS(FREEBSD)
+#if HAVE(TIMINGSAFE_BCMP)
 inline int constantTimeMemcmp(const void* voidA, const void* voidB, size_t length)
 {
     return timingsafe_bcmp(voidA, voidB, length);

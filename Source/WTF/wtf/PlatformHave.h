@@ -93,6 +93,10 @@
 #define HAVE_ACCESSIBILITY 1
 #endif
 
+#if !defined(HAVE_TIMINGSAFE_BCMP) && (PLATFORM(COCOA) || OS(OPENBSD) || OS(FREEBSD))
+#define HAVE_TIMINGSAFE_BCMP 1
+#endif
+
 #if !defined(HAVE_STD_FILESYSTEM)
 #if __has_include(<filesystem>)
 #define HAVE_STD_FILESYSTEM 1
