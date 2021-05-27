@@ -73,8 +73,6 @@ GraphicsContextCG::GraphicsContextCG(HDC hdc, bool hasAlpha)
     m_data->m_hdc = hdc;
 }
 
-// FIXME: Is it possible to merge getWindowsContext and createWindowsBitmap into a single API
-// suitable for all clients?
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
 {
     bool createdBitmap = !deprecatedPrivateContext()->m_hdc || isInTransparencyLayer();
@@ -101,17 +99,6 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     
     // Delete all our junk.
     ::DeleteDC(hdc);
-}
-
-void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& point)
-{
-    // FIXME: Creating CFData is non-optimal, but needed to avoid crashing when printing.  Ideally we should 
-    // make a custom CGDataProvider that controls the WindowsBitmap lifetime.  see <rdar://6394455>
-    RetainPtr<CFDataRef> imageData = adoptCF(CFDataCreate(kCFAllocatorDefault, image->buffer(), image->bufferLength()));
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(imageData.get()));
-    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(image->size().width(), image->size().height(), 8, 32, image->bytesPerRow(), sRGBColorSpaceRef(),
-                                                         kCGBitmapByteOrder32Little | kCGImageAlphaFirst, dataProvider.get(), 0, true, kCGRenderingIntentDefault));
-    CGContextDrawImage(deprecatedPrivateContext()->m_cgContext.get(), CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
 }
 
 void GraphicsContextCG::drawFocusRing(const Path& path, float width, float offset, const Color& color)

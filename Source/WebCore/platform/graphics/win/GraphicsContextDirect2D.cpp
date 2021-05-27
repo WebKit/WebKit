@@ -254,10 +254,6 @@ void GraphicsContextDirect2D::releaseWindowsContext(HDC hdc, const IntRect& dstR
     ::DeleteDC(hdc);
 }
 
-void GraphicsContextDirect2D::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& point)
-{
-}
-
 void GraphicsContextDirect2D::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
 }

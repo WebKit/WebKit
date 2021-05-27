@@ -63,40 +63,6 @@ bool GraphicsContext::shouldIncludeChildWindows() const
 {
     return deprecatedPrivateContext()->m_shouldIncludeChildWindows;
 }
-
-GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, const IntSize& size)
-    : m_hdc(0)
-{
-    BitmapInfo bitmapInfo = BitmapInfo::create(size);
-
-    void* storage = 0;
-    m_bitmap = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &storage, 0, 0);
-    if (!m_bitmap)
-        return;
-
-    m_hdc = CreateCompatibleDC(hdc);
-    SelectObject(m_hdc, m_bitmap);
-
-    m_pixelData.initialize(m_bitmap);
-
-    ASSERT(storage == m_pixelData.buffer());
-
-    SetGraphicsMode(m_hdc, GM_ADVANCED);
-}
-
-GraphicsContext::WindowsBitmap::~WindowsBitmap()
-{
-    if (!m_bitmap)
-        return;
-
-    DeleteDC(m_hdc);
-    DeleteObject(m_bitmap);
-}
-
-std::unique_ptr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(const IntSize& size)
-{
-    return makeUnique<WindowsBitmap>(deprecatedPrivateContext()->m_hdc, size);
-}
 #endif
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend)

@@ -135,11 +135,6 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
 }
 
 #if PLATFORM(WIN)
-void GraphicsContext::drawWindowsBitmap(WindowsBitmap* bitmap, const IntPoint& point)
-{
-    drawBitmapToContext(*platformContext(), bitmap->windowsDIB(), IntSize(point.x(), bitmap->size().height() + point.y()));
-}
-
 GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(cairo_t* cr)
 {
     if (!cr)

@@ -550,30 +550,6 @@ public:
     void setShouldIncludeChildWindows(bool);
     bool shouldIncludeChildWindows() const;
 
-    class WindowsBitmap {
-        WTF_MAKE_FAST_ALLOCATED;
-        WTF_MAKE_NONCOPYABLE(WindowsBitmap);
-    public:
-        WindowsBitmap(HDC, const IntSize&);
-        ~WindowsBitmap();
-
-        HDC hdc() const { return m_hdc; }
-        UInt8* buffer() const { return m_pixelData.buffer(); }
-        unsigned bufferLength() const { return m_pixelData.bufferLength(); }
-        const IntSize& size() const { return m_pixelData.size(); }
-        unsigned bytesPerRow() const { return m_pixelData.bytesPerRow(); }
-        unsigned short bitsPerPixel() const { return m_pixelData.bitsPerPixel(); }
-        const DIBPixelData& windowsDIB() const { return m_pixelData; }
-
-    private:
-        HDC m_hdc;
-        HBITMAP m_bitmap;
-        DIBPixelData m_pixelData;
-    };
-
-    std::unique_ptr<WindowsBitmap> createWindowsBitmap(const IntSize&);
-    // The bitmap should be non-premultiplied.
-    void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
 #if USE(DIRECT2D)
     GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.
 

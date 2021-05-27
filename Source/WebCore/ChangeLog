@@ -1,5 +1,32 @@
 2021-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] Remove unused GraphicsContext::WindowsBitmap class
+        https://bugs.webkit.org/show_bug.cgi?id=226312
+
+        Reviewed by Don Olmstead.
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::WindowsBitmap::hdc const): Deleted.
+        (WebCore::GraphicsContext::WindowsBitmap::buffer const): Deleted.
+        (WebCore::GraphicsContext::WindowsBitmap::bufferLength const): Deleted.
+        (WebCore::GraphicsContext::WindowsBitmap::size const): Deleted.
+        (WebCore::GraphicsContext::WindowsBitmap::bytesPerRow const): Deleted.
+        (WebCore::GraphicsContext::WindowsBitmap::bitsPerPixel const): Deleted.
+        (WebCore::GraphicsContext::WindowsBitmap::windowsDIB const): Deleted.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::drawWindowsBitmap): Deleted.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::drawWindowsBitmap): Deleted.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContextDirect2D::drawWindowsBitmap): Deleted.
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::shouldIncludeChildWindows const):
+        (WebCore::GraphicsContext::WindowsBitmap::WindowsBitmap): Deleted.
+        (WebCore::GraphicsContext::WindowsBitmap::~WindowsBitmap): Deleted.
+        (WebCore::GraphicsContext::createWindowsBitmap): Deleted.
+
+2021-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Cairo] Remove unused members ownedPlatformContext and platformContext of GraphicsContextPlatformPrivate
         https://bugs.webkit.org/show_bug.cgi?id=226310
 
