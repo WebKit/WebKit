@@ -775,22 +775,103 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
     });
 }
 
-Optional<BitVector> Font::findOTSVGGlyphs(const GlyphBufferGlyph* glyphs, unsigned count) const
-{
 #if PLATFORM(COCOA)
+const PAL::OTSVGTable& Font::otSVGTable() const
+{
     if (!m_otSVGTable) {
         if (auto tableData = adoptCF(CTFontCopyTable(platformData().ctFont(), kCTFontTableSVG, kCTFontTableOptionNoOptions)))
             m_otSVGTable = PAL::OTSVGTable(tableData.get(), fontMetrics().unitsPerEm(), platformData().size());
         else
             m_otSVGTable = {{ }};
     }
+    return m_otSVGTable.value();
+}
 
-    if (!PAL::isOTSVGFrameworkAvailable() || !m_otSVGTable.value().table)
+Font::ComplexColorFormatGlyphs Font::ComplexColorFormatGlyphs::createWithNoRelevantTables()
+{
+    return { false, 0 };
+}
+
+Font::ComplexColorFormatGlyphs Font::ComplexColorFormatGlyphs::createWithRelevantTablesAndGlyphCount(unsigned glyphCount)
+{
+    return { true, glyphCount };
+}
+
+bool Font::ComplexColorFormatGlyphs::hasValueFor(Glyph glyph) const
+{
+    return m_bits.contains(bitForInitialized(glyph));
+}
+
+bool Font::ComplexColorFormatGlyphs::get(Glyph glyph) const
+{
+    ASSERT(hasValueFor(glyph));
+    return m_bits.contains(bitForValue(glyph));
+}
+
+void Font::ComplexColorFormatGlyphs::set(Glyph glyph, bool value)
+{
+    ASSERT(m_hasRelevantTables);
+    ASSERT(!hasValueFor(glyph));
+    m_bits.set(bitForInitialized(glyph));
+    if (value)
+        m_bits.set(bitForValue(glyph));
+}
+
+bool Font::hasComplexColorFormatTables() const
+{
+    if (otSVGTable().table)
+        return true;
+
+#if HAVE(CORE_TEXT_SBIX_IMAGE_SIZE_FUNCTIONS)
+    if (auto sbixTableData = adoptCF(CTFontCopyTable(platformData().ctFont(), kCTFontTableSbix, kCTFontTableOptionNoOptions)))
+        return true;
+#endif
+
+    return false;
+}
+
+Font::ComplexColorFormatGlyphs& Font::glyphsWithComplexColorFormat() const
+{
+    if (!m_glyphsWithComplexColorFormat) {
+        if (hasComplexColorFormatTables()) {
+            CFIndex glyphCount = CTFontGetGlyphCount(getCTFont());
+            if (glyphCount >= 0) {
+                m_glyphsWithComplexColorFormat = ComplexColorFormatGlyphs::createWithRelevantTablesAndGlyphCount(glyphCount);
+                return m_glyphsWithComplexColorFormat.value();
+            }
+        }
+    }
+    m_glyphsWithComplexColorFormat = ComplexColorFormatGlyphs::createWithNoRelevantTables();
+    return m_glyphsWithComplexColorFormat.value();
+}
+
+bool Font::glyphHasComplexColorFormat(Glyph glyphID) const
+{
+    if (auto svgTable = otSVGTable().table) {
+        if (PAL::softLinkOTSVGOTSVGTableGetDocumentIndexForGlyph(svgTable, glyphID) != kCFNotFound)
+            return true;
+    }
+
+#if HAVE(CORE_TEXT_SBIX_IMAGE_SIZE_FUNCTIONS)
+    // There's no function to directly look up the sbix table, so use the fact that this one returns a non-zero value iff there's an sbix entry.
+    if (CTFontGetSbixImageSizeForGlyphAndContentsScale(getCTFont(), glyphID, 0))
+        return true;
+#endif
+
+    return false;
+}
+#endif
+
+Optional<BitVector> Font::findOTSVGGlyphs(const GlyphBufferGlyph* glyphs, unsigned count) const
+{
+#if PLATFORM(COCOA)
+    auto table = otSVGTable().table;
+    if (!table)
         return { };
 
     Optional<BitVector> result;
     for (unsigned i = 0; i < count; ++i) {
-        if (PAL::softLinkOTSVGOTSVGTableGetDocumentIndexForGlyph(m_otSVGTable.value().table, glyphs[i]) != kCFNotFound) {
+        if (PAL::softLinkOTSVGOTSVGTableGetDocumentIndexForGlyph(table, glyphs[i]) != kCFNotFound) {
             if (!result)
                 result = BitVector(count);
             result.value().quickSet(i);
@@ -801,6 +882,28 @@ Optional<BitVector> Font::findOTSVGGlyphs(const GlyphBufferGlyph* glyphs, unsign
     UNUSED_PARAM(glyphs);
     UNUSED_PARAM(count);
     return { };
+#endif
+}
+
+bool Font::hasAnyComplexColorFormatGlyphs(const GlyphBufferGlyph* glyphs, unsigned count) const
+{
+#if PLATFORM(COCOA)
+    auto& complexGlyphs = glyphsWithComplexColorFormat();
+    if (!complexGlyphs.hasRelevantTables())
+        return false;
+
+    for (unsigned i = 0; i < count; ++i) {
+        if (!complexGlyphs.hasValueFor(glyphs[i]))
+            complexGlyphs.set(glyphs[i], glyphHasComplexColorFormat(glyphs[i]));
+
+        if (complexGlyphs.get(glyphs[i]))
+            return true;
+    }
+    return false;
+#else
+    UNUSED_PARAM(glyphs);
+    UNUSED_PARAM(count);
+    return false;
 #endif
 }
 

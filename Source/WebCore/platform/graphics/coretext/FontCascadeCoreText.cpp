@@ -190,9 +190,12 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     if (!platformData.size())
         return;
 
-    CGContextRef cgContext = context.platformContext();
+    if (isInGPUProcess() && font.hasAnyComplexColorFormatGlyphs(glyphs, numGlyphs)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    RELEASE_ASSERT(!isInGPUProcess() || !font.findOTSVGGlyphs(glyphs, numGlyphs));
+    CGContextRef cgContext = context.platformContext();
 
     bool shouldAntialias = true;
     bool shouldSmoothFonts = true;

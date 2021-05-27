@@ -223,6 +223,8 @@ public:
     // Returns nullopt if none of the glyphs are OT-SVG glyphs.
     Optional<BitVector> findOTSVGGlyphs(const GlyphBufferGlyph*, unsigned count) const;
 
+    bool hasAnyComplexColorFormatGlyphs(const GlyphBufferGlyph*, unsigned count) const;
+
 #if PLATFORM(WIN)
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
@@ -255,6 +257,38 @@ private:
     void platformCommonDestroy();
     FloatRect boundsForGDIGlyph(Glyph) const;
     float widthForGDIGlyph(Glyph) const;
+#endif
+
+#if PLATFORM(COCOA)
+    class ComplexColorFormatGlyphs {
+    public:
+        static ComplexColorFormatGlyphs createWithNoRelevantTables();
+        static ComplexColorFormatGlyphs createWithRelevantTablesAndGlyphCount(unsigned glyphCount);
+
+        bool hasValueFor(Glyph) const;
+        bool get(Glyph) const;
+        void set(Glyph, bool value);
+
+        bool hasRelevantTables() const { return m_hasRelevantTables; }
+
+    private:
+        static constexpr size_t bitForInitialized(Glyph glyphID) { return static_cast<size_t>(glyphID) * 2; }
+        static constexpr size_t bitForValue(Glyph glyphID) { return static_cast<size_t>(glyphID) * 2 + 1; }
+        static constexpr size_t bitsRequiredForGlyphCount(unsigned glyphCount) { return glyphCount * 2; }
+
+        ComplexColorFormatGlyphs(bool hasRelevantTables, unsigned glyphCount)
+            : m_hasRelevantTables(hasRelevantTables)
+            , m_bits(bitsRequiredForGlyphCount(glyphCount))
+        { }
+
+        bool m_hasRelevantTables;
+        BitVector m_bits; // pairs of (initialized, value) bits
+    };
+
+    const PAL::OTSVGTable& otSVGTable() const;
+    bool glyphHasComplexColorFormat(Glyph) const;
+    bool hasComplexColorFormatTables() const;
+    ComplexColorFormatGlyphs& glyphsWithComplexColorFormat() const;
 #endif
 
     FontMetrics m_fontMetrics;
@@ -298,6 +332,7 @@ private:
     mutable Optional<BitVector> m_glyphsSupportedByPetiteCaps;
     mutable Optional<BitVector> m_glyphsSupportedByAllPetiteCaps;
     mutable Optional<PAL::OTSVGTable> m_otSVGTable;
+    mutable Optional<ComplexColorFormatGlyphs> m_glyphsWithComplexColorFormat; // SVG and sbix
 #endif
 
 #if PLATFORM(WIN)

@@ -203,5 +203,6 @@ CTFontDescriptorRef CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(
 
 bool CTFontIsAppleColorEmoji(CTFontRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
+CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph, CGFloat contentsScale);
 
 WTF_EXTERN_C_END

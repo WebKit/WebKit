@@ -1,3 +1,49 @@
+2021-05-26  Cameron McCormack  <heycam@apple.com>
+
+        Prevent sbix glyphs from being rendered in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=226159
+        <rdar://77231959>
+
+        Reviewed by Darin Adler.
+
+        When GPUP canvas is enabled, the display list recorder handles sbix
+        glyphs by recording drawImage calls. This means that during display list
+        replay, we should not have any sbix glyphs in a DrawGlyphs display list
+        item. This patch checks for such glyphs (like we already do for SVG
+        glyphs) and returns early if they're found.
+
+        Manually tested. No new tests, since we'd need to add some way inject
+        sbix glyph IDs into display list items.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::ComplexColorFormatGlyphs::hasRelevantTables const):
+        (WebCore::Font::ComplexColorFormatGlyphs::bitForInitialized):
+        (WebCore::Font::ComplexColorFormatGlyphs::bitForValue):
+        (WebCore::Font::ComplexColorFormatGlyphs::bitsRequiredForGlyphCount):
+        (WebCore::Font::ComplexColorFormatGlyphs::ComplexColorFormatGlyphs):
+        * platform/graphics/coretext/FontCascadeCoreText.cpp:
+        (WebCore::FontCascade::drawGlyphs): Call new function that checks for
+        SVG and sbix glyph presence. Change release assertion to debug
+        assertion to avoid unnecessarily crashing the GPUP, and instead return
+        early in the presence of these glyphs.
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::Font::otSVGTable const):
+        (WebCore::Font::ComplexColorFormatGlyphs::createWithNoRelevantTables):
+        (WebCore::Font::ComplexColorFormatGlyphs::createWithRelevantTablesAndGlyphCount):
+        (WebCore::Font::ComplexColorFormatGlyphs::hasValueFor const):
+        (WebCore::Font::ComplexColorFormatGlyphs::get const):
+        (WebCore::Font::ComplexColorFormatGlyphs::set):
+        (WebCore::Font::hasComplexColorFormatTables const):
+        (WebCore::Font::glyphsWithComplexColorFormat const):
+        (WebCore::Font::glyphHasComplexColorFormat const):
+        (WebCore::Font::findOTSVGGlyphs const):
+        (WebCore::Font::hasAnyComplexColorFormatGlyphs const): New function to
+        check if a list of glyph IDs has any that would be inappropriate
+        to render in the GPU process. Since calling the CoreText function that
+        allows us to check if an sbix glyph exists would be too expensive to
+        call for every drawGlyphs call, we lazily cache (in a BitVector) the
+        presence of sbix and SVG images for glyph IDs we check.
+
 2021-05-26  Sihui Liu  <sihui_liu@apple.com>
 
         Add logging for when SQLiteDatabase fails to close

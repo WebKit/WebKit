@@ -1,3 +1,14 @@
+2021-05-26  Cameron McCormack  <heycam@apple.com>
+
+        Prevent sbix glyphs from being rendered in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=226159
+        <rdar://77231959>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cf/CoreTextSPI.h: Add declaration for an SPI that lets us
+        infer whether a glyph has an sbix image.
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         Leverage the new Vector(const T*, size_t) constructor
