@@ -91,7 +91,7 @@ public:
     {
         FileSystem::deleteFile(m_tempFilePath);
         FileSystem::deleteFile(m_tempFileSymlinkPath);
-        FileSystem::deleteEmptyDirectory(m_tempEmptyFolderPath);
+        FileSystem::deleteNonEmptyDirectory(m_tempEmptyFolderPath);
         FileSystem::deleteFile(m_tempEmptyFolderSymlinkPath);
         FileSystem::deleteFile(m_tempEmptyFilePath);
         FileSystem::deleteFile(m_spaceContainingFilePath);
