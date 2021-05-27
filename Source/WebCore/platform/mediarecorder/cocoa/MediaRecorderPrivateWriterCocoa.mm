@@ -98,9 +98,8 @@ using namespace PAL;
 RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions& options)
 {
     auto writer = adoptRef(*new MediaRecorderPrivateWriter(hasAudio, hasVideo));
-    if (!writer->initialize())
+    if (!writer->initialize(options))
         return nullptr;
-    writer->setOptions(options);
     return writer;
 }
 
@@ -131,7 +130,7 @@ MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
     clear();
 }
 
-bool MediaRecorderPrivateWriter::initialize()
+bool MediaRecorderPrivateWriter::initialize(const MediaRecorderPrivateOptions& options)
 {
     NSError *error = nil;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -149,21 +148,18 @@ bool MediaRecorderPrivateWriter::initialize()
         m_audioCompressor = AudioSampleBufferCompressor::create(compressedAudioOutputBufferCallback, this);
         if (!m_audioCompressor)
             return false;
+        if (options.audioBitsPerSecond)
+            m_audioCompressor->setBitsPerSecond(*options.audioBitsPerSecond);
     }
     if (m_hasVideo) {
-        m_videoCompressor = VideoSampleBufferCompressor::create(kCMVideoCodecType_H264, compressedVideoOutputBufferCallback, this);
+        m_videoCompressor = VideoSampleBufferCompressor::create(options.mimeType, compressedVideoOutputBufferCallback, this);
         if (!m_videoCompressor)
             return false;
+        if (options.videoBitsPerSecond)
+            m_videoCompressor->setBitsPerSecond(*options.videoBitsPerSecond);
     }
-    return true;
-}
 
-void MediaRecorderPrivateWriter::setOptions(const MediaRecorderPrivateOptions& options)
-{
-    if (options.audioBitsPerSecond && m_audioCompressor)
-        m_audioCompressor->setBitsPerSecond(*options.audioBitsPerSecond);
-    if (options.videoBitsPerSecond && m_videoCompressor)
-        m_videoCompressor->setBitsPerSecond(*options.videoBitsPerSecond);
+    return true;
 }
 
 void MediaRecorderPrivateWriter::processNewCompressedVideoSampleBuffers()

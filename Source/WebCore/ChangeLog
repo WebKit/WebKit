@@ -1,3 +1,32 @@
+2021-05-27  Youenn Fablet  <youenn@apple.com>
+
+        Support H264 profiles in MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=226219
+        <rdar://78027944>
+
+        Reviewed by Eric Carlson.
+
+        Use mimeType option given in MediaRecorder options to detect which H264 profile to use.
+        Implement this by parsing the mime type codec parameter and use the avc1.WXYZ string to compute the profile.
+        By default, use baseline profile, which is not VideoToolbox profile but has wider decoding support.
+        If profile specified by the application fails, we downgrade to baseline.
+
+        Test: http/wpt/mediarecorder/MediaRecorder-video-h264-profiles.html
+
+        * Modules/mediarecorder/MediaRecorderProvider.cpp:
+        (WebCore::MediaRecorderProvider::isSupported):
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::create):
+        (WebCore::MediaRecorderPrivateWriter::initialize):
+        (WebCore::MediaRecorderPrivateWriter::setOptions): Deleted.
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.h:
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm:
+        (WebCore::VideoSampleBufferCompressor::create):
+        (WebCore::VideoSampleBufferCompressor::VideoSampleBufferCompressor):
+        (WebCore::VideoSampleBufferCompressor::vtProfileLevel const):
+        (WebCore::VideoSampleBufferCompressor::initCompressionSession):
+
 2021-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Do not disable the idle connection timeout

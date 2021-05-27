@@ -85,8 +85,7 @@ private:
     MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
     void clear();
 
-    bool initialize();
-    void setOptions(const MediaRecorderPrivateOptions&);
+    bool initialize(const MediaRecorderPrivateOptions&);
 
     static void compressedVideoOutputBufferCallback(void*, CMBufferQueueTriggerToken);
     static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);

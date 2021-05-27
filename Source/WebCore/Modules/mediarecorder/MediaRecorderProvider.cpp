@@ -58,7 +58,7 @@ bool MediaRecorderProvider::isSupported(const String& value)
 
     for (auto& item : mimeType.codecs()) {
         auto codec = StringView(item).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
-        // FIXME: We should further validate paramters.
+        // FIXME: We should further validate parameters.
         if (!startsWithLettersIgnoringASCIICase(codec, "avc1") && !startsWithLettersIgnoringASCIICase(codec, "mp4a"))
             return false;
     }
