@@ -1,3 +1,16 @@
+2021-05-27  Daniel Kolesa  <dkolesa@igalia.com>
+
+        [JSC] Fix crash on 32-bit big endian systems.
+        https://bugs.webkit.org/show_bug.cgi?id=226264
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        This is an instance where properly offsetting was missed since
+        the issue was not present in 2.30 series and therefore not fixed
+        by r273104.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         Leverage the new Vector(const T*, size_t) constructor
