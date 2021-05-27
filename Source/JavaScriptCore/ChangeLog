@@ -1,3 +1,18 @@
+2021-05-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION: ASSERTION FAILED: !isCompilationThread() in JSC::Profiler::Database::addCompilation()
+        https://bugs.webkit.org/show_bug.cgi?id=226302
+        <rdar://78537378>
+
+        Reviewed by Saam Barati.
+
+        We started linking the JIT code in the compiler thread, which now triggers this assertion.
+        The assertion was introduce before a lock was held to modify the data structures in the
+        profiler database, but it's safe to remove it now.
+
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::addCompilation):
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         Use UncheckedLock even less in JavaScriptCore
