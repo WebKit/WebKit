@@ -1,5 +1,21 @@
 2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        ANGLE could be compiled with "aggressive uninitialised variable" setting
+        https://bugs.webkit.org/show_bug.cgi?id=226260
+
+        Reviewed by Alexey Proskuryakov.
+
+        Turn on compiler flag to warn about uninitialized variables that might be
+        conditionally uninitialized. This is the same flag as upstream ANGLE uses.
+        Fix a spurious warning produced by this flag.
+        This helps in scenarios where custom targets compile ANGLE sources and
+        this flag set, such as tests.
+
+        * Configurations/Base.xcconfig:
+        * src/compiler/translator/TranslatorMetalDirect/FixTypeConstructors.cpp:
+
+2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Cherry-pick ANGLE: D3D11: Skip blits if there is no intersection of dest areas
         https://bugs.webkit.org/show_bug.cgi?id=225190
         <rdar://77084155>
