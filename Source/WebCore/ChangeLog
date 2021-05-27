@@ -1,3 +1,16 @@
+2021-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Do not disable the idle connection timeout
+        https://bugs.webkit.org/show_bug.cgi?id=226263
+
+        Reviewed by Sergio Villar Senin.
+
+        We disable the connection timeout in SoupSession because we implement our own timeout in WebKit, but that's not
+        the case for the idle connection timeout. There's no reason keep idle connection alive forever.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+
 2021-05-26  Cameron McCormack  <heycam@apple.com>
 
         Prevent sbix glyphs from being rendered in the GPU process

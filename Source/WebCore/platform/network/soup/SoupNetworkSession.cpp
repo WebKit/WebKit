@@ -116,7 +116,6 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
         "max-conns", maxConnections,
         "max-conns-per-host", maxConnectionsPerHost,
         "timeout", 0,
-        "idle-timeout", 0,
         nullptr));
 
     soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_CONTENT_SNIFFER);
