@@ -1277,3 +1277,5 @@ webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
 webkit.org/b/224144 storage/websql/alter-to-info-table.html [ Skip ]
 
 webkit.org/b/226229 [ Catalina ] imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/226360 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html [ Pass Failure ]

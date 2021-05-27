@@ -1,3 +1,12 @@
+2021-05-27  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS Wk1] imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=226360
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-05-27  Mikhail R. Gadelha  <mikhail.ramalho@gmail.com>
 
         Increase NumberToStringBuffer to account for negative number
