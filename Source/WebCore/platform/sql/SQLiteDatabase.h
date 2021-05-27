@@ -59,7 +59,8 @@ public:
     enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
     WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
     bool isOpen() const { return m_db; }
-    WEBCORE_EXPORT void close();
+    enum class ShouldSetErrorState : bool { No, Yes };
+    WEBCORE_EXPORT void close(ShouldSetErrorState = ShouldSetErrorState::Yes);
 
     WEBCORE_EXPORT bool executeCommandSlow(const String&);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);

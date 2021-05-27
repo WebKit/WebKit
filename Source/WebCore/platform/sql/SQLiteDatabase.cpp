@@ -119,8 +119,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
             m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
             LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
                 m_openErrorMessage.data());
-            sqlite3_close(m_db);
-            m_db = 0;
+            close(ShouldSetErrorState::No);
             return false;
         }
     }
@@ -131,8 +130,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     if (m_openError != SQLITE_OK) {
         m_openErrorMessage = sqlite3_errmsg(m_db);
         LOG_ERROR("SQLite database error when enabling extended errors - %s", m_openErrorMessage.data());
-        sqlite3_close(m_db);
-        m_db = 0;
+        close(ShouldSetErrorState::No);
         return false;
     }
 
@@ -220,7 +218,7 @@ void SQLiteDatabase::useWALJournalMode()
     }
 }
 
-void SQLiteDatabase::close()
+void SQLiteDatabase::close(ShouldSetErrorState shouldSetErrorState)
 {
     if (m_db) {
         ASSERT_WITH_MESSAGE(!m_statementCount, "All SQLiteTransaction objects should be destroyed before closing the database");
@@ -232,16 +230,24 @@ void SQLiteDatabase::close()
             Locker locker { m_databaseClosingMutex };
             m_db = 0;
         }
+
+        int closeResult;
         if (m_useWAL) {
+            // Close in the scope of counter as it may acquire lock of database.
             SQLiteTransactionInProgressAutoCounter transactionCounter;
-            sqlite3_close(db);
+            closeResult = sqlite3_close(db);
         } else
-            sqlite3_close(db);
+            closeResult = sqlite3_close(db);
+
+        if (closeResult != SQLITE_OK)
+            RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::close: Failed to close database (%d) - %{public}s", closeResult, lastErrorMsg());
     }
 
-    m_openingThread = nullptr;
-    m_openError = SQLITE_ERROR;
-    m_openErrorMessage = CString();
+    if (shouldSetErrorState == ShouldSetErrorState::Yes) {
+        m_openingThread = nullptr;
+        m_openError = SQLITE_ERROR;
+        m_openErrorMessage = CString();
+    }
 }
 
 void SQLiteDatabase::overrideUnauthorizedFunctions()

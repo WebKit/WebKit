@@ -257,7 +257,7 @@ static IDBError createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
     String tableStatement = database.tableSQL("Records"_s);
     if (tableStatement.isEmpty()) {
         if (!database.executeCommand(v3RecordsTableSchema()))
-            return IDBError { UnknownError, makeString("Error creating new Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
+            return IDBError { UnknownError, makeString("Error creating Records table (", database.lastError(), ") - ", database.lastErrorMsg()) };
 
         return IDBError { };
     }
@@ -277,16 +277,16 @@ static IDBError createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
 
     // Create a temporary table with the correct schema and migrate all existing content over.
     if (!database.executeCommand(v3RecordsTableSchemaTemp()))
-        return IDBError { UnknownError, makeString("Error creating temporary Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error creating temporary Records table (", database.lastError(), ") - ", database.lastErrorMsg()) };
 
     if (!database.executeCommand("INSERT INTO _Temp_Records (objectStoreID, key, value) SELECT objectStoreID, CAST(key AS TEXT), value FROM Records"_s))
-        return IDBError { UnknownError, makeString("Error migrating Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error migrating Records table (", database.lastError(), ") - ", database.lastErrorMsg()) };
 
     if (!database.executeCommand("DROP TABLE Records"_s))
-        return IDBError { UnknownError, makeString("Error dropping Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error dropping Records table (", database.lastError(), ") - ", database.lastErrorMsg()) };
 
     if (!database.executeCommand("ALTER TABLE _Temp_Records RENAME TO Records"_s))
-        return IDBError { UnknownError, makeString("Error renaming temporary Records table (%i) - %s", database.lastError(), database.lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error renaming temporary Records table (", database.lastError(), ") - ", database.lastErrorMsg()) };
 
     transaction.commit();
 
@@ -301,7 +301,7 @@ IDBError SQLiteIDBBackingStore::ensureValidBlobTables()
     String recordsTableStatement = m_sqliteDB->tableSQL("BlobRecords"_s);
     if (recordsTableStatement.isEmpty()) {
         if (!m_sqliteDB->executeCommand(blobRecordsTableSchema()))
-            return IDBError { UnknownError, makeString("Error creating BlobRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+            return IDBError { UnknownError, makeString("Error creating BlobRecords table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
         recordsTableStatement = blobRecordsTableSchema();
     }
@@ -311,7 +311,7 @@ IDBError SQLiteIDBBackingStore::ensureValidBlobTables()
     String filesTableStatement = m_sqliteDB->tableSQL("BlobFiles"_s);
     if (filesTableStatement.isEmpty()) {
         if (!m_sqliteDB->executeCommand(blobFilesTableSchema()))
-            return IDBError { UnknownError, makeString("Error creating BlobFiles table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+            return IDBError { UnknownError, makeString("Error creating BlobFiles table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
         filesTableStatement = blobFilesTableSchema();
     }
@@ -332,7 +332,7 @@ IDBError SQLiteIDBBackingStore::ensureValidRecordsTable()
     // Whether the updated records table already existed or if it was just created and the data migrated over,
     // make sure the uniqueness index exists.
     if (!m_sqliteDB->executeCommand("CREATE UNIQUE INDEX IF NOT EXISTS RecordsIndex ON Records (objectStoreID, key);"_s))
-        error = IDBError { UnknownError, makeString("Error creating RecordsIndex on Records table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        error = IDBError { UnknownError, makeString("Error creating RecordsIndex on Records table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     return error;
 }
@@ -345,7 +345,7 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
     String tableStatement = m_sqliteDB->tableSQL("IndexRecords"_s);
     if (tableStatement.isEmpty()) {
         if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchema()))
-            return IDBError { UnknownError, makeString("Error creating IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+            return IDBError { UnknownError, makeString("Error creating IndexRecords table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
         return IDBError { };
     }
@@ -361,16 +361,16 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
 
     // Create a temporary table with the correct schema and migrate all existing content over.
     if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchemaTemp()))
-        return IDBError { UnknownError, makeString("Error creating temporary IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error creating temporary IndexRecords table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_IndexRecords SELECT IndexRecords.indexID, IndexRecords.objectStoreID, IndexRecords.key, IndexRecords.value, Records.rowid FROM IndexRecords INNER JOIN Records ON Records.key = IndexRecords.value AND Records.objectStoreID = IndexRecords.objectStoreID"_s))
-        return IDBError { UnknownError, makeString("Error migrating IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error migrating IndexRecords table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     if (!m_sqliteDB->executeCommand("DROP TABLE IndexRecords"_s))
-        return IDBError { UnknownError, makeString("Error dropping IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error dropping IndexRecords table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords"_s))
-        return IDBError { UnknownError, makeString("Error renaming temporary IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error renaming temporary IndexRecords table (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     transaction.commit();
 
@@ -387,10 +387,10 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
         return IDBError { };
     
     if (!m_sqliteDB->executeCommand("DROP INDEX IF EXISTS IndexRecordsIndex"_s))
-        return IDBError { UnknownError, makeString("Error dropping IndexRecordsIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error dropping IndexRecordsIndex index (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     if (!m_sqliteDB->executeCommand(IndexRecordsIndexSchema))
-        return IDBError { UnknownError, makeString("Error creating IndexRecordsIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error creating IndexRecordsIndex index (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     return IDBError { };
 }
@@ -405,10 +405,10 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex()
         return IDBError { };
     
     if (!m_sqliteDB->executeCommand("DROP INDEX IF EXISTS IndexRecordsRecordIndex"_s))
-        return IDBError { UnknownError, makeString("Error dropping IndexRecordsRecordIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error dropping IndexRecordsRecordIndex index (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     if (!m_sqliteDB->executeCommand(v1IndexRecordsRecordIndexSchema))
-        return IDBError { UnknownError, makeString("Error creating IndexRecordsRecordIndex index (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg()) };
+        return IDBError { UnknownError, makeString("Error creating IndexRecordsRecordIndex index (", m_sqliteDB->lastError(), ") - ", m_sqliteDB->lastErrorMsg()) };
 
     return IDBError { };
 }

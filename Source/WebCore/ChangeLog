@@ -1,3 +1,26 @@
+2021-05-26  Sihui Liu  <sihui_liu@apple.com>
+
+        Add logging for when SQLiteDatabase fails to close
+        https://bugs.webkit.org/show_bug.cgi?id=226290
+
+        Reviewed by Chris Dumez.
+
+        Also fix some logging error in IDB.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidBlobTables):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+        (WebCore::SQLiteDatabase::close):
+        * platform/sql/SQLiteDatabase.h:
+
 2021-05-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Remove unused GraphicsContext::WindowsBitmap class

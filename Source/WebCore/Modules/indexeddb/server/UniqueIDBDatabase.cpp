@@ -195,11 +195,12 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
             m_backingStore = m_server.createBackingStore(m_identifier);
             IDBDatabaseInfo databaseInfo;
             backingStoreOpenError = m_backingStore->getOrEstablishDatabaseInfo(databaseInfo);
-            if (backingStoreOpenError.isNull()) {
-                LOG_ERROR("Failed to get database info '%s'", backingStoreOpenError.message().utf8().data());
+            if (backingStoreOpenError.isNull())
                 m_databaseInfo = makeUnique<IDBDatabaseInfo>(databaseInfo);
-            } else
+            else {
+                LOG_ERROR("Failed to get database info '%s'", backingStoreOpenError.message().utf8().data());
                 m_backingStore = nullptr;
+            }
         }
     }
 
