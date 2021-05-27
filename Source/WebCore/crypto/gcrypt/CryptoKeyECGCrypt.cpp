@@ -521,13 +521,8 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
     if (qMPI) {
         auto q = mpiData(qMPI);
         if (q && q->size() == curveUncompressedPointSize(m_curve)) {
-            Vector<uint8_t> a;
-            a.append(q->data() + 1, uncompressedFieldElementSize);
-            jwk.x = base64URLEncodeToString(a);
-
-            Vector<uint8_t> b;
-            b.append(q->data() + 1 + uncompressedFieldElementSize, uncompressedFieldElementSize);
-            jwk.y = base64URLEncodeToString(b);
+            jwk.x = base64URLEncodeToString(Vector<uint8_t> { q->data() + 1, uncompressedFieldElementSize });
+            jwk.y = base64URLEncodeToString(Vector<uint8_t> { q->data() + 1 + uncompressedFieldElementSize, uncompressedFieldElementSize });
         }
     }
 

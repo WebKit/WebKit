@@ -1,3 +1,15 @@
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Leverage the new Vector(const T*, size_t) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226304
+
+        Reviewed by Darin Adler.
+
+        Leverage the new Vector(const T*, size_t) constructor in existing code.
+
+        * pal/crypto/gcrypt/CryptoDigestGCrypt.cpp:
+        (PAL::CryptoDigest::computeHash):
+
 2021-05-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a PAL softlinking header for the Reveal framework

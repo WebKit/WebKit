@@ -1,3 +1,15 @@
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Leverage the new Vector(const T*, size_t) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226304
+
+        Reviewed by Darin Adler.
+
+        Leverage the new Vector(const T*, size_t) constructor in existing code.
+
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::consume):
+
 2021-05-26  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION: ASSERTION FAILED: !isCompilationThread() in JSC::Profiler::Database::addCompilation()

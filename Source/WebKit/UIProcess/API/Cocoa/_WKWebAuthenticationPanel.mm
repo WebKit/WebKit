@@ -54,6 +54,7 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
 #if ENABLE(WEB_AUTHN)
@@ -293,12 +294,6 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 }
 
 #if ENABLE(WEB_AUTHN)
-static Vector<uint8_t> vectorFromNSData(NSData* data)
-{
-    Vector<uint8_t> result;
-    result.append((const uint8_t*)data.bytes, data.length);
-    return result;
-}
 
 static WebCore::PublicKeyCredentialCreationOptions::RpEntity publicKeyCredentialRpEntity(_WKPublicKeyCredentialRelyingPartyEntity *rpEntity)
 {

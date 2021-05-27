@@ -37,9 +37,7 @@ namespace WebCore {
 
 Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length)
 {
-    Vector<uint8_t> result;
-    result.append(byteArray, length);
-    return result;
+    return { byteArray, length };
 }
 
 Vector<uint8_t> produceRpIdHash(const String& rpId)

@@ -43,13 +43,6 @@ namespace {
 const char* soAuthorizationPostDidStartMessageToParent = "<script>parent.postMessage('SOAuthorizationDidStart', '*');</script>";
 const char* soAuthorizationPostDidCancelMessageToParent = "<script>parent.postMessage('SOAuthorizationDidCancel', '*');</script>";
 
-static inline Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length)
-{
-    Vector<uint8_t> result;
-    result.append(byteArray, length);
-    return result;
-}
-
 } // namespace
 
 Ref<SOAuthorizationSession> SubFrameSOAuthorizationSession::create(SOAuthorization *soAuthorization, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, FrameIdentifier frameID)
@@ -77,7 +70,7 @@ SubFrameSOAuthorizationSession::~SubFrameSOAuthorizationSession()
 void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
 {
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), convertBytesToVector(reinterpret_cast<const uint8_t*>(soAuthorizationPostDidCancelMessageToParent), strlen(soAuthorizationPostDidCancelMessageToParent)));
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector { reinterpret_cast<const uint8_t*>(soAuthorizationPostDidCancelMessageToParent), strlen(soAuthorizationPostDidCancelMessageToParent) });
     appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
 }
 
@@ -92,7 +85,7 @@ void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceRes
         fallBackToWebPathInternal();
         return;
     }
-    appendRequestToLoad(URL(response.url()), convertBytesToVector(reinterpret_cast<const uint8_t*>(data.bytes), data.length));
+    appendRequestToLoad(URL(response.url()), Vector { reinterpret_cast<const uint8_t*>(data.bytes), data.length });
 }
 
 void SubFrameSOAuthorizationSession::beforeStart()
@@ -100,7 +93,7 @@ void SubFrameSOAuthorizationSession::beforeStart()
     // Cancelled the current load before loading the data to post SOAuthorizationDidStart to the parent frame.
     invokeCallback(true);
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), convertBytesToVector(reinterpret_cast<const uint8_t*>(soAuthorizationPostDidStartMessageToParent), strlen(soAuthorizationPostDidStartMessageToParent)));
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector { reinterpret_cast<const uint8_t*>(soAuthorizationPostDidStartMessageToParent), strlen(soAuthorizationPostDidStartMessageToParent) });
 }
 
 void SubFrameSOAuthorizationSession::didFinishLoad()

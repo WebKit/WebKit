@@ -67,9 +67,7 @@ std::unique_ptr<FidoHidInitPacket> FidoHidInitPacket::createFromSerializedData(c
     // Update remaining size to determine the payload size of follow on packets.
     *remainingSize = payloadSize - dataSize;
 
-    auto data = Vector<uint8_t>();
-    data.append(serialized.begin() + index, dataSize);
-
+    Vector<uint8_t> data { serialized.begin() + index, dataSize };
     return makeUnique<FidoHidInitPacket>(channelId, command, WTFMove(data), payloadSize);
 }
 
@@ -122,9 +120,7 @@ std::unique_ptr<FidoHidContinuationPacket> FidoHidContinuationPacket::createFrom
     // Check to see if packet payload is less than maximum size and padded with 0s.
     size_t dataSize = std::min(*remainingSize, kHidPacketSize - index);
     *remainingSize -= dataSize;
-    auto data = Vector<uint8_t>();
-    data.append(serialized.begin() + index, dataSize);
-
+    Vector<uint8_t> data { serialized.begin() + index, dataSize };
     return makeUnique<FidoHidContinuationPacket>(channelId, sequence, WTFMove(data));
 }
 

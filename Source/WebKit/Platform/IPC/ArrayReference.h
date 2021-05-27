@@ -107,10 +107,7 @@ public:
 
     Vector<T> vector() const
     {
-        Vector<T> result;
-        if (!isEmpty())
-            result.append(m_data, Extent);
-        return result;
+        return { m_data, Extent };
     }
 
 private:

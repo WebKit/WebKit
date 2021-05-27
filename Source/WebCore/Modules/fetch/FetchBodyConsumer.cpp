@@ -43,9 +43,7 @@ namespace WebCore {
 
 static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, const unsigned char* data, unsigned length, const String& contentType)
 {
-    Vector<uint8_t> value(length);
-    memcpy(value.data(), data, length);
-    return Blob::create(context, WTFMove(value), Blob::normalizedContentType(contentType));
+    return Blob::create(context, Vector { data, length }, Blob::normalizedContentType(contentType));
 }
 
 // https://mimesniff.spec.whatwg.org/#http-quoted-string-token-code-point

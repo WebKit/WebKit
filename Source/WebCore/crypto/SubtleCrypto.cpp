@@ -458,9 +458,7 @@ static Optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCrypto:
                 return WTF::nullopt;
             },
             [] (auto& bufferSource) -> Optional<KeyData> {
-                Vector<uint8_t> result;
-                result.append(static_cast<const uint8_t*>(bufferSource->data()), bufferSource->byteLength());
-                return KeyData { result };
+                return KeyData { Vector { static_cast<const uint8_t*>(bufferSource->data()), bufferSource->byteLength() } };
             }
         );
     case SubtleCrypto::KeyFormat::Jwk:
@@ -481,9 +479,7 @@ static Optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCrypto:
 
 static Vector<uint8_t> copyToVector(BufferSource&& data)
 {
-    Vector<uint8_t> dataVector;
-    dataVector.append(data.data(), data.length());
-    return dataVector;
+    return { data.data(), data.length() };
 }
 
 static bool isSupportedExportKey(CryptoAlgorithmIdentifier identifier)

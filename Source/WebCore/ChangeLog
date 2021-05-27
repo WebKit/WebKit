@@ -1,3 +1,65 @@
+2021-05-26  Chris Dumez  <cdumez@apple.com>
+
+        Leverage the new Vector(const T*, size_t) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226304
+
+        Reviewed by Darin Adler.
+
+        Leverage the new Vector(const T*, size_t) constructor in existing code.
+
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::blobFromData):
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::dataFromBuffer):
+        * Modules/webauthn/WebAuthenticationUtils.cpp:
+        (WebCore::convertBytesToVector):
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::decodeResponseMap):
+        * Modules/webauthn/fido/FidoHidPacket.cpp:
+        (fido::FidoHidInitPacket::createFromSerializedData):
+        (fido::FidoHidContinuationPacket::createFromSerializedData):
+        * Modules/webauthn/fido/Pin.cpp:
+        (fido::pin::encodeCOSEPublicKey):
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::WebCore::extractECPublicKeyFromU2fRegistrationResponse):
+        (fido::WebCore::extractCredentialIdFromU2fRegistrationResponse):
+        (fido::WebCore::createFidoAttestationStatementFromU2fRegisterResponse):
+        (fido::readU2fSignResponse):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::enqueueRawFrame):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::toKeyData):
+        (WebCore::copyToVector):
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        * crypto/mac/CryptoKeyECMac.cpp:
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::vectorFromNSData):
+        * crypto/openssl/CryptoAlgorithmAES_GCMOpenSSL.cpp:
+        (WebCore::cryptDecrypt):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::ImageBackingStore):
+        * platform/graphics/cairo/ImageBufferUtilitiesCairo.cpp:
+        (WebCore::data):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::GstMappedBuffer::createVector const):
+        * platform/graphics/gstreamer/eme/CDMProxyClearKey.cpp:
+        (WebCore::CDMProxyClearKey::cencSetDecryptionKey):
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::fetchData):
+        * platform/network/FormData.cpp:
+        (WebCore::FormDataElement::isolatedCopy const):
+        (WebCore::FormData::appendData):
+        * platform/network/curl/OpenSSLHelper.cpp:
+        (OpenSSL::BIO::getDataAsVector const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::deserializeBuffer const):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+
 2021-05-26  Jean-Yves Avenard  <jya@apple.com>
 
         Make MediaSession readystate enums all lowercase

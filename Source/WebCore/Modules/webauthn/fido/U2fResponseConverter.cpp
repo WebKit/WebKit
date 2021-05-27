@@ -64,13 +64,10 @@ static Vector<uint8_t> extractECPublicKeyFromU2fRegistrationResponse(const Vecto
     if (u2fData.size() < pos + 2 * ES256FieldElementLength)
         return { };
 
-    Vector<uint8_t> x;
-    x.append(u2fData.data() + pos, ES256FieldElementLength);
+    Vector<uint8_t> x { u2fData.data() + pos, ES256FieldElementLength };
     pos += ES256FieldElementLength;
 
-    Vector<uint8_t> y;
-    y.append(u2fData.data() + pos, ES256FieldElementLength);
-
+    Vector<uint8_t> y { u2fData.data() + pos, ES256FieldElementLength };
     return encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
 }
 
@@ -84,9 +81,7 @@ static Vector<uint8_t> extractCredentialIdFromU2fRegistrationResponse(const Vect
 
     if (u2fData.size() < pos + credentialIdLength)
         return { };
-    Vector<uint8_t> credentialId;
-    credentialId.append(u2fData.data() + pos, credentialIdLength);
-    return credentialId;
+    return { u2fData.data() + pos, credentialIdLength };
 }
 
 static Vector<uint8_t> createAttestedCredentialDataFromU2fRegisterResponse(const Vector<uint8_t>& u2fData, const Vector<uint8_t>& publicKey)
@@ -124,12 +119,10 @@ static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterRe
     if (!x509Length || u2fData.size() < offset + x509Length)
         return { };
 
-    Vector<uint8_t> x509;
-    x509.append(u2fData.data() + offset, x509Length);
+    Vector<uint8_t> x509 { u2fData.data() + offset, x509Length };
     offset += x509Length;
 
-    Vector<uint8_t> signature;
-    signature.append(u2fData.data() + offset, u2fData.size() - offset);
+    Vector<uint8_t> signature { u2fData.data() + offset, u2fData.size() - offset };
     if (signature.isEmpty())
         return { };
 
@@ -184,9 +177,7 @@ RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, c
     auto authData = buildAuthData(rpId, flags, counter, { });
 
     // FIXME: Find a way to remove the need of constructing a vector here.
-    Vector<uint8_t> signature;
-    signature.append(u2fData.data() + signatureIndex, u2fData.size() - signatureIndex);
-
+    Vector<uint8_t> signature { u2fData.data() + signatureIndex, u2fData.size() - signatureIndex };
     return AuthenticatorAssertionResponse::create(keyHandle, authData, signature, { });
 }
 

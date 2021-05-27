@@ -43,6 +43,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
@@ -88,18 +89,10 @@ static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDes
     return result;
 }
 
-static inline Vector<uint8_t> toVector(NSData *data)
-{
-    Vector<uint8_t> result;
-    result.append(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
-    return result;
-}
-
 static inline Vector<uint8_t> aaguidVector()
 {
-    Vector<uint8_t> result;
-    result.append(aaguid, aaguidLength);
-    return result;
+    static NeverDestroyed<Vector<uint8_t>> aaguidVector = { aaguid, aaguidLength };
+    return aaguidVector;
 }
 
 static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
@@ -153,7 +146,7 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
     Vector<Ref<AuthenticatorAssertionResponse>> result;
     result.reserveInitialCapacity(sortedAttributesArray.count);
     for (NSDictionary *attributes in sortedAttributesArray) {
-        auto decodedResponse = cbor::CBORReader::read(toVector(attributes[(id)kSecAttrApplicationTag]));
+        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return WTF::nullopt;
@@ -471,7 +464,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     {
         Vector<cbor::CBORValue> cborArray;
         for (size_t i = 0; i < [certificates count]; i++)
-            cborArray.append(cbor::CBORValue(toVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
+            cborArray.append(cbor::CBORValue(vectorFromNSData((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple", WTFMove(attestationStatementMap), creationOptions.attestation);

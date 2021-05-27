@@ -59,8 +59,7 @@ Optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>& inBuffer)
     if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
         return WTF::nullopt;
 
-    Vector<uint8_t> buffer;
-    buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
+    Vector<uint8_t> buffer { inBuffer.data() + 1, inBuffer.size() - 1 };
     Optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
     if (!decodedResponse || !decodedResponse->isMap())
         return WTF::nullopt;

@@ -31,6 +31,7 @@
 #import "NfcService.h"
 #import "WKNFReaderSessionDelegate.h"
 #import <WebCore/FidoConstants.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -90,11 +91,9 @@ NfcConnection::~NfcConnection()
 
 Vector<uint8_t> NfcConnection::transact(Vector<uint8_t>&& data) const
 {
-    Vector<uint8_t> response;
     // The method will return an empty NSData if the tag is disconnected.
     auto *responseData = [m_session transceive:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).get()];
-    response.append(reinterpret_cast<const uint8_t*>(responseData.bytes), responseData.length);
-    return response;
+    return vectorFromNSData(responseData);
 }
 
 void NfcConnection::stop() const

@@ -419,9 +419,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline)
 
 Vector<uint8_t> GstMappedBuffer::createVector() const
 {
-    Vector<uint8_t> vector;
-    vector.append(data(), size());
-    return vector;
+    return { data(), size() };
 }
 
 Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()

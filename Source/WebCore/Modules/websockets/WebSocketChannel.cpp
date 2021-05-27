@@ -720,9 +720,7 @@ void WebSocketChannel::enqueueRawFrame(WebSocketFrame::OpCode opCode, const char
     auto frame = makeUnique<QueuedFrame>();
     frame->opCode = opCode;
     frame->frameType = QueuedFrameTypeVector;
-    frame->vectorData.resize(dataLength);
-    if (dataLength)
-        memcpy(frame->vectorData.data(), data, dataLength);
+    frame->vectorData = { data, dataLength };
     m_outgoingFrameQueue.append(WTFMove(frame));
 }
 

@@ -116,9 +116,7 @@ public:
         if (length < 0)
             return WTF::nullopt;
 
-        Vector<uint8_t> result;
-        result.append(data, length);
-        return result;
+        return Vector { data, static_cast<size_t>(length) };
     }
 
     String getDataAsString() const

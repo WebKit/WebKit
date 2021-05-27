@@ -36,6 +36,7 @@
 #import <wtf/Optional.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
@@ -61,13 +62,6 @@ const NSString* encryptedKeyKey = @"encryptedKey";
 const NSString* tagKey = @"tag";
 
 const size_t masterKeySizeInBytes = 16;
-
-inline Vector<uint8_t> vectorFromNSData(NSData* data)
-{
-    Vector<uint8_t> result;
-    result.append((const uint8_t*)[data bytes], [data length]);
-    return result;
-}
 
 static NSString* masterKeyAccountNameForCurrentApplication()
 {

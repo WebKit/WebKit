@@ -163,10 +163,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
                 return completionHandler({ returnedValue });
             }
 
-            Vector<uint8_t> data;
-            data.reserveInitialCapacity(dataReference.size());
-            data.append(dataReference.data(), dataReference.size());
-            completionHandler({ { API::SerializedScriptValue::adopt(WTFMove(data)).ptr() } });
+            completionHandler({ { API::SerializedScriptValue::adopt(Vector { dataReference.data(), dataReference.size() }).ptr() } });
         });
     });
 }

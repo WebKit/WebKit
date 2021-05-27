@@ -165,9 +165,7 @@ FormDataElement FormDataElement::isolatedCopy() const
 {
     return switchOn(data,
         [] (const Vector<char>& bytes) {
-            Vector<char> copy;
-            copy.append(bytes.data(), bytes.size());
-            return FormDataElement(WTFMove(copy));
+            return FormDataElement(Vector { bytes.data(), bytes.size() });
         }, [] (const FormDataElement::EncodedFileData& fileData) {
             return FormDataElement(fileData.isolatedCopy());
         }, [] (const FormDataElement::EncodedBlobData& blobData) {
@@ -185,9 +183,7 @@ void FormData::appendData(const void* data, size_t size)
             return;
         }
     }
-    Vector<char> vector;
-    vector.append(reinterpret_cast<const char*>(data), size);
-    m_elements.append(WTFMove(vector));
+    m_elements.append(Vector { reinterpret_cast<const char*>(data), size });
 }
 
 void FormData::appendFile(const String& filename)

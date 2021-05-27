@@ -123,9 +123,7 @@ Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, Optional<do
     if (!encodeImage(image, mimeType, quality, buffer, bufferSize))
         return { };
 
-    Vector<uint8_t> imageData;
-    imageData.append(buffer.get(), bufferSize);
-    return imageData;
+    return { reinterpret_cast<const uint8_t*>(buffer.get()), bufferSize };
 }
 #endif // !PLATFORM(GTK)
 
