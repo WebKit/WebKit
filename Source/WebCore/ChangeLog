@@ -1,3 +1,19 @@
+2021-05-27  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Add discrete animation support for grid-template-columns|rows
+        https://bugs.webkit.org/show_bug.cgi?id=226174
+
+        For CSSGridTemplateTemplate|Row, the animation wrapper setter needs to check a few style
+        settings such as gridColumns|gridRows, gridAutoRepeatColumns|gridAutoRepeatRows etc. to be
+        inline with the style specified. So does the getter. 
+
+        Reviewed by Antoine Quint.
+
+        This change has improved the two exising animation related grid-template-* tests.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2021-05-27  Tim Horton  <timothy_horton@apple.com>
 
         Introduce BifurcatedGraphicsContext
