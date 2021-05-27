@@ -1,3 +1,22 @@
+2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        MacOS WebM Format Reader returns enabled for tracks that do not have samples
+        https://bugs.webkit.org/show_bug.cgi?id=226078
+        <rdar://74048072>
+
+        Reviewed by Jer Noble.
+
+        After r274378 the WebM format reader does not support WebM with non-disabled audio tracks
+        that do not have any samples.
+        Remove the empty audio track from all red-green.webmvp9.webm files so that WebGL
+        conformance tests that use the file do not fail due to this.
+
+        * fast/canvas/webgl/resources/red-green.webmvp8.webm:
+        * http/tests/webgl/1.0.2/resources/webgl_test_files/conformance/resources/red-green.webmvp8.webm:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/resources/red-green.webmvp8.webm:
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green.webmvp8.webm:
+        * webgl/resources/webgl_test_files/resources/red-green.webmvp8.webm:
+
 2021-05-26  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
 
         [MSE] MediaSample that need to be removed with SourceBufferPrivate::evictCodedFrames() may not be removed.
