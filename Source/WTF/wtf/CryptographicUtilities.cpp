@@ -26,15 +26,11 @@
 #include "config.h"
 #include <wtf/CryptographicUtilities.h>
 
-#include <string.h>
-
 namespace WTF {
 
+#if !PLATFORM(COCOA) && !OS(OPENBSD) && !OS(FREEBSD)
 NEVER_INLINE int constantTimeMemcmp(const void* voidA, const void* voidB, size_t length)
 {
-#if PLATFORM(COCOA) || OS(OPENBSD) || OS(FREEBSD)
-    return timingsafe_bcmp(voidA, voidB, length);
-#else
     const uint8_t* a = static_cast<const uint8_t*>(voidA);
     const uint8_t* b = static_cast<const uint8_t*>(voidB);
 
@@ -43,7 +39,7 @@ NEVER_INLINE int constantTimeMemcmp(const void* voidA, const void* voidB, size_t
         result |= a[i] ^ b[i];
 
     return result;
-#endif
 }
+#endif
 
 }
