@@ -1,3 +1,39 @@
+2021-05-27  Sam Weinig  <weinig@apple.com>
+
+        Merge WorkerGlobalScope+Caches.idl and DOMWindow+Caches.idl into a single WindowOrWorkerGlobalScope+Caches.idl
+        https://bugs.webkit.org/show_bug.cgi?id=226271
+
+        Reviewed by Darin Adler.
+
+        Address FIXMEs in both WorkerGlobalScope+Caches.idl and DOMWindow+Caches.idl by
+        merging them into a single WindowOrWorkerGlobalScope+Caches.idl, matching the spec
+        langauge more closely.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/cache/DOMWindow+Caches.idl: Removed.
+        * Modules/cache/DOMWindowCaches.cpp: Removed.
+        * Modules/cache/DOMWindowCaches.h: Removed.
+        * Modules/cache/WindowOrWorkerGlobalScope+Caches.idl: Added.
+        * Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp: Added.
+        (WebCore::DOMWindowCaches::supplementName):
+        (WebCore::WorkerGlobalScopeCaches::supplementName):
+        (WebCore::DOMWindowCaches::DOMWindowCaches):
+        (WebCore::DOMWindowCaches::from):
+        (WebCore::DOMWindowCaches::caches const):
+        (WebCore::WorkerGlobalScopeCaches::WorkerGlobalScopeCaches):
+        (WebCore::WorkerGlobalScopeCaches::from):
+        (WebCore::WorkerGlobalScopeCaches::caches const):
+        (WebCore::WindowOrWorkerGlobalScopeCaches::caches):
+        * Modules/cache/WindowOrWorkerGlobalScopeCaches.h: Added.
+        * Modules/cache/WorkerGlobalScope+Caches.idl: Removed.
+        * Modules/cache/WorkerGlobalScopeCaches.cpp: Removed.
+        * Modules/cache/WorkerGlobalScopeCaches.h: Removed.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-05-27  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late May 2021 edition

@@ -229,8 +229,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/cache/CacheQueryOptions.idl
     Modules/cache/DOMCache.idl
     Modules/cache/DOMCacheStorage.idl
-    Modules/cache/DOMWindow+Caches.idl
-    Modules/cache/WorkerGlobalScope+Caches.idl
+    Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
 
     Modules/contact-picker/ContactInfo.idl
     Modules/contact-picker/ContactProperty.idl

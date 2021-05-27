@@ -34,9 +34,8 @@ Modules/cache/CacheStorageConnection.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheEngine.cpp
 Modules/cache/DOMCacheStorage.cpp
-Modules/cache/DOMWindowCaches.cpp
+Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
 Modules/cache/WorkerCacheStorageConnection.cpp
-Modules/cache/WorkerGlobalScopeCaches.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/credentialmanagement/BasicCredential.cpp
