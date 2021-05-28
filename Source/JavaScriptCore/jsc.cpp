@@ -1519,6 +1519,8 @@ JSC_DEFINE_HOST_FUNCTION(functionRun, (JSGlobalObject* globalObject, CallFrame* 
     stopWatch.stop();
 
     if (exception) {
+        if (vm.isTerminationException(exception.get()))
+            vm.setExecutionForbidden();
         throwException(realm, scope, exception);
         return JSValue::encode(jsUndefined());
     }
@@ -1548,6 +1550,8 @@ JSC_DEFINE_HOST_FUNCTION(functionRunString, (JSGlobalObject* globalObject, CallF
     evaluate(realm, jscSource(source, callFrame->callerSourceOrigin(vm)), JSValue(), exception);
 
     if (exception) {
+        if (vm.isTerminationException(exception.get()))
+            vm.setExecutionForbidden();
         scope.throwException(realm, exception);
         return JSValue::encode(jsUndefined());
     }
@@ -1579,8 +1583,11 @@ JSC_DEFINE_HOST_FUNCTION(functionLoad, (JSGlobalObject* globalObject, CallFrame*
 
     NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(globalObject, jscSource(script, SourceOrigin { path }, fileName), JSValue(), evaluationException);
-    if (evaluationException)
+    if (evaluationException) {
+        if (vm.isTerminationException(evaluationException.get()))
+            vm.setExecutionForbidden();
         throwException(globalObject, scope, evaluationException);
+    }
     return JSValue::encode(result);
 }
 
@@ -1594,8 +1601,11 @@ JSC_DEFINE_HOST_FUNCTION(functionLoadString, (JSGlobalObject* globalObject, Call
 
     NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(globalObject, jscSource(sourceCode, callFrame->callerSourceOrigin(vm)), JSValue(), evaluationException);
-    if (evaluationException)
+    if (evaluationException) {
+        if (vm.isTerminationException(evaluationException.get()))
+            vm.setExecutionForbidden();
         throwException(globalObject, scope, evaluationException);
+    }
     return JSValue::encode(result);
 }
 
@@ -1924,8 +1934,11 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject
 
     NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(realm, jscSource(sourceCode, callFrame->callerSourceOrigin(vm)), JSValue(), evaluationException);
-    if (evaluationException)
+    if (evaluationException) {
+        if (vm.isTerminationException(evaluationException.get()))
+            vm.setExecutionForbidden();
         throwException(globalObject, scope, evaluationException);
+    }
     return JSValue::encode(result);
 }
 
@@ -2961,9 +2974,12 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
         return valueCell == terminationError;
     };
 
-    if (options.m_treatWatchdogExceptionAsSuccess && isTerminationException(value)) {
-        ASSERT(hasException);
-        return;
+    if (isTerminationException(value)) {
+        vm.setExecutionForbidden();
+        if (options.m_treatWatchdogExceptionAsSuccess) {
+            ASSERT(hasException);
+            return;
+        }
     }
 
     if (!options.m_uncaughtExceptionName || !isLastFile) {
@@ -3050,11 +3066,8 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
             NakedPtr<Exception> evaluationException;
             JSValue returnValue = evaluate(globalObject, jscSource(scriptBuffer, sourceOrigin , fileName), JSValue(), evaluationException);
             scope.assertNoException();
-            if (evaluationException) {
-                if (vm.isTerminationException(evaluationException.get()))
-                    vm.setExecutionForbidden();
+            if (evaluationException)
                 returnValue = evaluationException->value();
-            }
             checkException(globalObject, isLastFile, evaluationException, returnValue, options, success);
         }
 
@@ -3125,6 +3138,9 @@ static void runInteractive(GlobalObject* globalObject)
         NakedPtr<Exception> evaluationException;
         JSValue returnValue = evaluate(globalObject, jscSource(line, sourceOrigin, sourceOrigin.string()), JSValue(), evaluationException);
 #endif
+        if (vm.isTerminationException(evaluationException.get()))
+            vm.setExecutionForbidden();
+
         Expected<CString, UTF8ConversionError> utf8;
         if (evaluationException) {
             fputs("Exception: ", stdout);
