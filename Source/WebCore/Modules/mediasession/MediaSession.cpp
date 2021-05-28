@@ -31,6 +31,7 @@
 #include "DOMWindow.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSMediaPositionState.h"
 #include "JSMediaSessionAction.h"
 #include "JSMediaSessionPlaybackState.h"
@@ -272,10 +273,24 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
     notifyActionHandlerObservers();
 }
 
-bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails)
+void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, DOMPromiseDeferred<void>&& promise)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (!callActionHandler(actionDetails, TriggerGestureIndicator::No)) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+
+    promise.resolve();
+}
+
+bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, TriggerGestureIndicator triggerGestureIndicator)
 {
     if (auto handler = m_actionHandlers.get(actionDetails.action)) {
-        UserGestureIndicator gestureIndicator(ProcessingUserGesture, document());
+        Optional<UserGestureIndicator> maybeGestureIndicator;
+        if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
+            maybeGestureIndicator.emplace(ProcessingUserGesture, document());
         handler->handleEvent(actionDetails);
         return true;
     }

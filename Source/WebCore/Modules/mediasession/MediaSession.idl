@@ -37,6 +37,8 @@
 
     undefined setActionHandler(MediaSessionAction action, MediaSessionActionHandler? handler);
 
+    Promise<undefined> callActionHandler(MediaSessionActionDetails actionDetails);
+
     undefined setPositionState(optional MediaPositionState? state = null);
 };
 

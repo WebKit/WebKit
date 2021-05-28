@@ -1,3 +1,14 @@
+2021-05-28  Jean-Yves Avenard  <jya@apple.com>
+
+        Add MediaSession.callActionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=226077
+        rdar://77463304
+
+        Reviewed by Eric Carlson.
+
+        * media/media-session/callActionHandler-expected.txt: Added.
+        * media/media-session/callActionHandler.html: Added.
+
 2021-05-28  Alan Bujtas  <zalan@apple.com>
 
         CrashOnOverflow in WebCore::RenderTable::cellBefore(WebCore::RenderTableCell const*)

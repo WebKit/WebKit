@@ -50,6 +50,7 @@ class MediaMetadata;
 class MediaSessionCoordinator;
 class MediaSessionCoordinatorPrivate;
 class Navigator;
+template<typename> class DOMPromiseDeferred;
 
 class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,6 +66,8 @@ public:
     void setPlaybackState(MediaSessionPlaybackState);
 
     void setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
+
+    void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
     ExceptionOr<void> setPositionState(Optional<MediaPositionState>&&);
     Optional<MediaPositionState> positionState() const { return m_positionState; }
@@ -87,7 +90,11 @@ public:
 #endif
 
     bool hasActiveActionHandlers() const { return !m_actionHandlers.isEmpty(); }
-    WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&);
+    enum class TriggerGestureIndicator {
+        No,
+        Yes,
+    };
+    WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&, TriggerGestureIndicator = TriggerGestureIndicator::Yes);
 
     const Logger& logger() const { return *m_logger.get(); }
 

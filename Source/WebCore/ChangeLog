@@ -1,3 +1,21 @@
+2021-05-28  Jean-Yves Avenard  <jya@apple.com>
+
+        Add MediaSession.callActionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=226077
+        rdar://77463304
+
+        Reviewed by Eric Carlson.
+
+        Make it possible for JavaScript to be able to trigger a MediaSession action
+        handler so a MediaSession.coordinator polyfill such as one provided by an
+        external JS library will work.
+        Test: media/media-session/callActionHandler.html
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::callActionHandler):
+        * Modules/mediasession/MediaSession.h:
+        * Modules/mediasession/MediaSession.idl: Add method definition.
+
 2021-05-28  Alan Bujtas  <zalan@apple.com>
 
         CrashOnOverflow in WebCore::RenderTable::cellBefore(WebCore::RenderTableCell const*)
