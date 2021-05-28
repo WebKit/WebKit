@@ -37,7 +37,7 @@ class TableFormattingContext;
 
 class TableFormattingGeometry : public FormattingGeometry {
 public:
-    TableFormattingGeometry(const TableFormattingContext&, const TableGrid&);
+    TableFormattingGeometry(const TableFormattingContext&);
 
     LayoutUnit cellBoxContentHeight(const ContainerBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
@@ -47,7 +47,6 @@ public:
 
 private:
     const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }
-    const TableGrid& m_grid;
 };
 
 }
